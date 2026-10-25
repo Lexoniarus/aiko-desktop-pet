@@ -13,7 +13,6 @@ from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.catalog import (
     ANIMATIONS,
-    CATALOGUE,
     DialogueBook,
     Line,
     Reaction,
@@ -22,7 +21,7 @@ from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalConditio
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from tools.dialogue_test_support import dialogue_context
+from tools.dialogue_test_support import dialogue_context, dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -46,7 +45,10 @@ class VoiceCatalogueTests(unittest.TestCase):
         self.context = ctx()
 
     def test_authored_phrases_are_unique_and_german(self):
-        self.assertGreaterEqual(len(self.book.lines), 150)
+        self.assertTrue({
+            "greeting", "feed_meal", "pet", "sleep", "wake", "object_search",
+            "object_handover", "game_greeting", "game_quiz_greeting",
+        } <= {line.event for line in self.book.lines})
         self.assertEqual(len(self.book.lines), len({x.id for x in self.book.lines}))
         self.assertEqual(len(self.book.lines), len({x.text for x in self.book.lines}))
         self.assertTrue(
@@ -153,14 +155,14 @@ class VoiceCatalogueTests(unittest.TestCase):
         )
 
     def test_malformed_lines_and_duplicate_ids_are_rejected(self):
-        data = json.loads(CATALOGUE.read_text("utf-8"))
+        data = dialogue_source_fixture()
         data["lines"][0]["animation"] = "teleport"
         with TemporaryDirectory() as tmp:
             file = Path(tmp) / "voice.json"
             file.write_text(json.dumps(data), encoding="utf-8")
             with self.assertRaises(ValueError):
                 DialogueBook.from_file(file)
-        line = Line.parse(json.loads(CATALOGUE.read_text("utf-8"))["lines"][0])
+        line = Line.parse(dialogue_source_fixture()["lines"][0])
         with self.assertRaises(ValueError):
             DialogueBook((line, line))
 

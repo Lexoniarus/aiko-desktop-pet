@@ -41,6 +41,9 @@ desktop.ini
 # Includes the example save directory from .env.example.
 local-data/
 state.json
+# These authored dialogue resources are not personal save files.
+!/aiko_pet/data/dialogues/de/spontaneous/state.json
+!/aiko_pet/data/dialogues/de/plaudern/state.json
 *.aiko-save-backup
 *.sqlite
 *.sqlite3

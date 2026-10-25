@@ -10,7 +10,7 @@ import math
 import random
 from collections import deque
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from string import Formatter
 from typing import Any, Literal
 
@@ -31,7 +31,9 @@ from .dialogue_context import (
 from .dialogue_events import DIALOGUE_EVENTS
 from .reaction_sequence import Cue, conversation_timing
 
-CATALOGUE = Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"
+CATALOGUE = (
+    Path(__file__).resolve().parents[2] / "data" / "dialogues" / "de" / "index.json"
+)
 ANIMATIONS = frozenset({
     "idle",
     "waiting",
@@ -270,6 +272,63 @@ class Reaction:
         return cls(line_id, (Cue.text(text),), animation, event)
 
 
+def _source_lines(raw: Any) -> tuple[Line, ...]:
+    data = object_fields(
+        raw, ("catalogue_version", "language", "lines"), context="dialogues",
+    )
+    if (
+        type(data["catalogue_version"]) is not int
+        or data["catalogue_version"] != 3
+        or data["language"] != "de"
+    ):
+        raise ValueError("Unsupported dialogue catalogue version")
+    if not isinstance(data["lines"], list):
+        raise ValueError("Missing dialogue lines")
+    return tuple(Line.parse(item) for item in data["lines"])
+
+
+def _indexed_lines(file: Path, raw: Any) -> tuple[Line, ...]:
+    data = object_fields(
+        raw,
+        ("index_version", "catalogue_version", "language", "files", "line_order"),
+        context="dialogue index",
+    )
+    if (
+        type(data["index_version"]) is not int or data["index_version"] != 1
+        or type(data["catalogue_version"]) is not int
+        or data["catalogue_version"] != 3 or data["language"] != "de"
+    ):
+        raise ValueError("Unsupported dialogue index version or language")
+    names = data["files"]
+    if (not isinstance(names, list) or not names
+            or any(not isinstance(name, str) or not name for name in names)):
+        raise ValueError("Invalid dialogue source files")
+    if len(set(names)) != len(names):
+        raise ValueError("Duplicate dialogue source file")
+    root = file.parent.resolve()
+    lines: list[Line] = []
+    for name in names:
+        relative = PurePosixPath(name)
+        if (relative.is_absolute() or ".." in relative.parts
+                or "\\" in name or ":" in name
+                or relative.as_posix() != name or relative.suffix != ".json"):
+            raise ValueError(f"Invalid dialogue source path: {name}")
+        source = (root / name).resolve()
+        if not source.is_relative_to(root) or source == file.resolve():
+            raise ValueError(f"Dialogue source outside index or recursive: {name}")
+        lines.extend(_source_lines(load_json(source)))
+    by_id = {line.id: line for line in lines}
+    if len(by_id) != len(lines):
+        raise ValueError("Duplicate dialogue IDs across source files")
+    order = data["line_order"]
+    if (not isinstance(order, list)
+            or any(not isinstance(item, str) or not item for item in order)):
+        raise ValueError("Invalid dialogue line order")
+    if len(order) != len(set(order)) or set(order) != set(by_id):
+        raise ValueError("Dialogue line order must name every source ID exactly once")
+    return tuple(by_id[item] for item in order)
+
+
 class DialogueBook:
     """Context-filtered rotation; no fallback can cross a relationship boundary."""
 
@@ -288,20 +347,14 @@ class DialogueBook:
     def from_file(
         cls, file: Path = CATALOGUE, *, rng: random.Random | None = None
     ) -> DialogueBook:
-        data = object_fields(
-            load_json(file),
-            ("catalogue_version", "language", "lines"),
-            context="dialogues",
+        """Read one indexed book or an explicitly supplied single-source catalogue."""
+        data = load_json(file)
+        lines = (
+            _indexed_lines(file, data)
+            if isinstance(data, dict) and "index_version" in data
+            else _source_lines(data)
         )
-        if (
-            type(data["catalogue_version"]) is not int
-            or data["catalogue_version"] != 3
-            or data["language"] != "de"
-        ):
-            raise ValueError("Unsupported dialogue catalogue version")
-        if not isinstance(data["lines"], list):
-            raise ValueError("Missing dialogue lines")
-        return cls(tuple(Line.parse(item) for item in data["lines"]), rng=rng)
+        return cls(lines, rng=rng)
 
     def choose(
         self,

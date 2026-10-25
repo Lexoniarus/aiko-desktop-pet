@@ -1,0 +1,4202 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "object-notice-01",
+      "event": "object_notice",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Oh? Was liegt denn da?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_notice-0001",
+      "event": "object_notice",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da liegt etwas auf meinem Weg."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_notice-0002",
+      "event": "object_notice",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huch, das habe ich hier noch nicht gesehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_notice-friend-close-01",
+      "event": "object_notice",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Du, da liegt etwas auf meinem Weg!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_notice-friend-close-02",
+      "event": "object_notice",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Schau mal da unten. Was hast du denn da hingelegt?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_notice-friend-close-03",
+      "event": "object_notice",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Oh, was liegt denn da vor meinen Füßen?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-approach-01",
+      "event": "object_approach",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gehe mal nachsehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_approach-0005",
+      "event": "object_approach",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Von hier aus erkenne ich es nicht richtig. Ich gehe näher ran."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_approach-0006",
+      "event": "object_approach",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schaue mir das aus der Nähe an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_approach-friend-close-01",
+      "event": "object_approach",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das sehe ich mir mal aus der Nähe an."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_approach-friend-close-02",
+      "event": "object_approach",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gehe rüber. Vielleicht erkenne ich es dann."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_approach-friend-close-03",
+      "event": "object_approach",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da muss ich näher ran. Von hier sehe ich zu wenig."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-pick-up-01",
+      "event": "object_pick_up",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich nehme es mal hoch."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_pick_up-0007",
+      "event": "object_pick_up",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, einmal aufheben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_pick_up-0008",
+      "event": "object_pick_up",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hebe das mal vom Boden auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_pick_up-friend-close-01",
+      "event": "object_pick_up",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Komm her … hab dich!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_pick_up-friend-close-02",
+      "event": "object_pick_up",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hopp, ab in meine Hände."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_pick_up-friend-close-03",
+      "event": "object_pick_up",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, jetzt habe ich dich!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-inspect-01",
+      "event": "object_inspect",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm … was ist das genau?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_inspect-0009",
+      "event": "object_inspect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mal sehen, was ich da in der Hand habe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_inspect-0010",
+      "event": "object_inspect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Von der Seite erkenne ich vielleicht mehr."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_inspect-friend-close-01",
+      "event": "object_inspect",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na, was habe ich mir denn da geangelt?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_inspect-friend-close-02",
+      "event": "object_inspect",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Lass dich mal von allen Seiten anschauen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_inspect-friend-close-03",
+      "event": "object_inspect",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm … ich drehe das mal um. Was haben wir denn hier?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-recognized-01",
+      "event": "object_recognized",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, {item_indef_nom}!"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recognized-0011",
+      "event": "object_recognized",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}! Jetzt erkenne ich {item_pron_acc}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recognized-0012",
+      "event": "object_recognized",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ach so, das ist {item_indef_nom}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recognized-friend-close-01",
+      "event": "object_recognized",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}! Schau, was ich gefunden habe."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recognized-friend-close-02",
+      "event": "object_recognized",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schau mal: {item_indef_nom}!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recognized-friend-close-03",
+      "event": "object_recognized",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, jetzt weiß ich es! Das ist {item_indef_nom}."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-unknown-01",
+      "event": "object_unknown",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das kenne ich nicht. Ich lege es wieder ab."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_unknown-0013",
+      "event": "object_unknown",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich erkenne nicht, was das ist. Das lasse ich hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_unknown-0014",
+      "event": "object_unknown",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm, das sagt mir nichts. Ich lege es zurück."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_unknown-friend-close-01",
+      "event": "object_unknown",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, das kenne ich noch gar nicht. Das lasse ich lieber liegen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_unknown-friend-close-02",
+      "event": "object_unknown",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Damit kann ich nichts anfangen. Das kommt wieder auf den Boden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_unknown-friend-close-03",
+      "event": "object_unknown",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm … keine Ahnung, was das ist. Ich lege es wieder hin."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-want-01",
+      "event": "object_want",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das würde ich jetzt gern haben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_want-0015",
+      "event": "object_want",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, das kann ich gerade gebrauchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_want-0016",
+      "event": "object_want",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das passt gut. Das nehme ich jetzt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_want-friend-close-01",
+      "event": "object_want",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh ja, das kommt mir gerade recht!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_want-friend-close-02",
+      "event": "object_want",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, genau das brauche ich jetzt!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_want-friend-close-03",
+      "event": "object_want",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das lasse ich mir jetzt nicht entgehen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-later-01",
+      "event": "object_later",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das brauche ich gerade nicht. Ich hebe es mir auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_later-0017",
+      "event": "object_later",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt noch nicht. Das bleibt für später hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_later-0018",
+      "event": "object_later",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das lasse ich erst mal liegen. Vielleicht brauche ich es nachher."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_later-friend-close-01",
+      "event": "object_later",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das hebe ich mir auf. Dann habe ich später noch etwas davon."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_later-friend-close-02",
+      "event": "object_later",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt brauche ich es nicht. Aber nachher vielleicht!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_later-friend-close-03",
+      "event": "object_later",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das behalte ich für später. Wäre doch schade drum."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-put-down-01",
+      "event": "object_put_down",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich lege es hierhin."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_put_down-0021",
+      "event": "object_put_down",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, wieder auf den Boden damit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_put_down-0022",
+      "event": "object_put_down",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier lege ich es wieder ab."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_put_down-friend-close-01",
+      "event": "object_put_down",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, hier bleibst du erst mal."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_put_down-friend-close-02",
+      "event": "object_put_down",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da, wieder abgesetzt."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_put_down-friend-close-03",
+      "event": "object_put_down",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich lege es hier neben mich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "continuity-object_consider_known-1",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_acc} kenne ich. Ob ich {item_pron_acc} jetzt brauche?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "continuity-object_consider_known-2",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist {item_def_nom}. Ich überlege, ob ich {item_pron_acc} nehme."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "continuity-object_consider_known-3",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm, {item_def_nom}. Vielleicht passt das jetzt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consider_known-friend-close-01",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist ja {item_def_nom}. Vielleicht nehme ich {item_pron_acc} jetzt."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consider_known-friend-close-02",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, {item_def_nom}! Mal sehen, ob ich {item_pron_acc} diesmal brauche."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consider_known-friend-close-03",
+      "event": "object_consider_known",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_nom} liegt noch da. Soll ich {item_pron_acc} mir jetzt holen?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "continuity-object_collect_wanted-1",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_acc} wollte ich noch holen. Das mache ich jetzt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "continuity-object_collect_wanted-2",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte {item_def_acc} noch haben. Ich gehe hin."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "continuity-object_collect_wanted-3",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt hole ich mir {item_def_acc}, wie ich es vorhatte."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_collect_wanted-friend-close-01",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ach, {item_def_acc} wollte ich doch noch haben! Jetzt hole ich {item_pron_acc} mir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_collect_wanted-friend-close-02",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_acc} schnappe ich mir jetzt. Darauf hatte ich es ja abgesehen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_collect_wanted-friend-close-03",
+      "event": "object_collect_wanted",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da wartet noch {item_def_nom} auf mich. Abholen wollte ich {item_pron_acc} sowieso!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-recall-food-01",
+      "event": "object_recall_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da war noch {item_indef_nom}. Das hole ich mir zum Essen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_food-0031",
+      "event": "object_recall_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bekomme Hunger. Ich hole mir {item_def_acc}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_food-0032",
+      "event": "object_recall_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich weiß noch, wo {item_def_nom} liegt. Zeit, etwas zu essen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_food-friend-close-01",
+      "event": "object_recall_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt hätte ich gern etwas zu knabbern. Da war doch noch {item_indef_nom}!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_food-friend-close-02",
+      "event": "object_recall_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Magen meldet sich. Zum Glück weiß ich, wo {item_def_nom} liegt."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_food-friend-close-03",
+      "event": "object_recall_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hole mir {item_def_acc}. Darauf habe ich jetzt Appetit!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-recall-drink-01",
+      "event": "object_recall_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich werde langsam müde. Ich hole mir {item_def_acc}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_drink-0033",
+      "event": "object_recall_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas zum Wachwerden wäre gut. Da war noch {item_indef_nom}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_drink-0034",
+      "event": "object_recall_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hole mir {item_def_acc}. Ein kleiner Schub würde helfen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_drink-friend-close-01",
+      "event": "object_recall_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich werde langsam schlapp. Zum Glück liegt da noch {item_def_nom}."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_drink-friend-close-02",
+      "event": "object_recall_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Augen werden schwer. Ich hole mir {item_def_acc}."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_drink-friend-close-03",
+      "event": "object_recall_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, ich habe ja noch {item_def_acc}! Das hilft mir wieder auf die Beine."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-recall-saved-food-01",
+      "event": "object_recall_saved_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe mir {item_def_acc} aufgehoben. Jetzt wird gegessen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_food-0035",
+      "event": "object_recall_saved_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich Hunger. Gut, dass ich {item_poss_acc} noch habe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_food-0036",
+      "event": "object_recall_saved_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hole meinen Vorrat. {Item_poss_nom} müsste noch da sein."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_food-friend-close-01",
+      "event": "object_recall_saved_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, {item_poss_nom} ist noch da! Gut, dass ich das Essen aufgehoben habe."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_food-friend-close-02",
+      "event": "object_recall_saved_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt freue ich mich auf {item_poss_acc}. Aufheben hat sich gelohnt!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_food-friend-close-03",
+      "event": "object_recall_saved_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Für später aufheben war eine gute Idee. Jetzt hole ich mir {item_poss_acc}!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-recall-saved-drink-01",
+      "event": "object_recall_saved_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner Schub wäre gut. Ich habe ja noch {item_poss_acc}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_drink-0037",
+      "event": "object_recall_saved_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich werde müde. Jetzt hole ich mein aufgehobenes Getränk."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_drink-0038",
+      "event": "object_recall_saved_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_poss_acc} habe ich noch. Das kommt jetzt ganz recht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_drink-friend-close-01",
+      "event": "object_recall_saved_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt bin ich froh, dass ich {item_poss_acc} aufgehoben habe. Das kann ich gebrauchen!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_drink-friend-close-02",
+      "event": "object_recall_saved_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein aufgehobenes Getränk! Genau jetzt brauche ich etwas zum Wachwerden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_recall_saved_drink-friend-close-03",
+      "event": "object_recall_saved_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gut, dass ich noch {item_poss_acc} habe. Das hilft gegen meine schweren Augen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-consuming-food-01",
+      "event": "object_consuming_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt esse ich {item_def_acc}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_food-0039",
+      "event": "object_consuming_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fange mal an zu essen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_food-0040",
+      "event": "object_consuming_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, jetzt nehme ich den ersten Bissen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_food-friend-close-01",
+      "event": "object_consuming_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das lasse ich mir jetzt schmecken. Du kannst mir gern Gesellschaft leisten."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_food-friend-close-02",
+      "event": "object_consuming_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … jetzt wird gegessen. Bleibst du bei mir?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_food-friend-close-03",
+      "event": "object_consuming_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich beiße jetzt rein. Reden kann ich nach dem Kauen wieder."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-consuming-drink-01",
+      "event": "object_consuming_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Schluck davon sollte mich wieder wacher machen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_drink-0041",
+      "event": "object_consuming_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt trinke ich etwas davon."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_drink-0042",
+      "event": "object_consuming_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fange mal mit einem Schluck an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_drink-friend-close-01",
+      "event": "object_consuming_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich trinke erst mal etwas davon. Ich könnte einen kleinen Schub gebrauchen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_drink-friend-close-02",
+      "event": "object_consuming_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, jetzt gibt es etwas zum Wachwerden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_consuming_drink-friend-close-03",
+      "event": "object_consuming_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Schluck für mich. Meine Augen fallen schon fast zu."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-finished-food-01",
+      "event": "object_finished_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das hat gutgetan."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_food-0043",
+      "event": "object_finished_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, aufgegessen. Jetzt bin ich zufriedener."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_food-0044",
+      "event": "object_finished_food",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm, das war gut. Fertig gegessen!"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_food-friend-close-01",
+      "event": "object_finished_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … genau das habe ich gebraucht."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_finished_food-friend-close-02",
+      "event": "object_finished_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Aufgegessen! Das hat mich wieder auf die Beine gebracht."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_finished_food-friend-close-03",
+      "event": "object_finished_food",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, jetzt ist mein Magen zufrieden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-finished-drink-01",
+      "event": "object_finished_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, wieder etwas wacher."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_drink-0045",
+      "event": "object_finished_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das hat geholfen. Ich bin wieder munterer."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_drink-0046",
+      "event": "object_finished_drink",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ausgetrunken. Die Müdigkeit lässt nach."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_finished_drink-friend-close-01",
+      "event": "object_finished_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, besser! So gefalle ich mir schon eher."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_finished_drink-friend-close-02",
+      "event": "object_finished_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, wieder wache Augen!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_finished_drink-friend-close-03",
+      "event": "object_finished_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das tat gut. Jetzt sehe ich nicht mehr alles durch halb geschlossene Augen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_offer-013",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom}? Ja, das würde ich gern nehmen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_offer-014",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du möchtest mir {item_indef_acc} geben? Ja, bitte."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_offer-015",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}. Das könnte ich gerade gebrauchen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_offer-016",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom} für mich? Dann nehme ich das gern."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_offer-017",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, bitte. Reichst du mir {item_def_acc}?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_offer-018",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke fürs Anbieten. {Item_def_acc} hätte ich gern."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_offer-019",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh ja! Gibst du mir {item_def_acc}?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_offer-020",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom}! Das kommt gerade recht. Her damit, bitte!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_offer-021",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast {item_indef_acc} für mich? Da sage ich gern Ja!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_offer-022",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, bitte! Mit {item_def_dat} kommst du genau richtig."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_offer-023",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}! Reichst du mir das gute Stück?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_offer-024",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_acc} möchte ich haben! Gibst du mir das bitte?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_handover-001",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom} für mich? Oh, danke."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_handover-002",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für {item_def_acc}. Du hast an mich gedacht."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_handover-003",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}. Das ist lieb von dir, danke."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_handover-004",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir {item_indef_acc} mitgebracht! Danke."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_handover-005",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für {item_def_acc}! Darüber freue ich mich."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_handover-006",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, danke dir. {Item_def_acc} nehme ich gern an."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_handover-007",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für {item_def_acc}! Du hast an mich gedacht. Das freut mich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_handover-008",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, du bist lieb. Danke für {item_def_acc}!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_handover-009",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom} für mich? Damit machst du mir eine Freude."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_handover-010",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für {item_def_acc}, du! Du passt wirklich gut auf mich auf."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_handover-011",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach … du bringst mir {item_indef_acc}. Mit dir habe ich es schon gut!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_handover-012",
+      "event": "object_handover",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast {item_indef_acc} für mich mitgebracht! Danke, das freut mich."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-025",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke, aber {item_def_acc} möchte ich gerade nicht."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-026",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nein, danke. {Item_def_acc} brauche ich im Augenblick nicht."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-027",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom}? Lieb gemeint, aber jetzt lieber nicht."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-028",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke fürs Anbieten. {Item_def_nom} passt jetzt nicht so recht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-029",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heb {item_def_acc} bitte noch auf. Gerade brauche ich das nicht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-030",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom}? Heute lieber nicht, danke. Vielleicht später."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-031",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Lieb von dir, aber jetzt möchte ich {item_def_acc} nicht. Heb das lieber noch auf."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-032",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nein, danke dir. Für {item_def_acc} habe ich gerade keine Verwendung."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-033",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bietest mir {item_indef_acc} an? Danke, aber diesmal passe ich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-034",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ach, du meinst es gut. Aber {item_def_acc} brauche ich wirklich gerade nicht."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-035",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_def_acc} kannst du wieder weglegen, du. Jetzt möchte ich nichts davon."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "situation-object_refuse-036",
+      "event": "object_refuse",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_indef_nom} für später vielleicht! Jetzt wäre das bei mir verschenkt."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "object-place-missing-here",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hä? Wo ist denn {item_poss_nom} hin?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-place-missing-noticed",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier lag doch {item_poss_nom}. Jetzt ist da nichts mehr."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-place-missing-empty",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_poss_nom} ist weg. Eben war das noch anders."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_place_missing-friend-close-01",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hast du {item_poss_acc} umgelegt? Hier ist nichts mehr."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_place_missing-friend-close-02",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "He, wo ist {item_poss_nom} geblieben? Hier lag doch etwas!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_place_missing-friend-close-03",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, {item_poss_nom} liegt nicht mehr hier. Hast du das umgeräumt?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-search-nearby",
+      "event": "object_search",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schaue den Weg entlang. Irgendwo muss es doch sein."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-search-place",
+      "event": "object_search",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich suche {item_poss_acc}. Vielleicht weiter drüben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-search-local",
+      "event": "object_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dann suche ich mal an den anderen Stellen auf meinem Weg."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_search-friend-close-01",
+      "event": "object_search",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na toll. Jetzt muss ich {item_poss_acc} suchen. Ich schaue weiter drüben nach."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_search-friend-close-02",
+      "event": "object_search",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich suche jetzt den Weg ab. {Item_poss_acc} will ich schließlich wiederhaben."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_search-friend-close-03",
+      "event": "object_search",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dann gehe ich suchen. Vielleicht liegt {item_poss_nom} jetzt am anderen Ende."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-found-nearby",
+      "event": "object_found",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, da ist {item_poss_nom}."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-found-alternative",
+      "event": "object_found",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist {item_poss_nom}. Wiedergefunden."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-found-supply",
+      "event": "object_found",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ach, hier liegt {item_poss_nom}!"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_found-friend-close-01",
+      "event": "object_found",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha! Da ist {item_poss_nom} ja!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_found-friend-close-02",
+      "event": "object_found",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{Item_poss_nom}! Da bist du ja endlich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_found-friend-close-03",
+      "event": "object_found",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gefunden! Hier hat sich {item_poss_nom} also versteckt."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-missing-01",
+      "event": "object_missing",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich finde es nirgends. Dabei habe ich den ganzen Weg abgesucht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_missing-0047",
+      "event": "object_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Auch am anderen Ende war nichts. Ich habe den Weg jetzt abgesucht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_missing-0048",
+      "event": "object_missing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leider nichts gefunden. Ich war überall auf meiner Strecke."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_missing-friend-close-01",
+      "event": "object_missing",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf. Ich habe den ganzen Weg abgesucht und nichts gefunden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_missing-friend-close-02",
+      "event": "object_missing",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na toll. Einmal den ganzen Weg abgesucht, und trotzdem ist es noch verschwunden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_missing-friend-close-03",
+      "event": "object_missing",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nichts. Ich habe überall auf meinem Weg gesucht. Jetzt ärgert mich das wirklich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-taken-1",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Oh … ich wollte mir das doch noch ansehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-taken-2",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Das wurde mir gerade weggenommen. Ich war noch nicht fertig."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-taken-3",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Hey, ich wollte damit noch etwas machen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_taken-friend-close-01",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "He! Ich war damit noch nicht fertig."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_taken-friend-close-02",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Du hast es weggenommen! Dabei war ich noch dran."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_taken-friend-close-03",
+      "event": "object_taken",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Das wollte ich noch haben. Wieso nimmst du es jetzt weg?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-request-return-1",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Legst du es mir bitte wieder hin?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-request-return-2",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte es gern zurück, um weiterzumachen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-request-return-3",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bitte leg es zurück. Ich war noch damit beschäftigt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_request_return-friend-close-01",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leg es mir bitte wieder hin. Ich will damit weitermachen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_request_return-friend-close-02",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich will das wiederhaben. Bitte zurück damit."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_request_return-friend-close-03",
+      "event": "object_request_return",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, gib es wieder her. Ich hatte damit noch etwas vor."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-withheld-1",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Bitte gib es wieder her. Ich möchte weitermachen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-withheld-2",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe doch schon darum gebeten. Leg es bitte zurück."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-withheld-3",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Das Wegnehmen gefällt mir nicht. Bitte gib es zurück."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_withheld-friend-close-01",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt reicht's mit dem Wegnehmen. Ich will das zurück."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_withheld-friend-close-02",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Das ist nicht mehr lustig. Leg es wieder hin."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_withheld-friend-close-03",
+      "event": "object_withheld",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "anger"
+        },
+        {
+          "kind": "text",
+          "content": "Du weißt, dass ich es zurückhaben will. Jetzt bitte her damit."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-returned-1",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke. Dann mache ich weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-returned-2",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wieder da. Gut, jetzt kann ich fortfahren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-returned-3",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke fürs Zurücklegen. Ich war ja noch nicht fertig."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_returned-friend-close-01",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na also. Jetzt kann ich endlich weitermachen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_returned-friend-close-02",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist es wieder. Diesmal lässt du es mir bitte."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_returned-friend-close-03",
+      "event": "object_returned",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gut, zurück! Jetzt mache ich da weiter, wo du mich unterbrochen hast."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "object-busy-1",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin damit noch nicht fertig."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-busy-2",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich möchte das hier erst zu Ende machen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "object-busy-3",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gerade mit dem Gegenstand beschäftigt. Bitte lass mich weitermachen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_busy-friend-close-01",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, lass mich das bitte erst zu Ende machen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_busy-friend-close-02",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin noch hiermit beschäftigt. Danach habe ich Zeit für dich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_busy-friend-close-03",
+      "event": "object_busy",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nicht dazwischenfunken, bitte. Ich bin noch dran."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "contact-object_busy_search-1",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin noch auf der Suche."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "contact-object_busy_search-2",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich möchte erst fertig suchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "contact-object_busy_search-3",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich suche gerade etwas. Bitte unterbrich mich dabei nicht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-object_busy_search-friend-close-01",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nicht ablenken, bitte. Ich möchte weitersuchen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_busy_search-friend-close-02",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich will meine Suche erst zu Ende bringen. Dann komme ich zu dir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-object_busy_search-friend-close-03",
+      "event": "object_busy_search",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich suche noch. Lass mich erst meinen Weg absuchen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-object_offer-0130",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, {item_def_acc} hätte ich jetzt gern. Gut, dass du das anbietest."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-object_offer-0131",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, {item_indef_nom}! Gibst du mir das bitte?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-object_offer-0154",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, her mit {item_def_dat}, bitte! Das kann ich gerade gebrauchen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-object_offer-0155",
+      "event": "object_offer",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bringst {item_indef_acc}? Das hätte ich jetzt gern!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    }
+  ]
+}

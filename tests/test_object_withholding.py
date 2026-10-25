@@ -4,14 +4,14 @@ import unittest
 
 from aiko_pet.application.object_relationship import ObjectRelationship
 from aiko_pet.pet.balance import BALANCE, parse_balance
-from aiko_pet.pet.catalog_validation import load_json
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
+from aiko_pet.pet.mind.catalog import DialogueBook
 from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.mind.object_withholding import (
     WithholdingEpisode,
     choose_withholding_response,
 )
 from aiko_pet.pet.state import PetState
+from tools.dialogue_test_support import balance_source_fixture
 
 
 class ObjectWithholdingTests(unittest.TestCase):
@@ -88,7 +88,7 @@ class ObjectWithholdingTests(unittest.TestCase):
     def test_invalid_withholding_tuning_is_rejected(self):
         for key, value in (("repeated_takes", 0), ("maximum_episode_loss", .01),
                            ("request_interval_seconds", 100)):
-            raw = load_json(CATALOGUE.parent / "balance.json")
+            raw = balance_source_fixture()
             raw["object_withholding"][key] = value
             with self.assertRaisesRegex(ValueError, "withholding"):
                 parse_balance(raw)

@@ -5,7 +5,6 @@ speak follows observations, that silence is real, and that no unobserved
 program/user activity can be invented.
 """
 
-import json
 import random
 import re
 import unittest
@@ -15,10 +14,11 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.adaptive_policy import ActivityMode
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -386,7 +386,7 @@ class ClickStoryTests(unittest.TestCase):
 
 class CatalogueContractTests(unittest.TestCase):
     def test_followup_schema_and_nonexistent_animation_rejected(self):
-        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw = dialogue_source_fixture()["lines"][0]
         for key, bad in [
             ("followup_text", ""),
             ("followup_delay_ms", 200),

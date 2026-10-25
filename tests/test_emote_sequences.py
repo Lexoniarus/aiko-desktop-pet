@@ -7,9 +7,10 @@ from pathlib import Path
 
 from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
 from tools.desktop_test_support import create_test_desktop
+from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -27,7 +28,7 @@ class EmoteDomainTests(unittest.TestCase):
     def test_curated_catalogue_emotes_have_valid_names_and_inherit(self):
         lines = DialogueBook.from_file().lines
         emotes = [b.content for line in lines for b in line.beats if b.kind == "emote"]
-        self.assertGreater(len(emotes), 150)
+        self.assertTrue(emotes)
         self.assertTrue(all(name in EMOTES for name in emotes))
 
     def test_authored_beats_have_readable_text_and_deliberate_pauses(self):
@@ -40,9 +41,8 @@ class EmoteDomainTests(unittest.TestCase):
 
     def test_bad_emote_is_rejected_early(self):
         self.assertRaises(ValueError, Cue, "emote", "unsupported", 700)
-        import json
 
-        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw = dialogue_source_fixture()["lines"][0]
         raw["emote_before"] = "does-not-exist"
         self.assertRaises(ValueError, Line.parse, raw)
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import random
 import unittest
 from dataclasses import replace
@@ -16,7 +15,7 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line
+from aiko_pet.pet.mind.catalog import DialogueBook, Line
 from aiko_pet.pet.mind.dialogue_context import (
     FriendshipStage,
     ReactionTone,
@@ -25,7 +24,11 @@ from aiko_pet.pet.mind.dialogue_context import (
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from tools.dialogue_test_support import dialogue_context
+from tools.dialogue_test_support import (
+    balance_source_fixture,
+    dialogue_context,
+    dialogue_source_fixture,
+)
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -199,7 +202,7 @@ class DialogueContextTests(unittest.TestCase):
     def test_spontaneous_story_throttle_and_sleep(self) -> None:
         state = PetState(friendship=90, mood=65, social=80, affection=80)
         context = self.mind.dialogue_context(state, self.time, 10, present=True)
-        raw = json.loads((CATALOGUE.parent / "balance.json").read_text("utf-8"))
+        raw = balance_source_fixture()
         raw["dialogue"]["spontaneous_story_quiet_seconds"] = 60
         raw["dialogue"]["spontaneous_story_probability"] = 0.05
         with (
@@ -255,7 +258,7 @@ class DialogueContextTests(unittest.TestCase):
                     self.assertGreaterEqual(len(candidates), 3, (stage, event))
 
     def test_rejects_bad_sequences_filters_and_placeholders(self) -> None:
-        original = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        original = dialogue_source_fixture()["lines"][0]
         invalid = [
             {"beats": []},
             {"stages": ["romantic"]},

@@ -25,6 +25,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.food_models import food_choices
 from aiko_pet.ui.view_models.projections import project_hover
+from tools.dialogue_test_support import dialogue_source_fixture
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
@@ -32,7 +33,7 @@ DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 class ResourceValidationTests(unittest.TestCase):
     def test_dialogue_weights_use_integer_scale_not_normalized_fractions(self) -> None:
         original = load_json(DATA / "balance.json")
-        line = load_json(DATA / "dialogues.de.json")["lines"][0]
+        line = dialogue_source_fixture()["lines"][0]
         line.pop("weight", None)
         for weight in range(1, 11):
             with self.subTest(weight=weight):
@@ -126,7 +127,7 @@ class ResourceValidationTests(unittest.TestCase):
             parse_routine_catalog(routine)
 
     def test_dialogue_event_names_and_filter_types_are_checked(self) -> None:
-        original = load_json(DATA / "dialogues.de.json")["lines"][0]
+        original = dialogue_source_fixture()["lines"][0]
         for key, value in (
             ("event", "__misspelled_event__"),
             ("conditions", [{"emotional_states": [{}]}]),
@@ -142,7 +143,7 @@ class ResourceValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             file = Path(folder) / "dialogues.json"
             for version in (True, 3.0, 2):
-                raw = load_json(DATA / "dialogues.de.json")
+                raw = dialogue_source_fixture()
                 raw["catalogue_version"] = version
                 file.write_text(json.dumps(raw), encoding="utf-8")
                 with self.subTest(version=version), self.assertRaises(ValueError):

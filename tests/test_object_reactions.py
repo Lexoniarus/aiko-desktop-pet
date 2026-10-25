@@ -8,13 +8,13 @@ from unittest.mock import patch
 from aiko_pet.application.object_feedback import FeedbackKey, ObjectFeedback
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.balance import parse_balance
-from aiko_pet.pet.catalog_validation import load_json
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.object_events import ObjectEvent
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
+from tools.dialogue_test_support import balance_source_fixture
 
 
 class ObjectReactionTests(unittest.TestCase):
@@ -48,7 +48,7 @@ class ObjectReactionTests(unittest.TestCase):
                 self.assertNotIn("item", fields, line.id)
 
     def test_object_playback_respects_configured_reading_time_after_formatting(self):
-        raw = load_json(CATALOGUE.parent / "balance.json")
+        raw = balance_source_fixture()
         raw["dialogue"]["minimum_text_ms"] = 3000
         delays = []
         player = ReactionPlayer(

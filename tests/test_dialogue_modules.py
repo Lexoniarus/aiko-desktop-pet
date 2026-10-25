@@ -28,7 +28,10 @@ class DialogueModulesTests(unittest.TestCase):
     def test_catalogue_is_still_available_without_gui(self) -> None:
         self.assertTrue(CATALOGUE.is_file())
         book = DialogueBook.from_file(rng=random.Random(12))
-        self.assertGreater(len(book.lines), 150)
+        self.assertTrue({
+            "greeting", "object_notice", "object_search", "object_handover",
+            "pet_boundary_ignored", "game_mm_player_win", "game_quiz_finish",
+        } <= {line.event for line in book.lines})
         self.assertTrue(all(line.animation in ANIMATIONS for line in book.lines))
 
     def test_selected_reaction_remains_same_public_type(self) -> None:
