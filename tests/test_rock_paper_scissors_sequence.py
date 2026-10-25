@@ -67,6 +67,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.assertEqual(self.animations, ["waving-greeting"])
         self.flow.choose(Move.ROCK)
         self.assertEqual([e.outcome for e in self.rounds], [None])
+        self.assertIsNone(self.rounds[0].details)
         self.assertEqual(self.events[-1], ("text", "Eins!"))
         self.assertEqual(self.busy, [True])
         for expected in ("Zwei!", "Drei!"):
@@ -86,6 +87,10 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         )
         self.assertEqual(self.flow.score.games, 1)
         self.assertEqual([e.outcome for e in self.rounds], [None, "win"])
+        details = self.rounds[1].details
+        assert details is not None
+        self.assertEqual((details.player_move, details.aiko_move),
+                         (Move.ROCK, Move.SCISSORS))
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.step()
         self.assertEqual(self.animations[-1], "failed")
@@ -158,6 +163,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.flow.greet()
         self.assertEqual(self.events, [("text", "Eins!")])
         self.assertEqual(self.reveals, [])
+        self.assertEqual([event.details for event in self.rounds], [None])
 
     def test_outcome_dialogue_varies_without_narrating_player_score(self) -> None:
         result = Round(Move.ROCK, Move.SCISSORS, Outcome.WIN)

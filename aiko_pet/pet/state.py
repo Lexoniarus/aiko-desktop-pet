@@ -8,7 +8,7 @@ from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
-from ..games.contracts import GameResult
+from ..games.contracts import GameResult, RockPaperScissorsDetails
 from .balance import BALANCE
 from .care_actions import (
     CareTransition,
@@ -496,27 +496,35 @@ class PetState:
         self._change(moodlets=moodlets)
         return recorded
 
-    def finish_game_round_experience(self, *, game_id: str, round_id: str) -> None:
+    def finish_game_round_experience(
+        self, *, game_id: str, round_id: str,
+        game_details: RockPaperScissorsDetails | None = None,
+    ) -> None:
         self._change(moodlets=award_comeback(
             self.moodlets, f"play:{game_id}:{round_id}",
+            game_details=game_details,
         ))
 
     def complete_play_session(
         self, *, game_id: str, session_id: str, round_id: str,
+        game_details: RockPaperScissorsDetails | None = None,
     ) -> None:
         self._change(moodlets=complete_play_session(
             self.moodlets, game_id=game_id, session_id=session_id,
             last_receipt=f"play:{game_id}:{round_id}", elapsed=self.lived_seconds,
+            game_details=game_details,
         ))
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
         started_at: float, outcome: GameResult,
+        game_details: RockPaperScissorsDetails | None = None,
     ) -> None:
         self._apply_wish_resolution(progress_game_wish(
             self.wishes, instance_id, game_id=game_id, session_id=session_id,
             round_id=round_id, started_at=started_at, elapsed=self.lived_seconds,
             outcome=outcome, definitions=WISH_CATALOG.definitions,
+            game_details=game_details,
         ), personal=True)
 
     def begin_food_handover(self, handover_id: str, *, object_id: str) -> None:

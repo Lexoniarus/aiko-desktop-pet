@@ -3,6 +3,7 @@
 from dataclasses import replace
 from typing import Literal, Mapping
 
+from ..games.contracts import RockPaperScissorsDetails
 from .moodlets import (
     MoodletCause,
     MoodletCauseKind,
@@ -30,6 +31,7 @@ def wish_cause(
     wish: ActiveWish, *, elapsed: float, event_id: str, outcome: MoodletOutcome,
     failed: bool = False, target_id: str | None = None,
     object_id: str | None = None, game: MoodletGameResult | None = None,
+    game_details: RockPaperScissorsDetails | None = None,
 ) -> MoodletCause:
     goal = wish.goal_snapshot
     return MoodletCause(
@@ -39,7 +41,7 @@ def wish_cause(
                              wish.target_id, goal.objective.value, goal.required_count,
                              target=wish.target),
         target_id=wish.target_id if target_id is None else target_id,
-        outcome=outcome, object_id=object_id, game=game,
+        outcome=outcome, object_id=object_id, game=game, game_details=game_details,
     )
 
 
@@ -112,6 +114,7 @@ def progress_game_wish(
     round_id: str, started_at: float, elapsed: float,
     outcome: Literal["win", "loss", "draw", "completed"],
     definitions: Mapping[WishId, WishDefinition],
+    game_details: RockPaperScissorsDetails | None = None,
 ) -> WishResolution:
     """One real qualifying round, from Aiko's perspective; no session score."""
     wish = next((w for w in state.active if w.instance_id == instance_id), None)
@@ -147,7 +150,8 @@ def progress_game_wish(
         ))
         cause = (wish_cause(
             wish, elapsed=elapsed, event_id=round_id, outcome=result,
-            failed=disappointed, target_id=game_id, game=MoodletGameResult(
+            failed=disappointed, target_id=game_id, game_details=game_details,
+            game=MoodletGameResult(
                 MoodletOutcome(outcome), progress.completed_rounds,
                 progress.wins, progress.losses,
             ),

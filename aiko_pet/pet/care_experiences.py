@@ -7,6 +7,7 @@ wish identity. No needs refill, timer or autonomous intake invents a visit.
 
 from dataclasses import replace
 
+from ..games.contracts import RockPaperScissorsDetails
 from .care_evidence import (
     MAX_CARE_ENCOUNTERS,
     MAX_CARE_EXPERIENCES,
@@ -167,6 +168,7 @@ def award_positive(
     event: CareExperience,
     *,
     elapsed: float | None = None,
+    game_details: RockPaperScissorsDetails | None = None,
 ) -> MoodletState:
     at = event.occurred_at if elapsed is None else elapsed
     return reinforce_moodlet(
@@ -183,11 +185,15 @@ def award_positive(
             target_id=event.target_id,
             outcome=event.outcome,
             object_id=event.object_id,
+            game_details=game_details,
         ),
     )
 
 
-def award_comeback(state: MoodletState, receipt: str) -> MoodletState:
+def award_comeback(
+    state: MoodletState, receipt: str, *,
+    game_details: RockPaperScissorsDetails | None = None,
+) -> MoodletState:
     evidence = state.care_evidence
     if evidence is None or event_has_wish_outcome(state, receipt):
         return state
@@ -205,7 +211,7 @@ def award_comeback(state: MoodletState, receipt: str) -> MoodletState:
         and index >= 2
         and all(e.outcome == MoodletOutcome.LOSS for e in rounds[index - 2 : index])
     ):
-        return award_positive(state, MoodletId.PRIDE, event)
+        return award_positive(state, MoodletId.PRIDE, event, game_details=game_details)
     return state
 
 
@@ -216,6 +222,7 @@ def complete_play_session(
     session_id: str,
     last_receipt: str,
     elapsed: float,
+    game_details: RockPaperScissorsDetails | None = None,
 ) -> MoodletState:
     """Enrich the actual final round; never create a second session reward fact."""
     evidence = state.care_evidence
@@ -275,7 +282,10 @@ def complete_play_session(
         if c.kind in (MoodletCauseKind.INTERACTION, MoodletCauseKind.WISH_FULFILLED)
     )
     if rounds[0].occurred_at - previous >= 2 * 3600 and not rewarded:
-        state = award_positive(state, MoodletId.SHARED_PLAY, last, elapsed=elapsed)
+        state = award_positive(
+            state, MoodletId.SHARED_PLAY, last, elapsed=elapsed,
+            game_details=game_details,
+        )
     return state
 
 

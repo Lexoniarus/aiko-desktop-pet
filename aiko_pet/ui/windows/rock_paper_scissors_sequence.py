@@ -138,7 +138,7 @@ class RockPaperScissorsSequence:
             self._result = result
             self._round_event(GameRoundEvent(
                 GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games,
-                result.outcome.value,
+                result.outcome.value, result.details,
             ))
             self._phase = 5
             # Both views reveal at the same instant, in their own owners.

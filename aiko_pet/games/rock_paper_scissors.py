@@ -7,9 +7,14 @@ from enum import Enum
 from secrets import randbelow
 from typing import Callable
 
-from .contracts import RPS_WINNING_MOVES as WINNING_MOVES
-from .contracts import RockPaperScissorsDetails
-from .contracts import RockPaperScissorsMove as Move
+from .contracts import (
+    RPS_WINNING_MOVES,
+    RockPaperScissorsDetails,
+    RockPaperScissorsMove,
+)
+
+Move = RockPaperScissorsMove
+WINNING_MOVES = RPS_WINNING_MOVES
 
 
 class Outcome(str, Enum):

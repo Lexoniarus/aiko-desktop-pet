@@ -124,10 +124,11 @@ class GameExperienceCoordinator:
             self._state.complete_wish_round(
                 pending.wish_instance_id, game_id=event.game_id.value,
                 session_id=event.session_id, round_id=event.identity,
-                started_at=pending.elapsed, outcome=outcome,
+                started_at=pending.elapsed, outcome=outcome, game_details=event.details,
             )
         self._state.finish_game_round_experience(
             game_id=event.game_id.value, round_id=event.identity,
+            game_details=event.details,
         )
         if outcome == "completed":
             # Quiz rewards settle now, using one cumulative window-session budget.
@@ -164,7 +165,7 @@ class GameExperienceCoordinator:
         if last is not None and last.game_id.value == experience.game_id:
             self._state.complete_play_session(
                 game_id=experience.game_id, session_id=last.session_id,
-                round_id=last.identity,
+                round_id=last.identity, game_details=last.details,
             )
         self._adaptive.note_interaction(inputs.wall_time)
         self._mind.record_accepted_care("play", inputs.monotonic_time)
