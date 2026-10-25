@@ -7,11 +7,9 @@ from enum import Enum
 from secrets import randbelow
 from typing import Callable
 
-
-class Move(str, Enum):
-    ROCK = "rock"
-    PAPER = "paper"
-    SCISSORS = "scissors"
+from .contracts import RPS_WINNING_MOVES as WINNING_MOVES
+from .contracts import RockPaperScissorsDetails
+from .contracts import RockPaperScissorsMove as Move
 
 
 class Outcome(str, Enum):
@@ -21,11 +19,6 @@ class Outcome(str, Enum):
 
 
 MOVES: tuple[Move, ...] = (Move.ROCK, Move.PAPER, Move.SCISSORS)
-WINNING_MOVES = frozenset({
-    (Move.ROCK, Move.SCISSORS),
-    (Move.PAPER, Move.ROCK),
-    (Move.SCISSORS, Move.PAPER),
-})
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,6 +28,10 @@ class Round:
     player: Move
     aiko: Move
     outcome: Outcome
+
+    @property
+    def details(self) -> RockPaperScissorsDetails:
+        return RockPaperScissorsDetails(self.player, self.aiko)
 
 
 @dataclass(frozen=True, slots=True)

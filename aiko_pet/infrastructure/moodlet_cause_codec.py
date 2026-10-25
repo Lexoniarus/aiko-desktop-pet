@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from ..games.contracts import GameId, RockPaperScissorsDetails, RockPaperScissorsMove
 from ..pet.catalog_validation import (
     enum_value,
     integer_value,
@@ -75,6 +76,18 @@ def _wish_cause(raw: Any) -> MoodletWishCause:
     )
 
 
+def _game_details(raw: Any) -> RockPaperScissorsDetails:
+    row = object_fields(
+        raw, ("game_id", "player_move", "aiko_move"), context="Moodlet game details",
+    )
+    if row["game_id"] != GameId.ROCK_PAPER_SCISSORS.value:
+        raise ValueError("Unsupported Moodlet game details")
+    return RockPaperScissorsDetails(
+        enum_value(row["player_move"], RockPaperScissorsMove, context="player move"),
+        enum_value(row["aiko_move"], RockPaperScissorsMove, context="Aiko move"),
+    )
+
+
 def decode_moodlet_causes(
     raw: Any,
     *,
@@ -101,7 +114,7 @@ def decode_moodlet_causes(
                 "outcome",
                 "object_id",
             ),
-            optional=("game", "level", "period", "handed_over_at"),
+            optional=("game", "level", "period", "handed_over_at", "game_details"),
             context="Moodlet cause",
         )
         kind = enum_value(row["kind"], MoodletCauseKind, context="Moodlet cause kind")
@@ -237,6 +250,9 @@ def decode_moodlet_causes(
             game,
             period,
             handover,
+            None if row.get("game_details") is None else _game_details(
+                row["game_details"],
+            ),
         )
         if cause.receipt in receipts:
             raise ValueError("Duplicate Moodlet cause receipt")
@@ -283,7 +299,7 @@ def _game_result(raw: Any) -> MoodletGameResult:
 
 def encode_moodlet_cause(cause: MoodletCause) -> dict[str, Any]:
     wish = cause.wish
-    return dict(
+    encoded: dict[str, Any] = dict(
         kind=cause.kind.value,
         occurred_at=cause.occurred_at,
         event_id=cause.event_id,
@@ -312,3 +328,10 @@ def encode_moodlet_cause(cause: MoodletCause) -> dict[str, Any]:
             target=None if wish.target is None else encode_wish_target(wish.target),
         ),
     )
+    if cause.game_details is not None:
+        encoded["game_details"] = dict(
+            game_id=GameId.ROCK_PAPER_SCISSORS.value,
+            player_move=cause.game_details.player_move.value,
+            aiko_move=cause.game_details.aiko_move.value,
+        )
+    return encoded

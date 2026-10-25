@@ -17,6 +17,45 @@ class GameId(str, Enum):
     QUIZ = "quiz"
 
 
+class RockPaperScissorsMove(str, Enum):
+    ROCK = "rock"
+    PAPER = "paper"
+    SCISSORS = "scissors"
+
+
+RPS_WINNING_MOVES = frozenset({
+    (RockPaperScissorsMove.ROCK, RockPaperScissorsMove.SCISSORS),
+    (RockPaperScissorsMove.PAPER, RockPaperScissorsMove.ROCK),
+    (RockPaperScissorsMove.SCISSORS, RockPaperScissorsMove.PAPER),
+})
+
+
+@dataclass(frozen=True, slots=True)
+class RockPaperScissorsDetails:
+    """Actual hands of one revealed event, independent of wishes and scores."""
+
+    player_move: RockPaperScissorsMove
+    aiko_move: RockPaperScissorsMove
+
+    def __post_init__(self) -> None:
+        if (not isinstance(self.player_move, RockPaperScissorsMove)
+                or not isinstance(self.aiko_move, RockPaperScissorsMove)):
+            raise ValueError("Rock Paper Scissors details require typed moves")
+
+    @property
+    def player_outcome(self) -> RoundOutcome:
+        if self.player_move == self.aiko_move:
+            return "draw"
+        return (
+            "win" if (self.player_move, self.aiko_move) in RPS_WINNING_MOVES else "loss"
+        )
+
+    @property
+    def aiko_outcome(self) -> RoundOutcome:
+        result = self.player_outcome
+        return "loss" if result == "win" else "win" if result == "loss" else "draw"
+
+
 @dataclass(frozen=True, slots=True)
 class SessionSummary:
     """Completed units from the player's perspective; never persisted."""
@@ -48,6 +87,7 @@ class GameRoundEvent:
     session_id: str
     number: int
     outcome: GameResult | None = None
+    details: RockPaperScissorsDetails | None = None
 
     def __post_init__(self) -> None:
         if (not isinstance(self.game_id, GameId)
@@ -59,6 +99,12 @@ class GameRoundEvent:
                 or self.game_id is GameId.QUIZ
                 and self.outcome not in (None, "completed")):
             raise ValueError("Invalid game round evidence")
+        if self.details is not None and (
+            not isinstance(self.details, RockPaperScissorsDetails)
+            or self.game_id is not GameId.ROCK_PAPER_SCISSORS
+            or self.outcome != self.details.player_outcome
+        ):
+            raise ValueError("Game result details must match a revealed RPS outcome")
 
     @property
     def identity(self) -> str:

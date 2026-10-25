@@ -28,6 +28,9 @@ def write_causes(
     require_transaction(connection)
     for index, cause in enumerate(causes):
         wish = cause["wish"]
+        details = dict(version=1, game=cause["game"], period=cause["period"])
+        if cause.get("game_details") is not None:
+            details.update(version=2, game_details=cause["game_details"])
         row = {name: cause[name] for name in _FACT_FIELDS}
         row.update(
             episode_id=episode_id,
@@ -36,9 +39,7 @@ def write_causes(
             wish_snapshot=None
             if wish is None
             else json_value(dict(version=1, wish=wish)),
-            details_snapshot=json_value(
-                dict(version=1, game=cause["game"], period=cause["period"])
-            ),
+            details_snapshot=json_value(details),
         )
         connection.execute(
             "INSERT INTO moodlet_causes(episode_id, position_index, kind, occurred_at, "
@@ -80,13 +81,19 @@ def read_causes(connection: sqlite3.Connection) -> dict[int, list[dict[str, Any]
             raise ValueError(
                 "Moodlet source wish disagrees with its historical snapshot"
             )
-        details = _snapshot(row["details_snapshot"], ("game", "period"))
-        causes.append(
-            {name: row[name] for name in _FACT_FIELDS}
-            | dict(
-                wish=wish,
-                game=details["game"],
-                period=details["period"],
-            )
+        details = object_fields(
+            parse_json(row["details_snapshot"]), ("version", "game", "period"),
+            optional=("game_details",), context="Moodlet detail",
         )
+        version = details["version"]
+        if (type(version) is not int or version not in (1, 2)
+                or (version == 2) != (details.get("game_details") is not None)
+                or version == 1 and "game_details" in details):
+            raise ValueError("Unsupported or inconsistent Moodlet detail snapshot")
+        cause = {name: row[name] for name in _FACT_FIELDS} | dict(
+            wish=wish, game=details["game"], period=details["period"],
+        )
+        if version == 2:
+            cause["game_details"] = details["game_details"]
+        causes.append(cause)
     return grouped
