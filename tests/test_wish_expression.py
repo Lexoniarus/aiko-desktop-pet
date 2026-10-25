@@ -93,7 +93,7 @@ class WishExpressionTests(unittest.TestCase):
         definitions[WishId.WIN_OVERALL] = replace(definitions[WishId.WIN_OVERALL],
                                                   round_count=5)
         original = ActiveWish(1, WishId.WIN_OVERALL, "blackjack", 0, 14400)
-        with patch("aiko_pet.pet.mind.mind.WISH_CATALOG", WishCatalog(definitions)):
+        with patch("aiko_pet.pet.mind.catalog.WISH_CATALOG", WishCatalog(definitions)):
             reaction = self.mind.wish_reaction(original)
         self.assertIn("3", reaction.text)
         self.assertNotIn("5", reaction.text)
