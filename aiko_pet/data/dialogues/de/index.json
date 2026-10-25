@@ -1121,7 +1121,6 @@
     "plaudern-state-hungry",
     "plaudern-state-tired",
     "plaudern-wish",
-    "plaudern-affection",
     "plaudern-social-chat",
     "plaudern-poking",
     "plaudern-withheld",
@@ -1304,6 +1303,24 @@
     "plaudern-food-variety-friend",
     "plaudern-food-variety-close",
     "plaudern-food-variety-quiet",
-    "plaudern-food-variety-mixed"
+    "plaudern-food-variety-mixed",
+    "plaudern-affection-welcome-acquaintance",
+    "plaudern-affection-welcome-familiar",
+    "plaudern-affection-welcome-friend",
+    "plaudern-affection-welcome-close",
+    "plaudern-affection-welcome-quiet",
+    "plaudern-affection-welcome-mixed",
+    "plaudern-affection-wanted-acquaintance",
+    "plaudern-affection-wanted-familiar",
+    "plaudern-affection-wanted-friend",
+    "plaudern-affection-wanted-close",
+    "plaudern-affection-wanted-quiet",
+    "plaudern-affection-wanted-mixed",
+    "plaudern-affection-personal-wish-acquaintance",
+    "plaudern-affection-personal-wish-familiar",
+    "plaudern-affection-personal-wish-friend",
+    "plaudern-affection-personal-wish-close",
+    "plaudern-affection-personal-wish-quiet",
+    "plaudern-affection-personal-wish-mixed"
   ]
 }
