@@ -344,11 +344,8 @@ class AffectionDialogueTests(unittest.TestCase):
             ).event,
             "affection_low",
         )
-        self.assertEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(state, self.context, 61)
-            ).event,
-            "idle",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 61),
         )
         self.assertEqual(
             require_reaction(

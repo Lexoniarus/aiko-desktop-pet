@@ -84,7 +84,8 @@ class VoiceCatalogueTests(unittest.TestCase):
             "wake",
             "return",
             "cursor_follow",
-            "idle",
+            "hungry",
+            "tired",
             "walk_pause",
         ):
             with self.subTest(event=event):
@@ -129,16 +130,8 @@ class VoiceCatalogueTests(unittest.TestCase):
         ]
         self.assertEqual(len(ids), len(set(ids)))
 
-    def test_weighted_selection_respects_period_and_emotion(self):
+    def test_need_comments_require_their_actual_need_condition(self):
         morning = ctx(hour=8)
-        response = self.book.choose("morning", dialogue_context(morning), 500)
-        self.assertIsNotNone(response)
-        self.assertIsNone(
-            self.book.choose("morning", dialogue_context(ctx(hour=17)), 501)
-        )
-        self.assertIsNotNone(
-            self.book.choose("night", dialogue_context(ctx(hour=0)), 600)
-        )
         self.assertIsNone(self.book.choose("hungry", dialogue_context(morning), 500))
         self.assertIsNotNone(
             self.book.choose(
@@ -375,7 +368,7 @@ class EmotionTests(unittest.TestCase):
         self.assertIsNone(
             self.mind.select_spontaneous_reaction(self.state, self.context, 30)
         )
-        set_test_pet_values(self.state, sleeping=False)
+        set_test_pet_values(self.state, sleeping=False, satiety=5)
         self.assertIsNotNone(
             self.mind.select_spontaneous_reaction(self.state, self.context, 31)
         )

@@ -419,8 +419,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "voice_duration_ms": "integer",
     },
     "dialogue": {
-        "spontaneous_story_quiet_seconds": "integer",
-        "spontaneous_story_probability": "number",
         "default_weight": "integer",
         "default_cooldown_seconds": "integer",
         "recent_line_history": "integer",

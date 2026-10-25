@@ -648,7 +648,7 @@
     },
     {
       "id": "situation-morning-079",
-      "event": "morning",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -675,7 +675,7 @@
     },
     {
       "id": "situation-morning-080",
-      "event": "morning",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -702,7 +702,7 @@
     },
     {
       "id": "situation-morning-082",
-      "event": "morning",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -729,7 +729,7 @@
     },
     {
       "id": "situation-morning-083",
-      "event": "morning",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -756,7 +756,7 @@
     },
     {
       "id": "situation-night-085",
-      "event": "night",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -782,7 +782,7 @@
     },
     {
       "id": "situation-night-086",
-      "event": "night",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -808,7 +808,7 @@
     },
     {
       "id": "situation-night-088",
-      "event": "night",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {
@@ -834,7 +834,7 @@
     },
     {
       "id": "situation-night-089",
-      "event": "night",
+      "event": "tired",
       "animation": "idle",
       "conditions": [
         {

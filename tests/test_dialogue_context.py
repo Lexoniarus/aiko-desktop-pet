@@ -180,19 +180,22 @@ class DialogueContextTests(unittest.TestCase):
                 ]
                 self.assertEqual(len(pool), 1, (stage, emotion))
 
-    def test_spontaneous_speech_cannot_enter_requested_plaudern_without_topic(self):
-        state = PetState(friendship=90, mood=65, social=80, affection=80)
-        snapshot = self.mind.dialogue_context(state, self.time, 10, present=True)
-        with (
-            patch.object(self.mind, "dialogue_context", return_value=snapshot),
-            patch.object(self.mind, "_select_spontaneous_event", return_value="idle"),
-            patch.object(self.mind.rng, "random", return_value=0),
-        ):
+    def test_spontaneous_speech_never_selects_requested_plaudern(self):
+        state = PetState(friendship=90, mood=65, satiety=5)
+        self.mind.clicks.append(1)
+        before = state.capture_checkpoint()
+        with patch.object(
+            self.mind.book, "choose", wraps=self.mind.book.choose,
+        ) as choose:
             for now in (10, 70, 1000):
                 reaction = self.mind.select_spontaneous_reaction(state, self.time, now)
                 assert reaction is not None
                 self.assertEqual(reaction.presentation, "short")
-                self.assertNotEqual(reaction.event, "talk")
+                self.assertEqual(reaction.event, "hungry")
+            self.assertTrue(all(call.args[0] == "hungry"
+                                for call in choose.call_args_list))
+        self.assertEqual(state.capture_checkpoint(), before)
+        self.assertEqual(tuple(self.mind.clicks), (1,))
         set_test_pet_values(state, sleeping=True)
         self.assertIsNone(self.mind.select_spontaneous_reaction(state, self.time, 2000))
 

@@ -86,7 +86,6 @@ class PetMind:
         self._last_care_at = -1.0
         self._last_social_comment = float("-inf")
         self._last_affection_comment = float("-inf")
-        self._last_spontaneous_story = float("-inf")
 
     def note_object_withholding(self, now: float) -> None:
         """Record a short reaction tone, independently of lasting impressions."""
@@ -425,31 +424,12 @@ class PetMind:
             event = "return"
         return self.select_reaction(event, state, context, now)
 
-    def _choose_idle_topic(self, state: PetState, context: TimeContext) -> str:
-        """Select a grounded idle topic using the existing weighted rotation."""
-        events = ["idle", "idle", "idle", "idle"]
-        if context.period in ("breakfast", "quiet"):
-            events.append("morning")
-        if context.period == "lunch":
-            events.append("midday")
-        if context.period == "evening":
-            events.append("evening")
-        if context.night:
-            events.append("night")
-        if context.weekend:
-            events.append("weekend")
-        if context.local.weekday() == 0:
-            events.append("monday")
-        if context.local.weekday() == 4:
-            events.append("friday")
-        return self.rng.choice(events)
-
     def _select_spontaneous_event(
         self,
         state: PetState,
         context: TimeContext,
         now: float,
-    ) -> str:
+    ) -> str | None:
         """Prioritize real needs, measured work and recently observed rest."""
         dialogue = self.dialogue_context(state, context, now)
         situation = self.situation
@@ -464,7 +444,6 @@ class PetMind:
             ):
                 self._last_social_comment = now
                 return "social_low"
-            return "idle"
         if NeedCondition.LOW_AFFECTION in dialogue.need_conditions and not (
             situation and situation.focused
         ):
@@ -473,7 +452,6 @@ class PetMind:
             ):
                 self._last_affection_comment = now
                 return "affection_low"
-            return "idle"
         if SituationalCondition.FATIGUED in dialogue.situational_conditions and not (
             situation and situation.focused
         ):
@@ -506,7 +484,7 @@ class PetMind:
             or dialogue.reaction_tone == ReactionTone.IRRITATED
         ):
             return "low_mood"
-        return self._choose_idle_topic(state, context)
+        return None
 
     def select_spontaneous_reaction(
         self,
@@ -514,34 +492,10 @@ class PetMind:
         context: TimeContext,
         now: float,
     ) -> Reaction | None:
-        """Speak about actual observations, without imagined applications."""
+        """Offer a grounded short comment, or silence; never requested Plaudern."""
         if state.sleeping:
             return None
         event = self._select_spontaneous_event(state, context, now)
-        snapshot = self.dialogue_context(state, context, now)
-        if (
-            event in ("idle", "low_mood", "tired", "social_low", "affection_low")
-            and not snapshot.working
-            and snapshot.present is True
-            and now - self._last_spontaneous_story
-            >= BALANCE.integer(
-                "dialogue",
-                "spontaneous_story_quiet_seconds",
-            )
-            and self.rng.random()
-            < BALANCE.number(
-                "dialogue",
-                "spontaneous_story_probability",
-            )
-        ):
-            story = self.book.choose(
-                "talk",
-                snapshot,
-                now,
-                presentation="story",
-            )
-            if story is not None:
-                self._last_spontaneous_story = now
-                self.clicks.clear()
-                return story
+        if event is None:
+            return None
         return self.select_reaction(event, state, context, now)

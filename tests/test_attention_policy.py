@@ -67,6 +67,27 @@ class AttentionPolicyTests(unittest.TestCase):
             201.0, context_at(1_781_000_000), toolbar_visible=False,
         ).due)
 
+    def test_ungrounded_comment_slot_is_silent_without_mutating_pet(self) -> None:
+        self.attention.next_comment = 0
+        self.attention.last_spoken = -1000
+        self.attention.next_care_request = 1000
+        before = self.state.capture_checkpoint()
+        with (
+            patch.object(self.workload_events, "maybe_event", return_value=None),
+            patch("aiko_pet.application.attention.random.uniform", return_value=300),
+        ):
+            result = self.attention.spontaneous(
+                200, context_at(1_781_000_000), toolbar_visible=False,
+            )
+            self.assertTrue(result.due)
+            self.assertIsNone(result.reaction)
+            self.assertEqual(self.attention.next_comment, 500)
+            self.assertFalse(self.attention.spontaneous(
+                201, context_at(1_781_000_000), toolbar_visible=False,
+            ).due)
+        self.assertEqual(self.state.capture_checkpoint(), before)
+        self.assertEqual(self.attention.last_spoken, -1000)
+
     def test_idles_never_interrupt_sleep_or_toolbar(self) -> None:
         self.attention.next_idle_emote = 0
         set_test_pet_values(self.state, sleeping=True)

@@ -259,17 +259,11 @@ class ClickStoryTests(unittest.TestCase):
             ).event,
             "after_work_thought",
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 770)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 770),
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 1500)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 1500),
         )
 
     def test_no_fake_work_recovery_after_short_spike(self):
@@ -370,17 +364,8 @@ class ClickStoryTests(unittest.TestCase):
 
     def test_unavailable_situation_does_not_invent_usage(self):
         self.mind.set_situation(None)
-        reaction = self.mind.select_spontaneous_reaction(self.state, self.context, 100)
-        assert reaction is not None
-        self.assertNotIn(
-            reaction.event,
-            (
-                "work_concentrating",
-                "work_late",
-                "work_long_thought",
-                "work_finished_long",
-                "return_working",
-            ),
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 100),
         )
 
 

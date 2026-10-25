@@ -248,11 +248,8 @@ class SocialDialogueTests(unittest.TestCase):
             ).event,
             "social_low",
         )
-        self.assertEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(state, self.context, 55)
-            ).event,
-            "idle",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 55),
         )
         self.assertEqual(
             require_reaction(

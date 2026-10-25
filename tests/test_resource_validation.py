@@ -54,7 +54,6 @@ class ResourceValidationTests(unittest.TestCase):
         for section, key in (
             ("mood", "need_weight"),
             ("food_activity", "short_window_weight"),
-            ("dialogue", "spontaneous_story_probability"),
         ):
             with self.subTest(section=section, key=key):
                 raw = copy.deepcopy(original)
