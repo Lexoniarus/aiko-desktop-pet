@@ -5,9 +5,9 @@ Essenswunsch missachtet, Vertrauensvoll, Wertgeschätzt, Zuversichtlich,
 Verunsichert, Übersehen and Auf der Hut. The source pack now has **54 icons**,
 including **26 distinct Moodlet symbols** for the 26 current families.
 The [new inventory, exact prompts and checks](moodlets-2026-10-25/README.md)
-record this asset-only delivery. Runtime assignments still use the previous
-shared motifs until separate integration. The preparation record below
-describes the original 2026-10-20 pack.
+record the asset delivery. On subsequent owner authorization, runtime assignments
+were updated to use all eight new motifs. The preparation record below describes
+the original 2026-10-20 pack.
 
 Prepared 2026-10-20 after the owner approved completing the documented artwork.
 This is asset preparation only: the application, Moodlet rules, wishes and saves

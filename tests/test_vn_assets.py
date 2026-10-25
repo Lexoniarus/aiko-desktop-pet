@@ -10,6 +10,7 @@ from PIL import Image
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.ui.common.icon_images import IconImages
+from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS
 from tools.export_vn_ui import nine_slice
 
 
@@ -19,6 +20,8 @@ class VnAssetTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         self.assertEqual(len(catalog["icons"]), 54)
         self.assertEqual(len(catalog["source_sha256"]), 62)
+        self.assertEqual(len(set(MOODLET_ICONS.values())), len(MOODLET_ICONS))
+        self.assertLessEqual(set(MOODLET_ICONS.values()), set(catalog["icons"]))
         for path, expected in catalog["source_sha256"].items():
             self.assertEqual(
                 hashlib.sha256((root / path).read_bytes()).hexdigest(), expected, path

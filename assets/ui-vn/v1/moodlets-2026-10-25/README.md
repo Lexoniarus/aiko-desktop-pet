@@ -2,9 +2,10 @@
 
 The owner requested asset production after reviewing the 26 current Moodlets
 against the 18 original symbols. These eight new symbols complete source-art
-coverage. They are prepared for review; the existing runtime icon assignments
-remain unchanged. No Moodlet rules, wishes, save format, book/hat or character
-artwork changes are part of this delivery.
+coverage. The owner subsequently requested using them immediately, and the shared
+runtime Moodlet icon mapping now assigns all eight symbols to their own families.
+No Moodlet rules, wishes, save format, book/hat or character artwork changes are
+part of this delivery.
 
 | Current Moodlet | Source | Motif |
 | --- | --- | --- |
@@ -27,7 +28,8 @@ bytes and transparency are preserved.
 The existing exporter produces 24, 32, 40, 48, 64, 96 and 128 px derivatives
 under `aiko_pet/assets/ui/`; the packaged catalogue includes all eight IDs.
 Only optical cropping and size normalization are applied to these derivatives.
-The originals remain untouched. Application wiring remains a later step.
+The originals remain untouched. The existing MoodletStrip consumes the shared
+mapping directly; no additional image loader or state owner is introduced.
 
 [validation.json](validation.json) records source hashes, alpha bounds,
 dimensions and export coverage. All 54 earlier source/control hashes match
@@ -35,6 +37,11 @@ their previous catalogue. Visual review covered all originals and a contact
 sheet showing 24/32/48 px derivatives on the approved pale rose/white UI colors.
 The small silhouettes remain distinguishable; fine facial/finger details are
 secondary at 24 px. This does not claim native application acceptance.
+
+The subsequent integration check constructed the real native MoodletStrip with
+all 26 families and verified every displayed 40 px image against its assigned
+PNG, without changing pet state or opening a user save. Twenty-five targeted
+asset/emotional-view/menu tests, scoped Ruff and strict Mypy checks passed.
 
 The labeled review sheet is deliberately outside Git, alongside other local
 design previews: `E:/aiko-desktop-pet/design-previews/moodlets-2026-10-25/overview.png`.

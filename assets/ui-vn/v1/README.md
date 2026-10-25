@@ -3,8 +3,9 @@
 **Moodlet addition (2026-10-25):** eight new transparent source icons and their
 24–128 px exports complete coverage of the current 26 Moodlet families. The
 [dated extension record](moodlets-2026-10-25/README.md) contains the inventory,
-prompts and validation. These new symbols are prepared for review; application
-icon assignments are unchanged. The older preparation notes below are historical.
+prompts and validation. The owner subsequently authorized immediate use; all eight
+new symbols are now assigned through the shared runtime Moodlet icon mapping.
+The older preparation notes below are historical.
 
 **Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
 shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
