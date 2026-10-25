@@ -17,6 +17,7 @@ from .interaction_events import InteractionMemory
 from .moodlet_patterns import LongTermPatternParameters
 from .moodlet_types import MoodletId, MoodletOutcome
 from .need_exposure import ExposureMark
+from .social_content_evidence import SocialContentEvidence
 
 if TYPE_CHECKING:
     from .wish_types import WishTarget
@@ -84,8 +85,20 @@ class MoodletCause:
     period: CarePeriodSummary | None = None
     handed_over_at: float | None = None
     game_details: GameResultDetails | None = None
+    social_content: SocialContentEvidence | None = None
 
     def __post_init__(self) -> None:
+        if self.social_content is not None and (
+            not isinstance(self.social_content, SocialContentEvidence)
+            or self.target_id != self.social_content.category.value
+            or self.kind not in (MoodletCauseKind.INTERACTION,
+                                 MoodletCauseKind.WISH_FULFILLED)
+            or self.outcome != MoodletOutcome.COMPLETED
+            or self.game_details is not None or self.game is not None
+            or self.period is not None or self.handed_over_at is not None
+            or self.object_id is not None
+        ):
+            raise ValueError("Social content must match its completed Moodlet cause")
         if self.game_details is None:
             return
         if not isinstance(

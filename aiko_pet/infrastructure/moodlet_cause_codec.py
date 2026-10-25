@@ -1,5 +1,6 @@
 """Bounded original wish, handover and qualifying-period facts inside Moodlet causes."""
 
+from dataclasses import asdict
 from typing import Any
 
 from ..games.contracts import (
@@ -28,6 +29,11 @@ from ..pet.moodlets import (
     MoodletId,
     MoodletOutcome,
     MoodletWishCause,
+)
+from ..pet.social_content_evidence import (
+    SocialCategory,
+    SocialContentEvidence,
+    SocialProvider,
 )
 from ..pet.wish_catalog import WISH_CATALOG
 from ..pet.wishes import WishArea, WishId, WishTargetMode
@@ -108,6 +114,24 @@ def _game_details(raw: Any) -> GameResultDetails:
     )
 
 
+def _social_content(raw: Any) -> SocialContentEvidence:
+    row = object_fields(
+        raw, ("category", "provider", "identity", "fingerprint", "parts", "source",
+              "source_url", "permalink", "author", "author_url", "license_name",
+              "license_url"), context="Moodlet original social content",
+    )
+    if not isinstance(row["parts"], list):
+        raise ValueError("Original social content requires separate parts")
+    return SocialContentEvidence(
+        category=enum_value(row["category"], SocialCategory, context="social category"),
+        provider=enum_value(row["provider"], SocialProvider, context="social provider"),
+        identity=row["identity"], fingerprint=row["fingerprint"],
+        parts=tuple(row["parts"]), source=row["source"], source_url=row["source_url"],
+        permalink=row["permalink"], author=row["author"], author_url=row["author_url"],
+        license_name=row["license_name"], license_url=row["license_url"],
+    )
+
+
 def decode_moodlet_causes(
     raw: Any,
     *,
@@ -134,7 +158,8 @@ def decode_moodlet_causes(
                 "outcome",
                 "object_id",
             ),
-            optional=("game", "level", "period", "handed_over_at", "game_details"),
+            optional=("game", "level", "period", "handed_over_at", "game_details",
+                      "social_content"),
             context="Moodlet cause",
         )
         kind = enum_value(row["kind"], MoodletCauseKind, context="Moodlet cause kind")
@@ -273,6 +298,9 @@ def decode_moodlet_causes(
             None if row.get("game_details") is None else _game_details(
                 row["game_details"],
             ),
+            None if row.get("social_content") is None else _social_content(
+                row["social_content"],
+            ),
         )
         if cause.receipt in receipts:
             raise ValueError("Duplicate Moodlet cause receipt")
@@ -360,5 +388,11 @@ def encode_moodlet_cause(cause: MoodletCause) -> dict[str, Any]:
             player_total=cause.game_details.player_total,
             aiko_total=cause.game_details.aiko_total,
             reason=cause.game_details.reason.value,
+        )
+    if cause.social_content is not None:
+        content = cause.social_content
+        encoded["social_content"] = asdict(content) | dict(
+            category=content.category.value, provider=content.provider.value,
+            parts=list(content.parts),
         )
     return encoded

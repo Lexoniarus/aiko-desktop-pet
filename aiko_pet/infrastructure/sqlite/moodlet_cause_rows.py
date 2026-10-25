@@ -31,6 +31,8 @@ def write_causes(
         details = dict(version=1, game=cause["game"], period=cause["period"])
         if cause.get("game_details") is not None:
             details.update(version=2, game_details=cause["game_details"])
+        if cause.get("social_content") is not None:
+            details.update(version=3, social_content=cause["social_content"])
         row = {name: cause[name] for name in _FACT_FIELDS}
         row.update(
             episode_id=episode_id,
@@ -81,19 +83,23 @@ def read_causes(connection: sqlite3.Connection) -> dict[int, list[dict[str, Any]
             raise ValueError(
                 "Moodlet source wish disagrees with its historical snapshot"
             )
-        details = object_fields(
-            parse_json(row["details_snapshot"]), ("version", "game", "period"),
-            optional=("game_details",), context="Moodlet detail",
-        )
-        version = details["version"]
-        if (type(version) is not int or version not in (1, 2)
-                or (version == 2) != (details.get("game_details") is not None)
-                or version == 1 and "game_details" in details):
+        raw_details = parse_json(row["details_snapshot"])
+        if (not isinstance(raw_details, dict)
+                or type(raw_details.get("version")) is not int
+                or raw_details["version"] not in (1, 2, 3)):
             raise ValueError("Unsupported or inconsistent Moodlet detail snapshot")
+        extra = {1: (), 2: ("game_details",), 3: ("social_content",)}[
+            raw_details["version"]
+        ]
+        details = object_fields(
+            raw_details, ("version", "game", "period", *extra),
+            context="Moodlet detail",
+        )
+        if any(details[name] is None for name in extra):
+            raise ValueError("Missing Moodlet detail snapshot")
         cause = {name: row[name] for name in _FACT_FIELDS} | dict(
             wish=wish, game=details["game"], period=details["period"],
         )
-        if version == 2:
-            cause["game_details"] = details["game_details"]
+        cause.update({name: details[name] for name in extra})
         causes.append(cause)
     return grouped

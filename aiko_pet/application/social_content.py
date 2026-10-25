@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass, replace
-from enum import StrEnum
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -13,27 +12,14 @@ from ..pet.balance import BALANCE
 from ..pet.content import GERMAN_TEXT
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.reaction_sequence import Cue
+from ..pet.social_content_evidence import SocialCategory as SocialCategory
+from ..pet.social_content_evidence import SocialProvider as SocialProvider
 from .horoscope_models import HoroscopeText
-
-
-class SocialCategory(StrEnum):
-    SINGLE = "single"
-    TWO_PARTS = "twopart"
-    FACT = "fact"
-    HOROSCOPE = "horoscope"
-
 
 BUFFERED_CATEGORIES = (
     SocialCategory.SINGLE, SocialCategory.TWO_PARTS, SocialCategory.FACT,
 )
 SOCIAL_INTRO_VARIANTS = 3
-
-
-class SocialProvider(StrEnum):
-    JOKEAPI = "jokeapi"
-    QUOTATIONS = "zitat-service"
-    FACTS = "uselessfacts"
-    ASTROWAY = "astroway"
 
 
 def default_provider(category: SocialCategory) -> SocialProvider:
