@@ -10753,7 +10753,7 @@ delivery plan were secured separately as `7a58367`.
 [The inventory](PLAUDERN_SOURCE_INVENTORY.md) and its
 [per-ID manifest](inventories/PL1A_DIALOGUE_IDS.tsv) cover the frozen shared-
 worktree snapshot: **1,153 sequences / 148 events**, schema 3, including 35
-uncommitted parallel Quiz additions. All 1,118 runtime-baseline definitions
+parallel Quiz additions that were uncommitted at capture. All 1,118 runtime-baseline definitions
 are unchanged in that snapshot; no parallel catalogue/runtime files are staged.
 The snapshot/hash provenance and later-reconciliation requirement are explicit.
 
@@ -10778,3 +10778,8 @@ Verification is static raw JSON/AST, per-ID/hash/classification consistency,
 baseline/parallel comparison and documentation diff/link checks. No app imports,
 runtime tests, windows, mouse control, live API, personal-save changes or CI.
 No PL-1B source move, generic removal, schema or behavior change is performed.
+
+During the audit, the parallel Quiz owner secured `e473338` on this same branch,
+between documentation commits `7a58367` and `dd70f41`. The shared-branch push
+included that existing commit. PL-1A's own commits contain documentation only;
+the final live catalogue still matches the frozen inventory hash exactly.

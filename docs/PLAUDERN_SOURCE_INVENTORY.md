@@ -14,7 +14,11 @@ documentation was subsequently secured separately as `7a58367`.
 The frozen working-copy snapshot contains **1,153 sequences / 148 events**:
 **48 stories and 1,105 short reactions**. All baseline IDs and full definitions
 are unchanged; the only catalogue delta is **35 parallel Quiz additions** across
-six events. These remain separate, uncommitted runtime work, not a PL-1A delivery.
+six events. At capture these were separate, uncommitted runtime work, not a
+PL-1A delivery. During the audit the parallel owner committed Quiz as `e473338`,
+between the documentation commits `7a58367` and `dd70f41`. That existing shared-
+branch commit was included in the push; PL-1A's own commits contain docs only.
+The final live catalogue still matches the frozen hash exactly.
 Earlier exploratory reads saw 1,168 sequences while Quiz copy was being revised.
 All tables and per-ID decisions here consistently use the frozen 1,153 snapshot.
 Reconcile later parallel changes before PL-1B; never reset the live catalogue
