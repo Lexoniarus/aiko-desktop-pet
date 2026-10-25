@@ -299,10 +299,19 @@ class Line:
         if data["event"] == "talk":
             required = {field for text in texts
                         for _, field, _, _ in Formatter().parse(text) if field}
-            if any(not required <= conversation_fields(topic)
-                   for condition in conditions
-                   for topic in condition.conversation_topics):
-                raise ValueError("Conversation placeholder is not proved by its topic")
+            for condition in conditions:
+                for topic in condition.conversation_topics:
+                    available = conversation_fields(topic)
+                    if (topic in ("negative.food_monotony",
+                                  "negative.food_wish_disregarded")
+                            and condition.conversation_targets
+                            and condition.conversation_targets
+                            <= set(DEFAULT_CATALOG.foods)):
+                        available |= {"target"}
+                    if not required <= available:
+                        raise ValueError(
+                            "Conversation placeholder is not proved by its topic"
+                        )
         return cls(
             data["id"],
             data["event"],

@@ -112,7 +112,7 @@ class PlaudernTests(unittest.TestCase):
             episode(1, MoodletId.WITHHELD, 1, actual(target="withheld")),
         )))
         reaction = talk(pet)
-        self.assertEqual(reaction.line_id, "plaudern-withheld")
+        self.assertTrue(reaction.line_id.startswith("plaudern-negative-withheld-"))
         self.assertIn("Ding", reaction.text)
         self.assertNotIn("Du hast", reaction.text)
 
