@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Keep choices stationary when a pointer press gives them focus in a scroll
+  region. Retain automatic reveal for keyboard focus so partially visible game
+  choices do not lose their first click to a focus-induced scroll.
+
 - Fix blank free-choice game wish cards by using the packaged fun icon.
   Commit rendered wish identities only after a complete refresh so interrupted
   card construction can recover on the next refresh.

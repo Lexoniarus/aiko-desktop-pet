@@ -40,6 +40,7 @@ class ScrollRegion:
         self._max_height = max_height
         self._bar_visible = not autohide
         self._layout_idle: str | None = None
+        self._pointer_focus: tk.Misc | None = None
         self._item = self.canvas.create_window(0, 0, window=self.body, anchor="nw")
         # Autohiding must not change the viewport width and reflow its content.
         # A fixed gutter also breaks the parent-size/overflow feedback cycle.
@@ -84,6 +85,8 @@ class ScrollRegion:
                 self._tag, f"<{key}>", partial(self._key_scroll, amount)
             )
         self.canvas.bind_class(self._tag, "<FocusIn>", self._focus_visible)
+        self.canvas.bind_class(self._tag, "<ButtonPress-1>", self._pointer_pressed)
+        self.canvas.bind_class(self._tag, "<ButtonRelease-1>", self._pointer_released)
         self.body.bind("<Configure>", self._content_changed)
         self.canvas.bind("<Configure>", self._viewport_changed)
         self.frame.bind("<Destroy>", self._destroyed, add="+")
@@ -109,6 +112,11 @@ class ScrollRegion:
     def _focus_visible(self, event: tk.Event) -> None:
         """Tabbing to an offscreen card/choice reveals it without stealing focus."""
         widget = event.widget
+        pointer_focus, self._pointer_focus = self._pointer_focus, None
+        if widget is pointer_focus:
+            # Native buttons focus on press. Scrolling them at that instant can
+            # move them out from under the pointer and cancel the first click.
+            return
         if widget is self.canvas:
             return
         if self._horizontal:
@@ -129,6 +137,12 @@ class ScrollRegion:
                 self.canvas.yview_moveto(
                     max(0, self.canvas.yview()[0] + offset / total)
                 )
+
+    def _pointer_pressed(self, event: tk.Event) -> None:
+        self._pointer_focus = event.widget
+
+    def _pointer_released(self, _event: tk.Event) -> None:
+        self._pointer_focus = None
 
     def _scroll(self, amount: int) -> str:
         if self._horizontal:
@@ -209,6 +223,8 @@ class ScrollRegion:
                 "<Button-4>",
                 "<Button-5>",
                 "<FocusIn>",
+                "<ButtonPress-1>",
+                "<ButtonRelease-1>",
                 "<Up>",
                 "<Down>",
                 "<Prior>",

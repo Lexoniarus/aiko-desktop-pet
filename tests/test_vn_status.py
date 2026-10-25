@@ -66,6 +66,7 @@ class VnStatusTests(unittest.TestCase):
         canvas, body, target = Mock(), Mock(), Mock()
         region.canvas, region.body = cast(Any, canvas), cast(Any, body)
         region._horizontal = True
+        region._pointer_focus = None
         canvas.winfo_rootx.return_value = 0
         canvas.winfo_width.return_value = 100
         canvas.xview.return_value = (0, 0.25)

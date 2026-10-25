@@ -16,6 +16,31 @@ def requested_width(region: ScrollRegion) -> int:
 
 
 class ScrollRegionLayoutTests(unittest.TestCase):
+    def test_pointer_focus_keeps_pressed_choice_stationary_but_tab_reveals_it(self):
+        for horizontal in (False, True):
+            with self.subTest(horizontal=horizontal), widgets():
+                region = ScrollRegion(cast(Any, Widget()), cast(Any, Skin()),
+                                      width=100, height=100, horizontal=horizontal)
+                target = Mock()
+                target.winfo_rootx.return_value = 270
+                target.winfo_rooty.return_value = 270
+                target.winfo_width.return_value = 50
+                target.winfo_height.return_value = 50
+                cast(Any, region.body).configure(width=400, height=400)
+                event = cast(Any, Mock(widget=target))
+                method = "xview_moveto" if horizontal else "yview_moveto"
+                position = "xview" if horizontal else "yview"
+                with (
+                    patch.object(region.canvas, method) as move,
+                    patch.object(region.canvas, position, return_value=(0, .25)),
+                ):
+                    region._pointer_pressed(event)
+                    region._focus_visible(event)
+                    move.assert_not_called()
+                    region._pointer_released(event)
+                    region._focus_visible(event)
+                    move.assert_called_once_with(.5)
+
     def test_fit_growth_does_not_change_width_before_viewport_allocation(self):
         with widgets():
             region = ScrollRegion(cast(Any, Widget()), cast(Any, Skin()),
