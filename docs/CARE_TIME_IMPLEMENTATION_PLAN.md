@@ -1,5 +1,14 @@
 # Care, relationship and real-time implementation plan
 
+> **Dialogue planning update, 2026-10-25:** the owner-approved
+> [separation of spontaneous speech, immediate reactions and Plaudern](#dialogue-planning-spontaneous-speech-immediate-reactions-and-plaudern-2026-10-25)
+> below defines the next dialogue scope. This is documentation only; selection
+> rules and wording still require discussion before implementation.
+> The [approved simplification](#approved-simplification-existing-wishes-and-moodlets-define-relevance)
+> removes proposed discussed markers and conversation-history management.
+> The [replacement scope](#approved-replacement-scope-remove-ungrounded-generic-bubbles)
+> removes ungrounded generic speech rather than adding another dialogue layer.
+
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
 > records generated-wish care balances, all seventeen emotional labels, status/
@@ -10147,3 +10156,587 @@ paths**, excluded from these commits. No personal-save access/change, native
 test/pet windows, mouse automation, HTTP or CI; no merge. Native visual/input
 acceptance remains separate. Timing report:
 `%TEMP%/aiko-social-full-20261025-cad2673f-149d-4f4d-9433-4c3b5d236300.json`.
+
+### Dialogue planning: spontaneous speech, immediate reactions and Plaudern (2026-10-25)
+
+The owner approved the following distinction after the branch audit. It replaces
+the discussion proposal that ordinary need and active-wish announcements should
+be primary Plaudern topics. This entry records product direction only; it does
+not authorize runtime, catalogue, persistence or test changes.
+
+| Speech flow | Trigger | Purpose |
+| --- | --- | --- |
+| Spontaneous speech | Aiko speaks on her own while idle or moving | Short situational comments, current needs and active wishes whose existing relationship/disclosure conditions allow expression. |
+| Immediate reaction | An actual interaction or event occurs | Express the immediate response: joy, thanks, disappointment or discomfort about that event. |
+| Plaudern | The user deliberately starts a conversation | Tell a coherent personal story about a concrete experienced event and what it meant emotionally to Aiko. |
+
+For Plaudern, the experience is the topic. A fulfilled or failed wish may explain
+why that event mattered; the associated active Moodlet supplies the continuing
+emotional significance. Examples include the particular game she wanted to win
+and actually won, the specific wished-for food she received, or an actual welcome
+interaction she enjoyed. Unpleasant experiences may also be discussed when
+supported by the retained cause. An active, unfulfilled wish is not itself a past
+experience and remains primarily a spontaneous wish-expression topic.
+
+Friendship controls openness and familiarity. Overall emotional composition
+colors the complete conversation, including mixed feelings; high friendship
+does not erase discomfort or a boundary. Current needs remain contextual facts
+and may affect delivery, but do not automatically turn Plaudern into a care
+request or a reading of status values.
+
+Use actual retained Moodlet causes and their original wish/outcome snapshots;
+do not invent a completed-action archive, missing events, food recognition or
+user responsibility. The existing bounded cause retention and episode lifetime
+remain unchanged. The owner subsequently approved the cause-selection rules
+below. The subsequently approved friendship/emotional coloring and concrete
+gameplay wording are recorded after it; no runtime delivery is claimed by
+these planning entries.
+
+#### Approved Plaudern cause eligibility and topic selection
+
+Eligible topics are concrete causes of active Moodlets: fulfilled game goals
+with their original objective and real result; fulfilled food, social and
+affection wishes; qualified positive experiences without a wish; failed goals
+and negative interactions; modeled prolonged poor care; and longer-term care
+patterns. A cumulative game goal must not be described as consecutive wins or
+as one round unless that is the actual recorded objective.
+
+Each story must preserve the evidence's meaning. Handover does not prove intake,
+a failed wish does not alone prove a lost round, and an unknown cause does not
+identify an action or responsible person. Poor-care and long-term causes support
+an account of the experienced period/feeling, not an invented single incident or
+an explanation of internal thresholds. Unspecified legacy causes and ended
+episodes cannot supply concrete retrospective stories.
+
+Selection rules:
+
+1. Consider only active episodes with usable retained causes.
+2. Each retained actual cause may become its own topic while it remains relevant;
+   having told it before does not consume it or reduce its eligibility.
+3. Weight the episode by current intensity, **1:2:3** for levels one/two/three,
+   then select a cause within it. The number of retained causes must not multiply
+   that episode's weight again.
+4. Do not give negative events automatic priority. Both polarities remain
+   eligible; overall emotional composition colors the resulting story.
+5. Vary wording using the existing dialogue rotation. Do not add a last-two-
+   experiences exclusion or a separate record of previously discussed causes.
+   Do not force an ungrounded generic line when no usable specific topic fits.
+6. Treat one event that produced several Moodlets as one experience, not several
+   independent memories. One conversation has one main cause/topic; concurrent
+   feelings may color its telling.
+
+The later owner-approved simplification removes the previously proposed
+discussed/not-discussed markers and recent-experience list altogether. There is
+no conversation archive or additional playback-completion bookkeeping for
+topic eligibility. Existing conversation completion for care effects, wish
+fulfillment and relief remains separate and unchanged.
+
+#### Approved friendship and overall-emotion coloring
+
+The owner approved the discussed coloring rules, with the concrete-gameplay
+correction below. A retained experience remains factually identical across
+variants. Friendship governs personal openness and familiarity; the current
+overall emotional composition governs how Aiko now reflects on it.
+
+| Friendship level | Conversational expression |
+| --- | --- |
+| 1-2 | Reserved, brief personal disclosures and restrained requests. |
+| 3-5 | More personal, with clearer preferences and feelings. |
+| 6-8 | Open and playful, with familiar teasing and candid ambition. |
+| 9-10 | Close and direct about affection, joy, disappointment and discomfort. |
+
+Higher friendship does not require longer text, guarantee happiness, erase a
+boundary or automatically forgive an unpleasant action. Negative experiences
+may be discussed more personally at high friendship rather than softened away.
+Positive experiences remain positive even under an unhappy present mood;
+pleasant current feelings likewise do not rewrite an unpleasant event. Mixed
+feelings may coexist in one coherent account.
+
+Express emotion through the complete sequence's wording, emphasis and suitable
+emotes, not by repeatedly announcing emotional status labels. A specific
+accusation requires an actual retained cause and supported attribution. Do not
+assemble disconnected lines that shift from warmth into an unrelated complaint.
+Earlier single-sentence examples illustrate tone, not approved final dialogue.
+
+#### Concrete gameplay and interaction wording correction
+
+The owner rejected generic Mastermind wording about a fulfilled wish or merely
+winning a round as sufficient concrete storytelling. Refer to the game's actual
+activity: when Aiko wins as the code setter, her code was not cracked. Her wish
+may explain personal significance internally, but must not replace the event in
+the spoken account. For example, a proud retelling can center on "Du hast meinen
+Mastermind-Code nicht geknackt. Hihi, darauf bin ich schon ein bisschen stolz."
+This is a semantic example, not final approved copy.
+
+Apply the same principle to other games, particular foods and interactions:
+describe what actually happened in that activity. Only use details proved by
+the retained cause or by the fixed rules/roles of that game's recorded outcome.
+The current Mastermind role and Aiko-perspective outcome support the uncracked-
+code statement without retaining a board. Do not invent code colors, guesses,
+near misses, card hands or other transient details that were not retained.
+Cumulative objectives must still not become invented single-round accounts.
+
+#### Remaining Plaudern implementation preparation
+
+This remains planning only. Existing dialogue context carries current needs,
+friendship and emotional composition but no selected concrete cause. Existing
+Moodlet causes retain targets, semantic outcomes and original wish/game summary
+facts; they do not contain a replay of a board or complete past API content.
+DialogueBook's existing line-ID rotation can vary wording; cause-level discussion
+tracking is neither required nor planned. These are context/evidence integration
+gaps, not missing completed care/Moodlet rules.
+
+The game narrative occasions and minimal result evidence are settled below.
+Food, affection and social occasions, retained API content and negative/poor-care
+and long-term narrative occasions are subsequently approved below. Remaining
+preparation covers concrete API-reference wording and the OOP/delivery breakdown.
+Specify
+small delivery slices for result evidence and compatible storage, topic selection,
+immutable dialogue context and authored text coverage. Apply the
+already agreed topic/occasion-based JSON organization through one catalogue
+loader; do not add a parallel text-selection owner or a permanent action journal.
+No further care-balance, wish-generation or overall-emotion redesign is implied.
+
+#### Approved character-first experience storytelling
+
+The owner approved the character direction after rejecting outcome summaries
+as generic computer-like wording. Use the established Desktop-Aiko voice in
+`DIALOGUE_REVISION_PLAN.md`: light Kawaii-Chibi expression, personal ambition,
+playfulness, pride, disappointment and increasingly candid attachment. Short
+spoken sentences and occasional "Hihi", "Hach" or "Hmpf" support the expression;
+adding an interjection alone does not create personality. Avoid baby talk,
+constant self-description and routine explanations of status or game mechanics.
+
+For each complete conversation, establish:
+
+1. What mattered personally to Aiko about this particular activity or original
+   wish. A wish provides motivation without requiring the spoken word "wish".
+2. What actually happened, expressed in the specific game's or interaction's
+   terms rather than as a generic win, completed round or fulfilled objective.
+3. Why that experience still matters while its Moodlet cause is retained.
+4. How openly she shows it to this user at the current friendship stage and
+   how the current overall emotional composition colors the whole account.
+
+Preserve one coherent voice across the full ordered bubble/emote sequence.
+At low friendship she can reveal restrained pride; at higher friendship she
+can boast playfully, tease, express affection or admit disappointment directly.
+Mixed feelings can combine genuine enjoyment of a specific success with
+continuing discomfort about another supported experience. A secondary specific
+complaint still requires its own retained evidence and does not become a
+mandatory extra topic in every conversation.
+
+The discussed Mastermind and Teriyaki sequences illustrate this character
+direction; they are not final approved catalogue text. They do not authorize
+inventing an intake, move, motive unsupported by the original wish, earlier
+conversation or user action. The other games' characterful narrative examples
+were subsequently approved as narrative occasions below, not as delivered
+content or newly approved storage fields.
+
+#### Approved narrative occasions for the other four games
+
+The owner accepted the following character-first occasions as the next planning
+baseline. Their illustrative dialogue remains draft wording; this approval does
+not authorize implementation or settle the additional result-evidence fields.
+
+| Game | Concrete experience and original wish | Emotional significance and friendship coloring |
+| --- | --- | --- |
+| Rock Paper Scissors | Aiko wanted to win; her rock beat the player's scissors. | A little triumph. At levels 1-2 she admits restrained pleasure; at levels 6-8 she playfully celebrates getting the winning hand against this user. Naming the hands requires their actual retained evidence. |
+| Tic-Tac-Toe | Aiko wanted not to lose; the board filled without either player completing a line of three. | Relief rather than an invented victory. At levels 6-8 she can tease that the user did not beat her; at levels 9-10 she admits directly how much avoiding defeat mattered. A subdued present feeling permits quiet relief instead of forced jubilation. |
+| Connect Four | Aiko wanted three total wins; the last connection of four completed that cumulative goal. | Pride in reaching something she personally wanted. At levels 1-2 she shares it with restraint; at levels 6-8 she boasts playfully. Do not turn the goal into consecutive wins, a specific line direction or one single game's total score. |
+| Blackjack | Aiko wanted not to lose; she went over 21 and lost. | Disappointed ambition and lingering frustration. At levels 6-8 she can openly sulk about busting; at levels 9-10 mixed feelings may also express appreciation of playing together when a retained positive experience supports it. Busting must be proved by the actual result evidence, not inferred from loss alone. |
+
+These cases complement Mastermind's uncracked/cracked-code narrative. For every
+game, choose the actual motive and outcome from the retained cause, then color
+the complete story by friendship and overall emotion. Playfulness, relief,
+setbacks and shared enjoyment are distinct personal meanings; no obligatory
+gratitude or generic result report replaces them. Ordinary play-wish fulfillment
+does not imply victory; cumulative success does not imply a winning streak.
+
+The owner subsequently approved the minimal Rock Paper Scissors and Blackjack
+result evidence below. Full boards, card hands, permanent round histories and
+new Moodlet triggers are not authorized by this narrative planning entry.
+
+#### Approved minimal Rock Paper Scissors and Blackjack result evidence
+
+This is an approved storage/domain planning contract, not an implementation.
+Existing game identity, semantic event identity, Aiko-perspective outcome and
+original wish/aggregate progress remain authoritative. Add only the following
+game-specific facts to the corresponding retained Moodlet cause.
+
+| Game | Additional facts | Narrative supported |
+| --- | --- | --- |
+| Rock Paper Scissors | Aiko's actual move and the player's actual move, each rock/paper/scissors. | The specific winning pair or the identical hands on a draw. |
+| Blackjack | Aiko's actual hand total, the player's actual hand total and the actual decision reason at completed settlement. | Concrete bust, natural Blackjack, comparison of valid totals or draw. |
+
+Rock Paper Scissors evidence is captured only on actual reveal, never from an
+aborted selection. Its moves must agree with the recorded result. Blackjack's
+decision reason has the following seven semantic cases:
+
+- Aiko bust.
+- Player bust.
+- Aiko natural Blackjack.
+- Player natural Blackjack.
+- Both natural Blackjack.
+- Higher valid hand total decided the outcome.
+- Equal valid hand totals produced a draw.
+
+Distinguish a natural two-card Blackjack from 21 reached later. The game supplies
+the actual decision reason; dialogue selection does not guess it from totals or
+infer bust from a loss. Captured totals describe actual cards at settlement,
+including cases where play ended before further dealer draws.
+
+The immutable result evidence describes one specific completed event. For
+cumulative wishes, it describes the triggering final event; existing counters
+describe the aggregate objective. Do not attribute one final pair of moves or
+Blackjack decision reason to every earlier win. Use the same evidence contract
+for qualifying experiences with and without wishes; recording details creates
+no additional Moodlet or reward.
+
+Details remain bounded by existing cause retention and disappear with their
+cause; there is no additional round history. Valid older causes without these
+optional facts remain usable with wording that does not invent missing moves,
+totals or decision reasons. No reconstruction from current game state or
+rejection of an otherwise valid legacy save is authorized.
+
+The game owns factual result creation, application coordination attaches that
+result to the existing experience, and Mind selects the narrative. Shared
+aggregate persistence stores it; the UI and dialogue catalogue do not become
+independent result writers. The owner subsequently rejected extra conversation
+markers in favor of the existing state lifetime, as recorded below.
+
+#### Approved simplification: existing wishes and Moodlets define relevance
+
+The owner rejected the proposed extra conversation-management layer. Existing
+wishes, Moodlets and retained causes already represent what occupies Aiko and
+already survive restarts. Remove discussed flags, discussed-at fields, last-two-
+experience lists, consumed-topic rules and additional completion/restart
+bookkeeping from the Plaudern plan. None of those features was implemented by
+these documentation entries.
+
+An active wish supplies what Aiko wants; a retained cause of an active Moodlet
+supplies an actual experience and its continuing significance. Friendship
+governs openness, and overall emotional composition colors the telling. The
+same relevant experience may be discussed again, using varying wording or a
+different perspective, for as long as its cause remains. A conversation does
+not consume the memory. Eligibility ends through the existing wish lifecycle
+or Moodlet/cause removal rather than through a separate conversational clock.
+An unfulfilled wish must never be narrated as an accomplished event.
+
+The established separation remains: spontaneous comments or wish expressions,
+immediate event reactions, and deliberately initiated personal Plaudern.
+Preserve existing wish-disclosure rules. The later replacement-scope decision
+removes ungrounded general-chat fallback; speech must fit actual retained
+experience, a current wish or real state/situation. Existing dialogue rotation
+provides text variety without a new persisted conversation history.
+
+Restart behavior requires no new conversational storage: restore the existing
+wish and Moodlet/cause state, then derive applicable topics from it. The approved
+additional factual game-result evidence still requires its own compatible
+persistence integration; it is not conversation tracking. Existing completed-
+conversation callbacks and save behavior for actual social care, wish outcomes
+and relief must not be deleted or weakened as part of this simplification.
+
+Remaining preparation is bounded to the narrative/evidence topics identified
+above and a concrete OOP/module and delivery breakdown for result evidence,
+context/selection and topic-organized JSON content. No runtime, catalogue,
+schema or test changes are authorized by this documentation update.
+
+#### Approved food, affection and social narrative occasions
+
+The owner accepted the following personal narrative direction. Examples remain
+draft complete-sequence concepts, not final approved catalogue wording or new
+wish/Moodlet mechanics. Preserve the spontaneous/immediate/Plaudern distinction.
+
+| Experience | Personal significance and coloring |
+| --- | --- |
+| A desired Donut was given and eaten. | `food_fulfilled`: pleasure that this specific preference was met. At levels 3-5 Aiko directly appreciates the food; at levels 9-10 she warmly enjoys being treated by this user. Claim taste/eating only with actual intake evidence. |
+| An expressly unwanted Donut was handed over. | Disappointment that she received what she did not want, even if she put it down. A complaint that she had told the user requires actual wish-expression evidence; an internal wish alone does not prove that warning. |
+| A wanted, accepted petting interaction fulfilled her wish. | `secure`: the desired closeness mattered personally. At levels 1-2 she acknowledges pleasant contact with restraint; at levels 9-10 she openly enjoys that closeness. A full affection need does not invalidate an actual qualifying wish. |
+| Petting became unwelcome and left a retained negative cause. | Existing crowding/boundary experience supports a personal account that the closeness became excessive. High friendship permits affection and a clear need for space to coexist; it does not rewrite the unwanted contact as secretly enjoyed. |
+| A chat or general social wish was fulfilled by actual shared conversation. | `connection`: she wanted time with the user and to tell them something. Lower friendship is more restrained; high friendship allows direct warmth. Invent no prior user replies or exact conversation content that was not retained. |
+| A saying or joke wish was fulfilled by her completed telling. | `cheerful`: enjoyment of sharing something funny. Aiko told the content; do not reverse the roles or claim to have observed the user laughing. |
+| A fact wish was fulfilled by her completed telling. | `enthusiastic`: eagerness to share something noteworthy. Specific retrospective references to the fact or punchline require retained content, not just a category or hash. |
+
+Friendship and overall emotional composition color each full personal account;
+the table does not require arbitrary new Moodlets, extra rewards or guaranteed
+cheerfulness. Mixed feelings require actual concurrent evidence. These occasions
+do not authorize an inference from handover to intake, undisclosed preference to
+prior warning, or completed playback to an observed human emotional response.
+
+The owner subsequently approved the original-content evidence below. Current
+repeat-protection receipts carry identity/hash/framing, not original API text.
+The content-evidence contract preserves the approved removal of conversation
+history management and the existing bounded cause lifetime.
+
+#### Approved original-content evidence for social Moodlet causes
+
+Retain the validated, actually told source content as a small immutable snapshot
+attached to the corresponding Moodlet cause. This is a planning contract only;
+no runtime, catalogue or schema implementation is authorized by this entry.
+
+| Content type | Retained source words |
+| --- | --- |
+| Saying / one-line joke | The complete actually presented one-liner. |
+| Quotation | The complete actually presented quotation and supplied author attribution. |
+| Two-part joke | Setup and punchline as two distinct parts. |
+| Curious fact | The complete actually presented fact. |
+
+Retain the existing category, provider, content identity, source metadata and
+applicable author/license metadata with the content. This distinguishes a short
+joke from a quotation within Sprueche. Preserve the validated original words,
+not an invented summary or generated topic title. Do not store Aiko's intro,
+pauses, emotes or bubble segmentation as the remembered source content; current
+friendship/emotion and authored dialogue supply the later personal framing.
+
+Only attach this snapshot when actual completed playback creates or reinforces
+a qualifying Moodlet cause. Buffered, prepared and aborted content is not a
+personal experience. Each retained cause keeps its own content within the
+existing one/two/three-cause limit, and losing the cause removes its content.
+Restarts restore this evidence without refetching the provider. Older valid
+causes without original text remain usable without inventing their specific
+punchline or fact.
+
+The existing 100-receipt-per-category repetition protection stays separate and
+retains its identifier/fingerprint purpose; do not expand it into a body archive.
+There is no added conversation history, discussed marker or independent content
+lifetime. Existing API-only source-content boundaries remain unchanged.
+
+The owner subsequently approved the narrative occasions for negative experiences
+and the six long-term Moodlets below. Actual evidence and character-first
+coloring remain binding.
+
+#### Approved negative-experience and long-term narrative occasions
+
+The owner approved these narrative directions, not final catalogue wording,
+new triggers, penalties or cause-retention rules. Deliberate Plaudern reflects
+what still bothers Aiko; it does not replace immediate event reactions.
+
+| Negative cause | Personal narrative focus |
+| --- | --- |
+| Repeated poking | The repeated contact became unpleasant. At levels 3-5 she directly acknowledges lingering annoyance; at levels 9-10 mixed feelings may express that she wanted pleasant attention instead. Affection does not retract her boundary. |
+| Excessive closeness | She needed space. At high friendship she can enjoy the relationship and still reject that excessive contact. |
+| Food monotony | She wanted variety rather than the repeated particular food. |
+| Food wish disregarded | Receiving the expressly unwanted food disappointed her, even if she put it down. Claiming a prior warning requires actual retained disclosure evidence. |
+| Withheld object | She wanted to inspect or use what was withheld. If its identity was unknown then, describe her thwarted curiosity without inventing a recognized food name. Attribution to the user must be supported. |
+| Changed familiar place | She actually searched where she expected the known object and found its arrangement changed. Mere pickup/cursor custody supplies no such retrospective search story. |
+| Lost game wish | The specific game outcome disappointed her personally: for example, her Mastermind code was cracked when avoiding defeat mattered. Preserve the actual original objective and result. |
+| Prolonged hunger | The earlier hungry period still affected her. A later meal need not erase that emotional after-effect. |
+| Prolonged exhaustion | The tiring period left her irritable. Invent neither particular computer work nor deliberate sleep deprivation. |
+| Prolonged understimulation | She missed engaging shared activity or variety; name no rejected game without its evidence. |
+| Loneliness | She missed shared conversation and having something to tell the user. |
+| Missing closeness | She missed welcome attention; express this more openly at close friendship, with greater reserve at low friendship. |
+
+Long-term Moodlets express an accumulated present feeling about the relationship
+or herself. Their care thresholds, counts and qualification formulae stay out of
+character speech; period summaries do not reconstruct missing individual events.
+
+| Long-term Moodlet | Personal meaning and friendship coloring |
+| --- | --- |
+| Trusting | Feeling safe and able to relax with the user. Lower friendship admits feeling comfortable; close friendship expresses that ease directly. |
+| Appreciated | Feeling that her individual preferences matter. At close friendship she can warmly appreciate the small things the user does for her; do not claim an unrecorded particular gift. |
+| Optimistic | Renewed willingness to try things and confidence in herself. Close friendship permits playful enthusiasm about what she might achieve; this is distinct from trust in the user's treatment. |
+| Uncertain | Uncertainty about what treatment comes next after inconsistent experiences. Greater closeness permits a candid admission of this insecurity. |
+| Overlooked | An accumulated feeling of being forgotten or peripheral, distinct from one current quiet interval. Close friendship permits admitting she wants to feel more noticed. |
+| Guarded | Difficulty relaxing and a desire for distance/protection after upsetting experiences. Close friendship permits saying she would like to feel at ease but currently struggles. |
+
+Current overall emotional composition colors every complete sequence. Aiko may
+feel trusting yet remain annoyed about poking, or still value a pleasant shared
+experience while disappointed. Avoid automatic cheerfulness, invented blame,
+implicit forgiveness or a mechanically recited status label. These illustrative
+meanings support authored coherent sequences, not a combinatorial sentence mixer.
+
+#### Plaudern preparation audit after narrative decisions
+
+The narrative families, friendship/overall-emotion coloring, existing-state
+relevance and minimal game/API evidence are agreed. No conversation journal,
+discussed flags, new need/wish/Moodlet rules or new retention clock are needed.
+
+Current code still needs implementation planning for:
+
+- Carrying the agreed game result facts and completed API content into optional
+  typed cause evidence and compatible existing SQLite snapshots.
+- Supplying the chosen retained cause and original wish meaning to the existing
+  immutable dialogue context and single Mind/catalogue selection path.
+- Organizing canonical JSON by topic/occasion and writing complete characterful
+  sequences with appropriate conditions. Remove ungrounded generic fallbacks;
+  alternative wording must still have a real state/event basis.
+
+The remaining concrete dialogue-design point is how original API content appears
+in the retrospective conversation. Keeping the words does not itself produce a
+semantic interpretation or an authored personal comment specific to every remote
+fact. Settle a bounded source-reference pattern without implying a new language
+model, automatic factual paraphrasing or invented content. Other exact lines can
+be written/reviewed within small delivery slices; do not require exhaustive
+hypothetical state combinations before starting implementation.
+
+Missing older evidence must not be reconstructed or treated as proof of prior
+wish disclosure, food intake or game details. Use wording supported by what is
+actually retained. Define OOP owners/module names and targeted local verification
+per delivery slice before implementation authorization. No tests, runtime,
+catalogue or schema changes are part of this documentation-only audit.
+
+#### Approved replacement scope: remove ungrounded generic bubbles
+
+The owner clarified that this work replaces existing generic speech rather than
+adding an experience-driven layer alongside it. Remove generic random bubbles
+without a concrete basis, including ungrounded Plaudern/default fallback text.
+A substantially smaller initial dialogue catalogue is acceptable; there is no
+requirement to replace removed lines one for one or retain the old bubble count.
+
+Retain existing functional event-driven speech and its working behavior,
+especially object discovery/recognition, searching, handover, intake and related
+World/Mind interaction sequences. Do not remove these merely because they are
+spontaneous, short or multi-bubble. This scope is not authorization to rewrite
+or dismantle working object interaction flows.
+
+Replacement speech must draw on actual current wishes, retained active Moodlet
+causes or real needs/state/situation. The three speech flows stay distinct.
+No-context spontaneous speech may remain silent; do not fill quiet time with
+an unrelated random line. Do not introduce a substitute generic catalogue as a
+fallback. Specific behavior for a user-requested chat must remain factually
+grounded rather than fabricate an experience or silently disable the control.
+
+Read-only inspection confirms `PetMind._choose_idle_topic()` currently supplies
+an idle/calendar rotation and `select_spontaneous_reaction()` can promote idle
+or need-related events into an unsolicited `talk` story. Audit those selection
+paths together with their actual catalogue entries during delivery: remove
+ungrounded defaults and the mixing of unsolicited stories with deliberately
+initiated Plaudern, while preserving genuinely grounded comments and functional
+event speech. A calendar/time filter alone does not prove a personal experience.
+
+Catalogue cleanup must include obsolete selection branches and direct references
+where no longer used, preserving stable IDs for retained sequences. The delivery
+plan must distinguish the removal list from the protected functional sequences.
+This documentation update changes no runtime, texts, tests or saves.
+
+### Plaudern delivery plan: owners, source files and small slices (2026-10-25)
+
+Requested planning only. None of the modules, resources, schema extensions or
+tests described here is implemented by this document. The approved narrative,
+replacement and no-conversation-history contracts above remain binding. The
+source layout below makes the earlier illustrative JSON organization concrete.
+
+#### Current baseline and parallel work
+
+Read current worktree state before every authorized slice and preserve unrelated
+work. The plan itself is locally modified along with parallel character/export,
+minigame and now Quiz work. Quiz sources and `GameId.QUIZ`/completed-result
+contracts are being added in the shared workspace; do not overwrite or fold an
+unfinished parallel change into a Plaudern commit. Reconcile with its finished
+contract before editing shared game contracts, catalogues or tests.
+
+The earlier five-game examples are not an exhaustive claim about the evolving
+checkout. Quiz is a shared question/answer activity, not an invented opponent
+win/loss for Aiko. A `completed` result must remain distinct from competitive
+results in any narrative adapter. Only actual retained facts may be mentioned;
+do not add new Quiz wish rules or invent scores in this dialogue work.
+
+#### Single ownership and proposed Python modules
+
+| Owner / module | Responsibility |
+| --- | --- |
+| Existing `pet/state.py`, `pet/moodlet_models.py` and cause producers | One Pet aggregate retains immutable cause details. Existing wishes, Moodlet timing, intensity and retention remain authoritative. No second emotional state or memory store. |
+| Existing `games/contracts.py` | Extend the shared immutable game-result contract with typed Rock Paper Scissors and Blackjack details. Pet may import this game module under the existing boundary test; it must not import concrete game engines. Keep one canonical vocabulary for moves and decision reasons rather than duplicate enums. |
+| Existing `games/rock_paper_scissors.py`, `games/blackjack.py` | Produce the actual settled details from game rules. They do not select dialogue or write Pet/storage. |
+| New `pet/social_content_evidence.py` | Frozen `SocialContentEvidence` and the minimal shared content vocabulary for original parts, identity and attribution. Place shared types below application; never import API adapters, prepared reactions or application coordinators into Pet. Move/reuse existing canonical vocabulary where necessary rather than maintain duplicate definitions. |
+| Existing `application/game_experience.py`, `application/social_content.py`, `application/controller.py` and completion path | Carry the immutable facts to the actual existing outcome. API preparation retains original validated parts explicitly; do not recover content by stripping intro/author bubbles from rendered reactions. Existing playback callbacks carry the chosen content to completion, without an extra history or completion tracker. |
+| Existing `pet/mind/mind.py` / `PetMind` | Remain the single behavior/conversation entry point, using actual state and the existing RNG. Keep spontaneous speech, immediate reaction and requested Plaudern distinct. |
+| New `pet/mind/conversation_topics.py` | Frozen `ConversationTopic` and pure `select_conversation_topic(...)` policy over existing wish/Moodlet/state snapshots. Return source facts and semantic topic, not rendered text or a second mutable conversation manager. Apply agreed episode weighting and evidence/knowledge limits. |
+| Existing `pet/mind/dialogue_context.py` | Extend the same immutable context/conditions with the selected topic, original wish meaning and available concrete facts. Existing friendship, needs and overall-emotion fields remain canonical; do not create a parallel conversation-context hierarchy. |
+| Existing `pet/mind/catalog.py` / `DialogueBook` | One strict source loader, condition matcher, placeholder renderer and text-variant rotation. Load the indexed topic files and return the existing `Reaction`/ordered `Cue` sequence. No second experience-specific catalogue engine or independent sentence mixer. |
+| Existing `infrastructure/moodlet_cause_codec.py`, `infrastructure/sqlite/moodlet_cause_rows.py` and schema owner if required | Compatible serialization of optional game/API detail snapshots, using the existing transaction/revision/backup ownership. No UI SQL, separate database, standalone writer or conversational archive. |
+| Existing `infrastructure/character_mind.py` and UI reaction player | Assemble the single catalogue and present the chosen sequence. UI does not infer results, classify API meaning or select personal memories. Existing care/wish/relief completion remains intact. |
+
+Only two new Python modules are planned initially. Additional splitting requires
+a demonstrated responsibility or size problem; OOP does not require a manager
+class for every pure policy. Keep current public owners, strict validation,
+acyclic dependencies and existing import boundaries, without new exemptions.
+
+#### Canonical JSON layout
+
+Planned root: `aiko_pet/data/dialogues/de/`.
+
+```text
+index.json
+spontaneous/
+  needs.json
+  state.json
+plaudern/
+  games.json
+  food.json
+  affection.json
+  social.json
+  negative_experiences.json
+  long_term.json
+  state.json
+events/
+  objects.json
+  care.json
+  games.json
+  contact.json
+  work.json
+```
+
+`index.json` identifies the ordered, explicit source files, language and source
+schema. Topic files contain full authored sequences, stable IDs and typed
+conditions. Keep one aggregate `DialogueBook`; the index is not another content
+store. Do not recursively discover arbitrary JSON or load both the old monolith
+and the new files. Retire `data/dialogues.de.json` when its consumers switch.
+
+`events/objects.json` preserves actual discovery, identification, search,
+withholding/handover and related event sequences with their conditions and
+text/emote order. Other event files preserve genuine functional care, contact,
+game and observed-work responses. They are not the retrospective Plaudern files.
+Game success/failure reflections belong once in `plaudern/games.json`; do not
+duplicate the same sequence in `negative_experiences.json` or per mood label.
+
+`spontaneous/*` holds short comments with actual need/state/situation conditions.
+`plaudern/state.json` permits a grounded response when the user requests chat
+without a fitting retained experience; it must reflect actual current state,
+not an invented past event or an unconditioned general-chat fallback. The absence
+of a spontaneous topic may produce silence. Preserve the existing wish utterance
+templates in `texts.de.json` through `PetMind.wish_reaction`; do not duplicate
+them in a new wish-expression catalogue or change their disclosure semantics.
+
+Keep existing `wishes.json`, `moodlets.json`, `balance.json` and UI text resources
+as their existing owners. Authored content is versioned JSON; private evidence
+remains in SQLite. Conditions express friendship and overall emotion without a
+separate file for every emotion/combination. The readable review view is derived
+from canonical resources rather than a second editable text source.
+
+#### Ordered small delivery slices
+
+| Slice | Concrete change and commit scope | Focused local verification |
+| --- | --- | --- |
+| PL-1A | Record a source/caller inventory classifying protected functional IDs, grounded comments and ungrounded removals. Reconcile parallel Quiz/shared-contract work. No blind deletion by event name alone. | Read-only reference audit across runtime, tests, tools and packaging; no runtime tests needed for the inventory itself. |
+| PL-1B | Introduce the single indexed loader and move existing sequences into topic/event JSON without changing behavior yet. Preserve retained IDs/conditions/ordered beats. Update resource consumers and package inclusion; remove the active monolith in the same cutover. | Source validation, duplicate IDs, conditions/placeholders, exact protected-sequence preservation, resource/package loading and existing catalogue assembly. Replace fixed total-line-count assertions with meaningful required coverage. |
+| PL-2 | Add Rock Paper Scissors result detail types, actual reveal-to-cause propagation and compatible save/read support. One small model/storage commit and one wiring commit if needed. | Move/result consistency, actual reveal versus cancellation, actual wish and ordinary-experience paths, cause retention and real SQLite round-trip including older missing-detail snapshots. |
+| PL-3 | Reuse the shared detail contract for Blackjack: actual totals and seven decision reasons from settled rules through the same cause/storage path. | Natural Blackjack versus later 21, bust/comparison/draw semantics, Aiko/player perspective, cancellation and compatible persistence; use deterministic decks without windows. |
+| PL-4 | Add the immutable original API-content evidence and carry it through existing playback completion into qualifying causes. Split model/codec and application wiring if needed. | One-liner versus quote, author/source metadata, setup/punchline separation, actual full playback versus cancellation, original parts unchanged, cause-cap cleanup and restart. Existing 100-receipt history remains body-free and independent. |
+| PL-5 | Add `conversation_topics.py`, extend the existing context/conditions and route deliberately initiated Plaudern through the same Mind/DialogueBook. Include a small reviewed first set of complete stories and actual-state replies so this replaces the old requested-chat selection atomically. Remove old generic `talk` sequences from the active catalogue instead of retaining a parallel mode. | Actual-cause/wish/target matching, cumulative versus final-round facts, 1:2:3 episode weighting without multiplying cause count, friendship/emotion conditions, unknown-evidence wording and unchanged existing social completion/reward behavior. No discussed-state tests or new history. |
+| PL-6A | Complete game, food and affection story families in separate focused commits. | Required narrative coverage, full-sequence coherence, knowledge/intake boundaries and truthful game role/result; do not require every theoretical combination or exact line counts. |
+| PL-6B | Complete social-content, negative and six long-term families in separate focused commits, applying the agreed source-reference wording pattern. | Original-source integrity, attribution, no fabricated human response or individual event from a period summary, and safe fallback within actual available facts. |
+| PL-6C | Replace spontaneous selection with grounded short comments. Remove idle/calendar random defaults and unsolicited promotion into requested `talk` stories. Delete all remaining ungrounded lines and genuinely unused events/settings/references after proving no retained consumer. | No spontaneous topic means no forced speech; spontaneous comments never use the Plaudern story path. Protected item/search/handover and direct interaction sequences remain reachable and unchanged. No numerical bubble-count target. |
+| PL-7 | Run final complete local suite and OOP/PEP 8/dependency review after all slices, update delivery/removal evidence and final source inventory, correct any justified findings. | One final integrated suite plus configured static gates. Inspect every test over ten seconds; use injected time/data and bounded integration rather than sleep, manual clicks or redundant scenario loops. |
+
+PL-1B's temporarily preserved generic entries exist only to keep the mechanical
+source move reviewable; their removal in PL-5/PL-6C is required for acceptance.
+No final dual catalogue, old random mode or ungrounded fallback may survive.
+
+Per authorized implementation slice: inspect/preserve current local work, use
+small focused commits and targeted local checks, then push cleanly without CI
+using the established skip-CI convention. No test windows, mouse automation,
+live personal-save experiments or whole-suite reruns at every small commit.
+Do not merge as part of these slices. This planning request itself authorizes
+documentation only, not starting PL-1 or running tests.
+
+#### Remaining bounded wording decision
+
+Before the API-reflection text commit, review one complete example for a saying,
+two-part joke and fact using their retained words and personal emotional framing.
+Do not add semantic paraphrasing, generated topic labels or a language-model
+dependency merely because the source text is retained. This wording review need
+not block the independent catalogue inventory or game-evidence slices once they
+are explicitly authorized. Other exact catalogue text is reviewed within the
+small content commits rather than through an exhaustive pre-implementation
+cross-product of friendship, mood and causes.
