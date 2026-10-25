@@ -35,6 +35,7 @@ from ..wishes import ActiveWish, WishArea, WishId, WishObjective, wish_text_key
 from .conversation_topics import (
     CONVERSATION_KEYS,
     CONVERSATION_TEXT_FIELDS,
+    SOCIAL_REFERENCE_FIELDS,
     conversation_fields,
 )
 from .dialogue_context import (
@@ -85,6 +86,17 @@ def render_wish_text(wish: ActiveWish) -> str:
         if "rounds" in TEXT_FIELDS[key]:
             values["rounds"] = str(wish.goal_snapshot.required_count)
     return GERMAN_TEXT.format(key, **values)
+
+
+def _source_excerpt(text: str, maximum: int = 123) -> str:
+    """A literal prefix, visibly marked when shortened; never a paraphrase."""
+    if len(text) <= maximum:
+        return text
+    prefix = text[:maximum - 1]
+    boundary = prefix.rfind(" ")
+    if boundary > 0:
+        prefix = prefix[:boundary]
+    return prefix.rstrip() + "…"
 
 
 def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
@@ -262,6 +274,8 @@ class Line:
                     or conversion
                 ):
                     raise ValueError("Invalid dialogue placeholder")
+                if field in SOCIAL_REFERENCE_FIELDS and phrase != f"{{{field}}}":
+                    raise ValueError("Source references require their own text bubble")
         weight = data.get("weight", BALANCE.integer("dialogue", "default_weight"))
         cooldown = data.get(
             "cooldown_seconds", BALANCE.integer("dialogue", "default_cooldown_seconds")
@@ -515,6 +529,24 @@ class DialogueBook:
                     values["player_move"] = GERMAN_TEXT.format(
                         f"rps.move.{cause.game_details.player_move.value}",
                     )
+                if cause.social_content is not None:
+                    content = cause.social_content
+                    if content.kind == "two_part":
+                        values["source_setup"] = (
+                            f"»{_source_excerpt(content.parts[0])}«"
+                        )
+                        values["source_punchline"] = (
+                            f"»{_source_excerpt(content.parts[1])}«"
+                        )
+                    else:
+                        values["source_quote"] = (
+                            f"»{_source_excerpt(content.parts[0])}«"
+                        )
+                    if content.kind == "quotation":
+                        values["source_author"] = GERMAN_TEXT.format(
+                            "social.quote_author",
+                            author=_source_excerpt(content.author, 120),
+                        )
             beats = tuple(Cue.text(beat.content.format(**values))
                           if beat.kind == "text" else beat for beat in beats)
         return Reaction(line.id, beats, line.animation, event, line.presentation)

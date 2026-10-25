@@ -3,6 +3,7 @@
 import random
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import get_args
 
 from ...games.contracts import (
     BlackjackDecisionReason,
@@ -18,6 +19,7 @@ from ..moodlets import (
     MoodletOutcome,
     MoodletState,
 )
+from ..social_content_evidence import SocialContentKind
 from ..wishes import ActiveWish
 
 
@@ -54,14 +56,18 @@ CONVERSATION_KEYS = frozenset({
       for outcome in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)),
     *(f"game.blackjack.{reason.value}" for reason in BlackjackDecisionReason),
     *(f"social.{category}" for category in ("chat", "single", "twopart", "fact")),
+    *(f"social.content.{kind}" for kind in get_args(SocialContentKind)),
     *(f"negative.{family.value}" for family in NEGATIVE_FAMILIES),
     *(f"poor_care.{family.value}" for family in POOR_CARE_FAMILIES),
     *(f"long_term.{family.value}" for family in LONG_TERM_FAMILIES),
 })
+SOCIAL_REFERENCE_FIELDS = frozenset({
+    "source_quote", "source_setup", "source_punchline", "source_author",
+})
 CONVERSATION_TEXT_FIELDS = frozenset({
     "target", "count", "player_total", "aiko_total", "wish_text",
     "aiko_move", "player_move",
-})
+}) | SOCIAL_REFERENCE_FIELDS
 
 
 def conversation_fields(key: str) -> frozenset[str]:
@@ -70,6 +76,12 @@ def conversation_fields(key: str) -> frozenset[str]:
         return frozenset({"wish_text"})
     if key == "game.cumulative":
         return frozenset({"target", "count"})
+    if key == "social.content.two_part":
+        return frozenset({"source_setup", "source_punchline"})
+    if key == "social.content.quotation":
+        return frozenset({"source_quote", "source_author"})
+    if key in ("social.content.one_liner", "social.content.fact"):
+        return frozenset({"source_quote"})
     if key.startswith("game.rock_paper_scissors.") and key.endswith(".hands"):
         return frozenset({"target", "aiko_move", "player_move"})
     if key.startswith("game.blackjack.") and key.rsplit(".", 1)[-1] in {
@@ -112,6 +124,8 @@ class ConversationTopic:
         if self.kind == ConversationKind.FOOD:
             return f"food.{cause.outcome.value}"
         if self.kind == ConversationKind.SOCIAL:
+            if cause.social_content is not None:
+                return f"social.content.{cause.social_content.kind}"
             return f"social.{cause.target_id}"
         return self.kind.value
 

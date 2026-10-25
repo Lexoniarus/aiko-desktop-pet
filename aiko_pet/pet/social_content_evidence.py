@@ -3,8 +3,10 @@
 import hashlib
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Literal
+from typing import Literal, TypeAlias
 from urllib.parse import urlsplit
+
+SocialContentKind: TypeAlias = Literal["one_liner", "quotation", "two_part", "fact"]
 
 
 class SocialCategory(StrEnum):
@@ -87,7 +89,7 @@ class SocialContentEvidence:
             raise ValueError("Missing social content permalink")
 
     @property
-    def kind(self) -> Literal["one_liner", "quotation", "two_part", "fact"]:
+    def kind(self) -> SocialContentKind:
         if self.provider == SocialProvider.QUOTATIONS:
             return "quotation"
         if self.category == SocialCategory.TWO_PARTS:

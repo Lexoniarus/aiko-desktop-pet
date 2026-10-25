@@ -3,10 +3,1749 @@
   "language": "de",
   "lines": [
     {
-      "id": "plaudern-social-chat",
+      "id": "plaudern-social-one-liner-acquaintance",
       "event": "talk",
       "animation": "idle",
       "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Es hat mir gefallen, dir diesen Spruch zu erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Spruch mit dir zu teilen hat mir Freude gemacht. Die ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, an dem Spruch habe ich noch meine kleine Freude. Schön, dass ich ihn dir erzählen konnte."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Spruch mit dir zu teilen war schön. Das kleine Schmunzeln darüber mag ich dir gern zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch, dass ich dir diesen Spruch erzählt habe. Gerade eher mit einem leisen Schmunzeln."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Spruch, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Der Spruch bringt mich noch zum Schmunzeln. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-wanted-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle daraus ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich ihn dir erzählt habe, freut mich noch. Genau das hatte ich mir gewünscht."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle daraus ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, genau diesen kleinen Erzählmoment wollte ich. Die Freude darüber ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle daraus ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch, dass ich dir diesen Spruch erzählt habe. Gerade eher mit einem leisen Schmunzeln."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-one-liner-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.one_liner"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle daraus ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Der Spruch bringt mich noch zum Schmunzeln. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Das Zitat mit dir zu teilen hat mir gefallen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Es war schön, dir das Zitat zu erzählen. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, das Zitat mit dir zu teilen war schön. Dieser kleine Erzählmoment bleibt mir noch im Herzen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch darüber, dass ich dir das Zitat erzählt habe. So eine kleine Freude zeige ich dir gern."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich denke noch gern daran, dir das Zitat erzählt zu haben. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An das Zitat, das ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Das Zitat mit dir zu teilen war schön. Dieses gute Gefühl bleibt neben dem anderen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-wanted-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle aus dem Zitat ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Das habe ich mir gewünscht, und es hat mir gefallen, es dir zu erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle aus dem Zitat ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, genau diesen Erzählmoment wollte ich. Dass ich das Zitat mit dir geteilt habe, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle aus dem Zitat ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich denke noch gern daran, dir das Zitat erzählt zu haben. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-quotation-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.quotation"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "single"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Spruch erzählen. Diese Stelle aus dem Zitat ist mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_author}"
+        },
+        {
+          "kind": "text",
+          "content": "Das Zitat mit dir zu teilen war schön. Dieses gute Gefühl bleibt neben dem anderen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Es hat mir Freude gemacht, dir diesen Witz zu erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Witz mit dir zu teilen hat mir Spaß gemacht. Ein bisschen Freude daran ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, den Witz mit dir zu teilen war schön. Die kleine Freude daran ist noch nicht weg."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch darüber, dass ich dir den Witz erzählt habe. Mein kleines Schmunzeln darfst du ruhig sehen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Witz mit dir zu teilen hat mir gefallen. Gerade denke ich eher mit einem leisen Schmunzeln daran."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den Witz, den ich dir erzählt habe, denke ich noch. Diese Stellen aus Frage und Pointe:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Der Witz lässt mich noch schmunzeln. Auch wenn mir gerade nicht nur zum Lachen ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-wanted-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "twopart"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Witz erzählen. Diese Stellen aus Frage und Pointe sind mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich hatte mir gewünscht, dir einen Witz zu erzählen. Dass ich es getan habe, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "twopart"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Witz erzählen. Diese Stellen aus Frage und Pointe sind mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, genau diesen kleinen Witz-Moment wollte ich mit dir haben. Die Freude daran ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "twopart"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Witz erzählen. Diese Stellen aus Frage und Pointe sind mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Witz mit dir zu teilen hat mir gefallen. Gerade denke ich eher mit einem leisen Schmunzeln daran."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-two-part-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.two_part"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "twopart"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen Witz erzählen. Diese Stellen aus Frage und Pointe sind mir noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_setup}"
+        },
+        {
+          "kind": "text",
+          "content": "{source_punchline}"
+        },
+        {
+          "kind": "text",
+          "content": "Der Witz lässt mich noch schmunzeln. Auch wenn mir gerade nicht nur zum Lachen ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Es hat mir gefallen, dir diesen kuriosen Fakt zu erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den kuriosen Fakt mit dir zu teilen hat mir Freude gemacht. Daran denke ich noch gern."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, ich freue mich noch, dass ich dir etwas so Kurioses erzählen konnte."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den kuriosen Fakt mit dir zu teilen war schön. Diese kleine Freude mag ich dir offen zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch, dass ich dir diesen Fakt erzählt habe. Gerade eher ganz ruhig."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An den kuriosen Fakt, den ich dir erzählt habe, denke ich noch. Diese Stelle hier:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Fakt mit dir zu teilen war schön. Auch wenn mich gerade noch anderes beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-wanted-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "fact"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen kuriosen Fakt erzählen. Diese Stelle ist mir davon noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Das hatte ich mir gewünscht. Dass ich dir diesen Fakt erzählt habe, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "fact"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen kuriosen Fakt erzählen. Diese Stelle ist mir davon noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, genau diesen kuriosen Erzählmoment wollte ich mit dir teilen. Die Freude darüber ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "fact"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen kuriosen Fakt erzählen. Diese Stelle ist mir davon noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch, dass ich dir diesen Fakt erzählt habe. Gerade eher ganz ruhig."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-fact-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.content.fact"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "fact"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte dir einen kuriosen Fakt erzählen. Diese Stelle ist mir davon noch im Kopf geblieben:"
+        },
+        {
+          "kind": "text",
+          "content": "{source_quote}"
+        },
+        {
+          "kind": "text",
+          "content": "Den Fakt mit dir zu teilen war schön. Auch wenn mich gerade noch anderes beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
       "conditions": [
         {
           "conversation_topics": [
@@ -15,21 +1754,872 @@
           "sleeping": false
         }
       ],
-      "stages": [],
       "periods": [],
       "weekdays": [],
       "beats": [
         {
           "kind": "text",
-          "content": "Unser Gespräch beschäftigt mich noch."
+          "content": "An unser Gespräch denke ich noch zurück."
         },
         {
           "kind": "text",
-          "content": "Dass wir uns Zeit zum Reden genommen haben, hat mir gutgetan."
+          "content": "Die Zeit zum Reden hat mir gutgetan."
         },
         {
           "kind": "emote",
           "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An unser Gespräch denke ich noch zurück."
+        },
+        {
+          "kind": "text",
+          "content": "Es war schön, gemeinsam zu reden. Das gute Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An unser Gespräch denke ich noch zurück."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, unser Redemoment war schön. Ich denke noch gern daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An unser Gespräch denke ich noch zurück."
+        },
+        {
+          "kind": "text",
+          "content": "Die Zeit zum Reden mit dir hat mir gutgetan. Diese kleine Wärme mag ich dir ruhig zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An unser Gespräch denke ich noch zurück."
+        },
+        {
+          "kind": "text",
+          "content": "Unser Gespräch war schön. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An unser Gespräch denke ich noch zurück."
+        },
+        {
+          "kind": "text",
+          "content": "Unser Gespräch hat mir gutgetan. Dieses schöne Gefühl bleibt neben meinen anderen Gefühlen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir miteinander gesprochen haben, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Genau diese gemeinsame Zeit hatte ich mir gewünscht. Sie hat mir gutgetan."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, genau diese Zeit zum Plaudern hatte ich mir gewünscht. Das war schön mit dir."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Diese gemeinsame Zeit habe ich mir gewünscht. Ich mag dir direkt sagen, wie schön unser Redemoment für mich war."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir miteinander geredet haben, freut mich noch. Gerade ganz leise."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-chat-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_wishes": [
+            "chat",
+            "social_any"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte Zeit zum Reden mit dir haben."
+        },
+        {
+          "kind": "text",
+          "content": "Unsere gemeinsame Zeit war schön. Auch wenn gerade nicht alles unbeschwert ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-saying-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.single"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Spruch erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment hat mir Freude gemacht."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-saying-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.single"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Spruch erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, den Spruch mit dir zu teilen war schön. Die Freude daran ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-saying-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.single"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Spruch erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Gerade freue ich mich darüber eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-saying-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.single"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Spruch erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Neben allem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-joke-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.twopart"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Witz erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Es hat mir gefallen, den Witz mit dir zu teilen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-joke-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.twopart"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Witz erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, der gemeinsame Witz-Moment hat mir Freude gemacht."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-joke-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.twopart"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Witz erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Gerade freue ich mich darüber eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-joke-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.twopart"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen Witz erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Neben allem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-fact-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen kuriosen Fakt erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Das zu erzählen hat mir Freude gemacht."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-fact-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.fact"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen kuriosen Fakt erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Es war schön, den kuriosen Fakt mit dir zu teilen. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-fact-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.fact"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen kuriosen Fakt erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Gerade freue ich mich darüber eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-social-old-fact-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.fact"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich dir einen kuriosen Fakt erzählt habe."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Erzählmoment war schön. Neben allem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
         }
       ]
     }
