@@ -82,7 +82,7 @@ class PlaudernTests(unittest.TestCase):
             card("10"), card("9"), card("8"), card("7"), card("K"),
         ))
         reaction = talk(pet)
-        self.assertEqual(reaction.line_id, "plaudern-blackjack-aiko-bust")
+        self.assertTrue(reaction.line_id.startswith("plaudern-blackjack-aiko-bust"))
         self.assertIn("26", reaction.text)
         self.assertNotIn("{", reaction.text)
 
@@ -184,7 +184,10 @@ class PlaudernTests(unittest.TestCase):
             pet = PetState(lived_seconds=100, moodlets=MoodletState(active=(
                 episode(1, MoodletId.SHARED_PLAY, 1, cause),
             )))
-            self.assertTrue(talk(pet).line_id.startswith("plaudern-state-"))
+            reaction = talk(pet)
+            text = " ".join(b.content for b in reaction.beats if b.kind == "text")
+            self.assertNotIn("wollte", text)
+            self.assertNotIn("enttäuscht", text)
 
 
 if __name__ == "__main__":

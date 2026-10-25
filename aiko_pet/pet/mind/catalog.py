@@ -14,19 +14,24 @@ from pathlib import Path, PurePosixPath
 from string import Formatter
 from typing import Any, Literal
 
-from ...games.contracts import BlackjackDetails, GameId
+from ...games.contracts import BlackjackDetails, GameId, RockPaperScissorsDetails
 from ..balance import BALANCE
 from ..catalog_validation import enum_value, load_json, object_fields
 from ..content import GERMAN_TEXT
 from ..emotions import EmotionalState
 from ..food_catalog import DEFAULT_CATALOG
 from ..interaction_events import SocialCompletion
-from ..moodlets import EmotionalDirection, MoodletAttribution, MoodletCauseKind
+from ..moodlets import (
+    EmotionalDirection,
+    MoodletAttribution,
+    MoodletCauseKind,
+    MoodletOutcome,
+)
 from ..needs import NeedCondition
 from ..object_text_contract import OBJECT_TEXT_FIELDS
 from ..text_contract import TEXT_FIELDS
 from ..wish_catalog import WISH_CATALOG
-from ..wishes import ActiveWish, WishArea, wish_text_key
+from ..wishes import ActiveWish, WishArea, WishId, WishObjective, wish_text_key
 from .conversation_topics import (
     CONVERSATION_KEYS,
     CONVERSATION_TEXT_FIELDS,
@@ -100,6 +105,11 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                 "conversation_topics",
                 "conversation_attributions",
                 "conversation_causes",
+                "conversation_objectives",
+                "conversation_targets",
+                "conversation_outcomes",
+                "conversation_round_outcomes",
+                "conversation_wishes",
             ),
             context="dialogue conditions",
         )
@@ -114,6 +124,11 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
             "conversation_topics",
             "conversation_attributions",
             "conversation_causes",
+            "conversation_objectives",
+            "conversation_targets",
+            "conversation_outcomes",
+            "conversation_round_outcomes",
+            "conversation_wishes",
         ):
             items = row.get(key, [])
             if not isinstance(items, list) or not all(
@@ -148,10 +163,24 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                           for v in row.get("conversation_attributions", [])),
                 frozenset(enum_value(v, MoodletCauseKind, context="conversation cause")
                           for v in row.get("conversation_causes", [])),
+                frozenset(enum_value(v, WishObjective, context="conversation objective")
+                          for v in row.get("conversation_objectives", [])),
+                frozenset(row.get("conversation_targets", [])),
+                frozenset(enum_value(v, MoodletOutcome, context="conversation outcome")
+                          for v in row.get("conversation_outcomes", [])),
+                frozenset(enum_value(v, MoodletOutcome, context="conversation round")
+                          for v in row.get("conversation_round_outcomes", [])),
+                frozenset(enum_value(v, WishId, context="conversation source wish")
+                          for v in row.get("conversation_wishes", [])),
             )
         )
         if not result[-1].conversation_topics <= CONVERSATION_KEYS:
             raise ValueError("Unknown conversation topic")
+        if not result[-1].conversation_targets <= (
+            set(DEFAULT_CATALOG.foods) | {game.value for game in GameId}
+            | {"chat", "single", "twopart", "fact", "pet"}
+        ):
+            raise ValueError("Unknown conversation target")
     return tuple(result)
 
 
@@ -479,6 +508,13 @@ class DialogueBook:
                 if isinstance(cause.game_details, BlackjackDetails):
                     values["player_total"] = str(cause.game_details.player_total)
                     values["aiko_total"] = str(cause.game_details.aiko_total)
+                if isinstance(cause.game_details, RockPaperScissorsDetails):
+                    values["aiko_move"] = GERMAN_TEXT.format(
+                        f"rps.move.{cause.game_details.aiko_move.value}",
+                    )
+                    values["player_move"] = GERMAN_TEXT.format(
+                        f"rps.move.{cause.game_details.player_move.value}",
+                    )
             beats = tuple(Cue.text(beat.content.format(**values))
                           if beat.kind == "text" else beat for beat in beats)
         return Reaction(line.id, beats, line.animation, event, line.presentation)

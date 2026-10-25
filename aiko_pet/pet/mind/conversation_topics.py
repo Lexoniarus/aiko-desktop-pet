@@ -4,7 +4,12 @@ import random
 from dataclasses import dataclass
 from enum import StrEnum
 
-from ...games.contracts import BlackjackDecisionReason, BlackjackDetails, GameId
+from ...games.contracts import (
+    BlackjackDecisionReason,
+    BlackjackDetails,
+    GameId,
+    RockPaperScissorsDetails,
+)
 from ..food_catalog import DEFAULT_CATALOG
 from ..moodlets import (
     MoodletCause,
@@ -45,6 +50,8 @@ CONVERSATION_KEYS = frozenset({
     *(f"game.{game.value}.{outcome.value}" for game in GameId if game != GameId.QUIZ
       for outcome in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)),
     "game.quiz.completed",
+    *(f"game.rock_paper_scissors.{outcome.value}.hands"
+      for outcome in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)),
     *(f"game.blackjack.{reason.value}" for reason in BlackjackDecisionReason),
     *(f"social.{category}" for category in ("chat", "single", "twopart", "fact")),
     *(f"negative.{family.value}" for family in NEGATIVE_FAMILIES),
@@ -53,6 +60,7 @@ CONVERSATION_KEYS = frozenset({
 })
 CONVERSATION_TEXT_FIELDS = frozenset({
     "target", "count", "player_total", "aiko_total", "wish_text",
+    "aiko_move", "player_move",
 })
 
 
@@ -62,6 +70,8 @@ def conversation_fields(key: str) -> frozenset[str]:
         return frozenset({"wish_text"})
     if key == "game.cumulative":
         return frozenset({"target", "count"})
+    if key.startswith("game.rock_paper_scissors.") and key.endswith(".hands"):
+        return frozenset({"target", "aiko_move", "player_move"})
     if key.startswith("game.blackjack.") and key.rsplit(".", 1)[-1] in {
         reason.value for reason in BlackjackDecisionReason
     }:
@@ -89,6 +99,9 @@ class ConversationTopic:
                 return "game.cumulative"
             if isinstance(cause.game_details, BlackjackDetails):
                 return f"game.blackjack.{cause.game_details.reason.value}"
+            if isinstance(cause.game_details, RockPaperScissorsDetails):
+                rps_result = cause.game_details.aiko_outcome
+                return f"game.rock_paper_scissors.{rps_result}.hands"
             result = (cause.game.round_outcome if cause.game is not None
                       else cause.outcome)
             return f"game.{cause.target_id}.{result.value}"

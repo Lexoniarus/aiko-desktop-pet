@@ -169,7 +169,1520 @@
       ]
     },
     {
-      "id": "plaudern-mastermind-loss",
+      "id": "plaudern-rps-hands-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Schere–Stein–Papier hatte ich {aiko_move}, du hattest {player_move}."
+        },
+        {
+          "kind": "text",
+          "content": "Meine Hand hat deine geschlagen. Darüber freue ich mich noch ein wenig."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Hihi, meine Hand hat deine geschlagen!"
+        },
+        {
+          "kind": "text",
+          "content": "Unser kleines Schere–Stein–Papier-Duell lässt mich immer noch grinsen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-win-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Damit ging das Duell an mich."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch. Nur gerade eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-win-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich deine Hand mit {player_move} geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, ein schöner kleiner Sieg. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Deine Hand war die stärkere."
+        },
+        {
+          "kind": "text",
+          "content": "An unser Schere–Stein–Papier-Duell denke ich trotzdem gern zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} verloren."
+        },
+        {
+          "kind": "text",
+          "content": "Diesmal ging das Schnick-Schnack-Schnuck an dich. Unser Duell war trotzdem schön."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-nonloss-failed-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss.hands"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} verloren."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte diesmal nicht verlieren. Das enttäuscht mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss.hands"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Hmpf, deine Hand hat meine geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Dabei wollte ich mich gerade nicht geschlagen geben. Das wurmt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-draw-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.draw.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir hatten beide {aiko_move}. Bei Schere–Stein–Papier stand es damit unentschieden."
+        },
+        {
+          "kind": "text",
+          "content": "Denselben Einfall zu haben, fand ich irgendwie lustig."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-hands-draw-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.draw.hands"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Beide {aiko_move}! Hihi, da hatten wir beim Schnick-Schnack-Schnuck denselben Einfall."
+        },
+        {
+          "kind": "text",
+          "content": "Keiner hat gewonnen. Unser Gleichstand bringt mich trotzdem noch zum Schmunzeln."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} gewonnen."
+        },
+        {
+          "kind": "text",
+          "content": "Das wollte ich schaffen. Gerade freue ich mich darüber ganz leise."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} gewonnen. Das wollte ich schaffen!"
+        },
+        {
+          "kind": "text",
+          "content": "Darauf bin ich stolz. Dass mich anderes noch beschäftigt, macht den Sieg nicht kleiner."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unser Schere–Stein–Papier-Duell ging an mich."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch. Es war schön, mit dir zu spielen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Beim Schnick-Schnack-Schnuck habe ich dich geschlagen. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Unser kleines Duell lässt mich immer noch grinsen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Beim Schere–Stein–Papier hast du mich geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Trotzdem denke ich gern an unser kleines Duell zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unser Schnick-Schnack-Schnuck ging diesmal an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Auch ohne Sieg war das gemeinsame Spielen schön."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-draw-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unser Schere–Stein–Papier blieb unentschieden."
+        },
+        {
+          "kind": "text",
+          "content": "Keiner hat den anderen geschlagen. Es war trotzdem schön, zusammen zu spielen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-draw-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Beim Schnick-Schnack-Schnuck blieb es bei einem Gleichstand."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, unser kleines Duell beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe habe ich eine Dreierreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig stolz bin ich darauf noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Drei in einer Reihe! Hihi, bei Tic-Tac-Toe habe ich dich damit geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "So eine kleine Dreierreihe kann mich ganz schön stolz machen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe hast du eine Dreierreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Unser Spiel ist mir trotzdem in schöner Erinnerung geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast bei Tic-Tac-Toe drei in eine Reihe bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Diesmal war deine Reihe zuerst fertig. Schön war unser Spiel trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-draw-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe war das Feld voll, ohne eine Dreierreihe für einen von uns."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir uns so gegenseitig aufgehalten haben, hat mir gefallen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-draw-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Tic-Tac-Toe-Feld war voll, aber keiner hatte drei in einer Reihe."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, wir haben uns ganz schön gegenseitig ausgebremst."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt habe ich vier Steine in eine Reihe bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Viererreihe war fertig! Hihi, bei Vier gewinnt ging der Sieg an mich."
+        },
+        {
+          "kind": "text",
+          "content": "Die vier Steinchen machen mich immer noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt hast du deine Viererreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Auch wenn ich nicht gewonnen habe, denke ich gern an unser Spiel zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Viererreihe war bei Vier gewinnt fertig."
+        },
+        {
+          "kind": "text",
+          "content": "Die Steinchen haben diesmal für dich gepasst. Unser Spiel war trotzdem schön."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-draw-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt war das Feld voll, ohne eine Viererreihe für einen von uns."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir bis dahin zusammen gespielt haben, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-draw-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Vier-gewinnt-Feld war voll. Keine Viererreihe für dich und auch keine für mich."
+        },
+        {
+          "kind": "text",
+          "content": "Keiner hat gewonnen. An unser Steinchen-Duell denke ich trotzdem gern zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-nonloss-failed-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Schere–Stein–Papier habe ich gegen dich verloren."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte diesmal nicht verlieren. Das enttäuscht mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-old-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unser Schnick-Schnack-Schnuck ging an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf. Ich wollte mich nicht geschlagen geben. Die Niederlage hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-win-feeling-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe war fertig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch über diesen Sieg. Gerade aber eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-win-feeling-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe war fertig."
+        },
+        {
+          "kind": "text",
+          "content": "Die Dreierreihe freut mich noch. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-win-feeling-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt habe ich meine Viererreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Die Freude darüber ist noch da. Mir ist nur gerade nicht nach großem Jubel."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-win-feeling-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt habe ich meine Viererreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Auf die vier Steinchen bin ich noch stolz. Daneben ist gerade auch anderes in mir los."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe blieb das volle Feld ohne Dreierreihe."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Der Gleichstand lässt mich noch ein wenig aufatmen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das volle Tic-Tac-Toe-Feld blieb ohne Dreierreihe. Ich habe nicht verloren."
+        },
+        {
+          "kind": "text",
+          "content": "Das wollte ich. Ein kleines Aufatmen zwischen all meinen anderen Gefühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-nonloss-failed-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast bei Tic-Tac-Toe eine Dreierreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte diesmal nicht verlieren. Dass es anders kam, beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast bei Tic-Tac-Toe eine Dreierreihe geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf. Ich wollte mich nicht geschlagen geben. Die Niederlage hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-nonloss-failed-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt war deine Viererreihe fertig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte diesmal nicht verlieren. Dass es anders kam, beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-c4-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.connect_four.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Vier gewinnt war deine Viererreihe fertig."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf. Ich wollte mich nicht geschlagen geben. Die Niederlage hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-nonloss-failed-reserved",
       "event": "talk",
       "animation": "idle",
       "presentation": "story",
@@ -184,7 +1697,10 @@
           ]
         }
       ],
-      "stages": [],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
       "periods": [],
       "weekdays": [],
       "beats": [
@@ -194,7 +1710,7 @@
         },
         {
           "kind": "text",
-          "content": "Das wurmt mich noch ein bisschen. Ich hätte ihn gern besser versteckt."
+          "content": "Ich wollte diesmal nicht verlieren. Dass es anders kam, beschäftigt mich noch."
         },
         {
           "kind": "emote",
@@ -203,7 +1719,3462 @@
       ]
     },
     {
-      "id": "plaudern-blackjack-aiko-bust",
+      "id": "plaudern-mm-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code geknackt."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf. Ich wollte mich nicht geschlagen geben. Die Niederlage hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-ordinary-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code geknackt."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Tüfteln ist mir trotzdem in schöner Erinnerung geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-ordinary-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist geknackt worden. Diesmal hast du mich erwischt."
+        },
+        {
+          "kind": "text",
+          "content": "Schön war unser Code-Duell trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben. Den Sieg wollte ich schaffen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin noch stolz darauf. Gerade nur ohne großen Jubel."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben. Den Sieg wollte ich haben."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, ich bin noch stolz darauf. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bin ich mit {aiko_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Diese Hand ging an dich. Unser Kartenspiel beschäftigt mich trotzdem noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_total} bin ich bei Blackjack über die 21 gerutscht."
+        },
+        {
+          "kind": "text",
+          "content": "Eine Karte zu viel. An unser gemeinsames Kartenspiel denke ich trotzdem noch gern."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bin ich mit {aiko_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bin ich mit {aiko_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-bust-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bist bei Blackjack mit {player_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Damit ging die Hand an mich. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-bust-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bist du mit {player_total} über die 21 gekommen. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Diese Hand ging an mich. Das kleine Siegergefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-bust-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_bust"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bist bei Blackjack mit {player_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-bust-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_bust"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bist bei Blackjack mit {player_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-natural-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatte ich gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "So ein Blackjack gleich am Anfang freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-natural-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleich zwei Karten und 21: mein Blackjack! Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Die Hand ging an mich. Über diesen Start freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-natural-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatte ich gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-natural-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatte ich gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-natural-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hattest du gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Dein Blackjack hat die Hand entschieden. Unser Kartenspiel hat mir trotzdem gefallen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-natural-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleich mit zwei Karten hattest du bei Blackjack 21."
+        },
+        {
+          "kind": "text",
+          "content": "Da war dein Blackjack schon da. Unser Kartenspiel bleibt mir trotzdem schön in Erinnerung."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-natural-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hattest du gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-natural-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hattest du gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-both-natural-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.both_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir hatten bei Blackjack beide gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Zwei Blackjacks auf einmal! Unser Gleichstand ist mir im Kopf geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-both-natural-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.both_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Beide gleich zwei Karten und 21! Wir hatten bei Blackjack denselben starken Start."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, zwei Blackjacks und keiner gewinnt. Daran denke ich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-both-natural-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.both_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir hatten bei Blackjack beide gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-both-natural-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.both_blackjack"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir hatten bei Blackjack beide gleich mit zwei Karten 21."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_round_outcomes": [
+            "win"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine {aiko_total} haben bei Blackjack deine {player_total} geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Nicht über 21 gekommen und gewonnen. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_round_outcomes": [
+            "win"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack waren meine {aiko_total} mehr wert als deine {player_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Nicht über 21 gekommen und die Hand gewonnen. Hihi, das fühlt sich noch schön an."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-win-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine {aiko_total} haben bei Blackjack deine {player_total} geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-win-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine {aiko_total} haben bei Blackjack deine {player_total} geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_round_outcomes": [
+            "loss"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack waren deine {player_total} mehr wert als meine {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Die Hand ging an dich. An unser Kartenspiel denke ich trotzdem gern zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_round_outcomes": [
+            "loss"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine {player_total} haben bei Blackjack meine {aiko_total} geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Diesmal war dein Kartenwert höher. Schön war das Kartenspiel trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-loss-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_round_outcomes": [
+            "loss"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack waren deine {player_total} mehr wert als meine {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-higher-loss-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_round_outcomes": [
+            "loss"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack waren deine {player_total} mehr wert als meine {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-equal-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.equal_total"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatten wir am Ende beide {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Gleicher Kartenwert und ein Unentschieden. Unser Spiel hat mir gefallen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-equal-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.equal_total"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Am Ende beide {aiko_total}! Bei Blackjack hatte keiner von uns die höhere Hand."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, ein Gleichstand. Das gemeinsame Spielen bleibt mir noch schön im Kopf."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-equal-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.equal_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatten wir am Ende beide {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Das gemeinsame Kartenspiel hat mir gutgetan. Gerade denke ich eher still daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-equal-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.equal_total"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "interaction",
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack hatten wir am Ende beide {aiko_total}."
+        },
+        {
+          "kind": "text",
+          "content": "Das Kartenspiel mit dir war schön. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-disappointed-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_total} über 21. Bei Blackjack habe ich verloren, obwohl ich das vermeiden wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Das ärgert mich noch. Meine anderen Gefühle sind deswegen nicht einfach weg."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-win-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack ging die Hand an mich."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir zusammen Karten gespielt haben, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese Blackjack-Hand habe ich gewonnen. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Unser Kartenspiel macht mir immer noch ein gutes Gefühl."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack ging die Hand an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Unser gemeinsames Kartenspiel ist mir trotzdem schön in Erinnerung geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.loss"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Blackjack-Hand ging diesmal an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Auch ohne Sieg war das Kartenspiel mit dir schön."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-draw-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unsere Blackjack-Hand endete unentschieden."
+        },
+        {
+          "kind": "text",
+          "content": "An das gemeinsame Kartenspiel denke ich noch gern zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-old-draw-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.draw"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack blieb es bei einem Gleichstand."
+        },
+        {
+          "kind": "text",
+          "content": "Keiner gewinnt, aber schön war unser Kartenspiel trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-player_blackjack-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack ging die Hand an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Die Niederlage beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-player_blackjack-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_blackjack"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich bei Blackjack geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf, ich wollte gerade nicht verlieren. Das steckt mir noch ein bisschen in den Knochen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-higher_total-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_round_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack ging die Hand an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Die Niederlage beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-higher_total-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.higher_total"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_round_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich bei Blackjack geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf, ich wollte gerade nicht verlieren. Das steckt mir noch ein bisschen in den Knochen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-loss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack ging die Hand an dich."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Die Niederlage beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-defeat-loss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich bei Blackjack geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf, ich wollte gerade nicht verlieren. Das steckt mir noch ein bisschen in den Knochen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-played-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_rounds",
+            "session_rounds"
+          ],
+          "conversation_outcomes": [
+            "completed"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die {count} Spielrunden, die ich mir gewünscht hatte, haben wir zusammen gespielt."
+        },
+        {
+          "kind": "text",
+          "content": "Die gemeinsame Zeit hat mir gutgetan."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-played-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_rounds",
+            "session_rounds"
+          ],
+          "conversation_outcomes": [
+            "completed"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine {count} Spielrunden mit dir sind zusammengekommen. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Es ging mir ums Spielen mit dir. Das schöne Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe die {count} Siege zusammenbekommen, die ich schaffen wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Darauf bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hihi, ich habe es geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe auf diese Siege hingespielt. Jetzt freue ich mich noch richtig darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-majority-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_majority"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt vorne."
+        },
+        {
+          "kind": "text",
+          "content": "Das hatte ich mir vorgenommen. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-majority-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_majority"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach unseren {count} Spielrunden war ich insgesamt vorne. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich am Ende vorne lag, macht mich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "win",
+            "draw"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt nicht hinten."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Dass das geklappt hat, lässt mich noch aufatmen."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "win",
+            "draw"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach unseren {count} Spielrunden stand ich insgesamt nicht als Verliererin da."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, genau das wollte ich. Dieses Aufatmen ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-failed-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte nach unseren {count} Spielrunden insgesamt nicht hinten liegen."
+        },
+        {
+          "kind": "text",
+          "content": "Es kam anders. Diese Enttäuschung beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-failed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach unseren {count} Spielrunden lag ich insgesamt hinten."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf. Gerade das wollte ich verhindern. Die Enttäuschung ist noch nicht weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-mastermind-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "mastermind"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein ungeknackter Mastermind-Code hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich die {count} Siege zusammen, die ich schaffen wollte."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-mastermind-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "mastermind"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein ungeknackter Mastermind-Code hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hihi, darauf bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-tic_tac_toe-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "tic_tac_toe"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich die {count} Siege zusammen, die ich schaffen wollte."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-tic_tac_toe-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "tic_tac_toe"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hihi, darauf bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-rock_paper_scissors-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "rock_paper_scissors"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Sieg bei Schere–Stein–Papier hat das letzte fehlende Stück beigetragen."
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich die {count} Siege zusammen, die ich schaffen wollte."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-rock_paper_scissors-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "rock_paper_scissors"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Sieg bei Schere–Stein–Papier hat das letzte fehlende Stück beigetragen."
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hihi, darauf bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-blackjack-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "blackjack"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die gewonnene Blackjack-Hand hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich die {count} Siege zusammen, die ich schaffen wollte."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-blackjack-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "blackjack"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die gewonnene Blackjack-Hand hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hihi, darauf bin ich noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-quiz-shared-reserved",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.quiz.completed"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Quizfragen mit dir durchzugehen hat mir gefallen."
+        },
+        {
+          "kind": "text",
+          "content": "Unsere gemeinsame Knobelei beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-quiz-shared-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.quiz.completed"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, unsere Quiz-Knobelei geht mir noch durch den Kopf."
+        },
+        {
+          "kind": "text",
+          "content": "Die Fragen mit dir durchzugehen hat mir Spaß gemacht."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Meine Hand hat deine geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte gewinnen. Ein wenig freue ich mich noch, dass es geklappt hat."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} gewonnen."
+        },
+        {
+          "kind": "text",
+          "content": "Genau so wollte ich abschneiden. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte {aiko_move}, du hattest {player_move}. Hihi, meine Hand hat deine geschlagen!"
+        },
+        {
+          "kind": "text",
+          "content": "Genau diesen Sieg wollte ich. Ein kleines bisschen darf ich damit angeben, oder?"
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-rps-wanted-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.rock_paper_scissors.win.hands"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_move} habe ich gegen {player_move} gewonnen. Hehe, diesmal habe ich dich erwischt!"
+        },
+        {
+          "kind": "text",
+          "content": "Den Sieg wollte ich haben. Ich bin noch ganz stolz darauf und mag dir das auch zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben."
+        },
+        {
+          "kind": "text",
+          "content": "Ich hatte mir vorgenommen zu gewinnen. Darüber freue ich mich noch ein wenig."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code nicht geknackt. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Dass mein Code gehalten hat, freut mich noch. Ich wollte diesmal gewinnen."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben. Hehe, erwischt!"
+        },
+        {
+          "kind": "text",
+          "content": "Den Sieg wollte ich haben. Jetzt bin ich noch ein bisschen stolz auf meinen Code."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mm-wanted-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_win",
+            "retry_win"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code nicht geknackt. Hihi, mein kleiner Triumph!"
+        },
+        {
+          "kind": "text",
+          "content": "Den Sieg wollte ich schaffen. Ich bin noch so stolz darauf, dass ich es dir direkt sagen muss."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe blieb das volle Feld ohne Dreierreihe."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Mit diesem Gleichstand bin ich noch erleichtert."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Tic-Tac-Toe hatte keiner von uns drei in einer Reihe, als das Feld voll war."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte mich nicht geschlagen geben. Hach, der Gleichstand lässt mich noch aufatmen."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "friend"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keine Dreierreihe für dich! Bei Tic-Tac-Toe haben wir uns bis zum vollen Feld aufgehalten."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, ich wollte diesmal einfach nicht verlieren. Der Gleichstand tut mir noch gut."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-ttt-relief-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.tic_tac_toe.draw"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "next_non_loss"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das volle Tic-Tac-Toe-Feld blieb ohne Dreierreihe. Du hast mich nicht geschlagen."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, ich wollte diesmal wirklich nicht verlieren. Wie erleichtert ich noch bin, darfst du ruhig wissen."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Viererreihe bei Vier gewinnt hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Die {count} Siege, die ich schaffen wollte, sind zusammen. Darauf bin ich noch ein wenig stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit meiner Viererreihe bei Vier gewinnt ist der letzte fehlende Sieg dazugekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte meine {count} Siege schaffen. Hihi, das habe ich hinbekommen."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "friend"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Viererreihe war fertig und mein letzter fehlender Sieg damit auch!"
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen. Hihi, bei Vier gewinnt habe ich den Abschluss geschafft!"
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit der Viererreihe bei Vier gewinnt habe ich den letzten fehlenden Sieg geschafft."
+        },
+        {
+          "kind": "text",
+          "content": "Meine {count} Siege sind zusammen! Hehe, diesen kleinen Stolz muss ich dir einfach zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-disappointed-acquaintance",
       "event": "talk",
       "animation": "idle",
       "presentation": "story",
@@ -218,7 +5189,45 @@
           ]
         }
       ],
-      "stages": [],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_total} bin ich bei Blackjack über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte nicht verlieren. Das hat mich enttäuscht und beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-disappointed-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
       "periods": [],
       "weekdays": [],
       "beats": [
@@ -228,7 +5237,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine Karte zu viel! Daran knabbere ich noch ein bisschen."
+          "content": "Ausgerechnet, als ich nicht verlieren wollte. Diese Hand wurmt mich noch ein bisschen."
         },
         {
           "kind": "emote",
@@ -237,33 +5246,74 @@
       ]
     },
     {
-      "id": "plaudern-blackjack-player-bust",
+      "id": "plaudern-blackjack-aiko-bust-disappointed-friend",
       "event": "talk",
       "animation": "idle",
       "presentation": "story",
       "conditions": [
         {
           "conversation_topics": [
-            "game.blackjack.player_bust"
+            "game.blackjack.aiko_bust"
           ],
-          "sleeping": false
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
         }
       ],
-      "stages": [],
+      "stages": [
+        "friend"
+      ],
       "periods": [],
       "weekdays": [],
       "beats": [
         {
           "kind": "text",
-          "content": "Bei Blackjack bist du mit {player_total} über die 21 gekommen."
+          "content": "Bei Blackjack bin ich mit {aiko_total} über die 21 gerutscht. Hmpf!"
         },
         {
           "kind": "text",
-          "content": "Hihi, damit ging die Hand an mich. Darüber freue ich mich noch."
+          "content": "Dabei wollte ich gerade nicht verlieren. Die eine Karte zu viel hängt mir noch nach."
         },
         {
           "kind": "emote",
-          "content": "faceHappy"
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust-disappointed-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit {aiko_total} über 21. Bei Blackjack habe ich verloren."
+        },
+        {
+          "kind": "text",
+          "content": "Das wollte ich gerade nicht. Ich mag dich, aber über diese Hand schmolle ich immer noch ein bisschen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
         }
       ]
     }
