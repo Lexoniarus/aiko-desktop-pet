@@ -383,6 +383,16 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
+PL-2 retains actual revealed Rock Paper Scissors hands as optional cause details
+for existing wish success/failure and qualified ordinary play/comeback episodes.
+Start/aborted selections carry no result details. The shared immutable game
+contract validates moves against the outcome; Pet still owns all changes.
+Aggregate goals keep their existing counters while details describe only their
+triggering final round. No reward, wish rule, Moodlet trigger, stage duration,
+fun/friendship balance or visible dialogue changes in this slice.
+See [cause storage](DATA_AND_SAVES.md) and the
+[PL-2 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-2-delivery-revealed-rock-paper-scissors-result-evidence).
+
 The renewed wish/Moodlet delivery passed step-8 local acceptance: the isolated
 candidate completed 1,701 repository tests in 77.761 seconds with no failures or
 errors and 111 explicit native-display skips. Whole Ruff, strict Mypy and Pyright

@@ -14,6 +14,9 @@
 > **PL-1B delivered:** the [indexed-source cutover](#pl-1b-delivery-indexed-catalogue-with-unchanged-sequences)
 > preserves all 1,153 definitions and the original global order. The monolith is
 > retired; generic speech remains intentionally unchanged until PL-5/PL-6C.
+> **PL-2 delivered:** [actual Rock Paper Scissors hands](#pl-2-delivery-revealed-rock-paper-scissors-result-evidence)
+> now reach existing wish and ordinary-play Moodlet causes and compatible SQLite
+> storage. Blackjack details, API content and Plaudern selection remain later work.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -10850,3 +10853,63 @@ ownership and resource documentation are updated; PL-1A's manifest remains a
 dated comparison artifact, not a live duplicate text source. No app/test windows,
 mouse automation, live API, personal-save access/change, GitHub CI or merge.
 No full-suite result is claimed; final integrated acceptance remains PL-7.
+
+#### PL-2 delivery: revealed Rock Paper Scissors result evidence
+
+Delivered on the existing Social Optimization branch with two focused runtime
+commits: **`e09b1c6`** (typed contracts and compatible cause persistence) and
+**`975366a`** (actual reveal-to-cause wiring and targeted integration coverage).
+Parallel character/export files remain unstaged and untouched.
+
+Ownership and flow:
+
+- `games/contracts.py` owns the canonical `RockPaperScissorsMove`, shared winning
+  pairs and frozen `RockPaperScissorsDetails`. Existing `Move` and `WINNING_MOVES`
+  imports from the game remain explicit aliases, not duplicate vocabularies.
+- A `GameRoundEvent` can carry details only for RPS with a matching actual
+  outcome. Start events carry none. `Round.details` comes from the actual hands
+  returned on reveal; the existing sequence emits it at its established reveal
+  boundary. Countdown, reactions, timer/cancellation behavior and copy are intact.
+- `GameExperienceCoordinator` passes the facts through existing Pet operations
+  to the original assigned wish and existing ordinary comeback/session awards.
+  Original goals and counters remain unchanged. Details on cumulative outcomes
+  describe the actual triggering final round, including a draw or loss, not an
+  invented sequence of identical earlier rounds.
+- `MoodletCause.game_details` is optional and validates the target and Aiko's
+  settled-round outcome. Existing `MoodletGameResult` still describes wish counts
+  and the final-round result. There is no new experience/memory owner or archive.
+- Ordinary shared-session awards use the already existing transient last-round
+  event; moves are not persisted in the 512-entry care-evidence window or wish
+  progress. Existing reward qualification prevents duplicate impressions.
+
+Storage uses the existing cause codec and SQLite `details_snapshot` field.
+Version-one envelopes and causes without hands keep their old shape; only actual
+new evidence writes a strict version-two envelope adding `game_details` beside
+`game`/`period`. Readers support both without reconstructing missing facts.
+No SQLite DDL, database schema-version bump, new table, independent write or
+change to revision/transaction/backup ownership is needed. Cause cap, lower-tier
+trimming and episode removal also remove their details/rows.
+
+Validation:
+
+- Model/storage slice: **51 focused tests in 0.937 s**, no failures/errors/skips.
+  New temporary SQLite connections close explicitly; no user file is involved.
+- Final wiring acceptance: **91 targeted tests in 2.948 s**, zero
+  failures/errors/skips. Longest **0.261 s**; none exceeds ten seconds.
+- Coverage includes all nine hand pairs, typed public move compatibility,
+  start/wrong-game/inconsistent-result rejection, real reveal and cancellation,
+  original winning/failed non-loss wishes, restart-safe cumulative play with a
+  final draw, existing ordinary shared play/comeback without wishes, replay
+  idempotency, actual SQLite close/reopen, legacy missing detail, malformed
+  detail envelopes, three/one/zero retained SQL causes and package boundaries.
+- Scoped Ruff passes. Fresh strict Mypy passes for all **ten** changed production
+  modules; Pyright passes for the **twelve** changed Python source/test files.
+  Dependency tests include the acyclic graph and allowed layer imports without
+  adding exemptions. The UI only forwards game-owned immutable facts.
+
+Reports remain outside Git under `%TEMP%/aiko-pl2-reports-o9tviybz/`
+(`model.json`, `final.json`). Native Tk creation was blocked before test imports
+and default saves redirected to disposable storage. No app/test windows, mouse
+automation, live APIs, personal-save access/change, GitHub CI, full suite or merge.
+No new dialogue, emotion interpretation, wish rule, Moodlet reward or game/care
+balance was introduced. The final whole-branch suite remains PL-7.

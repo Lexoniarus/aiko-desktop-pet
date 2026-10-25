@@ -204,6 +204,22 @@ decay trims to the newest fitting the lower level. A stronger single event or
 incomplete old save may have fewer actual causes. Missing events are never
 fabricated and ended episodes have no separate archive.
 
+PL-2 adds optional `game_details` to a retained cause. For Rock Paper Scissors
+it contains `game_id: "rock_paper_scissors"`, `player_move` and `aiko_move`, each
+using the canonical rock/paper/scissors vocabulary from `games/contracts.py`.
+The game event uses the player's result perspective; the cause validates the
+hands against Aiko's actual final-round result. For a cumulative wish that is
+`game.round_outcome`, not the aggregate goal outcome. Old causes without these
+facts remain valid and are not reconstructed.
+
+SQLite reuses `moodlet_causes.details_snapshot`: version 1 remains unchanged
+for causes without new facts; version 2 adds the non-null `game_details` member
+beside existing `game` and `period` data. Both versions are read strictly. The
+table/schema version and shared transaction/revision ownership are unchanged.
+Details disappear with their trimmed/removed cause, including on row replacement.
+No moves are added to the bounded care-event history or wish progress; only the
+existing transient final event carries them until session qualification.
+
 The codec accepts and validates obsolete optional per-cause `level` metadata,
 but ignores it; new saves omit it. Available old receipts survive within the
 current cap; already discarded receipts cannot be reconstructed. Wish results,

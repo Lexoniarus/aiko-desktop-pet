@@ -33,6 +33,13 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest RPS result-evidence slice (PL-2): **91 targeted tests in 2.948 s**, no
+failures/errors/skips, longest **0.261 s**, plus scoped Ruff, fresh strict Mypy
+for ten changed source modules and Pyright for all twelve changed Python files.
+The [delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-2-delivery-revealed-rock-paper-scissors-result-evidence)
+covers actual reveal, cause propagation, old/new SQLite snapshots and cleanup.
+No windows, mouse control, personal-save access, live API, CI or full-suite run.
+
 Latest dialogue-source cutover (PL-1B): **125 targeted tests in 2.743 s**, no
 failures/errors/skips, longest **0.303 s**, plus scoped Ruff/strict Mypy/Pyright.
 All 1,153 definitions and their global order match the PL-1A baseline; 1,776
