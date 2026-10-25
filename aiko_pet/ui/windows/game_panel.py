@@ -146,7 +146,9 @@ class GamePanel:
             background=self.skin.background, padding=padding,
         )
 
-    def show(self, root: tk.Tk) -> None:
+    def show(
+        self, root: tk.Tk, *, prepare_body: Callable[[int], None] | None = None,
+    ) -> None:
         if not self._placed:
             self.scroll.adopt()
             self.window.update_idletasks()
@@ -154,7 +156,15 @@ class GamePanel:
                 root.winfo_rootx() + root.winfo_width() // 2,
                 root.winfo_rooty() + root.winfo_height() // 2,
             )
-            height = min(self.window.winfo_reqheight(), max(1, bounds.height - 20))
+            requested_height = self.window.winfo_reqheight()
+            height = min(requested_height, max(1, bounds.height - 20))
+            if prepare_body is not None:
+                # Allocate the known body budget before mapping. Views must not
+                # expose their unconstrained requested layout for the first frame.
+                prepare_body(max(
+                    1, self.scroll.canvas.winfo_reqheight()
+                    - (requested_height - height),
+                ))
             x, y = beside_character(
                 root.winfo_rootx(), root.winfo_rooty(),
                 root.winfo_width(), root.winfo_height(), self.width, height, bounds,

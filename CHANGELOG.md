@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Support Mastermind color-then-slot clicks alongside visible capsule dragging.
+  Distinguish clicks from drags, release capture on cancellation, and prepare
+  the board's constrained layout before mapping. Allow draft editing during
+  dialogue while retaining submission/evaluation and completed-round guards.
+
 - Keep choices stationary when a pointer press gives them focus in a scroll
   region. Retain automatic reveal for keyboard focus so partially visible game
   choices do not lose their first click to a focus-induced scroll.

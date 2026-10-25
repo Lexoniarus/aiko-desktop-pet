@@ -42,12 +42,13 @@ class MastermindWindow:
         self._closed, self._busy = False, True
         self._on_closed, self._codes, self.skin = on_closed, codes, skin
         self._draft: list[str | None] = [None] * PLACES
+        self._selected_color: str | None = None
         self._active, self._feedback_visible = 0, 4
         self._view = RoundView()
         self._sequence: MastermindSequence | None = None
         self._layout_timer: str | None = None
         self._palette_images: dict[str, tk.PhotoImage] = {}
-        self._drag = MastermindDrag(codes.images, self._drop)
+        self._drag = MastermindDrag(codes.images, self._drop, self._click_piece)
         self._panel = GamePanel(
             root,
             GERMAN_TEXT.format("game.name.mastermind"),
@@ -80,7 +81,7 @@ class MastermindWindow:
                 round_event=round_event,
             )
             self._present(self._sequence.game.view, self._sequence.game.score, True, 4)
-            self._panel.show(root)
+            self._panel.show(root, prepare_body=self._fit_board)
             self._queue_layout()
             # Palette arrows edit the draft before inherited scroll bindings.
             tags = self.palette.bindtags()
@@ -221,11 +222,12 @@ class MastermindWindow:
         if self._sequence is not None:
             self._sequence.greet()
 
-    def _fit_board(self) -> None:
+    def _fit_board(self, body_height: int | None = None) -> None:
         """Keep the palette and the entire board viewport inside the body."""
         self._layout_timer = None
         available = (
-            self._panel.scroll.canvas.winfo_height()
+            (self._panel.scroll.canvas.winfo_height() if body_height is None
+             else body_height)
             - self.board_scroll.frame.winfo_y()
             - 12
         )
@@ -271,7 +273,7 @@ class MastermindWindow:
         enabled = self._editable()
         self.palette.configure(cursor="hand2" if enabled else "arrow")
         update_button_state(
-            self.submit_button, enabled=enabled and None not in self._draft
+            self.submit_button, enabled=enabled and not busy and None not in self._draft
         )
         update_button_state(self.clear_button, enabled=enabled and any(self._draft))
         self._draw_board()
@@ -378,13 +380,15 @@ class MastermindWindow:
                 )
 
     def _editable(self) -> bool:
-        return not self._closed and not self._busy and self._view.result is None
+        # Dialogue may run while the player prepares a guess. Evaluation and
+        # terminal rounds still protect the board; submission has its own gate.
+        return (not self._closed and self._feedback_visible == 4
+                and self._view.result is None)
 
     def _palette_press(self, event: tk.Event[tk.Misc]) -> str:
         if self._editable():
             index = event.x // self._palette_step
             if 0 <= index < len(COLORS):
-                self.palette.focus_set()
                 return self._drag.begin(event, COLORS[index])
         return "break"
 
@@ -417,6 +421,9 @@ class MastermindWindow:
             color = self._draft[slot]
             if color is not None:
                 return self._drag.begin(event, color, slot)
+            if self._selected_color is not None:
+                self._draft[slot] = self._selected_color
+                self._refresh()
         return "break"
 
     def _drop(self, color: str, source: int | None, x: int, y: int) -> None:
@@ -434,8 +441,29 @@ class MastermindWindow:
             self._view, self._sequence.game.score, self._busy, self._feedback_visible
         )
 
+    def _click_piece(self, color: str, source: int | None) -> None:
+        if not self._editable():
+            return
+        if source is not None:
+            if self._selected_color is not None:
+                self._draft[source] = self._selected_color
+                self._refresh()
+            return
+        self._selected_color = color
+        # Focus only after the completed click; keyboard reveal must not move
+        # the palette while a pointer gesture is still in progress.
+        self.palette.focus_set()
+        self.palette.delete("selection")
+        index = COLORS.index(color)
+        self.palette.create_rectangle(
+            index * self._palette_step + 1, 1,
+            (index + 1) * self._palette_step - 1,
+            38 if self._palette_step == 40 else 54,
+            outline=self.skin.accent, width=2, tags="selection",
+        )
+
     def choose(self, color: str) -> None:
-        """Keyboard alternative; drag and drop is the primary pointer input."""
+        """Number keys fill the active slot; pointer input selects color then slot."""
         if self._editable() and color in COLORS:
             self._draft[self._active] = color
             self._active = (self._active + 1) % PLACES
@@ -455,7 +483,7 @@ class MastermindWindow:
             self._draw_board()
 
     def submit(self) -> None:
-        if self._editable() and None not in self._draft:
+        if self._editable() and not self._busy and None not in self._draft:
             assert self._sequence is not None
             code = tuple(color for color in self._draft if color is not None)
             if self._sequence.submit(code):

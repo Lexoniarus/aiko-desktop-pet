@@ -9942,3 +9942,51 @@ construction. Local acceptance: **17 tests passed in 0.279 s**, no skips, longes
 and the default save redirected to a temporary directory. No personal save was
 opened or changed; no test windows, mouse control, HTTP or GitHub CI. Parallel
 character/export changes are excluded from this fix. The full suite was not rerun.
+
+### Follow-up: game choice clicks and Mastermind pointer input (2026-10-25)
+
+The user confirmed the blank wish screenshot preceded its correction. The next
+runtime report concerned ignored first game clicks, Mastermind's intermediate
+scrolling layout and missing click/visible-drag alternatives. Scope remains UI
+coordination and presentation; no game rules, wish rewards, pet values or storage
+contracts change.
+
+The existing local scroll tag revealed a newly focused control even when focus
+was caused by a pointer press. Native ttk buttons focus on press and cancel their
+pressed state on pointer leave. Moving a partially visible choice during that
+sequence can therefore cancel its first click. `ScrollRegion` now distinguishes
+pointer focus from keyboard focus and leaves the pressed choice stationary.
+Keyboard focus still reveals offscreen choices; bindings stay local to the region.
+
+Mastermind previously treated every palette press as a drag and discarded a
+release outside a board slot. A plain palette click could not select a color.
+`MastermindDrag` now owns the same single local gesture, distinguishes movement
+at six pixels, creates and raises its color preview on real movement, and routes
+clicks separately from drops. Cancellation releases its grab and destroys its
+preview. `MastermindWindow` owns selected color and draft: click a color, then
+click the destination slot (including replacement), or drag directly from the
+palette/current row. Number keys retain direct draft entry. Focus is requested
+after a completed palette click so it cannot scroll the source mid-gesture.
+
+The same view previously rejected draft input throughout the greeting and other
+dialogue despite displaying the board. Draft editing is now independent of that
+dialogue lock; submission still waits for readiness, and evaluation/terminal rows
+remain protected. `GamePanel.show` offers a body-budget preparation callback before
+its first mapping. Mastermind uses it to constrain its board viewport before
+showing the window, then retains the existing resize callback for later changes.
+There is no extra window owner, polling loop or second game state.
+
+Local checks cover click/drag distinction and preview requests, cancellation and
+failed-preview cleanup, color-then-slot placement/replacement, draft admission,
+submission blocking, pre-map layout ordering, pointer/keyboard focus distinction,
+existing game rules/sequences and menu/architecture/content contracts. Native
+Tk is blocked before discovery; saves are redirected to a temporary fixture.
+Windows appearance, capture and physical click delivery remain manual acceptance
+items; headless widget doubles are not a claim of native visual validation.
+
+Final targeted acceptance: **75 tests passed in 0.220 s**, zero skips/failures/
+errors; longest **0.064 s**, none over ten seconds. Scoped Ruff and fresh strict
+Mypy on the four changed production modules pass. Repository Pyright passes;
+the final palette-focus adjustment and input tests also pass scoped Pyright.
+No test windows, mouse automation, live HTTP or CI were used. No full-suite
+rerun or personal-save change; parallel character/export work remains excluded.

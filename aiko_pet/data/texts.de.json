@@ -417,7 +417,7 @@
     "connect_four.wait": "Einen Moment ...",
     "game.name.mastermind": "Mastermind",
     "mastermind.code": "Aikos Code",
-    "mastermind.rules": "4 Stellen · 6 Farben · 10 Versuche\nZiehe die Pins in die aktuelle Reihe und drücke Prüfen.\nFarben dürfen mehrfach vorkommen. Ohne Zeitlimit.",
+    "mastermind.rules": "4 Stellen · 6 Farben · 10 Versuche\nWähle eine Farbe und klicke auf ein Feld oder ziehe die Kapsel dorthin. Danach Prüfen.\nFarben dürfen mehrfach vorkommen. Ohne Zeitlimit.",
     "mastermind.evaluating": "Aiko setzt ihre Rückmeldungs-Pins …",
     "mastermind.board.guesses": "Deine Versuche",
     "mastermind.board.feedback": "Aikos Rückmeldung",
