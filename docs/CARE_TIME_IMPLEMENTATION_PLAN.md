@@ -11,6 +11,9 @@
 > **PL-1A delivered:** the [source/reference inventory](PLAUDERN_SOURCE_INVENTORY.md)
 > and exhaustive per-ID manifest document preservation/removal scope. No runtime
 > or catalogue change is included; PL-1B remains a separate implementation slice.
+> **PL-1B delivered:** the [indexed-source cutover](#pl-1b-delivery-indexed-catalogue-with-unchanged-sequences)
+> preserves all 1,153 definitions and the original global order. The monolith is
+> retired; generic speech remains intentionally unchanged until PL-5/PL-6C.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -10783,3 +10786,67 @@ During the audit, the parallel Quiz owner secured `e473338` on this same branch,
 between documentation commits `7a58367` and `dd70f41`. The shared-branch push
 included that existing commit. PL-1A's own commits contain documentation only;
 the final live catalogue still matches the frozen inventory hash exactly.
+
+#### PL-1B delivery: indexed catalogue with unchanged sequences
+
+The owner authorized the source split/common-loader cutover, preservation of
+parallel work, focused no-window local checks and clean commits/push. The
+existing Quiz baseline is committed; the catalogue exactly matched the PL-1A
+snapshot before edits. Character/export work remains separate and untouched.
+The runtime/resource and focused test cutover is committed as `30f021d`.
+
+`data/dialogues/de/index.json` is now the only packaged entrypoint. Eight
+populated topic files contain the existing sequences: needs/state comments,
+legacy requested chat, and protected object/care/game/contact/work events. No
+empty future-family files or new dialogue text were added. The old packaged
+`data/dialogues.de.json` is removed, not retained as a parallel fallback.
+
+The manifest uses `index_version: 1`, source schema `catalogue_version: 3`,
+German language, explicit `files` and `line_order`. The latter preserves the
+complete original ordering, not merely within-file or alphabetical order;
+changing candidate order could otherwise change seeded weighted selection.
+Individual source definitions, IDs, conditions, ordered beats, stages, weights,
+cooldowns and presentation remain identical.
+
+The existing broad personal-save ignore rule also matched the two authored
+`state.json` topic files. Two exact package-path exceptions now include those
+resources without changing ignore behavior for actual saves/databases. Verified
+all nine indexed resources are versioned and representative private-save paths
+remain ignored; the copied-source-bundle loader check passes.
+
+`DialogueBook.from_file()` remains the one loader/selection facade. It accepts
+the packaged index or an explicitly supplied standalone version-three source
+through the same line parser. It rejects invalid source paths, missing files,
+duplicate files/IDs, nested indexes and incomplete or duplicate ID ordering.
+Unlisted JSON is not discovered. No new mutable owner, conversation history,
+topic selection, care effect or speech timing is introduced in this slice.
+
+Direct source-reader test fixtures now read an actual topic source rather than
+assuming the entrypoint contains `lines`; balance fixtures resolve the separate
+balance resource independently of the nested catalogue location. Old exact-path
+and global minimum-copy assertions are replaced by actual resource/functional
+coverage. Existing standalone game loading remains supported and tested.
+
+Verification:
+
+- **125 focused local tests in 2.743 seconds**, no failures/errors/skips. Native
+  Tk creation was blocked before discovery/import, and default save location
+  redirected to disposable storage. Longest case **0.303 seconds**; no case
+  exceeded ten seconds. Checks include strict indexed resources, standalone and
+  copied-bundle loading, dialogue/context/emotion/sequence contracts, protected
+  object/petting behavior and full package dependency boundaries/cycle checks.
+- Independent comparison against the preserved old source and PL-1A hashes:
+  **all 1,153 complete definitions and global order identical**, including all
+  **214 object sequences** and every currently planned generic removal.
+- **1,776 seeded selections** across 148 events, four friendship stages and
+  three emotional contexts match the old explicit source exactly, including
+  resulting RNG and rotation state. The preservation comparison took **0.191 s**.
+- Scoped Ruff passes; fresh strict Mypy passes for the two changed source/tool
+  modules, and Pyright passes for all thirteen changed Python files.
+
+Reports and preserved old input remain outside Git under
+`%TEMP%/aiko-pl1b-2wjluhji/` (`targeted.json`, `preservation.json`). Current source
+ownership and resource documentation are updated; PL-1A's manifest remains a
+dated comparison artifact, not a live duplicate text source. No app/test windows,
+mouse automation, live API, personal-save access/change, GitHub CI or merge.
+No full-suite result is claimed; final integrated acceptance remains PL-7.

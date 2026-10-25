@@ -15,7 +15,7 @@ SQLite tables, not new JSON checkpoints.
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
 | `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
 | `aiko_pet/data/object_grammar.de.json` | German grammatical gender and optional spoken-name override for every consumable; no duplicated nutrition/menu names |
-| `aiko_pet/data/dialogues.de.json` | Version-3 character sequences, relationship/state filters, stories and rotation |
+| `aiko_pet/data/dialogues/de/index.json` | Version-3 character sequences, relationship/state filters, stories and rotation |
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
 | `aiko_pet/assets/items/items.json` | Item images, icons and hand pivots |
@@ -78,6 +78,29 @@ value or sentence does not require another Python copy of that value.
 Run the resource validation and functional tests before sharing changed data.
 
 ### Character copy
+
+PL-1B stores the one authored catalogue under `data/dialogues/de/`. Its
+`index.json` has `index_version: 1`, `catalogue_version: 3`, `language: "de"`,
+an explicit ordered `files` list and a `line_order` list naming every source ID
+exactly once. The latter preserves the old global sequence order, including
+seeded weighted selection, even when an event has entries in different files.
+Each source retains the existing version-three `{catalogue_version, language,
+lines}` shape. Edit each complete sequence only in its listed topic file; add or
+remove its ID in `line_order` when intentionally changing catalogue membership.
+
+Eight populated sources cover `events/{objects,care,games,contact,work}.json`,
+`spontaneous/{needs,state}.json` and `plaudern/state.json`. Further planned story
+families get files when implemented; there are no empty placeholder catalogues.
+Existing generic lines are temporarily preserved in the state files until
+PL-5/PL-6C; this mechanical source split does not implement new topic selection.
+
+`pet/mind/catalog.py:DialogueBook.from_file()` remains the single loader and
+selection owner. The default is the index; an explicitly supplied standalone
+version-three source is still supported by the same parser. There is no old
+packaged monolith or fallback loader. Missing sources, invalid relative paths,
+duplicate files/IDs, nested indexes and incomplete/duplicate ordering fail before
+playback. Unlisted JSON is never recursively discovered. Ship the complete
+indexed source directory with the application.
 
 Spoken character game reactions live in the dialogue catalogue; countdowns,
 player-facing labels, status displays and emergency care fallback wording stay

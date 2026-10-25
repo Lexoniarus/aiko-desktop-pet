@@ -33,6 +33,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest dialogue-source cutover (PL-1B): **125 targeted tests in 2.743 s**, no
+failures/errors/skips, longest **0.303 s**, plus scoped Ruff/strict Mypy/Pyright.
+All 1,153 definitions and their global order match the PL-1A baseline; 1,776
+seeded selections match the old source. The
+[delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-1b-delivery-indexed-catalogue-with-unchanged-sequences)
+distinguishes this focused acceptance from the earlier full-suite results below.
+No windows, mouse control, personal-save changes, live API or CI were used.
+
 Latest complete acceptance after the Social change (2026-10-25): **1,865 reported
 tests in 98.868 s**, zero failures/errors, **112 display-dependent skips**. No test
 over ten seconds; longest **8.640 s**. Configured Ruff, strict Mypy (**343 sources**)
@@ -256,6 +264,12 @@ Expected rhythm remains distinct from observed activity, and remaining transitio
 details are resolved in the [stage-4 runtime guide](SLEEP_SYSTEM.md).
 
 ## Dialogue editorial review
+
+PL-1B now loads the unchanged dialogue catalogue from explicit topic sources
+under `aiko_pet/data/dialogues/de/` through one index and `DialogueBook`. The
+[source format](DATA_AND_SAVES.md#character-copy) explains file/order validation;
+the [PL-1A inventory](PLAUDERN_SOURCE_INVENTORY.md) records protected and later
+removal scope. Generic bubble removal remains PL-5/PL-6C, not this source move.
 
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) is a historical
 whole-sequence snapshot, preserving original rows and B2 review decisions.

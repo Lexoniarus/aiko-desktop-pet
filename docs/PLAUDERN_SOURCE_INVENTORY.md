@@ -5,6 +5,11 @@ Documentation-only audit, 2026-10-25, on `feature/social-optimization`.
 This task changes no runtime, catalogue, tests or saves. No app imports, GUI,
 mouse control, live API calls, runtime tests or CI were used.
 
+> **Later PL-1B cutover:** the definitions now live in indexed topic sources;
+> see the [source format](DATA_AND_SAVES.md#character-copy). This inventory keeps
+> the original monolith's snapshot hash/line coordinates for comparison, not as
+> an active source-path requirement. PL-1B verified all definitions and order.
+
 ## Snapshot and decisions
 
 The runtime baseline at capture was `c2c31493cfa7f1255bffff78854a34f9795968c7`:

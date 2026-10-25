@@ -98,7 +98,8 @@ allgemeine Suche während einer Unterbrechung bleiben getrennt.
 Der Katalog bleibt die einzige Laufzeitquelle. Das bestehende
 `DIALOGUE_REVIEW.md` bleibt als historischer Vergleich mit seinen bisherigen
 Review-Zellen erhalten; es ist nach dieser Überarbeitung kein aktueller
-Wortlautnachweis. Aktuelle Texte stehen in `aiko_pet/data/dialogues.de.json`.
+Wortlautnachweis. Aktuelle Texte stehen unter `aiko_pet/data/dialogues/de/`;
+`index.json` lädt die Themenquellen in unveränderter ursprünglicher Reihenfolge.
 
 Die Prüfung umfasst vollständige Folgen, grammatische Einsetzung aller
 bekannten Objektnamen sowie unbekannter Gegenstände, Stufenabdeckung und

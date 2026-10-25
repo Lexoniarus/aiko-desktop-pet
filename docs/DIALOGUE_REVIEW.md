@@ -3,7 +3,8 @@
 > **Historical wording snapshot.** The subsequent complete German dialogue
 > revision is documented in [DIALOGUE_REVISION_PLAN.md](DIALOGUE_REVISION_PLAN.md).
 > The rows below preserve the earlier originals and B2 review decisions;
-> current runtime wording and filters are owned by `aiko_pet/data/dialogues.de.json`.
+> current runtime wording and filters are owned by the indexed sources under
+> `aiko_pet/data/dialogues/de/`.
 
 > **Editorial review only.** Created 2026-10-19 on
 > `feature/social-optimization`, from baseline `f4c6e3f`.
@@ -26,7 +27,7 @@ it does not by itself approve a runtime edit.
 - **16 additional review rows**: 12 care fallbacks, one combined RPS countdown,
   fallback farewell, invalid-placement feedback and a dynamic notification
   template. Overall: **1,068 review rows**; B2 marks **141 reviewed**.
-- Original snapshot: [dialogues.de.json](../aiko_pet/data/dialogues.de.json), catalogue v2,
+- Original snapshot: former `aiko_pet/data/dialogues.de.json`, catalogue v2,
   SHA-256 `3373c6d45ecbc854041d790b20ddb7d76d0ad0a1af154e4dc6f2e93c1d688b13`.
 - Additional bubble copy: [texts.de.json](../aiko_pet/data/texts.de.json).
   Status hints, toolbar/settings labels and game-panel labels that are not
