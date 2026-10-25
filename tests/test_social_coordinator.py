@@ -209,9 +209,10 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.assertFalse(self.social.waiting)
         self.assertNotEqual(self.worker.requests[-1][0], SocialCategory.SINGLE)
 
-    def test_old_deliveries_become_eligible_after_ten_newer_items(self) -> None:
+    def test_old_deliveries_become_eligible_after_one_hundred_newer_items(self) -> None:
         self.social.set_enabled(True)
-        for identifier in (*range(1, 12), 1):
+        for identifier in (*range(1, 102), 1):
+            self.worker.clock.now += 3600  # This case checks retention, not quotas.
             self.social.select(SocialCategory.SINGLE)
             self.worker.complete(identifier)
             update = self.social.poll()
@@ -219,16 +220,17 @@ class SocialCoordinatorTests(unittest.TestCase):
             self.assertEqual(update.status, "ready")
             self.social.accept(update.content)
 
-    def test_all_ten_receipts_block_provider_ids_and_content_across_categories(self):
+    def test_all_hundred_receipts_block_ids_and_content_across_categories(self):
         self.social.set_enabled(True)
-        for identifier in range(1, 11):
+        for identifier in range(1, 101):
+            self.worker.clock.now += 3600
             self.social.select(SocialCategory.SINGLE)
             self.worker.complete(identifier)
             offered = self.social.poll()
             assert offered is not None and offered.content is not None
             self.social.accept(offered.content)
         history = self.social.history
-        self.assertEqual(len(history.entries), 10)
+        self.assertEqual(len(history.entries), 100)
         worker = ManualSocialWorker()
         restored = SocialContentCoordinator(worker, history=history,
                                             wall_time=worker.clock)

@@ -10,7 +10,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.application.social_history import SocialContentHistory
+from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_history import (
+    SocialContentHistory,
+    SocialContentReceipt,
+)
 from aiko_pet.application.storage_contracts import (
     SaveRevision,
     StorageError,
@@ -28,6 +32,7 @@ class SqliteMigrationTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory(prefix="aiko-migration-")
         self.addCleanup(folder.cleanup)
         self.path = Path(folder.name) / "fixture.sqlite3"
+        self.base_version = schema.SCHEMA_VERSION
         self.store = self.create_store(self.path)
 
     @staticmethod
@@ -52,24 +57,68 @@ class SqliteMigrationTests(unittest.TestCase):
             "MIGRATIONS",
             (
                 *schema.MIGRATIONS,
-                schema.SchemaMigration(2, "synthetic_future_upgrade", statements),
+                schema.SchemaMigration(
+                    self.base_version + 1, "synthetic_future_upgrade", statements,
+                ),
             ),
         )
 
     def backups(self) -> list[Path]:
-        return list(self.path.parent.glob(f".{self.path.name}.schema-v1-*.sqlite3"))
+        return list(self.path.parent.glob(
+            f".{self.path.name}.schema-v{self.base_version}-*.sqlite3"
+        ))
+
+    def test_v1_receipts_upgrade_with_backup_and_preserved_session(self):
+        original = self.store.load_session()
+        history = SocialContentHistory((SocialContentReceipt(
+            SocialCategory.FACT, "uselessfacts:legacy", "a" * 64,
+        ),))
+        self.store.save(
+            original.state, original.settings, expected_revision=original.revision,
+            adaptive=original.adaptive_memory, social_history=history,
+        )
+        # Reconstruct the delivered v1 shape from a valid full fixture. Only the
+        # newly added nullable column and its migration metadata are removed.
+        with closing(sqlite3.connect(self.path)) as connection:
+            connection.execute("ALTER TABLE social_receipts DROP COLUMN intro_variant")
+            connection.execute("DELETE FROM schema_migrations WHERE version = 2")
+            connection.execute("PRAGMA user_version = 1")
+            connection.commit()
+        loaded = self.store.load_session()
+        self.assertEqual(loaded.state, original.state)
+        self.assertEqual(loaded.settings, original.settings)
+        self.assertEqual(loaded.revision, SaveRevision(2))
+        self.assertEqual(loaded.social_history, history)
+        backups = list(self.path.parent.glob(f".{self.path.name}.schema-v1-*.sqlite3"))
+        self.assertEqual(len(backups), 1)
+        with closing(sqlite3.connect(backups[0])) as connection:
+            self.assertEqual(connection.execute("PRAGMA user_version").fetchone(), (1,))
+            self.assertNotIn("intro_variant", [r[1] for r in connection.execute(
+                "PRAGMA table_info(social_receipts)"
+            )])
+            self.assertEqual(connection.execute(
+                "SELECT identity, fingerprint FROM social_receipts"
+            ).fetchall(), [("uselessfacts:legacy", "a" * 64)])
+        self.store.load_session()
+        self.assertEqual(len(list(self.path.parent.glob(
+            f".{self.path.name}.schema-v1-*.sqlite3"
+        ))), 1)
 
     def test_upgrade_creates_one_consistent_old_checkpoint_before_committing_schema(
         self,
     ) -> None:
         original = self.store.load_session()
-        with self.future(), patch.object(schema, "SCHEMA_VERSION", 2):
+        with (
+            self.future(),
+            patch.object(schema, "SCHEMA_VERSION", self.base_version + 1),
+        ):
             loaded = self.store.load_session()
             self.assertEqual(loaded.state, original.state)
             self.assertEqual(loaded.revision, original.revision)
             with closing(sqlite3.connect(self.path)) as connection:
                 self.assertEqual(
-                    connection.execute("PRAGMA user_version").fetchone(), (2,)
+                    connection.execute("PRAGMA user_version").fetchone(),
+                    (self.base_version + 1,),
                 )
                 self.assertEqual(
                     connection.execute("SELECT value FROM upgrade_probe").fetchone(),
@@ -85,7 +134,10 @@ class SqliteMigrationTests(unittest.TestCase):
 
     def test_failed_upgrade_keeps_old_database_and_the_valid_backup(self) -> None:
         before = self.path.read_bytes()
-        with self.future(fail=True), patch.object(schema, "SCHEMA_VERSION", 2):
+        with (
+            self.future(fail=True),
+            patch.object(schema, "SCHEMA_VERSION", self.base_version + 1),
+        ):
             with self.assertRaises(StorageError):
                 self.store.load_session()
         self.assertEqual(self.path.read_bytes(), before)
@@ -100,7 +152,7 @@ class SqliteMigrationTests(unittest.TestCase):
         failure = StorageError(StorageFailureKind.ACCESS, self.path, "Backup denied")
         with (
             self.future(),
-            patch.object(schema, "SCHEMA_VERSION", 2),
+            patch.object(schema, "SCHEMA_VERSION", self.base_version + 1),
             patch.object(
                 schema,
                 "backup_database",
@@ -120,7 +172,7 @@ class SqliteMigrationTests(unittest.TestCase):
             writer.execute("UPDATE pet_state SET satiety = 17")
             writer.commit()
             self.assertTrue(Path(str(self.path) + "-wal").exists())
-            backup = backup_database(self.path, 1)
+            backup = backup_database(self.path, self.base_version)
             self.assertEqual(SqliteStateStore(backup).load_session().state.satiety, 17)
 
     def test_locked_backup_aborts_promptly_and_removes_the_incomplete_copy(
@@ -130,7 +182,7 @@ class SqliteMigrationTests(unittest.TestCase):
             writer.execute("BEGIN EXCLUSIVE")
             try:
                 with self.assertRaises(StorageError) as failure:
-                    backup_database(self.path, 1)
+                    backup_database(self.path, self.base_version)
                 self.assertEqual(failure.exception.kind, StorageFailureKind.LOCKED)
             finally:
                 writer.rollback()

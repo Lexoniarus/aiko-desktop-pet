@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 from typing import Any
 from urllib.parse import urlsplit
@@ -26,6 +26,7 @@ class SocialCategory(StrEnum):
 BUFFERED_CATEGORIES = (
     SocialCategory.SINGLE, SocialCategory.TWO_PARTS, SocialCategory.FACT,
 )
+SOCIAL_INTRO_VARIANTS = 3
 
 
 class SocialProvider(StrEnum):
@@ -57,6 +58,27 @@ class PreparedSocialContent:
     license_name: str = ""
     license_url: str = ""
     horoscope: HoroscopeText | None = None
+    intro_variant: int | None = None
+
+
+def _intro_cue(category: SocialCategory, variant: int) -> Cue:
+    key = f"social.intro.{category.value}" + (f"_alt{variant}" if variant else "")
+    return Cue.text(GERMAN_TEXT.format(key))
+
+
+def with_intro_variant(
+    content: PreparedSocialContent, variant: int,
+) -> PreparedSocialContent:
+    """Replace framing only; provider text, identity and fingerprint stay intact."""
+    if (content.category not in BUFFERED_CATEGORIES or type(variant) is not int
+            or not 0 <= variant < SOCIAL_INTRO_VARIANTS):
+        raise ValueError("Invalid social introduction variant")
+    return replace(
+        content, intro_variant=variant,
+        reaction=replace(content.reaction, beats=(
+            _intro_cue(content.category, variant), *content.reaction.beats[1:],
+        )),
+    )
 
 
 def _text(value: object) -> str:
@@ -194,11 +216,10 @@ def prepare_social_content(
                      _text(payload.get("setup")), _text(payload.get("delivery")),
                  ))
     fingerprint = hashlib.sha256(" ".join(parts).casefold().encode()).hexdigest()
-    # Stable variation belongs to the prepared sequence, not mutable playback.
-    # Only provider text participates in duplicate detection.
-    variant = int(fingerprint[:2], 16) % 3
-    intro_key = f"social.intro.{category.value}" + (f"_alt{variant}" if variant else "")
-    beats = [Cue.text(GERMAN_TEXT.format(intro_key))]
+    # Initial framing is deterministic. The coordinator rotates it against the
+    # last admitted receipt when offering it, before the immutable playback.
+    variant = int(fingerprint[:2], 16) % SOCIAL_INTRO_VARIANTS
+    beats = [_intro_cue(category, variant)]
     for index, part in enumerate(parts):
         if index:
             beats.append(Cue(
@@ -219,4 +240,5 @@ def prepare_social_content(
         category, identity, fingerprint, source, source_url, permalink,
         Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),
         provider, author, author_url, license_name, license_url,
+        intro_variant=variant,
     )

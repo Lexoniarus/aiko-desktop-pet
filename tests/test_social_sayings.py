@@ -234,9 +234,9 @@ class MixedSayingTests(unittest.TestCase):
         self.content.poll()
         self.assertEqual(self.content.count(SocialCategory.SINGLE), 0)
 
-    def test_ten_admitted_sayings_share_one_history_across_both_sources(self):
+    def test_hundred_sayings_share_one_history_across_both_sources(self):
         history = SocialContentHistory()
-        for index in range(12):
+        for index in range(102):
             prefix = "jokeapi" if index % 2 else "zitat-service"
             history = history.admitted(
                 SocialContentReceipt(
@@ -245,7 +245,7 @@ class MixedSayingTests(unittest.TestCase):
                     f"{index:064x}",
                 )
             )
-        self.assertEqual(len(history.entries), 10)
+        self.assertEqual(len(history.entries), 100)
         self.assertEqual(history.entries[0].identity, "zitat-service:2")
         self.assertEqual({e.category for e in history.entries}, {SocialCategory.SINGLE})
 

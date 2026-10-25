@@ -19,9 +19,10 @@ def write_social_core(
     for table in ("social_receipts", "social_requests", "provider_pauses"):
         connection.execute(f"DELETE FROM {table}")
     connection.executemany(
-        "INSERT INTO social_receipts VALUES (?, 1, ?, ?, ?)",
+        "INSERT INTO social_receipts VALUES (?, 1, ?, ?, ?, ?)",
         [
-            (index, row["category"], row["identity"], row["fingerprint"])
+            (index, row["category"], row["identity"], row["fingerprint"],
+             row["intro_variant"])
             for index, row in enumerate(raw["entries"])
         ],
     )
@@ -57,7 +58,7 @@ def read_social_core(
     singleton(connection, "save_state")
     history = decode_social_history(
         dict(
-            version=3,
+            version=4,
             entries=_ordered(connection, "social_receipts"),
             horoscope=None,
             requests=dict(

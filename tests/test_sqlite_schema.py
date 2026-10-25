@@ -31,7 +31,7 @@ class SqliteSchemaTests(unittest.TestCase):
                              (schema.SCHEMA_VERSION,))
             self.assertEqual(connection.execute(
                 "SELECT version, name FROM schema_migrations"
-            ).fetchall(), [(1, "initial_save_schema")])
+            ).fetchall(), [(m.version, m.name) for m in schema.MIGRATIONS])
             self.assertEqual(connection.execute(
                 "SELECT count(*) FROM save_state"
             ).fetchone(), (0,))

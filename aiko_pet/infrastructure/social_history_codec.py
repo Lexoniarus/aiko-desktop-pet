@@ -2,7 +2,11 @@
 
 from typing import Any
 
-from ..application.social_content import SocialCategory
+from ..application.social_content import (
+    BUFFERED_CATEGORIES,
+    SOCIAL_INTRO_VARIANTS,
+    SocialCategory,
+)
 from ..application.social_history import (
     RECENT_CONTENTS_PER_CATEGORY,
     SocialContentHistory,
@@ -17,12 +21,12 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
     if not isinstance(raw, dict) or type(raw.get("version")) is not int:
         raise ValueError("Unsupported social history version")
     version = raw["version"]
-    if version not in (1, 2, 3):
+    if version not in (1, 2, 3, 4):
         raise ValueError("Unsupported social history version")
     row = object_fields(
         raw,
         ("version", "entries", "requests", "horoscope")
-        if version == 3
+        if version >= 3
         else ("version", "entries", "requests")
         if version == 2
         else ("version", "entries"),
@@ -31,7 +35,7 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
     entries = row["entries"]
     if (
         not isinstance(entries, list)
-        or len(entries) > len(SocialCategory) * RECENT_CONTENTS_PER_CATEGORY
+        or len(entries) > len(BUFFERED_CATEGORIES) * RECENT_CONTENTS_PER_CATEGORY
     ):
         raise ValueError("Unbounded social history")
     result = []
@@ -40,7 +44,9 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
     fingerprints: set[str] = set()
     for entry in entries:
         item = object_fields(
-            entry, ("category", "identity", "fingerprint"), context="social receipt"
+            entry, ("category", "identity", "fingerprint", "intro_variant")
+            if version >= 4 else ("category", "identity", "fingerprint"),
+            context="social receipt",
         )
         category = enum_value(
             item["category"],
@@ -50,6 +56,12 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
         if category == SocialCategory.HOROSCOPE:
             raise ValueError("Horoscope uses its bounded daily record")
         identity, fingerprint = item["identity"], item["fingerprint"]
+        intro_variant = item.get("intro_variant")
+        if intro_variant is not None and (
+            type(intro_variant) is not int
+            or not 0 <= intro_variant < SOCIAL_INTRO_VARIANTS
+        ):
+            raise ValueError("Invalid social introduction variant")
         prefix = (
             "uselessfacts:"
             if category == SocialCategory.FACT
@@ -83,24 +95,26 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
             raise ValueError("Duplicate or excessive social history")
         identities.add(identity)
         fingerprints.add(fingerprint)
-        result.append(SocialContentReceipt(category, identity, fingerprint))
+        result.append(SocialContentReceipt(category, identity, fingerprint,
+                                           intro_variant))
     if version >= 2:
         return SocialContentHistory(
             tuple(result),
             decode_social_requests(row["requests"]),
-            decode_horoscope(row["horoscope"]) if version == 3 else None,
+            decode_horoscope(row["horoscope"]) if version >= 3 else None,
         )
     return SocialContentHistory(tuple(result))
 
 
 def encode_social_history(history: SocialContentHistory) -> dict[str, Any]:
     return dict(
-        version=3,
+        version=4,
         entries=[
             dict(
                 category=e.category.value,
                 identity=e.identity,
                 fingerprint=e.fingerprint,
+                intro_variant=e.intro_variant,
             )
             for e in history.entries
         ],

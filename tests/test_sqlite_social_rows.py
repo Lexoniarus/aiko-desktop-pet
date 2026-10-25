@@ -31,7 +31,7 @@ from aiko_pet.infrastructure.sqlite.social_rows import (
 
 def social_history() -> SocialContentHistory:
     entries = []
-    for index in range(10):
+    for index in range(100):
         for offset, category in enumerate(BUFFERED_CATEGORIES):
             identity = (
                 f"uselessfacts:fact-{index}"
@@ -43,7 +43,8 @@ def social_history() -> SocialContentHistory:
                 else f"jokeapi:{index}"
             )
             entries.append(
-                SocialContentReceipt(category, identity, f"{3 * index + offset:064x}")
+                SocialContentReceipt(category, identity, f"{3 * index + offset:064x}",
+                                     index % 3)
             )
     requests = SocialRequestHistory(
         (
@@ -69,7 +70,7 @@ class SqliteSocialRowsTests(unittest.TestCase):
                 "INSERT INTO save_state VALUES (1, 1, 1800000000, 90000)"
             )
 
-    def test_thirty_mixed_receipts_and_wall_clock_requests_round_trip_without_pruning(
+    def test_three_hundred_receipts_and_wall_requests_round_trip_without_pruning(
         self,
     ) -> None:
         original = social_history()
@@ -87,7 +88,7 @@ class SqliteSocialRowsTests(unittest.TestCase):
             )
             self.assertEqual(len(restored.requests.blocks), 2)
 
-    def test_eleventh_admission_rotates_only_its_category_through_existing_owner(
+    def test_hundred_and_first_receipt_rotates_only_its_category(
         self,
     ) -> None:
         original = social_history()
@@ -108,7 +109,7 @@ class SqliteSocialRowsTests(unittest.TestCase):
                     "SELECT category, count(*) FROM social_receipts "
                     "GROUP BY category ORDER BY category"
                 ).fetchall(),
-                [("fact", 10), ("single", 10), ("twopart", 10)],
+                [("fact", 100), ("single", 100), ("twopart", 100)],
             )
 
     def test_corrupt_or_excessive_present_history_is_not_defaulted_or_saved(

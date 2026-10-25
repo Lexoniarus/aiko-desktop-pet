@@ -1,7 +1,7 @@
-"""Transactional version-one schema foundation, without domain row mappings.
+"""Transactional versioned schema foundation, without domain row mappings.
 
-Later mapping slices extend this first schema before runtime cutover. Migration
-statements execute individually: executescript() would break rollback by
+The delivered version-one DDL remains unchanged. Migration statements execute
+individually: executescript() would break rollback by
 implicitly committing an existing transaction.
 """
 
@@ -28,7 +28,7 @@ from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -82,6 +82,13 @@ MIGRATIONS = (
     )""",
         )
         + _DOMAIN_SCHEMA,
+    ),
+    SchemaMigration(
+        2,
+        "social_introduction_rotation",
+        ("ALTER TABLE social_receipts ADD COLUMN intro_variant INTEGER "
+         "CHECK(intro_variant IS NULL OR "
+         "(typeof(intro_variant) = 'integer' AND intro_variant BETWEEN 0 AND 2))",),
     ),
 )
 

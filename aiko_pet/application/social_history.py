@@ -8,7 +8,7 @@ from .horoscope_models import HoroscopeDay
 from .social_content import SocialCategory
 from .social_requests import SocialRequestHistory
 
-RECENT_CONTENTS_PER_CATEGORY = 10
+RECENT_CONTENTS_PER_CATEGORY = 100
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,6 +16,7 @@ class SocialContentReceipt:
     category: SocialCategory
     identity: str
     fingerprint: str
+    intro_variant: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
