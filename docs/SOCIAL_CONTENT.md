@@ -254,6 +254,16 @@ Wish-specific motives require their original wish; friendship and quiet/mixed
 feelings color the full sequence. The body-free repetition history is unchanged.
 See [PL-6B delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6b-delivery-social-negative-and-long-term-story-families).
 
+PL-6C keeps deliberately requested Plaudern separate from unsolicited short
+comments. A calendar date or quiet desktop alone causes no speech; a genuine
+need, emotional state or observed work/rest can supply a short comment. A cooled
+social/affection reminder permits a different real topic or silence. The random
+idle/calendar pool and automatic promotion into a multi-bubble `talk` story are
+removed. Wishes keep their existing relationship-qualified disclosure and
+display/completion path; item/search/handover reactions and deliberately started
+social playback remain unchanged. This introduces no additional history or save
+fields. See [PL-6C delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6c-delivery-grounded-spontaneous-comments-and-generic-removal).
+
 `settings.online_social` is an optional Boolean within the existing version-one
 legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never
 saved. The `social_history` transfer section now uses version four: up to 100

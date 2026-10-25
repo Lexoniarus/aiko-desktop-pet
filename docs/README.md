@@ -33,6 +33,16 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest spontaneous-speech cleanup (PL-6C): **235 targeted tests in 8.699 s**,
+zero failures/errors/skips, longest **0.648 s**, plus scoped Ruff, fresh strict
+Mypy for three production modules and Pyright for twelve source/test files.
+The [delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6c-delivery-grounded-spontaneous-comments-and-generic-removal)
+records exact removal of fifty generic sequences, eight fatigue-only event
+reassignments, all 992 protected event definitions unchanged, and silence when no
+real short-comment topic fits. Spontaneous speech no longer enters requested
+Plaudern. No windows, mouse control, personal-save access, live API or CI.
+Final complete-suite/OOP acceptance remains PL-7.
+
 Latest social/negative/long-term story slice (PL-6B): **309 targeted tests in
 14.947 s**, zero failures/errors/skips, longest **1.687 s**, plus scoped Ruff,
 fresh strict Mypy for three production modules and Pyright for seven source/test

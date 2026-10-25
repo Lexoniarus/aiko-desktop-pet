@@ -32,6 +32,10 @@
 > now use retained source words, incident attribution and period summaries.
 > Spontaneous cleanup remains PL-6C; final whole-branch acceptance remains PL-7.
 
+> **PL-6C delivered:** [grounded spontaneous comments and generic removal](#pl-6c-delivery-grounded-spontaneous-comments-and-generic-removal)
+> closes the remaining idle/calendar cleanup and unsolicited story-promotion
+> path. PL-1 through PL-6 are delivered; final whole-branch acceptance remains PL-7.
+
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
 > records generated-wish care balances, all seventeen emotional labels, status/
@@ -11313,3 +11317,81 @@ Tk creation was blocked before imports and default saves redirected to disposabl
 paths. No windows, mouse control, live API, personal-save access/change, GitHub
 CI, full-suite run or merge. PL-6C removes the remaining ungrounded spontaneous
 pool/machinery; PL-7 performs the final whole-branch suite and OOP/PEP 8 review.
+
+
+#### PL-6C delivery: grounded spontaneous comments and generic removal
+
+Delivered in **`b63b16a`**, with the separate existing test-owner correction in
+**`c70467f`**. Parallel character/export and unrelated documentation changes
+remain untouched and unstaged. This closes PL-6C, not final PL-7 acceptance.
+
+- `PetMind` remains the situational policy owner and the existing single
+  `DialogueBook` remains the loader/rotation owner. `_select_spontaneous_event`
+  now returns an optional event: real hunger, fatigue, emotional state or
+  observed work/rest may yield short feedback; no matching fact yields silence.
+  No new module, manager, timer, conversation archive or fallback mode is added.
+- Remove the generic idle/calendar topic picker. Date, weekday and quiet desktop
+  alone no longer force a remark. Real routine/sleep/time context is retained,
+  including observed late work. A cooled social/affection reminder falls through
+  to another real need/situation/emotion or silence without resetting its anchor.
+- Remove automatic promotion into requested `talk` stories, its timestamp and
+  the two unused strict balance fields (`spontaneous_story_probability` and
+  `spontaneous_story_quiet_seconds`). Spontaneous selection never requests the
+  Plaudern story pool or clears a click burst on a silent turn. Keep `talk`
+  itself for deliberate Plaudern, prepared API and horoscope sequences.
+- Remove exactly the fifty `REMOVE_GENERIC` IDs in the frozen
+  [PL-1A manifest](inventories/PL1A_DIALOGUE_IDS.tsv), from both the source and
+  explicit index. The eight `KEEP_REHOME_GROUNDED` morning/night definitions
+  change only their event to `tired`; original IDs, words, emotes, periods,
+  relationship/actual-fatigue conditions, weights and cooldowns are preserved.
+  Their valid periods still matter and they cannot speak solely because it is
+  morning/night. Existing specific matching gives those preserved variants a
+  reachable place in the actual fatigue pool.
+- Retire only the eight now-unconsumed semantic speech keys `idle`, `morning`,
+  `midday`, `evening`, `night`, `monday`, `friday` and `weekend` from the dialogue
+  event registry. Reference checks distinguish animation `idle`, routine/time
+  periods and weekdays from those deleted speech events. The strict parser
+  rejects reintroducing the retired events or balance controls.
+- Existing `AttentionCoordinator` already distinguishes a due silent slot from
+  an undued slot, with its next deadline set normally. Its production code needs
+  no change. Wish disclosure, care requests, incoming notifications, cursor/walk
+  observations and silent idle animation/emotes keep their existing owners and
+  settings. Item discovery, search, withheld-object escalation, handovers and
+  deliberate contact/playback paths are unchanged.
+- Update obsolete tests that required random calendar speech or filler during
+  reminder throttling. The expanded wish-expression check exposed a stale
+  patch of `mind.WISH_CATALOG`; the renderer already belongs to `catalog`.
+  Correct that fixture at the actual owner and retain its original-goal assertion;
+  do not re-export a catalogue from Mind to satisfy the test.
+
+Preservation audit against the pre-change indexed sources: **1,517 -> 1,467
+entries**, no additions; exactly fifty inventoried removals, eight event-only
+reassignments and **1,459 otherwise identical definitions**. All **992 protected
+event definitions**, all twelve other source files and the relative index order
+of every retained definition are unchanged. The frozen inventory is marked with
+its delivered cleanup rather than rewriting historical per-ID hashes.
+
+Validation:
+
+- Initial policy/catalogue/attention check: **116 tests in 4.680 s**, no failures,
+  errors or skips. Final expanded focused run after the real attention silence
+  regression and stale fixture correction: **235 tests in 8.699 s**, no failures,
+  errors or skips; longest **0.648 s**, none over ten seconds.
+- Checks include real short need/rest/work selection, silence across representative
+  calendar periods, independent reminder anchors and fallthrough, actual fatigue
+  and period guards, no requested-story entry or click reset, actual attention
+  deadline progression with no fabricated speech/effect, retained wish disclosure,
+  strict obsolete-field/event rejection, indexed loader/package boundaries,
+  object feedback and completion/cancellation of deliberate social sequences.
+- Scoped Ruff and Pyright pass for the three production and nine test files;
+  fresh strict Mypy passes for the three production modules. Dependency/package
+  checks pass in the targeted run. No production persistence fields or behavior
+  balancing changes are involved.
+
+Native Tk creation was blocked before test imports and default saves redirected
+to disposable storage. No test window, mouse automation, live API, personal-save
+access/change, GitHub CI, full-suite run or merge. Reports and before/after source
+proof stay outside Git under `%TEMP%/aiko-pl6c-gtxej27r/` (`sources-before.json`,
+`index-before.json`, `preservation.json`, `targeted.json`, `acceptance.json`).
+Final complete local suite, every test over ten seconds, whole-branch OOP/PEP 8
+review and final source inventory belong to the remaining PL-7 slice.

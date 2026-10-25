@@ -93,8 +93,11 @@ Populated sources cover `events/{objects,care,games,contact,work}.json`,
 `plaudern/{state,games,food,affection,social,negative_experiences,long_term}.json`.
 Further planned story families get files when implemented; there are no empty
 placeholder catalogues. PL-5 removed all sixty old requested-chat entries and
-added a first set of grounded stories. Random spontaneous filler remains
-temporarily until PL-6C; the event sources remain unchanged.
+added a first set of grounded stories. PL-6C removes the fifty inventoried
+ungrounded idle/calendar sequences and routes the eight preserved morning/night
+fatigue variants through `tired`, with their other fields unchanged. All five
+protected event sources remain unchanged. Spontaneous selection may yield silence
+and never promotes a short comment into requested Plaudern.
 
 `pet/mind/catalog.py:DialogueBook.from_file()` remains the single loader and
 selection owner. The default is the index; an explicitly supplied standalone
@@ -155,9 +158,9 @@ subjective history supports them. Care food fallbacks use the same full
 indefinite nominative phrase. Menu names stay catalogue-owned and unchanged.
 Object formatting applies to every text beat, never to an emote or a pause.
 The resulting text determines its reading time through the dialogue balance
-values. Spontaneous story frequency and quiet time use
-`spontaneous_story_probability` and `spontaneous_story_quiet_seconds` in that
-same section. Mutable selection history belongs to the session mind, or to
+values. The obsolete spontaneous story probability/quiet controls are retired
+from the strict balance contract; ordinary attention cadence, variant cooldowns
+and reading-time settings remain. Mutable selection history belongs to the session mind, or to
 one standalone game instance; neither is a second source of authored copy.
 
 The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,

@@ -16,6 +16,14 @@ mouse control, live API calls, runtime tests or CI were used.
 > for current membership and validation. Spontaneous filler replacement remains
 > PL-6C.
 
+> **Later PL-6C cleanup delivered:** all fifty `REMOVE_GENERIC` IDs are removed
+> from the indexed sources and ordering. The eight `KEEP_REHOME_GROUNDED` IDs
+> retain their complete definitions except for `event: tired`, making the same
+> fatigue/period/relationship guards reachable without the random calendar
+> picker. All 992 `PROTECT_EVENT` definitions are unchanged. The original
+> manifest and tables below remain a frozen audit, not an open-work list.
+> See [current removal and verification evidence](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6c-delivery-grounded-spontaneous-comments-and-generic-removal).
+
 ## Snapshot and decisions
 
 The runtime baseline at capture was `c2c31493cfa7f1255bffff78854a34f9795968c7`:

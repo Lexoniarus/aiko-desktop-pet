@@ -767,11 +767,12 @@ feedback retains 58 ms/character clamped to 2.8–8 s. Emotes default to 800 ms
 and deliberate pauses to 600 ms; two-part API jokes use an explicit 800 ms
 punchline pause after the full setup reading time. The `conversation_*`
 parameters live in `data/balance.json`; display and advancement consume the
-same prepared cue durations. There are 48 authored talk
-stories, twelve per relationship stage, with independent emotional, need,
-short-reaction and situational variants.
-Stories exhaust their matching rotation pool before repeating. Warm moments
-also admit suitable calm stories, keeping repeated contact varied after care.
+same prepared cue durations. Requested Plaudern chooses concrete retained
+Moodlet causes or already disclosed wishes through immutable conversation
+topics, with a truthful current-state response when no fitting episode is
+available. Complete stories use relationship and emotional filters without
+inventing an experience from a general mood. Stories exhaust their matching
+rotation pool before repeating; no separate conversation journal is introduced.
 
 An intentional talk normally runs three to five text bubbles. Left-clicking
 Aiko during a story advances to the next text, skipping intermediate emotes
@@ -779,10 +780,15 @@ and pauses. Clicking the last text ends it. These reading clicks do not enter
 the teasing counter or apply care rewards; normal clicks start a fresh burst.
 Other deliberate interactions can interrupt. Automatic speech, gaze remarks,
 idle effects and object-goal acquisition respect active playback, including
-blank pauses. Spontaneous stories require observed presence, a 20% draw among
-eligible quiet moments and at least ten minutes since the previous one. Those
-values come from `dialogue.spontaneous_story_probability` and
-`dialogue.spontaneous_story_quiet_seconds` in the validated balance catalogue.
+blank pauses. Spontaneous speech selects only short comments about actual needs,
+emotion or observed work/rest, independently of requested Plaudern. Calendar
+facts alone do not cause speech. The eight preserved morning/night fatigue
+variants belong to the `tired` event and keep their fatigue, period and
+relationship guards. A throttled social/affection reminder permits other real
+topics, or silence when none fits. The old idle/calendar picker, story-promotion
+state and its two balance controls are removed. Existing attention scheduling,
+wish disclosure, cursor/walk comments and silent animation/emotes retain their
+owners and settings.
 
 Playback completion and cancellation are reported once; stale timers cannot
 advance or complete a newer sequence. Object-phase feedback retains its
