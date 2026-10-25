@@ -48,6 +48,22 @@ def source(target, outcome="win", *, objective=None, count=1, final=None, detail
         "block_majority": "win_overall",
         "block_non_loss": "avoid_overall_loss",
     }.get(objective or "", "play_game")
+    game = None
+    if final is not None:
+        rounds, wins, losses = count + 2, count, 1
+        if objective in ("block_majority", "block_non_loss"):
+            rounds = count
+            wins = (
+                (count + 1) // 2
+                if outcome == "win"
+                else ((count - 1) // 2 if outcome == "draw" else 0)
+            )
+            losses = (
+                (count - 1) // 2
+                if outcome == "draw"
+                else (count - 1 if outcome == "loss" else 0)
+            )
+        game = MoodletGameResult(MoodletOutcome(final), rounds, wins, losses)
     return replace(
         actual(target=target),
         attribution=MoodletAttribution.USER,
@@ -65,14 +81,7 @@ def source(target, outcome="win", *, objective=None, count=1, final=None, detail
             objective,
             count,
         ),
-        game=None
-        if final is None
-        else MoodletGameResult(
-            MoodletOutcome(final),
-            count + 2,
-            count,
-            1,
-        ),
+        game=game,
     )
 
 
@@ -156,14 +165,20 @@ class PlaudernGameTests(unittest.TestCase):
         self.assertNotIn("21", legacy)
         self.assertNotIn("über", legacy)
 
-    def test_total_wins_keep_count_and_require_final_win_for_a_final_connection(self):
-        for final in ("win", "draw", "loss"):
-            cause = source("connect_four", objective="total_wins", count=3, final=final)
+    def test_aggregate_goals_keep_the_last_result_distinct_from_total_success(self):
+        for objective, outcome, final in (
+            ("total_wins", "win", "win"),
+            ("block_majority", "win", "draw"),
+            ("block_non_loss", "draw", "loss"),
+        ):
+            cause = source(
+                "connect_four", outcome, objective=objective, count=3, final=final
+            )
             reaction, text = choose_game(self.book, cause)
-            self.assertIn("3 Siege", text)
             self.assertNotIn("hintereinander", text)
             self.assertNotIn("in Folge", text)
             if final == "win":
+                self.assertIn("3 Siege", text)
                 self.assertIn("Viererreihe", text)
             else:
                 self.assertNotIn("Viererreihe", text)

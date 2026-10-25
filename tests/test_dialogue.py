@@ -50,7 +50,14 @@ class VoiceCatalogueTests(unittest.TestCase):
             "object_handover", "game_greeting", "game_quiz_greeting",
         } <= {line.event for line in self.book.lines})
         self.assertEqual(len(self.book.lines), len({x.id for x in self.book.lines}))
-        self.assertEqual(len(self.book.lines), len({x.text for x in self.book.lines}))
+        # One actual fact may open several differently colored full stories.
+        # Complete text sequences still must not be copied between entries.
+        self.assertEqual(len(self.book.lines), len({
+            tuple(beat.content for beat in line.beats if beat.kind == "text")
+            for line in self.book.lines
+        }))
+        short = [line for line in self.book.lines if line.presentation == "short"]
+        self.assertEqual(len(short), len({line.text for line in short}))
         self.assertTrue(
             all(x.text.strip() and x.animation in ANIMATIONS for x in self.book.lines)
         )

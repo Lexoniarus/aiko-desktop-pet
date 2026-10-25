@@ -3474,7 +3474,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bei Blackjack ging die Hand an dich."
+          "content": "Bei Blackjack hattest du gleich mit zwei Karten 21."
         },
         {
           "kind": "text",
@@ -3511,7 +3511,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du hast mich bei Blackjack geschlagen."
+          "content": "Bei Blackjack hattest du gleich mit zwei Karten 21."
         },
         {
           "kind": "text",
@@ -3551,7 +3551,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bei Blackjack ging die Hand an dich."
+          "content": "Bei Blackjack haben deine {player_total} meine {aiko_total} geschlagen."
         },
         {
           "kind": "text",
@@ -3591,7 +3591,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du hast mich bei Blackjack geschlagen."
+          "content": "Bei Blackjack haben deine {player_total} meine {aiko_total} geschlagen."
         },
         {
           "kind": "text",
@@ -3665,7 +3665,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du hast mich bei Blackjack geschlagen."
+          "content": "Bei Blackjack ging die Hand an dich."
         },
         {
           "kind": "text",
