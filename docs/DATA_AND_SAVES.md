@@ -220,13 +220,26 @@ facts remain valid and are not reconstructed.
 
 SQLite reuses `moodlet_causes.details_snapshot`: version 1 remains unchanged
 for causes without new facts; version 2 adds the non-null `game_details` member
-beside existing `game` and `period` data. Both versions are read strictly. The
-table/schema version and shared transaction/revision ownership are unchanged.
+beside existing `game` and `period` data. PL-4 adds version 3 with non-null
+`social_content` instead of `game_details`. All three versions are read strictly;
+mixed, missing, unknown or inconsistent detail fields are rejected. The database
+schema version and shared transaction/revision ownership are unchanged.
 Details disappear with their trimmed/removed cause, including on row replacement.
 No hands, totals or decision reasons are added to the bounded care-event history
 or wish progress; only the existing transient final event carries them until
 session qualification. PL-3 adds a subtype within the existing version-two
 envelope, without a new table, envelope version or database migration.
+
+PL-4's optional `social_content` stores the actually played original `parts`
+(one complete one-liner/quotation/fact or distinct setup and punchline), category,
+provider, identity, fingerprint, source/source URL, permalink and applicable
+author/author URL and license name/URL. These are immutable source facts from
+preparation, not reconstructed from intro/author bubbles or a generated summary.
+Only actual full-sequence completion may attach them to an existing qualifying
+wish or ordinary social cause. Older causes omit this field without invented
+text. Cause trimming/removal removes its content; no separate archive exists.
+The 100 admission receipts per category remain body-free, and the care-event
+window and active wish progress do not gain content bodies.
 
 The codec accepts and validates obsolete optional per-cause `level` metadata,
 but ignores it; new saves omit it. Available old receipts survive within the

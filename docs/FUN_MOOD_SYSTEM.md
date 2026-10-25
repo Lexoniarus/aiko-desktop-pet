@@ -383,6 +383,15 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
+PL-4 retains original API source words/attribution in existing qualifying social
+causes after complete playback. One-liners, quotations, setup/punchline and facts
+remain distinguishable; preparation, interrupted playback and unqualified
+completion create no content-bearing cause. Intro rotation/segmentation stay
+presentation concerns. The existing cause cap/lifetime, wish rewards, social-gap
+qualification and body-free repetition receipts remain unchanged. Older causes
+without content remain valid. See the
+[PL-4 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-4-delivery-original-social-content-evidence).
+
 PL-2/PL-3 retain actual revealed Rock Paper Scissors hands and settled Blackjack
 totals/decision reasons as optional cause details
 for existing wish success/failure and qualified ordinary play/comeback episodes.

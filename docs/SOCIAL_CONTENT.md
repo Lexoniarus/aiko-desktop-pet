@@ -229,6 +229,18 @@ no extra care; later interruption does not undo accepted care or its repeat
 receipt. A matching social wish still requires the complete sequence and may
 then create its existing fulfillment Moodlet.
 
+PL-4 preserves original API words separately from the prepared reaction and
+passes them through that same full-sequence completion. A qualifying wish or
+ordinary social-gap cause retains one complete saying/one-line joke, quotation
+with separate author, two distinct setup/punchline parts, or complete fact before
+bubble segmentation. Provider identity, fingerprint and supplied source/author/
+license metadata remain available across restarts without refetching. Intro
+rotation, pauses, emotes and authored framing are not remembered source words.
+Preparation, interrupted playback and unqualified completion retain no such
+cause. Each cause keeps its own content within the existing one/two/three limit;
+cause removal also removes its content. Plain chat and horoscope keep their
+existing behavior. See [PL-4 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-4-delivery-original-social-content-evidence).
+
 `settings.online_social` is an optional Boolean within the existing version-one
 legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never
 saved. The `social_history` transfer section now uses version four: up to 100
@@ -255,7 +267,11 @@ is added. See [storage and import](DATA_AND_SAVES.md).
 ## Owners and verification
 
 - `application/social_content.py` validates source data and prepares immutable
-  source-aware reactions.
+  source-aware reactions with separate original-content evidence.
+- `pet/social_content_evidence.py` owns the frozen original parts/attribution and
+  shared category/provider vocabulary; existing application imports re-export
+  those same types. The existing completion path and Pet cause producers retain
+  qualifying evidence; infrastructure serializes it in the existing cause rows.
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
 - `application/social_history.py` supplies immutable bounded admission receipts;

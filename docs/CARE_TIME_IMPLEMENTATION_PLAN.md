@@ -18,8 +18,10 @@
 > now reach existing wish and ordinary-play Moodlet causes and compatible SQLite
 > storage. The PL-2 record below describes that slice's original RPS-only scope.
 > **PL-3 delivered:** [settled Blackjack totals and decision reasons](#pl-3-delivery-settled-blackjack-result-evidence)
-> now use the same bounded cause and compatible storage path. API content and
-> Plaudern selection remain later work.
+> now use the same bounded cause and compatible storage path.
+> **PL-4 delivered:** [actually played API source words and attribution](#pl-4-delivery-original-social-content-evidence)
+> now reach qualifying social causes and compatible SQLite storage. Plaudern
+> topic selection and dialogue replacement remain later work.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -10973,3 +10975,66 @@ before imports and default saves redirected to disposable storage. No windows,
 mouse control, live API, personal-save access/change, GitHub CI, full suite or
 merge. Rules, timers, dialogue, rewards and care/friendship balance are unchanged.
 Final integrated acceptance remains PL-7.
+
+#### PL-4 delivery: original social content evidence
+
+Delivered in **`a9a6bee`** (immutable original-content values and compatible cause
+storage) and **`dac9890`** (preparation/full-playback-to-cause propagation and
+focused integration coverage). Parallel character/export and social-plan work
+remains unstaged and untouched.
+
+- `pet/social_content_evidence.py` owns frozen `SocialContentEvidence` and the
+  canonical `SocialCategory`/`SocialProvider` vocabulary. Existing imports from
+  `application/social_content.py` remain explicit aliases of those same enums.
+  Pet imports no application, API adapter, prepared reaction or UI type.
+- Preparation preserves the validated original `parts` separately from Aiko's
+  reaction. A saying/one-line joke retains one complete original, a quotation
+  retains its quote plus separate author attribution, a two-part joke keeps
+  setup and punchline distinct, and a fact retains its complete original before
+  bubble segmentation. Category/provider, identity/fingerprint, original source,
+  source URL, permalink and applicable author/license metadata accompany it.
+  Body shape, bounds, identity, fingerprint and attribution are validated;
+  introduction rotation preserves the immutable evidence unchanged.
+- The existing `CareController` puts those facts in the existing admitted
+  `SocialCompletion`. The reaction player's unchanged full-sequence callback
+  carries them into `PetState.complete_social_experience`; existing assigned
+  wish fulfillment and qualified ordinary social-gap awards attach them to the
+  corresponding cause. Unqualified completions store no original body. Buffered,
+  prepared or interrupted playback creates no content-bearing personal cause.
+  Chat and older direct completions may omit evidence; horoscope behavior is
+  unchanged and supplies no new wish/Moodlet content.
+- `MoodletCause.social_content` is optional and checks category and completed
+  social-cause consistency. Its existing codec retains the original words,
+  without extracting them from rendered bubbles or saving Aiko's introduction,
+  emotes, pauses or segmentation. The one/two/three-cause cap and stage trimming
+  remove their content together; no archive, discussed marker, new memory owner
+  or independent content lifetime is introduced.
+- SQLite reuses `moodlet_causes.details_snapshot` with a strict version-three
+  envelope for `social_content`. Version one (no new detail) and version two
+  (RPS/Blackjack facts) remain readable and retain their existing write shapes.
+  There is no database schema change, DDL, migration or separate writer.
+  The 100-per-category repetition receipts remain body-free and independent.
+
+Validation:
+
+- Model/storage slice: **56 focused tests in 2.021 s**, zero failures/errors/
+  skips; longest **0.268 s**.
+- Final focused acceptance: **178 tests in 4.831 s**, zero failures/errors/skips;
+  longest **0.539 s**. No test exceeds ten seconds.
+- Provider-shaped fixtures cover all four original formats and attribution,
+  intro rotation, fact segmentation, real full playback with assigned wishes,
+  original wish identity, replay after SQLite restart, cancellation during setup
+  and a stale callback, qualified gap versus duplicate wish awards, unqualified
+  completion, plain chat and older absent evidence. Real SQLite tests check
+  cause trimming/removal, strict envelopes and unchanged body-free receipt rows.
+  Existing content/API, repetition, request, care, horoscope, RPS/Blackjack and
+  transaction tests pass alongside the unchanged package-boundary/acyclic gates.
+- Scoped Ruff and fresh strict Mypy pass for all ten changed production files;
+  Pyright passes for those files and both new test modules.
+
+The final report is outside Git at
+`%TEMP%/aiko-pl4-acceptance-qdak0g4z/targeted.json`. Native Tk creation was blocked
+before imports and default saves redirected to disposable storage. No native
+windows, mouse control, live API, personal-save access/change, GitHub CI, full
+suite or merge. Dialogue text, rewards, wish/Moodlet rules and balancing remain
+unchanged; final integrated acceptance remains PL-7.

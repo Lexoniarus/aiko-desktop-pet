@@ -33,6 +33,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest social-content evidence slice (PL-4): **178 targeted tests in 4.831 s**,
+zero failures/errors/skips, longest **0.539 s**, plus scoped Ruff, fresh strict
+Mypy for ten changed production files and Pyright for twelve source/test files.
+The [delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-4-delivery-original-social-content-evidence)
+covers original parts/attribution, full playback versus cancellation, qualified
+causes, SQLite restart/cleanup and unchanged body-free repetition receipts.
+No windows, mouse control, personal-save access, live API, CI or full-suite run.
+
 Latest Blackjack result-evidence slice (PL-3): **107 targeted tests in 3.300 s**,
 zero failures/errors/skips, longest **0.281 s**, plus scoped Ruff, fresh strict
 Mypy for nine production roots and Pyright for eleven source/test files. The
