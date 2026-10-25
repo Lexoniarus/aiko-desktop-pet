@@ -104,7 +104,14 @@ class ConnectFourSequence:
             return
         self._started = True
         self._begin_round()
-        self._react("game_c4_greeting", self._turn)
+        if self.game.board.turn == 1:
+            # The welcome is presentation, not an unresolved player move.
+            # Keep its reading time without discarding the player's first click.
+            text = self._dialogue("game_c4_greeting")
+            self._say(text, conversation_timing((Cue.text(text),))[0].duration_ms)
+            self._turn()
+        else:
+            self._react("game_c4_greeting", self._turn)
 
     def _begin_round(self) -> None:
         self._round_event(

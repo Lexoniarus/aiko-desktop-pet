@@ -50,12 +50,12 @@ class ConnectFourSequenceTests(unittest.TestCase):
         for _ in range(6):
             self.advance_callback()
 
-    def test_greeting_is_readable_then_gravity_animation_blocks_double_input(self):
+    def test_first_choice_during_greeting_counts_and_drop_blocks_double_input(self):
         self.flow.greet()
         self.assertGreaterEqual(self.lines[0][1], 4000)
-        self.flow.choose(3)
+        self.assertFalse(self.flow.busy)
+        self.assertIsNone(self.flow.pending_timer)
         self.assertFalse(any(self.flow.game.board.cells))
-        self.advance_callback()
         self.flow.choose(3)
         board = self.flow.game.board
         self.flow.choose(4)
@@ -72,7 +72,6 @@ class ConnectFourSequenceTests(unittest.TestCase):
 
     def test_close_invalidates_a_running_search_and_every_stale_callback(self):
         self.flow.greet()
-        self.advance_callback()
         self.flow.choose(3)
         self.finish_drop()
         future = self.futures[0]
@@ -89,7 +88,6 @@ class ConnectFourSequenceTests(unittest.TestCase):
 
     def test_unready_search_polls_without_advancing_live_game(self):
         self.flow.greet()
-        self.advance_callback()
         self.flow.choose(0)
         self.finish_drop()
         board = self.flow.game.board
@@ -105,7 +103,6 @@ class ConnectFourSequenceTests(unittest.TestCase):
         self.flow = self.make_flow(game)
         self.addCleanup(self.flow.close)
         self.flow.greet()
-        self.advance_callback()
         self.flow.choose(3)
         self.finish_drop()
         self.assertEqual(game.score.wins, 1)
@@ -124,7 +121,6 @@ class ConnectFourSequenceTests(unittest.TestCase):
 
     def test_stale_drop_callback_cannot_override_a_new_timer(self):
         self.flow.greet()
-        self.advance_callback()
         self.flow.choose(0)
         stale = next(iter(self.tasks.values()))[1]
         self.advance_callback()
