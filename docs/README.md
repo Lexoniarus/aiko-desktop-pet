@@ -33,6 +33,16 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest Plaudern selection slice (PL-5): **202 targeted tests in 6.806 s**, zero
+failures/errors/skips, longest **0.586 s**, plus scoped Ruff, fresh strict Mypy
+for four production modules and Pyright for eight source/test files. The
+[delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-5-delivery-evidence-based-requested-plaudern)
+records cause weighting, actual wish/result boundaries, requested/spontaneous
+separation and the first 24 complete grounded stories replacing all 60 old talk
+entries. All 1,093 non-talk definitions are unchanged; later text coverage and
+spontaneous filler cleanup remain PL-6. No windows, mouse control, personal-save
+access, live API, CI or full-suite run.
+
 Latest social-content evidence slice (PL-4): **178 targeted tests in 4.831 s**,
 zero failures/errors/skips, longest **0.539 s**, plus scoped Ruff, fresh strict
 Mypy for ten changed production files and Pyright for twelve source/test files.

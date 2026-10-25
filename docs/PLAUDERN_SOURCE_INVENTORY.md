@@ -9,6 +9,12 @@ mouse control, live API calls, runtime tests or CI were used.
 > see the [source format](DATA_AND_SAVES.md#character-copy). This inventory keeps
 > the original monolith's snapshot hash/line coordinates for comparison, not as
 > an active source-path requirement. PL-1B verified all definitions and order.
+> **Later PL-5 replacement:** all sixty old requested-chat IDs listed here are
+> now removed, with 24 first grounded stories in their topic sources. All 1,093
+> non-talk definitions remain unchanged. This frozen manifest still documents
+> the original audit; see the [PL-5 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-5-delivery-evidence-based-requested-plaudern)
+> for current membership and validation. Spontaneous filler replacement remains
+> PL-6C.
 
 ## Snapshot and decisions
 

@@ -88,11 +88,13 @@ Each source retains the existing version-three `{catalogue_version, language,
 lines}` shape. Edit each complete sequence only in its listed topic file; add or
 remove its ID in `line_order` when intentionally changing catalogue membership.
 
-Eight populated sources cover `events/{objects,care,games,contact,work}.json`,
-`spontaneous/{needs,state}.json` and `plaudern/state.json`. Further planned story
-families get files when implemented; there are no empty placeholder catalogues.
-Existing generic lines are temporarily preserved in the state files until
-PL-5/PL-6C; this mechanical source split does not implement new topic selection.
+Populated sources cover `events/{objects,care,games,contact,work}.json`,
+`spontaneous/{needs,state}.json` and PL-5's
+`plaudern/{state,games,food,affection,social,negative_experiences}.json`.
+Further planned story families get files when implemented; there are no empty
+placeholder catalogues. PL-5 removed all sixty old requested-chat entries and
+added a first set of grounded stories. Random spontaneous filler remains
+temporarily until PL-6C; the event sources remain unchanged.
 
 `pet/mind/catalog.py:DialogueBook.from_file()` remains the single loader and
 selection owner. The default is the index; an explicitly supplied standalone
@@ -112,8 +114,14 @@ five. Named filters use supported `stages`, day periods and weekdays;
 `requires_present` requires observed or direct contact. `conditions` contains
 alternative clauses (OR), whose populated fields combine (AND):
 `emotional_states`, `emotional_directions`, `need_conditions`, `reaction_tones`,
-`situational_conditions` and boolean `sleeping`. State/tone choices within one
-field are alternatives; directions/needs/situations require every listed fact.
+`situational_conditions` and boolean `sleeping`. PL-5 additionally supports
+semantic `conversation_topics`, `conversation_attributions` and
+`conversation_causes`. Their values are validated; every requested `talk` clause
+must bind a topic. Topic-bound placeholders are limited to proved fields
+(`target`, `count`, actual Blackjack totals or the existing `wish_text`).
+State/tone/topic/cause choices within one field are alternatives;
+directions/needs/situations require every listed fact. Topic selection reads
+existing wish/Moodlet facts; it adds no conversational storage or schema fields.
 For example, `low_satiety` never qualifies as an emotional state, while `proud`
 never qualifies as a care condition. Old `moods`/`needs` keys are rejected.
 All 1,082 catalogue IDs and their authored text/emote beats were preserved in

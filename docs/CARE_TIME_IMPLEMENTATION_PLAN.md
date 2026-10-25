@@ -2,8 +2,8 @@
 
 > **Dialogue planning update, 2026-10-25:** the owner-approved
 > [separation of spontaneous speech, immediate reactions and Plaudern](#dialogue-planning-spontaneous-speech-immediate-reactions-and-plaudern-2026-10-25)
-> below defines the next dialogue scope. This is documentation only; selection
-> rules and wording still require discussion before implementation.
+> below records the agreed dialogue scope. Dated planning entries remain
+> historical where superseded by the delivery records below.
 > The [approved simplification](#approved-simplification-existing-wishes-and-moodlets-define-relevance)
 > removes proposed discussed markers and conversation-history management.
 > The [replacement scope](#approved-replacement-scope-remove-ungrounded-generic-bubbles)
@@ -20,8 +20,10 @@
 > **PL-3 delivered:** [settled Blackjack totals and decision reasons](#pl-3-delivery-settled-blackjack-result-evidence)
 > now use the same bounded cause and compatible storage path.
 > **PL-4 delivered:** [actually played API source words and attribution](#pl-4-delivery-original-social-content-evidence)
-> now reach qualifying social causes and compatible SQLite storage. Plaudern
-> topic selection and dialogue replacement remain later work.
+> now reach qualifying social causes and compatible SQLite storage.
+> **PL-5 delivered:** [evidence-based Plaudern selection](#pl-5-delivery-evidence-based-requested-plaudern)
+> replaces the old requested-chat pool with a first grounded story set. Completing
+> the story families and replacing random spontaneous filler remain PL-6.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -11038,3 +11040,84 @@ before imports and default saves redirected to disposable storage. No native
 windows, mouse control, live API, personal-save access/change, GitHub CI, full
 suite or merge. Dialogue text, rewards, wish/Moodlet rules and balancing remain
 unchanged; final integrated acceptance remains PL-7.
+
+#### PL-5 delivery: evidence-based requested Plaudern
+
+Delivered in **`d9595cb`** (pure topic policy) and **`43f828e`** (atomic requested-
+chat cutover, strict conditions, first authored stories and focused acceptance).
+Parallel character/export, horoscope-documentation and social-plan changes
+remain untouched and unstaged.
+
+- New `pet/mind/conversation_topics.py` owns frozen `ConversationTopic`, its
+  semantic kind/key and pure `select_conversation_topic(...)`. It projects the
+  existing active Moodlet causes and their original wish/result/content/period
+  facts. No new mutable memory, conversation manager, persistence fields,
+  discussed markers, completion ledger or independent clock is introduced.
+- Selection weights an eligible episode once by current intensity **1:2:3**,
+  then chooses one retained cause within it. Cause count does not multiply the
+  episode weight, and negatives have no automatic priority. A shared event is
+  represented once by its strongest surviving episode; stable episode ID breaks
+  ties. Legacy/unspecified, ended and future causes do not invent an experience.
+  A retained cause remains eligible after being discussed and across restarts.
+- Topics distinguish competitive outcomes, shared Quiz completion, cumulative
+  original goals versus the triggering final round, food intake versus handover,
+  welcome affection/social contact, negative incidents, poor-care exposure and
+  actual long-term period summaries. Unknown Blackjack cards do not prove bust
+  or natural Blackjack. Object stories do not infer food identity or blame from
+  an unknown object or mere current stock. Full source facts remain attached to
+  their existing causes rather than being copied into a topic archive.
+- `PetMind.select_reaction("talk", ...)` selects the topic with the existing RNG
+  and enriches the existing immutable `DialogueContext`. Actual experience is
+  primary. If none is available, a still-live, already disclosed wish may be
+  repeated in the present tense under the existing friendship/mood thresholds
+  and positive-expression guard. Hidden wishes are not newly disclosed here.
+  Otherwise, or when a selected topic has no authored story yet, reply only to
+  actual current state. Do not invent a generic past event or silently use the
+  retired short-talk pool.
+- The same `DialogueConditions` and `DialogueBook` handle semantic
+  `conversation_topics`, optional cause-kind/attribution guards, relationship
+  stages, overall emotion and concurrent needs. The loader rejects ungrounded
+  `talk` entries, unknown topics and placeholders not proved by the topic.
+  Existing authored wish utterances now share `render_wish_text` with the same
+  renderer; their text and spontaneous disclosure semantics are unchanged.
+  There is no separate story engine or sentence mixer.
+- All **60 old requested `talk` entries** are removed atomically from active
+  resources and index order. **24 first complete stories** occupy the canonical
+  `plaudern/{state,games,food,affection,social,negative_experiences}.json` sources.
+  They cover Mastermind's actual uncracked-code result with relationship and
+  mixed-feeling variants, selected evidenced Blackjack busts, named food intake/
+  handover, welcome petting, actual chat, poking/withholding, disclosed current
+  wishes and actual emotion/need replies. A lost final round in positive shared
+  play is not falsely told as a failed wish: disappointment variants require an
+  actual retained `wish_failed` cause. No appetite, intake or human response is
+  invented by a successful handover or an API category.
+- All **1,093 non-talk definitions**, including protected object/search/handover,
+  functional care, click, work and game reactions, remain unchanged. The live
+  catalogue contains **1,117 entries**. The former unsolicited `talk` promotion
+  cannot match the new mandatory topic conditions; spontaneous short comments
+  remain on their existing path. Removing its now-unused promotion machinery
+  and replacing remaining idle/calendar filler are explicitly PL-6C work.
+
+Validation:
+
+- **202 targeted tests in 6.806 s**, zero failures/errors/skips; longest
+  **0.586 s**. No test exceeds ten seconds. Coverage includes per-episode weights,
+  event deduplication, original/cumulative evidence, polarity, unknown identity,
+  period facts, relationship/mixed-emotion coloring, concrete food/Blackjack
+  fields, existing full-playback social fulfillment and replay protection,
+  actual SQLite restart, typed schema/placeholder rejection and protected flows.
+- Old fixed story-count and unsolicited-story assertions were replaced by
+  meaningful topic/grounding/rotation and separation checks. No native tests
+  were relaxed into false passes. Scope is targeted, not the complete suite.
+- Scoped Ruff, fresh strict Mypy for all four changed production modules, and
+  Pyright for all eight changed source/test files pass. Package boundaries and
+  the acyclic graph pass without exceptions. Source comparison records unchanged
+  non-talk definitions and removal of every old talk ID.
+
+Reports remain outside Git in `%TEMP%/aiko-pl5-acceptance-1dtp856x/final.json`
+and `%TEMP%/aiko-pl5-source-039isyn0/` (`before.json`, `preservation.json`). Native
+Tk creation was blocked before imports; default saves used disposable paths.
+No windows, mouse control, live API, personal-save access/change, GitHub CI,
+full-suite run or merge. Wish/Moodlet timing, rewards, friendship balance and
+existing social completion/save ownership remain intact. Remaining story-family
+coverage is PL-6A/B; spontaneous cleanup is PL-6C; final integrated review is PL-7.

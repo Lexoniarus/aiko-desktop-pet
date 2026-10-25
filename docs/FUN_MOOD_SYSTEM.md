@@ -383,6 +383,17 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
+PL-5 derives requested Plaudern topics from existing active causes and original
+wish facts. Episode intensity supplies weight once before choosing a retained
+cause; multiple causes do not multiply episode weight, and shared events do not
+become independent memories. The same Mind/context/catalogue renders the first
+grounded stories with relationship/emotional coloring. A current disclosed wish
+or actual state is a present-tense alternative, without inventing a completed
+event. The old generic talk pool is removed; broader family text coverage and
+spontaneous filler cleanup remain PL-6. There is no discussed-state storage or
+change to care, wish rewards or Moodlet timing. See the
+[PL-5 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-5-delivery-evidence-based-requested-plaudern).
+
 PL-4 retains original API source words/attribution in existing qualifying social
 causes after complete playback. One-liners, quotations, setup/punchline and facts
 remain distinguishable; preparation, interrupted playback and unqualified
