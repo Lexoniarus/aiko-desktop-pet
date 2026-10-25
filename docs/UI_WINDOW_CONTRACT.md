@@ -134,10 +134,20 @@ small screens. Counts and a permanent legend supplement colors; feedback is
 unordered and never identifies exact positions. Palette keys 1–6 and Left/Right,
 Delete and Enter provide an alternative to dragging.
 
+Pointer input also supports clicking a palette color, then a destination slot.
+Draft pins can be picked up again and moved or swapped within the active row.
+The drag preview belongs to the game Toplevel, outside the grabbed source
+canvas's subtree: motion/release over the preview still reaches that canvas.
+Every completed/cancelled gesture disposes its preview and owned local grab;
+invalid drops preserve the draft and consume no attempt. Failed mapping or an
+already destroyed source also clears transient gesture state. No global input
+hooks or desktop-item ownership are involved.
+
 Aiko's separate desktop code strip contains only question-mark covers during
 play; hovering/clicking cannot reveal it or trigger pet/World interaction. The
 sequence places feedback marks one by one, then reveals the secret only at round
-end. Sparse emotes and readable dialogue block input until finished. The next
+end. Draft preparation remains possible during dialogue; submission waits for
+readiness, and feedback/terminal rows remain protected. The next
 round requires an explicit click. Close/failure/shutdown cancels callbacks,
 releases a local drag grab and removes drag/code windows and image caches.
 

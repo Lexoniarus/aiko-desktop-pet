@@ -11395,3 +11395,57 @@ proof stay outside Git under `%TEMP%/aiko-pl6c-gtxej27r/` (`sources-before.json`
 `index-before.json`, `preservation.json`, `targeted.json`, `acceptance.json`).
 Final complete local suite, every test over ten seconds, whole-branch OOP/PEP 8
 review and final source inventory belong to the remaining PL-7 slice.
+
+
+### Follow-up: Mastermind drag preview event routing (2026-10-25)
+
+The runtime report describes pieces apparently staying outside the response
+row, difficult drop targeting and inability to pick those apparent pieces up.
+The rule/draft path already accepts only the visible active row; the concrete
+input defect is in the preview window hierarchy, not World object placement.
+
+Delivered in **`96a4171`**: `MastermindDrag` creates its preview under the source's
+owning game Toplevel instead of under the grabbed source canvas. Tk local grabs
+include descendants, including Toplevel descendants; the old preview/label could
+therefore receive motion and release without the source canvas's handlers.
+Placing the preview outside that subtree keeps those events on the captured
+source, so preview movement and teardown do not depend on moving away from it.
+See the [Tk grab contract](https://www.tcl-lang.org/man/tcl8.6/TkCmd/grab.htm).
+
+The existing drag object remains the single transient gesture owner. Failed grab
+acquisition or preview mapping/positioning cancels it. Cancellation detaches all
+local gesture references before cleanup and still destroys the preview when Tk
+has already destroyed the source. It releases only its own grab, not another
+window's. Invalid drops retain the original draft. Existing click-color-then-slot,
+active-row pickup/move/swap, greeting-time preparation, explicit submission and
+round rules remain unchanged; no new module, domain state or persistence field.
+
+Focused regression checks:
+
+- A bounded pointer-routing double models Tk's documented descendant-versus-
+  outside-subtree rule. Motion and release over the preview label must continue
+  movement and finish exactly one drop. This new test fails on the unchanged
+  pre-fix implementation and passes with the correction. It is not a native
+  Windows event-delivery or appearance claim.
+- Existing click-versus-drag, preview content and cancellation cases remain.
+  New checks cover failed grab/mapping with a destroyed source, actual draft
+  pickup, movement and occupied-slot swap using the real slot mapper, cleanup
+  outside the board/in a future row, scrolled active-row coordinates and clipping
+  by each real viewport boundary. No gameplay waiting or mouse automation.
+- **34 focused tests in 0.092 s**, zero failures/errors/skips; longest **0.029 s**.
+  Rule, sequence, input, shared models/focus and game dependency checks pass.
+  Scoped Ruff, fresh strict Mypy for `mastermind_drag.py`, and Pyright for the
+  changed source/test module pass.
+- The supplemental broader run reports **77 tests in 0.896 s**: 61 pass,
+  15 native-only skips and one independent existing working-tree architecture
+  failure. `test_gui_composition_root_stays_bounded` observes **753 lines** in
+  parallel `gui.py` versus its 640-line gate (committed HEAD was 640). That
+  unrelated in-progress change and the gate are left untouched. No green
+  whole-branch acceptance is claimed; reconcile it before final PL-7 acceptance.
+
+Native Tk was blocked before test imports and the default save redirected to
+synthetic temporary storage. No test windows, mouse control, live APIs, personal
+save access/change, CI, full-suite run or merge. Reports remain outside Git in
+`%TEMP%/aiko-mastermind-drag-dc_n_k0o/` (`regression-before.txt`, `targeted.json`,
+`focused.json`). Native Windows dragging remains a separate manual acceptance
+item. Parallel horoscope, character and UI work is preserved and unstaged.
