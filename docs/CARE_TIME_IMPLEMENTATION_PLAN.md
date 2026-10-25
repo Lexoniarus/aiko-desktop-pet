@@ -28,6 +28,9 @@
 > now cover their concrete retained evidence, original goals and relationship/
 > emotional coloring. Social/negative/long-term stories remain PL-6B; spontaneous
 > cleanup remains PL-6C.
+> **PL-6B delivered:** [social, negative and long-term stories](#pl-6b-delivery-social-negative-and-long-term-story-families)
+> now use retained source words, incident attribution and period summaries.
+> Spontaneous cleanup remains PL-6C; final whole-branch acceptance remains PL-7.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -11212,3 +11215,101 @@ saves redirected to disposable paths. No windows, mouse control, live API,
 personal-save access/change, GitHub CI, full-suite run or merge. Existing need,
 friendship, wish/Moodlet and care/completion rules are unchanged. PL-7 remains
 the final whole-branch suite and OOP/PEP 8 acceptance.
+
+#### PL-6B delivery: social, negative and long-term story families
+
+Delivered in **`8ea7c46`** (social source reflections), **`76861c7`** (negative
+incidents/poor care) and **`2376d58`** (the six long-term feeling families).
+Parallel character/export, horoscope-documentation and social-plan work remains
+untouched and unstaged.
+
+The existing Mind, immutable topic/context and single `DialogueBook` remain the
+owners. No new production module, state store, conversation journal, clock,
+Moodlet trigger, retention rule, reward or schema is introduced.
+
+- **Social content:** the canonical `SocialContentKind` type lives beside the
+  existing frozen source evidence. Typed-content topic keys distinguish a
+  one-liner, quotation, setup/punchline and fact from older category-only causes.
+  Chat and its actual shared-time wish have their own complete stories. Aiko
+  remains the teller; no user reply, laugh or emotional response is invented.
+- Reviewed source-reference pattern: one personal introductory text, the literal
+  retained source reference, then Aiko's personal reflection. A quotation also
+  names its supplied author in a separate bubble; a two-part joke keeps setup
+  and punchline in two separate reference bubbles. One-liner/fact stories use
+  three text bubbles; quotations/two-part stories use four. Wish-specific framing
+  requires its original category wish, without claiming a prior desire for that
+  particular remote item. General/shared wishes and ordinary qualified telling
+  retain truthful sharing-based wording.
+- Source references are bounded literal prefixes, not summaries or generated
+  topic labels. Up to 123 characters appear inside `»…«` (125-character bubble
+  maximum). Shortening prefers a word boundary and appends a visible ellipsis;
+  an oversized token can be shortened visibly without inventing its completion.
+  Short originals remain exact. The author attribution uses the existing German
+  credit template with a bounded supplied name. The complete original parts,
+  identity, fingerprint, URLs and author/license metadata stay unchanged in the
+  existing cause. No refetch or content body is added to the 100-entry receipt
+  history. Missing older words yield a telling-based reflection, not a fabricated
+  quote, fact or punchline.
+- `source_quote`, `source_setup`, `source_punchline` and `source_author` are allowed
+  only for their proved typed-content topics and must occupy their own text
+  bubble. The same loader rejects embedding them in a longer uncontrolled
+  template. Formatting is one pass, so braces in original API text remain literal.
+  Complete saying, quotation, two-part and fact examples were reviewed using
+  deterministic provider-shaped fixtures and retained outside Git; no fixture
+  content is installed as an authored API fallback.
+- **Negative incidents:** all six incident families and five poor-care
+  after-effects have complete relationship/quiet/mixed variants. The actual
+  cause's USER attribution gates direct blame for poking, withholding and changed
+  familiar places. Unknown attribution remains impersonal. A withheld unknown
+  object remains a "Ding"; no current World stock or opaque object ID supplies a
+  food identity. Changed-place text reflects the actual prior search evidence,
+  not mere pickup or current movement.
+- Monotony/disregarded-food stories may name only a food ID retained as the actual
+  target. The existing parser proves `{target}` for these topics only with a
+  nonempty canonical-food target guard. An unwanted handover remains a handover,
+  without invented intake or a previous warning/disclosure. High friendship and
+  mixed feelings do not make unwanted contact secretly pleasant or forgive a
+  boundary. Game failures keep their existing PL-6A game-family owner instead of
+  being duplicated in the negative file.
+- **Long-term feelings:** Trusting, Appreciated, Optimistic, Uncertain, Overlooked
+  and Guarded speak about an accumulated feeling over the retained period. Each
+  has four relationship bands and quiet/mixed alternatives. Trust in treatment,
+  feeling individually valued and confidence in herself remain distinct;
+  insecurity, feeling peripheral and self-protective distance remain distinct.
+  Period counts, thresholds and formulas stay out of speech. A period summary
+  never reconstructs an individual gift, game, human intention or event after
+  raw care evidence is gone. Legacy episodes without a known period still cannot
+  supply that retrospective story.
+
+The canonical files hold **64 social, 96 negative/poor-care and 36 long-term
+stories**. `plaudern/long_term.json` is populated and explicitly indexed, not
+recursively discovered. These counts describe the delivery, not future quotas.
+The live catalogue has **1,517 entries**. All eleven other sources, all **1,093
+non-talk definitions** and their relative global order are unchanged, including
+the PL-6A game/food/affection files and protected object/search/handover feedback.
+
+Validation:
+
+- Social: **60 targeted tests in 4.967 s**; negative/poor care: **74 in 3.195 s**;
+  long-term families: **52 in 4.893 s**. All pass without errors or skips.
+- Final combined targeted acceptance: **309 tests in 14.947 s**, zero failures,
+  errors or skips; longest **1.687 s**. No individual test exceeds ten seconds.
+  Tests cover actual full playback and retained originals through SQLite restart,
+  safe literal excerpts, separate author/setup/punchline, old absent words,
+  friendship and emotional coloring, real poking/search/withholding signals,
+  unwanted recognized handover without intake or invented disclosure, modeled
+  poor-care after-effects and all six actual long-term qualification patterns.
+  A period remains narratable after raw events expire without reconstructing
+  them. Story selection does not alter Pet checkpoints, boundaries or causes.
+- Scoped Ruff, fresh strict Mypy for the three changed production modules, and
+  Pyright for those modules plus four changed test files pass. Source comparison,
+  complete-sequence uniqueness, package boundaries and the acyclic graph pass
+  without exemptions. No native assertions are replaced with false passes.
+
+Reports and editorial exports remain outside Git under
+`%TEMP%/aiko-pl6b-29o8cauc/` (`social-tests.json`, `negative-tests.json`,
+`final.json`, `reviewed-examples.json`, `before.json`, `preservation.json`). Native
+Tk creation was blocked before imports and default saves redirected to disposable
+paths. No windows, mouse control, live API, personal-save access/change, GitHub
+CI, full-suite run or merge. PL-6C removes the remaining ungrounded spontaneous
+pool/machinery; PL-7 performs the final whole-branch suite and OOP/PEP 8 review.

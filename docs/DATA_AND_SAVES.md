@@ -90,7 +90,7 @@ remove its ID in `line_order` when intentionally changing catalogue membership.
 
 Populated sources cover `events/{objects,care,games,contact,work}.json`,
 `spontaneous/{needs,state}.json` and PL-5's
-`plaudern/{state,games,food,affection,social,negative_experiences}.json`.
+`plaudern/{state,games,food,affection,social,negative_experiences,long_term}.json`.
 Further planned story families get files when implemented; there are no empty
 placeholder catalogues. PL-5 removed all sixty old requested-chat entries and
 added a first set of grounded stories. Random spontaneous filler remains
@@ -124,9 +124,15 @@ PL-6A adds typed `conversation_objectives`, `conversation_targets`,
 The aggregate goal outcome is distinct from its final round. Revealed RPS-hand
 topics may render `aiko_move`/`player_move` using existing German move labels;
 older missing-detail topics may not. These filters project saved causes and
-their original wish snapshots without new storage fields. Game, food and welcome-
-affection stories use their existing canonical topic files; further social and
-negative/long-term completion remains PL-6B.
+their original wish snapshots without new storage fields. PL-6B adds typed
+`social.content.*` topic keys for retained original words and separate author/
+setup/punchline references. Source placeholders occupy a complete bubble and
+render literal, visibly shortened prefixes when needed; the original stored
+parts remain complete. Category-only causes cannot invent those words.
+The parser permits a named `{target}` in monotony/disregarded-food stories only
+under a canonical-food target guard. Long-term topics cannot render individual
+gift/game fields or internal counters from a period summary. These story families
+use the existing cause envelopes and introduce no save format or schema change.
 State/tone/topic/cause choices within one field are alternatives;
 directions/needs/situations require every listed fact. Topic selection reads
 existing wish/Moodlet facts; it adds no conversational storage or schema fields.

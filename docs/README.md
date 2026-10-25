@@ -33,6 +33,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest social/negative/long-term story slice (PL-6B): **309 targeted tests in
+14.947 s**, zero failures/errors/skips, longest **1.687 s**, plus scoped Ruff,
+fresh strict Mypy for three production modules and Pyright for seven source/test
+files. The [delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6b-delivery-social-negative-and-long-term-story-families)
+covers literal API references, incident attribution, poor-care after-effects and
+all six modeled long-term feelings. Eleven other catalogue sources and 1,093
+non-talk definitions are unchanged. PL-6C and final PL-7 acceptance remain.
+No windows, mouse control, personal-save access, live API, CI or full-suite run.
+
 Latest game/food/affection story slice (PL-6A): **240 targeted tests in 8.734 s**,
 zero failures/errors/skips, longest **0.595 s**, plus scoped Ruff, fresh strict
 Mypy for three production modules and Pyright for eight source/test files.

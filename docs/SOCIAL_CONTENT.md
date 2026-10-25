@@ -239,7 +239,20 @@ rotation, pauses, emotes and authored framing are not remembered source words.
 Preparation, interrupted playback and unqualified completion retain no such
 cause. Each cause keeps its own content within the existing one/two/three limit;
 cause removal also removes its content. Plain chat and horoscope keep their
-existing behavior. See [PL-4 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-4-delivery-original-social-content-evidence).
+existing care/completion behavior. See [PL-4 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-4-delivery-original-social-content-evidence).
+
+PL-6B's requested Plaudern reflects those same causes through the single Mind/
+catalogue path. A personal introduction precedes a literal retained reference
+and Aiko's feeling about sharing it. Quotations add their supplied author;
+two-part jokes keep setup and punchline separate. Long references use a visibly
+ellipsized original prefix inside quotation marks, with each reference occupying
+its own 125-character bubble. The complete original and metadata remain stored
+unchanged. There is no semantic paraphraser, generated source title or provider
+refetch. Aiko remains the teller and does not claim the user laughed or replied.
+Older category-only causes reflect the telling without inventing lost words.
+Wish-specific motives require their original wish; friendship and quiet/mixed
+feelings color the full sequence. The body-free repetition history is unchanged.
+See [PL-6B delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6b-delivery-social-negative-and-long-term-story-families).
 
 `settings.online_social` is an optional Boolean within the existing version-one
 legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never

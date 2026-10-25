@@ -383,6 +383,16 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
+PL-6B completes social-content, negative/poor-care and six long-term story
+families. Retained API words support literal references, while unknown text,
+object identity, human reactions and prior warnings stay unknown. Direct blame
+uses the individual cause's attribution. Long-term episodes express accumulated
+feelings from their saved period without reconstructing specific events or
+reciting internal thresholds. Friendship and mixed feelings do not retract
+boundaries. The same topic/context/catalogue path preserves existing causes,
+timing, care and persistence ownership. See the
+[PL-6B delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6b-delivery-social-negative-and-long-term-story-families).
+
 PL-6A completes the game, food and welcome-affection story families through the
 same catalogue. Retained goals, actual last-round results and revealed details
 remain distinct. Food handover does not prove intake; autonomous intake does
