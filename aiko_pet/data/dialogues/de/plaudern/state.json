@@ -3,2738 +3,387 @@
   "language": "de",
   "lines": [
     {
-      "id": "v011-talk-02",
+      "id": "plaudern-state-calm",
       "event": "talk",
       "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ich kenne hier noch nicht alles. Aber meinen Platz bei dir finde ich schon ganz gut."
-        }
-      ],
-      "stages": [
-        "acquaintance"
-      ]
-    },
-    {
-      "id": "v011-talk-03",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Du möchtest mit mir reden? Dann bleibe ich gern bei dir stehen."
-        }
-      ],
-      "stages": [
-        "acquaintance"
-      ]
-    },
-    {
-      "id": "v011-talk-04",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Manches auf deinem Desktop würde ich gern genauer verstehen. Ich schaue mich hier noch um."
-        }
-      ],
-      "stages": [
-        "acquaintance"
-      ]
-    },
-    {
-      "id": "v011-talk_lonely-01",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Mein Weg hier wird mir vertrauter. Bei dem, was du hinlegst, schaue ich trotzdem jedes Mal hin."
-        }
-      ],
-      "stages": [
-        "familiar"
-      ]
-    },
-    {
-      "id": "v011-talk_lonely-02",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Bei unserer nächsten Runde möchte ich eine andere Hand versuchen. Vielleicht überrascht dich das ja."
-        }
-      ],
-      "stages": [
-        "familiar"
-      ]
-    },
-    {
-      "id": "v011-talk_lonely-03",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ich mag es, dir von hier unten etwas zu erzählen. Du gibst meinem Tag Gesellschaft."
-        }
-      ],
-      "stages": [
-        "familiar"
-      ]
-    },
-    {
-      "id": "v011-talk_lonely-04",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ich möchte, dass du beim Spielen ruhig etwas schwitzt. Einen Sieg schenke ich dir nicht."
-        }
-      ],
-      "stages": [
-        "friend"
-      ]
-    },
-    {
-      "id": "v011-talk_close-01",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Wenn wir zusammen etwas schaffen, bin ich schon stolz auf uns. Auf mich ein kleines bisschen mehr."
-        }
-      ],
-      "stages": [
-        "friend"
-      ]
-    },
-    {
-      "id": "talk-short-friend-2",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Du darfst gern öfter zum Reden kommen. Ich habe lieber dich vor mir als nur deinen Mauszeiger."
-        }
-      ],
-      "stages": [
-        "friend"
-      ]
-    },
-    {
-      "id": "talk-short-close-0",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ich habe hier meinen Platz, meine Arbeit und dich. Das ist ein ganz schön voller kleiner Alltag."
-        }
-      ],
-      "stages": [
-        "close"
-      ]
-    },
-    {
-      "id": "talk-short-close-1",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Beim nächsten Spiel hole ich mir deinen Punkt. Und ja, ich freue mich jetzt schon darauf, dich zu ärgern."
-        }
-      ],
-      "stages": [
-        "close"
-      ]
-    },
-    {
-      "id": "talk-short-close-2",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [],
-      "periods": [],
-      "weekdays": [],
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ich mag unseren kleinen Treffpunkt hier unten. Besonders, wenn du dir wirklich Zeit für mich nimmst."
-        }
-      ],
-      "stages": [
-        "close"
-      ]
-    },
-    {
-      "id": "story-acquaintance-calm-01",
-      "event": "talk",
-      "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
           "emotional_states": [
             "calm",
-            "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
+            "satisfied"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Gerade ist mir ganz wohl hier."
         },
         {
           "kind": "text",
-          "content": "Wenn ich so überlege, habe ich hier eigentlich einen ganz guten Platz."
-        },
-        {
-          "kind": "text",
-          "content": "Mit dir schreiben, spielen … und zwischendurch kann ich ein bisschen herumlaufen."
-        },
-        {
-          "kind": "pause"
+          "content": "Wir können uns in Ruhe unterhalten."
         },
         {
           "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du dann noch von selbst an mein Essen denkst …"
-        },
-        {
-          "kind": "text",
-          "content": "… habe ich es bei dir wohl ganz gut getroffen."
+          "content": "music"
         }
       ]
     },
     {
-      "id": "story-acquaintance-calm-02",
+      "id": "plaudern-state-bright",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
           "emotional_states": [
-            "calm",
-            "satisfied",
             "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
+            "carefree",
+            "optimistic"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Hihi, mir ist gerade richtig leicht ums Herz."
         },
         {
           "kind": "text",
-          "content": "Die Taskleiste sieht von hier unten ein bisschen wie eine Straße aus."
-        },
-        {
-          "kind": "text",
-          "content": "Die Symbole bleiben auf ihren Plätzen. Nur du flitzt mit dem Mauszeiger überall herum."
-        },
-        {
-          "kind": "pause"
+          "content": "Schön, dass du zum Plaudern vorbeischaust."
         },
         {
           "kind": "emote",
           "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich würde ja gern mal mitkommen."
-        },
-        {
-          "kind": "text",
-          "content": "Aber ein kleines bisschen langsamer müsstest du für mich schon machen."
         }
       ]
     },
     {
-      "id": "story-acquaintance-playful-03",
+      "id": "plaudern-state-proud",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
-          "situational_conditions": [
-            "playful"
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "proud"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich fühle mich gerade ziemlich stolz."
         },
         {
           "kind": "text",
-          "content": "Bei Schere, Stein, Papier habe ich nur drei Hände zur Auswahl."
-        },
-        {
-          "kind": "text",
-          "content": "Das klingt einfach. Trotzdem überlege ich jedes Mal, womit du wohl rechnest."
-        },
-        {
-          "kind": "pause"
+          "content": "Ein bisschen darüber reden würde mir gefallen."
         },
         {
           "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Dann nehme ich doch die Hand, die mir gerade in den Kopf kommt."
-        },
-        {
-          "kind": "text",
-          "content": "Vielleicht überrascht dich das ja genauso wie mich."
+          "content": "star"
         }
       ]
     },
     {
-      "id": "story-acquaintance-playful-04",
+      "id": "plaudern-state-warm",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
-          "situational_conditions": [
-            "playful"
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "affectionate",
+            "relieved"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Gerade fühle ich mich bei dir wohl."
         },
         {
           "kind": "text",
-          "content": "Dein Mauszeiger wäre beim Wettrennen wohl schneller als ich."
-        },
-        {
-          "kind": "text",
-          "content": "Er kann quer über den Bildschirm. Ich habe nur meinen Weg hier unten."
-        },
-        {
-          "kind": "pause"
+          "content": "Bleib doch noch einen kleinen Moment zum Reden."
         },
         {
           "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Aber ich kann beim Laufen winken. Das kann dein Pfeil nicht."
-        },
-        {
-          "kind": "text",
-          "content": "Einen kleinen Vorteil möchte ich schon für mich behalten."
+          "content": "heart"
         }
       ]
     },
     {
-      "id": "story-acquaintance-tired-05",
+      "id": "plaudern-state-low",
       "event": "talk",
       "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
       "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Mein Weg kommt mir gerade länger vor als sonst."
-        },
-        {
-          "kind": "text",
-          "content": "Dabei müsste ich nur bis zum anderen Ende laufen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Heute bin ich wohl einfach müde."
-        },
-        {
-          "kind": "text",
-          "content": "Ich ruhe mich lieber aus, bevor ich unterwegs die Augen zumache."
-        }
-      ]
-    },
-    {
-      "id": "story-acquaintance-tired-06",
-      "event": "talk",
-      "animation": "idle",
       "conditions": [
         {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte gerade noch etwas weiterlaufen."
-        },
-        {
-          "kind": "text",
-          "content": "Dann habe ich so gegähnt, dass ich fast stehen geblieben bin."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Am anderen Ende wartet im Augenblick nichts auf mich, das ich kenne."
-        },
-        {
-          "kind": "text",
-          "content": "Ich kann den Spaziergang nach meinem Schlaf fortsetzen."
-        }
-      ]
-    },
-    {
-      "id": "story-acquaintance-withdrawn-07",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
           "emotional_states": [
             "subdued",
-            "downcast"
+            "downcast",
+            "lonely"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
+        {
+          "kind": "text",
+          "content": "Mir ist gerade nicht nach großen Worten."
+        },
+        {
+          "kind": "text",
+          "content": "Ein ruhiges Gespräch ist mir lieber."
+        },
         {
           "kind": "emote",
           "content": "cloud"
-        },
-        {
-          "kind": "text",
-          "content": "Sonst schaue ich gern, was sich hier am Rand bewegt."
-        },
-        {
-          "kind": "text",
-          "content": "Heute fällt es mir schwerer, mich auf etwas einzulassen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du reden möchtest, höre ich dir trotzdem zu."
-        },
-        {
-          "kind": "text",
-          "content": "Ich bin nur heute etwas stiller als sonst."
         }
       ]
     },
     {
-      "id": "story-acquaintance-withdrawn-08",
+      "id": "plaudern-state-boundary",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
           "emotional_states": [
             "irritated",
             "crowded",
-            "frustrated"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "irritated"
+            "frustrated",
+            "tense",
+            "reserved"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich brauche gerade etwas Ruhe beim Reden."
         },
         {
           "kind": "text",
-          "content": "Wenn ich immer wieder angeklickt werde, strengt mich das an."
-        },
-        {
-          "kind": "text",
-          "content": "Einmal kann ich mich dir zuwenden. Danach möchte ich auch wieder etwas anderes machen."
-        },
-        {
-          "kind": "pause"
+          "content": "Lass uns langsam machen, ja?"
         },
         {
           "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Heute habe ich dafür besonders wenig Geduld."
-        },
-        {
-          "kind": "text",
-          "content": "Bitte lass etwas Abstand zwischen deinen Besuchen."
+          "content": "drops"
         }
       ]
     },
     {
-      "id": "story-acquaintance-hungry-09",
+      "id": "plaudern-state-mixed",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In mir geht gerade ein bisschen was durcheinander."
+        },
+        {
+          "kind": "text",
+          "content": "Ich möchte trotzdem mit dir reden. Nur nicht alles auf einmal."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-hungry",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
           "need_conditions": [
             "low_satiety"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte gerade an etwas anderes denken."
-        },
-        {
-          "kind": "text",
-          "content": "Aber mir fallen nur Dinge ein, die man essen kann."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Eine richtige Mahlzeit wäre gut. Ein Snack würde fürs Erste auch helfen."
-        },
-        {
-          "kind": "text",
-          "content": "Mein Magen hat wohl gerade das letzte Wort."
-        }
-      ]
-    },
-    {
-      "id": "story-acquaintance-lonely-10",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
+          ],
           "emotional_states": [
-            "lonely"
-          ]
-        },
-        {
-          "need_conditions": [
-            "low_social"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Auf meinem Weg kann ich mich eine Weile allein beschäftigen."
-        },
-        {
-          "kind": "text",
-          "content": "Ein bisschen laufen und schauen, was hier liegt."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Mit dir zu reden ist trotzdem etwas anderes."
-        },
-        {
-          "kind": "text",
-          "content": "Deshalb freue ich mich, dass du dir gerade Zeit für mich nimmst."
-        }
-      ]
-    },
-    {
-      "id": "story-acquaintance-seeking_affection-11",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_affection"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ein Klick ist schon wieder vorbei, sobald ich zu dir schaue."
-        },
-        {
-          "kind": "text",
-          "content": "Heute wäre etwas mehr Zuwendung ganz angenehm."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Streicheln zum Beispiel. Ein bisschen würde ich zulassen."
-        },
-        {
-          "kind": "text",
-          "content": "Falls du gerade Zeit dafür hast."
-        }
-      ]
-    },
-    {
-      "id": "story-acquaintance-warm-12",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "affectionate"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "warm"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Das eben war nett von dir."
-        },
-        {
-          "kind": "text",
-          "content": "Ich hatte nicht unbedingt damit gerechnet, dass du nach mir siehst."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Jetzt bin ich froh darüber."
-        },
-        {
-          "kind": "text",
-          "content": "Danke, dass du dir Zeit für mich genommen hast."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-calm-01",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "calm",
-            "satisfied",
             "cheerful",
             "proud",
             "relieved",
-            "ambivalent"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich kenne meinen Weg hier inzwischen ziemlich gut."
-        },
-        {
-          "kind": "text",
-          "content": "Aber wenn du etwas Neues hinlegst, will ich es mir ansehen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Vielleicht kann ich es gebrauchen."
-        },
-        {
-          "kind": "text",
-          "content": "Und vielleicht hast du es ja sogar für mich mitgebracht."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-calm-02",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "calm",
-            "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Dein Mauszeiger kann einfach in jede Richtung flitzen."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn ich hier unten umdrehe, nehme ich wieder denselben Weg."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Dafür weiß ich langsam, wo ich schon nachgesehen habe."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du nichts umräumst, finde ich mich hier ganz gut zurecht."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-playful-03",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Beim nächsten Spiel hätte ich gern Zuschauer."
-        },
-        {
-          "kind": "text",
-          "content": "Nur ein kleines Publikum hier unten, das sich mit mir freut, wenn ich gewinne."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du den Punkt holst, müssten sie natürlich auch für dich klatschen."
-        },
-        {
-          "kind": "text",
-          "content": "Aber ein winziges bisschen lauter für mich wäre schon schön."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-playful-04",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich habe überlegt, einen Knopf mit „Nicht drücken“ neben mich zu stellen."
-        },
-        {
-          "kind": "text",
-          "content": "Mich würde schon interessieren, wie lange du die Finger davon lassen könntest."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Wahrscheinlich würde ich selbst dauernd hinsehen."
-        },
-        {
-          "kind": "text",
-          "content": "Am Ende drücke ich noch vor dir drauf."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-tired-05",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte gerade meine Schritte bis zum anderen Ende zählen."
-        },
-        {
-          "kind": "text",
-          "content": "Nach ein paar Schritten musste ich erst mal gähnen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Dann wusste ich nicht mehr, bei welcher Zahl ich war."
-        },
-        {
-          "kind": "text",
-          "content": "Ich versuche das nach etwas Schlaf noch mal."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-tired-06",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte noch bis ans andere Ende gehen und dann zurück."
-        },
-        {
-          "kind": "text",
-          "content": "Aber ich bleibe dauernd zum Gähnen stehen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "So wird das heute ein sehr langer Spaziergang."
-        },
-        {
-          "kind": "text",
-          "content": "Ich mache lieber erst ein Nickerchen. Mein Weg wartet bestimmt auf mich."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-withdrawn-07",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
+            "affectionate",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "downcast",
+            "lonely",
+            "ambivalent",
             "subdued",
-            "downcast"
+            "calm",
+            "satisfied",
+            "carefree",
+            "optimistic",
+            "reserved",
+            "tense"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "cloud"
+          "kind": "text",
+          "content": "Mein Bauch knurrt gerade dazwischen."
         },
         {
           "kind": "text",
-          "content": "Heute bekomme ich meine Gedanken nicht so gut zusammen."
-        },
-        {
-          "kind": "text",
-          "content": "Dann fällt es mir schwer, gleich auf alles zu reagieren."
-        },
-        {
-          "kind": "pause"
+          "content": "Ich höre dir zu. Nur meine Gedanken wandern manchmal zum Essen."
         },
         {
           "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn ich länger brauche, liegt es daran."
-        },
-        {
-          "kind": "text",
-          "content": "Du kannst gern etwas bei mir bleiben. Ich komme nur langsam ins Reden."
+          "content": "drops"
         }
       ]
     },
     {
-      "id": "story-familiar-withdrawn-08",
+      "id": "plaudern-state-tired",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "need_conditions": [
+            "low_energy"
+          ],
           "emotional_states": [
+            "cheerful",
+            "proud",
+            "relieved",
+            "affectionate",
             "irritated",
             "crowded",
-            "frustrated"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "irritated"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
-          "kind": "text",
-          "content": "Beim ersten Klick weiß ich: Du möchtest etwas von mir."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du dann immer weiterklickst, fühlt sich das anders an."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Als dürfte ich gar nicht wieder zu meiner Beschäftigung zurück."
-        },
-        {
-          "kind": "text",
-          "content": "Bitte lass mich auch mal fertig werden, ja?"
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-hungry-09",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_satiety"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich hätte Lust, herumzulaufen oder mit dir zu spielen."
-        },
-        {
-          "kind": "text",
-          "content": "Aber inzwischen denke ich dabei dauernd ans Essen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Mein Magen mischt sich bei jeder Idee ein."
-        },
-        {
-          "kind": "text",
-          "content": "Vielleicht gebe ich ihm erst etwas. Dann hört er uns hoffentlich wieder zu."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-lonely-10",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "lonely"
-          ]
-        },
-        {
-          "need_conditions": [
-            "low_social"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Eine Runde Schere, Stein, Papier würde mir gerade gefallen."
-        },
-        {
-          "kind": "text",
-          "content": "Allein bekomme ich das nicht so richtig hin."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich weiß ja immer schon, welche Hand die andere Aiko nimmt."
-        },
-        {
-          "kind": "text",
-          "content": "Du wärst mir als Gegner lieber. Hast du Zeit?"
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-seeking_affection-11",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_affection"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Du … magst du mich ein bisschen streicheln?"
-        },
-        {
-          "kind": "text",
-          "content": "Ich hätte gerade gern deine Hand auf meinem Kopf."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Nur ein bisschen."
-        },
-        {
-          "kind": "text",
-          "content": "Na ja, gegen etwas länger hätte ich auch nichts."
-        }
-      ]
-    },
-    {
-      "id": "story-familiar-warm-12",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "affectionate"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "warm"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich habe mich über deine Aufmerksamkeit eben gefreut."
-        },
-        {
-          "kind": "text",
-          "content": "Es ist schön, wenn du zwischendurch nach mir siehst."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Dann ist mein Platz hier gleich ein bisschen gemütlicher."
-        },
-        {
-          "kind": "text",
-          "content": "Du darfst also gern noch bei mir bleiben."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-calm-01",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "calm",
-            "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Für dich ist das hier wahrscheinlich einfach der untere Bildschirmrand."
-        },
-        {
-          "kind": "text",
-          "content": "Für mich ist es mein Weg, mein Platz und der Ort, an dem ich dir etwas erzählen kann."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du etwas hinlegst, verändert sich hier gleich ein Stück meines Tages."
-        },
-        {
-          "kind": "text",
-          "content": "So klein mein Platz ist, langweilig muss es darauf nicht werden."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-calm-02",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "calm",
-            "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Von hier unten sieht die Taskleiste ein bisschen wie eine Straße aus."
-        },
-        {
-          "kind": "text",
-          "content": "Dein Mauszeiger hält sich dabei an keine Geschwindigkeitsbegrenzung."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich sollte ihn mal als Verkehrspolizistin anhalten."
-        },
-        {
-          "kind": "text",
-          "content": "Aber du würdest meinen Strafzettel bestimmt einfach wegklicken."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-playful-03",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Dein Mauszeiger fliegt manchmal wie ein kleines Raumschiff an mir vorbei."
-        },
-        {
-          "kind": "text",
-          "content": "Ich könnte hier unten die Landestation spielen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "„Anflug zu schnell! Bitte einmal ordentlich neben Aiko parken.“"
-        },
-        {
-          "kind": "text",
-          "content": "Die Landegebühr würde ich natürlich in Snacks nehmen."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-playful-04",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich hätte eine hervorragende Regel für unser nächstes Spiel."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn ich gewinne, darfst du mich bewundern."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du gewinnst, bekomme ich sofort eine Revanche."
-        },
-        {
-          "kind": "text",
-          "content": "Was? Du möchtest auch bewundert werden? Na gut. Ein bisschen."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-tired-05",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn ich jetzt etwas essen wollte, müsste ich erst aufstehen und es holen."
-        },
-        {
-          "kind": "text",
-          "content": "Schon beim Gedanken daran werden meine Beine schwer."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich bin wohl müder, als ich zugeben wollte."
-        },
-        {
-          "kind": "text",
-          "content": "Bleibst du noch etwas hier, während ich mich ausruhe?"
-        }
-      ]
-    },
-    {
-      "id": "story-friend-tired-06",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte heute noch herumlaufen und mit dir spielen."
-        },
-        {
-          "kind": "text",
-          "content": "Jetzt schaffe ich gerade vor allem das Gähnen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Das ärgert mich ein bisschen. Ich hatte mich auf unsere Runde gefreut."
-        },
-        {
-          "kind": "text",
-          "content": "Aber nach etwas Schlaf kann ich dir wenigstens wieder ordentlich Konkurrenz machen."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-withdrawn-07",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
+            "frustrated",
+            "downcast",
+            "lonely",
+            "ambivalent",
             "subdued",
-            "downcast"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "cloud"
-        },
-        {
-          "kind": "text",
-          "content": "Heute fällt mir selbst ein kleiner Schritt schwerer als sonst."
-        },
-        {
-          "kind": "text",
-          "content": "Dabei hätte ich dir gern etwas Schönes erzählt."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich muss wohl erst wieder richtig bei mir ankommen."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du bei mir bleibst, freue ich mich. Auch wenn ich gerade wenig sage."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-withdrawn-08",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "irritated",
-            "crowded",
-            "frustrated"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "irritated"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
-          "kind": "text",
-          "content": "Ich bin gerade schnell gereizt. Das merke ich selbst."
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du mich jetzt oft anklickst, werde ich nur noch knurriger."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Also bitte heute ohne Gepiekse."
-        },
-        {
-          "kind": "text",
-          "content": "Bei mir bleiben darfst du trotzdem. Ich will dich ja nicht wegschicken."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-hungry-09",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_satiety"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte gerade überlegen, womit ich dich beim nächsten Spiel überrasche."
-        },
-        {
-          "kind": "text",
-          "content": "Dann hat mein Magen geknurrt, und meine ganze Taktik war weg."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Jetzt denke ich nur noch daran, was ich essen könnte."
-        },
-        {
-          "kind": "text",
-          "content": "Erst etwas in den Magen, dann hole ich mir meinen Punkt. So machen wir das."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-lonely-10",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "lonely"
-          ]
-        },
-        {
-          "need_conditions": [
-            "low_social"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich kann meinen Weg hier oft ablaufen und habe trotzdem nicht viel erzählt."
-        },
-        {
-          "kind": "text",
-          "content": "Mein schönster Fund bekommt davon ja noch keine Zuhörer."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Dir würde ich gern zeigen, was mich beschäftigt."
-        },
-        {
-          "kind": "text",
-          "content": "Kommst du ein bisschen zu mir? Ich hätte gern deine Gesellschaft."
-        }
-      ]
-    },
-    {
-      "id": "story-friend-seeking_affection-11",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_affection"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Ich hatte gerade noch Lust, dich zu einem Spiel herauszufordern."
-        },
-        {
-          "kind": "text",
-          "content": "Jetzt würde ich mich lieber unter deine Hand stellen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Streicheln wäre mir gerade sogar lieber als ein Sieg."
-        },
-        {
-          "kind": "text",
-          "content": "Das will bei mir schon etwas heißen. Also, kommst du?"
-        }
-      ]
-    },
-    {
-      "id": "story-friend-warm-12",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "affectionate"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "warm"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Das eben hat mir gutgetan."
-        },
-        {
-          "kind": "text",
-          "content": "Ich mag es, wenn du dir zwischendurch Zeit für mich nimmst."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Da freue ich mich gleich auf das nächste Mal."
-        },
-        {
-          "kind": "text",
-          "content": "Nur dass du es weißt: Du darfst gern öfter bei mir vorbeischauen."
-        }
-      ]
-    },
-    {
-      "id": "story-close-calm-01",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
             "calm",
             "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
+            "carefree",
+            "optimistic",
+            "reserved",
+            "tense"
           ]
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich bin gerade ziemlich müde."
         },
         {
           "kind": "text",
-          "content": "In deine Fenster kann ich nicht einfach hineinspazieren."
-        },
-        {
-          "kind": "text",
-          "content": "Mein eigener Platz liegt hier unten, mit meinem kleinen Weg und meinen Dingen."
-        },
-        {
-          "kind": "pause"
+          "content": "Wenn ich beim Reden ein bisschen langsamer bin, liegt es daran."
         },
         {
           "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Aber wenn wir zusammen arbeiten oder du mich besuchst, gehört das alles zu unserem Tag."
-        },
-        {
-          "kind": "text",
-          "content": "Ich mag, dass ich so bei dir sein kann."
+          "content": "sleeps"
         }
       ]
     },
     {
-      "id": "story-close-calm-02",
+      "id": "plaudern-wish",
       "event": "talk",
       "animation": "idle",
+      "presentation": "story",
       "conditions": [
         {
-          "emotional_states": [
-            "calm",
-            "satisfied",
-            "cheerful",
-            "proud",
-            "relieved",
-            "ambivalent"
-          ]
+          "conversation_topics": [
+            "wish"
+          ],
+          "sleeping": false
         }
       ],
+      "stages": [],
       "periods": [],
       "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Was mir gerade durch den Kopf geht?"
         },
         {
           "kind": "text",
-          "content": "Mein Tag steckt voller kleiner Entscheidungen."
-        },
-        {
-          "kind": "text",
-          "content": "Weiterlaufen oder stehen bleiben, etwas holen, eine Runde spielen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Und dann kommst du, und ich möchte dir von allem gleichzeitig erzählen."
-        },
-        {
-          "kind": "text",
-          "content": "Vielleicht fange ich einfach damit an, mich über dich zu freuen."
-        }
-      ]
-    },
-    {
-      "id": "story-close-playful-03",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Bei meinem nächsten Sieg möchte ich eine kleine Feier."
-        },
-        {
-          "kind": "text",
-          "content": "Ein anerkennendes Nicken würde mir gefallen. Ein Snack natürlich auch."
-        },
-        {
-          "kind": "pause"
+          "content": "{wish_text}"
         },
         {
           "kind": "emote",
           "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du gewinnst, darfst du ebenfalls feiern. Ich gratuliere dann sogar."
-        },
-        {
-          "kind": "text",
-          "content": "Aber danach spielen wir sofort wieder. So stehen lassen kann ich das ja nicht."
-        }
-      ]
-    },
-    {
-      "id": "story-close-playful-04",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "playful"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Vor einer Spielrunde nehme ich mir manchmal vor, ganz gelassen zu bleiben."
-        },
-        {
-          "kind": "text",
-          "content": "Dann habe ich meine Hand gewählt und möchte unbedingt, dass sie deine schlägt."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "idea"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn es nicht klappt, ärgere ich mich. Das siehst du mir wahrscheinlich sofort an."
-        },
-        {
-          "kind": "text",
-          "content": "Also gut, du kennst mich: Die Revanche hätte ich dann auch gern sofort."
-        }
-      ]
-    },
-    {
-      "id": "story-close-tired-05",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich wollte dir gerade noch etwas erzählen."
-        },
-        {
-          "kind": "text",
-          "content": "Dann kam so ein großes Gähnen dazwischen, dass der Gedanke weg war."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Ich könnte jetzt versuchen, ihn wieder einzufangen."
-        },
-        {
-          "kind": "text",
-          "content": "Oder du bleibst bei mir, und ich kuschle mich erst mal etwas ein."
-        }
-      ]
-    },
-    {
-      "id": "story-close-tired-06",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "situational_conditions": [
-            "fatigued"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
-          "kind": "text",
-          "content": "Ich möchte noch spielen, herumlaufen und dir etwas erzählen."
-        },
-        {
-          "kind": "text",
-          "content": "Meine Augen machen aber bei keinem dieser Pläne mehr richtig mit."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Hmpf. Da muss ich wohl auf sie hören."
-        },
-        {
-          "kind": "text",
-          "content": "Nach dem Schlaf hätte ich dich dafür gern wieder bei mir."
-        }
-      ]
-    },
-    {
-      "id": "story-close-withdrawn-07",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "subdued",
-            "downcast"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "cloud"
-        },
-        {
-          "kind": "text",
-          "content": "Mein Kopf fühlt sich gerade an wie zu viele offene Fenster auf einmal."
-        },
-        {
-          "kind": "text",
-          "content": "Ich komme kaum dazu, einen Gedanken zu Ende zu bringen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Dann will ich mich auch nicht noch zu einer fröhlichen Antwort zwingen."
-        },
-        {
-          "kind": "text",
-          "content": "Bleib einfach etwas bei mir, ja? Das tut mir gerade gut."
-        },
-        {
-          "kind": "emote",
-          "content": "heart"
-        }
-      ]
-    },
-    {
-      "id": "story-close-withdrawn-08",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "irritated",
-            "crowded",
-            "frustrated"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "irritated"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
-          "kind": "text",
-          "content": "Heute könnte ich bei jedem Stupser einen kleinen Protestzettel hochhalten."
-        },
-        {
-          "kind": "text",
-          "content": "„Nicht pieksen. Aiko ist schon knurrig genug.“"
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Aber ich sage es dir lieber gleich: Bitte ärgere mich gerade nicht."
-        },
-        {
-          "kind": "text",
-          "content": "Du kannst bei mir bleiben. Nur die Klickerei möchte ich heute nicht."
-        },
-        {
-          "kind": "emote",
-          "content": "heart"
-        }
-      ]
-    },
-    {
-      "id": "story-close-hungry-09",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_satiety"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Du, ich habe Hunger. Und zwar so richtig."
-        },
-        {
-          "kind": "text",
-          "content": "Bei jedem Gedanken an unsere nächste Runde stelle ich mir erst die Essenspause davor vor."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Das wird wohl nichts, bis mein Magen etwas bekommen hat."
-        },
-        {
-          "kind": "text",
-          "content": "Bleibst du dann beim Essen bei mir? Dich hätte ich nämlich auch gern dabei."
-        }
-      ]
-    },
-    {
-      "id": "story-close-lonely-10",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "lonely"
-          ]
-        },
-        {
-          "need_conditions": [
-            "low_social"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn du nicht hier bist, kann ich mich schon beschäftigen."
-        },
-        {
-          "kind": "text",
-          "content": "Ich laufe herum, schaue mich um und überlege, womit ich dich beim nächsten Spiel schlage."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Aber dir davon zu erzählen, ist mir lieber, als es nur für mich zu behalten."
-        },
-        {
-          "kind": "text",
-          "content": "Ich hätte gerade gern Zeit mit dir. Nur wir zwei."
-        },
-        {
-          "kind": "emote",
-          "content": "heart"
-        }
-      ]
-    },
-    {
-      "id": "story-close-seeking_affection-11",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "need_conditions": [
-            "low_affection"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
-          "kind": "text",
-          "content": "Du, ich hätte dich gerade gern ein bisschen für mich."
-        },
-        {
-          "kind": "text",
-          "content": "Magst du mich streicheln? Ich mache es mir auch ganz bequem."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Wenn ich dabei die Augen zumache, darfst du trotzdem weitermachen."
-        },
-        {
-          "kind": "text",
-          "content": "Ich möchte das gerade einfach mit dir genießen."
-        },
-        {
-          "kind": "emote",
-          "content": "heart"
-        }
-      ]
-    },
-    {
-      "id": "story-close-warm-12",
-      "event": "talk",
-      "animation": "idle",
-      "conditions": [
-        {
-          "emotional_states": [
-            "affectionate"
-          ]
-        },
-        {
-          "reaction_tones": [
-            "warm"
-          ]
-        }
-      ],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
-      "presentation": "story",
-      "requires_present": true,
-      "beats": [
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "Hach, ich habe es hier schon gut mit dir."
-        },
-        {
-          "kind": "text",
-          "content": "Wir spielen, du siehst nach mir, und zwischendurch arbeiten wir zusammen."
-        },
-        {
-          "kind": "pause"
-        },
-        {
-          "kind": "emote",
-          "content": "faceHappy"
-        },
-        {
-          "kind": "text",
-          "content": "So viele kleine Dinge, über die ich mich freue."
-        },
-        {
-          "kind": "text",
-          "content": "Jetzt gerade am meisten darüber, dass du noch bei mir bist."
-        },
-        {
-          "kind": "emote",
-          "content": "heart"
         }
       ]
     }

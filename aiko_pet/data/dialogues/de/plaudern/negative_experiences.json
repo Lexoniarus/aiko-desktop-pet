@@ -1,0 +1,68 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-poking",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das viele Stupsen war mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Das unangenehme Gefühl ist noch nicht ganz weg. Ich möchte lieber etwas Abstand."
+        },
+        {
+          "kind": "emote",
+          "content": "anger"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-withheld",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch an das Ding, das ich haben wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Dass es nicht weiterging, hat mich wirklich geärgert."
+        },
+        {
+          "kind": "emote",
+          "content": "anger"
+        }
+      ]
+    }
+  ]
+}

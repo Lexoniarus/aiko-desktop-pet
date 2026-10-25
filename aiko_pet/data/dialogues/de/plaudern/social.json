@@ -1,0 +1,37 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-social-chat",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "social.chat"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unser Gespräch beschäftigt mich noch."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir uns Zeit zum Reden genommen haben, hat mir gutgetan."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    }
+  ]
+}

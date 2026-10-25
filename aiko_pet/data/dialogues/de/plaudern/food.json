@@ -1,0 +1,68 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-food-intake",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch an {target}."
+        },
+        {
+          "kind": "text",
+          "content": "Das zu essen hat mir gutgetan. Das schöne Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch daran, wie ich {target} bekommen habe."
+        },
+        {
+          "kind": "text",
+          "content": "Die Freude darüber ist immer noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    }
+  ]
+}

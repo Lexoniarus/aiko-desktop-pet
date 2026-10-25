@@ -42,7 +42,7 @@ LONG_TERM_FAMILIES = frozenset({
 })
 CONVERSATION_KEYS = frozenset({
     "state", "wish", "affection", "game.cumulative", "food.intake", "food.handover",
-    *(f"game.{game.value}.{outcome.value}" for game in GameId
+    *(f"game.{game.value}.{outcome.value}" for game in GameId if game != GameId.QUIZ
       for outcome in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)),
     "game.quiz.completed",
     *(f"game.blackjack.{reason.value}" for reason in BlackjackDecisionReason),
@@ -115,8 +115,9 @@ def _cause_kind(family: MoodletId, cause: MoodletCause) -> ConversationKind | No
         return ConversationKind.NEGATIVE
     if cause.target_id in {game.value for game in GameId}:
         result = cause.game.round_outcome if cause.game is not None else cause.outcome
-        if result in (MoodletOutcome.WIN, MoodletOutcome.LOSS,
-                      MoodletOutcome.DRAW, MoodletOutcome.COMPLETED):
+        if (result == MoodletOutcome.COMPLETED if cause.target_id == GameId.QUIZ.value
+                else result in (MoodletOutcome.WIN, MoodletOutcome.LOSS,
+                                MoodletOutcome.DRAW)):
             return ConversationKind.GAME
     if cause.target_id in DEFAULT_CATALOG.foods and cause.outcome in (
         MoodletOutcome.INTAKE, MoodletOutcome.HANDOVER,

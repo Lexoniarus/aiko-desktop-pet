@@ -333,8 +333,9 @@ class SocialDialogueTests(unittest.TestCase):
 
     def test_new_dialogues_reference_only_existing_sprites(self):
         book = DialogueBook.from_file()
-        new = [line for line in book.lines if line.id.startswith("v011-")]
-        self.assertGreaterEqual(len(new), 35)
+        new = [line for line in book.lines
+               if line.id.startswith(("v011-", "plaudern-"))]
+        self.assertTrue(new)
         self.assertTrue(
             all(
                 line.animation

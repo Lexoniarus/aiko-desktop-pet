@@ -14,13 +14,24 @@ from pathlib import Path, PurePosixPath
 from string import Formatter
 from typing import Any, Literal
 
+from ...games.contracts import BlackjackDetails, GameId
 from ..balance import BALANCE
 from ..catalog_validation import enum_value, load_json, object_fields
+from ..content import GERMAN_TEXT
 from ..emotions import EmotionalState
+from ..food_catalog import DEFAULT_CATALOG
 from ..interaction_events import SocialCompletion
-from ..moodlets import EmotionalDirection
+from ..moodlets import EmotionalDirection, MoodletAttribution, MoodletCauseKind
 from ..needs import NeedCondition
 from ..object_text_contract import OBJECT_TEXT_FIELDS
+from ..text_contract import TEXT_FIELDS
+from ..wish_catalog import WISH_CATALOG
+from ..wishes import ActiveWish, WishArea, wish_text_key
+from .conversation_topics import (
+    CONVERSATION_KEYS,
+    CONVERSATION_TEXT_FIELDS,
+    conversation_fields,
+)
 from .dialogue_context import (
     DialogueConditions,
     DialogueContext,
@@ -56,6 +67,21 @@ PERIODS = frozenset({
 })
 
 
+def render_wish_text(wish: ActiveWish) -> str:
+    """Use the same existing authored wish utterance for both speech contexts."""
+    definition = WISH_CATALOG.definitions[wish.definition_id]
+    key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance",
+                        target_id=wish.target_id)
+    values: dict[str, str] = {}
+    if definition.area == WishArea.FOOD:
+        values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name
+    elif definition.area == WishArea.GAMES:
+        values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
+        if "rounds" in TEXT_FIELDS[key]:
+            values["rounds"] = str(wish.goal_snapshot.required_count)
+    return GERMAN_TEXT.format(key, **values)
+
+
 def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
     if not isinstance(raw, list) or len(raw) > 8:
         raise ValueError("Invalid dialogue condition alternatives")
@@ -71,6 +97,9 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                 "reaction_tones",
                 "situational_conditions",
                 "sleeping",
+                "conversation_topics",
+                "conversation_attributions",
+                "conversation_causes",
             ),
             context="dialogue conditions",
         )
@@ -82,6 +111,9 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
             "need_conditions",
             "reaction_tones",
             "situational_conditions",
+            "conversation_topics",
+            "conversation_attributions",
+            "conversation_causes",
         ):
             items = row.get(key, [])
             if not isinstance(items, list) or not all(
@@ -111,8 +143,15 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                     for v in row.get("situational_conditions", [])
                 ),
                 row.get("sleeping"),
+                frozenset(row.get("conversation_topics", [])),
+                frozenset(enum_value(v, MoodletAttribution, context="cause attribution")
+                          for v in row.get("conversation_attributions", [])),
+                frozenset(enum_value(v, MoodletCauseKind, context="conversation cause")
+                          for v in row.get("conversation_causes", [])),
             )
         )
+        if not result[-1].conversation_topics <= CONVERSATION_KEYS:
+            raise ValueError("Unknown conversation topic")
     return tuple(result)
 
 
@@ -186,8 +225,10 @@ class Line:
                 raise ValueError("Invalid dialogue template") from error
             for _, field, spec, conversion in fields:
                 if field is not None and (
-                    not data["event"].startswith("object_")
-                    or field not in OBJECT_TEXT_FIELDS
+                    field not in (OBJECT_TEXT_FIELDS
+                                  if data["event"].startswith("object_") else
+                                  CONVERSATION_TEXT_FIELDS if data["event"] == "talk"
+                                  else frozenset())
                     or spec
                     or conversion
                 ):
@@ -207,12 +248,24 @@ class Line:
         present = data.get("requires_present", False)
         if type(present) is not bool:
             raise ValueError("Invalid presence filter")
+        conditions = _parse_conditions(data.get("conditions", []))
+        if data["event"] == "talk" and (
+            not conditions or any(not c.conversation_topics for c in conditions)
+        ):
+            raise ValueError("Requested chat requires a grounded conversation topic")
+        if data["event"] == "talk":
+            required = {field for text in texts
+                        for _, field, _, _ in Formatter().parse(text) if field}
+            if any(not required <= conversation_fields(topic)
+                   for condition in conditions
+                   for topic in condition.conversation_topics):
+                raise ValueError("Conversation placeholder is not proved by its topic")
         return cls(
             data["id"],
             data["event"],
             beats,
             data["animation"],
-            _parse_conditions(data.get("conditions", [])),
+            conditions,
             tuple(data["periods"]),
             tuple(days),
             weight,
@@ -407,4 +460,25 @@ class DialogueBook:
         self.recent.append(line.id)
         if line.presentation == "story":
             self._story_used.add(line.id)
-        return Reaction(line.id, line.beats, line.animation, event, line.presentation)
+        beats = line.beats
+        if event == "talk" and context.conversation_topic is not None:
+            topic = context.conversation_topic
+            cause = topic.cause
+            values: dict[str, str] = {}
+            if topic.wish is not None:
+                values["wish_text"] = render_wish_text(topic.wish)
+            if cause is not None:
+                target = cause.target_id
+                if target in DEFAULT_CATALOG.foods:
+                    assert target is not None
+                    values["target"] = DEFAULT_CATALOG.foods[target].display_name
+                elif target in {game.value for game in GameId}:
+                    values["target"] = GERMAN_TEXT.format(f"game.name.{target}")
+                if cause.wish is not None:
+                    values["count"] = str(cause.wish.required_count)
+                if isinstance(cause.game_details, BlackjackDetails):
+                    values["player_total"] = str(cause.game_details.player_total)
+                    values["aiko_total"] = str(cause.game_details.aiko_total)
+            beats = tuple(Cue.text(beat.content.format(**values))
+                          if beat.kind == "text" else beat for beat in beats)
+        return Reaction(line.id, beats, line.animation, event, line.presentation)

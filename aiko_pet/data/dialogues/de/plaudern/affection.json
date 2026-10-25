@@ -1,0 +1,37 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-affection",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln vorhin hat sich schön angefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "So eine liebe Nähe bleibt mir noch ein bisschen im Herzen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    }
+  ]
+}

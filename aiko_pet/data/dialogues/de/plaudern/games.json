@@ -1,0 +1,271 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-mastermind-win-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch. Ich wollte ihn gut verstecken."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mastermind-win-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "familiar"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code nicht geknackt. Hihi!"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich immer noch über meinen Sieg."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mastermind-win-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "friend"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code hat dich ganz schön beschäftigt, hm?"
+        },
+        {
+          "kind": "text",
+          "content": "Ungeknackt geblieben! Hihi, ich bin immer noch ein bisschen stolz."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mastermind-win-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [
+        "close"
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code hat standgehalten. Hehe, erwischt!"
+        },
+        {
+          "kind": "text",
+          "content": "Ich freu mich immer noch über meinen Sieg gegen dich."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mastermind-win-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.win"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Mastermind-Code ist ungeknackt geblieben. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "text",
+          "content": "Trotzdem ist mir gerade nicht nur zum Jubeln. Beides ist eben da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-mastermind-loss",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.mastermind.loss"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meinen Mastermind-Code geknackt."
+        },
+        {
+          "kind": "text",
+          "content": "Das wurmt mich noch ein bisschen. Ich hätte ihn gern besser versteckt."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-aiko-bust",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.aiko_bust"
+          ],
+          "sleeping": false,
+          "conversation_causes": [
+            "wish_failed"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bin ich mit {aiko_total} über die 21 gerutscht."
+        },
+        {
+          "kind": "text",
+          "content": "Eine Karte zu viel! Daran knabbere ich noch ein bisschen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-blackjack-player-bust",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.blackjack.player_bust"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei Blackjack bist du mit {player_total} über die 21 gekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, damit ging die Hand an mich. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    }
+  ]
+}

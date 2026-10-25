@@ -6,9 +6,10 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from ..emotions import EmotionalComposition, EmotionalState
-from ..moodlets import EmotionalDirection
+from ..moodlets import EmotionalDirection, MoodletAttribution, MoodletCauseKind
 from ..needs import NeedCondition
 from ..routine import TimeContext
+from .conversation_topics import ConversationTopic
 
 
 class FriendshipStage(StrEnum):
@@ -52,6 +53,7 @@ class DialogueContext:
     sleeping: bool = False
     working: bool = False
     present: bool | None = None
+    conversation_topic: ConversationTopic | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +66,9 @@ class DialogueConditions:
     reaction_tones: frozenset[ReactionTone] = frozenset()
     situational_conditions: frozenset[SituationalCondition] = frozenset()
     sleeping: bool | None = None
+    conversation_topics: frozenset[str] = frozenset()
+    conversation_attributions: frozenset[MoodletAttribution] = frozenset()
+    conversation_causes: frozenset[MoodletCauseKind] = frozenset()
 
     def matches(self, context: DialogueContext) -> bool:
         return (
@@ -78,6 +83,17 @@ class DialogueConditions:
             )
             and self.situational_conditions <= context.situational_conditions
             and (self.sleeping is None or self.sleeping == context.sleeping)
+            and (not self.conversation_topics or context.conversation_topic is not None
+                 and context.conversation_topic.key in self.conversation_topics)
+            and (not self.conversation_attributions
+                 or context.conversation_topic is not None
+                 and context.conversation_topic.cause is not None
+                 and context.conversation_topic.cause.attribution
+                 in self.conversation_attributions)
+            and (not self.conversation_causes
+                 or context.conversation_topic is not None
+                 and context.conversation_topic.cause is not None
+                 and context.conversation_topic.cause.kind in self.conversation_causes)
         )
 
     def specificity(self) -> tuple[int, int]:
@@ -88,6 +104,9 @@ class DialogueConditions:
             + bool(self.reaction_tones)
             + len(self.situational_conditions)
             + (self.sleeping is not None)
+            + bool(self.conversation_topics)
+            + bool(self.conversation_attributions)
+            + bool(self.conversation_causes)
         )
         # A short reaction may color wording without replacing overall feeling.
         return size, 2 if self.reaction_tones else 1 if self.emotional_states else 0

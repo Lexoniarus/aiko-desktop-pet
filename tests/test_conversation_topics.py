@@ -7,6 +7,7 @@ from unittest.mock import Mock
 
 from test_wish_assignment import wish
 
+from aiko_pet.pet.care_evidence import CarePeriodSummary
 from aiko_pet.pet.mind.conversation_topics import (
     ConversationKind,
     select_conversation_topic,
@@ -132,6 +133,34 @@ class ConversationTopicTests(unittest.TestCase):
         self.assertEqual(topic.key, "game.cumulative")
         self.assertIs(topic.cause, cause)
         self.assertIsNotNone(topic.cause.wish if topic.cause else None)
+
+    def test_period_topics_keep_actual_facts_without_inventing_incidents(self):
+        period = CarePeriodSummary(0, 50, encounters=3, fulfilled_wishes=2)
+        for family, cause, kind in (
+            (MoodletId.HUNGER_WORN,
+             replace(actual(target="satiety"), kind=MoodletCauseKind.POOR_CARE),
+             ConversationKind.POOR_CARE),
+            (MoodletId.TRUSTING,
+             replace(actual(), kind=MoodletCauseKind.LONG_TERM, period=period,
+                     target_id=None),
+             ConversationKind.LONG_TERM),
+        ):
+            topic = select_conversation_topic(MoodletState(active=(
+                episode(1, family, 1, cause),
+            )), rng=random.Random(0), elapsed=100)
+            self.assertEqual(topic.kind, kind)
+            self.assertIs(topic.cause, cause)
+        unknown = replace(cause, period=None)
+        self.assertEqual(select_conversation_topic(MoodletState(active=(
+            episode(1, MoodletId.TRUSTING, 1, unknown),
+        )), rng=random.Random(0), elapsed=100).kind, ConversationKind.STATE)
+
+    def test_older_blackjack_loss_without_cards_does_not_prove_a_bust(self):
+        cause = replace(actual(target="blackjack"), outcome=MoodletOutcome.LOSS)
+        topic = select_conversation_topic(MoodletState(active=(
+            episode(1, MoodletId.DISAPPOINTED, 1, cause),
+        )), rng=random.Random(0), elapsed=100)
+        self.assertEqual(topic.key, "game.blackjack.loss")
 
 
 if __name__ == "__main__":

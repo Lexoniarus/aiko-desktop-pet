@@ -7,29 +7,30 @@ from __future__ import annotations
 
 import random
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 from ..balance import BALANCE
 from ..care_result import CareEffect, CareResult
-from ..content import GERMAN_TEXT
 from ..emotions import (
     EmotionalComposition,
     EmotionalState,
     derive_emotional_state,
     supports_positive_expression,
 )
-from ..food_catalog import DEFAULT_CATALOG
 from ..moodlet_catalog import MOODLET_CATALOG
 from ..needs import NeedCondition, assess_need_conditions
 from ..routine import TimeContext
 from ..state import PetState
-from ..text_contract import TEXT_FIELDS
-from ..wish_catalog import WISH_CATALOG
-from ..wishes import ActiveWish, WishArea, wish_text_key
+from ..wishes import ActiveWish
 from .adaptive_models import Behaviour
-from .catalog import DialogueBook, Reaction
+from .catalog import DialogueBook, Reaction, render_wish_text
 from .click_policy import POKING_BOUNDARY_EVENTS, ClickButton, choose_click_reaction
+from .conversation_topics import (
+    ConversationKind,
+    ConversationTopic,
+    select_conversation_topic,
+)
 from .cursor_attention import CursorAttention
 from .dialogue_context import (
     DialogueContext,
@@ -183,6 +184,21 @@ class PetMind:
         presentation: Literal["short", "story"] = (
             "story" if event == "talk" and not snapshot.sleeping else "short"
         )
+        if event == "talk" and not snapshot.sleeping:
+            # Current wishes remain present-tense and may only repeat a wish
+            # already disclosed under the existing relationship rules.
+            disclosed = state.wishes.active if (
+                state.friendship_level >= BALANCE.integer(
+                    "wishes", "disclosure_friendship_level",
+                ) and state.mood >= BALANCE.number(
+                    "wishes", "disclosure_mood_threshold",
+                )
+                and supports_positive_expression(snapshot.emotions)
+            ) else ()
+            snapshot = replace(snapshot, conversation_topic=select_conversation_topic(
+                state.moodlets, rng=self.rng, elapsed=state.lived_seconds,
+                disclosed_wishes=disclosed,
+            ))
         reaction = self.book.choose(
             event,
             snapshot,
@@ -190,24 +206,19 @@ class PetMind:
             presentation=presentation,
         )
         if reaction is None and presentation == "story":
-            reaction = self.book.choose(event, snapshot, now, presentation="short")
+            # A topic with no authored story yet may fall back only to a truthful
+            # current-state response, never to the retired general-chat pool.
+            snapshot = replace(snapshot, conversation_topic=ConversationTopic(
+                ConversationKind.STATE,
+            ))
+            reaction = self.book.choose(event, snapshot, now, presentation="story")
         if reaction is not None and reaction.presentation == "story":
             self.clicks.clear()
         return reaction
 
     def wish_reaction(self, wish: ActiveWish) -> Reaction:
         """Render one admitted concrete desire; selection alone is not speech."""
-        definition = WISH_CATALOG.definitions[wish.definition_id]
-        key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance",
-                            target_id=wish.target_id)
-        values: dict[str, str] = {}
-        if definition.area == WishArea.FOOD:
-            values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name
-        elif definition.area == WishArea.GAMES:
-            values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
-            if "rounds" in TEXT_FIELDS[key]:
-                values["rounds"] = str(wish.goal_snapshot.required_count)
-        text = GERMAN_TEXT.format(key, **values)
+        text = render_wish_text(wish)
         return Reaction(
             f"wish-{wish.instance_id}",
             (Cue.text(text),),
