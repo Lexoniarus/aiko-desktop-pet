@@ -251,6 +251,8 @@ class GameWishTests(unittest.TestCase):
 
     def test_application_captures_existing_wish_and_translates_each_game_once(self):
         for game in GameId:
+            if game is GameId.QUIZ:
+                continue  # Shared quiz completion has its own noncompetitive tests.
             with self.subTest(game=game):
                 pet = pet_with(WishId.WIN_ROUND)
                 pet.restore_checkpoint(

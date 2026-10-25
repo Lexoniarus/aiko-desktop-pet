@@ -163,6 +163,7 @@ class GameMenuTests(unittest.TestCase):
                 GameId.TIC_TAC_TOE,
                 GameId.CONNECT_FOUR,
                 GameId.MASTERMIND,
+                GameId.QUIZ,
             ],
         )
         for button in menu.buttons.values():

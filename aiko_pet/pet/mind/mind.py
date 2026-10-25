@@ -198,7 +198,8 @@ class PetMind:
     def wish_reaction(self, wish: ActiveWish) -> Reaction:
         """Render one admitted concrete desire; selection alone is not speech."""
         definition = WISH_CATALOG.definitions[wish.definition_id]
-        key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance")
+        key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance",
+                            target_id=wish.target_id)
         values: dict[str, str] = {}
         if definition.area == WishArea.FOOD:
             values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name

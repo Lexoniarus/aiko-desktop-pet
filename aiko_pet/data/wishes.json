@@ -58,7 +58,8 @@
         "tic_tac_toe",
         "blackjack",
         "connect_four",
-        "mastermind"
+        "mastermind",
+        "quiz"
       ],
       "fulfillment_moodlet": "shared_play",
       "fulfillment_level": 1,
@@ -228,7 +229,8 @@
         "tic_tac_toe",
         "blackjack",
         "connect_four",
-        "mastermind"
+        "mastermind",
+        "quiz"
       ],
       "fulfillment_moodlet": "shared_play",
       "fulfillment_level": 1,
@@ -247,7 +249,8 @@
         "tic_tac_toe",
         "blackjack",
         "connect_four",
-        "mastermind"
+        "mastermind",
+        "quiz"
       ],
       "fulfillment_moodlet": "shared_play",
       "fulfillment_level": 1,

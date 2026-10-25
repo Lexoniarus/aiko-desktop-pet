@@ -29,6 +29,7 @@ from .game_menu import GameMenu
 from .game_speech import GameSpeech
 from .hover_contracts import HoverActions
 from .mastermind_window import MastermindWindow
+from .quiz_window import QuizWindow
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .settings_contracts import SettingsActions
 from .settings_window import SettingsWindow
@@ -245,7 +246,8 @@ class HoverUi:
             choices=(GameId.ROCK_PAPER_SCISSORS,)
             + ((GameId.BLACKJACK,) if self._ports.cards is not None else ())
             + (GameId.TIC_TAC_TOE, GameId.CONNECT_FOUR)
-            + ((GameId.MASTERMIND,) if self._ports.codes is not None else ()),
+            + ((GameId.MASTERMIND,) if self._ports.codes is not None else ())
+            + (GameId.QUIZ,),
             selected=self.open_game,
             closed=self._game_menu_closed,
             skin=self._skin,
@@ -281,7 +283,18 @@ class HoverUi:
         self.close_food_menu()
         self._ports.game_speech.start()
         try:
-            if game_id is GameId.BLACKJACK:
+            if game_id is GameId.QUIZ:
+                self.game_window = QuizWindow(
+                    self.root, on_closed=self._game_closed,
+                    speak=self._ports.game_speech.say,
+                    animate=self._ports.game_speech.animate,
+                    emote=self._ports.game_speech.emote,
+                    dialogue=self._ports.game_dialogue,
+                    round_event=self._ports.game_round,
+                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                    bounds_at=self._ports.game_bounds_at,
+                )
+            elif game_id is GameId.BLACKJACK:
                 if self._ports.cards is None:
                     raise RuntimeError("Card presentation is unavailable")
                 self.game_window = BlackjackWindow(

@@ -19,6 +19,16 @@ authorized local implementation: Aiko provides the code, with a concealed
 desktop strip, ten prepared drag-and-drop rows, Kenney pieces and local
 Python-standard-library rules. No Mastermind commit or merge is included.
 
+The [quiz concept](#quiz-concept-planning-only) records the owner's subsequent
+topic, difficulty, round flow, Aiko-role and separate question-feedback decisions.
+The owner subsequently authorized the 200-question catalogue, including film
+and television. Its [editorial draft](#authored-starting-catalogue-editorial-draft)
+is separate from game implementation. The owner subsequently authorized the
+[local Quiz delivery](#quiz-delivery-2026-10-25) under Spielen, including its
+reviewed catalogue, quizmaster role and shared-play rules. Feedback settings
+remain separate future work. A scoped local Quiz commit was subsequently
+authorized; push and merge remain excluded.
+
 ## Agreed experience
 
 - **Spielen** opens a small submenu: **Schere–Stein–Papier**, **Blackjack**,
@@ -806,3 +816,573 @@ throughout this run, so it could not create native test windows. The slowest
 individual test took 0.057 seconds. Changed-file Ruff, strict Mypy for eighteen
 affected source files and focused Pyright passed. No full suite, mouse control
 or GitHub CI was run for this delivery. No merge is authorized or performed.
+
+## Quiz concept (planning only)
+
+Owner decisions recorded on 2026-10-25. This section is the planning authority
+for the quiz direction and supersedes the exploratory source/theme suggestions
+in [minigame candidates](MINIGAME_CANDIDATES.md#quiz-and-content-driven-game-variations).
+The owner subsequently authorized authoring the 200-question catalogue after
+adding film and television. A subsequent explicit implementation request
+authorized the local quiz runtime described in the delivery section below.
+Separate feedback storage/settings and a feedback service remain future work.
+The selected starting scope is **200 reviewed German questions**, with the
+topic/difficulty counts and question information described below. The agreed
+session flow and Aiko's role are also recorded here. Catalogue authoring is a
+separate editorial deliverable; this section retains the planning history while
+the delivery section records its implemented scope.
+
+The owner explicitly classifies the quiz as a **game**. Its future entry is
+**Spielen > Quiz**, using the existing game admission/lifecycle flow. Aiko's
+quizmaster performance does not turn it into a social/entertainment action.
+The social menu and horoscope prototype are outside this implementation scope.
+
+### Audience and topic distribution
+
+Use accessible general knowledge with an emphasis on gaming, anime/manga,
+science fiction and fantasy. The quiz must work beyond the owner's personal
+interests. Recognizable characters, worlds, concepts and cultural knowledge
+are appropriate; detailed programming-language knowledge, obscure minor
+characters, episode numbers, damage values and edition-specific trivia are
+outside the intended scope.
+
+| Group | Topic | Target share of catalogue | Starting question count | Content orientation |
+| --- | --- | --- | --- | --- |
+| Nerd topics | Gaming | 20% | 40 | Familiar characters, game concepts, classics and consoles |
+| Nerd topics | Anime and manga | 15% | 30 | Well-known works, main characters and basic concepts |
+| Nerd topics | Science fiction | 15% | 30 | Familiar worlds, characters and genre concepts |
+| Nerd topics | Fantasy | 10% | 20 | Familiar works, mythical creatures and mythology |
+| General knowledge | Nature and science | 10% | 20 | Space, animals and everyday phenomena |
+| General knowledge | World, history and culture | 10% | 20 | Places, inventions, language, books and music |
+| General knowledge | Film and television | 10% | 20 | Familiar films, series, animation, creators and screen culture |
+| General knowledge | Computers and digital culture | 10% | 20 | Everyday technology, the internet and computing history |
+| **Total** | **All topics** | **100%** | **200** | **120 nerd-topic / 80 general-knowledge questions (60% / 40%)** |
+
+Each question has one primary topic for distribution accounting. Cross-topic
+connections are welcome but must not count the same question twice. Computers
+and digital culture belong to the general-knowledge allocation above.
+Film and television is also general knowledge in this allocation. Classify
+genre-specific questions about science fiction, fantasy or anime under their
+respective topics; use film/television for other screen stories and general
+screen culture, including general family-animation knowledge. Count each
+question only once.
+
+### Difficulty distribution
+
+| Difficulty | Target share of catalogue | Starting question count | Intended knowledge level |
+| --- | --- | --- | --- |
+| Easy ("Leicht") | 50% | 100 | Solvable through incidental familiarity with the topic |
+| Medium ("Mittel") | 35% | 70 | Basic familiarity and recall help |
+| Tricky ("Knifflig") | 15% | 30 | More deliberate recall or reasoning, still without specialist knowledge |
+| **Total** | **100%** | **200** | |
+
+Apply this mix across the catalogue and approximately within each topic, with
+small per-topic rounding while preserving the overall 100/70/30 counts in the
+starting set. Anime/manga must not become the difficult category by
+default. Difficulty comes from the knowledge or reasoning required, not from
+ambiguous wording, trick answers or obscure detail. Questions should have a
+clear solution and plausible, clearly incorrect alternatives.
+
+These are editorial target shares, not exact quotas for every short game.
+Initial difficulty labels are estimates to revisit using player feedback;
+a wrong answer alone does not establish that a question is too difficult.
+
+### Starting catalogue scope and question information
+
+The 200-question starting set must span multiple subtopics and works within
+each main topic. Avoid letting one franchise dominate its category or a session.
+Rewordings of the same fact do not constitute additional variety. The first
+set should primarily use durable knowledge to limit ongoing editorial work.
+
+Use the following information for each question. This is an editorial content
+contract. The authored draft below uses JSON for review and exchange; that
+does not select a runtime serialization format, database schema or loader.
+
+| Information | Purpose and requirement |
+| --- | --- |
+| Stable question identifier | Identify the question across sessions, repetition tracking and feedback. |
+| Content revision | Associate feedback with the wording and answers actually presented; do not silently transfer old ratings to a changed version. |
+| Question text | Short, self-contained German wording; no missing context from another question. |
+| Four answer choices | Exactly one correct answer and three plausible, clearly incorrect alternatives. |
+| Correct-answer reference | Unambiguously identify the correct choice even when display positions are shuffled. |
+| Primary topic | Exactly one of the eight agreed topics for distribution accounting. |
+| Subtopic and, where applicable, work/franchise | Support variety and avoid grouping similar facts or the same franchise too heavily in a session. |
+| Difficulty | Easy, medium or tricky according to the agreed knowledge and reasoning criteria. |
+| Short explanation | One or two sentences when they add useful context to the resolution; avoid merely repeating the answer. |
+| Verification source(s) and review date | Make the evidence for the solution and the date of editorial checking traceable. |
+| Content origin and reuse rights | Distinguish authored wording from reused material; for reused content, retain the source, author, applicable licence and required credit/modification information. |
+| Editorial status | Draft, approved or temporarily disabled; only approved questions are eligible for play. |
+
+For time-dependent claims, additionally record a clear reference date or period
+and make that scope understandable in the question. A review date alone does
+not make an otherwise undated changing fact unambiguous.
+
+Keep factual question content separate from Aiko's quizmaster comments. Do not
+require bespoke reactions for every question and friendship tier; her response
+is driven by the answer outcome, existing friendship/current state and the
+observed session situation. The factual explanation belongs to the question.
+
+Keep player history and ratings separate from the distributed question content.
+They refer to a question by its stable identifier and relevant content revision.
+This preserves the meaning of earlier feedback after editorial corrections.
+It does not settle storage, retention or transmission design, which remain
+open in the feedback section below.
+
+### Agreed quiz session flow
+
+- One session contains **ten questions**, each with **four answer choices**
+  and exactly one correct solution. There is **no time limit**, speed bonus
+  or elimination after an incorrect answer.
+- Aiko opens the session with a brief introduction. Mix topics and difficulty
+  without repeating a question within that session; prefer questions not
+  recently presented where the available pool permits. The catalogue shares
+  above are long-term editorial targets, not rigid quotas for every session.
+  Mix the order rather than making the final questions invariably harder.
+- The player window keeps the complete question and all four answer choices
+  readable, with progress such as **"Frage 3 von 10"**. Clicking an answer
+  commits the choice once and prevents further answers to that question.
+  Keyboard shortcuts **1-4** remain an optional input convenience to assess.
+- After commitment, clearly distinguish the selected answer and the correct
+  solution. Add a short explanation when it contributes useful context.
+  Keep the question and resolution readable in the player window; Aiko's
+  speech bubbles carry her framing and reactions.
+- The player selects **"Weiter"** to proceed. Do not automatically advance
+  or hide the resolution after a timer. Aiko gives the player thinking time
+  without impatient nudges or answer-revealing expressions.
+- Each correct answer counts as one point, independent of difficulty.
+  After question ten, show the score out of ten, Aiko's closing reaction,
+  **"Noch eine Runde"** and **"Beenden"**. A fresh session starts only on
+  request. The ordinary close/exit path remains available during play.
+- Keep question ratings in the separate settings area described below;
+  neither answering nor finishing a session introduces a feedback prompt.
+
+### Aiko's playful quizmaster role
+
+Aiko stages a small quiz show on the player's desktop. Like the planned
+fortune-teller performance, this is a consciously played role with a beginning,
+an ongoing performance and a closing moment. It is a presentation analogy,
+not a dependency on the horoscope, tarot, fortune-teller hat or floating book.
+
+Her light anime/chibi personality remains visible beneath the performance:
+enthusiastic, curious and occasionally ceremonious about her tiny desktop
+stage. She knows the solutions and acts as quizmaster and companion; do not
+invent a competing Aiko score or pretend she is independently guessing.
+
+- Occasionally let her composure slip through sincere excitement, nerdy
+  enthusiasm, a dry desktop-life aside or genuine encouragement. Role breaks
+  vary by situation and do not happen after every question. Returning to the
+  role must not rely on one repeated apology/catchphrase.
+- Reuse suitable existing attentive, pleased, playful or thoughtful expressions
+  and emotes. Larger gestures belong at selected moments, such as the opening
+  or finale; each answer does not require an animation or long comment.
+  This plan does not select or authorize new character artwork or props.
+- Comments and light teasing must sound like Aiko speaking to this player,
+  shaped by their actual friendship and her current state. Do not substitute
+  a generic competitive TV-host persona or compulsory jokes for that relationship.
+
+Use the established [friendship and voice contract](DIALOGUE_REVISION_PLAN.md#freundschaft-und-stimme)
+and its unchanged friendship tiers as the editorial reference:
+
+| Existing relationship | Intended quiz-comment tone |
+| --- | --- |
+| Acquaintance (1-2) | Reserved, polite, tentatively playful; do not assume an established teasing relationship. |
+| Familiar (3-5) | More personal and relaxed, with occasional mild situational teasing. |
+| Friend (6-8) | Open, lively and cheekier; shared playfulness can carry more direct banter. |
+| Close (9-10) | Warm, familiar and candid; affectionate teasing alongside equally direct encouragement. |
+
+Closeness permits a more familiar voice, not progressively harsher or more
+frequent put-downs. Tease the particular choice or playful situation, never
+the player's intelligence, worth or supposed personal failings. Do not claim
+to know whether they guessed or what they were thinking. Repeated mistakes
+are not a reason to escalate teasing; allow supportive or brief neutral
+reactions instead. Her own exaggerated performance can also be the joke.
+
+Friendship and current state shape expression without changing correct answers,
+question difficulty or scoring. No new relationship thresholds, balance rules,
+dialogue catalogue entries or mandatory four-variant script per question are
+approved here. The tone examples below are approved planning references;
+production dialogue authoring and catalogue integration remain later work.
+
+#### Approved tone examples by friendship stage
+
+The following German lines preserve the agreed voice direction. They are
+standalone editorial examples, not a compulsory sequence, a complete dialogue
+set or runtime catalogue entries. The differences come from familiarity,
+cheekiness and openly expressed joy; higher friendship does not require more
+elaborate jokes after every answer.
+
+| Friendship stage | Correct answer | Incorrect answer |
+| --- | --- | --- |
+| 1-2, acquaintance | „Richtig! Ein Punkt für dich. … Mhm, das Verkünden gefällt mir.“ | „Oh, leider nicht. Ich zeig dir die Lösung. Wir haben ja Zeit.“ |
+| 3-5, familiar | „Richtig! Hihi. Ich glaube, ich behalte den Job als Quizmasterin.“ | „Leider daneben. Ich hatte mich schon aufs Punkteverteilen eingestellt. Mein großer Auftritt muss wohl noch warten.“ |
+| 6-8, friend | „Richtig! Du könntest wenigstens kurz so tun, als wäre meine große Auflösung noch spannend. Hihi.“ | „Die war’s nicht. Ich könnte jetzt sehr wissend nicken … aber ich hatte die Lösung vorher schon. Das wäre Angeberei.“ |
+| 9-10, close | „Ja! Richtig! Ich soll hier eigentlich würdevoll moderieren. Ich freu mich aber gerade lieber mit dir.“ | „Die war’s nicht. Ich bin auf deiner Seite, aber die Lösung lässt sich von mir auch nicht bestechen.“ |
+
+More direct teasing needs a fitting observed situation. For example, at
+friendship 6-8 or an appropriately close relationship, after several correct
+answers followed by the first incorrect answer:
+
+> „Ha, doch noch ein Einsatz für meine Auflösung! Ich dachte schon, du brauchst
+> mich hier nur zum Punkteaufschreiben.“
+
+The joke is her playful wish to have a part and shine in their shared activity.
+Do not use this line for repeated mistakes or as a generic incorrect-answer
+response. Her exaggerated quizmaster performance can be the target of the joke
+instead of making the player the target of every punchline.
+
+After several incorrect answers, reduce teasing and performance, regardless
+of friendship tier. Prefer calmer, supportive or briefly neutral responses.
+For a familiar, warm relationship, the agreed example is:
+
+> „Hach. Die Punkte lassen heute auf sich warten. Ich bleib trotzdem gern mit
+> dir hier.“
+
+At lower friendship, keep encouragement more reserved, following the existing
+stage examples rather than assuming close affection. Mistakes do not lead to
+disappointment in the player, harsher jokes or withdrawal of warmth. Direct
+affection at high friendship may stand on its own without immediately being
+undercut by another quip. The exact repeated-error threshold remains undecided;
+this is an editorial reaction rule, not a new implemented streak mechanism.
+
+Role breaks are deliberately prominent in these examples. Mix them with simple
+responses such as „Genau, richtig!“ and „Leider nicht, die hier war’s“, so the
+special comments retain their effect. Current state still governs delivery;
+friendship does not force constant cheerfulness. No new dialogue IDs, question
+content, animations, persistent counters or balance effects are created here.
+
+### Separate feedback in settings
+
+Plan a dedicated settings area, provisionally labelled **"Quizfragen bewerten"**,
+outside the active game. Players can review and rate individual questions that
+Aiko has already actually presented to them. Merely drawing, preloading or
+reserving a question must not make it eligible for this list.
+
+- Keep the review voluntary and separate from gameplay: no rating prompt,
+  extra step or interruption inside a quiz round.
+- Show the previously presented question, its answer choices and correct
+  solution so the player can assess its wording and content. Do not reveal
+  unasked questions through this settings area.
+- Collect difficulty and quality separately. Proposed difficulty responses:
+  **"Zu leicht"**, **"Passend"**, **"Zu schwer"**. Proposed quality responses:
+  **"Gut"**, **"Unklar formuliert"**, **"Inhaltlicher Fehler"**; allow an
+  optional explanatory comment. Exact controls and labels remain UI planning.
+- Feedback refers to an identifiable question and its content revision, so a
+  later correction does not silently attach old ratings to different wording.
+  Revisiting a question should allow updating feedback rather than creating
+  accidental duplicate votes.
+- Treat feedback as editorial input for wording, correctness and difficulty
+  review. It must not automatically rewrite questions, change a current round,
+  affect rewards/friendship or equate player success rates with factual quality.
+
+Retention, storage ownership and any way to share feedback with maintainers
+remain to be designed. Local review must not silently imply a centrally
+collected feedback service. Any future export or transmission needs a separate,
+explicit user action or consent and must satisfy the zero-cost boundary below.
+No external feedback provider or automatic upload is selected.
+
+### Cost and content boundary
+
+The intended basis is a bundled local German catalogue, with suitable freely
+reusable material and/or authored questions. The starting draft below uses
+newly authored wording and factual reference links, without importing an
+external question bank, images or source prose. Preserve provenance and
+applicable licence/credit requirements for any later reused material.
+
+Content acquisition and operation must cause no provider charges: no monthly
+subscription, paid fallback, compulsory account/API key, metered translation
+or additional language model is part of the planned quiz. A library or service
+is not a prerequisite for the catalogue. Catalogue authoring is authorized;
+the quiz runtime is subsequently authorized and delivered below. Its separate
+feedback settings/storage remain future work.
+
+### Authored starting catalogue (editorial draft)
+
+On 2026-10-25, after adding film and television, the owner explicitly authorized
+authoring the catalogue. The resulting **200 German questions** are available as:
+
+- [Canonical editorial content with metadata and source registry](quiz/catalogue.de.json).
+- [Readable review of all 200 questions, answers, solutions and explanations](quiz/catalogue-review.de.html).
+
+The review HTML is a static presentation of the JSON, with no scripts, external
+assets or automatic network requests. It is not a playable quiz or a runtime UI.
+Treat the JSON as the content authority and keep the review in sync when editing.
+Question IDs remain stable; do not renumber existing records when adding entries.
+The initial records have revision 1; the nineteen revised records described
+below have revision 2. All have four uniquely identified answers. Later display
+shuffling must retain the correct-answer reference rather than infer correctness
+from position. The review has fifty solutions at each of the four positions;
+this does not implement runtime shuffling or session selection.
+
+| Topic | Easy | Medium | Tricky | Total |
+| --- | --- | --- | --- | --- |
+| Gaming | 20 | 14 | 6 | 40 |
+| Anime and manga | 15 | 11 | 4 | 30 |
+| Science fiction | 15 | 10 | 5 | 30 |
+| Fantasy | 10 | 7 | 3 | 20 |
+| Film and television | 10 | 7 | 3 | 20 |
+| Nature and science | 10 | 7 | 3 | 20 |
+| World, history and culture | 10 | 7 | 3 | 20 |
+| Computers and digital culture | 10 | 7 | 3 | 20 |
+| **Total** | **100** | **70** | **30** | **200** |
+
+Every question includes a subtopic, work/franchise where applicable, explanation,
+stable answer reference, source IDs, checking date, origin/reuse information and
+editorial status. Claims tied to a particular film, event, edition or definition
+also record their scope where needed. Each record counts in exactly one topic;
+multiple questions about a work still need sensible separation in later sessions.
+
+The reviewed records were approved for the starting runtime catalogue by the
+owner's subsequent explicit implementation request including that catalogue.
+This does not claim independent expert fact-checking. Source references
+were researched on 2026-10-25, preferably through official publishers, creators,
+institutions or technical documentation. The registry distinguishes accessed
+pages from available search excerpts; it does not assert a full-page check or an
+independent second review for every source. Difficulty labels are initial editorial
+estimates. Feedback should later assess factual quality and difficulty separately.
+
+The newly formulated questions, alternatives and explanations use the repository's
+[MIT licence](../LICENSE). External pages, works and marks retain their own rights;
+reference links do not license third-party text, images or character artwork.
+This catalogue requires no provider, API key, subscription, translation service
+or additional runtime language model. Reference links are editorial evidence,
+not dependencies to call during play.
+
+Data checks confirmed 200 unique question IDs/texts, 800 unique answer IDs,
+four distinct answer texts and exactly one valid solution reference per question,
+complete source references, the 120/80 topic-group split and the 100/70/30
+difficulty split. These checks validate structure, not human approval or empirical
+difficulty. No quiz code, settings controls, persistence, player ratings, Aiko
+dialogue records, horoscope behavior or character assets were changed for this
+catalogue delivery. No commit, push or merge was performed.
+
+#### Catalogue revision 2: nineteen editorial corrections
+
+The owner authorized these corrections on 2026-10-25, retaining every question's
+ID, answer IDs, topic, difficulty and correct-answer reference. The catalogue
+revision is now **2**. Exactly nineteen question records have revision 2; the
+other 181 question records are unchanged. All 200 were subsequently approved for
+the starting runtime catalogue by the explicit implementation request.
+
+- Clarified profession versus gameplay income (`gam-033`), removed the W20
+  answer from its own question (`gam-036`) and removed the type clue from Ash's
+  companion question (`ani-006`).
+- Asked explicitly for the in-series name of the Titans (`ani-013`), scoped
+  Skynet to the 1984 film (`sci-021`), replaced the SSD alternatives with real
+  storage technologies (`dig-005`) and included redistribution in the open-source
+  rights question (`dig-012`).
+- Replaced weak alternatives or reframed the same knowledge in `gam-006`,
+  `gam-009`, `gam-020`, `ani-029`, `sci-010`, `sci-025`, `fan-020`, `fil-016`,
+  `nat-020`, `dig-006`, `dig-008` and `dig-016`.
+
+The review HTML reflects the canonical JSON, including the per-question revisions,
+updated explanations, source access information and film/edition scope. Topic
+counts, the 120/80 split, and all difficulty labels/counts remain unchanged.
+
+### Implementation preparation (proposal only)
+
+This is preparation for a future game implementation, not authorization to add
+runtime code. Keep the agreed ten questions, four answers, no time limit,
+explicit **Weiter**, one point per correct answer, and Aiko as quizmaster.
+The existing code was inspected to identify these proposed owners and seams:
+
+| Proposed owner / existing seam | Responsibility |
+| --- | --- |
+| `QuizCatalogue` in a future `games/quiz_catalogue.py` | Load and validate immutable, approved local question content. Check IDs, revisions, four distinct choices and solution references. No Tk, networking, player state or editorial auto-approval. |
+| `QuizSession` in a future `games/quiz.py` | Own the ten-question selection, current question, committed answers, explicit advancement and score. Use the Python standard library with injectable randomness. Reject repeated answers and unknown answer IDs. No Tk, dialogue delivery or pet-state writes. |
+| Future `QuizWindow` / `QuizSequence` in `ui/windows/` | Render the question, four answers, progress and resolution; coordinate Aiko's opening/reactions/closing through the existing game speech ports. Do not reveal answers before commitment. Closing cancels pending presentation without fabricating a completed question. |
+| Existing `HoverGameUI` in `ui/windows/hover_ui.py` and `GameId` | Later add Quiz to the game menu and reuse `can_interact("play")`, deferred admission, one-game-window exclusion and cleanup. No social-menu route or separate game launcher. |
+| Existing application game-experience and pet owners | Preserve single ownership of care effects and actual-play evidence. A UI/session must not write friendship, fun or wishes directly. Apply the agreed noncompetitive completion semantics below when designing the later contract integration. |
+
+Reuse the VN skin, geometry/scrolling helpers, existing animation/emote ports and
+game-window lifecycle. Plan a quiz-specific progress/score presentation. The
+current `GamePanel` shows player/Aiko wins, losses and draws; it must not invent
+an opposing Aiko score for this game. Reuse its suitable presentation helpers or
+make a bounded score-display extension without changing other games' behavior.
+Question/answer wrapping must accommodate the actual catalogue lengths rather
+than a fixed line count; all answers and the explanation remain readable until
+the player advances.
+
+#### Selection and content preparation
+
+- Bundle only explicitly approved questions in a later runtime catalogue. Keep
+  editorial HTML and source research outside runtime loading. Invalid content
+  or fewer than ten eligible questions must yield an unavailable-game message;
+  do not call an API, invent replacement questions or duplicate questions.
+- Sample without replacement and shuffle answer display independently of question
+  order. Evaluate by stable answer ID; the review's repeating solution positions
+  are not a runtime ordering rule. Difficulty labels and topic shares remain the
+  long-term catalogue targets, with varied short rounds rather than rigid quotas.
+- Treat related works as one variety group where appropriate, such as Tolkien's
+  language questions and The Lord of the Rings. Do not rely only on exact equality
+  of the current free-text work/franchise labels. Keep question sets with obvious
+  answer hints to each other apart where the pool permits.
+- Future presentation history records a question only when its question and
+  choices are actually shown, using ID and content revision. Sampling/preloading
+  is not presentation. Settings feedback stays separate from play, voluntary and
+  local by default; storage and any explicit export remain separate design work.
+
+#### Agreed quiz completion, fun and wishes (planning only)
+
+Owner decision recorded on 2026-10-25. These rules supersede the earlier proposal
+to settle completion semantics before coding. They initially authorized
+documentation only; the subsequent implementation request covers these rules
+and is recorded in the delivery section below.
+
+**One completed ten-question quiz counts as one shared-play round.** The number
+of correct answers remains a separate quiz score, with no player-versus-Aiko
+win, loss or draw. Aiko is the quizmaster, not a competing player.
+
+- Completion occurs when the tenth answer has been committed and its resolution
+  displayed in the player window. Finishing Aiko's closing speech or clicking
+  another button is not required. Closing during the subsequent reaction retains
+  this completed round.
+- Settle the completion exactly once through the application/pet owners. Repeated
+  callbacks, reopening the result, later window closure and save/reload must not
+  credit the same round again. A new requested ten-question round is a new unit.
+- Opening, preloading, elapsed window time and individual answers award no partial
+  round or partial fun. Abandoning a quiz before its completion boundary counts
+  no completed round and creates no quiz defeat or extra disappointment penalty.
+  Ordinary existing wish deadlines continue to run.
+
+**Fun:** award **9 base fun points per completed quiz round**, using the same
+starting base value as Connect Four and Mastermind. Existing high-fun reduction,
+long-session diminishing returns and the session fun cap still apply. Treat
+successive rounds requested in the same game session cumulatively for those
+limits; awarding at completion must not reset the session allowance each round.
+There is no per-question, speed or accuracy multiplier. Scores of 0/10, 5/10 and
+10/10 have identical completion/fun value under otherwise equal conditions.
+No additional performance-based friendship reward or penalty is introduced.
+
+| Wish type | Agreed quiz contribution |
+| --- | --- |
+| General shared-play wish | One completed quiz gives one progress step. Preserve the existing requirement of two completed game rounds, which may be accumulated across eligible games/sessions. |
+| Concrete quiz wish ("Mach ein Quiz mit mir") | One completed ten-question quiz fulfills the wish, regardless of score. This is a quiz-specific completion requirement, not a reduction of other games' existing wish goals. |
+| Game-change wish | One progress step if Quiz meets the wish's original target/exclusion. Preserve the wish's existing required count. |
+| Win, avoid losing, win streak/overall competitive result, or rematch/comeback wish | Quiz contributes no competitive result or result progress. Do not generate these wishes with Quiz as their target or use a quiz score as competitive history. |
+
+Capture at most one eligible shared-play wish at quiz-round start, using the
+existing assignment priority and the noncompetitive activity's eligibility.
+Only that original wish can receive the completion, provided it still meets its
+ordinary validity/deadline rules. Later-created wishes receive no retroactive
+progress, and an ineligible/expired original wish does not redirect the same
+completion to another wish. One quiz must not fulfill both a concrete quiz wish
+and a general play wish simultaneously.
+
+Fulfillment uses the existing shared-play wish effect and ordinary once-per-wish
+handling. It creates no quiz-specific performance bonus. Normal shared-play and
+wish effects remain distinct, so the same completion may give ordinary fun and
+resolve its assigned wish without duplicating either effect.
+
+**Later contract integration:** represent the activity as completed shared play,
+without manufacturing a competitive outcome. The existing `GameExperience` can
+already count unclassified completed units. Its result-free use is distinct from
+`neutral_units`, which competitive adapters currently use for draws.
+
+The current `SessionSummary` and `GameRoundEvent` describe player wins/losses/draws.
+`application/game_experience.py` reverses them into Aiko's competitive experience.
+Directly translating a correct quiz answer into a player win would therefore
+give the wrong meaning to Aiko's experience. An incorrect answer must not become
+an Aiko victory or trigger generic opponent-win banter. Do not substitute a draw:
+that could accidentally satisfy an avoid-losing wish. Extend the completion/wish
+path explicitly for noncompetitive shared play before wiring Quiz into it.
+The concrete API/storage design remains implementation preparation; no runtime
+contracts, balance data, wish definitions or other games are changed here.
+
+#### Later delivery order and validation
+
+1. Obtain implementation authorization and approve the intended runtime content;
+   design the contract integration for the agreed shared-play semantics above.
+2. Implement the pure catalogue/session layer and check selection, stable answer
+   IDs after shuffling, exactly-once commitment, ten-question completion and
+   cancellation boundaries.
+3. Connect the player window and the **Spielen** route with quiz-appropriate score
+   presentation, existing game gating and reliable close/restart cleanup.
+4. Add Aiko's separate quizmaster reactions using the agreed friendship tone;
+   reduce teasing after repeated errors without changing factual solutions.
+5. Plan and deliver previously-presented-question feedback separately once its
+   storage ownership is agreed. It must not become an in-round prompt.
+
+For that later implementation, verify long-text wrapping at narrow window sizes,
+single-click/keyboard commitment, **Weiter** control, absence of time limits,
+menu exclusion, closing during a reaction, a fresh round, and appropriate care
+accounting. This catalogue revision implements none of these runtime features.
+
+## Quiz delivery (2026-10-25)
+
+The owner authorized implementation under **Spielen > Quiz**, including the
+reviewed 200-question catalogue, Aiko's quizmaster role and the agreed shared-play
+fun/wish rules. The horoscope prototype and parallel character-asset work are
+outside this delivery and were not edited.
+
+- `games/quiz_catalogue.py` loads immutable approved local content from
+  `data/quiz.de.json`, validating four distinct choices, stable IDs/revisions and
+  solution references. The editorial JSON/HTML retain factual sources, rights and
+  review history outside runtime loading. The implementation request approves
+  the revised initial catalogue for use; no automatic editorial approval exists
+  in the loader. No provider, key, account, translation model or network call is
+  used. Topic/difficulty counts and all question/answer IDs are preserved.
+- `games/quiz.py` selects ten different questions, preferring fresh questions,
+  different works and a topic mix informed by catalogue size. Answers shuffle
+  independently and resolve by ID. Tolkien language/LOTR entries share a variety
+  group. Scoring, one-time commitment and explicit advancement are pure rules.
+- `QuizWindow` and `QuizSequence` provide the VN game window, keyboard choices
+  1–4, wrapped answers, visible selected/correct answers and explanations,
+  **Weiter**, score out of ten and **Noch eine Runde**. There is no answer timer,
+  automatic advancement, Aiko opponent score or score-based pass threshold.
+  Invalid/insufficient local content produces a readable unavailable message.
+- Aiko uses the existing speech/animation/emote ports and authored dialogue
+  catalogue. Friendship stages have their agreed tone, mixed with short ordinary
+  responses. A mid-round role break can occur, repeated errors select supportive
+  dialogue, and quieter/irritated emotional contexts have restrained alternatives.
+  No new character artwork or props are needed. The game uses the existing fun
+  icon and VN UI resources.
+- A result-free `completed` receipt extends the shared game-round contract for
+  Quiz. Competitive quiz receipts/summaries are rejected. The application credits
+  the round after the tenth answer's visible resolution, before the closing
+  reaction. Existing Pet-owned bounded receipts prevent replay after reload.
+  Closing an unfinished quiz gives no completion; closing after its result gives
+  no second reward.
+- Quiz reuses the nine-point board-game fun profile, including its ordinary
+  energy/social amounts. Incremental completion preserves the existing per-window
+  cumulative diminishing returns, twenty-point fun cap, high-fun reduction and
+  existing friendship threshold. Correctness never enters care accounting.
+- Named Quiz wishes use the existing exact-play form with a captured one-round
+  goal. General/eligible game-change wishes keep their original required counts;
+  one assigned completion advances one wish. Competitive/rematch forms exclude
+  Quiz. Saved shared-play causes retain `completed`, with no fabricated draw,
+  and the UI displays shared-play progress rather than an Aiko win/loss score.
+
+The separate settings feedback feature remains at the explicitly deferred fifth
+delivery step: its storage/retention/export design is not chosen here. No ratings
+are requested during play and no feedback service or new save schema is added.
+Question-repetition avoidance in this delivery is transient within the open game
+window; no persistent quiz/answer history is claimed.
+
+Validation: the final focused run passed **244 tests**, covering Quiz, wish
+creation/completion/storage, game menu/window/session behavior, dialogue and
+architecture/dependency checks. Whole-repository Ruff passed, strict Mypy passed
+for 347 source files, Pyright reported zero errors/warnings, and diff whitespace
+checks passed. The isolated native Windows quiz tests cover correct/incorrect
+marking, long-answer wrapping in a narrow work area, explicit advancement,
+new-round reset, cancellation and unavailable content. A separate native render
+was visually inspected; no normal pet save or character-asset regeneration was
+used. This is not a claim of a full manual mouse/keyboard session with the live pet.
+
+The broader Windows run executed **2,092 tests** and had four failures:
+`test_click_gui.test_story_reading_including_right_clicks_does_not_tease`,
+`test_mastermind_gui.test_cancelled_drop_and_close_release_local_grab_and_ghost`,
+and the two `test_world_gui` cases
+`test_recognized_drink_handover_then_unknown_full_drink_is_examined` and
+`test_refused_identified_offer_still_falls_instead_of_entering_hands`.
+All four also failed identically in a temporary comparison copy with the
+pre-Quiz tracked sources restored from HEAD and the existing parallel artwork
+preserved. They were left unchanged. After the final Quiz/text changes, the
+244-test focused run above passed; a second complete suite is not claimed.
+
+Character-artwork and horoscope file hashes match their pre-implementation
+snapshots. The independent parallel care-planning document was not edited by
+this delivery. Existing non-Quiz dialogue/copy content is unchanged; new Quiz
+dialogue was appended without reformatting the rest of the catalogue.
+The owner subsequently authorized a local commit of Quiz, its catalogue, tests
+and these related documents. Horoscope and parallel character-asset work are
+excluded from that commit. No push or merge is authorized.

@@ -44,7 +44,7 @@ def cause_description(cause: MoodletCause) -> str:
         parts.append(GERMAN_TEXT.format(
             "vn.cause_wish",
             wish=GERMAN_TEXT.format(wish_text_key(
-                WishId(wish.definition_id), goal, "label",
+                WishId(wish.definition_id), goal, "label", target_id=wish.target_id,
             )),
             target=target,
         ))
@@ -70,6 +70,10 @@ def cause_description(cause: MoodletCause) -> str:
     if cause.game is None:
         return summary
     game = cause.game
+    if game.round_outcome.value == "completed":
+        return summary + "\n" + GERMAN_TEXT.format(
+            "quiz.shared_completed", rounds=str(game.completed_rounds),
+        )
     return summary + "\n" + GERMAN_TEXT.format(
         "vn.cause_game",
         round=GERMAN_TEXT.format(f"vn.outcome.{game.round_outcome}"),

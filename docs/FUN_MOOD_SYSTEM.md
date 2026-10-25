@@ -169,6 +169,25 @@ and once-per-tier rules. No death or new general interaction lock is introduced.
 
 ## Game-neutral pipeline
 
+### Noncompetitive Quiz extension (2026-10-25)
+
+Quiz is available under Spielen. One completed ten-question round is one shared
+play unit, with nine base fun points and the existing board-game profile's energy
+and social effects. Correct-answer totals never enter fun, friendship or wish
+outcomes. Existing high-fun reduction, cumulative session diminishing returns and
+the twenty-point cap apply even though Quiz settles at each full round's visible
+final resolution rather than waiting for window closure.
+
+Quiz reports `completed`, not win/loss/draw. The ordinary application coordinator
+captures one eligible wish at round start and commits a restart-safe receipt.
+The concrete Quiz wish requires one full round; general play/game-change wishes
+retain their usual counts and can accumulate across eligible games. Competitive
+and rematch wishes exclude Quiz. Interrupting before final resolution gives no
+completion, while closing during the final reaction cannot revoke or duplicate it.
+Its zero close-summary only cleans up the UI; it awards no second session reward.
+
+### Competitive games
+
 Every game adapter returns a frozen `GameExperience` with a game ID,
 number of *completed units* and outcome counts from Aiko's perspective.
 What a unit means and how strongly it is rewarded is a per-game profile.

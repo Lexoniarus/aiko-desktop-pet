@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Literal
 
 RoundOutcome = Literal["win", "loss", "draw"]
+GameResult = Literal["win", "loss", "draw", "completed"]
 
 
 class GameId(str, Enum):
@@ -13,6 +14,7 @@ class GameId(str, Enum):
     BLACKJACK = "blackjack"
     CONNECT_FOUR = "connect_four"
     MASTERMIND = "mastermind"
+    QUIZ = "quiz"
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,6 +32,8 @@ class SessionSummary:
             for value in (self.wins, self.losses, self.draws)
         ):
             raise ValueError("Invalid game session summary")
+        if self.game_id is GameId.QUIZ and self.games:
+            raise ValueError("Quiz completion is not a competitive score")
 
     @property
     def games(self) -> int:
@@ -43,14 +47,17 @@ class GameRoundEvent:
     game_id: GameId
     session_id: str
     number: int
-    outcome: RoundOutcome | None = None
+    outcome: GameResult | None = None
 
     def __post_init__(self) -> None:
         if (not isinstance(self.game_id, GameId)
                 or not isinstance(self.session_id, str)
                 or not 1 <= len(self.session_id) <= 64
                 or type(self.number) is not int or not 1 <= self.number < 2**63
-                or self.outcome not in (None, "win", "loss", "draw")):
+                or self.outcome not in (None, "win", "loss", "draw", "completed")
+                or self.outcome == "completed" and self.game_id is not GameId.QUIZ
+                or self.game_id is GameId.QUIZ
+                and self.outcome not in (None, "completed")):
             raise ValueError("Invalid game round evidence")
 
     @property

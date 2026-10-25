@@ -29,6 +29,8 @@ def timestamp() -> float:
 class GameExperienceTests(unittest.TestCase):
     def test_shared_summary_preserves_orientation_for_each_game(self) -> None:
         for game in GameId:
+            if game is GameId.QUIZ:
+                continue  # Quiz completion has no player/opponent orientation.
             result = experience_from_session(SessionSummary(game, 2, 1, 3))
             self.assertEqual(result.game_id, game.value)
             self.assertEqual(result.completed_units, 6)

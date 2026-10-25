@@ -202,10 +202,15 @@ class WishExpressionTests(unittest.TestCase):
                 with self.subTest(objective=definition.id, target=target):
                     reaction = self.mind.wish_reaction(
                         ActiveWish(5, definition.id, target, 0, 14400,
-                                   goal=definition.goal)
+                                   goal=(definition.goal_for_target(
+                                       definition.bind_target(target),
+                                   ) if definition.id == WishId.PLAY_GAME
+                                         else definition.goal))
                     )
                     self.assertEqual(len(reaction.beats), 1)
                     self.assertEqual(reaction.wish_instance_id, 5)
                     self.assertNotIn("{", reaction.text)
-                    if definition.round_count > 1:
+                    if target == 'quiz' and definition.id == WishId.PLAY_GAME:
+                        self.assertIn('eine Runde Quiz', reaction.text)
+                    elif definition.round_count > 1:
                         self.assertIn(str(definition.round_count), reaction.text)

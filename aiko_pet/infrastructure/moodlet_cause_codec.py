@@ -268,7 +268,8 @@ def _game_result(raw: Any) -> MoodletGameResult:
         row["losses"], minimum=0, maximum=rounds - wins, context="Moodlet game losses"
     )
     if (
-        outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)
+        outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW,
+                        MoodletOutcome.COMPLETED)
         or outcome == MoodletOutcome.WIN
         and wins == 0
         or outcome == MoodletOutcome.LOSS

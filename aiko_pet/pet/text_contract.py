@@ -7,6 +7,22 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "wish.quiz.label": frozenset(),
+    "wish.quiz.description": frozenset(),
+    "wish.quiz.utterance": frozenset(),
+    "quiz.shared_progress": frozenset({"completed", "required"}),
+    "quiz.shared_completed": frozenset({"rounds"}),
+    "game.name.quiz": frozenset(),
+    "game.score.answered": frozenset(),
+    "game.score.correct": frozenset(),
+    "quiz.progress": frozenset({"number"}),
+    "quiz.think": frozenset(),
+    "quiz.correct": frozenset({"explanation"}),
+    "quiz.incorrect": frozenset({"answer", "explanation"}),
+    "quiz.next": frozenset(),
+    "quiz.again": frozenset(),
+    "quiz.finished": frozenset({"correct"}),
+    "quiz.unavailable": frozenset(),
     'game.name.mastermind': frozenset(set()),
     'mastermind.code': frozenset(set()),
     'mastermind.rules': frozenset(set()),

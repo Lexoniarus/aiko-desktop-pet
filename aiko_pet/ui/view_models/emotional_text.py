@@ -41,7 +41,8 @@ GAME_FILES = {
     "connect_four": CONNECT_FOUR_DIR / "red.png",
     "mastermind": MASTERMIND_DIR / "blue.png",
 }
-GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_toe"}
+GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_toe",
+              "quiz": "status_fun"}
 
 
 def duration_text(seconds: float) -> str:
@@ -91,6 +92,11 @@ def wish_progress(view: WishView, *, compact: bool = False) -> str:
     game = view.value.game
     if game is None:
         return ""
+    if view.value.target_id == "quiz":
+        return GERMAN_TEXT.format(
+            "quiz.shared_progress", completed=str(game.completed_rounds),
+            required=str(game.required_count),
+        )
     wins_goal = (view.value.goal is not None
                  and view.value.goal.objective == WishObjective.TOTAL_WINS)
     if compact:

@@ -138,6 +138,7 @@ class DesktopCareRuntime:
         )
         if event.outcome is not None:
             self._save()
+            self._hover.refresh_status()
 
     def complete_game(self, summary: SessionSummary) -> None:
         self._router.complete_game(

@@ -144,6 +144,10 @@ def parse_wish_catalog(
             or len(targets) != len(set(targets))
         ):
             raise ValueError(f"{key}: unknown, duplicate or incompatible targets")
+        if "quiz" in targets and key not in (
+            WishId.PLAY_GAME, WishId.PLAY_ANY_GAME, WishId.PLAY_OTHER_GAME,
+        ):
+            raise ValueError("Quiz supports shared play, not competitive objectives")
         outcome = enum_value(row["fulfillment_moodlet"], MoodletId, context=str(key))
         if outcome not in moodlets.definitions:
             raise ValueError(f"{key}: missing fulfillment Moodlet {outcome}")

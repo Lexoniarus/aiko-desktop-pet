@@ -24146,6 +24146,776 @@
         "friend",
         "close"
       ]
+    },
+    {
+      "id": "game_quiz_greeting-acquaintance",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Willkommen zum kleinen Desktop-Quiz. Zehn Fragen, und du hast alle Zeit zum Überlegen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-familiar",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich übernehme heute die Moderation. Hihi, ein ganz eigener Job hier auf deinem Desktop."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-friend",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Quizmasterin ist bereit! Mein Publikum besteht aus dir. Übersichtlich, aber sehr wichtig."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-close",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Setz dich gedanklich in die erste Reihe. Ich hab zehn Fragen für uns. Und meinen großen Auftritt."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Richtig! Ein Punkt für dich. Mhm, das Verkünden gefällt mir."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-familiar",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Richtig! Hihi. Ich glaube, ich behalte den Job als Quizmasterin."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-friend",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau! Ich hatte mich schon so schön auf meine feierliche Auflösung vorbereitet."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-close",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja! Richtig! Ich soll würdevoll moderieren. Ich freu mich aber gerade lieber mit dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, leider nicht. Ich zeig dir die Lösung. Wir haben ja Zeit."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-familiar",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leider daneben. Mein großer Auftritt mit der Auflösung kommt also doch noch."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-friend",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die war’s nicht. Ich könnte wissend nicken, aber ich hatte die Lösung vorher schon. Das wäre Angeberei."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-close",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die war’s nicht. Ich bin auf deiner Seite, aber die Lösung lässt sich von mir auch nicht bestechen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-acquaintance",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Lösung steht hier. Wir machen ganz in Ruhe weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-familiar",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Manche Fragen liegen einem weniger. Wir haben Zeit für die nächste."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-friend",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heute lassen die Punkte auf sich warten. Ich bleib trotzdem gern mit dir hier."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-close",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach. Die Punkte verstecken sich. Ich bin trotzdem gern deine Quizmasterin."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-acquaintance",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das waren unsere zehn Fragen. Danke, dass du mitgespielt hast."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-familiar",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Fragen geschafft. Meine kleine Quizshow hat mir mit dir Spaß gemacht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-friend",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Und damit endet die erste Staffel meiner Desktop-Quizshow! Also, diese Runde. Ich werd schon übermütig."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-close",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Fragen, wir beide, und ich durfte moderieren. Das war schön. Die nächste Runde läuft uns nicht weg."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-acquaintance",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, das Thema mag ich. Ähm, ich bleibe natürlich ganz sachlich bei meiner Moderation."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-familiar",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huh, ich hatte gerade meinen eigenen Kommentar im Kopf. Zurück zu deiner Frage."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-friend",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde jetzt gern abschweifen. Aber meine winzige Quizbühne hat einen Ablauf. Angeblich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-close",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hehe, ich merke gerade, wie gern ich das mit dir mache. So. Meine Moderationsstimme hat sich wieder gefangen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-quiet",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mache heute eine ruhige Quizrunde mit dir. Zehn Fragen, und du kannst dir Zeit nehmen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-quiet",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist richtig. Ein Punkt für dich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-quiet",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal nicht. Die richtige Antwort steht hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-quiet",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir schauen uns die Lösung an und machen in Ruhe weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-quiet",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unsere zehn Fragen sind geschafft. Danke fürs gemeinsame Spielen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-quiet",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schweife gerade ab. Zurück zu unserer Frage."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance-simple-1",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau, richtig!"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance-simple-2",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das passt. Ein Punkt für dich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance-simple-1",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leider nicht. Die richtige Antwort steht im Fenster."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance-simple-2",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die hier wäre richtig gewesen. Wir schauen weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-acquaintance-simple-1",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die nächste Frage ist ein neues Thema. Wir haben Zeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
     }
   ]
 }

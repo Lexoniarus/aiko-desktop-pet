@@ -10,7 +10,16 @@
 > yellow/red Kenney pieces, own local rules, bounded opponent search and Aiko
 > reactions. Mastermind was authorized and [implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#mastermind-extension):
 > Aiko sets the code, with a concealed desktop strip, Kenney pieces and local
-> Python-standard-library rules and ten prepared drag-and-drop rows. Other entries remain research.
+> Python-standard-library rules and ten prepared drag-and-drop rows. Quiz topic,
+> difficulty, session flow, Aiko-role and separate settings-feedback decisions
+> are recorded in the
+> [planning-only quiz concept](MINIGAME_IMPLEMENTATION_PLAN.md#quiz-concept-planning-only);
+> the separately authorized [200-question editorial draft](MINIGAME_IMPLEMENTATION_PLAN.md#authored-starting-catalogue-editorial-draft)
+> now includes film and television. Quiz was subsequently authorized and
+> [implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#quiz-delivery-2026-10-25).
+> Its placement is **Spielen > Quiz**; game integration preparation is
+> recorded in the [implementation proposal](MINIGAME_IMPLEMENTATION_PLAN.md#implementation-preparation-proposal-only).
+> Other entries remain research.
 > Inclusion of a game, algorithm, API or library below does not select it.
 > Candidate effort and duration estimates are provisional comparison aids,
 > not rankings or priorities.
@@ -148,6 +157,15 @@ candidate proposed by this document.
 
 ### Quiz and content-driven game variations
 
+The owner's [quiz concept](MINIGAME_IMPLEMENTATION_PLAN.md#quiz-concept-planning-only)
+now takes precedence for the intended accessible German quiz: 60% nerd topics,
+40% general knowledge; 50% easy, 35% medium and 15% tricky questions. Separate
+settings feedback covers only questions Aiko has already presented. Sessions
+have ten questions, four answer choices and no time limit. Aiko plays a playful
+quizmaster with occasional role breaks and relationship-appropriate teasing.
+The target is a free local catalogue; the source/API suggestions below remain historical
+research alternatives, not selected providers or implementation authorization.
+
 For the shared provider/translation design and the original 4/5 estimate for
 riddles/Open Trivia DB (assuming an installed translator), see the
 [social concept](SOCIAL_ENTERTAINMENT_CONCEPT.md#content-sources-and-original-relative-effort).
@@ -259,7 +277,18 @@ sequence, deadline or acceptance decision.
   a concealed code strip beside her on the desktop, Kenney pieces and local
   Python-standard-library rules. See the [plan](MINIGAME_IMPLEMENTATION_PLAN.md#mastermind-extension).
   Ten prepared attempt rows accept dragged pins; no new external package is used.
-- **All remaining entries:** optional research candidates only.
+- **Quiz:** topic/difficulty distribution, ten-question session flow, Aiko's
+  playful quizmaster role and separate settings feedback are
+  planned in the [quiz concept](MINIGAME_IMPLEMENTATION_PLAN.md#quiz-concept-planning-only).
+  The separately authorized [200-question draft](quiz/catalogue-review.de.html)
+  is available for editorial review, including twenty film/television questions.
+  Catalogue revision 2 corrects nineteen reviewed entries without changing topic
+  or difficulty counts. The quiz belongs under **Spielen**, with Aiko moderating.
+  The reviewed catalogue is approved for this starting delivery by the subsequent
+  implementation request. [Quiz is implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#quiz-delivery-2026-10-25)
+  with shared-play completion and nine base fun points; separate feedback settings
+  remain future work.
+- **All other remaining entries:** optional research candidates only.
 - **Implementation authorization:** granted on 2026-10-19 for the original
   Blackjack/Tic-Tac-Toe delivery and on 2026-10-23 for Connect Four and Mastermind. No merge authorized.
 - **Proposed delivery stages:** see the separate plan; no schedule is committed.

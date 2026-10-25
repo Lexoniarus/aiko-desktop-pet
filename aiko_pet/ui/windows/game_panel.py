@@ -56,6 +56,7 @@ class GamePanel:
             if game_id is GameId.MASTERMIND
             else skin.images.icon(
                 'game_rps' if game_id is GameId.ROCK_PAPER_SCISSORS
+                else 'status_fun' if game_id is GameId.QUIZ
                 else 'game_tic_tac_toe', 32,
             )
         )
@@ -107,10 +108,13 @@ class GamePanel:
         scores = tk.Frame(outer, bg=skin.background)
         scores.pack(side='bottom', fill='x', padx=16)
         self.score_labels: dict[str, tk.Label] = {}
-        for col, (key, label) in enumerate((
+        score_columns = (("correct", "correct"), ("answered", "answered")) if (
+            game_id is GameId.QUIZ
+        ) else (
             ('wins', 'player'), ('losses', 'aiko'),
             ('draws', 'draws'), ('games', 'rounds'),
-        )):
+        )
+        for col, (key, label) in enumerate(score_columns):
             scores.grid_columnconfigure(col, weight=1, uniform='scores')
             cell = self.passive(scores, padding=6)
             cell.frame.grid(row=0, column=col, sticky='nsew', padx=3)

@@ -8,7 +8,7 @@ from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
-from ..games.contracts import RoundOutcome
+from ..games.contracts import GameResult
 from .balance import BALANCE
 from .care_actions import (
     CareTransition,
@@ -478,7 +478,7 @@ class PetState:
             ))
 
     def record_completed_game_round(
-        self, *, game_id: str, round_id: str, outcome: RoundOutcome,
+        self, *, game_id: str, round_id: str, outcome: GameResult,
     ) -> bool:
         """Retain one actual round fact for wish eligibility, even without a wish.
 
@@ -511,7 +511,7 @@ class PetState:
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
-        started_at: float, outcome: RoundOutcome,
+        started_at: float, outcome: GameResult,
     ) -> None:
         self._apply_wish_resolution(progress_game_wish(
             self.wishes, instance_id, game_id=game_id, session_id=session_id,
@@ -548,10 +548,15 @@ class PetState:
         *,
         now: float,
         arrangement_ready: bool = False,
+        previous_units: int = 0,
+        awarded_fun: float = 0.0,
     ) -> float:
         """Commit one finished minigame, retaining no session statistics."""
-        reward = calculate_game_session_fun(experience, self.fun)
-        if experience.completed_units == 0:
+        reward = calculate_game_session_fun(
+            experience, self.fun, previous_units=previous_units,
+            awarded_fun=awarded_fun,
+        )
+        if experience.completed_units == previous_units:
             return 0.0
         before = self.fun
         self._change(
@@ -560,9 +565,9 @@ class PetState:
             social=clamp_need_value(self.social + reward.social_gain, 0.0),
         )
         self._record_accepted_contact("play", now)
-        if experience.completed_units >= BALANCE.integer(
+        if previous_units < BALANCE.integer(
             "friendship", "minimum_play_rounds",
-        ):
+        ) <= experience.completed_units:
             self.experience_interaction(HelpfulInteraction("play", arrangement_ready))
         return self.fun - before
 

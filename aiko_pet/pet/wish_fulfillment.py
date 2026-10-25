@@ -82,7 +82,8 @@ def _retire_wish(
 
 
 def _game_result(
-    goal: WishGoal, progress: GameWishProgress, outcome: Literal["win", "loss", "draw"],
+    goal: WishGoal, progress: GameWishProgress,
+    outcome: Literal["win", "loss", "draw", "completed"],
 ) -> tuple[bool, bool, MoodletOutcome]:
     """Completion and success are properties of the original goal, not its ID."""
     objective = goal.objective
@@ -109,7 +110,7 @@ def _game_result(
 def progress_game_wish(
     state: WishState, instance_id: int, *, game_id: str, session_id: str,
     round_id: str, started_at: float, elapsed: float,
-    outcome: Literal["win", "loss", "draw"],
+    outcome: Literal["win", "loss", "draw", "completed"],
     definitions: Mapping[WishId, WishDefinition],
 ) -> WishResolution:
     """One real qualifying round, from Aiko's perspective; no session score."""
@@ -122,6 +123,10 @@ def progress_game_wish(
             or round_id in wish.game.round_ids):
         return WishResolution(state)
     definition, goal = definitions[wish.definition_id], wish.goal_snapshot
+    if outcome == "completed" and goal.objective not in (
+        WishObjective.TOTAL_ROUNDS, WishObjective.SESSION_ROUNDS,
+    ):
+        return WishResolution(state)
     before = wish.game
     if (goal.objective == WishObjective.RETRY_WIN
             or goal.objective == WishObjective.SESSION_ROUNDS

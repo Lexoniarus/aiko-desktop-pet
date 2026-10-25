@@ -74,6 +74,7 @@ GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
 # Reuse the completed-board-round profile without adding or changing balance values.
 GAME_FUN_PROFILES["connect_four"] = GAME_FUN_PROFILES["tic_tac_toe"]
 GAME_FUN_PROFILES["mastermind"] = GAME_FUN_PROFILES["tic_tac_toe"]
+GAME_FUN_PROFILES["quiz"] = GAME_FUN_PROFILES["tic_tac_toe"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,6 +104,8 @@ class GameExperience:
             raise ValueError("Game experience requires valid unit counts")
         if sum(counts[1:]) > self.completed_units:
             raise ValueError("Game outcomes exceed completed units")
+        if self.game_id == "quiz" and any(counts[1:]):
+            raise ValueError("Quiz has no competitive outcomes")
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,21 +161,28 @@ def satisfaction_reward_fraction(current_fun: float) -> float:
 def calculate_game_session_fun(
     experience: GameExperience,
     current_fun: float,
+    *, previous_units: int = 0, awarded_fun: float = 0.0,
 ) -> FunReward:
     """Award actual completed play, never an open window or pending round."""
-    if experience.completed_units == 0:
+    if not 0 <= previous_units <= experience.completed_units or awarded_fun < 0:
+        raise ValueError("Invalid incremental game reward")
+    units = experience.completed_units - previous_units
+    if units == 0:
         return FunReward(0.0, 0.0, 0.0)
     profile = GAME_FUN_PROFILES[experience.game_id]
     points = experience.completed_units * profile.base_fun_per_completed_unit
     points *= completed_unit_reward_fraction(experience.completed_units)
+    points -= (previous_units * profile.base_fun_per_completed_unit
+               * completed_unit_reward_fraction(previous_units))
     points *= satisfaction_reward_fraction(current_fun)
-    points = min(FUN_BALANCE.maximum_fun_gain_per_session, points)
+    points = min(max(0.0, FUN_BALANCE.maximum_fun_gain_per_session - awarded_fun),
+                 points)
     return FunReward(
         fun_points=max(0.0, points),
         energy_cost=(
-            experience.completed_units * profile.energy_cost_per_completed_unit
+            units * profile.energy_cost_per_completed_unit
         ),
         social_gain=(
-            experience.completed_units * profile.social_gain_per_completed_unit
+            units * profile.social_gain_per_completed_unit
         ),
     )

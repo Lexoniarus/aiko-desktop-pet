@@ -58,7 +58,12 @@ class WishCatalogTests(unittest.TestCase):
             if definition.area == WishArea.GAMES:
                 with self.subTest(wish=definition.id):
                     self.assertEqual(set(definition.targets),
-                                     {game.value for game in GameId})
+                                     {game.value for game in GameId
+                                      if game is not GameId.QUIZ
+                                      or definition.id in (
+                                          WishId.PLAY_GAME, WishId.PLAY_ANY_GAME,
+                                          WishId.PLAY_OTHER_GAME,
+                                      )})
         self.assertEqual(sum(d.area == WishArea.GAMES
                              for d in catalog.definitions.values()), 9)
 

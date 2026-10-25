@@ -58,8 +58,11 @@ GAME_GOAL_TEXT_VARIANTS = (
 def wish_text_key(
     key: WishId, goal: WishGoal | None,
     field: Literal["label", "description", "utterance"],
+    *, target_id: str | None = None,
 ) -> str:
     """Preserve original goal wording when a catalogue ID acquires a new meaning."""
+    if key == WishId.PLAY_GAME and target_id == "quiz":
+        return f"wish.quiz.{field}"
     prefix = (f"wish.goal.{goal.objective}" if goal is not None
               and key in (WishId.PLAY_GAME, WishId.WIN_ROUND, WishId.WIN_OVERALL)
               and goal.objective in GAME_GOAL_TEXT_VARIANTS else f"wish.{key}")
@@ -106,6 +109,12 @@ class WishDefinition:
         if target_id is not None and target_id not in self.targets:
             raise ValueError("Wish target is outside its supported activity pool")
         return target
+
+    def goal_for_target(self, target: WishTarget) -> WishGoal:
+        """A named quiz wish needs one full ten-question round."""
+        if self.id == WishId.PLAY_GAME and target.target_id == "quiz":
+            return WishGoal(WishObjective.TOTAL_ROUNDS, 1)
+        return self.goal
 
     @property
     def label_key(self) -> str:

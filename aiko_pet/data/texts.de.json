@@ -446,6 +446,22 @@
     "wish.comeback_game.utterance": "Bei {target} würde ich gern doch noch gewinnen. Versuchen wir es noch einmal?",
     "wish.social_any.label": "Zeit miteinander verbringen",
     "wish.social_any.description": "Aiko möchte mit dir plaudern oder einen Spruch, Witz oder kuriosen Fakt erzählen. Du kannst die Art der Unterhaltung wählen.",
-    "wish.social_any.utterance": "Ich würde gern ein bisschen Zeit mit dir verbringen. Worauf hast du Lust?"
+    "wish.social_any.utterance": "Ich würde gern ein bisschen Zeit mit dir verbringen. Worauf hast du Lust?",
+    "game.name.quiz": "Quiz",
+    "game.score.correct": "Richtig",
+    "game.score.answered": "Beantwortet",
+    "quiz.progress": "Frage {number} von 10",
+    "quiz.think": "Du hast Zeit. Wähle eine Antwort.",
+    "quiz.correct": "Richtig! {explanation}",
+    "quiz.incorrect": "Richtig ist: {answer}. {explanation}",
+    "quiz.next": "Weiter",
+    "quiz.again": "Noch eine Runde",
+    "quiz.finished": "Geschafft: {correct} von 10 richtig. Danke fürs Mitspielen!",
+    "quiz.unavailable": "Das Quiz ist gerade nicht verfügbar. Es fehlen mindestens zehn gültige, freigegebene Fragen.",
+    "wish.quiz.label": "Zusammen ein Quiz spielen",
+    "wish.quiz.description": "Aiko möchte eine vollständige Runde mit zehn Fragen mit dir spielen. Dein Punktestand ist dafür nicht wichtig.",
+    "wish.quiz.utterance": "Ich hätte Lust auf eine Runde Quiz mit dir. Zehn Fragen, und ich darf die Quizmasterin sein.",
+    "quiz.shared_progress": "Gemeinsame Quizrunden: {completed} von {required}",
+    "quiz.shared_completed": "Gemeinsam abgeschlossene Spielrunden: {rounds}"
   }
 }

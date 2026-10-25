@@ -51,7 +51,8 @@ def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
     wishes = []
     for wish in pet.wishes:
         label = GERMAN_TEXT.format(
-            wish_text_key(wish.definition_id, wish.goal, "label"),
+            wish_text_key(wish.definition_id, wish.goal, "label",
+                          target_id=wish.target_id),
         )
         target = (
             FOOD_CATALOG[wish.target_id].display_name
@@ -70,7 +71,8 @@ def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
                 wish,
                 label,
                 GERMAN_TEXT.format(wish_text_key(wish.definition_id, wish.goal,
-                                                "description")),
+                                                "description",
+                                                target_id=wish.target_id)),
                 target,
                 (
                     GERMAN_TEXT.format(f"wish.restriction.{wish.restriction}")

@@ -60,7 +60,8 @@ def _candidate(
         if (evidence is None or evidence.activity != CareActivity.PLAY
                 or evidence.target_kind != WishTargetKind.GAME
                 or evidence.outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS,
-                                            MoodletOutcome.DRAW)
+                                            MoodletOutcome.DRAW,
+                                            MoodletOutcome.COMPLETED)
                 or not 0 <= elapsed - evidence.occurred_at < requirement.window_seconds
                 or evidence.target_id not in definition.targets
                 or requirement.kind == WishExperienceKind.LAST_ROUND_LOSS
@@ -89,7 +90,7 @@ def _candidate(
         )) for w in active
     }
     targets = tuple(t for t in (definition.bind_target(r) for r in references)
-                    if (definition.goal, t) not in occupied)
+                    if (definition.goal_for_target(t), t) not in occupied)
     return _Candidate(definition, targets, weight) if targets else None
 
 
@@ -131,7 +132,7 @@ def replenish_wishes(
         target = rng.choice(candidate.targets)
         active.append(ActiveWish(
             next_id, definition.id, target.target_id or "", elapsed, deadline,
-            goal=definition.goal, target=target,
+            goal=definition.goal_for_target(target), target=target,
         ))
         next_id += 1
         anchors[area] = elapsed

@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from ..games.contracts import GameId, GameRoundEvent, RoundOutcome, SessionSummary
+from ..games.contracts import GameId, GameResult, GameRoundEvent, SessionSummary
 from ..games.rock_paper_scissors import Score
 from ..pet.fun import GameExperience
 from ..pet.mind import PetMind
@@ -78,6 +78,9 @@ class GameExperienceCoordinator:
         self._arrangement_ready = arrangement_ready
         self._round: _WishRoundAttempt | None = None
         self._last_round: GameRoundEvent | None = None
+        self._quiz_session: str | None = None
+        self._quiz_units = 0
+        self._quiz_fun = 0.0
 
     def observe_round(self, event: GameRoundEvent, inputs: SessionInputs) -> None:
         """Observe actual start/result; capture the existing wish before play."""
@@ -94,6 +97,10 @@ class GameExperienceCoordinator:
             self._round = _WishRoundAttempt(
                 event, self._state.lived_seconds, wish.instance_id if wish else None,
             )
+            if event.game_id is GameId.QUIZ and self._quiz_session != event.session_id:
+                self._quiz_session = event.session_id
+                self._quiz_units = 0
+                self._quiz_fun = 0.0
             return
         pending = self._round
         if (pending is None or pending.start.game_id != event.game_id
@@ -102,8 +109,11 @@ class GameExperienceCoordinator:
         advance_session_time(
             self._state, self._clock, inputs, progression=self._progression,
         )
-        outcome: RoundOutcome = ("loss" if event.outcome == "win" else
-                                 "win" if event.outcome == "loss" else "draw")
+        outcome: GameResult = (
+            "completed" if event.outcome == "completed" else
+            "loss" if event.outcome == "win" else
+            "win" if event.outcome == "loss" else "draw"
+        )
         recorded = self._state.record_completed_game_round(
             game_id=event.game_id.value, round_id=event.identity, outcome=outcome,
         )
@@ -119,6 +129,20 @@ class GameExperienceCoordinator:
         self._state.finish_game_round_experience(
             game_id=event.game_id.value, round_id=event.identity,
         )
+        if outcome == "completed":
+            # Quiz rewards settle now, using one cumulative window-session budget.
+            gained = self._state.record_game_experience(
+                GameExperience("quiz", self._quiz_units + 1),
+                now=inputs.wall_time, arrangement_ready=self._arrangement_ready(),
+                previous_units=self._quiz_units, awarded_fun=self._quiz_fun,
+            )
+            self._quiz_units += 1
+            self._quiz_fun += gained
+            self._state.complete_play_session(
+                game_id="quiz", session_id=event.session_id, round_id=event.identity,
+            )
+            self._adaptive.note_interaction(inputs.wall_time)
+            self._mind.record_accepted_care("play", inputs.monotonic_time)
         self._last_round = event
         self._round = None  # Retire after a successful commit, before UI callbacks.
 
