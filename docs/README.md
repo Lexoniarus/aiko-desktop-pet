@@ -33,6 +33,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest Blackjack result-evidence slice (PL-3): **107 targeted tests in 3.300 s**,
+zero failures/errors/skips, longest **0.281 s**, plus scoped Ruff, fresh strict
+Mypy for nine production roots and Pyright for eleven source/test files. The
+[delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-3-delivery-settled-blackjack-result-evidence)
+covers all seven actual decisions, reveal/settlement ordering, cause propagation,
+old/new SQLite snapshots and original cumulative progress. No windows, mouse
+control, personal-save access, live API, CI or full-suite run.
+
 Latest RPS result-evidence slice (PL-2): **91 targeted tests in 2.948 s**, no
 failures/errors/skips, longest **0.261 s**, plus scoped Ruff, fresh strict Mypy
 for ten changed source modules and Pyright for all twelve changed Python files.

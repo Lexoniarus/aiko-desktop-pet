@@ -204,11 +204,17 @@ decay trims to the newest fitting the lower level. A stronger single event or
 incomplete old save may have fewer actual causes. Missing events are never
 fabricated and ended episodes have no separate archive.
 
-PL-2 adds optional `game_details` to a retained cause. For Rock Paper Scissors
+PL-2/PL-3 add optional `game_details` to a retained cause. For Rock Paper Scissors
 it contains `game_id: "rock_paper_scissors"`, `player_move` and `aiko_move`, each
 using the canonical rock/paper/scissors vocabulary from `games/contracts.py`.
+For Blackjack it contains `game_id: "blackjack"`, `player_total`, `aiko_total`
+and `reason` from the actual settled hand. Reasons are `aiko_bust`, `player_bust`,
+`aiko_blackjack`, `player_blackjack`, `both_blackjack`, `higher_total` and
+`equal_total`. Natural Blackjack means initial two-card 21; later 21 remains a
+comparison/draw. An early player bust retains Aiko's real undrawn total, possibly
+below 17. The game supplies these facts only after reveal and settlement.
 The game event uses the player's result perspective; the cause validates the
-hands against Aiko's actual final-round result. For a cumulative wish that is
+details against Aiko's actual final-round result. For a cumulative wish that is
 `game.round_outcome`, not the aggregate goal outcome. Old causes without these
 facts remain valid and are not reconstructed.
 
@@ -217,8 +223,10 @@ for causes without new facts; version 2 adds the non-null `game_details` member
 beside existing `game` and `period` data. Both versions are read strictly. The
 table/schema version and shared transaction/revision ownership are unchanged.
 Details disappear with their trimmed/removed cause, including on row replacement.
-No moves are added to the bounded care-event history or wish progress; only the
-existing transient final event carries them until session qualification.
+No hands, totals or decision reasons are added to the bounded care-event history
+or wish progress; only the existing transient final event carries them until
+session qualification. PL-3 adds a subtype within the existing version-two
+envelope, without a new table, envelope version or database migration.
 
 The codec accepts and validates obsolete optional per-cause `level` metadata,
 but ignores it; new saves omit it. Available old receipts survive within the

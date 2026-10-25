@@ -16,7 +16,10 @@
 > retired; generic speech remains intentionally unchanged until PL-5/PL-6C.
 > **PL-2 delivered:** [actual Rock Paper Scissors hands](#pl-2-delivery-revealed-rock-paper-scissors-result-evidence)
 > now reach existing wish and ordinary-play Moodlet causes and compatible SQLite
-> storage. Blackjack details, API content and Plaudern selection remain later work.
+> storage. The PL-2 record below describes that slice's original RPS-only scope.
+> **PL-3 delivered:** [settled Blackjack totals and decision reasons](#pl-3-delivery-settled-blackjack-result-evidence)
+> now use the same bounded cause and compatible storage path. API content and
+> Plaudern selection remain later work.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -10913,3 +10916,60 @@ and default saves redirected to disposable storage. No app/test windows, mouse
 automation, live APIs, personal-save access/change, GitHub CI, full suite or merge.
 No new dialogue, emotion interpretation, wish rule, Moodlet reward or game/care
 balance was introduced. The final whole-branch suite remains PL-7.
+
+#### PL-3 delivery: settled Blackjack result evidence
+
+Delivered on Social Optimization in **`7cea21b`** (shared typed detail contract
+and compatible persistence) and **`bc9ebc1`** (actual Blackjack settlement wiring
+and focused integration coverage). Parallel character/export and social-plan
+changes remain untouched and unstaged.
+
+- `games/contracts.py` extends the existing immutable details union with
+  `BlackjackDetails`: actual player/Aiko totals and `BlackjackDecisionReason`.
+  The seven reasons distinguish each side busting, each side having natural
+  Blackjack, both having natural Blackjack, a higher valid total and equal valid
+  totals. Typed values, possible totals, reason consistency, game identity and
+  player/Aiko result perspectives are checked at the existing boundaries.
+- `Blackjack` records the reason at its actual rule decision. Two-card natural
+  Blackjack and a later 21 remain distinct, including both-natural versus later
+  21/21 draws. On early player bust, the evidence retains Aiko's actual initial
+  total, even below 17; no dealer draws or hidden facts are reconstructed.
+  The public `result_details` stays absent until reveal and settlement. Next-hand
+  reset clears it; cancellation before settlement emits no result details.
+- `BlackjackSequence` forwards that immutable evidence with its existing settled
+  result event. `GameExperienceCoordinator` and existing Pet operations carry it
+  to the original assigned wish's success/failure, ordinary shared-session and
+  comeback causes. No new orchestration, score owner or round archive is added.
+  Cumulative goals preserve their counters and refer only to the actual final
+  triggering round, which may be a draw despite successful goal completion.
+- `MoodletCause.game_details` and its shared codec accept either game subtype.
+  Blackjack's stored subtype contains `game_id`, `player_total`, `aiko_total`
+  and `reason`. SQLite reuses the existing strict version-two detail envelope;
+  old missing-detail causes still use version one. No DDL, schema-version bump,
+  separate writer, migration or reconstruction of older absent facts is needed.
+  Details remain attached only to existing bounded active causes; the existing
+  cause trimming/removal also removes them.
+
+Validation:
+
+- Model/storage slice: **59 targeted tests in 1.636 s**, zero failures/errors/
+  skips; longest **0.298 s**.
+- Final settlement/cause acceptance: **107 targeted tests in 3.300 s**, zero
+  failures/errors/skips; longest **0.281 s**. No test exceeds ten seconds.
+- Fixed complete decks exercise all seven decision reasons, both comparison
+  directions, later 21 and two-card naturals. Existing injected-timer sequence
+  tests check actual post-reveal delivery, early player bust, cancellation and
+  next-hand reset. Integration checks assigned wish success/non-loss failure,
+  duplicate result idempotency, cumulative progress across real SQLite reopen,
+  final-draw evidence and ordinary shared play/comeback. Existing RPS, cause-row,
+  transaction and package-boundary tests also pass.
+- Scoped Ruff passes; fresh strict Mypy passes for nine production roots,
+  including the unchanged coordinator. Pyright passes for eleven source/test
+  files. The package graph remains acyclic without boundary exemptions.
+
+Reports remain outside Git in `%TEMP%/aiko-pl3-reports-2mrfy5as/model.json` and
+`%TEMP%/aiko-pl3-acceptance-l3vav0nn/targeted.json`. Native Tk creation was blocked
+before imports and default saves redirected to disposable storage. No windows,
+mouse control, live API, personal-save access/change, GitHub CI, full suite or
+merge. Rules, timers, dialogue, rewards and care/friendship balance are unchanged.
+Final integrated acceptance remains PL-7.

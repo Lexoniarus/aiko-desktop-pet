@@ -383,15 +383,20 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
-PL-2 retains actual revealed Rock Paper Scissors hands as optional cause details
+PL-2/PL-3 retain actual revealed Rock Paper Scissors hands and settled Blackjack
+totals/decision reasons as optional cause details
 for existing wish success/failure and qualified ordinary play/comeback episodes.
 Start/aborted selections carry no result details. The shared immutable game
-contract validates moves against the outcome; Pet still owns all changes.
+contract validates facts against the outcome; Pet still owns all changes.
+Blackjack distinguishes natural two-card 21 from later 21 and retains actual
+totals even when early player bust ends the hand before Aiko draws. Evidence
+becomes available only after reveal and settlement.
 Aggregate goals keep their existing counters while details describe only their
 triggering final round. No reward, wish rule, Moodlet trigger, stage duration,
 fun/friendship balance or visible dialogue changes in this slice.
 See [cause storage](DATA_AND_SAVES.md) and the
-[PL-2 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-2-delivery-revealed-rock-paper-scissors-result-evidence).
+[PL-2 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-2-delivery-revealed-rock-paper-scissors-result-evidence)
+and [PL-3 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-3-delivery-settled-blackjack-result-evidence).
 
 The renewed wish/Moodlet delivery passed step-8 local acceptance: the isolated
 candidate completed 1,701 repository tests in 77.761 seconds with no failures or
