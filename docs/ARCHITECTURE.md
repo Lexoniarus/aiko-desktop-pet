@@ -1178,10 +1178,14 @@ are separate read dimensions, with no discovery or memory mutation on a read.
 The API repeat window is one immutable application value,
 `social_history.SocialContentHistory`, owned by SocialContentCoordinator.
 The existing session read contracts carry it through StateStore and
-PetSessionRestorer; the codec validates receipt-only data, at most ten entries
-per category. DesktopPersistence reads that same value in its one atomic save.
+PetSessionRestorer; the codec validates receipt-only data, at most 100 entries
+per category, including the actual introduction variant. DesktopPersistence
+reads that same value in its one atomic save. The coordinator rotates framing
+when offering content, using the last admitted variant, without advancing the
+rotation on warming or cancellation. SQLite schema v2 adds only the nullable
+variant column through the existing backed-up transactional migration path.
 SocialConversationRuntime persists only after the offered content is accepted
 for playback, combining the care commit and receipt without two admission
 writes. Whole-sequence social wish completion remains a separate event.
-Preparation, buffers, full provider text and presentation metadata remain
+Preparation, buffers, full provider text and other presentation metadata remain
 transient; these receipts are not another pet experience archive.

@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Retain 100 admitted API contents per buffered category across restarts and
+  rotate the three introductions independently of content hashes. Persist the
+  actual framing variant with the existing receipts; upgrade SQLite v1 to v2
+  after a consistent backup and retain supported older JSON histories.
+
 - Accept the first legal Connect Four move during Aiko's welcome without
   shortening the displayed line. Preserve fall animation, AI-turn and result
   guards. Audit the other game choices and pointer-focus paths locally.

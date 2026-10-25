@@ -1,6 +1,6 @@
 # Packaged data and local saves
 
-Personal progress uses private SQLite schema version 1. Authored catalogs and
+Personal progress uses private SQLite schema version 2. Authored catalogs and
 texts remain JSON resources in Git. JSON field paths below describe supported
 legacy import records and their domain meanings; live saves write the mapped
 SQLite tables, not new JSON checkpoints.
@@ -34,14 +34,15 @@ execution or extra pip dependency for this data layer.
 
 Optional [social API content](SOCIAL_CONTENT.md) is separate from packaged
 catalogs. The settings owner stores `online_social` (default false) and the
-optional zodiac sign. SQLite keeps the last ten admitted provider IDs/text
-fingerprints per API category, bounded provider request reservations/pauses,
+optional zodiac sign. SQLite keeps the last 100 admitted provider IDs/text
+fingerprints and actual introduction variants per API category, bounded provider
+request reservations/pauses,
 and the current-day horoscope's prepared reading, participation and paragraph
 cursor. Joke/quote/fact payloads, warm buffers, pending playback and credentials
 are not stored. Both Sprueche sources share category `single`; quote identities
 are namespaced `zitat-service:<entry-id>`. Reservations are committed before HTTP;
 a failed save prevents dispatch. Restart and opt-out retain quota metadata.
-The legacy social-history codecs support versions 1/2/3, with defaults only for
+The social-history codecs support versions 1/2/3/4, with defaults only for
 fields absent from the supported older version. Present invalid, excessive or
 duplicate data stops import. Admission saves care and receipts in one transaction.
 
@@ -351,7 +352,13 @@ strict importer and single `sqlite/store.py:SqliteStateStore` writer. A snapshot
 includes core/sleep/settings, relationship/exposure, World/subjective memory,
 wishes/handovers, Moodlets/causes/care evidence, adaptive memory and social/
 horoscope state. Related owners commit together; no second JSON writer remains.
-The schema stays version 1 before cutover. Future schema changes require a
+The original cutover used schema version 1. Version 2 adds the nullable
+`social_receipts.intro_variant` field for persistent introduction rotation.
+Existing version-one databases upgrade transactionally after a consistent
+pre-upgrade backup; old receipts retain their IDs, fingerprints and order. A
+missing old variant uses the previous deterministic fingerprint rule when
+choosing the next introduction. No raw API content is added to these receipts.
+Future schema changes require a
 consistent pre-update database backup and transactional migration.
 
 Every write supplies the session's last successful `SaveRevision`. The writer

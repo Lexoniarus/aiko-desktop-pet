@@ -11,10 +11,12 @@ from .horoscope import prepare_horoscope_text
 from .horoscope_models import HoroscopeDay, HoroscopeRequest, local_day
 from .social_content import (
     BUFFERED_CATEGORIES,
+    SOCIAL_INTRO_VARIANTS,
     PreparedSocialContent,
     SocialCategory,
     SocialProvider,
     default_provider,
+    with_intro_variant,
 )
 from .social_history import SocialContentHistory, SocialContentReceipt
 from .storage_contracts import StorageError
@@ -234,7 +236,7 @@ class SocialContentCoordinator:
             )
             item = next((e for e in buffer if e.provider == preferred), buffer[0])
             buffer.remove(item)
-            self._offered = item
+            item = self._offer(item)
             self._pump()
             return SocialSelection("ready", item)
         self._waiting = category
@@ -249,6 +251,17 @@ class SocialContentCoordinator:
         self._waiting = None
         self._offered = None
 
+    def _offer(self, item: PreparedSocialContent) -> PreparedSocialContent:
+        """Rotate from admitted history; warming/cancellation never advance it."""
+        last = next((entry for entry in reversed(self.history.entries)
+                     if entry.category == item.category), None)
+        if last is not None:
+            previous = (last.intro_variant if last.intro_variant is not None
+                        else int(last.fingerprint[:2], 16) % SOCIAL_INTRO_VARIANTS)
+            item = with_intro_variant(item, (previous + 1) % SOCIAL_INTRO_VARIANTS)
+        self._offered = item
+        return item
+
     def accept(self, content: PreparedSocialContent) -> None:
         if self._offered is not content:
             raise ValueError("Conversation is no longer offered")
@@ -260,6 +273,7 @@ class SocialContentCoordinator:
                 content.category,
                 content.identity,
                 content.fingerprint,
+                content.intro_variant,
             )
         )
 
@@ -319,7 +333,7 @@ class SocialContentCoordinator:
                         self._attempts[job] = 0
                         if self._waiting == category:
                             self._waiting = None
-                            self._offered = item
+                            item = self._offer(item)
                             update = SocialSelection("ready", item)
                         else:
                             self._buffers[category].append(item)

@@ -10063,3 +10063,52 @@ No personal-save access/change, test windows, mouse automation, live HTTP, CI or
 merge. Native Windows input/layout/preview and the reported AppHang remain
 practical acceptance items; headless checks do not certify them. Timing report:
 `%TEMP%/aiko-final-local-20261025-4f2951d9-3860-44a7-8c77-766bee195d38.json`.
+
+### Social follow-up: persistent introduction rotation and 100 receipts (2026-10-25)
+
+The user approved replacing the ten-item repetition window with **100 admitted
+contents per category**, plus restart-safe introduction rotation. The three
+buffered categories remain Single/Sprueche (both API sources share one window),
+Two Parts and Facts. The horoscope retains its independent daily record.
+
+`SocialContentHistory` keeps bounded admitted receipts, not full provider bodies.
+Existing ID and normalized-provider-text fingerprint checks still cover recent
+receipts, warm buffers and the active offer across categories. The 101st admission
+evicts only the oldest receipt in its own category. Quotas, retries and failure
+pauses are unchanged; no authored fallback entertainment or live API probe is
+introduced.
+
+Each receipt now has optional `intro_variant` metadata. The existing coordinator
+chooses the next of three introductions when offering content, using the last
+admitted variant in that category. Preparing/cancelling content does not advance
+rotation. The immutable prepared reaction receives only a replacement intro cue;
+its provider body, identity, fingerprint, author/source data and completion
+contract are preserved. Acceptance records the actual variant through the existing
+atomic care/history save. Old receipts without metadata recover their former
+fingerprint-selected variant, so the first new offer changes that introduction
+too. No second rotation cache or mutable history owner is added.
+
+SQLite **schema v2** adds one nullable checked column to `social_receipts` via the
+existing migration chain. The delivered v1 DDL is unchanged. Existing databases
+receive a consistent pre-upgrade backup, then a transactional upgrade without a
+revision reset or data loss. History transfer/codec version four persists the
+variant; versions one through three remain strictly readable. Missing older
+variants become `None`, not invented presentation history. Synthetic future
+migration tests now derive their target version from the current schema instead
+of assuming every future version is 2.
+
+Targeted local acceptance: **171 tests passed in 7.261 s**, no failures/errors/
+skips, longest **1.091 s**, none over ten seconds. Coverage includes 300 stored
+receipts, independent eviction and both Sprueche sources; ID/text exclusion;
+three restart cycles through all categories with real SQLite/restoration and
+reaction playback; cancelled offers; legacy JSON v1-v3; actual v1 database
+upgrade/backup; transactional failure and stale-save protection; existing quotas,
+horoscope and fractional-time save contracts. Scoped Ruff, fresh strict Mypy on
+six production modules and repository Pyright pass.
+
+Native Tk was blocked before discovery and default saves redirected to a temporary
+directory. No personal save was migrated or modified during this implementation;
+normal startup performs any required schema upgrade. No test windows, mouse
+automation, HTTP or CI. Parallel character/export and minigame-planning changes
+remain excluded. The previous full-suite result predates this follow-up; only the
+listed targeted acceptance is claimed here.

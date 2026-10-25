@@ -50,8 +50,12 @@ Two Parts keeps setup and delivery distinct, with an 800 ms pause before the
 delivery, after the final setup bubble's complete reading time.
 Each of these three buffered categories has three short German introductions
 in the existing text resource.
-A stable provider-text fingerprint varies the prepared introduction, sometimes
-adding a restrained happy/idea emote after the full content. No final emote
+The first introduction uses a stable provider-text fingerprint. Later offers
+cycle through the three variants using the last admitted variant in the same
+category, including after restart. Warming, selection and cancellation do not
+advance the rotation. Old receipts without an explicit variant use the previous
+fingerprint rule to recover their last introduction. The fingerprint still
+sometimes adds a restrained happy/idea emote after the full content. No final emote
 precedes the punchline or takes a text slot. Framing and the holding line are
 presentation copy, not substitute entertainment or a personal-memory record.
 
@@ -157,14 +161,14 @@ attempt with a brief menu message; choosing the category retries. Failures never
 select local authored entertainment or silently switch to Plaudern. Other ready
 API items remain usable if the network subsequently becomes unavailable.
 
-Ready and offered items cannot duplicate one another. The last ten admitted
+Ready and offered items cannot duplicate one another. The last 100 admitted
 contents per category also participate in repetition checking, including after
 restart. Namespaced provider IDs or normalized text fingerprints match across
 all three categories, including text split differently into setup/delivery.
 Only actual playback admission records a receipt; preparation, selection and
-cancellation do not. Ten newer admissions in its category release an older
+cancellation do not. One hundred newer admissions in its category release an older
 receipt, unless another category/buffer/offer still excludes it. Both Sprüche
-providers share the same ten-content history. Every rejected, duplicate or failed
+providers share the same 100-content history. Every rejected, duplicate or failed
 attempt consumes the provider budget. A refill cycle stops after three rejected
 or duplicate attempts per source and pauses that provider for at least ten
 minutes. Transient HTTP/network failures pause it for at least one minute;
@@ -226,15 +230,16 @@ receipt. A matching social wish still requires the complete sequence and may
 then create its existing fulfillment Moodlet.
 
 `settings.online_social` is an optional Boolean within the existing version-one
-save. Ready sayings/joke/fact buffers and pending tokens are never saved. The
-optional outer `social_history` section now uses version three: up to ten admission
-receipts per category (thirty total), plus bounded expiring request timestamps
+legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never
+saved. The `social_history` transfer section now uses version four: up to 100
+admission receipts per category (300 total), plus bounded expiring request timestamps
 and provider pauses, plus one bounded daily horoscope record (date, attempts,
 validated sign/text/footer, interrupted bubble, care admission and completion).
-Receipt fields remain category, namespaced provider identity and SHA-256 fingerprint of normalized provider words. Quote identities use
+Receipt fields are category, namespaced provider identity, SHA-256 fingerprint
+of normalized provider words and nullable `intro_variant` (0, 1 or 2). Quote identities use
 `zitat-service:<entry-id>` in the existing `single` category. These three
-receipt categories do not store source words, URLs, frame variants, buffers or
-pending tokens. Version-one receipt-only and version-two request histories remain
+receipt categories do not store source words, URLs, buffers or pending tokens.
+Version-one receipt-only, version-two request and version-three horoscope histories remain
 readable; no history means empty defaults. Opt-out clears buffers and retains admission/request bookkeeping.
 
 The session restorer carries this value to the existing content coordinator
@@ -254,7 +259,7 @@ is added. See [storage and import](DATA_AND_SAVES.md).
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
 - `application/social_history.py` supplies immutable bounded admission receipts;
-  `infrastructure/social_history_codec.py` validates the compatible version-three
+  `infrastructure/social_history_codec.py` validates the compatible version-four
   section, independently of pet experiences. `application/horoscope.py` validates
   the daily text; `application/horoscope_models.py` defines immutable values without
   depending on preparation. `infrastructure/horoscope_codec.py` bounds the saved record.

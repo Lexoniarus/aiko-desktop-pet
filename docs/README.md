@@ -33,6 +33,13 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest social follow-up (2026-10-25): restart-safe introduction rotation and
+**100 receipts per category** passed **171 targeted tests in 7.261 s**, no skips,
+longest **1.091 s**, plus scoped Ruff/Mypy and repository Pyright. The
+[social delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#social-follow-up-persistent-introduction-rotation-and-100-receipts-2026-10-25)
+includes the backed-up SQLite v1-to-v2 upgrade and legacy-history coverage.
+The full-suite result below predates this follow-up.
+
 Latest complete local acceptance (2026-10-25), after the time/save, wish-card and
 game input corrections: **1,862 reported tests in 96.257 s**, zero failures/errors,
 **112 display-dependent skips**. No test exceeded ten seconds; longest **8.847 s**.
