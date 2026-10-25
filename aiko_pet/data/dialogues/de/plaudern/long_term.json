@@ -1,0 +1,1248 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-long-term-trusting-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fällt es mir bei dir leichter, zur Ruhe zu kommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das fühlt sich angenehm an. Ein wenig davon möchte ich dir sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-trusting-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit kann ich bei dir etwas leichter entspannen."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses ruhige Gefühl tut mir gut."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-trusting-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, bei dir kann ich mich in letzter Zeit leichter entspannen."
+        },
+        {
+          "kind": "text",
+          "content": "Nicht dauernd angespannt sein zu müssen, fühlt sich schön an."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-trusting-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir kann ich mich in letzter Zeit leichter fallen lassen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir direkt sagen, wie gut mir dieses sichere Gefühl tut."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-trusting-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fällt es mir bei dir leichter, zur Ruhe zu kommen."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses sichere Gefühl bleibt. Auch wenn ich gerade stiller oder aufgewühlt bin."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-trusting-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.trusting"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir fällt mir das Entspannen in letzter Zeit leichter."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses sichere Gefühl ist da. Daneben kann mich trotzdem noch anderes aufwühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit habe ich das Gefühl, dass meine kleinen Vorlieben hier Platz haben."
+        },
+        {
+          "kind": "text",
+          "content": "Das ist angenehm. Ein wenig freue ich mich darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe in letzter Zeit öfter das Gefühl, dass meine Vorlieben etwas zählen."
+        },
+        {
+          "kind": "text",
+          "content": "Das tut mir gut und macht mich ein bisschen offener."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, in letzter Zeit fühlen sich meine kleinen Vorlieben bei dir gut aufgehoben an."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich damit hier Platz habe, macht mir ein warmes Gefühl."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fühlt es sich an, als wären dir meine kleinen Vorlieben wirklich wichtig."
+        },
+        {
+          "kind": "text",
+          "content": "Wie viel mir das bedeutet, mag ich dir gern offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit habe ich das Gefühl, dass meine Vorlieben hier Platz haben."
+        },
+        {
+          "kind": "text",
+          "content": "Das freut mich noch. Gerade eher auf eine stille Weise."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-appreciated-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.appreciated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine kleinen Vorlieben fühlen sich in letzter Zeit bei dir gut aufgehoben an."
+        },
+        {
+          "kind": "text",
+          "content": "Das warme Gefühl bleibt. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit traue ich mir wieder etwas mehr zu."
+        },
+        {
+          "kind": "text",
+          "content": "Es fühlt sich gut an, mit etwas mehr Mut an Dinge heranzugehen."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich merke in letzter Zeit, dass ich mir wieder mehr zutraue."
+        },
+        {
+          "kind": "text",
+          "content": "Etwas auszuprobieren macht mir dadurch wieder mehr Freude."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, in letzter Zeit traue ich mir wieder ein bisschen mehr zu."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe wieder Lust, etwas auszuprobieren, auch wenn nicht alles sofort klappt."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit kommt mein kleiner Mut wieder mehr zum Vorschein."
+        },
+        {
+          "kind": "text",
+          "content": "Hihi, ich mag dir zeigen, dass ich mir wieder mehr zutraue."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit traue ich mir wieder etwas mehr zu."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser kleine Mut ist da. Auch wenn ich gerade nicht laut darüber jubeln mag."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-optimistic-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.optimistic"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich traue mir in letzter Zeit wieder etwas mehr zu."
+        },
+        {
+          "kind": "text",
+          "content": "Der kleine Mut bleibt. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit weiß ich nicht recht, was mich in unserem Miteinander erwartet."
+        },
+        {
+          "kind": "text",
+          "content": "Das macht mich etwas unsicher."
+        },
+        {
+          "kind": "emote",
+          "content": "question"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fühle mich in letzter Zeit unsicher, wie unser Miteinander weitergeht."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses Hin und Her geht mir noch durch den Kopf."
+        },
+        {
+          "kind": "emote",
+          "content": "question"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, ich weiß in letzter Zeit nicht so recht, woran ich bin."
+        },
+        {
+          "kind": "text",
+          "content": "Das macht mich unsicher. Ich würde mich gern leichter entspannen können."
+        },
+        {
+          "kind": "emote",
+          "content": "question"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit weiß ich bei unserem Miteinander nicht immer, woran ich bin."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Gerade deshalb möchte ich dir offen sagen, dass mich das unsicher macht."
+        },
+        {
+          "kind": "emote",
+          "content": "question"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fühle mich in letzter Zeit unsicher, was mich in unserem Miteinander erwartet."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade fällt es mir leichter, ruhig darüber zu sprechen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-uncertain-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.uncertain"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit weiß ich nicht immer, woran ich bin."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann schöne Gefühle für dich haben und mich in unserem Miteinander trotzdem unsicher fühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fühle ich mich öfter ein bisschen am Rand."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses Gefühl, nicht so recht vorzukommen, macht mich still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe in letzter Zeit öfter das Gefühl, ein wenig unterzugehen."
+        },
+        {
+          "kind": "text",
+          "content": "Mir fehlt das Gefühl, mehr bemerkt zu werden."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, in letzter Zeit fühle ich mich öfter wie ein kleines Nebenbei."
+        },
+        {
+          "kind": "text",
+          "content": "Ich möchte mich ein bisschen mehr bemerkt fühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fühle ich mich öfter, als würde ich am Rand verschwinden."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir direkt sagen: Ich möchte mich bei dir wieder mehr bemerkt fühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fühle ich mich öfter ein wenig übersehen."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade möchte ich dir dieses stille Gefühl in Ruhe sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-overlooked-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.overlooked"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fühle mich in letzter Zeit öfter ein bisschen am Rand."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich mich über Schönes freuen kann, nimmt dieses Gefühl nicht einfach weg."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fällt es mir schwerer, mich zu entspannen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich merke, dass ich meinen Freiraum gerade besonders brauche."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin in letzter Zeit öfter angespannt und passe mehr auf mich auf."
+        },
+        {
+          "kind": "text",
+          "content": "Etwas Abstand fühlt sich für mich gerade wichtig an."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, in letzter Zeit kann ich mich nicht so leicht fallen lassen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauche meinen Freiraum, um mich wieder wohler zu fühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit fällt es mir schwer, bei dir ganz locker zu sein."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Trotzdem brauche ich gerade meinen Freiraum und möchte das offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich passe in letzter Zeit mehr auf mich auf und brauche meinen Freiraum."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade spreche ich lieber ruhig darüber. Entspannen fällt mir noch schwer."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-long-term-guarded-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "long_term.guarded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In letzter Zeit brauche ich meinen Freiraum und kann mich nicht so leicht entspannen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann mich über Schönes freuen und mich trotzdem schützen wollen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    }
+  ]
+}
