@@ -1,5 +1,60 @@
 # SQLite acceptance and OOP review
 
+## Social-change full acceptance (2026-10-25)
+
+Reviewed `feature/social-optimization` at **`a567a39`**, after the persistent
+introduction rotation, 100-item category windows and SQLite schema-v2 delivery.
+The full current-workspace run includes **55 pre-existing dirty/untracked
+character/export and minigame-planning paths**. Those paths are not included in
+this review's commits; this is not a frozen clean-checkout result.
+
+- **1,865 reported tests in 98.868 s**, zero failures/errors, **112 native-display
+  skips**. All recorded skip reasons require Tk/display access. Native Tk was
+  blocked before discovery and default saves redirected into a disposable folder.
+- **No test exceeded ten seconds.** The longest cases are temporary Windows
+  install/repeat/launcher integration **8.640 s**, substituted-provider
+  install/repair/failure paths **7.821 s**, and preserved broken-environment
+  handling **5.578 s**. These exercise actual setup/subprocess boundaries with
+  isolated sources and replacement entrypoints, not real pet windows or waits
+  for user input. No timing-based rewrite or extra mock layer was warranted.
+- New Social boundaries remain small: three restart cycles and complete provider
+  playback **0.523 s**, real v1-to-v2 upgrade/backup **0.128 s**, and 300 persisted
+  receipts **0.016 s**. The existing four/eight-phase care schedule is **4.138 s**;
+  its explicit timestamps do not represent real-time waiting.
+- Configured Ruff (`aiko_pet tests main.py tools`), fresh strict Mypy
+  (**343 application/tool sources**) and complete repository Pyright pass. The
+  previously documented legacy exporter outside that configured source gate was
+  not changed or reclassified as lint-clean.
+
+### Social ownership and migration review
+
+| Owner | Reviewed contract and outcome |
+| --- | --- |
+| `SocialContentCoordinator` / immutable history | One mutable coordinator owns admission, offers and buffers. Its existing immutable history retains at most 100 receipts in each buffered category; both Sprueche providers share one category. No second last-introduction cache or completed-conversation archive is added. |
+| Prepared content / `with_intro_variant` | Framing is selected before immutable playback. Only the intro cue and its metadata change; provider body, fingerprint, identity, source/author data and completion contract remain intact. Text hashing remains independent of framing. |
+| Offer and acceptance lifecycle | Warmed content does not consume a rotation step. Offers select from the last admitted variant; cancellation leaves the receipt history unchanged. Acceptance records the variant actually selected. Existing foreground/deferred-admission checks and atomic care/receipt save ordering are preserved. |
+| Restore / codecs | Restored history is supplied before warming. Version-four receipts carry a checked nullable 0/1/2 variant. Strict v1-v3 readers retain old receipts with `None`; the coordinator uses the known old fingerprint rule only to choose the next intro. No stored provider body or personal-experience history is invented. |
+| SQLite schema and row mapping | Original v1 DDL is unchanged. One v2 migration adds the nullable column through the existing backup/transaction owner. Mapping validates records before replacing rows and never commits independently. Existing checkpoints/revisions are preserved; all owners still use the one conditional-revision writer. |
+| Tests | Existing receipt/capacity and future-migration tests were updated rather than duplicated. Integration covers actual SQLite restoration plus reaction playback, while workers/images remain fake and GUI is prohibited. Expanded retention tests advance injected timestamps to avoid exercising unrelated quota limits or real-time waits. |
+
+The source review found no additional necessary product refactor in these
+boundaries. It did find a **test-fixture defect**: two duplicate-receipt examples
+claimed legacy version one while carrying the new version-four intro field.
+They failed on field layout before exercising duplicate detection. The corrected
+fixture now tests valid-layout duplicates in both v1 and v4 and requires the
+specific duplicate rejection. After the full run, all **four codec cases passed
+again in 0.014 s**, no skips; scoped Ruff/Pyright also pass. Only that test fixture
+and this acceptance documentation change after the full run; production code is
+unchanged, so no redundant full-suite repetition was performed.
+
+Timing report (outside Git):
+`%TEMP%/aiko-social-full-20261025-cad2673f-149d-4f4d-9433-4c3b5d236300.json`.
+No personal save was accessed/migrated/changed, no test/pet windows, mouse control,
+live HTTP or GitHub CI were used, and no merge was performed. Native Windows
+visual/input behavior remains practical acceptance; the 112 skips do not certify
+it. Earlier acceptance sections below remain historical results for their named
+baselines.
+
 ## Post-correction local acceptance (2026-10-25)
 
 Reviewed `feature/social-optimization` at **`40cf4fe`**, including the fractional

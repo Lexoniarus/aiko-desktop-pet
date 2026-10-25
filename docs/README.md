@@ -33,14 +33,23 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest complete acceptance after the Social change (2026-10-25): **1,865 reported
+tests in 98.868 s**, zero failures/errors, **112 display-dependent skips**. No test
+over ten seconds; longest **8.640 s**. Configured Ruff, strict Mypy (**343 sources**)
+and repository Pyright pass. The [Social-change OOP review](SQLITE_ACCEPTANCE_REVIEW.md#social-change-full-acceptance-2026-10-25)
+records owner/migration boundaries, parallel workspace scope and one corrected
+codec duplicate fixture (four targeted cases rerun successfully). Native windows,
+mouse control, personal-save access and CI remain outside this run.
+
 Latest social follow-up (2026-10-25): restart-safe introduction rotation and
 **100 receipts per category** passed **171 targeted tests in 7.261 s**, no skips,
 longest **1.091 s**, plus scoped Ruff/Mypy and repository Pyright. The
 [social delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#social-follow-up-persistent-introduction-rotation-and-100-receipts-2026-10-25)
 includes the backed-up SQLite v1-to-v2 upgrade and legacy-history coverage.
-The full-suite result below predates this follow-up.
+The full-suite result above includes this follow-up; the earlier results below
+apply only to their named baselines.
 
-Latest complete local acceptance (2026-10-25), after the time/save, wish-card and
+Earlier complete local acceptance (2026-10-25), after the time/save, wish-card and
 game input corrections: **1,862 reported tests in 96.257 s**, zero failures/errors,
 **112 display-dependent skips**. No test exceeded ten seconds; longest **8.847 s**.
 Configured Ruff, fresh strict Mypy (**343 sources**) and repository Pyright pass.

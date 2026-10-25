@@ -10112,3 +10112,38 @@ normal startup performs any required schema upgrade. No test windows, mouse
 automation, HTTP or CI. Parallel character/export and minigame-planning changes
 remain excluded. The previous full-suite result predates this follow-up; only the
 listed targeted acceptance is claimed here.
+
+### Social-change full suite and final OOP acceptance (2026-10-25)
+
+Completed the separately authorized full local run at **`a567a39`**, including
+introduction rotation, the 100-receipt windows and the backed-up SQLite v2
+extension. **1,865 reported tests in 98.868 s**, zero failures/errors and
+**112 display-dependent skips**. All skip reasons were reviewed. Native Tk was
+blocked before discovery and default saves redirected to a temporary fixture.
+
+No individual test exceeded ten seconds. Longest: temporary Windows setup
+integration **8.640 s**, substituted-provider install/repair paths **7.821 s**,
+preserved broken environments **5.578 s**. These validate actual installation
+boundaries with isolated sources, no real pet launch or user interaction.
+Social restart/playback is **0.523 s**, v1-to-v2 migration/backup **0.128 s**,
+and 300 receipt round-trip **0.016 s**. No timing-driven test rewrite was needed.
+
+Configured Ruff, fresh strict Mypy (**343 sources**) and repository Pyright pass.
+The [Social-change OOP review](SQLITE_ACCEPTANCE_REVIEW.md#social-change-full-acceptance-2026-10-25)
+records the single coordinator/history, immutable framing transformation,
+admission/cancellation semantics, unchanged body fingerprints and ownership of
+strict codecs, backups, migrations and conditional-revision writes. No further
+necessary product refactor was found within those boundaries.
+
+Review corrected one misleading codec fixture: duplicate v1 examples had retained
+the new intro field, so field validation rejected them before deduplication.
+Valid-layout duplicates are now explicitly checked in v1 and v4 with the specific
+duplicate error. All four affected cases passed in **0.014 s**, no skips; scoped
+Ruff/Pyright pass. Production code did not change after the complete run. Only the
+fixture and acceptance docs change; no redundant full-suite repetition is claimed.
+
+The run includes **55 parallel dirty/untracked character/export and minigame-plan
+paths**, excluded from these commits. No personal-save access/change, native
+test/pet windows, mouse automation, HTTP or CI; no merge. Native visual/input
+acceptance remains separate. Timing report:
+`%TEMP%/aiko-social-full-20261025-cad2673f-149d-4f4d-9433-4c3b5d236300.json`.
