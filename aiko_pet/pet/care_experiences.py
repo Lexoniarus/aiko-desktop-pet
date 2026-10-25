@@ -7,7 +7,7 @@ wish identity. No needs refill, timer or autonomous intake invents a visit.
 
 from dataclasses import replace
 
-from ..games.contracts import RockPaperScissorsDetails
+from ..games.contracts import GameResultDetails
 from .care_evidence import (
     MAX_CARE_ENCOUNTERS,
     MAX_CARE_EXPERIENCES,
@@ -168,7 +168,7 @@ def award_positive(
     event: CareExperience,
     *,
     elapsed: float | None = None,
-    game_details: RockPaperScissorsDetails | None = None,
+    game_details: GameResultDetails | None = None,
 ) -> MoodletState:
     at = event.occurred_at if elapsed is None else elapsed
     return reinforce_moodlet(
@@ -192,7 +192,7 @@ def award_positive(
 
 def award_comeback(
     state: MoodletState, receipt: str, *,
-    game_details: RockPaperScissorsDetails | None = None,
+    game_details: GameResultDetails | None = None,
 ) -> MoodletState:
     evidence = state.care_evidence
     if evidence is None or event_has_wish_outcome(state, receipt):
@@ -222,7 +222,7 @@ def complete_play_session(
     session_id: str,
     last_receipt: str,
     elapsed: float,
-    game_details: RockPaperScissorsDetails | None = None,
+    game_details: GameResultDetails | None = None,
 ) -> MoodletState:
     """Enrich the actual final round; never create a second session reward fact."""
     evidence = state.care_evidence

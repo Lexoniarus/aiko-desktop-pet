@@ -2,7 +2,14 @@
 
 from typing import Any
 
-from ..games.contracts import GameId, RockPaperScissorsDetails, RockPaperScissorsMove
+from ..games.contracts import (
+    BlackjackDecisionReason,
+    BlackjackDetails,
+    GameId,
+    GameResultDetails,
+    RockPaperScissorsDetails,
+    RockPaperScissorsMove,
+)
 from ..pet.catalog_validation import (
     enum_value,
     integer_value,
@@ -76,7 +83,20 @@ def _wish_cause(raw: Any) -> MoodletWishCause:
     )
 
 
-def _game_details(raw: Any) -> RockPaperScissorsDetails:
+def _game_details(raw: Any) -> GameResultDetails:
+    if isinstance(raw, dict) and raw.get("game_id") == GameId.BLACKJACK.value:
+        row = object_fields(
+            raw, ("game_id", "player_total", "aiko_total", "reason"),
+            context="Moodlet Blackjack details",
+        )
+        return BlackjackDetails(
+            integer_value(row["player_total"], minimum=4, maximum=30,
+                          context="player Blackjack total"),
+            integer_value(row["aiko_total"], minimum=4, maximum=26,
+                          context="Aiko Blackjack total"),
+            enum_value(row["reason"], BlackjackDecisionReason,
+                       context="Blackjack decision reason"),
+        )
     row = object_fields(
         raw, ("game_id", "player_move", "aiko_move"), context="Moodlet game details",
     )
@@ -328,10 +348,17 @@ def encode_moodlet_cause(cause: MoodletCause) -> dict[str, Any]:
             target=None if wish.target is None else encode_wish_target(wish.target),
         ),
     )
-    if cause.game_details is not None:
+    if isinstance(cause.game_details, RockPaperScissorsDetails):
         encoded["game_details"] = dict(
             game_id=GameId.ROCK_PAPER_SCISSORS.value,
             player_move=cause.game_details.player_move.value,
             aiko_move=cause.game_details.aiko_move.value,
+        )
+    elif isinstance(cause.game_details, BlackjackDetails):
+        encoded["game_details"] = dict(
+            game_id=GameId.BLACKJACK.value,
+            player_total=cause.game_details.player_total,
+            aiko_total=cause.game_details.aiko_total,
+            reason=cause.game_details.reason.value,
         )
     return encoded

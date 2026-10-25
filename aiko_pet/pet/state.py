@@ -8,7 +8,7 @@ from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
-from ..games.contracts import GameResult, RockPaperScissorsDetails
+from ..games.contracts import GameResult, GameResultDetails
 from .balance import BALANCE
 from .care_actions import (
     CareTransition,
@@ -498,7 +498,7 @@ class PetState:
 
     def finish_game_round_experience(
         self, *, game_id: str, round_id: str,
-        game_details: RockPaperScissorsDetails | None = None,
+        game_details: GameResultDetails | None = None,
     ) -> None:
         self._change(moodlets=award_comeback(
             self.moodlets, f"play:{game_id}:{round_id}",
@@ -507,7 +507,7 @@ class PetState:
 
     def complete_play_session(
         self, *, game_id: str, session_id: str, round_id: str,
-        game_details: RockPaperScissorsDetails | None = None,
+        game_details: GameResultDetails | None = None,
     ) -> None:
         self._change(moodlets=complete_play_session(
             self.moodlets, game_id=game_id, session_id=session_id,
@@ -518,7 +518,7 @@ class PetState:
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
         started_at: float, outcome: GameResult,
-        game_details: RockPaperScissorsDetails | None = None,
+        game_details: GameResultDetails | None = None,
     ) -> None:
         self._apply_wish_resolution(progress_game_wish(
             self.wishes, instance_id, game_id=game_id, session_id=session_id,

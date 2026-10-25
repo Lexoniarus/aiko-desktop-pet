@@ -7,7 +7,11 @@ from dataclasses import dataclass, replace
 from enum import StrEnum
 from typing import TYPE_CHECKING, Literal
 
-from ..games.contracts import GameId, RockPaperScissorsDetails
+from ..games.contracts import (
+    BlackjackDetails,
+    GameResultDetails,
+    RockPaperScissorsDetails,
+)
 from .care_evidence import CareEvidenceState, CarePeriodSummary
 from .interaction_events import InteractionMemory
 from .moodlet_patterns import LongTermPatternParameters
@@ -79,16 +83,18 @@ class MoodletCause:
     game: MoodletGameResult | None = None
     period: CarePeriodSummary | None = None
     handed_over_at: float | None = None
-    game_details: RockPaperScissorsDetails | None = None
+    game_details: GameResultDetails | None = None
 
     def __post_init__(self) -> None:
         if self.game_details is None:
             return
-        if not isinstance(self.game_details, RockPaperScissorsDetails):
+        if not isinstance(
+            self.game_details, (RockPaperScissorsDetails, BlackjackDetails),
+        ):
             raise ValueError("Invalid Moodlet game details")
         settled = self.game.round_outcome if self.game is not None else self.outcome
         if (not isinstance(settled, MoodletOutcome)
-                or self.target_id != GameId.ROCK_PAPER_SCISSORS.value
+                or self.target_id != self.game_details.game_id.value
                 or settled.value != self.game_details.aiko_outcome):
             raise ValueError("Moodlet game details must match its actual settled event")
 

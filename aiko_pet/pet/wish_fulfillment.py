@@ -3,7 +3,7 @@
 from dataclasses import replace
 from typing import Literal, Mapping
 
-from ..games.contracts import RockPaperScissorsDetails
+from ..games.contracts import GameResultDetails
 from .moodlets import (
     MoodletCause,
     MoodletCauseKind,
@@ -31,7 +31,7 @@ def wish_cause(
     wish: ActiveWish, *, elapsed: float, event_id: str, outcome: MoodletOutcome,
     failed: bool = False, target_id: str | None = None,
     object_id: str | None = None, game: MoodletGameResult | None = None,
-    game_details: RockPaperScissorsDetails | None = None,
+    game_details: GameResultDetails | None = None,
 ) -> MoodletCause:
     goal = wish.goal_snapshot
     return MoodletCause(
@@ -114,7 +114,7 @@ def progress_game_wish(
     round_id: str, started_at: float, elapsed: float,
     outcome: Literal["win", "loss", "draw", "completed"],
     definitions: Mapping[WishId, WishDefinition],
-    game_details: RockPaperScissorsDetails | None = None,
+    game_details: GameResultDetails | None = None,
 ) -> WishResolution:
     """One real qualifying round, from Aiko's perspective; no session score."""
     wish = next((w for w in state.active if w.instance_id == instance_id), None)
