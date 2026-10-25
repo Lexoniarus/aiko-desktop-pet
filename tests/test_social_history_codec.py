@@ -63,12 +63,18 @@ class SocialHistoryCodecTests(unittest.TestCase):
             intro_variant=0,
         )]
         invalid.append(excessive)  # 101 in one category, below the total cap.
-        invalid += [dict(version=True, entries=[]), dict(version=2, entries=[]),
-                    dict(version=1, entries=raw["entries"] + [raw["entries"][0]]),
-                    dict(version=1, entries=[raw["entries"][0]] * 2)]
+        invalid += [dict(version=True, entries=[]), dict(version=2, entries=[])]
         for item in invalid:
             with self.subTest(value=item):
                 with self.assertRaises(ValueError):
+                    decode_social_history(item)
+        duplicate = deepcopy(raw)
+        duplicate["entries"] = [duplicate["entries"][0]] * 2
+        legacy_entry = {key: value for key, value in raw["entries"][0].items()
+                        if key != "intro_variant"}
+        for item in (duplicate, dict(version=1, entries=[legacy_entry] * 2)):
+            with self.subTest(version=item["version"]):
+                with self.assertRaisesRegex(ValueError, "Duplicate or excessive"):
                     decode_social_history(item)
 
     def test_older_history_versions_keep_receipts_without_inventing_intro_state(self):
