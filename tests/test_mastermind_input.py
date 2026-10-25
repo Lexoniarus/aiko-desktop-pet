@@ -1,10 +1,11 @@
 """Pointer gestures and initial layout with no native windows or mouse input."""
 
+import tkinter as tk
 import unittest
 from typing import Any, cast
 from unittest.mock import Mock, patch
 
-from aiko_pet.games.mastermind import RoundView
+from aiko_pet.games.mastermind import Feedback, Guess, RoundView
 from aiko_pet.ui.common.window_geometry import WindowBounds
 from aiko_pet.ui.windows.game_panel import GamePanel
 from aiko_pet.ui.windows.mastermind_drag import MastermindDrag
@@ -70,6 +71,74 @@ class MastermindInputTests(unittest.TestCase):
         self.assertIsNone(self.drag._source)
         self.assertIsNone(self.drag._ghost)
 
+    def test_motion_and_release_over_preview_stay_with_grabbed_source(self):
+        owner = Mock(master=None)
+        self.source.master = owner
+        self.source.winfo_toplevel.return_value = owner
+        ghost = Mock()
+        label = Mock(master=ghost)
+
+        def preview(parent):
+            ghost.master = parent
+            return ghost
+
+        def deliver(target, handler, x, y):
+            # Tk keeps events on descendants of the grab owner, and redirects
+            # events outside that subtree to the owner (including Toplevels).
+            ancestor = target
+            while ancestor is not None and ancestor is not self.source:
+                ancestor = ancestor.master
+            if ancestor is None:
+                handler(self.event(x, y))
+
+        with (
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
+                  side_effect=preview),
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label", return_value=label),
+        ):
+            self.drag.begin(self.event(), "blue")
+            self.drag.motion(self.event(120, 130))
+            deliver(label, self.drag.motion, 150, 160)
+            ghost.geometry.assert_called_with("+118+128")
+            deliver(label, self.drag.release, 210, 220)
+        ghost.transient.assert_called_once_with(owner)
+        ghost.destroy.assert_called_once()
+        self.drop.assert_called_once_with("blue", None, 210, 220)
+        self.click.assert_not_called()
+        self.assertIsNone(self.drag._source)
+        self.assertIsNone(self.drag._ghost)
+
+    def test_failed_mapping_and_destroyed_source_still_dispose_preview(self):
+        ghost = Mock()
+        ghost.geometry.side_effect = tk.TclError("cannot position preview")
+        with (
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
+                  return_value=ghost),
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label"),
+        ):
+            self.drag.begin(self.event(), "green")
+            # Cancellation must still remove the preview when Tk has already
+            # destroyed the source; no stale gesture may place a piece later.
+            self.source.tk.call.side_effect = tk.TclError("source destroyed")
+            with self.assertRaisesRegex(tk.TclError, "cannot position preview"):
+                self.drag.motion(self.event(120, 130))
+            self.drag.cancel()
+            self.drag.release(self.event())
+        ghost.destroy.assert_called_once()
+        self.assertIsNone(self.drag._source)
+        self.assertIsNone(self.drag._ghost)
+        self.drop.assert_not_called()
+        self.click.assert_not_called()
+
+    def test_failed_grab_cannot_leave_a_pending_click_or_drop(self):
+        self.source.grab_set.side_effect = tk.TclError("cannot grab source")
+        with self.assertRaisesRegex(tk.TclError, "cannot grab source"):
+            self.drag.begin(self.event(), "red")
+        self.drag.release(self.event())
+        self.assertIsNone(self.drag._source)
+        self.drop.assert_not_called()
+        self.click.assert_not_called()
+
     def window(self):
         game = MastermindWindow.__new__(MastermindWindow)
         game._closed, game._busy, game._feedback_visible = False, True, 4
@@ -109,6 +178,70 @@ class MastermindInputTests(unittest.TestCase):
             game._board_press(self.event())
             game._drop("white", None, 210, 220)
             self.assertEqual(game._draft, ["red"] * 4)
+
+    def board_window(self):
+        game = self.window()
+        game.board = cast(Any, Mock())
+        game.board_scroll, game.board_horizontal = cast(Any, Mock()), cast(Any, Mock())
+        game._panel = cast(Any, Mock())
+        for widget in (game.board, game.board_scroll.canvas,
+                       game.board_horizontal.canvas, game._panel.scroll.canvas):
+            widget.winfo_rootx.return_value = 300
+            widget.winfo_rooty.return_value = 200
+            widget.winfo_width.return_value = 460
+            widget.winfo_height.return_value = 200
+        return game
+
+    def test_real_slot_mapping_supports_repickup_swap_and_invalid_drop_cleanup(self):
+        game = self.board_window()
+        with (
+            patch.object(game, "_refresh"), patch.object(game, "_draw_board"),
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
+                  side_effect=lambda _owner: Mock()),
+            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label"),
+        ):
+            game._drag.begin(self.event(), "red")
+            game._drag.motion(self.event(352, 248))
+            game._drag.release(self.event(352, 248))
+            self.assertEqual(game._draft, ["red", None, None, None])
+
+            # Pick up the placed draft pin and move it to the next empty slot.
+            game._board_press(self.event(352, 248))
+            game._drag.motion(self.event(400, 248))
+            game._drag.release(self.event(400, 248))
+            self.assertEqual(game._draft, [None, "red", None, None])
+            game._drop("blue", None, 448, 248)
+            game._board_press(self.event(400, 248))
+            game._drag.motion(self.event(448, 248))
+            game._drag.release(self.event(448, 248))
+            self.assertEqual(game._draft, [None, "blue", "red", None])
+
+            # Future rows and positions outside the view never accept a pin;
+            # the source draft stays intact and the preview is always removed.
+            for x, y in ((448, 296), (900, 900)):
+                game._board_press(self.event(448, 248))
+                game._drag.motion(self.event(x, y))
+                game._drag.release(self.event(x, y))
+                self.assertEqual(game._draft, [None, "blue", "red", None])
+                self.assertIsNone(game._drag._source)
+                self.assertIsNone(game._drag._ghost)
+        self.assertFalse(game._view.guesses)
+
+    def test_slot_mapping_respects_scrolled_active_row_and_all_viewport_clipping(self):
+        game = self.board_window()
+        game._view = RoundView((Guess(("red",) * 4, Feedback(1, 0)),))
+        # The first row is now scrolled out; the active row occupies its old
+        # screen position. Canvas-local coordinates alone would pick the past row.
+        cast(Any, game.board).winfo_rooty.return_value = 152
+        for slot, x in enumerate((352, 400, 448, 496)):
+            self.assertEqual(game._slot_at(x, 248), slot)
+        self.assertIsNone(game._slot_at(352, 200))
+        self.assertIsNone(game._slot_at(352, 296))
+        for viewport in (game.board_scroll.canvas, game.board_horizontal.canvas,
+                         game._panel.scroll.canvas):
+            cast(Any, viewport).winfo_width.return_value = 120
+            self.assertIsNone(game._slot_at(448, 248))
+            cast(Any, viewport).winfo_width.return_value = 460
 
     def test_body_is_prepared_before_the_first_mapping_and_only_once(self):
         panel = GamePanel.__new__(GamePanel)

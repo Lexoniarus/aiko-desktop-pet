@@ -29,15 +29,22 @@ class MastermindDrag:
         self.cancel()
         self._source, self._color, self._slot = event.widget, color, slot
         self._origin = event.x_root, event.y_root
-        event.widget.grab_set()
+        try:
+            event.widget.grab_set()
+        except tk.TclError:
+            self.cancel()
+            raise
         return "break"
 
     def _show_ghost(self) -> None:
         assert self._source is not None
-        ghost = self._ghost = tk.Toplevel(self._source)
+        # A grab includes its widget descendants. Keep the preview outside that
+        # subtree so motion/release over its label still reach the source canvas.
+        owner = self._source.winfo_toplevel()
+        ghost = self._ghost = tk.Toplevel(owner)
         ghost.withdraw()
         ghost.overrideredirect(True)
-        ghost.transient(self._source.winfo_toplevel())
+        ghost.transient(owner)
         ghost.wm_attributes("-topmost", True)
         background = "#010203"
         if sys.platform == "win32":
@@ -49,16 +56,16 @@ class MastermindDrag:
         return (event.x_root - x) ** 2 + (event.y_root - y) ** 2 >= 36
 
     def motion(self, event: tk.Event[tk.Misc]) -> str:
-        if self._source is not None and self._ghost is None and self._moved(event):
-            try:
+        try:
+            if self._source is not None and self._ghost is None and self._moved(event):
                 self._show_ghost()
-            except Exception:
-                self.cancel()
-                raise
-        if self._ghost is not None:
-            self._ghost.geometry(f"+{event.x_root - 32}+{event.y_root - 32}")
-            self._ghost.deiconify()
-            self._ghost.lift()
+            if self._ghost is not None:
+                self._ghost.geometry(f"+{event.x_root - 32}+{event.y_root - 32}")
+                self._ghost.deiconify()
+                self._ghost.lift()
+        except Exception:
+            self.cancel()
+            raise
         return "break"
 
     def release(self, event: tk.Event[tk.Misc]) -> str:
@@ -73,13 +80,20 @@ class MastermindDrag:
         return "break"
 
     def cancel(self) -> None:
-        if self._source is not None:
-            if str(self._source.tk.call("grab", "current", self._source)) == str(
-                self._source
-            ):
-                self._source.grab_release()
-            self._source = None
-        if self._ghost is not None:
-            self._ghost.destroy()
-            self._ghost = None
+        source, ghost = self._source, self._ghost
+        self._source, self._ghost = None, None
         self._color, self._slot = None, None
+        try:
+            if source is not None and str(
+                source.tk.call("grab", "current", source)
+            ) == str(source):
+                source.grab_release()
+        except tk.TclError:
+            # The source may already have been destroyed during window closure.
+            pass
+        finally:
+            if ghost is not None:
+                try:
+                    ghost.destroy()
+                except tk.TclError:
+                    pass
