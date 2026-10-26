@@ -12,6 +12,7 @@ The product intent is retained while older paths, illustrative scales and
 integration assumptions are identified explicitly.
 
 Related references: [current architecture](ARCHITECTURE.md),
+[module ownership and commit plan, 2026-10-27](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md),
 [UI window contract](UI_WINDOW_CONTRACT.md),
 [World behavior](WORLD_OBJECT_CONTRACTS.md),
 [fun and mood](FUN_MOOD_SYSTEM.md) and
