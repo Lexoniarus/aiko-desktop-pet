@@ -1,5 +1,27 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Selector focus and Quiz frontend (2026-10-26):** ScrollRegion ignores FocusIn
+events from ancestor frames and its own canvas before consuming a pressed
+button's pointer-focus guard. Focusing the full content frame previously scrolled
+the game selector to the bottom and moved choices before mouse release, losing
+the first click. Button focus remains stationary during a pointer press; keyboard
+focus still reveals offscreen choices.
+
+Quiz answers now use the shared atomic ImageButton and existing rose button
+artwork, with a window-specific wrap length cached independently of other button
+styles. Correct answers retain their selected artwork and full text contrast
+while input is disabled; the chosen incorrect answer remains explicitly labeled.
+Questions and revealed explanations use the existing passive blue cards.
+The question catalogue, ten-question flow, timing, moderation, scoring, fun and
+wish rules are unchanged.
+
+Validation: 84 focused automated selector/button/quiz/menu/layout tests pass,
+including the ancestor-focus first-click regression, narrow answer wrapping,
+locked answer feedback, ten-question completion and stable style-cache reuse.
+Repository Ruff and strict Mypy pass; the two previously recorded Pyright
+findings in the unrelated Rock-Paper-Scissors sequence test remain. Normal saves,
+horoscope behavior and parallel character work are outside this correction.
+
 **Atomic button rendering (2026-10-20):** the owner accepted the overall visual
 appearance and reported delayed/missing Snack labels while scrolling. The
 shared `ImageButton` now uses one native ttk button window. Prepared rose frame

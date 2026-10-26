@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from functools import partial
+from tkinter import ttk
 
 from .skin import AikoSkin
 
@@ -112,12 +113,15 @@ class ScrollRegion:
     def _focus_visible(self, event: tk.Event) -> None:
         """Tabbing to an offscreen card/choice reveals it without stealing focus."""
         widget = event.widget
+        if widget is self.canvas or isinstance(widget, (tk.Frame, ttk.Frame)):
+            # FocusIn also travels through the button's ancestor containers.
+            # Revealing the entire content frame jumps to the end of the menu;
+            # consuming the pointer marker here then lets the button move too.
+            return
         pointer_focus, self._pointer_focus = self._pointer_focus, None
         if widget is pointer_focus:
             # Native buttons focus on press. Scrolling them at that instant can
             # move them out from under the pointer and cancel the first click.
-            return
-        if widget is self.canvas:
             return
         if self._horizontal:
             low = widget.winfo_rootx() - self.canvas.winfo_rootx()

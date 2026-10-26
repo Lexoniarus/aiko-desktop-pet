@@ -20,11 +20,14 @@ class ImageButton(ttk.Button):
         self, parent: tk.Misc, text: str, command: Callable[[], None], *,
         images: IconImages, size: str, font: str, icon: tk.PhotoImage | None = None,
         align_left: bool = False, stacked: bool = False,
+        wraplength: int | None = None, preserve_selection: bool = False,
     ) -> None:
         self._images, self._size, self._font = images, size, font
         self._icon_width = icon.width() if icon is not None else 0
         self._align_left, self._stacked = align_left, stacked
         self._text = text
+        self._wraplength = wraplength
+        self._preserve_selection = preserve_selection
         super().__init__(
             parent, text=self._label(text), command=command, width=0,
             # An explicit disabled image avoids Tk's generated stippled copy.
@@ -42,6 +45,8 @@ class ImageButton(ttk.Button):
             self._size, self._font, self._icon_width,
             align_left=self._align_left, stacked=self._stacked,
             submenu=self._align_left and text.rstrip().endswith("›"),
+            wraplength=self._wraplength,
+            preserve_selection=self._preserve_selection,
         )
 
     def set_selected(self, selected: bool) -> None:

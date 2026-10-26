@@ -10,7 +10,7 @@ from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
@@ -37,31 +37,32 @@ class QuizWindow:
             game_id=GameId.QUIZ, bounds_at=bounds_at, body_height=500,
         )
         self.window = self._panel.window
+        self._question_card = self._panel.passive(self._panel.body, padding=12)
+        self._question_card.frame.pack(fill="x", pady=(0, 12))
         self._question = tk.Label(
-            self._panel.body, text="", bg=skin.background, fg=skin.text,
+            self._question_card.body, text="", bg=skin.panel, fg=skin.text,
             font=(skin.font, 11, "bold"), justify="left", anchor="w",
-            wraplength=self._panel.content_width - 12,
+            wraplength=self._panel.content_width - 48,
         )
-        self._question.pack(fill="x", pady=(0, 12))
-        self.answers: list[tk.Button] = []
+        self._question.pack(fill="x")
+        self.answers: list[ImageButton] = []
         for index in range(4):
-            button = tk.Button(
-                self._panel.body, text="", command=partial(self._choose, index),
-                bg=skin.panel, fg=skin.text, activebackground=skin.title,
-                disabledforeground=skin.muted, font=(skin.font, 10),
-                relief="flat", bd=1, anchor="w", justify="left",
-                padx=12, pady=10, takefocus=True,
-                wraplength=self._panel.content_width - 42,
+            button = skin.button(
+                self._panel.body, "", partial(self._choose, index),
+                size="regular", align_left=True,
+                wraplength=self._panel.content_width - 36,
+                preserve_selection=True,
             )
             button.pack(fill="x", pady=4)
             self.answers.append(button)
             self.window.bind(str(index + 1), partial(self._key, index))
+        self._explanation_card = self._panel.passive(self._panel.body, padding=12)
         self._explanation = tk.Label(
-            self._panel.body, text="", bg=skin.background, fg=skin.text,
+            self._explanation_card.body, text="", bg=skin.panel, fg=skin.text,
             font=(skin.font, 10), justify="left", anchor="w",
-            wraplength=self._panel.content_width - 12,
+            wraplength=self._panel.content_width - 48,
         )
-        self._explanation.pack(fill="x", pady=12)
+        self._explanation.pack(fill="x")
         try:
             game = QuizSession(catalogue or QuizCatalogue.load())
         except (OSError, ValueError, TypeError, KeyError):
@@ -87,15 +88,15 @@ class QuizWindow:
         answered = game.selected is not None
         for index, (button, choice) in enumerate(zip(self.answers, question.answers)):
             marker = ""
-            color = self.skin.panel
             if answered and choice.id == question.correct_answer_id:
-                marker, color = "✓ Richtig: ", "#DCEEE1"
+                marker = "✓ Richtig: "
             elif answered and choice.id == game.selected:
-                marker, color = "Deine Antwort: ", "#F8EAF1"
+                marker = "Deine Antwort: "
             button.configure(
-                text=f"{index + 1}. {marker}{choice.text}", bg=color,
+                text=f"{index + 1}. {marker}{choice.text}",
                 state="normal" if not answered and not sequence.busy else "disabled",
             )
+            button.set_selected(answered and choice.id == question.correct_answer_id)
         explanation = ""
         if answered:
             correct = next(a.text for a in question.answers
@@ -105,6 +106,10 @@ class QuizWindow:
                 else "quiz.incorrect", answer=correct, explanation=question.explanation,
             )
         self._explanation.configure(text=explanation)
+        if answered:
+            self._explanation_card.frame.pack(fill="x", pady=(12, 0))
+        else:
+            self._explanation_card.frame.pack_forget()
         self._panel.title.configure(text=GERMAN_TEXT.format(
             "quiz.progress", number=str(game.index + 1),
         ))

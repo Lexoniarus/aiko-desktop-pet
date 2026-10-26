@@ -15,7 +15,9 @@ class ButtonStyles:
         self.style = ttk.Style(root)
         self._surface = surface
         self._prefix = f"Aiko{id(self)}"
-        self._styles: dict[tuple[str, str, int, bool, bool, bool], str] = {}
+        self._styles: dict[
+            tuple[str, str, int, bool, bool, bool, int | None, bool], str
+        ] = {}
         self._arrow = tk.PhotoImage(master=root, width=10, height=16)
         for y in range(3, 13):
             x = 2 + min(y - 3, 12 - y)
@@ -26,8 +28,10 @@ class ButtonStyles:
     def button(
         self, size: str, font: str, icon_width: int, *,
         align_left: bool, stacked: bool, submenu: bool,
+        wraplength: int | None = None, preserve_selection: bool = False,
     ) -> str:
-        key = size, font, icon_width, align_left, stacked, submenu
+        key = (size, font, icon_width, align_left, stacked, submenu,
+               wraplength, preserve_selection)
         if key in self._styles:
             return self._styles[key]
         art = {
@@ -36,9 +40,12 @@ class ButtonStyles:
         }
         frame = f"{self._prefix}.{len(self._styles)}.frame"
         name = f"{self._prefix}.{len(self._styles)}.TButton"
+        selected = ("selected", art["active"])
         self.style.element_create(
             frame, "image", art["normal"],
-            ("disabled", art["disabled"]), ("selected", art["active"]),
+            *((selected,) if preserve_selection else ()),
+            ("disabled", art["disabled"]),
+            *((selected,) if not preserve_selection else ()),
             ("pressed", art["pressed"]), ("active", art["hover"]),
             border=min(18, art["normal"].height() // 3), padding=0, sticky="nsew",
         )
@@ -53,6 +60,8 @@ class ButtonStyles:
         ]})])
         wrap = max(24, art["normal"].width() - 24 - (12 if submenu else 0)
                    - (icon_width + 8 if icon_width and not stacked else 0))
+        if wraplength is not None:
+            wrap = max(24, wraplength)
         self.style.configure(
             name, font=(font, 8 if size == "menu_back" else 10),
             foreground="#3E4C61", background="#FCF7F9", borderwidth=0,
@@ -62,6 +71,9 @@ class ButtonStyles:
             justify="left" if align_left else "center",
             focusthickness=1, focuscolor="#657F9D", embossed=False, stipple="",
         )
-        self.style.map(name, foreground=[("disabled", "#817883")])
+        self.style.map(name, foreground=(
+            [("selected", "#3E4C61"), ("disabled", "#817883")]
+            if preserve_selection else [("disabled", "#817883")]
+        ))
         self._styles[key] = name
         return name

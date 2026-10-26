@@ -35,6 +35,11 @@ class ScrollRegionLayoutTests(unittest.TestCase):
                     patch.object(region.canvas, position, return_value=(0, .25)),
                 ):
                     region._pointer_pressed(event)
+                    # Tk sends FocusIn to ancestors before the actual button.
+                    # The content frame must neither scroll nor consume the
+                    # pointer guard intended for that button.
+                    region._focus_visible(cast(Any, Mock(widget=region.canvas)))
+                    region._focus_visible(cast(Any, Mock(widget=region.body)))
                     region._focus_visible(event)
                     move.assert_not_called()
                     region._pointer_released(event)

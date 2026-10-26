@@ -89,7 +89,13 @@ class GameMenuTests(unittest.TestCase):
         button = menu.buttons[GameId.TIC_TAC_TOE]
         x, y = button.winfo_width() // 2, button.winfo_height() // 2
         self.point_at(button, x, y)
+        before_scroll = menu.scroll.canvas.yview()
         button.event_generate("<ButtonPress-1>", x=x, y=y)
+        # Native focus reaches the content container before the button.
+        menu.scroll.body.event_generate("<FocusIn>")
+        button.event_generate("<FocusIn>")
+        self.pet.root.update_idletasks()
+        self.assertEqual(menu.scroll.canvas.yview(), before_scroll)
         button.event_generate("<ButtonRelease-1>", x=x, y=y)
         self.assertIsNone(self.hover.game_menu)
         self.assertIsInstance(self.hover.game_window, TicTacToeWindow)

@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from aiko_pet.games.quiz_catalogue import QuizCatalogue
+from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.common.window_geometry import WindowBounds
 from aiko_pet.ui.windows.quiz_window import QuizWindow
@@ -73,6 +74,39 @@ class QuizWindowTests(unittest.TestCase):
         game.close()
         self.closed.assert_called_once()
         self.assertEqual(self.closed.call_args.args[0].games, 0)
+
+    def test_answers_use_shared_art_and_keep_correct_feedback_legible_when_locked(self):
+        game = self.make_game()
+        sequence = game._sequence
+        assert sequence is not None
+        self.assertTrue(all(isinstance(button, ImageButton) for button in game.answers))
+        self.assertIn("button_normal_regular.png", self.skin.images._images)
+        styles = {button.cget("style") for button in game.answers}
+        self.assertEqual(len(styles), 1)
+        style_count = len(self.skin.images.buttons._styles)
+        for button in game.answers:
+            self.assertEqual(button.winfo_children(), [])
+            wrap = self.skin.images.buttons.style.lookup(button.cget("style"),
+                                                         "wraplength")
+            self.assertEqual(int(wrap), game._panel.content_width - 36)
+        self.assertFalse(game._explanation_card.frame.winfo_ismapped())
+        wrong = next(i for i, answer in enumerate(sequence.game.current.answers)
+                     if answer.id != sequence.game.current.correct_answer_id)
+        game.answers[wrong].invoke()
+        correct = next(button for button in game.answers
+                       if "✓ Richtig:" in button.cget("text"))
+        self.assertTrue(correct.instate(["selected", "disabled"]))
+        self.assertEqual(self.skin.images.buttons.style.lookup(
+            correct.cget("style"), "foreground", state=correct.state(),
+        ), self.skin.text)
+        self.assertIn("Deine Antwort:", game.answers[wrong].cget("text"))
+        self.assertTrue(game._explanation_card.frame.winfo_ismapped())
+        self.ready()
+        game.next_question()
+        self.ready()
+        self.assertTrue(all(button.instate(["!selected", "!disabled"])
+                            for button in game.answers))
+        self.assertEqual(len(self.skin.images.buttons._styles), style_count)
 
     def test_long_answers_wrap_in_a_narrow_work_area_and_abandon_counts_nothing(self):
         game = self.make_game(width=340)

@@ -66,6 +66,8 @@ class AikoSkin:
         icon: tk.PhotoImage | None = None,
         align_left: bool = False,
         stacked: bool = False,
+        wraplength: int | None = None,
+        preserve_selection: bool = False,
     ) -> ImageButton:
         return ImageButton(
             parent,
@@ -77,4 +79,6 @@ class AikoSkin:
             icon=icon,
             align_left=align_left,
             stacked=stacked,
+            wraplength=wraplength,
+            preserve_selection=preserve_selection,
         )
