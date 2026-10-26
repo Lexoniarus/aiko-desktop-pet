@@ -370,16 +370,21 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         ambient._direction = lambda _options: 12
         eyes_x, eyes_y = self.visual._eyes()
         self.visual.object_target = (eyes_x + 1000, eyes_y)
-        for tick in (now, now + 1, now + 2):
+        expected = [("look", 4), ("look", 4), ("body-turn-right", 1)]
+        for tick, key in zip((now, now + 1, now + 2), expected):
             self.anim.render(tick, (0, 0))
-            self.assertEqual(self.anim.frame_clock.active_key, ("look", 4))
+            self.assertEqual(self.anim.frame_clock.active_key, key)
+            self.assertEqual(self.visual.sector, 4)
             self.assertEqual(ambient.next_glance_at, now - 1)
         self.visual.object_target = None
         self.anim.render(now + 3, (0, 0))
-        self.assertEqual(self.anim.frame_clock.active_key, ("look", 12))
+        self.assertEqual(self.visual.sector, None)
+        self.assertEqual(ambient._glance_frame, 12)
+        self.assertEqual(self.anim.frame_clock.active_key, ("body-turn-right", 2))
         self.visual.object_target = (eyes_x + 1000, eyes_y)
         self.anim.render(now + 3.1, (0, 0))
-        self.assertEqual(self.anim.frame_clock.active_key, ("look", 4))
+        self.assertEqual(self.visual.sector, 4)
+        self.assertEqual(self.anim.frame_clock.active_key, ("body-turn-right", 2))
         self.assertGreater(ambient.next_glance_at, now + 3.1)
 
     def test_spontaneous_glance_never_overrides_sleep_or_game(self) -> None:
@@ -427,13 +432,45 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         old_key = self.anim.frame_clock.active_key
         assert old_key is not None
         self.assertEqual(old_key[0], "look")
+        for elapsed in (1.20, 1.34, 1.48, 1.62):
+            self.anim.render(now + elapsed, pointer)
+        key = self.anim.frame_clock.active_key
+        self.assertEqual(key, ("body-look-right", old_key[1]))
         original = self.canvas.itemcget(self.anim.image_item, "image")
-        self.anim.render(now + 0.85, pointer)
-        self.assertEqual(self.anim.frame_clock.active_key, old_key)
+        self.anim.render(now + 2.20, pointer)
+        self.assertEqual(self.anim.frame_clock.active_key, key)
         self.assertNotEqual(
             self.canvas.itemcget(self.anim.image_item, "image"),
             original,
         )
+
+    def test_body_turns_do_not_move_desktop_and_scale_keeps_pose(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.next_blink_at = now + 200
+        self.anim._ambient.next_glance_at = now + 200
+        initial_position = self.settings.x, self.settings.y
+        pointer = (99999, 20)
+        for elapsed in (0, 1.20, 1.34, 1.48, 1.62):
+            self.anim.render(
+                now + elapsed,
+                pointer,
+                attention=CursorAttentionSnapshot(now, -100.0),
+            )
+        self.assertEqual(self.settings.x, initial_position[0])
+        self.assertEqual(self.settings.y, initial_position[1])
+        self.assertEqual(self.walk.movement.remaining_distance, 0)
+        key = self.anim.frame_clock.active_key
+        self.assertEqual(key, ("body-look-right", 4))
+        self.settings.scale = 2
+        with patch(
+            "aiko_pet.ui.pet_view.animated_pet.time.monotonic",
+            return_value=now + 1.63,
+        ):
+            self.anim.reload_sprites()
+        self.assertEqual(self.anim.frame_clock.active_key, key)
+        self.assertEqual(self.anim.sprites["body-look-right"][4].width(), 384)
 
     def test_reload_at_double_scale_discards_old_sway_images(self) -> None:
         self.settings.auto_walk = False

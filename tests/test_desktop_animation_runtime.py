@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
+from types import MappingProxyType
 from typing import cast
 from unittest.mock import MagicMock
 
@@ -22,6 +24,9 @@ from tools.pet_test_support import set_test_pet_values
 
 class DesktopAnimationRuntimeTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.create_runtime_fixture()
+
+    def create_runtime_fixture(self) -> None:
         self.state = PetState()
         self.settings = PetSettings()
         self.walk = MagicMock(spec=WalkDriver)
@@ -33,15 +38,20 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.visual.orienting = False
         self.action_until = 0.0
         self.action_clip_id = "review"
+        self.holding_readable = False
+        self.ready_for_handover = False
+        self.assets = load_character_catalog()
         self.runtime = DesktopAnimationRuntime(
             state=self.state, settings=self.settings,
-            assets=load_character_catalog(),
+            assets=self.assets,
             walk=cast(WalkDriver, self.walk),
             visual=cast(DesktopVisualObservation, self.visual),
             ports=AnimationRuntimePorts(
                 action_until=lambda: self.action_until,
                 action_clip_id=lambda: self.action_clip_id,
                 attention_until=lambda: -100.0,
+                holding_readable=lambda: self.holding_readable,
+                ready_for_handover=lambda: self.ready_for_handover,
             ),
         )
         self.runtime.ambient.next_blink_at = 1000.0
@@ -112,3 +122,49 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.walk.step.assert_called_once_with(
             100, .1, game_mode=False, attention_active=True,
         )
+
+    def test_optional_pack_missing_preserves_frontal_gaze_after_long_attention(self):
+        runtime = DesktopAnimationRuntime(
+            state=self.state, settings=self.settings,
+            assets=replace(self.assets, body_clips=MappingProxyType({})),
+            walk=cast(WalkDriver, self.walk),
+            visual=cast(DesktopVisualObservation, self.visual),
+            ports=AnimationRuntimePorts(
+                action_until=lambda: 0.0, action_clip_id=lambda: "idle",
+                attention_until=lambda: -100.0,
+            ),
+        )
+        runtime.ambient.next_blink_at = runtime.ambient.next_glance_at = 1000.0
+        self.visual.observe.return_value = PassiveObservation(4, False)
+        for now in (100.0, 102.0, 104.0):
+            self.assertEqual(
+                runtime.select_animation(now, (100, 0), now - 1, False, None),
+                RenderDecision(SpriteSelection("look", 4), clear_action=True),
+            )
+
+    def test_priority_interruptions_require_fresh_body_turn_dwell(self) -> None:
+        for priority in ("sleep", "game", "action", "walk", "handover", "book"):
+            with self.subTest(priority=priority):
+                self.create_runtime_fixture()
+                self.visual.observe.return_value = PassiveObservation(4, False)
+                for now in (100, 101.20, 101.34, 101.48, 101.62):
+                    turned = self.choose(now=now)
+                self.assertEqual(turned.sprite, SpriteSelection("body-look-right", 4))
+                set_test_pet_values(self.state, sleeping=priority == "sleep")
+                self.action_until = 200 if priority == "action" else 0
+                self.walk.step.return_value = (
+                    "running-right" if priority == "walk" else None
+                )
+                self.ready_for_handover = priority == "handover"
+                self.holding_readable = priority == "book"
+                interrupted = self.choose(now=102, game_mode=priority == "game")
+                self.assertFalse(interrupted.sprite.animation.startswith("body-"))
+                set_test_pet_values(self.state, sleeping=False)
+                self.action_until = 0
+                self.walk.step.return_value = None
+                self.ready_for_handover = self.holding_readable = False
+                for now in (103, 104):
+                    self.assertEqual(self.choose(now=now).sprite,
+                                     SpriteSelection("look", 4))
+                self.assertEqual(self.choose(now=104.2).sprite,
+                                 SpriteSelection("body-turn-right", 1))

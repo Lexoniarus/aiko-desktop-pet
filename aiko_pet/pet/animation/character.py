@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from types import MappingProxyType
 from typing import Mapping
 
 FRAME_WIDTH = 192
@@ -51,6 +52,9 @@ class AnimationClip:
 @dataclass(frozen=True, slots=True)
 class CharacterCatalog:
     clips: Mapping[str, AnimationClip]
+    body_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
 
 
 @dataclass(frozen=True, slots=True)

@@ -13,6 +13,7 @@ from typing import Callable, Protocol
 
 from ..pet.animation.ambient import AmbientDirector
 from ..pet.animation.animation import SpriteSelection
+from ..pet.animation.body_orientation import BodyOrientation
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.priority import RenderDecision, choose_animation_priority
 from .visual_observation import DesktopVisualObservation
@@ -65,6 +66,7 @@ class DesktopAnimationRuntime:
         self._visual = visual
         self._ports = ports
         self.ambient = AmbientDirector(started_at=time.monotonic())
+        self._body_orientation = BodyOrientation()
 
     def advance_walk(
         self, now: float, elapsed: float, *, game_mode: bool,
@@ -90,6 +92,7 @@ class DesktopAnimationRuntime:
         """Preserve game/sleep/action/walk/gaze/idle priority without Tk."""
         if (not game_mode and not self._state.sleeping
                 and self._ports.holding_readable()):
+            self._body_orientation.reset()
             self.ambient.suspend(now)
             return RenderDecision(SpriteSelection(
                 "pick_up", fixed_frame=len(self._assets.clips["pick_up"].frames) - 1,
@@ -105,6 +108,7 @@ class DesktopAnimationRuntime:
             timed_action_active=now < self._ports.action_until(),
         )
         if priority.mode != "passive":
+            self._body_orientation.reset()
             self.ambient.suspend(now)
             if priority.interrupt_walk:
                 self.interrupt_walk()
@@ -120,6 +124,7 @@ class DesktopAnimationRuntime:
 
         walking = self.advance_walk(now, 0, game_mode=game_mode)
         if walking is not None:
+            self._body_orientation.reset()
             self.ambient.suspend(now)
             return RenderDecision(SpriteSelection(walking), clear_action=True)
 
@@ -128,6 +133,7 @@ class DesktopAnimationRuntime:
             cursor_gaze_point=self._ports.cursor_gaze_point(),
         )
         if self._ports.ready_for_handover():
+            self._body_orientation.reset()
             self.ambient.suspend(now)
             return RenderDecision(
                 SpriteSelection("pick_up", fixed_frame=len(
@@ -142,4 +148,6 @@ class DesktopAnimationRuntime:
             satiety=self._state.satiety,
             forward_gaze=observation.forward_gaze,
         )
+        if self._assets.body_clips:
+            selection = self._body_orientation.select(now, selection)
         return RenderDecision(selection, clear_action=True)

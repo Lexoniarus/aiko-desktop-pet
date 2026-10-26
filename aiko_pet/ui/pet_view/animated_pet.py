@@ -20,6 +20,7 @@ from ...pet.animation.character import FRAME_WIDTH, CharacterCatalog, PlaybackEv
 from ...pet.animation.item_assets import ItemCatalog
 from ...pet.animation.priority import RenderDecision
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
+from .body_pose_cache import BodyPoseCache
 from .character_sprite_cache import CharacterSpriteCache
 from .food_overlay import FoodOverlay
 from .rest_pose_renderer import RestPoseRenderer
@@ -108,6 +109,7 @@ class AnimatedPet:
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
         self._last_render_pointer: tuple[int, int] = (0, 0)
         self._sprite_cache = CharacterSpriteCache(root, assets)
+        self._body_cache = BodyPoseCache(root, assets)
         self.sprites = self.load_sprites()
         self._rest_renderer = RestPoseRenderer(root)
         self.image_item = self.canvas.create_image(
@@ -120,7 +122,9 @@ class AnimatedPet:
 
     def load_sprites(self) -> dict[str, Sequence[tk.PhotoImage]]:
         """Reuse originals and lazily zoom only requested 2x frames."""
-        return self._sprite_cache.for_scale(self.settings.scale)
+        sprites = dict(self._sprite_cache.for_scale(self.settings.scale))
+        sprites.update(self._body_cache.for_scale(self.settings.scale))
+        return sprites
 
     @property
     def game_mode(self) -> bool:
@@ -142,6 +146,7 @@ class AnimatedPet:
 
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""
+        self._body_cache.clear()
         self.sprites = self.load_sprites()
         self._rest_renderer.clear()
         self.food_overlay.reload(self.settings.scale)
@@ -182,7 +187,7 @@ class AnimatedPet:
     ) -> None:
         if self._stopped:
             return
-        clip = self.assets.clips[state]
+        clip = self.assets.body_clips.get(state) or self.assets.clips[state]
         # End a complete idle blink after frame 7, then hold neutral frame 0
         # until the ambient policy schedules another one. No frame is skipped.
         if (
@@ -223,7 +228,7 @@ class AnimatedPet:
         image = self.sprites[state][source_index]
         if state == "idle" or (
             state == "look" and fixed is not None
-        ):
+        ) or state.startswith("body-look-"):
             image = self._rest_renderer.resolve(
                 image, offset=self._ambient.motion_offset(now),
                 scale=self.settings.scale,
@@ -293,6 +298,7 @@ class AnimatedPet:
         self._rest_renderer.clear()
         self.sprites.clear()
         self._sprite_cache.close()
+        self._body_cache.close()
 
     def render(
         self, now: float, pointer: tuple[int, int],
