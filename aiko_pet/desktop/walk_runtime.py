@@ -13,6 +13,7 @@ from typing import Callable, Protocol
 
 from ..pet.animation.character import FRAME_WIDTH
 from ..pet.balance import BALANCE
+from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.movement import WalkConditions, WalkController
 from ..pet.movement.contracts import HorizontalTrack, MotionRequest, WalkStep
 
@@ -123,8 +124,42 @@ class WalkDriver:
     def set_world_goal(self, x: float | None) -> None:
         self.movement.set_goal(x)
 
-    def clear_cursor_request(self) -> None:
+    def clear_cursor_request(self, now: float | None = None) -> None:
+        old = self.movement.request("cursor")
         self.movement.release_request("cursor")
+        if old is not None:
+            self.ports.cursor_finished(
+                old.token, time.monotonic() if now is None else now
+            )
+
+    def apply_cursor_intent(self, intent: CursorIntent | None, now: float) -> None:
+        if intent is None:
+            self.clear_cursor_request(now)
+            return
+        old = self.movement.request("cursor")
+        if old is not None and old.token == intent.token:
+            return
+        amount = BALANCE.number(
+            "cursor_behaviour",
+            "flight_width_multiplier"
+            if intent.reaction == "flee"
+            else "step_width_fraction",
+        )
+        width = FRAME_WIDTH * self.settings.scale
+        x = self.settings.x or 0
+        target = self.ports.track().clamp_x(x + intent.side * width * amount, width)
+        if target == x:
+            self.ports.cursor_finished(intent.token, now)
+            return
+        self.submit_cursor_intent(
+            MotionRequest(
+                "cursor",
+                intent.token,
+                target,
+                "run" if intent.reaction == "flee" else "step",
+                intent.until,
+            )
+        )
 
     def submit_cursor_intent(self, request: MotionRequest) -> None:
         self.movement.replace_request("cursor", request)
@@ -141,7 +176,7 @@ class WalkDriver:
         if game_mode:
             return None
         if not self.ports.cursor_allowed():
-            self.clear_cursor_request()
+            self.clear_cursor_request(now)
         observed = self.adaptive.current
         committed = self.movement.goal_x is not None and self.ports.committed_goal()
         busy = (

@@ -30,6 +30,7 @@ from .desktop.persistence import DesktopPersistence
 from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
+from .application.cursor_behaviour import CursorActivityContext
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.social_runtime import SocialConversationRuntime
 from .desktop.startup import run_desktop
@@ -112,6 +113,8 @@ class DesktopPet:
                     self._session_runtime.refresh(now)
                 ),
                 observe_objects=lambda now: self._world.update(now),
+                prepare_cursor=lambda now: self._pointer_runtime.begin_behaviour(now),
+                admit_cursor=lambda now: self._pointer_runtime.admit_behaviour(now),
                 poll_social=lambda: self._social_runtime.poll(),
             ),
             schedule=self.root.after,
@@ -154,6 +157,7 @@ class DesktopPet:
             ),
         )
         self._cursor_observation = services.cursor_observation
+        self._cursor_behaviour = services.cursor_behaviour
         self.application = services.router
         self.workload_events = services.workload_events
         self._activity = services.activity
@@ -171,6 +175,9 @@ class DesktopPet:
                 action_until=lambda: self._action_playback.until,
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
+                cursor_interest=lambda: self._cursor_behaviour.watching,
+                cursor_allowed=lambda: self._pointer_runtime.motion_allowed(),
+                cursor_finished=self._cursor_behaviour.note_motion_finished,
                 extend_action=self._action_playback.extend,
                 world=self._world_access,
                 feedback_subject=lambda: self._reaction_player.subject,
@@ -374,7 +381,10 @@ class DesktopPet:
                 game_mode=lambda: self._animated.game_mode,
                 eyes=lambda: self._animated.cursor_eye_position,
                 on_motion=self._attention_runtime.cursor_moved,
+                scale=lambda: self.settings.scale,
+                activity=self._cursor_activity,
             ),
+            behaviour=self._cursor_behaviour, walk=self._walk,
         )
         self._session_runtime = DesktopSessionRuntime(
             activity=self._activity, attention=self._attention_runtime,
@@ -402,6 +412,7 @@ class DesktopPet:
             speech=self._speech,
             overlay_stack=self._overlay_stack,
             ports=DesktopPreferencePorts(
+                reset_cursor=self._reset_cursor_behaviour,
                 place_x=self._place_x,
                 save=self._save,
                 set_context=self._set_context,
@@ -438,6 +449,7 @@ class DesktopPet:
             self._reaction_player, self._item_catalog,
         )
         self._world = DesktopWorldRuntime(
+            pointer_snapshot=self._pointer_runtime.snapshot_pointer,
             root=self.root, state=self.state, settings=self.settings,
             mind=self.mind, adaptive=self.adaptive, items=self._item_catalog,
             clock=active_clock, track=lambda: self._window.track,
@@ -479,10 +491,24 @@ class DesktopPet:
             self._world.interaction.active or self._world.cursor.carrying
         )
 
+    def _cursor_activity(self) -> CursorActivityContext:
+        return CursorActivityContext(
+            game_open=self._hover.game_open, menu_engaged=self._hover.menu_engaged,
+            foreground_active=not self._contact.can_interact("pet"),
+            world_protected=self._world_access.cursor_protected(),
+            direct_contact=self._hover.pointer_inside(*self._cursor_observation.current.pointer)
+            and self._allow_sprite_hover(),
+        )
+
+    def _reset_cursor_behaviour(self) -> None:
+        self.mind.cursor_attention.reset()
+        self._cursor_behaviour.reset()
+        self._walk.clear_cursor_request()
+
     def _set_game_mode(self, enabled: bool) -> None:
         self._action_playback.cancel_at(time.monotonic())
         self._animated.set_game_mode(enabled)
-        self.mind.cursor_attention.reset()
+        self._reset_cursor_behaviour()
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""

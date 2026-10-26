@@ -86,7 +86,10 @@ class DesktopAnimationRuntime:
         """Advance host movement at the current Tk sprite frame cadence."""
         if (
             elapsed > 0
-            and self._walk.movement.kind == "step"
+            and (
+                self._walk.movement.kind == "step"
+                or self._walk.movement.source == "cursor"
+            )
             and not self._body_orientation.motion_ready
         ):
             return None
@@ -178,7 +181,10 @@ class DesktopAnimationRuntime:
 
         walking = self.advance_walk(now, 0, game_mode=game_mode)
         if walking is not None:
-            if self._walk.movement.kind == "step":
+            if (
+                self._walk.movement.kind == "step"
+                or self._walk.movement.source == "cursor"
+            ):
                 direction = 1 if self._walk.movement.remaining_distance > 0 else -1
                 pose = self._body_orientation.orient_for_motion(now, direction)
                 if not self._body_orientation.motion_ready:

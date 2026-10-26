@@ -42,6 +42,9 @@ class AnimationAssemblyPorts:
     world: WorldRuntimeAccess
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
+    cursor_interest: Callable[[], bool] | None = None
+    cursor_allowed: Callable[[], bool] = lambda: False
+    cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,6 +74,8 @@ def assemble_animation(
             place_x=ports.place_x,
             walk_finished=ports.walk_finished,
             committed_goal=ports.world.focused,
+            cursor_allowed=ports.cursor_allowed,
+            cursor_finished=ports.cursor_finished,
         ),
     )
     visual = DesktopVisualObservation(
@@ -82,6 +87,7 @@ def assemble_animation(
             feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
             orientation_side=ports.world.orientation_side,
+            cursor_interest=ports.cursor_interest,
         ),
     )
     animation = DesktopAnimationRuntime(

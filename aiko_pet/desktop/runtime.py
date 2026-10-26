@@ -33,6 +33,8 @@ class DesktopTickPorts:
     refresh_overlays_and_save: Callable[[float], None]
     observe_objects: Callable[[float], None] = lambda _now: None
     poll_social: Callable[[], None] = lambda: None
+    prepare_cursor: Callable[[float], None] = lambda _now: None
+    admit_cursor: Callable[[float], None] = lambda _now: None
 
 
 class DesktopRuntime:
@@ -89,7 +91,9 @@ class DesktopRuntime:
             ports.poll_social()
             ports.observe_computer(now)
             pointer = ports.observe_pointer(now)
+            ports.prepare_cursor(now)
             ports.observe_objects(now)
+            ports.admit_cursor(now)
             ports.render_character(now, elapsed, pointer)
             ports.show_idle_emote(now)
             ports.speak_spontaneously(now)

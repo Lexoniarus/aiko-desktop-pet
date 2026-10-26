@@ -476,7 +476,7 @@
     "stop_distance": 0.15,
     "curiosity_seconds": 2.5,
     "step_width_fraction": 0.08333333333333333,
-    "flight_width_multiplier": 1.25,
+    "flight_width_multiplier": 0.35,
     "idle_step_minimum_seconds": 35.0,
     "idle_step_maximum_seconds": 65.0
   }

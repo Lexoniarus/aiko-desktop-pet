@@ -97,11 +97,11 @@ class CursorBehaviourPolicy:
                 if context.energy >= 12
                 else "startle"
             )
-            duration = parameter("flight_seconds") if reaction == "flee" else 0.6
+            duration = parameter("flight_seconds") + 1.5 if reaction == "flee" else 2.2
             self.recover_until = now + parameter("recovery_seconds") * (
                 1.5 - trust * 0.5
             )
-            return self._choose(reaction, -p.side, now, duration, "near-fast-approach")
+            return self._choose(reaction, -p.side or 1, now, duration, "near-fast-approach")
         if self.current.reaction in ("avoid", "flee", "startle"):
             if now < self.current.until:
                 return self.current
@@ -118,7 +118,7 @@ class CursorBehaviourPolicy:
             and p.stationary_seconds >= parameter("curiosity_seconds")
             and context.energy >= 25
             and context.mood >= 30
-            and (context.affection < 75 or context.fun < 75 or trust > 0.5)
+            and (context.affection <= 75 or context.fun <= 75 or trust > 0.5)
         ):
             return self._choose("approach", p.side, now, 2.5, "calm-reachable-pointer")
         reaction = "observe" if interested and p.stationary_seconds < 8 else "ignore"

@@ -50,6 +50,15 @@ class WorldRuntimeAccess:
         runtime = self._runtime
         return runtime is not None and runtime.interaction.contact_feedback_active
 
+    def cursor_protected(self) -> bool:
+        """Expose current commitment without introducing another focus owner."""
+        runtime = self._runtime
+        return runtime is not None and (
+            runtime.interaction.active or runtime.user_action_pending
+            or runtime.cursor.carrying or runtime.interaction.searching
+            or runtime.orientation_side() is not None
+        )
+
     def phase(self) -> InteractionPhase:
         """Read the live episode; before World assembly there is no action."""
         return self._runtime.interaction.phase if self._runtime is not None else "idle"

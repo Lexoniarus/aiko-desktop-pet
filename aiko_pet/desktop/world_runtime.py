@@ -114,9 +114,11 @@ class DesktopWorldRuntime:
         save: Callable[[], None],
         restored_world: WorldSnapshot | None = None,
         restored_memory: ObjectMemorySnapshot | None = None,
+        pointer_snapshot: Callable[[], tuple[int, int]] | None = None,
     ) -> None:
         self.root, self.state, self.settings = root, state, settings
         self._track, self._walk, self._visual = track, walk, visual
+        self._pointer_snapshot = pointer_snapshot
         self._animated, self._playback = animated, playback
         self._inputs, self._game_open = inputs, game_open
         self._character_action_busy = character_action_busy
@@ -508,7 +510,8 @@ class DesktopWorldRuntime:
 
     def _attention(self) -> ObjectAttention:
         """Sample before perception; translate native eyes to World coordinates."""
-        pointer = self.root.winfo_pointerx(), self.root.winfo_pointery()
+        pointer = (self._pointer_snapshot() if self._pointer_snapshot is not None
+                   else (self.root.winfo_pointerx(), self.root.winfo_pointery()))
         attention = self._visual.attention(
             pointer,
             game_mode=self._game_open(),

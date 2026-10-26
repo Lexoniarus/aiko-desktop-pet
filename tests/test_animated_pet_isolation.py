@@ -41,6 +41,9 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.show_frame("body-step-right-06", now + .09)
         self.assertEqual(self.anim.frame_clock.frame_index, index)
         self.assertEqual(self.anim.frame_clock.active_key, ("body-step-right", None))
+        with patch("aiko_pet.ui.pet_view.animated_pet.time.monotonic", return_value=now+.1):
+            self.anim.reload_sprites()
+        self.assertEqual(self.anim.frame_clock.frame_index, index)
 
     @classmethod
     def setUpClass(cls) -> None:

@@ -114,6 +114,7 @@ class AnimatedPet:
         self._game_mode = False
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
         self._last_render_pointer: tuple[int, int] = (0, 0)
+        self._display_clip = "idle"
         self._sprite_cache = CharacterSpriteCache(root, assets)
         self._body_cache = BodyPoseCache(root, assets)
         self.sprites = self.load_sprites()
@@ -163,6 +164,8 @@ class AnimatedPet:
         self._rest_renderer.clear()
         self.food_overlay.reload(self.settings.scale)
         state, fixed = self.frame_clock.active_key or ("idle", None)
+        if state not in self.sprites:
+            state = self._display_clip
         self.show_frame(state, time.monotonic(), fixed=fixed)
 
     def set_food_overlay(self, food_id: str) -> None:
@@ -204,6 +207,7 @@ class AnimatedPet:
         if self._stopped:
             return
         clip = self.assets.body_clips.get(state) or self.assets.clips[state]
+        self._display_clip = state
         # End a complete idle blink after frame 7, then hold neutral frame 0
         # until the ambient policy schedules another one. No frame is skipped.
         if (

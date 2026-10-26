@@ -54,6 +54,9 @@ class WalkController:
             self.remaining_distance = 0
             self._residual = 0
 
+    def request(self, source: MotionSource) -> MotionRequest | None:
+        return self._requests.get(source)
+
     def set_goal(self, x: float | None) -> None:
         if x == self.goal_x:
             return

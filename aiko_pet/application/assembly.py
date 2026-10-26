@@ -7,11 +7,13 @@ from dataclasses import dataclass
 
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.state import PetState
 from .active_time import ActiveSessionClock, TimeProgression
 from .activity import ActivityCallbacks, ActivityCoordinator
 from .controller import CareController
+from .cursor_behaviour import CursorBehaviourCoordinator
 from .cursor_observation import CursorObservation
 from .game_experience import GameExperienceCoordinator
 from .ports import ComputerObservation
@@ -27,12 +29,18 @@ class ApplicationComponents:
     activity: ActivityCoordinator
     workload_events: WorkloadEventDetector
     cursor_observation: CursorObservation
+    cursor_behaviour: CursorBehaviourCoordinator
 
 
 def assemble_application(
-    *, state: PetState, settings: PetSettings, mind: PetMind,
-    adaptive: AdaptiveRoutine, monitor: ComputerObservation,
-    callbacks: ActivityCallbacks, clock: ActiveSessionClock,
+    *,
+    state: PetState,
+    settings: PetSettings,
+    mind: PetMind,
+    adaptive: AdaptiveRoutine,
+    monitor: ComputerObservation,
+    callbacks: ActivityCallbacks,
+    clock: ActiveSessionClock,
     progression: TimeProgression | None = None,
     arrangement_ready: Callable[[], bool] = lambda: False,
 ) -> ApplicationComponents:
@@ -41,13 +49,32 @@ def assemble_application(
     router = ApplicationRouter(
         CareController(state, mind, adaptive, clock=clock, progression=progression),
         game_experience=GameExperienceCoordinator(
-            state, mind, adaptive, clock=clock, progression=progression,
+            state,
+            mind,
+            adaptive,
+            clock=clock,
+            progression=progression,
             arrangement_ready=arrangement_ready,
         ),
     )
     workload_events = WorkloadEventDetector()
     activity = ActivityCoordinator(
-        state, settings, mind, adaptive, workload_events, monitor,
-        callbacks, clock=clock, progression=progression,
+        state,
+        settings,
+        mind,
+        adaptive,
+        workload_events,
+        monitor,
+        callbacks,
+        clock=clock,
+        progression=progression,
     )
-    return ApplicationComponents(router, activity, workload_events, cursor_observation)
+    return ApplicationComponents(
+        router,
+        activity,
+        workload_events,
+        cursor_observation,
+        CursorBehaviourCoordinator(
+            state, settings, cursor_observation, CursorBehaviourPolicy()
+        ),
+    )

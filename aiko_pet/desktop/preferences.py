@@ -32,6 +32,7 @@ class DesktopPreferencePorts:
     save: Callable[[], None]
     set_context: Callable[[TimeContext], None]
     social_sources_changed: Callable[[bool], None] = lambda _enabled: None
+    reset_cursor: Callable[[], None] = lambda: None
 
 
 class DesktopPreferences:
@@ -85,6 +86,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_auto_walk(self, value: bool) -> None:
+        self._ports.reset_cursor()
         self._walk.set_auto_walk(value, time.monotonic())
         self._ports.save()
 
@@ -98,6 +100,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
+        self._ports.reset_cursor()
         self._settings.follow_cursor = bool(enabled)
         self._visual.reset()
         self._ports.save()
@@ -131,6 +134,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def toggle_scale(self) -> None:
+        self._ports.reset_cursor()
         center = (self._settings.x or 0) + self._window.width / 2
         self._settings.scale = 2 if self._settings.scale == 1 else 1
         self._window.resize()
