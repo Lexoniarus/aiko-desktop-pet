@@ -1185,10 +1185,10 @@ class WorldGuiTests(unittest.TestCase):
     def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.enterContext(patch(
-            "aiko_pet.gui.messagebox.showwarning",
-            side_effect=lambda _title, message: self.fail(message),
-        ))
+        warnings = self.enterContext(patch("aiko_pet.gui.messagebox.showwarning"))
+        # Fail after desktop cleanup; raising in quit would leak the Tk root
+        # and produce misleading image errors in subsequent tests.
+        self.addCleanup(warnings.assert_not_called)
         self.app = create_test_desktop(
             store=StateStore(Path(folder.name) / "state.json"),
         )
