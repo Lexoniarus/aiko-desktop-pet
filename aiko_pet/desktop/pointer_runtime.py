@@ -16,13 +16,16 @@ class PointerRuntimePorts:
     game_mode: Callable[[], bool]
     eyes: Callable[[], tuple[float, float]]
     on_motion: Callable[[float, int, float], None]
+    scale: Callable[[], int] = lambda: 1
 
 
 class PointerRuntime:
     """Sample once, update the pet's history and forward changed motion."""
 
     def __init__(
-        self, observer: CursorObservation, ports: PointerRuntimePorts,
+        self,
+        observer: CursorObservation,
+        ports: PointerRuntimePorts,
     ) -> None:
         self._observer = observer
         self._ports = ports
@@ -30,10 +33,15 @@ class PointerRuntime:
     def observe(self, now: float) -> tuple[int, int]:
         x, y, screen_width = self._ports.sample()
         pointer = x, y
-        motion = self._observer.observe(
-            pointer, now, game_mode=self._ports.game_mode(),
-            eyes=self._ports.eyes(), screen_width=screen_width,
+        result = self._observer.observe(
+            pointer,
+            now,
+            game_mode=self._ports.game_mode(),
+            eyes=self._ports.eyes(),
+            screen_width=screen_width,
+            scale=self._ports.scale(),
         )
+        motion = result.motion
         if motion is not None:
             self._ports.on_motion(motion.distance, motion.screen_width, motion.now)
         return pointer
