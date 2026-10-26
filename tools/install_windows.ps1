@@ -190,7 +190,9 @@ function Invoke-AikoSetup {
         $smokeCheck = @'
 import tkinter as tk
 import aiko_pet.gui
+from aiko_pet.infrastructure.runtime_dependencies import check_runtime_dependencies
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+check_runtime_dependencies()
 catalog = load_character_catalog()
 root = tk.Tk()
 root.withdraw()
