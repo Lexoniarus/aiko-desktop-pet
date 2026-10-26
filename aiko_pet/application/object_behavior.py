@@ -132,7 +132,7 @@ class ObjectBehaviorCoordinator:
     def request_orientation(self) -> None:
         self._orientation = OrientationProgress(
             side=-1 if has_learned_places(
-                self._awareness.memory.snapshot(),
+                self._awareness.autonomous_records(),
                 (0, self._world.snapshot().surface.width),
             ) else None,
         )
@@ -166,7 +166,7 @@ class ObjectBehaviorCoordinator:
         attention: ObjectAttention,
     ) -> BehaviorObservation:
         interaction, awareness = self._interaction, self._awareness
-        memory_before = awareness.memory.snapshot()
+        memory_before = awareness.autonomous_records()
         goal_before = awareness.intentions.goal
         checking_before = awareness.checking_absence
         absences_before = {item.token for item in awareness.absences}
@@ -425,7 +425,7 @@ class ObjectBehaviorCoordinator:
         observed = {item.token for item in awareness.observations}
         visible = [
             item
-            for item in awareness.memory.snapshot()
+            for item in awareness.autonomous_records()
             if not item.assessed and item.token in observed
         ]
         gaze = awareness.memory.get(focus) if focus is not None else None

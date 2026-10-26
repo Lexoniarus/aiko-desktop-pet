@@ -99,3 +99,12 @@ owner's middle +12px adjustment at 1x for pickup, catching and reading. The
 four prepared PNG states and private originals are unchanged. Selection now
 uses the same press/drag/release gesture as food, including existing-instance
 relocation and handover.
+
+### Closed carry alignment correction (2026-10-26)
+
+The closed carry drawing's visible center lies to the right of its book-local
+grip pivot. `held_registration.state_offsets_1x.carry_closed = [-13.5, 0]`
+adds a horizontal attachment correction for this state only. The shared +12 px
+vertical attachment and half-open/open-reading positions remain unchanged.
+The loader validates optional per-state offsets; FoodOverlay applies them at
+native 1x/2x scale. The prepared PNGs and book-local pivots are unchanged.

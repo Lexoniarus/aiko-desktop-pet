@@ -132,6 +132,21 @@ class ObjectAwareness:
         record = self.record_for_instance(instance)
         return self.memory.get(record) if record is not None else None
 
+    def autonomous_interest(self, known: ObjectKnowledge) -> bool:
+        """Recognized books need an eligible first reading, not fresh curiosity.
+
+        Completed entries remain physical, remembered objects for user handover.
+        They no longer supply free goals, gaze targets or missing-place searches.
+        """
+        if known.kind != "book":
+            return True
+        instance = known.instance_id or self.instance_for_record(known.token)
+        return instance is not None and self.readable(instance)
+
+    def autonomous_records(self) -> tuple[ObjectKnowledge, ...]:
+        return tuple(known for known in self.memory.snapshot()
+                     if self.autonomous_interest(known))
+
     def target_evidence(self, record: str, *, radius: float) -> TargetEvidence:
         """Separate executable association from knowledge and local occupancy.
 
@@ -474,7 +489,17 @@ class ObjectAwareness:
             ),
         )
         sensed = self.perception.observe(tracked, now=now)
-        self.checking_notice = len(sensed) < len(tracked)
+        sensed_tokens = {seen.token for seen in sensed}
+        self.checking_notice = any(
+            item.token not in sensed_tokens
+            and (
+                (instance := self._tracker.resolve(item.token)) is None
+                or (known := self.memory.learned_instance(instance)) is None
+                or known.token == committed
+                or self.autonomous_interest(known)
+            )
+            for item in tracked
+        )
         previous = {
             (
                 item.token,
@@ -553,6 +578,7 @@ class ObjectAwareness:
             item
             for item in self.memory.snapshot()
             if item.token not in excluded
+            and self.autonomous_interest(item)
             and (attention.mode != "object" or item.token == committed)
         )
         for record in self._absence.observe(
@@ -576,6 +602,7 @@ class ObjectAwareness:
             key: item
             for key, item in self._absences.items()
             if (entry := self.memory.get(key)) is not None
+            and self.autonomous_interest(entry)
             and entry.resting
             and entry.place_status == "missing"
         }
@@ -614,21 +641,30 @@ class ObjectAwareness:
             # Finish the current visible place evidence before any free wish,
             # including a continuing offer wish. Keep the wish owner intact.
             return None
+        known_records = tuple(
+            known for known in self.memory.snapshot()
+            if known.token == committed or self.autonomous_interest(known)
+        )
         readable = frozenset(
             known.token
-            for known in self.memory.snapshot()
+            for known in known_records
             if known.kind == "book"
-            and (instance := self.instance_for_record(known.token)) is not None
+            and (instance := known.instance_id
+                 or self.instance_for_record(known.token)) is not None
             and self.readable(instance)
         )
         return self.intentions.choose(
-            self.memory.snapshot(),
+            known_records,
             state,
             readable=readable,
             x=x,
             now=now,
             blocked=blocked or self.checking_absence or bool(self.absences),
-            changed=changed,
+            changed=changed or (
+                self.intentions.goal is not None
+                and all(known.token != self.intentions.goal.token
+                        for known in known_records)
+            ),
             committed=committed,
             observed=frozenset(item.token for item in self.observations),
         )

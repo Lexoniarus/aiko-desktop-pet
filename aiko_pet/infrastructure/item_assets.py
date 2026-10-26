@@ -176,16 +176,11 @@ def _readables(records: object) -> Mapping[str, ReadableItem]:
         key = row["id"]
         if not key.isidentifier() or key in result:
             raise ValueError("Invalid or duplicate readable id")
-        offset = data.get("held_registration", {}).get("attachment_offset_1x", [0, 0])
-        if (
-            not isinstance(offset, list)
-            or len(offset) != 2
-            or any(
-                type(v) not in (int, float) or not math.isfinite(v) or abs(v) > 96
-                for v in offset
-            )
-        ):
-            raise ValueError("Invalid readable hand attachment")
+        registration = data.get("held_registration", {})
+        offset = _readable_offset(registration.get("attachment_offset_1x", [0, 0]))
+        state_offsets = registration.get("state_offsets_1x", {})
+        if not isinstance(state_offsets, dict) or not set(state_offsets) <= set(states):
+            raise ValueError("Invalid readable state attachments")
         world_zoom = data.get("world_registration", {}).get("zoom", 1)
         if type(world_zoom) is not int or not 1 <= world_zoom <= 3:
             raise ValueError("Invalid readable World size")
@@ -194,7 +189,19 @@ def _readables(records: object) -> Mapping[str, ReadableItem]:
             GERMAN_TEXT.format(row["label_key"]),
             icon,
             MappingProxyType(states),
-            (float(offset[0]), float(offset[1])),
+            offset,
             world_zoom,
+            MappingProxyType({name: _readable_offset(value)
+                              for name, value in state_offsets.items()}),
         )
     return MappingProxyType(result)
+
+
+def _readable_offset(value: object) -> tuple[float, float]:
+    if (
+        not isinstance(value, list) or len(value) != 2
+        or any(type(v) not in (int, float) or not math.isfinite(v) or abs(v) > 96
+               for v in value)
+    ):
+        raise ValueError("Invalid readable hand attachment")
+    return float(value[0]), float(value[1])

@@ -46,6 +46,41 @@ class FoodRenderingTests(unittest.TestCase):
         self.view = WorldView(self.root, self.items)
         self.addCleanup(self.view.close)
 
+    def test_closed_book_visible_center_matches_open_book_at_both_scales(self):
+        overlay = self.anim.food_overlay
+        overlay.select("horoscope_book")
+        book = self.items.readables["horoscope_book"]
+        for scale in (1, 2):
+            centers = {}
+            for state in ("carry_closed", "half_open", "open_reading"):
+                image = overlay._book_images[("horoscope_book", state, scale)]
+                columns = [x for x in range(image.width())
+                           if any(not image.transparency_get(x, y)
+                                  for y in range(image.height()))]
+                centers[state] = (min(columns) + max(columns) + 1) / 2
+            for name in ("pick_up", "put_down"):
+                clip = self.anim.assets.clips[name]
+                for frame in clip.frames:
+                    if frame.food_anchor is None:
+                        continue
+                    visible_centers = {}
+                    for state in centers:
+                        overlay.readable_state = state
+                        overlay.render(clip, frame, scale=scale)
+                        left, top = self.canvas.coords(overlay.item)
+                        visible_centers[state] = left + centers[state]
+                        if state != "carry_closed":
+                            sprite = book.states[state][scale]
+                            x = (96 - clip.anchor[0] + frame.food_anchor[0]) * scale
+                            y = (FOOT_BASELINE - clip.anchor[1]
+                                 + frame.food_anchor[1] + 12) * scale
+                            self.assertEqual((left, top), (
+                                round(x - sprite.pivot[0]),
+                                round(y - sprite.pivot[1]),
+                            ))
+                    self.assertAlmostEqual(visible_centers["carry_closed"],
+                                           visible_centers["open_reading"], delta=1)
+
     def test_png_assets_are_64_pixels_and_have_alpha(self) -> None:
         choices = food_choices(self.items)
         self.assertEqual(len(choices), 11)

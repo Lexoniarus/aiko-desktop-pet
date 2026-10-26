@@ -100,7 +100,13 @@ has not started the completed-book replay hour.
 
 During the hour the user can hand that same book to Aiko again. It restarts the
 same frozen reading from cue zero, without another daily care credit. Aiko does
-not autonomously loop completed readings. At the absolute deadline World removes
+not autonomously loop completed readings. Recognized books are assessed on the
+first use decision. Existing completed books, including older unassessed memory,
+are excluded from free curiosity, new-notice gaze, learned-place orientation,
+missing-place searches and pickup goals through the same reading-eligibility
+port. The memory and physical instance remain available for explicit handover.
+An active episode may still finish closing/put-down, and incomplete first
+readings remain eligible to resume. At the absolute deadline World removes
 the book even if the user/Aiko currently holds it; invalidate reading/episode
 callbacks and release cursor capture safely. Restart never renews a saved expiry.
 A completed held book recovered onto the taskbar starts its first put-down hour
@@ -160,3 +166,19 @@ Real Tk regressions cover press/drag ownership, release/drop/settling, opaque
 resting-item pickup, same-instance relocation/cancel, unknown direct handover,
 ground pickup/reading/put-down, runtime pose selection and same-story replay
 without renewed care or expiry. The recovery callback is cancelled at teardown.
+
+### Completed-book follow-up, 2026-10-26
+
+The reported closed-book misalignment and renewed idle gaze were reproduced
+against `e2c6b8b`: the visible closed cover was 13.5 px right of the open cover
+at 1x, and the completed book became a gaze target again after restart. The
+closed carry state now has its own horizontal attachment correction; the open
+states retain their existing placement. Book assessment and autonomous
+eligibility now cover goals, gaze, notice and remembered-place checks together.
+
+301 targeted tests pass in an isolated staged-tree export, including normal
+food/object behavior, native 1x/2x rendering, completed-book idle/restart over
+multiple retry intervals, and explicit replay without renewed care or expiry.
+The restart regression also covers the prior unassessed memory representation.
+Ruff and strict Mypy pass; Pyright retains only the two previously recorded
+unrelated findings. No normal save or parallel character artwork was changed.

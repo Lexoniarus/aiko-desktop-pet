@@ -166,7 +166,10 @@
     "attachment_offset_1x": [
       0,
       12
-    ]
+    ],
+    "state_offsets_1x": {
+      "carry_closed": [-13.5, 0]
+    }
   },
   "lifecycle_direction": "Place, pick up, read, put down; fixed one-hour replay window after first completed put-down, then dissipate. Next day new placement.",
   "runtime_registered": true,

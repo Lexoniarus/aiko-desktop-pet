@@ -1901,6 +1901,39 @@ class WorldGuiTests(unittest.TestCase):
         self.complete_feedback()
         self.assertEqual(world.world.get(token).state, ObjectState.RESTING)
 
+    def test_completed_book_is_ignored_after_restart_with_unassessed_memory(self):
+        self.read_ground_book()
+        world = self.app._world
+        first = self.app._care_runtime.horoscope.today()
+        assert first is not None and first.book_instance_id is not None
+        record = world.awareness.record_for_instance(first.book_instance_id)
+        assert record is not None
+        known = world.awareness.memory.get(record)
+        assert known is not None
+        self.assertTrue(known.assessed)
+        # Saves from the broken version contain recognized but unassessed books.
+        world.awareness.memory.restore_snapshot(tuple(
+            replace(item, assessed=False, disposition="interrupted")
+            if item.token == record else item
+            for item in world.awareness.memory.snapshot()
+        ))
+        self.restart()
+        world = self.app._world
+        self.look_at(world._body_x() + 4 * world.width)
+        world._behavior.request_orientation()
+        start = world.now
+        for elapsed in (0, .3, .6, 1, 5, 30, 600, 1200):
+            world.now = start + elapsed
+            world.update(time.monotonic())
+            self.assertEqual(world.interaction.phase, "idle")
+            self.assertIsNone(world.awareness.intentions.goal)
+            self.assertIsNone(world._visual.object_target)
+            self.assertIsNone(world.orientation_side())
+            self.assertFalse(world.awareness.absences)
+            self.assertEqual(world.world.get(first.book_instance_id).state,
+                             ObjectState.RESTING)
+        self.assertEqual(self.app._care_runtime.horoscope.today(), first)
+
     def test_book_manual_replay_keeps_same_object_story_and_expiry(self):
         self.read_ground_book()
         world = self.app._world

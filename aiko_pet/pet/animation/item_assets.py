@@ -46,6 +46,7 @@ class ReadableItem:
     states: Mapping[str, Mapping[int, ItemSprite]]
     hand_offset: tuple[float, float] = (0.0, 0.0)
     world_zoom: int = 1
+    state_offsets: Mapping[str, tuple[float, float]] = field(default_factory=dict)
 
     @property
     def sprites(self) -> Mapping[int, ItemSprite]:

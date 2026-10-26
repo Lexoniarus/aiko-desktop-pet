@@ -92,9 +92,10 @@ class FoodOverlay:
         x: float = (FRAME_WIDTH // 2 - clip.anchor[0] + frame.food_anchor[0]) * scale
         y: float = (FOOT_BASELINE - clip.anchor[1] + frame.food_anchor[1]) * scale
         if item_id in self._readables:
-            offset = self._readables[item_id].hand_offset
-            x += offset[0] * scale
-            y += offset[1] * scale
+            book = self._readables[item_id]
+            offset = book.state_offsets.get(self.readable_state, (0.0, 0.0))
+            x += (book.hand_offset[0] + offset[0]) * scale
+            y += (book.hand_offset[1] + offset[1]) * scale
         if self.contact_origin is not None and clip.name != "put_down":
             blend = min(1.0, (time.monotonic() - self._contact_at) / 0.13)
             x = self.contact_origin[0] * (1 - blend) + x * blend

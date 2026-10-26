@@ -452,6 +452,7 @@ class ObjectInteractionCoordinator:
     def _consider_use(self) -> None:
         assert self.memory_id is not None
         if self._episode.kind == "book":
+            self._memory.mark_assessed(self.memory_id)
             self._begin_reading()
             return
         self._acknowledge_known_handover()
