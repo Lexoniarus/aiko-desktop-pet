@@ -463,5 +463,21 @@
     "area_weight_moderate": 3,
     "area_weight_low": 5,
     "area_weight_critical": 7
+  },
+  "cursor_behaviour": {
+    "threat_distance": 1.25,
+    "fast_speed": 3.0,
+    "closing_speed": 2.0,
+    "flight_seconds": 1.1,
+    "recovery_seconds": 6.0,
+    "attempt_pause_seconds": 12.0,
+    "interest_distance": 3.0,
+    "approach_distance": 1.8,
+    "stop_distance": 0.15,
+    "curiosity_seconds": 2.5,
+    "step_width_fraction": 0.08333333333333333,
+    "flight_width_multiplier": 1.25,
+    "idle_step_minimum_seconds": 35.0,
+    "idle_step_maximum_seconds": 65.0
   }
 }
