@@ -36,6 +36,15 @@ class CursorObservation:
         self.attention = attention
         self.current = CursorPerception()
 
+    def classify_contact(
+        self, pointer: tuple[int, int], *, pet_moved_at: float,
+    ) -> bool:
+        """Fresh pointer motion is intentional; a pet crossing is not."""
+        previous = self.attention.previous_pointer
+        if previous is None or math.dist(pointer, previous) > 1:
+            return True
+        return self.attention.last_pointer_move >= pet_moved_at
+
     def observe(
         self,
         pointer: tuple[int, int],

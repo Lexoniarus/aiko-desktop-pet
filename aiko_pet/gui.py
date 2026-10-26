@@ -268,6 +268,7 @@ class DesktopPet:
                 game_completed=lambda score: self._care_runtime.complete_game(score),
                 game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
+                allow_sprite_hover=self._allow_sprite_hover,
                 record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
@@ -325,6 +326,7 @@ class DesktopPet:
             self.root, self.canvas,
             DesktopInputActions(
                 enter=self._on_enter,
+                allow_hover=self._allow_sprite_hover,
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,
                 show_menu=self._hover.open_settings,
@@ -510,7 +512,14 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        self._contact.enter()
+        if self._allow_sprite_hover():
+            self._contact.enter()
+
+    def _allow_sprite_hover(self) -> bool:
+        return self._cursor_observation.classify_contact(
+            (self.root.winfo_pointerx(), self.root.winfo_pointery()),
+            pet_moved_at=self._walk.last_placement_at,
+        )
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
         if not self._world.cursor.carrying:

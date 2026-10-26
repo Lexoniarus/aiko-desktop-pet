@@ -106,6 +106,7 @@ class WalkDriver:
         self.monitor = monitor
         self.ports = ports
         self.walk_cycle_seconds = walk_cycle_seconds
+        self.last_placement_at = -1000.0
         self.movement = WalkController(
             next_walk_at=time.monotonic()
             + random.uniform(
@@ -180,6 +181,8 @@ class WalkDriver:
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
+        if delta:
+            self.last_placement_at = now
         track = self.ports.track()
         blocked = (step.pixels < 0 and (self.settings.x or 0) <= track.left) or (
             step.pixels > 0
