@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import unittest
 
 from PIL import Image, ImageDraw
 
 from aiko_pet.asset_paths import ASSET_ROOT
+from tools.character_export_common import planted_foot_bounds
 from tools.character_gaze_export import (
     extract_gaze_poses,
     register_gaze_row,
@@ -170,55 +172,55 @@ class ShippedGazeExportTests(unittest.TestCase):
         for index in range(16):
             self.assertLessEqual(abs(centers[index] - centers[(index + 1) % 16]), 1.5)
 
-    def test_left_gaze_size_transitions_are_gentle(self) -> None:
+    def test_all_gaze_body_scales_match_idle_while_head_pitch_can_change(
+        self,
+    ) -> None:
         hd_root = ASSET_ROOT / "frames_2x"
-        manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
-        entries = {entry["path"]: entry for entry in manifest["frames"]}
-        heights = []
-        adjustments = []
-        for index in (0, 15, 14, 13, 12, 11, 10, 9, 8):
-            entry = entries[f"look/{index:02d}.png"]
-            adjustment = entry.get("scale_adjustment", 1.0)
-            self.assertGreaterEqual(adjustment, 1.0)
-            self.assertLessEqual(adjustment, 1.023)
-            adjustments.append(adjustment)
-            with Image.open(hd_root / entry["path"]) as image:
-                bounds = image.getchannel("A").getbbox()
-                assert bounds is not None
-                heights.append(bounds[3] - bounds[1])
-        self.assertLessEqual(abs(heights[0] - heights[1]), 1)
-        for first, second in zip(heights[1:], heights[2:]):
-            self.assertLessEqual(abs(first - second), 3)
-        self.assertEqual(adjustments[0], 1.0)
-        self.assertEqual(adjustments[-1], 1.0)
-        self.assertGreater(adjustments[1], adjustments[-2])
-
-    def test_corrected_frames_use_native_sources_and_keep_foot_anchors(self) -> None:
-        hd_root = ASSET_ROOT / "frames_2x"
+        with Image.open(hd_root / "idle/00.png") as idle:
+            reference_feet = planted_foot_bounds(idle)
+            reference_body = idle.crop((0, 260, 384, 416)).tobytes()
         manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
         entries = {entry["path"]: entry for entry in manifest["frames"]}
         for index in range(16):
+            with self.subTest(direction=index):
+                with Image.open(hd_root / f"look/{index:02d}.png") as image:
+                    feet = planted_foot_bounds(image)
+                    self.assertEqual(image.crop((0, 260, 384, 416)).tobytes(),
+                                     reference_body)
+                self.assertEqual(feet[3], reference_feet[3])
+                entry = entries[f"look/{index:02d}.png"]
+                self.assertEqual(entry["scale_calibration"],
+                                 "shared_idle_body_pixels")
+                self.assertEqual(entry["shared_body_from_y"], 260)
+                self.assertEqual(entry["body_sha256"],
+                                 entries["look/00.png"]["body_sha256"])
+
+    def test_modular_sources_keep_idle_foot_anchors_and_sector_mapping(
+        self,
+    ) -> None:
+        hd_root = ASSET_ROOT / "frames_2x"
+        manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
+        entries = {entry["path"]: entry for entry in manifest["frames"]}
+        idle_path = hd_root / "idle/00.png"
+        idle_sha = hashlib.sha256(idle_path.read_bytes()).hexdigest()
+        with Image.open(idle_path) as idle:
+            target = planted_foot_bounds(idle)
+        target_x = (target[0] + target[2]) / 2
+        for index in range(16):
             path = f"look/{index:02d}.png"
             entry = entries[path]
-            source = (
-                "look-row-9.png" if index < 8 else "look-row-10-before-registration.png"
-            )
-            self.assertEqual(entry["source"], f"decoded/{source}#component={index % 8}")
-            self.assertLess(abs(entry["aspect_rescale_ratio"] - 1), 0.004)
-            with (
-                Image.open(hd_root / path) as hd,
-                Image.open(ASSET_ROOT / "frames" / path) as native,
-            ):
-                feet = hd.getchannel("A").crop((0, 352, 384, 388)).getbbox()
-                low_feet = native.getchannel("A").crop((0, 176, 192, 194)).getbbox()
-                assert feet is not None and low_feet is not None
-                offset_x = {10: -1, 11: 1, 14: 1, 15: -1}.get(index, 0)
-                self.assertEqual(entry.get("horizontal_anchor_adjustment", 0), offset_x)
-                self.assertLessEqual(
-                    abs((feet[0] + feet[2]) / 2 - low_feet[0] - low_feet[2] - offset_x),
-                    0.5,
-                )
-                self.assertEqual(feet[3], 36)
+            self.assertEqual(entry["source"],
+                             f"private-v3-gaze-modular/look/{index:02d}.png")
+            self.assertEqual(entry["status"], "composited_v3_gaze_shared_idle_body")
+            self.assertEqual(entry["source_size"], [384, 416])
+            self.assertGreaterEqual(min(entry["head_provenance"]["size"]), 1000)
+            self.assertEqual(entry["reference_sha256"], idle_sha)
+            self.assertEqual(entry["degrees_clockwise_from_up"], index * 22.5)
+            self.assertLess(abs(entry["aspect_rescale_ratio"] - 1), 0.006)
+            with Image.open(hd_root / path) as hd:
+                feet = planted_foot_bounds(hd)
+            self.assertLessEqual(abs((feet[0] + feet[2]) / 2 - target_x), 0.5)
+            self.assertEqual(feet[3], target[3])
 
 
 if __name__ == "__main__":

@@ -9,15 +9,21 @@ PNGs from `aiko_pet/assets/frames_2x/`, not a 2x nearest-neighbor enlargement.
 ## Sources and reproducibility
 
 120 frames: twelve eight-pose clips, eight pickup poses, and 16 gaze poses.
-The export uses the owner-approved **Aiko Anime** Sailor-skin archives:
+The original export uses the owner-approved **Aiko Anime** Sailor-skin archives:
 `Aiko_Anime_8_Frames_Komplett.zip` and `Aiko_Pick_Up_und_Hinlegen.zip`.
+The V3 eating and gaze replacements described below use new private individual
+originals instead of the archive's eight eating and sixteen gaze poses.
 Original archive media do not belong to the public source repository;
 only the reduced 2x **runtime assets** and their provenance are shipped.
 They retain the project's restricted Aiko artwork terms, **not MIT**.
 
 Every 2x output is listed by path, source image/crop and SHA-256 in
 `aiko_pet/assets/frames_2x/manifest.json`. Regular clips preserve the original
-1x sprite's alpha-128 silhouette bounds and baseline. Gaze poses use connected
+1x sprite's alpha-128 silhouette bounds and baseline, except for V3 eating,
+which uses Idle's standing proportions and the unchanged eating floor anchor.
+The following gaze extraction and correction details describe the historical
+V2 export. Its current replacement is documented under V3 gaze below.
+Those archive-derived gaze poses use connected
 figures from the native `decoded/look-row-9.png` and
 `decoded/look-row-10-before-registration.png` sources. Their hair can cross
 equal-width tile boundaries, so rectangular eight-way division is unsuitable.
@@ -69,6 +75,11 @@ python scripts/build_character_hd_2x.py \
   --pickup-archive "C:/Aiko/Aiko_Pick_Up_und_Hinlegen.zip" \
   --output-dir aiko_pet/assets/frames_2x
 ```
+
+This command rebuilds the historical archive export. Apply the private V3
+export commands in the sections below afterwards to restore the current
+eating, gaze, modular Idle and question/request replacements; the old archives
+alone do not contain them.
 
 Pillow is used **only at export time**, not at application runtime.
 The exported audit CSV identifies every source, a thresholded silhouette
@@ -189,9 +200,212 @@ the head-width changes (idle 178, final pickup 180, eating endpoints 200 and
 208 HD pixels) are retained rather than corrected in this restoration. All
 120 outputs reproduce from the original archives into an empty export folder.
 
+### V3 eating replacement at 2x
+
+On **2026-10-23**, the owner requested the complete V3 eating sequence,
+its productive replacement and then accepted the visible result as completed.
+All eight `frames_2x/eat/00.png` through `07.png` now use the new sequence.
+Seven separately generated transparent originals supply eight positions;
+the final low holding pose reuses the first byte-for-byte. The originals are
+1205 x 1305 or 1205 x 1306 pixels. Prompts, input hashes, original tool paths,
+independent review and the previous export are preserved outside Git.
+
+Idle defines the character, hair and head/body proportions. Motion raises the
+hands to the mouth, makes bite contact, closes/chews and lowers the hands.
+The item remains a separate overlay. Small regenerated iris/hair/line details
+remain; this is not a pixel-identical local edit of Idle. The owner accepted
+the improved result after seeing the exchanged assets in the application.
+
+`tools.character_eating_export` registers the originals proportionally at
+384 x 416 with a visible height of 312 and a shoe baseline of 392. Source
+width and height are scaled together, with less than 0.3% integer rounding
+in the current export. The shoe center is aligned to x192. Eating's existing
+canvas offset places that baseline on the same world floor as Idle.
+All 1x PNGs, other animation PNGs, food anchors, timing and bite events remain
+unchanged. The HD manifest records each source/output hash and the reused pose.
+
+After rebuilding the legacy archive export, apply the private V3 originals:
+
+```console
+python -m tools.character_eating_export /path/to/private-v3-eating/originale \
+  --hd-root aiko_pet/assets/frames_2x
+```
+
+The exporter validates and stages all eight inputs before replacing any
+productive PNG. Missing inputs leave the existing export intact. Independent
+review checked every registered pose and Onigiri contact. A separate native
+Windows Tk smoke exercised pickup/holding, all eight actual HD eating images,
+their overlay coordinates, bite-contact/bite events and return to Idle with
+the overlay hidden. Automated checks do not stand in for the owner's visual
+acceptance, which was explicitly provided afterwards.
+
+Existing Tk image objects stay cached. Replacing a file does not guarantee
+that a frame already loaded by a running process changes; a fresh application
+start reliably loads the current files. This change adds no hot-reload path.
+
+### V3 gaze replacement at 2x
+
+On **2026-10-23**, the owner requested installation of the reviewed modular
+sequence, including corrected heads 00/14/15 and the final crown/ahoge edit
+on 15, followed by the jointly calibrated heads and corrected neck joins.
+All sixteen `frames_2x/look/00.png` through `15.png` use one shared
+body extracted from the existing Idle. Their individual heads come from the
+preserved large V3 originals; corrections are also separate large originals.
+The private source packages, exact prompts, masks and earlier previews remain
+outside Git. Generated raw output is not substituted for a reviewed composite.
+
+Direction mapping remains 00 up, 04 screen-right, 08 down and 12 screen-left,
+with 22.5-degree clockwise steps. The body remains frontal while the head/eyes
+turn. Every frame is RGBA-pixel-identical to Idle below y260; all foot centers
+are x191 and sole baselines y388. The shared body file is unchanged, and every
+opaque body pixel, including sleeves and collar, remains RGBA-identical.
+The sixteen heads were proportionally recalibrated from their preserved native
+sources against Idle's visible core head shape, excluding ahoge and hair tips.
+Jaw/neck landmarks set their placement separately; the unchanged collar lies
+in front of excess neck ends. The earlier y170 lock on frame15 applied to its
+hair-only correction; the subsequent calibration repositions and scales that
+whole head. Approximate visible head envelopes are artistic registration
+guides, not anatomical measurements. Existing face, eye and hair drawing
+differences remain; identical silhouettes are not claimed.
+
+The reproducible private installation package contains `body.png`, sixteen
+`heads/NN.png` components, sixteen reviewed `look/NN.png` composites and its
+own `manifest.json`. It is preserved under
+`asset-generierung/2026-10-23-umsehen-v3-kopfkalibrierung-2x-produktion/paket/` in the
+neighboring private data folder. Source reconstruction is documented in the
+preceding modular, head-correction, head15-hair-correction and joint
+head-calibration preview runs. The previous production package is retained
+as a historical version.
+
+After an archive rebuild and the V3 eating export, install the modular package:
+
+```console
+python -m tools.character_gaze_modular_export /path/to/private-modular-package \
+  --hd-root aiko_pet/assets/frames_2x
+```
+
+This command validates all sixteen source/composite/head digests, the shared
+body, the exact current Idle reference, lower-body pixels and foot anchors
+before staging replacements. It writes only the sixteen 2x gaze PNGs and
+updates their records in the existing 120-frame manifest. Other records,
+accepted eating PNGs, 1x files, animation timing/events and cache code are
+preserved. There is no additional resizing, head stretching or lateral offset.
+The runtime manifest records the shared-body digest, each head's original
+source/digest/dimensions, head calibration scale and jaw/neck registration,
+reviewed composite digest and final output digest.
+
+The existing binary alpha-128 export convention is retained. All sixteen
+calibrated preview composites already have binary alpha and are installed
+byte-for-byte, without another resizing or normalization pass. No new images
+were generated for this calibration or installation.
+
+The superseded full-figure V3 exporter and its tests are retained only in
+the private development archive, outside the active repository. It first used
+shoe width, then neckerchief-knot-to-sole distance (Idle:124.625px). Reapplying
+that algorithm would replace the shared-body result. Old V2 strip-specific
+scaling/offsets likewise do not apply to the modular sequence. Active exporters
+share image contracts through `tools.character_export_common`; none imports
+another exporter or adds a runtime dependency.
+
+Regression checks cover malformed/missing final inputs without partial
+replacement, shared-body preservation, source provenance, direction mapping,
+alpha normalization and unrelated frame records. Native Windows Tk verifies
+selection of every actual HD PNG, 15-to-00, forward Idle and the unchanged
+1x catalogue in a separate hidden renderer without opening the normal save.
+A running Aiko process can retain previously loaded sprite images until
+restarted; file installation does not invalidate that existing cache.
+
+### V3 modular Idle blink at 2x
+
+The owner requested installation of the modular Idle preview on 2026-10-23.
+The original `idle/00.png` stays byte-identical as the shared Idle/gaze
+reference. Only existing eye regions are overlaid on that fixed image;
+head/body silhouette, hair outside the eye masks, mouth, neck and body remain
+unchanged. The shared body and original collar match the modular gaze set.
+These are reused 2x eye patches, not newly generated large individual
+originals; this installation does not close historical original-source gaps.
+
+The eight existing slots use open, open, half-open, closed, half-open, open,
+open, open eyes. All open slots copy the reference PNG exactly; the repeated
+half-open slots share the same reviewed pixels. Common timings remain eight
+160 ms frames. The visible blink therefore takes 480 ms; the separate preview
+GIF used 220 ms. Existing ambient scheduling still holds neutral frame0
+between blinks. No 1x files, animation timing/events, gaze frames or runtime
+cache code change.
+
+The preserved package is
+`asset-generierung/2026-10-23-idle-v3-modular-2x-produktion/paket/` in the
+neighboring private data folder. It contains the body/head, eye modules,
+fixed eye mask, eight reviewed PNGs and their provenance manifest. After an
+archive rebuild, restore it with:
+
+```console
+python -m tools.character_idle_modular_export /path/to/private-idle-package \
+  --hd-root aiko_pet/assets/frames_2x
+```
+
+The exporter validates all inputs before staging replacements: exact Idle
+reference, component hashes/reassembly, a mask confined to the eye region,
+unchanged alpha and every pixel outside the mask, repeated phases and exact
+open endpoints. Only the eight 2x Idle files and their manifest records are
+written. The other 112 HD frame records, including all16 calibrated gaze
+directions, are preserved. Private before/after checks and a fresh native Tk
+renderer cover the complete Idle cycle and transitions to all gaze sectors.
+Existing sprite caches can retain earlier PNGs until the application restarts.
+
+### V3 question/request gesture at 2x
+
+On 2026-10-24 the owner requested the complete animation and replacement of
+all eight 2x runtime slots, superseding the preceding single-pose preview.
+The semantic label is question/request gesture; the existing runtime key and
+filenames remain `waiting` so current triggers and 1x playback are preserved.
+
+The complete sequence is Idle, separated rising hands (A), lower clasp (B),
+upper request hold (C, half-open eyes), upper hold (C, closed eyes), lower
+clasp (B, half-open eyes), lowering separated hands (A), Idle. Actual motion
+poses are reused in reverse for the return. There are no crossfaded duplicate
+arms or whole-character morphs. Existing frame durations remain
+330/210/220/320/250/350/390/2500 ms, a 4570 ms loop.
+
+Two new built-in ImageGen edits supply native A/B originals at 1205x1305 and
+1205x1306. The preceding 1205x1305 C original is reused. These three distinct
+large sources support eight playback positions; eight independently generated
+originals are not claimed. Native outputs, prompts, metadata, masks and source
+assignments are preserved outside Git. Idle endpoints reuse the existing
+384x416 reference byte-for-byte, and existing 2x eye modules are reused.
+Small exports are not relabeled as native 1000px sources.
+
+Only arm/hand modules from the new sources change the standing figure. The
+Idle head outside the eye mask, visible torso/skirt and the lower body are
+retained from the reference. Every frame keeps Idle's x191/y388 foot anchor;
+slots0/7 are the exact Idle PNG and slots1/6 share the same motion image.
+New arm-edge alpha is normalized to the existing binary-alpha convention
+before installation. There is no further resizing in the package installer.
+
+The private run is
+`asset-generierung/2026-10-24-frage-bitte-v3-produktion/`; `installationspaket/` preserves
+the complete reviewed installation input. After rebuilding the legacy HD
+assets, restore the gesture with:
+
+```console
+python -m tools.character_request_export /path/to/private-request-package \
+  --hd-root aiko_pet/assets/frames_2x
+```
+
+The exporter validates all three native source sizes/digests, all eight
+reviewed frame/mask digests, phase order, exact Idle endpoints, planted feet,
+lower-body preservation and the protected Idle head before staging any
+replacement. Only the eight `waiting` PNGs and their manifest records change;
+the other112 HD records, all1x artwork, timing, triggers and parallel UI work
+are preserved. Per-frame provenance distinguishes native arm sources from
+reused Idle/eye components. A separate native Tk check covers the full loop,
+entry/exit to Idle, all gaze transitions and unchanged 1x selection. Existing
+application sprite caches are refreshed on restart, not by PNG installation.
+
 ### Open artwork task: regenerate a cohesive eating sequence
 
-**Status: regeneration required; current artwork accepted for continued use.**
+**Historical V2 finding; the 2x task was completed and accepted on 2026-10-23
+as described above. The 1x sequence intentionally remains unchanged.**
 On **2026-10-20**, the owner accepted the restored eating sequence with its
 visible drawing differences and requested that the remaining artwork work be
 recorded. The affected set is `eat/00` through `eat/07`; review and regenerate
@@ -215,9 +429,9 @@ consistent through the eight eating poses and their entry/exit transitions.
 Retain the existing event/timing and overlay contracts when integrating the
 replacement art.
 
-This is an open visual-quality task, not a runtime or file-corruption defect.
-The restored assets remain in use without further size adjustments. No image
-generation or 1x/2x asset changes are part of this documentation decision.
+This was a visual-quality task rather than a runtime or file-corruption
+defect. The 2026-10-20 documentation decision retained the restored assets;
+the subsequent V3 production request superseded that decision for 2x only.
 
 ### Forward gaze and empty-hand offer preview
 

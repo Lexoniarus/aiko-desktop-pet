@@ -72,9 +72,39 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
-Known artwork work: the restored eating sequence remains in use, with
-regeneration required for its inconsistent proportions relative to idle and
-pickup. See the [eating regeneration backlog](docs/HD_CHARACTER_SPRITES.md#open-artwork-task-regenerate-a-cohesive-eating-sequence).
+The eight 2x Idle slots now use a modular blink on the unchanged Idle reference.
+Three existing eye phases are reused; all pixels outside the eye masks, body
+and silhouette remain fixed. The source artwork is preserved 2x material,
+not newly generated large originals. Native 1x files and common animation
+timing remain unchanged. See the
+[modular Idle export](docs/HD_CHARACTER_SPRITES.md#v3-modular-idle-blink-at-2x).
+
+The eight 2x `waiting` slots contain the V3 question/request gesture: hands
+rise, meet, hold briefly and lower back to Idle. Three large individual
+arm-pose originals cover the distinct A/B/C poses; matching return phases
+reuse the same artwork. Idle endpoints and existing eye modules are reused.
+The originals are 1205x1305, 1205x1306 and 1205x1305, preserved outside Git.
+Native 1x frames, timing and reaction triggers remain unchanged. See the
+[question/request export](docs/HD_CHARACTER_SPRITES.md#v3-questionrequest-gesture-at-2x).
+
+The eight 2x eating poses now use the V3 sequence, visually accepted by the
+owner on 2026-10-23. Seven large generated individual originals cover eight
+positions; the final holding pose reuses the first. Private originals and
+prompts remain outside Git. Native 1x artwork remains unchanged. See the
+[V3 eating export](docs/HD_CHARACTER_SPRITES.md#v3-eating-replacement-at-2x).
+
+All sixteen 2x gaze directions now use the reviewed modular V3 sequence:
+one shared Idle body, individual head cutouts, corrected heads 00/14/15,
+the final crown/ahoge correction on 15 and subsequent joint head/neck
+calibration against Idle. Native head sources are scaled proportionally;
+jaw/neck placement is set separately, with the unchanged collar in front of
+neck ends. All visible body pixels are preserved, and the body below y260 is
+pixel-identical to Idle throughout; the foot center is x191 and sole baseline y388. The
+head sources, masks and reviewed composition package remain outside Git.
+`tools.character_gaze_modular_export` installs that package without rescaling;
+the superseded full-figure exporter is preserved only in the private archive.
+See the [V3 gaze export](docs/HD_CHARACTER_SPRITES.md#v3-gaze-replacement-at-2x).
+The existing 1x catalogue and accepted V3 eating PNGs remain unchanged.
 
 The prepared eating anchors move six source pixels downward relative to the
 imported overlay hints, allowing native-size Onigiri to overlap the fingers
