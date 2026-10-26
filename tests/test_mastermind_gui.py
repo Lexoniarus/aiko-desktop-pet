@@ -15,7 +15,11 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.common.window_geometry import WindowBounds
 from aiko_pet.ui.view_models.game_models import HandAnchor
 from aiko_pet.ui.view_models.mastermind_models import place_code
-from aiko_pet.ui.windows.mastermind_window import MastermindWindow
+from aiko_pet.ui.windows.mastermind_window import (
+    BOARD_HEIGHT,
+    BOARD_PADDING,
+    MastermindWindow,
+)
 from tools.desktop_test_support import create_test_desktop
 from tools.tk_test_time import ControlledTkTime
 
@@ -182,6 +186,33 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(self.code.canvas.winfo_width(), 414)
         self.assertIn(self.code.window, self.pet._overlay_windows())
 
+    def test_first_mapping_shows_all_ten_rows_when_body_has_room_without_input(self):
+        self.game.close()
+        game = MastermindWindow(
+            self.pet.root,
+            on_closed=lambda _summary: None,
+            codes=self.pet._game_visuals.code_ports,
+            speak=lambda *_args: None,
+            animate=lambda _clip: None,
+            emote=lambda *_args: None,
+            always_on_top=False,
+            skin=self.pet._hover._skin,
+            bounds_at=lambda _x, _y: WindowBounds(0, 0, 1920, 1440),
+        )
+        self.addCleanup(game.close)
+        # Only initial layout work; no greet, focus event, click or drag.
+        self.pet.root.update_idletasks()
+        self.clock.advance(0)
+        self.pet.root.update_idletasks()
+        outer, viewport = game._panel.scroll.canvas, game.board_scroll.canvas
+        available = (outer.winfo_height() - game.board_scroll.frame.winfo_y()
+                     - BOARD_PADDING)
+        self.assertGreaterEqual(available, BOARD_HEIGHT)
+        self.assertEqual(viewport.winfo_height(), BOARD_HEIGHT)
+        self.assertEqual(len(game.board.find_withtag("row")), 10)
+        self.assertLessEqual(game.board.winfo_rooty() + BOARD_HEIGHT,
+                             viewport.winfo_rooty() + viewport.winfo_height())
+
     def test_narrow_panel_keeps_actions_and_footer_accessible(self):
         self.game.close()
         game = MastermindWindow(
@@ -265,12 +296,26 @@ class MastermindGuiTests(unittest.TestCase):
 
     def test_cancelled_drop_and_close_release_local_grab_and_ghost(self):
         palette = self.game.palette
-        palette.event_generate("<ButtonPress-1>", x=32, y=28)
+        self.pet.root.update_idletasks()
+
+        def begin_drag():
+            palette.event_generate(
+                "<ButtonPress-1>", x=32, y=28,
+                rootx=palette.winfo_rootx() + 32, rooty=palette.winfo_rooty() + 28,
+            )
+            self.assertIsNone(self.game._drag._ghost)
+            # A click only selects; the preview starts after actual movement.
+            palette.event_generate(
+                "<B1-Motion>", x=48, y=28,
+                rootx=palette.winfo_rootx() + 48, rooty=palette.winfo_rooty() + 28,
+            )
+
+        begin_drag()
         self.assertIsNotNone(self.game._drag._ghost)
         palette.event_generate("<ButtonRelease-1>", x=-100, y=-100)
         self.assertEqual(self.game._draft, [None] * 4)
         self.assertIsNone(palette.grab_current())
-        palette.event_generate("<ButtonPress-1>", x=32, y=28)
+        begin_drag()
         ghost = self.game._drag._ghost
         assert ghost is not None
         self.game.close()

@@ -744,6 +744,24 @@ draft. Closing releases the grab, destroys the image and cancels the sequence.
 editable. `GameCodePorts` connects the passive code strip; the existing game host
 retains admission, topmost and once-only completion ownership.
 
+Initial viewport correction (2026-10-26): all ten rows are drawn before input.
+The prepared board height is retained while Tk still reports an unmapped
+one-pixel body. MastermindWindow listens to the actual body viewport allocation
+and board-frame placement before mapping, rather than waiting for another
+top-level configure/input event. The frame's top padding is already included in
+its y position, so only the bottom padding is deducted from the usable height.
+Layout remains coalesced through one idle callback; preparation replaces older
+pending work and closing cancels it. Large work areas show all ten rows without
+a click; genuinely constrained areas keep a scrollable board.
+
+Verification: 59 targeted tests pass in an isolated Git-tree export, including
+the first-map/no-input case, constrained geometry, pending-layout cancellation,
+all Mastermind GUI/rule/sequence tests and shared menu/scroll/game layouts.
+The existing drag-cleanup fixture now generates motion before expecting a drag
+preview, matching the click-versus-drag contract; production drag logic is
+unchanged. Ruff and strict Mypy pass; only the two previously recorded unrelated
+Pyright findings remain. No Computer Use workflow or normal save was used.
+
 After confirmation Aiko places the four feedback marks at **90 ms intervals**.
 Their grouping remains unordered: exact marks first, then misplaced, then unused.
 Numeric counts appear after the fourth mark. Input stays blocked during this

@@ -21,6 +21,7 @@ from .mastermind_sequence import MastermindSequence
 ROW_HEIGHT = 48
 HEADER_HEIGHT = 24
 BOARD_HEIGHT = HEADER_HEIGHT + ATTEMPTS * ROW_HEIGHT
+BOARD_PADDING = 6
 
 
 class MastermindWindow:
@@ -81,6 +82,10 @@ class MastermindWindow:
                 round_event=round_event,
             )
             self._present(self._sequence.game.view, self._sequence.game.score, True, 4)
+            # These allocations may settle after the top-level Configure event.
+            # Listen before show() so first mapping needs no click to finish.
+            for widget in (self._panel.scroll.canvas, self.board_scroll.frame):
+                widget.bind("<Configure>", self._configured, add="+")
             self._panel.show(root, prepare_body=self._fit_board)
             self._queue_layout()
             # Palette arrows edit the draft before inherited scroll bindings.
@@ -194,7 +199,7 @@ class MastermindWindow:
             height=min(BOARD_HEIGHT, max(144, screen_height - 560)),
             autohide=True,
         )
-        self.board_scroll.frame.pack(pady=6)
+        self.board_scroll.frame.pack(pady=BOARD_PADDING)
         self.board_horizontal = ScrollRegion(
             self.board_scroll.body,
             self.skin,
@@ -224,23 +229,33 @@ class MastermindWindow:
 
     def _fit_board(self, body_height: int | None = None) -> None:
         """Keep the palette and the entire board viewport inside the body."""
-        self._layout_timer = None
-        available = (
-            (self._panel.scroll.canvas.winfo_height() if body_height is None
-             else body_height)
-            - self.board_scroll.frame.winfo_y()
-            - 12
+        if body_height is not None:
+            self._cancel_layout()
+        else:
+            self._layout_timer = None
+        if self._closed:
+            return
+        height = (
+            self._panel.scroll.canvas.winfo_height()
+            if body_height is None else body_height
         )
+        if height <= 1:
+            # Preserve the prepared pre-map budget until Tk allocates the body.
+            return
+        # winfo_y already includes the top padding; reserve only the bottom.
+        available = height - self.board_scroll.frame.winfo_y() - BOARD_PADDING
         self.board_scroll.canvas.configure(height=max(96, min(BOARD_HEIGHT, available)))
         self._panel.scroll.canvas.yview_moveto(0)
 
     def _configured(self, event: tk.Event[tk.Misc]) -> None:
-        if event.widget is self.window:
+        if event.widget in (
+            self.window, self._panel.scroll.canvas, self.board_scroll.frame,
+        ):
             self._queue_layout()
         self._codes.move()
 
     def _queue_layout(self) -> None:
-        if self._layout_timer is None:
+        if not self._closed and self._layout_timer is None:
             self._layout_timer = self.window.after_idle(self._fit_board)
 
     def _cancel_layout(self) -> None:

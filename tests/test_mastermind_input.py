@@ -263,6 +263,57 @@ class MastermindInputTests(unittest.TestCase):
         panel.show(root, prepare_body=prepare)
         prepare.assert_called_once()
 
+    def layout_window(self):
+        game = self.window()
+        game._layout_timer = None
+        game.window, game._panel = cast(Any, Mock()), cast(Any, Mock())
+        game.board_scroll, game._codes = cast(Any, Mock()), cast(Any, Mock())
+        game.board_scroll.frame.winfo_y.return_value = 200
+        return game
+
+    def test_unmapped_viewport_does_not_replace_prepared_ten_row_height(self):
+        game = self.layout_window()
+        viewport = cast(Mock, game._panel.scroll.canvas)
+        board = cast(Mock, game.board_scroll.canvas)
+        viewport.winfo_height.return_value = 1
+        game._fit_board(740)
+        board.configure.assert_called_once_with(height=504)
+        # An early idle pass still sees Tk's unmapped one-pixel allocation.
+        game._fit_board()
+        board.configure.assert_called_once_with(height=504)
+
+    def test_viewport_allocation_finishes_layout_without_click_or_window_resize(self):
+        game = self.layout_window()
+        viewport = cast(Mock, game._panel.scroll.canvas)
+        board, window = cast(Mock, game.board_scroll.canvas), cast(Mock, game.window)
+        viewport.winfo_height.return_value = 740
+        callbacks = []
+        window.after_idle.side_effect = lambda callback: (
+            callbacks.append(callback) or "layout"
+        )
+        game._configured(cast(Any, Mock(widget=game._panel.scroll.canvas)))
+        self.assertEqual(len(callbacks), 1)
+        callbacks.pop()()
+        board.configure.assert_called_once_with(height=504)
+        # Genuine constrained work areas still use the available height.
+        viewport.winfo_height.return_value = 430
+        game._configured(cast(Any, Mock(widget=game._panel.scroll.canvas)))
+        callbacks.pop()()
+        self.assertEqual(board.configure.call_args.kwargs,
+                         {"height": 224})
+
+    def test_explicit_preparation_replaces_pending_idle_and_close_cancels_layout(self):
+        game = self.layout_window()
+        window = cast(Mock, game.window)
+        window.after_idle.return_value = "old-layout"
+        game._queue_layout()
+        game._fit_board(740)
+        window.after_cancel.assert_called_once_with("old-layout")
+        self.assertIsNone(game._layout_timer)
+        game._closed = True
+        game._queue_layout()
+        self.assertEqual(window.after_idle.call_count, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
