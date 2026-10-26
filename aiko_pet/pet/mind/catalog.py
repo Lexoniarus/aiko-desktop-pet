@@ -122,6 +122,7 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                 "conversation_outcomes",
                 "conversation_round_outcomes",
                 "conversation_wishes",
+                "horoscope_comment_keys",
             ),
             context="dialogue conditions",
         )
@@ -147,6 +148,11 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                 isinstance(i, str) for i in items
             ):
                 raise ValueError("Invalid typed dialogue condition")
+        keys = row.get("horoscope_comment_keys", [])
+        if not isinstance(keys, list) or any(
+            not isinstance(k, str) or not k for k in keys
+        ):
+            raise ValueError("Invalid passage comment key conditions")
         result.append(
             DialogueConditions(
                 frozenset(
@@ -171,25 +177,39 @@ def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
                 ),
                 row.get("sleeping"),
                 frozenset(row.get("conversation_topics", [])),
-                frozenset(enum_value(v, MoodletAttribution, context="cause attribution")
-                          for v in row.get("conversation_attributions", [])),
-                frozenset(enum_value(v, MoodletCauseKind, context="conversation cause")
-                          for v in row.get("conversation_causes", [])),
-                frozenset(enum_value(v, WishObjective, context="conversation objective")
-                          for v in row.get("conversation_objectives", [])),
+                frozenset(
+                    enum_value(v, MoodletAttribution, context="cause attribution")
+                    for v in row.get("conversation_attributions", [])
+                ),
+                frozenset(
+                    enum_value(v, MoodletCauseKind, context="conversation cause")
+                    for v in row.get("conversation_causes", [])
+                ),
+                frozenset(
+                    enum_value(v, WishObjective, context="conversation objective")
+                    for v in row.get("conversation_objectives", [])
+                ),
                 frozenset(row.get("conversation_targets", [])),
-                frozenset(enum_value(v, MoodletOutcome, context="conversation outcome")
-                          for v in row.get("conversation_outcomes", [])),
-                frozenset(enum_value(v, MoodletOutcome, context="conversation round")
-                          for v in row.get("conversation_round_outcomes", [])),
-                frozenset(enum_value(v, WishId, context="conversation source wish")
-                          for v in row.get("conversation_wishes", [])),
+                frozenset(
+                    enum_value(v, MoodletOutcome, context="conversation outcome")
+                    for v in row.get("conversation_outcomes", [])
+                ),
+                frozenset(
+                    enum_value(v, MoodletOutcome, context="conversation round")
+                    for v in row.get("conversation_round_outcomes", [])
+                ),
+                frozenset(
+                    enum_value(v, WishId, context="conversation source wish")
+                    for v in row.get("conversation_wishes", [])
+                ),
+                horoscope_comment_keys=frozenset(keys),
             )
         )
         if not result[-1].conversation_topics <= CONVERSATION_KEYS:
             raise ValueError("Unknown conversation topic")
         if not result[-1].conversation_targets <= (
-            set(DEFAULT_CATALOG.foods) | {game.value for game in GameId}
+            set(DEFAULT_CATALOG.foods)
+            | {game.value for game in GameId}
             | {"chat", "single", "twopart", "fact", "pet"}
         ):
             raise ValueError("Unknown conversation target")
@@ -399,14 +419,19 @@ def _indexed_lines(file: Path, raw: Any) -> tuple[Line, ...]:
         context="dialogue index",
     )
     if (
-        type(data["index_version"]) is not int or data["index_version"] != 1
+        type(data["index_version"]) is not int
+        or data["index_version"] != 1
         or type(data["catalogue_version"]) is not int
-        or data["catalogue_version"] != 3 or data["language"] != "de"
+        or data["catalogue_version"] != 3
+        or data["language"] != "de"
     ):
         raise ValueError("Unsupported dialogue index version or language")
     names = data["files"]
-    if (not isinstance(names, list) or not names
-            or any(not isinstance(name, str) or not name for name in names)):
+    if (
+        not isinstance(names, list)
+        or not names
+        or any(not isinstance(name, str) or not name for name in names)
+    ):
         raise ValueError("Invalid dialogue source files")
     if len(set(names)) != len(names):
         raise ValueError("Duplicate dialogue source file")
@@ -414,9 +439,14 @@ def _indexed_lines(file: Path, raw: Any) -> tuple[Line, ...]:
     lines: list[Line] = []
     for name in names:
         relative = PurePosixPath(name)
-        if (relative.is_absolute() or ".." in relative.parts
-                or "\\" in name or ":" in name
-                or relative.as_posix() != name or relative.suffix != ".json"):
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or "\\" in name
+            or ":" in name
+            or relative.as_posix() != name
+            or relative.suffix != ".json"
+        ):
             raise ValueError(f"Invalid dialogue source path: {name}")
         source = (root / name).resolve()
         if not source.is_relative_to(root) or source == file.resolve():
@@ -426,8 +456,9 @@ def _indexed_lines(file: Path, raw: Any) -> tuple[Line, ...]:
     if len(by_id) != len(lines):
         raise ValueError("Duplicate dialogue IDs across source files")
     order = data["line_order"]
-    if (not isinstance(order, list)
-            or any(not isinstance(item, str) or not item for item in order)):
+    if not isinstance(order, list) or any(
+        not isinstance(item, str) or not item for item in order
+    ):
         raise ValueError("Invalid dialogue line order")
     if len(order) != len(set(order)) or set(order) != set(by_id):
         raise ValueError("Dialogue line order must name every source ID exactly once")

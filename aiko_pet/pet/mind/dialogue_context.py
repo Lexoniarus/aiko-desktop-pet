@@ -60,6 +60,7 @@ class DialogueContext:
     working: bool = False
     present: bool | None = None
     conversation_topic: ConversationTopic | None = None
+    horoscope_comment_key: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,13 +81,17 @@ class DialogueConditions:
     conversation_outcomes: frozenset[MoodletOutcome] = frozenset()
     conversation_round_outcomes: frozenset[MoodletOutcome] = frozenset()
     conversation_wishes: frozenset[WishId] = frozenset()
+    horoscope_comment_keys: frozenset[str] = frozenset()
 
     def matches(self, context: DialogueContext) -> bool:
         topic = context.conversation_topic
         cause = topic.cause if topic is not None else None
         wish = cause.wish if cause is not None else None
-        round_outcome = (cause.game.round_outcome if cause.game is not None
-                         else cause.outcome) if cause is not None else None
+        round_outcome = (
+            (cause.game.round_outcome if cause.game is not None else cause.outcome)
+            if cause is not None
+            else None
+        )
         return (
             (
                 not self.emotional_states
@@ -99,27 +104,52 @@ class DialogueConditions:
             )
             and self.situational_conditions <= context.situational_conditions
             and (self.sleeping is None or self.sleeping == context.sleeping)
-            and (not self.conversation_topics or context.conversation_topic is not None
-                 and context.conversation_topic.key in self.conversation_topics)
-            and (not self.conversation_attributions
-                 or context.conversation_topic is not None
-                 and context.conversation_topic.cause is not None
-                 and context.conversation_topic.cause.attribution
-                 in self.conversation_attributions)
-            and (not self.conversation_causes
-                 or context.conversation_topic is not None
-                 and context.conversation_topic.cause is not None
-                 and context.conversation_topic.cause.kind in self.conversation_causes)
-            and (not self.conversation_objectives or wish is not None
-                 and wish.objective in self.conversation_objectives)
-            and (not self.conversation_targets or cause is not None
-                 and cause.target_id in self.conversation_targets)
-            and (not self.conversation_outcomes or cause is not None
-                 and cause.outcome in self.conversation_outcomes)
-            and (not self.conversation_round_outcomes
-                 or round_outcome in self.conversation_round_outcomes)
-            and (not self.conversation_wishes or wish is not None
-                 and wish.definition_id in self.conversation_wishes)
+            and (
+                not self.conversation_topics
+                or context.conversation_topic is not None
+                and context.conversation_topic.key in self.conversation_topics
+            )
+            and (
+                not self.conversation_attributions
+                or context.conversation_topic is not None
+                and context.conversation_topic.cause is not None
+                and context.conversation_topic.cause.attribution
+                in self.conversation_attributions
+            )
+            and (
+                not self.conversation_causes
+                or context.conversation_topic is not None
+                and context.conversation_topic.cause is not None
+                and context.conversation_topic.cause.kind in self.conversation_causes
+            )
+            and (
+                not self.conversation_objectives
+                or wish is not None
+                and wish.objective in self.conversation_objectives
+            )
+            and (
+                not self.conversation_targets
+                or cause is not None
+                and cause.target_id in self.conversation_targets
+            )
+            and (
+                not self.conversation_outcomes
+                or cause is not None
+                and cause.outcome in self.conversation_outcomes
+            )
+            and (
+                not self.conversation_round_outcomes
+                or round_outcome in self.conversation_round_outcomes
+            )
+            and (
+                not self.horoscope_comment_keys
+                or context.horoscope_comment_key in self.horoscope_comment_keys
+            )
+            and (
+                not self.conversation_wishes
+                or wish is not None
+                and wish.definition_id in self.conversation_wishes
+            )
         )
 
     def specificity(self) -> tuple[int, int]:
@@ -137,6 +167,7 @@ class DialogueConditions:
             + bool(self.conversation_targets)
             + bool(self.conversation_outcomes)
             + bool(self.conversation_round_outcomes)
+            + bool(self.horoscope_comment_keys)
             + bool(self.conversation_wishes)
         )
         # A short reaction may color wording without replacing overall feeling.

@@ -1,0 +1,21 @@
+{
+  "index_version": 1,
+  "catalogue_version": 1,
+  "language": "de",
+  "catalogue_id": "aiko-horoscope-de",
+  "revision": 1,
+  "files": [
+    "self.json",
+    "resources.json",
+    "exchange.json",
+    "home.json",
+    "play.json",
+    "routine.json",
+    "encounter.json",
+    "change.json",
+    "perspective.json",
+    "goals.json",
+    "friendship.json",
+    "rest.json"
+  ]
+}

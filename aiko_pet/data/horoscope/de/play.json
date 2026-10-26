@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.play.begin.a",
+      "revision": 1,
+      "theme": "play",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute meldet sich deine spielerische Seite. Ein ungewöhnlicher Einfall bringt Abwechslung und macht dich neugierig."
+        },
+        {
+          "id": "p2",
+          "text": "Der erste Versuch muss nicht besonders geschickt ausfallen. Gerade aus einem kleinen Umweg entsteht etwas Eigenes."
+        },
+        {
+          "id": "p3",
+          "text": "Lass eine Idee zu, bevor du nach ihrem Nutzen fragst. Die Freude daran zeigt dir heute eher die Richtung als ein Plan."
+        },
+        {
+          "id": "p4",
+          "text": "Du darfst etwas nur deshalb ausprobieren, weil es dir Spaß macht. Nicht jeder gute Moment muss ein Ergebnis vorweisen.",
+          "comment_key": "horoscope.play_without_usefulness"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.begin.b",
+      "revision": 1,
+      "theme": "play",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute macht dich eine kleine Herausforderung neugierig. Sie weckt mehr Spielfreude, wenn du nicht sofort ans Gewinnen denkst."
+        },
+        {
+          "id": "p2",
+          "text": "Ein ungewohnter Versuch bringt Leichtigkeit in den Tag. Vielleicht liegt gerade in einem Fehler der nächste gute Einfall."
+        },
+        {
+          "id": "p3",
+          "text": "Neugier bringt heute mehr Leichtigkeit als Können. Ein erster Versuch gewinnt, wenn ein Fehler dich nicht gleich stoppt.",
+          "comment_key": "horoscope.try_without_perfection"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.develop.a",
+      "revision": 1,
+      "theme": "play",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute trägt dich die Freude am Ausprobieren weiter. Ein zweiter Versuch bringt eine neue Wendung in eine kleine Idee."
+        },
+        {
+          "id": "p2",
+          "text": "Was zunächst ungeschickt wirkt, kann einen eigenen Reiz bekommen. Gib dir Zeit, bevor du es vorschnell verbesserst."
+        },
+        {
+          "id": "p3",
+          "text": "Bleib spielerisch. Nicht jeder Versuch muss sofort zeigen, wie gut du etwas kannst.",
+          "comment_key": "horoscope.try_without_perfection"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.develop.b",
+      "revision": 1,
+      "theme": "play",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wächst dein Vergnügen, sobald du einer Sache noch einen Versuch gibst. Eine kleine Hürde wird dadurch überschaubar."
+        },
+        {
+          "id": "p2",
+          "text": "Bleib locker, wenn etwas nicht gleich gelingt. Dein Gespür entwickelt sich besser ohne den Druck, sofort glänzen zu müssen."
+        },
+        {
+          "id": "p3",
+          "text": "Ein zweiter Versuch ist keine Niederlage. Manchmal fängt der eigentliche Spaß erst dort an.",
+          "comment_key": "horoscope.steady_effort"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.reflect.a",
+      "revision": 1,
+      "theme": "play",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute merkst du, was dir wirklich Spaß macht. Vielleicht ist es gerade der Teil, den du bisher nebensächlich fandest."
+        },
+        {
+          "id": "p2",
+          "text": "Ein kleiner Erfolg freut dich mehr, wenn du ihn nicht sofort mit dem nächsten Ziel vergleichst. Lass den Moment gelten."
+        },
+        {
+          "id": "p3",
+          "text": "Freude braucht keine Rechtfertigung. Du darfst etwas mögen, ohne daraus gleich etwas Nützliches zu machen.",
+          "comment_key": "horoscope.play_without_usefulness"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.reflect.b",
+      "revision": 1,
+      "theme": "play",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bemerkst du, welche Beschäftigung dir wirklich Freude gibt. Vielleicht hast du sie zu schnell mit Leistung verknüpft."
+        },
+        {
+          "id": "p2",
+          "text": "Ein guter Moment verliert nichts, wenn dabei kein vorzeigbares Ergebnis entsteht. Lass dich auf das Vergnügen selbst ein."
+        },
+        {
+          "id": "p3",
+          "text": "Die Freude selbst gibt heute den Ausschlag. Ein schöner Moment verliert nichts, nur weil du darin nicht besonders gut bist.",
+          "comment_key": "horoscope.play_without_usefulness"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.conclude.a",
+      "revision": 1,
+      "theme": "play",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute findet eine spielerische Idee einen schönen Abschluss. Es muss daraus nicht gleich ein größeres Vorhaben werden."
+        },
+        {
+          "id": "p2",
+          "text": "Hör auf, wenn der Moment für dich rund ist. Die Lust daran bleibt eher erhalten, wenn du nicht noch etwas erzwingst."
+        },
+        {
+          "id": "p3",
+          "text": "Ein guter Versuch darf genug sein. Auch ohne perfektes Ergebnis kannst du Freude daran behalten.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.play.conclude.b",
+      "revision": 1,
+      "theme": "play",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kann ein Zeitvertreib genau dann rund sein, wenn du noch Lust auf mehr hättest. Ein guter Abschluss bewahrt den Reiz."
+        },
+        {
+          "id": "p2",
+          "text": "Du musst nicht weitermachen, bis die Freude in Anstrengung kippt. Heb dir lieber etwas Neugier für später auf."
+        },
+        {
+          "id": "p3",
+          "text": "Aufhören kann zu einem guten Spiel gehören. Nicht jeder schöne Moment braucht noch eine letzte Zugabe.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    }
+  ]
+}

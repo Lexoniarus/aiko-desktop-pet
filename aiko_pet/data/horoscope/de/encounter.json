@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.encounter.begin.a",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt es dir leichter, auf jemanden zuzugehen. Eine einfache freundliche Geste erreicht mehr als ein großer Auftritt."
+        },
+        {
+          "id": "p2",
+          "text": "Eine Begegnung kann sich angenehm entwickeln, wenn du nicht gleich eine bestimmte Antwort erwartest."
+        },
+        {
+          "id": "p3",
+          "text": "Lass einen ersten Kontakt klein beginnen. Nähe braucht nicht sofort einen Namen oder einen Plan.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.begin.b",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wirkt eine offene, unaufgeregte Art besonders anziehend. Eine Begegnung braucht keine ausgefeilte Inszenierung."
+        },
+        {
+          "id": "p2",
+          "text": "Ein ehrlicher Satz verkürzt eine Distanz, die größer aussah, als sie ist. Lass die Antwort in ihrem eigenen Tempo kommen."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst Nähe nicht beweisen, indem du viel versprichst. Ein kleiner zugewandter Anfang reicht.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.develop.a",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kommt Bewegung in einen stockenden Austausch. Mit klaren Worten und etwas Geduld findet ihr eher zueinander."
+        },
+        {
+          "id": "p2",
+          "text": "Sag, was du selbst möchtest, ohne die Reaktion des Gegenübers vorwegzunehmen. So bleibt Platz für eine ehrliche Antwort."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst deutlich sein und freundlich bleiben. Beides muss sich nicht gegenseitig abschwächen.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.develop.b",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lassen sich Erwartungen zwischen zwei Menschen klarer aussprechen. Eine kleine Irritation gibt den nötigen Anstoß."
+        },
+        {
+          "id": "p2",
+          "text": "Bleib bei deinem Wunsch, statt dem anderen eine Absicht zu unterstellen. So findet ihr einen brauchbaren nächsten Schritt."
+        },
+        {
+          "id": "p3",
+          "text": "Klare Wünsche erleichtern heute den Austausch. Ob sie gefallen, muss nicht schon vor dem ersten Satz entschieden sein.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.reflect.a",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute nimmst du Zwischentöne deutlicher wahr. Hinter einer knappen Antwort kann mehr stecken, als du zunächst vermutest."
+        },
+        {
+          "id": "p2",
+          "text": "In einer Begegnung zeigt sich, wo ihr verschieden auf dieselbe Sache blickt. Ein Unterschied muss euch nicht trennen."
+        },
+        {
+          "id": "p3",
+          "text": "Ein ruhiger Moment zum Nachfragen kann mehr Nähe schaffen als der Versuch, die passende Reaktion vorauszuahnen."
+        },
+        {
+          "id": "p4",
+          "text": "Du darfst deinen Standpunkt behalten und dem Gegenüber Raum lassen. Verstehen heißt nicht, einer Meinung zu sein.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.reflect.b",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute spürst du deutlicher, wie viel Nähe dir angenehm ist. Dein Bedürfnis nach Abstand darf sich verändern."
+        },
+        {
+          "id": "p2",
+          "text": "Ein ruhiger Moment hilft, Zuneigung und Erwartung auseinanderzuhalten. Nicht jede Zurückhaltung bedeutet fehlendes Interesse."
+        },
+        {
+          "id": "p3",
+          "text": "Nähe und eigener Raum müssen sich heute nicht ausschließen. Du kannst jemanden mögen und trotzdem Abstand brauchen.",
+          "comment_key": "horoscope.space_without_withdrawal"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.conclude.a",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lässt sich eine kleine Spannung entschärfen, wenn du nicht jedes Wort weiterverfolgst. Ein ruhiger Abschluss tut gut."
+        },
+        {
+          "id": "p2",
+          "text": "Vielleicht bleibt zwischen dir und jemandem ein Punkt offen. Das muss den guten Teil der Begegnung nicht entwerten."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst Abstand lassen, ohne dich abzuwenden. Nicht alles zwischen zwei Menschen verlangt sofort eine Lösung.",
+          "comment_key": "horoscope.space_without_withdrawal"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.encounter.conclude.b",
+      "revision": 1,
+      "theme": "encounter",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute verliert ein Streit an Schärfe, wenn keiner den letzten Satz gewinnen muss. Ein freundlicher Abschluss wird möglich."
+        },
+        {
+          "id": "p2",
+          "text": "Du brauchst nicht jeden Punkt zu klären, um dem Gegenüber wieder offen zu begegnen. Eine ehrliche kleine Geste kann genügen."
+        },
+        {
+          "id": "p3",
+          "text": "Verständigung braucht heute nicht unbedingt das letzte Wort. Dein Standpunkt bleibt auch ohne diesen kleinen Sieg bestehen.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    }
+  ]
+}

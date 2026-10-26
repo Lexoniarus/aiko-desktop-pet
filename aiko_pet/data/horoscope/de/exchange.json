@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.exchange.begin.a",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dir ein erster Satz leichter als sonst. Eine kurze Nachricht oder Frage eröffnet einen freundlichen Austausch."
+        },
+        {
+          "id": "p2",
+          "text": "Warte nicht auf die besonders kluge Formulierung. Gerade eine einfache Bemerkung macht es anderen leicht, anzuknüpfen."
+        },
+        {
+          "id": "p3",
+          "text": "Deine Neugier darf sichtbar werden. Eine ehrliche Frage ist oft der bessere Anfang als eine fertige Antwort.",
+          "comment_key": "horoscope.curiosity_second_question"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.begin.b",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Eine unerwartete Nachricht könnte heute einen Kontakt eröffnen. Deine Antwort muss nicht besonders ausgefeilt sein."
+        },
+        {
+          "id": "p2",
+          "text": "Mit einer einfachen Bemerkung findest du leichter Anschluss als mit dem Versuch, sofort alles richtig zu sagen."
+        },
+        {
+          "id": "p3",
+          "text": "Ein erster Satz darf leicht bleiben. Interesse zeigt sich oft deutlicher in einer Frage als in einer großen Erklärung.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.develop.a",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Ein beiläufiges Gespräch nimmt heute eine interessante Wendung. Eine Rückfrage bringt dich weiter als die schnelle Antwort."
+        },
+        {
+          "id": "p2",
+          "text": "Du findest Worte für einen Gedanken, der bisher nur halb ausgesprochen war. Bleib bei dem, was du wirklich meinst."
+        },
+        {
+          "id": "p3",
+          "text": "Ein kleines Missverständnis lässt sich eher klären, wenn du den anderen Satz noch einmal in Ruhe aufnimmst."
+        },
+        {
+          "id": "p4",
+          "text": "Deine Neugier hält den Austausch lebendig. Du musst nicht auf alles sofort eine fertige Antwort haben.",
+          "comment_key": "horoscope.curiosity_second_question"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.develop.b",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bist du gedanklich schnell unterwegs. Eine Idee führt zur nächsten, und im Gespräch entstehen neue Verbindungen."
+        },
+        {
+          "id": "p2",
+          "text": "Lass dem Gegenüber Zeit, deinen Sprüngen zu folgen. Ein gut gesetzter Zwischenhalt macht deinen Gedanken verständlicher."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht als Erster antworten. Manchmal liegt die spannendere Entdeckung im Satz des anderen.",
+          "comment_key": "horoscope.curiosity_second_question"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.reflect.a",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Ein Satz klingt heute länger nach, als du erwartet hast. Mit etwas Abstand erkennst du einen anderen Sinn darin."
+        },
+        {
+          "id": "p2",
+          "text": "Vielleicht war eine knappe Antwort nicht so abweisend gemeint, wie sie zuerst wirkte. Lass den zweiten Eindruck zu."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht beim ersten Urteil bleiben. Genauer hinzusehen ist kein Zeichen von Unsicherheit.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.reflect.b",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dir an einer vertrauten Aussage ein bisher überhörtes Detail auf. Es kann deinen ersten Eindruck verändern."
+        },
+        {
+          "id": "p2",
+          "text": "Bevor du zwischen richtig und falsch entscheidest, lohnt sich ein zweiter Blick auf den Zusammenhang."
+        },
+        {
+          "id": "p3",
+          "text": "Eine genauere Frage bringt heute mehr als schnelle Gewissheit. Ein geändertes Urteil kann deinen Blick klarer machen.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.conclude.a",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lässt sich ein kleiner offener Punkt mit wenigen Worten klären. Eine lange Erklärung würde ihn eher größer machen."
+        },
+        {
+          "id": "p2",
+          "text": "Sprich aus, was dir wichtig ist, und gib dem Satz dann Raum. Nicht jede Pause verlangt sofort eine Ergänzung."
+        },
+        {
+          "id": "p3",
+          "text": "Ein klarer Gedanke darf für sich stehen. Du musst ihn nicht immer wieder absichern.",
+          "comment_key": "horoscope.clear_simple_words"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.exchange.conclude.b",
+      "revision": 1,
+      "theme": "exchange",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kommt ein Austausch an einen guten Schlusspunkt. Eine kurze Rückmeldung schafft mehr Ruhe als weiteres Abwägen."
+        },
+        {
+          "id": "p2",
+          "text": "Formuliere den offenen Gedanken so einfach wie möglich. Danach muss nicht jede denkbare Nachfrage schon beantwortet sein."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst bei den richtigen wenigen Worten bleiben. Nicht jeder Satz braucht noch einen erklärenden Nachsatz.",
+          "comment_key": "horoscope.clear_simple_words"
+        }
+      ]
+    }
+  ]
+}
