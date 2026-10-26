@@ -7,6 +7,7 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "ui.horoscope_book": frozenset(),
     "wish.quiz.label": frozenset(),
     "wish.quiz.description": frozenset(),
     "wish.quiz.utterance": frozenset(),

@@ -25,7 +25,7 @@ from ...pet.mind.object_knowledge import ObjectMemorySnapshot
 from ...pet.state import PetState
 from ...world.contracts import ObjectDefinition, WorldSnapshot
 from ..item_assets import load_item_catalog
-from ..world_catalog import build_consumable_definitions
+from ..world_catalog import build_world_definitions
 from .connection import open_database
 from .errors import storage_failures
 from .publication import publish_database, temporary_database
@@ -49,7 +49,7 @@ class SqliteStateStore:
         return (
             self._definitions
             if self._definitions is not None
-            else build_consumable_definitions(DEFAULT_CATALOG, load_item_catalog())
+            else build_world_definitions(DEFAULT_CATALOG, load_item_catalog())
         )
 
     def _exists(self) -> bool:

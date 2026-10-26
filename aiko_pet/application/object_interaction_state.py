@@ -50,8 +50,10 @@ class PhaseFeedback:
 
     @property
     def contact_active(self) -> bool:
-        return (self.aside is not None
-                and self.aside.event in ("object_busy", "object_busy_search"))
+        return self.aside is not None and self.aside.event in (
+            "object_busy",
+            "object_busy_search",
+        )
 
     @property
     def blocking_aside(self) -> bool:
@@ -204,8 +206,13 @@ class IdlePhase:
 @dataclass(slots=True)
 class CuePhase:
     name: Literal[
-        "notice", "recognize", "handover", "finish", "missing",
-        "notice_absence", "found",
+        "notice",
+        "recognize",
+        "handover",
+        "finish",
+        "missing",
+        "notice_absence",
+        "found",
     ]
     feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
 
@@ -240,6 +247,14 @@ class InspectionPhase:
 
 
 @dataclass(slots=True)
+class ReadingPhase:
+    name: ClassVar[Literal["read"]] = "read"
+    feedback: PhaseFeedback = field(
+        default_factory=lambda: PhaseFeedback(completed=True)
+    )
+
+
+@dataclass(slots=True)
 class DecisionPhase:
     name: ClassVar[Literal["decide"]] = "decide"
     decision: ObjectUseDecision
@@ -260,6 +275,14 @@ class SearchPhase:
 
 
 PhaseState: TypeAlias = (
-    IdlePhase | CuePhase | ApproachPhase | AnimationPhase | PutDownPhase
-    | InspectionPhase | DecisionPhase | WaitingPhase | SearchPhase
+    IdlePhase
+    | CuePhase
+    | ApproachPhase
+    | AnimationPhase
+    | PutDownPhase
+    | InspectionPhase
+    | ReadingPhase
+    | DecisionPhase
+    | WaitingPhase
+    | SearchPhase
 )

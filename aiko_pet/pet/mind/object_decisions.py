@@ -25,7 +25,14 @@ class ObjectUseContext(Enum):
 @dataclass(frozen=True, slots=True)
 class ObjectUseDecision:
     consume: bool
-    reason: Literal["hungry", "low_energy", "not_needed", "unrecognized", "unavailable"]
+    reason: Literal[
+        "hungry", "low_energy", "not_needed", "unrecognized", "unavailable", "read"
+    ]
+    read: bool = False
+
+    @property
+    def use(self) -> bool:
+        return self.consume or self.read
 
 
 def decide_object_use(
@@ -37,17 +44,23 @@ def decide_object_use(
         return ObjectUseDecision(False, "unrecognized")
     if state.sleeping:
         return ObjectUseDecision(False, "unavailable")
+    if known.kind == "book":
+        return ObjectUseDecision(False, "not_needed")
     drink = known.kind == "drink"
     if drink and state.sleep_episode.care_break:
         return ObjectUseDecision(False, "not_needed")
     level = state.energy if drink else state.satiety
-    if (state.sleep_episode.care_break
-            and level >= BALANCE.number("sleep", "food_target")):
+    if state.sleep_episode.care_break and level >= BALANCE.number(
+        "sleep", "food_target"
+    ):
         return ObjectUseDecision(False, "not_needed")
     if not drink:
         permission = food_wish_permission(
-            state.wishes, known.identity, elapsed=state.lived_seconds,
-            definitions=WISH_CATALOG.definitions, object_id=known.instance_id,
+            state.wishes,
+            known.identity,
+            elapsed=state.lived_seconds,
+            definitions=WISH_CATALOG.definitions,
+            object_id=known.instance_id,
             personal=context != ObjectUseContext.SUPPLY,
         )
         if permission.excluded:

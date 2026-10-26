@@ -89,32 +89,46 @@ GERMAN_TEXT = load_packaged_text_catalog()
 def parse_object_grammar(raw: Any) -> ObjectGrammarCatalog:
     """Validate only grammatical metadata; food names remain catalogue-owned."""
     data = object_fields(
-        raw, ("version", "locale", "objects"), context="object grammar",
+        raw,
+        ("version", "locale", "objects"),
+        context="object grammar",
     )
-    if (type(data["version"]) is not int or data["version"] != 1
-            or data["locale"] != "de"):
+    if (
+        type(data["version"]) is not int
+        or data["version"] != 1
+        or data["locale"] != "de"
+    ):
         raise ValueError("Unsupported object grammar catalogue")
     rows = object_fields(
-        data["objects"], (*DEFAULT_CATALOG.foods, "energy_drink"),
+        data["objects"],
+        (*DEFAULT_CATALOG.foods, "energy_drink"),
+        optional=("horoscope_book",),
         context="object grammar identities",
     )
     entries: dict[str, ObjectGrammar] = {}
     for identity, raw_entry in rows.items():
         row = object_fields(
-            raw_entry, ("gender",), optional=("spoken_name",),
+            raw_entry,
+            ("gender",),
+            optional=("spoken_name",),
             context=f"object grammar {identity}",
         )
         gender, name = row["gender"], row.get("spoken_name")
         if gender not in ("masculine", "feminine", "neuter"):
             raise ValueError(f"Invalid object gender: {identity}")
         if "spoken_name" in row and (
-            not isinstance(name, str) or not name or name != name.strip()
-            or len(name) > 80 or not name.isprintable()
-            or "{" in name or "}" in name
+            not isinstance(name, str)
+            or not name
+            or name != name.strip()
+            or len(name) > 80
+            or not name.isprintable()
+            or "{" in name
+            or "}" in name
         ):
             raise ValueError(f"Invalid spoken object name: {identity}")
         entries[identity] = ObjectGrammar(
-            cast(GrammaticalGender, gender), name,
+            cast(GrammaticalGender, gender),
+            name,
         )
     return ObjectGrammarCatalog(MappingProxyType(entries))
 

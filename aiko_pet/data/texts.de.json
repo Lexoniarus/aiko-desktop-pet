@@ -462,6 +462,7 @@
     "wish.quiz.description": "Aiko möchte eine vollständige Runde mit zehn Fragen mit dir spielen. Dein Punktestand ist dafür nicht wichtig.",
     "wish.quiz.utterance": "Ich hätte Lust auf eine Runde Quiz mit dir. Zehn Fragen, und ich darf die Quizmasterin sein.",
     "quiz.shared_progress": "Gemeinsame Quizrunden: {completed} von {required}",
-    "quiz.shared_completed": "Gemeinsam abgeschlossene Spielrunden: {rounds}"
+    "quiz.shared_completed": "Gemeinsam abgeschlossene Spielrunden: {rounds}",
+    "ui.horoscope_book": "Horoskopbuch"
   }
 }

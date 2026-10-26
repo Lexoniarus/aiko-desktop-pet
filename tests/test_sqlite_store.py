@@ -29,7 +29,7 @@ from aiko_pet.infrastructure.sqlite import store as store_module
 from aiko_pet.infrastructure.sqlite.publication import publish_database
 from aiko_pet.infrastructure.sqlite.session_rows import write_session_rows
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore
-from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
+from aiko_pet.infrastructure.world_catalog import build_world_definitions
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.friendship_history import FriendshipHistory
 from aiko_pet.pet.mind.object_knowledge import (
@@ -57,7 +57,7 @@ class SqliteStoreTests(unittest.TestCase):
         self.settings = PetSettings(x=-120, scale=2, zodiac_sign="leo")
         self.adaptive = profile()
         self.history = replace(social_history(), horoscope=admitted_day())
-        definitions = build_consumable_definitions(DEFAULT_CATALOG, load_item_catalog())
+        definitions = build_world_definitions(DEFAULT_CATALOG, load_item_catalog())
         world = WorldState(WorldSurface(800, 600, 96), definitions)
         item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
         self.world = world.snapshot()

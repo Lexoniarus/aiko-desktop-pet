@@ -162,8 +162,16 @@
   },
   "held_registration": {
     "cover_outer_edge_length_1x": 42,
-    "pivot_scope": "Book-local metadata; Aiko hand attachment not fitted"
+    "pivot_scope": "Book-local pivots preserved; attachment_offset_1x is relative to the existing character hand anchor.",
+    "attachment_offset_1x": [
+      0,
+      12
+    ]
   },
-  "lifecycle_direction": "Place, pick up, open/read, close/put down, dissipate; a newly available entry needs new placement.",
-  "runtime_registered": false
+  "lifecycle_direction": "Place, pick up, read, put down; fixed one-hour replay window after first completed put-down, then dissipate. Next day new placement.",
+  "runtime_registered": true,
+  "world_registration": {
+    "zoom": 2,
+    "reason": "Readable closed book matches carried cover height; shared cursor/ground sprite size."
+  }
 }

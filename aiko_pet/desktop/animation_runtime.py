@@ -46,6 +46,7 @@ class AnimationRuntimePorts:
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     ready_for_handover: Callable[[], bool] = lambda: False
+    holding_readable: Callable[[], bool] = lambda: False
     cursor_gaze_point: Callable[[], tuple[float, float] | None] = lambda: None
 
 
@@ -87,6 +88,12 @@ class DesktopAnimationRuntime:
         active_action: str | None,
     ) -> RenderDecision:
         """Preserve game/sleep/action/walk/gaze/idle priority without Tk."""
+        if (not game_mode and not self._state.sleeping
+                and self._ports.holding_readable()):
+            self.ambient.suspend(now)
+            return RenderDecision(SpriteSelection(
+                "pick_up", fixed_frame=len(self._assets.clips["pick_up"].frames) - 1,
+            ))
         priority = choose_animation_priority(
             game_mode=game_mode,
             sleeping=self._state.sleeping,

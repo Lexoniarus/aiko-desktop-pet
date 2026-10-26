@@ -1,6 +1,6 @@
 """Desktop adapters for World time, observation, input and presentation.
 
-    Pet decisions and interaction execution remain in their owning packages.
+Pet decisions and interaction execution remain in their owning packages.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ from ..application.session import WorldSessionSnapshot
 from ..application.session_time import SessionTimeProgression
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
-from ..infrastructure.world_catalog import build_consumable_definitions
+from ..infrastructure.world_catalog import build_world_definitions
 from ..infrastructure.world_motion import motion_parameters
 from ..pet.animation.character import FRAME_WIDTH, PlaybackEvent
 from ..pet.animation.item_assets import ItemCatalog
@@ -74,8 +74,7 @@ from .walk_runtime import WalkDriver
 
 class DesktopWorldRuntime:
     def defer_sleep(self) -> bool:
-        return (self.interaction.active or self.user_action_pending
-                or self._game_open())
+        return self.interaction.active or self.user_action_pending or self._game_open()
 
     def object_status(self) -> ObjectStatusSnapshot:
         world = self.world.snapshot()
@@ -89,16 +88,29 @@ class DesktopWorldRuntime:
         )
 
     def __init__(
-        self, *, root: tk.Tk, state: PetState, settings: PetSettings,
-        mind: PetMind, adaptive: AdaptiveRoutine, items: ItemCatalog,
-        clock: ActiveSessionClock, track: Callable[[], TaskbarTrack],
-        walk: WalkDriver, visual: DesktopVisualObservation, animated: AnimatedPet,
-        playback: ActionPlayback, inputs: Callable[[float, float], SessionInputs],
-        game_open: Callable[[], bool], character_action_busy: Callable[[], bool],
+        self,
+        *,
+        root: tk.Tk,
+        state: PetState,
+        settings: PetSettings,
+        mind: PetMind,
+        adaptive: AdaptiveRoutine,
+        items: ItemCatalog,
+        clock: ActiveSessionClock,
+        track: Callable[[], TaskbarTrack],
+        walk: WalkDriver,
+        visual: DesktopVisualObservation,
+        animated: AnimatedPet,
+        playback: ActionPlayback,
+        inputs: Callable[[float, float], SessionInputs],
+        game_open: Callable[[], bool],
+        character_action_busy: Callable[[], bool],
         present_feedback: Callable[
             [ObjectFeedback, Reaction, Callable[[FeedbackReceipt], None]], None
-        ], cancel_feedback: Callable[[], None],
-        cancel_offer_feedback: Callable[[], None], feedback: Callable[[str], None],
+        ],
+        cancel_feedback: Callable[[], None],
+        cancel_offer_feedback: Callable[[], None],
+        feedback: Callable[[str], None],
         save: Callable[[], None],
         restored_world: WorldSnapshot | None = None,
         restored_memory: ObjectMemorySnapshot | None = None,
@@ -111,12 +123,17 @@ class DesktopWorldRuntime:
         self._present_feedback = present_feedback
         self._save, self._mind = save, mind
         self._care: CareOutcome | None = None
+        self.expired_book: Callable[[str], None] = lambda _book: None
         self._cancel_feedback = cancel_feedback
         self._cancel_offer_feedback = cancel_offer_feedback
         self._motion_parameters = motion_parameters()
-        self.world = WorldState(self._surface(), build_consumable_definitions(
-            DEFAULT_CATALOG, items,
-        ))
+        self.world = WorldState(
+            self._surface(),
+            build_world_definitions(
+                DEFAULT_CATALOG,
+                items,
+            ),
+        )
         if restored_world is not None:
             self.world.restore_snapshot(restored_world)
             self.world.change_surface(self._surface(), recovering=True)
@@ -124,10 +141,15 @@ class DesktopWorldRuntime:
             restored_memory if restored_world is not None else None,
         )
         self.time_progression = SessionTimeProgression(
-            self.world, self.awareness.memory,
+            self.world,
+            self.awareness.memory,
         )
         self._consumption = ObjectConsumption(
-            state, mind, adaptive, clock=clock, memory=self.awareness.memory,
+            state,
+            mind,
+            adaptive,
+            clock=clock,
+            memory=self.awareness.memory,
             progression=self.time_progression,
         )
         self._relationship = ObjectRelationship(state, mind)
@@ -144,47 +166,66 @@ class DesktopWorldRuntime:
         self._event_timer: str | None = None
         self._events: deque[PlaybackEvent] = deque(maxlen=128)
         self.interaction = ObjectInteractionCoordinator(
-            self.world, play=self._play, stop=self._stop,
-            select_item=self._select_item, consume=self._consume,
+            self.world,
+            play=self._play,
+            stop=self._stop,
+            select_item=self._select_item,
+            consume=self._consume,
             resolve_instance=self.awareness.instance_for_record,
             record_for_instance=self.awareness.record_for_instance,
-            can_acquire=self._can_acquire, ground_x=self._ground_x,
+            can_acquire=self._can_acquire,
+            ground_x=self._ground_x,
             hand_type_conflicts=lambda record, instance: (
                 held_type_conflicts_with_memory(
-                    self.awareness.memory.get(record), instance,
+                    self.awareness.memory.get(record),
+                    instance,
                     self.world.snapshot(),
                 )
             ),
             completed=self._completed,
-            memory=self.awareness.memory, decide=self._decide,
-            feedback=self._phase_feedback, cancel_feedback=cancel_feedback,
-            now=lambda: self.now, inspection_seconds=BALANCE.number(
-                "object_behavior", "inspection_seconds",
+            memory=self.awareness.memory,
+            decide=self._decide,
+            feedback=self._phase_feedback,
+            cancel_feedback=cancel_feedback,
+            now=lambda: self.now,
+            inspection_seconds=BALANCE.number(
+                "object_behavior",
+                "inspection_seconds",
             ),
             withholding=self._withheld,
             experience=state.experience_interaction,
             withholding_active=lambda: any(
-                e.definition_id == MoodletId.WITHHELD for e in state.moodlets.active),
+                e.definition_id == MoodletId.WITHHELD for e in state.moodlets.active
+            ),
             acknowledge_handover=self._acknowledge_food_handover,
             begin_handover=self._begin_food_handover,
             finish_handover=lambda item: self._consumption.finish_handover(
-                self.world, item,
+                self.world,
+                item,
             ),
         )
         self._behavior = ObjectBehaviorCoordinator(
-            state, self.awareness, self.interaction, self.world,
+            state,
+            self.awareness,
+            self.interaction,
+            self.world,
         )
         self._behavior.request_orientation()
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
-            root=root, world=self.world, view=self.view, settings=settings,
+            root=root,
+            world=self.world,
+            view=self.view,
+            settings=settings,
             track=track,
             ports=CursorItemPorts(
                 capture_contact=self._capture_contact,
                 handover=self._handover_on_release,
-                assess_offer=self._assess_offer, present_offer=self._present_offer,
+                assess_offer=self._assess_offer,
+                present_offer=self._present_offer,
                 known_instance=self.awareness.known_instance,
-                cancel_feedback=self._cancel_offer, save=save,
+                cancel_feedback=self._cancel_offer,
+                save=save,
                 sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
                 finished=self._behavior.refresh_after_placement,
@@ -208,9 +249,12 @@ class DesktopWorldRuntime:
     def _surface(self) -> WorldSurface:
         track = self._track()
         return WorldSurface(
-            max(1, track.right - track.left), max(1, track.ground_y),
-            track.ground_inset(int(self.width), self.width * BALANCE.number(
-                "object_behavior", "reach_widths")),
+            max(1, track.right - track.left),
+            max(1, track.ground_y),
+            track.ground_inset(
+                int(self.width),
+                self.width * BALANCE.number("object_behavior", "reach_widths"),
+            ),
         )
 
     def _body_x(self) -> float:
@@ -239,13 +283,20 @@ class DesktopWorldRuntime:
         )
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
-        reaction = self._care.reaction if (
-            cue.event in ("object_finished_food", "object_finished_drink")
-            and self._care is not None
-        ) else None
+        reaction = (
+            self._care.reaction
+            if (
+                cue.event in ("object_finished_food", "object_finished_drink")
+                and self._care is not None
+            )
+            else None
+        )
         if reaction is None:
             reaction = self._mind.select_reaction(
-                cue.event, self.state, context_at(time.time()), time.monotonic(),
+                cue.event,
+                self.state,
+                context_at(time.time()),
+                time.monotonic(),
             )
         if reaction is None:
             raise ValueError(f"Missing required object reaction: {cue.event}")
@@ -349,24 +400,40 @@ class DesktopWorldRuntime:
 
     def _within_handover_reach(self, token: str) -> bool:
         item = self.world.get(token)
-        return (item.state == ObjectState.USER_HELD and item.position is not None
-                and abs(item.position.x - self._body_x()) <= self.width * .3
-                and self.width * .05 <= item.position.height <= self.width * .9)
+        return (
+            item.state == ObjectState.USER_HELD
+            and item.position is not None
+            and abs(item.position.x - self._body_x()) <= self.width * 0.3
+            and self.width * 0.05 <= item.position.height <= self.width * 0.9
+        )
 
     def _handover_on_release(self, token: str) -> bool:
         return self.interaction.offer_on_release(token)
 
     def _begin_food_handover(self, token: str, record: str) -> None:
+        if self.world.get(token).definition_id in self.view.items.readables:
+            return
         self._consumption.begin_handover(
-            self.world, token, self._inputs(time.time(), time.monotonic()),
+            self.world,
+            token,
+            self._inputs(time.time(), time.monotonic()),
             memory_id=record,
         )
 
     def _acknowledge_food_handover(self, token: str, record: str) -> None:
+        if self.world.get(token).definition_id in self.view.items.readables:
+            return
         self._consumption.acknowledge_handover(
-            self.world, token, self._inputs(time.time(), time.monotonic()),
+            self.world,
+            token,
+            self._inputs(time.time(), time.monotonic()),
             memory_id=record,
         )
+
+    def holding_readable(self) -> bool:
+        token = self.interaction.instance_id
+        return (self.interaction.phase == "read" and token is not None
+                and self.world.get(token).state == ObjectState.PET_HELD)
 
     def ready_for_handover(self) -> bool:
         """Show empty hands for a wanted item near the authored hand anchor.
@@ -375,8 +442,12 @@ class DesktopWorldRuntime:
         actual handover through the existing interaction coordinator.
         """
         token = self.cursor.instance_id
-        if (token is None or not self.cursor.inside or not self.cursor.offer_ready
-                or not self._can_acquire(token)):
+        if (
+            token is None
+            or not self.cursor.inside
+            or not self.cursor.offer_ready
+            or not self._can_acquire(token)
+        ):
             return False
         eyes = self._animated.cursor_eye_position
         presentation = self.cursor.presentation(eyes, self.width)
@@ -385,13 +456,20 @@ class DesktopWorldRuntime:
         if presentation is None or anchor is None:
             return False
         scale = self.settings.scale
-        hand_x = (self.settings.x or 0) + (FRAME_WIDTH / 2 - clip.anchor[0]
-                                         + anchor[0]) * scale
-        hand_y = (self.settings.y or 0) + (FOOT_BASELINE - clip.anchor[1]
-                                         + anchor[1]) * scale
+        hand_x = (self.settings.x or 0) + (
+            FRAME_WIDTH / 2 - clip.anchor[0] + anchor[0]
+        ) * scale
+        hand_y = (self.settings.y or 0) + (
+            FOOT_BASELINE - clip.anchor[1] + anchor[1]
+        ) * scale
         pose = presentation[1]
-        return math.hypot(eyes[0] + pose.x * self.width - hand_x,
-                          eyes[1] + pose.y * self.width - hand_y) <= 24 * scale
+        return (
+            math.hypot(
+                eyes[0] + pose.x * self.width - hand_x,
+                eyes[1] + pose.y * self.width - hand_y,
+            )
+            <= 24 * scale
+        )
 
     def cursor_gaze_point(self) -> tuple[float, float] | None:
         """Project the followed portion's visible center for sprite gaze only."""
@@ -412,26 +490,39 @@ class DesktopWorldRuntime:
         item = self.world.get(token)
         if item.position is None:
             return
-        sprite = self.view.items.foods[item.definition_id].sprites[self.settings.scale]
-        image = self.view.image(item.definition_id, self.settings.scale)
+        sprite = self.view.sprite(item.definition_id, self.settings.scale)
+        support = self.view.ground_pivot(item.definition_id, self.settings.scale)
         self._contact = (
-            self._track().left + item.position.x - image.width() / 2
-            + sprite.pivot[0] - (self.settings.x or 0),
-            self._track().ground_y - item.position.height - image.height()
-            + sprite.pivot[1] - (self.settings.y or 0),
+            self._track().left
+            + item.position.x
+            - support[0]
+            + sprite.pivot[0]
+            - (self.settings.x or 0),
+            self._track().ground_y
+            - item.position.height
+            - support[1]
+            + sprite.pivot[1]
+            - (self.settings.y or 0),
         )
 
     def _attention(self) -> ObjectAttention:
         """Sample before perception; translate native eyes to World coordinates."""
         pointer = self.root.winfo_pointerx(), self.root.winfo_pointery()
         attention = self._visual.attention(
-            pointer, game_mode=self._game_open(),
+            pointer,
+            game_mode=self._game_open(),
             pointer_recent=time.monotonic()
-            - self._mind.cursor_attention.last_pointer_move < 4.0,
+            - self._mind.cursor_attention.last_pointer_move
+            < 4.0,
         )
         track = self._track()
-        return replace(attention, origin=(attention.origin[0] - track.left,
-                                         attention.origin[1] + track.ground_y))
+        return replace(
+            attention,
+            origin=(
+                attention.origin[0] - track.left,
+                attention.origin[1] + track.ground_y,
+            ),
+        )
 
     def orientation_side(self) -> LookSide | None:
         return self._behavior.orientation_side
@@ -443,32 +534,47 @@ class DesktopWorldRuntime:
         episode = self.state.sleep_episode
         if episode.care_break:
             finishing = sleep_care_complete(
-                episode, satiety=self.state.satiety, elapsed=self.state.lived_seconds,
+                episode,
+                satiety=self.state.satiety,
+                elapsed=self.state.lived_seconds,
             )
             if finishing:
                 if self.interaction.active:
                     self.interaction.interrupt(self._finish_sleep_care)
                 else:
                     self._finish_sleep_care()
-            elif (not self.interaction.active and self.state.satiety <= 0
-                    and not ObjectConsumption.remembered_stock(
-                        self.world, self.awareness.memory,
-                    )):
+            elif (
+                not self.interaction.active
+                and self.state.satiety <= 0
+                and not ObjectConsumption.remembered_stock(
+                    self.world,
+                    self.awareness.memory,
+                )
+            ):
                 self.interaction.start_food_search()
         elif self.state.sleeping and self.interaction.active:
             self.interaction.interrupt(lambda: None)
         self.interaction.update()
         snapshot = self.world.snapshot()
         if self.cursor.carrying and not self.cursor.inside:
-            snapshot = replace(snapshot, objects=tuple(
-                item for item in snapshot.objects
-                if item.instance_id != self.cursor.instance_id
-            ))
+            snapshot = replace(
+                snapshot,
+                objects=tuple(
+                    item
+                    for item in snapshot.objects
+                    if item.instance_id != self.cursor.instance_id
+                ),
+            )
         observation = self._behavior.observe(
-            snapshot, now=self.now, x=self._body_x(), width=self.width,
-            facts=self._behavior_facts(), attention=self._attention(),
+            snapshot,
+            now=self.now,
+            x=self._body_x(),
+            width=self.width,
+            facts=self._behavior_facts(),
+            attention=self._attention(),
             presentation=self.cursor.presentation(
-                self._animated.cursor_eye_position, self.width,
+                self._animated.cursor_eye_position,
+                self.width,
             ),
         )
         gaze = observation.gaze
@@ -477,7 +583,8 @@ class DesktopWorldRuntime:
             self.cursor.offer_ready = False
         self._visual.object_target = (
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
-            if gaze is not None else None
+            if gaze is not None
+            else None
         )
         if observation.absence_noticed:
             self._save()
@@ -488,7 +595,8 @@ class DesktopWorldRuntime:
             self.cursor.offer_ready = False
         track = self._track()
         motion = self._behavior.advance(
-            observation.goal, blocked=observation.blocked,
+            observation.goal,
+            blocked=observation.blocked,
             search_position=SearchPosition(
                 self.width / 2,
                 max(self.width / 2, track.right - track.left - self.width / 2),
@@ -515,8 +623,10 @@ class DesktopWorldRuntime:
             self._walk.movement.set_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
-        elif (instance is not None
-              and self.world.get(instance).state == ObjectState.RESTING):
+        elif (
+            instance is not None
+            and self.world.get(instance).state == ObjectState.RESTING
+        ):
             # Native motion may still be settling inside the two-pixel
             # arrival tolerance; retain the exact standing goal for reach.
             return
@@ -529,12 +639,13 @@ class DesktopWorldRuntime:
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
         direction = -1 if search.center < self._body_x() else 1
-        base = track.clamp_x(track.left + search.center - self.width / 2,
-                             int(self.width))
+        base = track.clamp_x(
+            track.left + search.center - self.width / 2, int(self.width)
+        )
         self._walk.movement.set_goal(base)
         self._visual.object_target = (
             base + self.width / 2 + (direction or 1) * self.width,
-            track.ground_y - self.width * .15,
+            track.ground_y - self.width * 0.15,
         )
 
     def request_contact(self, action: Callable[[], None]) -> None:
@@ -569,7 +680,7 @@ class DesktopWorldRuntime:
 
     def begin_carry(self, item_id: str) -> None:
         """Prepare new stock without interrupting Aiko's current intention."""
-        if not self.can_place_item:
+        if not self.can_place_item or not self.world.can_place_definition(item_id):
             return
         self._sync_geometry()
         self.cursor.begin(item_id)
@@ -633,33 +744,56 @@ class DesktopWorldRuntime:
         self._present_feedback(cue, reaction, lambda _receipt: None)
 
     def _sync_view(self) -> None:
-        self.view.sync(self.world.snapshot(), left=self._track().left,
-                       ground_y=self._track().ground_y, scale=self.settings.scale,
-                       topmost=self.settings.always_on_top,
-                       carried_cursor=(self.root.winfo_pointerx(),
-                                       self.root.winfo_pointery())
-                       if self.cursor.carrying else None)
+        self.view.sync(
+            self.world.snapshot(),
+            left=self._track().left,
+            ground_y=self._track().ground_y,
+            scale=self.settings.scale,
+            topmost=self.settings.always_on_top,
+            carried_cursor=(self.root.winfo_pointerx(), self.root.winfo_pointery())
+            if self.cursor.carrying
+            else None,
+        )
         state, _fixed = self._animated.frame_clock.active_key or ("idle", None)
+        # Passive body poses have no held-item overlay; AnimatedPet owns them.
+        if state not in ("pick_up", "put_down", "eat"):
+            return
         clip = self._animated.assets.clips[state]
         index = clip.sprite_index(self._animated.frame_clock.frame_index)
-        self._animated.food_overlay.render(clip, clip.frames[index],
-                                          scale=self.settings.scale)
+        self._animated.food_overlay.render(
+            clip, clip.frames[index], scale=self.settings.scale
+        )
 
     def _frame(self) -> None:
         self._timer = None
         if self._closed:
             return
-        active, real = active_uptime_seconds(), time.monotonic()
-        elapsed = (max(0, active - self._last_active)
-                   if active is not None and self._last_active is not None
-                   else min(0.5, max(0, real - self._last_real)))
-        self._last_active, self._last_real = active, real
-        self.now += elapsed
-        self._sync_geometry()
-        self.world.advance_motion(elapsed, self._motion_parameters)
-        self.cursor.update()
-        self._sync_view()
-        self._timer = self.root.after(33, self._frame)
+        try:
+            active, real = active_uptime_seconds(), time.monotonic()
+            elapsed = (
+                max(0, active - self._last_active)
+                if active is not None and self._last_active is not None
+                else min(0.5, max(0, real - self._last_real))
+            )
+            self._last_active, self._last_real = active, real
+            self.now += elapsed
+            expired = self.world.expire_books(time.time())
+            for book in expired:
+                if self.interaction.instance_id == book:
+                    self.interaction.interrupt(lambda: None)
+                self.expired_book(book)
+                if self.cursor.instance_id == book:
+                    self.cursor.cancel()
+            if expired:
+                self._save()
+            self._sync_geometry()
+            self.world.advance_motion(elapsed, self._motion_parameters)
+            self.cursor.update()
+            self._sync_view()
+        finally:
+            # Report the original Tk error without permanently stopping input.
+            if not self._closed:
+                self._timer = self.root.after(33, self._frame)
 
     def _sync_geometry(self) -> None:
         self.world.change_surface(self._surface())

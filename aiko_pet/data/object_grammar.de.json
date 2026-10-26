@@ -2,16 +2,43 @@
   "version": 1,
   "locale": "de",
   "objects": {
-    "onigiri": { "gender": "neuter" },
-    "sandwich": { "gender": "neuter" },
-    "taiyaki": { "gender": "neuter" },
-    "apple": { "gender": "masculine" },
-    "dango": { "gender": "masculine" },
-    "donut": { "gender": "masculine" },
-    "cookie": { "gender": "masculine" },
-    "melonpan": { "gender": "neuter" },
-    "cupcake": { "gender": "masculine" },
-    "dorayaki": { "gender": "neuter" },
-    "energy_drink": { "gender": "masculine", "spoken_name": "Energy-Drink" }
+    "onigiri": {
+      "gender": "neuter"
+    },
+    "sandwich": {
+      "gender": "neuter"
+    },
+    "taiyaki": {
+      "gender": "neuter"
+    },
+    "apple": {
+      "gender": "masculine"
+    },
+    "dango": {
+      "gender": "masculine"
+    },
+    "donut": {
+      "gender": "masculine"
+    },
+    "cookie": {
+      "gender": "masculine"
+    },
+    "melonpan": {
+      "gender": "neuter"
+    },
+    "cupcake": {
+      "gender": "masculine"
+    },
+    "dorayaki": {
+      "gender": "neuter"
+    },
+    "energy_drink": {
+      "gender": "masculine",
+      "spoken_name": "Energy-Drink"
+    },
+    "horoscope_book": {
+      "gender": "neuter",
+      "spoken_name": "Horoskopbuch"
+    }
   }
 }

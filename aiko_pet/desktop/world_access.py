@@ -61,6 +61,9 @@ class WorldRuntimeAccess:
         return (self._runtime.awareness.following_record
                 if self._runtime is not None else None)
 
+    def holding_readable(self) -> bool:
+        return self._runtime is not None and self._runtime.holding_readable()
+
     def ready_for_handover(self) -> bool:
         """Read live offer eligibility without initiating an interaction."""
         return self._runtime is not None and self._runtime.ready_for_handover()
