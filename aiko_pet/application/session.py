@@ -19,6 +19,7 @@ from ..pet.state import PetState
 from ..world.contracts import WorldSnapshot
 from ..world.state import WorldState
 from .active_time import ActiveSessionClock, SessionInputs
+from .horoscope_models import HoroscopeHistory
 from .session_time import SessionTimeProgression
 from .settings import PetSettings
 from .social_history import SocialContentHistory
@@ -46,6 +47,7 @@ class LoadedPetData:
     object_memory: ObjectMemorySnapshot | None = None
     social_history: SocialContentHistory = SocialContentHistory()
     revision: SaveRevision = SaveRevision()
+    horoscope: HoroscopeHistory = HoroscopeHistory()
 
 
 class SavedPetReader(Protocol):
@@ -58,10 +60,17 @@ class SavedPetWriter(Protocol):
     """Save all owners together and return a revision only after successful commit."""
 
     def save(
-        self, pet: PetState, settings: PetSettings, *,
-        expected_revision: SaveRevision, adaptive: AdaptiveMemory,
-        social_history: SocialContentHistory, world: WorldSnapshot | None = None,
-        world_recovery_x: float = 0, object_memory: ObjectMemorySnapshot | None = None,
+        self,
+        pet: PetState,
+        settings: PetSettings,
+        *,
+        expected_revision: SaveRevision,
+        adaptive: AdaptiveMemory,
+        social_history: SocialContentHistory,
+        world: WorldSnapshot | None = None,
+        world_recovery_x: float = 0,
+        object_memory: ObjectMemorySnapshot | None = None,
+        horoscope: HoroscopeHistory = HoroscopeHistory(),
     ) -> SaveRevision: ...
 
 
@@ -80,6 +89,7 @@ class RestoredPetSession:
     object_memory: ObjectMemorySnapshot | None = None
     social_history: SocialContentHistory = SocialContentHistory()
     revision: SaveRevision = SaveRevision()
+    horoscope: HoroscopeHistory = HoroscopeHistory()
 
 
 class PetSessionRestorer:
@@ -114,15 +124,27 @@ class PetSessionRestorer:
             context = adaptive.sleep_context()
             if world is not None:
                 SessionTimeProgression(world, memory).advance(
-                    loaded.state, SessionInputs(now, 0, loaded.settings.auto_routine,
-                                                None, False, False, None,
-                                                sleep_context=context),
-                    elapsed, reconstruct=True,
+                    loaded.state,
+                    SessionInputs(
+                        now,
+                        0,
+                        loaded.settings.auto_routine,
+                        None,
+                        False,
+                        False,
+                        None,
+                        sleep_context=context,
+                    ),
+                    elapsed,
+                    reconstruct=True,
                 )
             else:
                 loaded.state.advance(
-                    now, auto_routine=loaded.settings.auto_routine,
-                    elapsed_seconds=elapsed, sleep_context=context, observed=False,
+                    now,
+                    auto_routine=loaded.settings.auto_routine,
+                    elapsed_seconds=elapsed,
+                    sleep_context=context,
+                    observed=False,
                 )
         loaded.state.anchor_live_session(now)
         return RestoredPetSession(
@@ -130,6 +152,7 @@ class PetSessionRestorer:
             settings=loaded.settings,
             adaptive=adaptive,
             social_history=loaded.social_history,
+            horoscope=loaded.horoscope,
             world=world.snapshot() if world is not None else None,
             object_memory=memory.export(now=0) if world is not None else None,
             revision=loaded.revision,

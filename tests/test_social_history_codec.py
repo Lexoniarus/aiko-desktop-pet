@@ -85,8 +85,8 @@ class SocialHistoryCodecTests(unittest.TestCase):
             legacy = deepcopy(raw)
             legacy["version"] = version
             del legacy["entries"][0]["intro_variant"]
-            if version < 3:
-                del legacy["horoscope"]
+            if version == 3:
+                legacy["horoscope"] = None
             if version < 2:
                 del legacy["requests"]
             decoded = decode_social_history(legacy)

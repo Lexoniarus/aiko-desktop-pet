@@ -7,7 +7,6 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from aiko_pet.application.horoscope_models import HoroscopeDay
 from aiko_pet.application.social_content import (
     BUFFERED_CATEGORIES,
     SocialCategory,
@@ -43,17 +42,18 @@ def social_history() -> SocialContentHistory:
                 else f"jokeapi:{index}"
             )
             entries.append(
-                SocialContentReceipt(category, identity, f"{3 * index + offset:064x}",
-                                     index % 3)
+                SocialContentReceipt(
+                    category, identity, f"{3 * index + offset:064x}", index % 3
+                )
             )
     requests = SocialRequestHistory(
         (
             SocialRequestReceipt(SocialProvider.FACTS, 1800000000.1234567),
-            SocialRequestReceipt(SocialProvider.ASTROWAY, 1800000002.1234567),
+            SocialRequestReceipt(SocialProvider.QUOTATIONS, 1800000002.1234567),
             SocialRequestReceipt(SocialProvider.JOKEAPI, 1799999999.1234567),
         ),
         (
-            SocialProviderBlock(SocialProvider.ASTROWAY, 1800003600.1234567),
+            SocialProviderBlock(SocialProvider.QUOTATIONS, 1800003600.1234567),
             SocialProviderBlock(SocialProvider.FACTS, 1799999000.1234567),
         ),
     )
@@ -83,8 +83,8 @@ class SqliteSocialRowsTests(unittest.TestCase):
             restored = read_social_core(connection)
             self.assertEqual(restored, original)
             self.assertEqual(
-                restored.requests.ready_at(SocialProvider.ASTROWAY, 1800000010),
-                original.requests.ready_at(SocialProvider.ASTROWAY, 1800000010),
+                restored.requests.ready_at(SocialProvider.QUOTATIONS, 1800000010),
+                original.requests.ready_at(SocialProvider.QUOTATIONS, 1800000010),
             )
             self.assertEqual(len(restored.requests.blocks), 2)
 
@@ -133,15 +133,13 @@ class SqliteSocialRowsTests(unittest.TestCase):
 
     def test_partial_core_read_preserves_the_separate_daily_reading(self) -> None:
         original = social_history()
-        template = SocialContentHistory(
-            horoscope=HoroscopeDay("2026-10-24", attempts=2)
-        )
+        template = SocialContentHistory()
         with open_database(self.path) as connection:
             connection.execute("BEGIN IMMEDIATE")
             write_social_core(connection, original)
             self.assertEqual(
                 read_social_core(connection, template),
-                replace(original, horoscope=template.horoscope),
+                original,
             )
 
 

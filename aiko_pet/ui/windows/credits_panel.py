@@ -27,21 +27,29 @@ class CreditsPanel:
             ("JokeAPI", "https://jokeapi.dev/"),
             ("Random Useless Facts", "https://uselessfacts.jsph.pl/"),
             ("Zitat-Service", "https://www.zitat-service.de/"),
-            ("AstroWay", "https://api.astroway.info/en/free/"),
+            (
+                "Astronomy Engine (MIT, lokal)",
+                "https://github.com/cosinekitty/astronomy",
+            ),
         ):
             skin.button(
                 self.frame, name, partial(self._open_provider, url), size="wide"
             ).pack(anchor="w", pady=2)
         skin.button(
-            self.frame, GERMAN_TEXT.format("social.quote_license"),
-            partial(self._open_provider,
-                    "https://creativecommons.org/licenses/by/4.0/"), size="wide",
+            self.frame,
+            GERMAN_TEXT.format("social.quote_license"),
+            partial(
+                self._open_provider, "https://creativecommons.org/licenses/by/4.0/"
+            ),
+            size="wide",
         ).pack(anchor="w", pady=2)
         self._copy(GERMAN_TEXT.format("social.quote_collection_credit"))
         self.accepted = self._copy("")
         self.author_button = skin.button(
-            self.frame, GERMAN_TEXT.format("social.author_entry"),
-            self._open_author, size="wide",
+            self.frame,
+            GERMAN_TEXT.format("social.author_entry"),
+            self._open_author,
+            size="wide",
         )
         self.author_button.pack(anchor="w", pady=2)
         self.source_button = skin.button(self.frame, "", self._open_source, size="wide")

@@ -9,6 +9,7 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import replace
 
+from ...application.horoscope_models import HoroscopeHistory, validate_book_bindings
 from ...application.session import LoadedPetData
 from ...application.settings import PetSettings
 from ...application.social_history import SocialContentHistory
@@ -19,6 +20,7 @@ from ...pet.state import PetState
 from ...pet.state_values import PetValues
 from ...world.contracts import ObjectDefinition, WorldSnapshot
 from .adaptive_rows import read_adaptive, write_adaptive
+from .horoscope_rows import read_horoscope, write_horoscope
 from .moodlet_rows import read_moodlets, write_moodlets
 from .pet_rows import read_pet_core, write_pet_core
 from .relationship_rows import read_friendship, write_friendship
@@ -36,11 +38,13 @@ def write_session_rows(
     *,
     adaptive: AdaptiveMemory,
     social_history: SocialContentHistory,
+    horoscope: HoroscopeHistory = HoroscopeHistory(),
     world: WorldSnapshot | None,
     object_memory: ObjectMemorySnapshot | None,
     world_recovery_x: float,
 ) -> None:
     """Time/revision were written by the transaction owner; no mapper commits."""
+    validate_book_bindings(horoscope, world)
     write_pet_core(connection, values)
     write_settings(connection, settings)
     write_friendship(connection, values.relationship)
@@ -49,6 +53,7 @@ def write_session_rows(
     write_world_memory(connection, world, object_memory, recovery_x=world_recovery_x)
     write_adaptive(connection, adaptive)
     write_social_history(connection, social_history)
+    write_horoscope(connection, horoscope)
 
 
 def read_session_rows(
@@ -72,6 +77,8 @@ def read_session_rows(
         )
     )
     world, memory = read_world_memory(connection, definitions)
+    horoscope = read_horoscope(connection)
+    validate_book_bindings(horoscope, world)
     return LoadedPetData(
         state,
         read_settings(connection),
@@ -81,4 +88,5 @@ def read_session_rows(
         memory,
         read_social_history(connection),
         revision,
+        horoscope=horoscope,
     )

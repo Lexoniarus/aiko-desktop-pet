@@ -28,7 +28,6 @@ def project_credits(content: PreparedSocialContent | None) -> CreditsSnapshot:
     return CreditsSnapshot(
         ContentCredit(
             {
-                SocialProvider.ASTROWAY: "AstroWay",
                 SocialProvider.FACTS: "Random Useless Facts",
                 SocialProvider.JOKEAPI: "JokeAPI",
                 SocialProvider.QUOTATIONS: "Zitat-Service",

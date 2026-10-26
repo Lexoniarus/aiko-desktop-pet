@@ -144,7 +144,7 @@ class SqliteLegacyImportTests(unittest.TestCase):
         for episode in raw["pet"]["moodlets"]["active"]:
             del episode["causes"], episode["attribution"]
         raw["social_history"]["version"] = 1
-        del raw["social_history"]["requests"], raw["social_history"]["horoscope"]
+        del raw["social_history"]["requests"]
         for receipt in raw["social_history"]["entries"]:
             del receipt["intro_variant"]
         raw["object_memory"]["version"] = 2
@@ -154,9 +154,10 @@ class SqliteLegacyImportTests(unittest.TestCase):
         loaded = self.load()
         self.assertEqual(loaded.state.wishes.active, wish_state().active)
         self.assertTrue(loaded.social_history.entries)
-        self.assertTrue(all(r.intro_variant is None
-                            for r in loaded.social_history.entries))
-        self.assertIsNone(loaded.social_history.horoscope)
+        self.assertTrue(
+            all(r.intro_variant is None for r in loaded.social_history.entries)
+        )
+        self.assertFalse(loaded.horoscope.days)
         self.assertIsNotNone(loaded.object_memory)
         assert loaded.object_memory is not None
         self.assertIsNone(loaded.object_memory.entries[0].instance_id)

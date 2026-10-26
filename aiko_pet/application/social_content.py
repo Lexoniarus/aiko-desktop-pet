@@ -15,19 +15,23 @@ from ..pet.mind.reaction_sequence import Cue
 from ..pet.social_content_evidence import SocialCategory as SocialCategory
 from ..pet.social_content_evidence import SocialContentEvidence
 from ..pet.social_content_evidence import SocialProvider as SocialProvider
-from .horoscope_models import HoroscopeText
 
 BUFFERED_CATEGORIES = (
-    SocialCategory.SINGLE, SocialCategory.TWO_PARTS, SocialCategory.FACT,
+    SocialCategory.SINGLE,
+    SocialCategory.TWO_PARTS,
+    SocialCategory.FACT,
 )
 SOCIAL_INTRO_VARIANTS = 3
 
 
 def default_provider(category: SocialCategory) -> SocialProvider:
     if category == SocialCategory.HOROSCOPE:
-        return SocialProvider.ASTROWAY
-    return (SocialProvider.FACTS if category == SocialCategory.FACT
-            else SocialProvider.JOKEAPI)
+        raise ValueError("Horoscope is a local book, not an API provider")
+    return (
+        SocialProvider.FACTS
+        if category == SocialCategory.FACT
+        else SocialProvider.JOKEAPI
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,7 +48,6 @@ class PreparedSocialContent:
     author_url: str = ""
     license_name: str = ""
     license_url: str = ""
-    horoscope: HoroscopeText | None = None
     intro_variant: int | None = None
     evidence: SocialContentEvidence | None = None
 
@@ -55,17 +58,26 @@ def _intro_cue(category: SocialCategory, variant: int) -> Cue:
 
 
 def with_intro_variant(
-    content: PreparedSocialContent, variant: int,
+    content: PreparedSocialContent,
+    variant: int,
 ) -> PreparedSocialContent:
     """Replace framing only; provider text, identity and fingerprint stay intact."""
-    if (content.category not in BUFFERED_CATEGORIES or type(variant) is not int
-            or not 0 <= variant < SOCIAL_INTRO_VARIANTS):
+    if (
+        content.category not in BUFFERED_CATEGORIES
+        or type(variant) is not int
+        or not 0 <= variant < SOCIAL_INTRO_VARIANTS
+    ):
         raise ValueError("Invalid social introduction variant")
     return replace(
-        content, intro_variant=variant,
-        reaction=replace(content.reaction, beats=(
-            _intro_cue(content.category, variant), *content.reaction.beats[1:],
-        )),
+        content,
+        intro_variant=variant,
+        reaction=replace(
+            content.reaction,
+            beats=(
+                _intro_cue(content.category, variant),
+                *content.reaction.beats[1:],
+            ),
+        ),
     )
 
 
@@ -143,14 +155,16 @@ def _segments(text: str) -> tuple[Cue, ...]:
 
 
 def prepare_social_content(
-    category: SocialCategory, payload: Any,
-    *, provider: SocialProvider | None = None,
+    category: SocialCategory,
+    payload: Any,
+    *,
+    provider: SocialProvider | None = None,
 ) -> PreparedSocialContent:
     """Validate provider fields before a buffer slot can become ready."""
     if not isinstance(category, SocialCategory) or not isinstance(payload, dict):
         raise ValueError("Invalid social content")
     if category == SocialCategory.HOROSCOPE:
-        raise ValueError("Horoscope requires its dated validator")
+        raise ValueError("Local book readings do not accept provider payloads")
     provider = provider or default_provider(category)
     author, author_url, license_name, license_url = "", "", "", ""
     parts: tuple[str, ...]
@@ -171,8 +185,12 @@ def prepare_social_content(
         if payload.get("language") != "de":
             raise ValueError("Fact is not German")
         identifier = payload.get("id")
-        if (not isinstance(identifier, str) or not identifier or len(identifier) > 128
-                or any(char.isspace() or ord(char) < 32 for char in identifier)):
+        if (
+            not isinstance(identifier, str)
+            or not identifier
+            or len(identifier) > 128
+            or any(char.isspace() or ord(char) < 32 for char in identifier)
+        ):
             raise ValueError("Invalid fact identity")
         identity = f"uselessfacts:{identifier}"
         source = _text(payload.get("source"))
@@ -183,12 +201,24 @@ def prepare_social_content(
         parts = (_text(payload.get("text")),)
     else:
         flags = payload.get("flags")
-        if (payload.get("error") is not False or payload.get("safe") is not True
-                or payload.get("lang") != "de" or payload.get("type") != category
-                or not isinstance(flags, dict)
-                or any(flags.get(flag) is not False for flag in (
-                    "nsfw", "racist", "sexist", "religious", "political", "explicit",
-                ))):
+        if (
+            payload.get("error") is not False
+            or payload.get("safe") is not True
+            or payload.get("lang") != "de"
+            or payload.get("type") != category
+            or not isinstance(flags, dict)
+            or any(
+                flags.get(flag) is not False
+                for flag in (
+                    "nsfw",
+                    "racist",
+                    "sexist",
+                    "religious",
+                    "political",
+                    "explicit",
+                )
+            )
+        ):
             raise ValueError("Joke language, type or safety flags rejected")
         identifier = payload.get("id")
         if type(identifier) is not int or identifier < 0 or len(str(identifier)) > 128:
@@ -196,13 +226,15 @@ def prepare_social_content(
         identity = f"jokeapi:{identifier}"
         source = "JokeAPI"
         source_url = "https://jokeapi.dev/"
-        permalink = (
-            f"https://v2.jokeapi.dev/joke/Any?lang=de&idRange={identifier}"
+        permalink = f"https://v2.jokeapi.dev/joke/Any?lang=de&idRange={identifier}"
+        parts = (
+            (_short_content(payload.get("joke"), joke=True),)
+            if category == SocialCategory.SINGLE
+            else (
+                _text(payload.get("setup")),
+                _text(payload.get("delivery")),
+            )
         )
-        parts = ((_short_content(payload.get("joke"), joke=True),)
-                 if category == SocialCategory.SINGLE else (
-                     _text(payload.get("setup")), _text(payload.get("delivery")),
-                 ))
     fingerprint = hashlib.sha256(" ".join(parts).casefold().encode()).hexdigest()
     # Initial framing is deterministic. The coordinator rotates it against the
     # last admitted receipt when offering it, before the immutable playback.
@@ -210,10 +242,13 @@ def prepare_social_content(
     beats = [_intro_cue(category, variant)]
     for index, part in enumerate(parts):
         if index:
-            beats.append(Cue(
-                "pause", "",
-                BALANCE.integer("dialogue", "conversation_punchline_pause_ms"),
-            ))
+            beats.append(
+                Cue(
+                    "pause",
+                    "",
+                    BALANCE.integer("dialogue", "conversation_punchline_pause_ms"),
+                )
+            )
         beats.extend(_segments(part))
     if author:
         beats.append(Cue.text(GERMAN_TEXT.format("social.quote_author", author=author)))
@@ -225,13 +260,31 @@ def prepare_social_content(
         emote = "idea" if category == SocialCategory.FACT else "faceHappy"
         beats.append(Cue("emote", emote, 900))
     return PreparedSocialContent(
-        category, identity, fingerprint, source, source_url, permalink,
+        category,
+        identity,
+        fingerprint,
+        source,
+        source_url,
+        permalink,
         Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),
-        provider, author, author_url, license_name, license_url,
+        provider,
+        author,
+        author_url,
+        license_name,
+        license_url,
         intro_variant=variant,
         evidence=SocialContentEvidence(
-            category, provider, identity, fingerprint, parts,
-            source, source_url, permalink, author, author_url,
-            license_name, license_url,
+            category,
+            provider,
+            identity,
+            fingerprint,
+            parts,
+            source,
+            source_url,
+            permalink,
+            author,
+            author_url,
+            license_name,
+            license_url,
         ),
     )

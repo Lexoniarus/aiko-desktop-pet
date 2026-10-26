@@ -5,7 +5,7 @@
     "social.intro.single": "Hey, ich hab etwas aus dem Netz für dich.",
     "social.intro.twopart": "Hey, ich hab einen Witz für dich. Bereit?",
     "social.intro.fact": "Schau mal, ich hab im Internet etwas Kurioses gefunden.",
-    "settings.online_social": "Onlinequellen für Sprüche, Zitate, Witze, Fakten und Tageshoroskop verwenden",
+    "settings.online_social": "Onlinequellen für Sprüche, Zitate, Witze und Fakten verwenden",
     "social.hint": "Worüber möchtest du dich unterhalten?",
     "social.disabled": "Für Online-Inhalte bitte Onlinequellen in den Einstellungen aktivieren.",
     "social.waiting": "Ich muss kurz überlegen",
@@ -391,12 +391,8 @@
     "social.intro.fact_alt2": "Das stand gerade im Internet. Wusstest du das schon?",
     "social.name.horoscope": "Tageshoroskop",
     "settings.zodiac_sign": "Sternzeichen fürs Tageshoroskop",
-    "social.horoscope.enter": "Ich schlüpfe mal in die Rolle der Wahrsagerin. Mal sehen, was heute für dein Sternzeichen geschrieben steht.",
-    "social.horoscope.exit": "So, die Sterne hatten ihren Auftritt. Jetzt bin ich wieder deine Aiko.",
     "social.horoscope.sign": "Wähle in den Einstellungen ein Sternzeichen fürs Tageshoroskop aus.",
-    "social.horoscope.completed": "Dein Tageshoroskop ist für heute vollständig gelesen. Morgen gibt es ein neues.",
-    "social.horoscope.resume": "Tageshoroskop fortsetzen",
-    "social.horoscope.paused": "Die Lesung ist unterbrochen. Du kannst dein Tageshoroskop heute fortsetzen.",
+    "social.horoscope.completed": "Heute gelesen – neues Buch morgen",
     "social.zodiac.none": "Nicht ausgewählt",
     "social.zodiac.aries": "Widder",
     "social.zodiac.taurus": "Stier",
@@ -410,7 +406,6 @@
     "social.zodiac.capricorn": "Steinbock",
     "social.zodiac.aquarius": "Wassermann",
     "social.zodiac.pisces": "Fische",
-    "social.horoscope.read": "Tageshoroskop: heute gelesen",
     "game.name.connect_four": "Vier gewinnt",
     "connect_four.legend.player": "Du: Gelb",
     "connect_four.legend.aiko": "Aiko: Rot",
@@ -463,6 +458,11 @@
     "wish.quiz.utterance": "Ich hätte Lust auf eine Runde Quiz mit dir. Zehn Fragen, und ich darf die Quizmasterin sein.",
     "quiz.shared_progress": "Gemeinsame Quizrunden: {completed} von {required}",
     "quiz.shared_completed": "Gemeinsam abgeschlossene Spielrunden: {rounds}",
-    "ui.horoscope_book": "Horoskopbuch"
+    "ui.horoscope_book": "Horoskopbuch",
+    "social.horoscope.place": "Horoskopbuch platzieren",
+    "social.horoscope.bound": "Dein Horoskopbuch liegt bereits bereit",
+    "social.horoscope.choose_sign": "Zuerst Sternzeichen auswählen",
+    "settings.horoscope_note": "Lokales Horoskop zur Unterhaltung. Keine wissenschaftliche Vorhersage. Keine Internetverbindung nötig.",
+    "social.horoscope.unavailable": "Ich kann den Eintrag gerade nicht lesen. Ich lege das Buch erst mal wieder ab."
   }
 }

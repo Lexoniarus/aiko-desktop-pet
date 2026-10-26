@@ -1,12 +1,10 @@
 """Map existing social receipts/limits; horoscope is independently owned state."""
 
 import sqlite3
-from dataclasses import replace
 from typing import Any
 
 from ...application.social_history import SocialContentHistory
 from ..social_history_codec import decode_social_history, encode_social_history
-from .horoscope_rows import read_horoscope, write_horoscope
 from .rows import read_rows, singleton
 
 
@@ -14,15 +12,20 @@ def write_social_core(
     connection: sqlite3.Connection, history: SocialContentHistory
 ) -> None:
     singleton(connection, "save_state")
-    raw = encode_social_history(replace(history, horoscope=None))
+    raw = encode_social_history(history)
     decode_social_history(raw)
     for table in ("social_receipts", "social_requests", "provider_pauses"):
         connection.execute(f"DELETE FROM {table}")
     connection.executemany(
         "INSERT INTO social_receipts VALUES (?, 1, ?, ?, ?, ?)",
         [
-            (index, row["category"], row["identity"], row["fingerprint"],
-             row["intro_variant"])
+            (
+                index,
+                row["category"],
+                row["identity"],
+                row["fingerprint"],
+                row["intro_variant"],
+            )
             for index, row in enumerate(raw["entries"])
         ],
     )
@@ -58,9 +61,8 @@ def read_social_core(
     singleton(connection, "save_state")
     history = decode_social_history(
         dict(
-            version=4,
+            version=5,
             entries=_ordered(connection, "social_receipts"),
-            horoscope=None,
             requests=dict(
                 attempts=[
                     dict(provider=row["provider"], at=row["attempted_at"])
@@ -73,7 +75,7 @@ def read_social_core(
             ),
         )
     )
-    return replace(history, horoscope=template.horoscope)
+    return history
 
 
 def write_social_history(
@@ -83,8 +85,7 @@ def write_social_history(
     singleton(connection, "save_state")
     decode_social_history(encode_social_history(history))
     write_social_core(connection, history)
-    write_horoscope(connection, history.horoscope)
 
 
 def read_social_history(connection: sqlite3.Connection) -> SocialContentHistory:
-    return replace(read_social_core(connection), horoscope=read_horoscope(connection))
+    return read_social_core(connection)

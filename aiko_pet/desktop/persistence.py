@@ -10,6 +10,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 
+from ..application.horoscope_models import HoroscopeHistory
 from ..application.session import SavedPetWriter, WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..application.social_history import SocialContentHistory
@@ -25,11 +26,15 @@ class DesktopPersistence:
 
     def __init__(
         self,
-        store: SavedPetWriter, state: PetState, settings: PetSettings,
-        adaptive: AdaptiveRoutine, *,
+        store: SavedPetWriter,
+        state: PetState,
+        settings: PetSettings,
+        adaptive: AdaptiveRoutine,
+        *,
         revision: SaveRevision = SaveRevision(),
         monotonic: Callable[[], float] = time.monotonic,
         social_history: Callable[[], SocialContentHistory] = SocialContentHistory,
+        horoscope: Callable[[], HoroscopeHistory] = HoroscopeHistory,
     ) -> None:
         self._store = store
         self._state = state
@@ -37,6 +42,7 @@ class DesktopPersistence:
         self._adaptive = adaptive
         self._monotonic = monotonic
         self._social_history = social_history
+        self._horoscope = horoscope
         self.revision = revision
         self.last_saved = monotonic()
         self._last_attempt = self.last_saved
@@ -56,9 +62,12 @@ class DesktopPersistence:
         try:
             world = self._world() if self._world is not None else None
             revision = self._store.save(
-                self._state, self._settings, expected_revision=self.revision,
+                self._state,
+                self._settings,
+                expected_revision=self.revision,
                 adaptive=self._adaptive.memory,
                 social_history=self._social_history(),
+                horoscope=self._horoscope(),
                 world=world.world if world is not None else None,
                 world_recovery_x=world.recovery_x if world is not None else 0,
                 object_memory=world.object_memory if world is not None else None,

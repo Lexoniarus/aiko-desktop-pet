@@ -94,14 +94,19 @@ class CareController:
             # wakes; replaying a sleep toggle must never put her back to bed.
             result = (
                 self._state.interact(
-                    "sleep", now=inputs.wall_time,
+                    "sleep",
+                    now=inputs.wall_time,
                     sleep_context=self._adaptive.sleep_context(),
-                ) if self._state.sleeping
+                )
+                if self._state.sleeping
                 else CareResult("sleep", CareEffect.SLEEP_ENDED)
             )
             self._mind.note_sleep_disturbance(inputs.monotonic_time)
             wake_reaction = self._mind.select_reaction(
-                "click_wake", self._state, context, inputs.monotonic_time,
+                "click_wake",
+                self._state,
+                context,
+                inputs.monotonic_time,
             )
             return CareOutcome(result, wake_reaction, context)
         before = self._mind.preview_care(
@@ -115,16 +120,23 @@ class CareController:
             food_id=command.food_id,
             sleep_context=self._adaptive.sleep_context(),
         )
-        event = (food_variety_event(self._state, result)
-                 or self._mind.care_event(result, before))
-        if result.effect not in (
-            CareEffect.PLAY_TIRED,
-            CareEffect.DRINK_SATISFIED,
-        ) and not result.affection_refused:
+        event = food_variety_event(self._state, result) or self._mind.care_event(
+            result, before
+        )
+        if (
+            result.effect
+            not in (
+                CareEffect.PLAY_TIRED,
+                CareEffect.DRINK_SATISFIED,
+            )
+            and not result.affection_refused
+        ):
             self._mind.record_care_contact(inputs.monotonic_time)
             self._mind.record_accepted_care(command.action, inputs.monotonic_time)
         reaction: Reaction | None
-        if command.conversation is not None:
+        if command.book_reading is not None:
+            reaction = command.book_reading.reaction
+        elif command.conversation is not None:
             reaction = command.conversation.reaction
         else:
             reaction = self._mind.select_reaction(
@@ -134,19 +146,35 @@ class CareController:
                 inputs.monotonic_time,
                 dialogue=before.dialogue,
             )
-        if (result.effect == CareEffect.CONVERSATION and reaction is not None
-                and (command.conversation is None
-                     or command.conversation.horoscope is None)):
-            category = (command.conversation.category.value
-                        if command.conversation is not None else "chat")
-            wish = assign_activity_wish(
-                self._state.wishes, WishArea.SOCIAL, category,
-                elapsed=self._state.lived_seconds, definitions=WISH_CATALOG.definitions,
+        if (
+            result.effect == CareEffect.CONVERSATION
+            and reaction is not None
+            and command.book_reading is None
+        ):
+            category = (
+                command.conversation.category.value
+                if command.conversation is not None
+                else "chat"
             )
-            reaction = replace(reaction, completed_social=SocialCompletion(
-                category, wish.instance_id if wish else None,
-                sequence_id=uuid4().hex, started_at=self._state.lived_seconds,
-                content=(command.conversation.evidence
-                         if command.conversation is not None else None),
-            ))
+            wish = assign_activity_wish(
+                self._state.wishes,
+                WishArea.SOCIAL,
+                category,
+                elapsed=self._state.lived_seconds,
+                definitions=WISH_CATALOG.definitions,
+            )
+            reaction = replace(
+                reaction,
+                completed_social=SocialCompletion(
+                    category,
+                    wish.instance_id if wish else None,
+                    sequence_id=uuid4().hex,
+                    started_at=self._state.lived_seconds,
+                    content=(
+                        command.conversation.evidence
+                        if command.conversation is not None
+                        else None
+                    ),
+                ),
+            )
         return CareOutcome(result, reaction, context)

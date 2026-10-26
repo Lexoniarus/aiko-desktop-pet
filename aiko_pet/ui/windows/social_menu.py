@@ -25,6 +25,7 @@ class SocialMenu(EmbeddedSelector):
         snapshot: Callable[[], tuple[str, PreparedSocialContent | None]],
         skin: AikoSkin,
         horoscope_choice: Callable[[], tuple[str, bool]] = lambda: ("", True),
+        can_place_item: Callable[[], bool] = lambda: True,
     ) -> None:
         super().__init__(
             parent, skin, title=GERMAN_TEXT.format("ui.talk"), closed=closed
@@ -36,6 +37,7 @@ class SocialMenu(EmbeddedSelector):
         )
         self._snapshot = snapshot
         self._horoscope_choice = horoscope_choice
+        self._can_place_item = can_place_item
         self.buttons: dict[SocialCategory | None, ImageButton] = {}
         for category in (None, *SocialCategory):
             key = (
@@ -55,6 +57,8 @@ class SocialMenu(EmbeddedSelector):
                 align_left=True,
             )
             button.pack(fill="x", pady=2)
+            if category == SocialCategory.HOROSCOPE:
+                button.bind("<ButtonPress-1>", self._book_press)
             self.buttons[category] = button
         self.status = tk.Label(
             self.scroll.body,
@@ -68,15 +72,21 @@ class SocialMenu(EmbeddedSelector):
         self.scroll.adopt()
         self.refresh()
 
+    def _book_press(self, _event: tk.Event) -> str:
+        self.choose(SocialCategory.HOROSCOPE)
+        return "break"
+
     def choose(self, category: SocialCategory | None) -> None:
-        if (
-            self._closed
-            or not self._can_interact()
-            or category is not None
-            and not self._enabled()
-        ):
+        if self._closed:
             return
-        if category == SocialCategory.HOROSCOPE and not self._horoscope_choice()[1]:
+        if category == SocialCategory.HOROSCOPE:
+            if not self._can_place_item() or not self._horoscope_choice()[1]:
+                return
+            # Like food: destroy the selector before capturing the press gesture.
+            self.close()
+            self._selected(category)
+            return
+        if not self._can_interact() or category is not None and not self._enabled():
             return
         self._selected(category)
         self.refresh()
@@ -93,7 +103,9 @@ class SocialMenu(EmbeddedSelector):
                     button.configure(text=label)
             update_button_state(
                 button,
-                enabled=allowed and category_allowed and (category is None or enabled),
+                enabled=(self._can_place_item() and category_allowed
+                         if category == SocialCategory.HOROSCOPE else
+                         allowed and (category is None or enabled)),
             )
         status, _source = self._snapshot()
         text = status if enabled else GERMAN_TEXT.format("social.disabled")

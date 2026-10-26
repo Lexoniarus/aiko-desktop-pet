@@ -408,12 +408,18 @@ class HoverUi:
             can_interact=lambda: self._ports.can_interact("talk"),
             snapshot=self._ports.social_snapshot,
             horoscope_choice=self._ports.horoscope_choice,
+            can_place_item=self._ports.can_place_item,
             skin=self._skin,
         )
         self.social_menu.focus()
         self._ports.restore_stack()
 
     def _social_selected(self, category: SocialCategory | None) -> None:
+        if category == SocialCategory.HOROSCOPE:
+            self.close_social_menu()
+            if self._ports.social_selected is not None:
+                self._ports.social_selected(category)
+            return
         if not self._ports.can_interact("talk"):
             return
         if category is None:

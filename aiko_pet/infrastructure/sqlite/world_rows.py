@@ -25,7 +25,9 @@ from .rows import boolean, read_rows, require_transaction, upsert_singleton
 
 def _identities(definitions: tuple[ObjectDefinition, ...]) -> dict[str, ConsumableKind]:
     return {
-        item.food_id or item.definition_id: "drink"
+        item.food_id or item.definition_id: "book"
+        if ObjectInteraction.READ in item.interactions
+        else "drink"
         if ObjectInteraction.DRINK in item.interactions
         else "food"
         for item in definitions
@@ -116,7 +118,7 @@ def write_world_memory(
         },
     )
     connection.executemany(
-        "INSERT INTO world_objects VALUES (?, 1, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO world_objects VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?)",
         [
             (
                 row["id"],
@@ -125,6 +127,7 @@ def write_world_memory(
                 row["revision"],
                 row["x"],
                 *row["footprint"],
+                row.get("expires_at"),
             )
             for index, row in enumerate(raw_world["objects"])
         ],
@@ -177,7 +180,7 @@ def read_world_memory(
         connection, "SELECT * FROM world_objects ORDER BY position_index"
     )
     raw = dict(
-        version=1,
+        version=2,
         surface=[state["width"], state["height"]],
         revision=state["revision"],
         next_instance_id=state["next_instance_id"],
@@ -188,6 +191,7 @@ def read_world_memory(
                 revision=item["revision"],
                 x=item["x"],
                 footprint=[item["footprint_left"], item["footprint_right"]],
+                expires_at=item["expires_at"],
             )
             for item in objects
         ],

@@ -7,8 +7,6 @@ from collections import deque
 from dataclasses import dataclass, replace
 from typing import Callable, Literal, Protocol
 
-from .horoscope import prepare_horoscope_text
-from .horoscope_models import HoroscopeDay, HoroscopeRequest, local_day
 from .social_content import (
     BUFFERED_CATEGORIES,
     SOCIAL_INTRO_VARIANTS,
@@ -73,11 +71,9 @@ class SocialContentCoordinator:
         history: SocialContentHistory = SocialContentHistory(),
         wall_time: Callable[[], float] | None = None,
         persist_requests: Callable[[], StorageError | None] = lambda: None,
-        zodiac_sign: Callable[[], str | None] = lambda: None,
     ) -> None:
         self._worker, self._wall_time = worker, wall_time or time.time
         self._persist_requests = persist_requests
-        self._zodiac_sign = zodiac_sign
         self._buffers: dict[SocialCategory, deque[PreparedSocialContent]] = {
             category: deque() for category in BUFFERED_CATEGORIES
         }
@@ -110,88 +106,6 @@ class SocialContentCoordinator:
     def count(self, category: SocialCategory) -> int:
         return len(self._buffers.get(category, ()))
 
-    @property
-    def horoscope(self) -> HoroscopeDay:
-        today = local_day(self._wall_time())
-        current = self.history.horoscope
-        return (
-            current
-            if current is not None and current.date == today
-            else HoroscopeDay(today)
-        )
-
-    @property
-    def horoscope_available(self) -> bool:
-        day = self.horoscope
-        return not day.completed and bool(day.admitted or self._zodiac_sign())
-
-    def _save_horoscope(self, day: HoroscopeDay) -> bool:
-        self._history = replace(self.history, horoscope=day)
-        return self._persist()
-
-    def admit_horoscope(
-        self, content: PreparedSocialContent, care: Callable[[], None]
-    ) -> bool:
-        day = self.horoscope
-        if (
-            self._offered is not content
-            or content.horoscope != day.reading
-            or day.completed
-            or not self.enabled
-            or (
-                not day.admitted
-                and day.reading is not None
-                and day.reading.sign != self._zodiac_sign()
-            )
-        ):
-            return False
-        if not day.admitted:
-            care()
-            day = replace(day, admitted=True)
-        # Save care and admission in the same atomic snapshot before playback.
-        return self._save_horoscope(day)
-
-    def horoscope_progress(
-        self, date: str, index: int, *, completed: bool = False
-    ) -> bool:
-        day = self.history.horoscope
-        if day is None or day.date != date or day.reading is None or not day.admitted:
-            return False
-        return self._save_horoscope(replace(day, index=index, completed=completed))
-
-    def _select_horoscope(self) -> SocialSelection:
-        day = self.horoscope
-        if day.completed:
-            return SocialSelection("completed")
-        if day.reading is not None and (
-            day.admitted or day.reading.sign == self._zodiac_sign()
-        ):
-            self._offered = prepare_horoscope_text(day.reading)
-            return SocialSelection("ready", self._offered)
-        if not self._zodiac_sign():
-            return SocialSelection("sign")
-        if self._request is not None:
-            token, _job, generation = self._request
-            if (
-                isinstance(token, HoroscopeRequest)
-                and token.date == day.date
-                and token.sign == self._zodiac_sign()
-                and generation == self._generation
-            ):
-                self._waiting = SocialCategory.HOROSCOPE
-                return SocialSelection("waiting")
-        if (
-            day.attempts >= 3
-            or self.history.requests.ready_at(
-                SocialProvider.ASTROWAY, self._wall_time()
-            )
-            > self._wall_time()
-        ):
-            return SocialSelection("limited")
-        self._waiting = SocialCategory.HOROSCOPE
-        self._pump()
-        return SocialSelection("error" if self._storage_failed else "waiting")
-
     def set_enabled(self, enabled: bool) -> None:
         if self._closed or enabled == self._enabled:
             return
@@ -210,8 +124,8 @@ class SocialContentCoordinator:
         if not self.enabled:
             return SocialSelection("disabled")
         self._storage_failed = False
-        if category == SocialCategory.HOROSCOPE:
-            return self._select_horoscope()
+        if category not in BUFFERED_CATEGORIES:
+            raise ValueError("Local books are not social API content")
         for provider in providers_for(category):
             job = category, provider
             if job in self._failed:
@@ -253,11 +167,20 @@ class SocialContentCoordinator:
 
     def _offer(self, item: PreparedSocialContent) -> PreparedSocialContent:
         """Rotate from admitted history; warming/cancellation never advance it."""
-        last = next((entry for entry in reversed(self.history.entries)
-                     if entry.category == item.category), None)
+        last = next(
+            (
+                entry
+                for entry in reversed(self.history.entries)
+                if entry.category == item.category
+            ),
+            None,
+        )
         if last is not None:
-            previous = (last.intro_variant if last.intro_variant is not None
-                        else int(last.fingerprint[:2], 16) % SOCIAL_INTRO_VARIANTS)
+            previous = (
+                last.intro_variant
+                if last.intro_variant is not None
+                else int(last.fingerprint[:2], 16) % SOCIAL_INTRO_VARIANTS
+            )
             item = with_intro_variant(item, (previous + 1) % SOCIAL_INTRO_VARIANTS)
         self._offered = item
         return item
@@ -266,8 +189,6 @@ class SocialContentCoordinator:
         if self._offered is not content:
             raise ValueError("Conversation is no longer offered")
         self._offered = None
-        if content.category == SocialCategory.HOROSCOPE:
-            return
         self._history = self._history.admitted(
             SocialContentReceipt(
                 content.category,
@@ -315,10 +236,6 @@ class SocialContentCoordinator:
                     )
                     self._persist()
                 if self.enabled and generation == self._generation:
-                    if category == SocialCategory.HOROSCOPE:
-                        update = self._horoscope_result(result, token)
-                        self._pump()
-                        return update
                     item = result.content
                     valid = (
                         item is not None
@@ -360,8 +277,6 @@ class SocialContentCoordinator:
     def _unavailable(self) -> Literal["error", "limited"] | None:
         if self._waiting is None:
             return None
-        if self._waiting == SocialCategory.HOROSCOPE:
-            return "error" if self._storage_failed else None
         if self._storage_failed:
             return "error"
         if self._request is not None and self._request[1][0] == self._waiting:
@@ -382,29 +297,6 @@ class SocialContentCoordinator:
         if not self.enabled or self._request is not None or self._storage_failed:
             return
         now = self._wall_time()
-        if self._waiting == SocialCategory.HOROSCOPE:
-            day = self.horoscope
-            sign = self._zodiac_sign()
-            if sign is None or day.attempts >= 3:
-                return
-            provider = SocialProvider.ASTROWAY
-            if self.history.requests.ready_at(provider, now) > now:
-                return
-            self._history = replace(
-                self.history, requests=(self.history.requests.reserved(provider, now))
-            )
-            if not self._save_horoscope(
-                replace(day, attempts=day.attempts + 1, reading=None)
-            ):
-                return
-            horoscope_token = HoroscopeRequest(sign, day.date)
-            self._request = (
-                horoscope_token,
-                (SocialCategory.HOROSCOPE, provider),
-                self._generation,
-            )
-            self._worker.start(SocialCategory.HOROSCOPE, horoscope_token, provider)
-            return
         candidates = [
             (category, provider)
             for category in BUFFERED_CATEGORIES
@@ -434,31 +326,6 @@ class SocialContentCoordinator:
         token = object()
         self._request = (token, job, self._generation)
         self._worker.start(category, token, provider)
-
-    def _horoscope_result(
-        self, result: SocialFetchResult, token: object
-    ) -> SocialSelection | None:
-        assert isinstance(token, HoroscopeRequest)
-        if self._waiting != SocialCategory.HOROSCOPE:
-            return None
-        self._waiting = None
-        item = result.content
-        if (
-            token.date != self.horoscope.date
-            or token.sign != self._zodiac_sign()
-            or result.failure is not None
-            or result.category != SocialCategory.HOROSCOPE
-            or item is None
-            or item.provider != SocialProvider.ASTROWAY
-            or item.horoscope is None
-            or item.horoscope.sign != token.sign
-            or item.horoscope.date != token.date
-        ):
-            return SocialSelection("error")
-        if not self._save_horoscope(replace(self.horoscope, reading=item.horoscope)):
-            return SocialSelection("error")
-        self._offered = item
-        return SocialSelection("ready", item)
 
     def close(self) -> None:
         if self._closed:

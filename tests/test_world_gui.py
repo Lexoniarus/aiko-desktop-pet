@@ -7,7 +7,7 @@ import unittest
 from dataclasses import replace
 from functools import partial
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction_state import SearchPosition
@@ -1185,6 +1185,10 @@ class WorldGuiTests(unittest.TestCase):
     def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
+        self.enterContext(patch(
+            "aiko_pet.gui.messagebox.showwarning",
+            side_effect=lambda _title, message: self.fail(message),
+        ))
         self.app = create_test_desktop(
             store=StateStore(Path(folder.name) / "state.json"),
         )
@@ -1682,6 +1686,281 @@ class WorldGuiTests(unittest.TestCase):
             stamp = animated.frame_clock.frame_started_at + clip.timings[index] / 1000
             animated.show_frame(name, stamp + .001)
             self.app.root.update_idletasks()
+
+    def test_book_press_owns_drag_until_release_like_food(self):
+        from aiko_pet.application.social_content import SocialCategory
+        world = self.app._world
+        self.app._preferences.set_zodiac("taurus")
+        x = (self.app.settings.x or 0) + self.app._window.width // 2
+        y = world._track().ground_y - 80
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=x),
+            patch.object(self.app.root, "winfo_pointery", return_value=y),
+            patch("aiko_pet.desktop.cursor_item_gesture.mouse_buttons_down_windows",
+                  return_value=(True, False, False)),
+        ):
+            self.app._hover.open_social_menu()
+            menu = self.app._hover.social_menu
+            assert menu is not None
+            self.app.root.update_idletasks()
+            menu.buttons[SocialCategory.HOROSCOPE].event_generate("<ButtonPress-1>")
+            self.assertIsNone(self.app._hover.social_menu)
+            self.assertTrue(world.cursor.carrying)
+            token = world.cursor.instance_id
+            assert token is not None
+            world.cursor.update()
+            self.assertEqual(world.world.get(token).state, ObjectState.USER_HELD)
+            image = world.view.image("horoscope_book", self.app.settings.scale)
+            self.assertEqual(image.width(), 128 * self.app.settings.scale)
+            self.assertEqual(image.height(), 96 * self.app.settings.scale)
+            world.cursor.cancel()
+            self.assertFalse(world.cursor.carrying)
+
+    def read_ground_book(self):
+        world = self.app._world
+        self.app._preferences.set_zodiac("taurus")
+        item = world.world.place_resting("horoscope_book", world._body_x(),
+                                        ObjectFootprint(64, 64))
+        before = self.app.state.satiety
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "read")
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.app.root.after(350, self.app.root.quit)
+        self.app.root.mainloop()
+        self.assertEqual(self.app._reaction_player.event, "horoscope_reading")
+        # Drive normal runtime rendering too: it must not restart pickup/idle.
+        self.app._animated.render(time.monotonic(), (0, 0))
+        self.assertEqual(self.app._animated.frame_clock.active_key, ("pick_up", 7))
+        self.assertEqual(self.app._animated.food_overlay.current_food_id,
+                         "horoscope_book")
+        while self.app._reaction_player.story_active:
+            self.app._reaction_player.advance_story()
+        self.app.root.after(350, self.app.root.quit)
+        self.app.root.mainloop()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        book = world.world.get(item.instance_id)
+        self.assertEqual(book.state, ObjectState.RESTING)
+        self.assertIsNotNone(book.expires_at)
+        self.assertAlmostEqual(self.app.state.satiety, before, delta=1)
+
+    def test_book_ground_pickup_reads_then_puts_down_as_world_object(self):
+        self.read_ground_book()
+
+    def test_completed_book_keeps_story_and_fixed_deadline_after_restart(self):
+        self.read_ground_book()
+        original = self.app._care_runtime.horoscope.history
+        day = original.days[-1]
+        assert day.book_instance_id is not None
+        self.restart()
+        self.assertEqual(self.app._care_runtime.horoscope.history, original)
+        book = self.app._world.world.get(day.book_instance_id)
+        self.assertEqual(book.expires_at, day.expires_at)
+        self.assertEqual(book.state, ObjectState.RESTING)
+        with patch("aiko_pet.desktop.world_runtime.time.time",
+                   return_value=day.expires_at):
+            self.app._world._frame()
+        self.assertEqual(self.app._world.world.get(book.instance_id).state,
+                         ObjectState.REMOVED)
+
+    def test_book_drag_drop_and_relocation_preserve_one_physical_object(self):
+        world = self.app._world
+        track = world._track()
+        pointer = [track.left + 180, track.ground_y - 150]
+        with (
+            patch.object(self.app.root, "winfo_pointerx",
+                         side_effect=lambda: pointer[0]),
+            patch.object(self.app.root, "winfo_pointery",
+                         side_effect=lambda: pointer[1]),
+            patch("aiko_pet.desktop.cursor_item_gesture.mouse_buttons_down_windows",
+                  return_value=(True, False, False)),
+        ):
+            world.begin_carry("horoscope_book")
+            token = world.cursor.instance_id
+            assert token is not None
+            pointer[0] += 100
+            world.cursor.update()
+            position = world.world.get(token).position
+            assert position is not None
+            self.assertEqual(position.x, 280)
+            world.cursor.release()
+            self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
+            for _ in range(150):
+                world.world.advance_motion(.05, world._motion_parameters)
+            item = world.world.get(token)
+            self.assertEqual(item.state, ObjectState.RESTING)
+            world._sync_view()
+            self.app.root.update_idletasks()
+            entry = world.view._windows[token]
+            image = entry.image
+            assert image is not None
+            x, y = next((x, y) for y in range(image.height())
+                        for x in range(image.width())
+                        if not image.transparency_get(x, y)
+                        and image.get(x, y) != (255, 0, 255))
+            event: tk.Event[tk.Label] = tk.Event()
+            event.x, event.y = x, y
+            world.view._press(token, event)
+            self.assertEqual(world.cursor.instance_id, token)
+            pointer[0] += 100
+            world.cursor.update()
+            position = world.world.get(token).position
+            assert position is not None
+            self.assertEqual(position.x, 380)
+            world.cursor.cancel()
+            self.assertEqual(world.world.get(token).position, item.position)
+            self.assertEqual(len(world.world.snapshot().objects), 1)
+
+    def test_book_calculation_failure_returns_to_ground_without_care(self):
+        owner = self.app._care_runtime.horoscope
+        owner._calculator = Mock()
+        owner._calculator.calculate.side_effect = ModuleNotFoundError("astronomy")
+        self.app._preferences.set_zodiac("taurus")
+        world = self.app._world
+        item = world.world.place_resting("horoscope_book", world._body_x(),
+                                        ObjectFootprint(64, 64))
+        before = self.app.state.social
+        with self.assertLogs("aiko_pet.desktop.horoscope_playback", level="WARNING"):
+            self.observe_and_acknowledge()
+            self.finish_pickup()
+            self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.assertFalse(owner.history.days)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertAlmostEqual(self.app.state.social, before, delta=.1)
+
+    def test_book_save_failure_undoes_care_and_puts_down(self):
+        self.app._preferences.set_zodiac("taurus")
+        owner = self.app._care_runtime.horoscope
+        owner._persist = Mock(return_value=False)
+        world = self.app._world
+        item = world.world.place_resting("horoscope_book", world._body_x(),
+                                        ObjectFootprint(64, 64))
+        before = self.app.state.social
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.assertFalse(owner.history.days)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertAlmostEqual(self.app.state.social, before, delta=.1)
+
+    def test_unfinished_yesterday_book_is_retired_so_today_can_place_one(self):
+        from datetime import datetime, timedelta
+        self.app._preferences.set_zodiac("taurus")
+        world = self.app._world
+        item = world.world.place_resting("horoscope_book", world._body_x(),
+                                        ObjectFootprint(64, 64))
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "read")
+        owner = self.app._care_runtime.horoscope
+        tomorrow = (datetime.now() + timedelta(days=1)).timestamp()
+        owner._time = Mock(return_value=tomorrow)
+        with patch("aiko_pet.desktop.world_runtime.time.time", return_value=tomorrow):
+            world._frame()
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.REMOVED)
+        self.assertFalse(world.interaction.active)
+        self.assertFalse(self.app._care_runtime._horoscope.active)
+        self.assertTrue(self.app._care_runtime.horoscope_choice()[1])
+
+    def test_unknown_book_handover_is_identified_and_read_without_food_effect(self):
+        world = self.app._world
+        self.app._preferences.set_zodiac("taurus")
+        pointer_x = (self.app.settings.x or 0) + 96 * self.app.settings.scale
+        pointer_y = world._track().ground_y - 80 * self.app.settings.scale
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=pointer_x),
+            patch.object(self.app.root, "winfo_pointery", return_value=pointer_y),
+        ):
+            world.begin_carry("horoscope_book")
+            token = world.cursor.instance_id
+            assert token is not None
+            for stamp in (0, .3):
+                world.now = stamp
+                world.update(time.monotonic())
+            world.cursor.release()
+        self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "read")
+        record = world.awareness.record_for_instance(token)
+        assert record is not None
+        known = world.awareness.memory.get(record)
+        assert known is not None
+        self.assertEqual((known.identity, known.kind), ("horoscope_book", "book"))
+        world.interaction.interrupt(lambda: None)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(world.world.get(token).state, ObjectState.RESTING)
+
+    def test_book_manual_replay_keeps_same_object_story_and_expiry(self):
+        self.read_ground_book()
+        world = self.app._world
+        first = self.app._care_runtime.horoscope.today()
+        assert first is not None and first.book_instance_id is not None
+        book = world.world.get(first.book_instance_id)
+        before = self.app.state.social
+        pointer_x = (self.app.settings.x or 0) + 96 * self.app.settings.scale
+        pointer_y = world._track().ground_y - 80 * self.app.settings.scale
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=pointer_x),
+            patch.object(self.app.root, "winfo_pointery", return_value=pointer_y),
+        ):
+            world.begin_relocate(book.instance_id, book.revision)
+            self.assertTrue(world.cursor.carrying)
+            for _ in range(5):
+                world.now += .3
+                world.update(time.monotonic())
+                self.complete_feedback()
+            world.cursor.release()
+        self.finish_inspection()
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "read")
+        replay = self.app._care_runtime.horoscope.today()
+        assert replay is not None
+        self.assertEqual(replay.reading, first.reading)
+        self.assertEqual(replay.index, 0)
+        self.assertEqual(replay.expires_at, first.expires_at)
+        self.assertEqual(replay.book_instance_id, first.book_instance_id)
+        self.assertAlmostEqual(self.app.state.social, before, delta=.1)
+        self.assertEqual(world.world.get(book.instance_id).expires_at, book.expires_at)
+        with patch("aiko_pet.desktop.world_runtime.time.time",
+                   return_value=book.expires_at):
+            world._frame()
+        self.assertEqual(world.world.get(book.instance_id).state, ObjectState.REMOVED)
+        self.assertFalse(self.app._care_runtime._horoscope.active)
+        self.assertFalse(self.app._reaction_player.story_active)
+        self.assertFalse(world.interaction.active)
+
+    def test_book_expiry_releases_cursor_capture_and_cannot_return_old_object(self):
+        self.read_ground_book()
+        world = self.app._world
+        day = self.app._care_runtime.horoscope.today()
+        assert day is not None and day.book_instance_id is not None
+        book = world.world.get(day.book_instance_id)
+        with (
+            patch.object(self.app.root, "winfo_pointerx",
+                         return_value=world._track().left + 200),
+            patch.object(self.app.root, "winfo_pointery",
+                         return_value=world._track().ground_y - 100),
+        ):
+            world.begin_relocate(book.instance_id, book.revision)
+            self.assertTrue(world.cursor.carrying)
+            with patch("aiko_pet.desktop.world_runtime.time.time",
+                       return_value=book.expires_at):
+                world._frame()
+        self.assertFalse(world.cursor.carrying)
+        self.assertIsNone(self.app.root.grab_current())
+        world.cursor.release()
+        self.assertEqual(world.world.get(book.instance_id).state, ObjectState.REMOVED)
 
     def test_ground_pickup_commits_nutrition_only_after_inspection_and_decision(self):
         world = self.app._world

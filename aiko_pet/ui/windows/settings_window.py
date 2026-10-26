@@ -133,19 +133,37 @@ class SettingsWindow:
         for key in self.BEHAVIOUR:
             self._option(self._pages["behaviour"], key)
         zodiac = self._pages["behaviour"]
-        tk.Label(zodiac, text=GERMAN_TEXT.format("settings.zodiac_sign"),
-                 bg=self.skin.background, fg=self.skin.text,
-                 font=(self.skin.font, 10)).pack(anchor="w", pady=(8, 3))
+        tk.Label(
+            zodiac,
+            text=GERMAN_TEXT.format("settings.zodiac_sign"),
+            bg=self.skin.background,
+            fg=self.skin.text,
+            font=(self.skin.font, 10),
+        ).pack(anchor="w", pady=(8, 3))
         self._signs = (None, *ZODIAC_SIGNS)
-        self._sign_labels = tuple(GERMAN_TEXT.format(f"social.zodiac.{s or 'none'}")
-                                  for s in self._signs)
+        self._sign_labels = tuple(
+            GERMAN_TEXT.format(f"social.zodiac.{s or 'none'}") for s in self._signs
+        )
         self.zodiac_value = tk.StringVar(master=self.window)
         self.zodiac_choice = ttk.Combobox(
-            zodiac, textvariable=self.zodiac_value, values=self._sign_labels,
-            state="readonly", width=28, font=(self.skin.font, 10),
+            zodiac,
+            textvariable=self.zodiac_value,
+            values=self._sign_labels,
+            state="readonly",
+            width=28,
+            font=(self.skin.font, 10),
         )
         self.zodiac_choice.pack(anchor="w", pady=(0, 8))
         self.zodiac_choice.bind("<<ComboboxSelected>>", self._choose_zodiac)
+        tk.Label(
+            zodiac,
+            text=GERMAN_TEXT.format("settings.horoscope_note"),
+            bg=self.skin.background,
+            fg=self.skin.muted,
+            wraplength=340,
+            justify="left",
+            font=(self.skin.font, 8),
+        ).pack(anchor="w", pady=(0, 8))
         local = self._pages["local"]
         self.forget_button = self.skin.button(
             local,

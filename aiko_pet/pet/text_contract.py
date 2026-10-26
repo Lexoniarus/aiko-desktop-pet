@@ -24,32 +24,32 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "quiz.again": frozenset(),
     "quiz.finished": frozenset({"correct"}),
     "quiz.unavailable": frozenset(),
-    'game.name.mastermind': frozenset(set()),
-    'mastermind.code': frozenset(set()),
-    'mastermind.rules': frozenset(set()),
-    'mastermind.evaluating': frozenset(set()),
-    'mastermind.board.guesses': frozenset(set()),
-    'mastermind.board.feedback': frozenset(set()),
-    'mastermind.submit': frozenset(set()),
-    'mastermind.clear': frozenset(set()),
-    'mastermind.remaining': frozenset({'remaining'}),
-    'mastermind.feedback': frozenset({'misplaced', 'exact'}),
-    'mastermind.legend': frozenset(set()),
-    'mastermind.color.red': frozenset(set()),
-    'mastermind.color.yellow': frozenset(set()),
-    'mastermind.color.blue': frozenset(set()),
-    'mastermind.color.green': frozenset(set()),
-    'mastermind.color.purple': frozenset(set()),
-    'mastermind.color.white': frozenset(set()),
-    "social.horoscope.read": frozenset(),
+    "game.name.mastermind": frozenset(set()),
+    "mastermind.code": frozenset(set()),
+    "mastermind.rules": frozenset(set()),
+    "mastermind.evaluating": frozenset(set()),
+    "mastermind.board.guesses": frozenset(set()),
+    "mastermind.board.feedback": frozenset(set()),
+    "mastermind.submit": frozenset(set()),
+    "mastermind.clear": frozenset(set()),
+    "mastermind.remaining": frozenset({"remaining"}),
+    "mastermind.feedback": frozenset({"misplaced", "exact"}),
+    "mastermind.legend": frozenset(set()),
+    "mastermind.color.red": frozenset(set()),
+    "mastermind.color.yellow": frozenset(set()),
+    "mastermind.color.blue": frozenset(set()),
+    "mastermind.color.green": frozenset(set()),
+    "mastermind.color.purple": frozenset(set()),
+    "mastermind.color.white": frozenset(set()),
     "social.name.horoscope": frozenset(),
     "settings.zodiac_sign": frozenset(),
-    "social.horoscope.enter": frozenset(),
-    "social.horoscope.exit": frozenset(),
     "social.horoscope.sign": frozenset(),
+    "social.horoscope.unavailable": frozenset(),
+    "social.horoscope.place": frozenset(),
+    "social.horoscope.bound": frozenset(),
+    "social.horoscope.choose_sign": frozenset(),
+    "settings.horoscope_note": frozenset(),
     "social.horoscope.completed": frozenset(),
-    "social.horoscope.resume": frozenset(),
-    "social.horoscope.paused": frozenset(),
     "social.zodiac.none": frozenset(),
     "social.zodiac.aries": frozenset(),
     "social.zodiac.taurus": frozenset(),
@@ -63,25 +63,23 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.zodiac.capricorn": frozenset(),
     "social.zodiac.aquarius": frozenset(),
     "social.zodiac.pisces": frozenset(),
-
     "social.intro.single_alt1": frozenset(),
     "social.intro.single_alt2": frozenset(),
     "social.intro.twopart_alt1": frozenset(),
     "social.intro.twopart_alt2": frozenset(),
     "social.intro.fact_alt1": frozenset(),
     "social.intro.fact_alt2": frozenset(),
-
     "vn.wish_pinned": frozenset([]),
     "vn.wish_controls": frozenset([]),
     "vn.cause_unknown_target": frozenset([]),
-    "vn.cause_entry": frozenset(['number', 'cause']),
+    "vn.cause_entry": frozenset(["number", "cause"]),
     "vn.cause_by.user": frozenset(),
     "vn.cause_by.autonomous": frozenset(),
-    "vn.cause_wish": frozenset(['wish', 'target']),
-    "vn.cause_goal_count": frozenset(['count']),
-    "vn.cause_target": frozenset(['target']),
-    "vn.cause_result": frozenset(['result']),
-    "vn.cause_game": frozenset(['round', 'rounds', 'wins', 'losses']),
+    "vn.cause_wish": frozenset(["wish", "target"]),
+    "vn.cause_goal_count": frozenset(["count"]),
+    "vn.cause_target": frozenset(["target"]),
+    "vn.cause_result": frozenset(["result"]),
+    "vn.cause_game": frozenset(["round", "rounds", "wins", "losses"]),
     "vn.cause.legacy": frozenset([]),
     "vn.cause.wish_fulfilled": frozenset([]),
     "vn.cause.wish_failed": frozenset([]),
@@ -95,7 +93,6 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "vn.outcome.draw": frozenset([]),
     "vn.outcome.handover": frozenset([]),
     "vn.outcome.intake": frozenset([]),
-
     "social.intro.single": frozenset(),
     "social.intro.twopart": frozenset(),
     "social.intro.fact": frozenset(),
@@ -268,8 +265,13 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "activity.summary": frozenset(["strain", "summary"]),
     "activity.uptime_suffix": frozenset(["hours"]),
     "ui.object_status": frozenset([
-        "desktop", "known", "assigned", "missing",
-        "undiscovered", "unidentified", "unresolved",
+        "desktop",
+        "known",
+        "assigned",
+        "missing",
+        "undiscovered",
+        "unidentified",
+        "unresolved",
     ]),
     "ui.status_value": frozenset(["percent", "title"]),
     "ui.friendship_level_suffix": frozenset(["level"]),
@@ -295,13 +297,25 @@ TEXT_FIELDS.update({
 TEXT_FIELDS.update({
     f"wish.{key}.utterance": (
         frozenset({"target", "rounds"})
-        if key in (WishId.PLAY_GAME, WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS,
-                   WishId.PLAY_OTHER_GAME)
+        if key
+        in (
+            WishId.PLAY_GAME,
+            WishId.WIN_OVERALL,
+            WishId.AVOID_OVERALL_LOSS,
+            WishId.PLAY_OTHER_GAME,
+        )
         else frozenset({"target"})
-        if key in (WishId.FOOD, WishId.AVOID_FOOD,
-                   WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
-                   WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
-        else frozenset({"rounds"}) if key == WishId.PLAY_ANY_GAME
+        if key
+        in (
+            WishId.FOOD,
+            WishId.AVOID_FOOD,
+            WishId.WIN_ROUND,
+            WishId.AVOID_ROUND_LOSS,
+            WishId.REMATCH_GAME,
+            WishId.COMEBACK_GAME,
+        )
+        else frozenset({"rounds"})
+        if key == WishId.PLAY_ANY_GAME
         else frozenset()
     )
     for key in WishId
@@ -311,9 +325,12 @@ TEXT_FIELDS.update({f"emotion.{state}": frozenset() for state in EmotionalState}
 
 TEXT_FIELDS.update({
     f"wish.goal.{goal}.{field}": (
-        frozenset({"target"}) if goal == WishObjective.NEXT_WIN
+        frozenset({"target"})
+        if goal == WishObjective.NEXT_WIN
         else frozenset({"target", "rounds"})
-    ) if field == "utterance" else frozenset()
+    )
+    if field == "utterance"
+    else frozenset()
     for goal in GAME_GOAL_TEXT_VARIANTS
     for field in ("label", "description", "utterance")
 })

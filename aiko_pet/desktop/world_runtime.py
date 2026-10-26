@@ -124,6 +124,7 @@ class DesktopWorldRuntime:
         self._save, self._mind = save, mind
         self._care: CareOutcome | None = None
         self.expired_book: Callable[[str], None] = lambda _book: None
+        self.obsolete_books: Callable[[], tuple[str, ...]] = lambda: ()
         self._cancel_feedback = cancel_feedback
         self._cancel_offer_feedback = cancel_offer_feedback
         self._motion_parameters = motion_parameters()
@@ -777,6 +778,16 @@ class DesktopWorldRuntime:
             )
             self._last_active, self._last_real = active, real
             self.now += elapsed
+            objects = {item.instance_id: item
+                       for item in self.world.snapshot().objects}
+            for book in self.obsolete_books():
+                item = objects.get(book)
+                if (
+                    item is not None
+                    and item.expires_at is None
+                    and item.state not in (ObjectState.REMOVED, ObjectState.CONSUMED)
+                ):
+                    self.world.set_book_expiry(book, time.time())
             expired = self.world.expire_books(time.time())
             for book in expired:
                 if self.interaction.instance_id == book:

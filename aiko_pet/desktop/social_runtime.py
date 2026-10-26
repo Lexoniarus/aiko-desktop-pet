@@ -20,8 +20,6 @@ class SocialRuntimePorts:
     clear_wait: Callable[[], None]
     can_wait: Callable[[], bool] = lambda: True
     persist_admission: Callable[[], None] = lambda: None
-    stop_reading: Callable[[], None] = lambda: None
-    reading_active: Callable[[], bool] = lambda: False
 
 
 class SocialConversationRuntime:
@@ -53,41 +51,7 @@ class SocialConversationRuntime:
 
     def snapshot(self) -> tuple[str, PreparedSocialContent | None]:
         key = self._status if self.content.enabled else "social.disabled"
-        day = self.content.horoscope
-        if (
-            self.content.enabled
-            and (
-                key == "social.hint"
-                or key == "social.started"
-                and self._last_content is not None
-                and self._last_content.horoscope is not None
-            )
-            and day.admitted
-        ):
-            key = (
-                "social.horoscope.completed"
-                if day.completed
-                else "social.started"
-                if self._ports.reading_active()
-                else "social.horoscope.paused"
-            )
-        if (
-            key == "social.hint"
-            and self.content.enabled
-            and not self.content.horoscope_available
-        ):
-            key = "social.horoscope.sign"
         return GERMAN_TEXT.format(key), self._last_content
-
-    def horoscope_choice(self) -> tuple[str, bool]:
-        day = self.content.horoscope
-        return GERMAN_TEXT.format(
-            "social.horoscope.read"
-            if day.completed
-            else "social.horoscope.resume"
-            if day.admitted
-            else "social.name.horoscope",
-        ), self.content.horoscope_available
 
     def set_enabled(self, enabled: bool) -> None:
         self.cancel()
@@ -95,7 +59,6 @@ class SocialConversationRuntime:
         self.content.set_enabled(enabled)
 
     def cancel(self) -> None:
-        self._ports.stop_reading()
         self._token = None
         self._phase = "idle"
         self.content.cancel_selection()
@@ -146,10 +109,6 @@ class SocialConversationRuntime:
                 if selection.status == "disabled"
                 else "social.limited"
                 if selection.status == "limited"
-                else "social.horoscope.sign"
-                if selection.status == "sign"
-                else "social.horoscope.completed"
-                if selection.status == "completed"
                 else "social.error"
             )
             return

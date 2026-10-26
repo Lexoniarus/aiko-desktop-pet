@@ -70,19 +70,53 @@ class SqliteMigrationTests(unittest.TestCase):
 
     def test_v1_receipts_upgrade_with_backup_and_preserved_session(self):
         original = self.store.load_session()
-        history = SocialContentHistory((SocialContentReceipt(
-            SocialCategory.FACT, "uselessfacts:legacy", "a" * 64,
-        ),))
-        self.store.save(
-            original.state, original.settings, expected_revision=original.revision,
-            adaptive=original.adaptive_memory, social_history=history,
-        )
-        # Reconstruct the delivered v1 shape from a valid full fixture. Only the
-        # newly added nullable column and its migration metadata are removed.
+        history = SocialContentHistory((
+            SocialContentReceipt(
+                SocialCategory.FACT,
+                "uselessfacts:legacy",
+                "a" * 64,
+            ),
+        ))
+        # Recreate the delivered v1 schema with its original transaction mapper.
+        self.path.unlink()
         with closing(sqlite3.connect(self.path)) as connection:
-            connection.execute("ALTER TABLE social_receipts DROP COLUMN intro_variant")
-            connection.execute("DELETE FROM schema_migrations WHERE version = 2")
-            connection.execute("PRAGMA user_version = 1")
+            connection.execute(f"PRAGMA application_id={schema.APPLICATION_ID}")
+            for statement in schema.MIGRATIONS[0].statements:
+                connection.execute(statement)
+            connection.execute(
+                "INSERT INTO schema_migrations VALUES (1,?,0)",
+                (schema.MIGRATIONS[0].name,),
+            )
+            connection.execute("PRAGMA user_version=1")
+            connection.execute(
+                "INSERT INTO save_state VALUES (1,2,?,?)",
+                (original.state.updated_at, original.state.lived_seconds),
+            )
+            # Populate other unchanged owners using the current mapper, excluding
+            # the independently versioned online/local-book rows.
+            from aiko_pet.infrastructure.sqlite import session_rows
+
+            with (
+                patch.object(session_rows, "write_social_history"),
+                patch.object(
+                    session_rows,
+                    "write_horoscope",
+                ),
+            ):
+                session_rows.write_session_rows(
+                    connection,
+                    original.state.capture_checkpoint(),
+                    original.settings,
+                    adaptive=original.adaptive_memory,
+                    social_history=history,
+                    world=None,
+                    object_memory=None,
+                    world_recovery_x=0,
+                )
+            connection.execute(
+                "INSERT INTO social_receipts VALUES (0,1,?,?,?)",
+                ("fact", "uselessfacts:legacy", "a" * 64),
+            )
             connection.commit()
         loaded = self.store.load_session()
         self.assertEqual(loaded.state, original.state)
@@ -93,16 +127,24 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertEqual(len(backups), 1)
         with closing(sqlite3.connect(backups[0])) as connection:
             self.assertEqual(connection.execute("PRAGMA user_version").fetchone(), (1,))
-            self.assertNotIn("intro_variant", [r[1] for r in connection.execute(
-                "PRAGMA table_info(social_receipts)"
-            )])
-            self.assertEqual(connection.execute(
-                "SELECT identity, fingerprint FROM social_receipts"
-            ).fetchall(), [("uselessfacts:legacy", "a" * 64)])
+            self.assertNotIn(
+                "intro_variant",
+                [
+                    r[1]
+                    for r in connection.execute("PRAGMA table_info(social_receipts)")
+                ],
+            )
+            self.assertEqual(
+                connection.execute(
+                    "SELECT identity, fingerprint FROM social_receipts"
+                ).fetchall(),
+                [("uselessfacts:legacy", "a" * 64)],
+            )
         self.store.load_session()
-        self.assertEqual(len(list(self.path.parent.glob(
-            f".{self.path.name}.schema-v1-*.sqlite3"
-        ))), 1)
+        self.assertEqual(
+            len(list(self.path.parent.glob(f".{self.path.name}.schema-v1-*.sqlite3"))),
+            1,
+        )
 
     def test_upgrade_creates_one_consistent_old_checkpoint_before_committing_schema(
         self,

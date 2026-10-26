@@ -38,10 +38,15 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         self.addCleanup(folder.cleanup)
         self.store = StateStore(Path(folder.name) / "state.json")
         self.wall = 1800000000
-        self.pet = PetState(updated_at=self.wall, social=20, wishes=WishState(
-            2, (ActiveWish(1, WishId.SINGLE, "single", 0, 14400),),
-            ((WishArea.SOCIAL, 0),),
-        ))
+        self.pet = PetState(
+            updated_at=self.wall,
+            social=20,
+            wishes=WishState(
+                2,
+                (ActiveWish(1, WishId.SINGLE, "single", 0, 14400),),
+                ((WishArea.SOCIAL, 0),),
+            ),
+        )
         self.settings = PetSettings(auto_routine=False)
 
     def test_old_saves_have_empty_history_without_changing_pet_values(self):
@@ -160,10 +165,14 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
 
     def test_admission_saves_care_and_receipt_once_before_full_wish_completion(self):
         adaptive = AdaptiveRoutine()
-        router = ApplicationRouter(CareController(
-            self.pet, make_aiko_mind(started_at=0), adaptive,
-            clock=ActiveSessionClock(lambda: 0),
-        ))
+        router = ApplicationRouter(
+            CareController(
+                self.pet,
+                make_aiko_mind(started_at=0),
+                adaptive,
+                clock=ActiveSessionClock(lambda: 0),
+            )
+        )
         scheduler, deferred, worker = FakeScheduler(), [], ManualSocialWorker()
         root = MagicMock(spec=tk.Tk)
         root.after.side_effect = lambda _delay, callback: deferred.append(callback)
@@ -174,25 +183,50 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         world.arrangement_ready.return_value = False
         contact.can_interact.return_value = True
         player = ReactionPlayer(
-            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
-            display_text=Mock(), display_emote=Mock(), start_action=Mock(),
-            mark_spoken=Mock(), is_closed=lambda: False,
+            schedule=scheduler.schedule,
+            cancel_timer=scheduler.cancel,
+            display_text=Mock(),
+            display_emote=Mock(),
+            start_action=Mock(),
+            mark_spoken=Mock(),
+            is_closed=lambda: False,
             social_completed=lambda completion: runtime.complete_social(completion),
         )
         persistence = DesktopPersistence(
-            self.store, self.pet, self.settings, adaptive,
+            self.store,
+            self.pet,
+            self.settings,
+            adaptive,
             social_history=lambda: runtime.social.content.history,
         )
         runtime = DesktopCareRuntime(
-            root=root, state=self.pet, router=router, world=world, contact=contact,
-            animated=Mock(), player=player, speech=Mock(), hover=Mock(),
-            cancel_action=Mock(), start_action=Mock(),
+            root=root,
+            state=self.pet,
+            router=router,
+            world=world,
+            contact=contact,
+            animated=Mock(),
+            player=player,
+            speech=Mock(),
+            hover=Mock(),
+            cancel_action=Mock(),
+            start_action=Mock(),
             react=lambda reaction, duration: player.play(reaction, duration),
             inputs=lambda _wall, _now: SessionInputs(
-                self.wall, 0, False, None, False, False, None,
+                self.wall,
+                0,
+                False,
+                None,
+                False,
+                False,
+                None,
             ),
-            set_context=Mock(), save=lambda: self.assertIsNone(persistence.save()),
-            is_closed=lambda: False, game_open=lambda: False, social_worker=worker,
+            set_context=Mock(),
+            save=lambda: self.assertIsNone(persistence.save()),
+            is_closed=lambda: False,
+            game_open=lambda: False,
+            social_worker=worker,
+            mind=make_aiko_mind(started_at=0),
         )
         runtime.social.set_enabled(True)
         worker.complete(1)

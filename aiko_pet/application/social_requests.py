@@ -12,8 +12,6 @@ REQUEST_CAPS: dict[SocialProvider, tuple[int, int, int]] = {
     SocialProvider.JOKEAPI: (5, 60, 300),
     SocialProvider.QUOTATIONS: (10, 20, 60),
     SocialProvider.FACTS: (10, 20, 60),
-    # Daily calendar limit is separate; this also protects the shared IP quota.
-    SocialProvider.ASTROWAY: (60, 30, 60),
 }
 MAX_REQUEST_RECEIPTS = sum(cap[2] for cap in REQUEST_CAPS.values())
 
@@ -66,7 +64,10 @@ class SocialRequestHistory:
 
     def blocked(self, provider: SocialProvider, until: float) -> SocialRequestHistory:
         until = max((until, *(b.until for b in self.blocks if b.provider == provider)))
-        return SocialRequestHistory(self.attempts, (
-            *(b for b in self.blocks if b.provider != provider),
-            SocialProviderBlock(provider, until),
-        ))
+        return SocialRequestHistory(
+            self.attempts,
+            (
+                *(b for b in self.blocks if b.provider != provider),
+                SocialProviderBlock(provider, until),
+            ),
+        )

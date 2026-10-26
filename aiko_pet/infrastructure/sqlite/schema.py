@@ -18,7 +18,7 @@ from .adaptive_schema import ADAPTIVE_SCHEMA
 from .backups import backup_database
 from .care_evidence_schema import CARE_EVIDENCE_SCHEMA
 from .food_handover_schema import FOOD_HANDOVER_SCHEMA
-from .horoscope_schema import HOROSCOPE_SCHEMA
+from .horoscope_schema import HOROSCOPE_SCHEMA, LOCAL_HOROSCOPE_SCHEMA
 from .interaction_schema import INTERACTION_SCHEMA
 from .moodlet_schema import MOODLET_SCHEMA
 from .pet_schema import PET_SCHEMA
@@ -28,7 +28,7 @@ from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -86,9 +86,35 @@ MIGRATIONS = (
     SchemaMigration(
         2,
         "social_introduction_rotation",
-        ("ALTER TABLE social_receipts ADD COLUMN intro_variant INTEGER "
-         "CHECK(intro_variant IS NULL OR "
-         "(typeof(intro_variant) = 'integer' AND intro_variant BETWEEN 0 AND 2))",),
+        (
+            "ALTER TABLE social_receipts ADD COLUMN intro_variant INTEGER "
+            "CHECK(intro_variant IS NULL OR "
+            "(typeof(intro_variant) = 'integer' AND intro_variant BETWEEN 0 AND 2))",
+        ),
+    ),
+    SchemaMigration(
+        3,
+        "local_horoscope_book",
+        LOCAL_HOROSCOPE_SCHEMA
+        + (
+            "INSERT INTO local_horoscope_days("
+            "day,state_id,sign,progress_index,admitted,completed) "
+            "SELECT day,state_id,sign,0,admitted,completed FROM horoscope_days "
+            "WHERE admitted=1",
+            "DROP TABLE horoscope_days",
+            "ALTER TABLE world_objects ADD COLUMN expires_at REAL "
+            "CHECK(expires_at >= 0)",
+            "CREATE TEMP TABLE saved_book_sources AS "
+            "SELECT * FROM object_memory_sources",
+            "DROP TABLE object_memory_sources",
+            "ALTER TABLE object_memories RENAME TO previous_object_memories",
+            WORLD_SCHEMA[3].replace("('food', 'drink')", "('food', 'drink', 'book')"),
+            "INSERT INTO object_memories SELECT * FROM previous_object_memories",
+            "DROP TABLE previous_object_memories",
+            WORLD_SCHEMA[4],
+            "INSERT INTO object_memory_sources SELECT * FROM saved_book_sources",
+            "DROP TABLE saved_book_sources",
+        ),
     ),
 )
 
@@ -160,21 +186,20 @@ def _validate_structure(
         if migration.version <= version
         for statement in migration.statements
     )
-    required = {
-        ("table", statement.split()[2].partition("(")[0])
-        for statement in statements
-        if statement.startswith("CREATE TABLE ")
-    }
-    required |= {
-        ("index", statement.split()[3].partition("(")[0])
-        for statement in statements
-        if statement.startswith("CREATE UNIQUE INDEX ")
-    }
-    required |= {
-        ("index", statement.split()[2].partition("(")[0])
-        for statement in statements
-        if statement.startswith("CREATE INDEX ")
-    }
+    required: set[tuple[str, str]] = set()
+    for statement in statements:
+        words = statement.split()
+        if statement.startswith("CREATE TABLE "):
+            required.add(("table", words[2].partition("(")[0]))
+        elif statement.startswith("CREATE UNIQUE INDEX "):
+            required.add(("index", words[3]))
+        elif statement.startswith("CREATE INDEX "):
+            required.add(("index", words[2]))
+        elif statement.startswith("DROP TABLE "):
+            required.discard(("table", words[2]))
+        elif statement.startswith("ALTER TABLE ") and " RENAME TO " in statement:
+            required.discard(("table", words[2]))
+            required.add(("table", words[-1]))
     present = set(connection.execute("SELECT type, name FROM sqlite_schema"))
     if not required <= present:
         raise StorageError(

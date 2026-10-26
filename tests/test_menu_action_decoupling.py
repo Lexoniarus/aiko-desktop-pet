@@ -165,6 +165,7 @@ class SnackPlacementTests(unittest.TestCase):
             )
         )
         self.runtime = DesktopWorldRuntime.__new__(DesktopWorldRuntime)
+        self.runtime.world = self.world
         self.runtime._closed = False
         self.runtime.cursor = self.cursor
         self.runtime.state = PetState()

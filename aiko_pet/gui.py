@@ -22,10 +22,7 @@ from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animati
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
 from .desktop.care_runtime import DesktopCareRuntime
 from .desktop.farewell import FarewellSequence
-from .desktop.global_input import (
-    idle_seconds_windows,
-    mouse_buttons_down_windows,
-)
+from .desktop.global_input import idle_seconds_windows, mouse_buttons_down_windows
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.maintenance import DesktopMaintenance
@@ -129,6 +126,7 @@ class DesktopPet:
             self.store, self.state, self.settings, self.adaptive,
             revision=session.revision,
             social_history=lambda: self._social_runtime.content.history,
+            horoscope=lambda: self._care_runtime.horoscope.history,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
         self.activity_monitor = activity_monitor or ActivityMonitor()
@@ -256,11 +254,11 @@ class DesktopPet:
                 game_ready=lambda: self._contact.can_interact("play"),
                 cards=self._game_visuals.ports, codes=self._game_visuals.code_ports,
                 game_bounds_at=self._window.work_area_at,
-                social_selected=lambda category: self._social_runtime.select(category),
+                social_selected=lambda choice: self._care_runtime.select_social(choice),
                 social_cancel=lambda: self._social_runtime.cancel(),
                 social_enabled=lambda: self.settings.online_social,
                 social_snapshot=lambda: self._social_runtime.snapshot(),
-                horoscope_choice=lambda: self._social_runtime.horoscope_choice(),
+                horoscope_choice=lambda: self._care_runtime.horoscope_choice(),
                 food_choices=self._food_choices,
                 place_item=lambda selected: self._world.begin_carry(selected),
                 can_place_item=lambda: self._world.can_place_item,
@@ -423,7 +421,7 @@ class DesktopPet:
             place_initially=self._place_initially,
             save=self._save,
             stop_animation=self._animated.close,
-            stop_social=lambda: self._social_runtime.close(),
+            stop_social=lambda: self._care_runtime.close(),
         )
         self._farewell = FarewellSequence(
             wording=lambda: self.mind.contact_text(
@@ -468,6 +466,7 @@ class DesktopPet:
             social_worker=social_worker, social_history=session.social_history,
             persist_requests=self._persistence.save,
             zodiac_sign=lambda: self.settings.zodiac_sign,
+            horoscope_history=session.horoscope, mind=self.mind,
         )
         self._social_runtime = self._care_runtime.social
         self._social_runtime.set_enabled(self.settings.online_social)

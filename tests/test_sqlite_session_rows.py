@@ -12,16 +12,22 @@ from test_sqlite_care_evidence import complete_emotional_state
 from test_sqlite_food_handovers import handover_state
 from test_sqlite_horoscope import admitted_day
 
+from aiko_pet.application.horoscope_models import HoroscopeHistory
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_history import SocialContentHistory
 from aiko_pet.application.storage_contracts import SaveRevision
+from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.sqlite.connection import open_database
 from aiko_pet.infrastructure.sqlite.session_rows import (
     read_session_rows,
     write_session_rows,
 )
+from aiko_pet.infrastructure.world_catalog import build_world_definitions
+from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.state import PetState
+from aiko_pet.world.contracts import ObjectFootprint, WorldSurface
+from aiko_pet.world.state import WorldState
 
 
 class SqliteSessionRowsTests(unittest.TestCase):
@@ -40,7 +46,11 @@ class SqliteSessionRowsTests(unittest.TestCase):
             wishes=handover_state(),
         )
         settings, adaptive = PetSettings(zodiac_sign="leo"), profile()
-        history = SocialContentHistory(horoscope=admitted_day())
+        history = SocialContentHistory()
+        horoscope = HoroscopeHistory((admitted_day(),))
+        definitions = build_world_definitions(DEFAULT_CATALOG, load_item_catalog())
+        world = WorldState(WorldSurface(800, 600, 96), definitions)
+        world.place_resting("horoscope_book", 200, ObjectFootprint(64, 48))
         with open_database(self.path, initialize=True) as connection:
             connection.execute("BEGIN IMMEDIATE")
             connection.execute(
@@ -52,7 +62,8 @@ class SqliteSessionRowsTests(unittest.TestCase):
                 settings,
                 adaptive=adaptive,
                 social_history=history,
-                world=None,
+                horoscope=horoscope,
+                world=world.snapshot(),
                 object_memory=None,
                 world_recovery_x=0,
             )
@@ -66,15 +77,16 @@ class SqliteSessionRowsTests(unittest.TestCase):
             ),
         ):
             connection.execute("BEGIN")
-            loaded = read_session_rows(connection, ())
+            loaded = read_session_rows(connection, definitions)
         self.assertEqual(loaded.state.capture_checkpoint(), pet.capture_checkpoint())
         self.assertEqual(
             (loaded.settings, loaded.adaptive_memory, loaded.social_history),
             (settings, adaptive, history),
         )
+        self.assertEqual(loaded.horoscope, horoscope)
         self.assertEqual(loaded.revision, SaveRevision(7))
         self.assertTrue(loaded.restored_from_save)
-        self.assertIsNone(loaded.world)
+        self.assertIsNotNone(loaded.world)
 
         class Reader:
             def load_session(self, *, now: float | None = None):

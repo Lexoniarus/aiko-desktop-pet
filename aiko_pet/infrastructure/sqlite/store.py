@@ -11,6 +11,7 @@ import time
 from copy import deepcopy
 from pathlib import Path
 
+from ...application.horoscope_models import HoroscopeHistory
 from ...application.session import LoadedPetData
 from ...application.settings import PetSettings
 from ...application.social_history import SocialContentHistory
@@ -81,13 +82,23 @@ class SqliteStateStore:
         expected_revision: SaveRevision,
         adaptive: AdaptiveMemory,
         social_history: SocialContentHistory,
+        horoscope: HoroscopeHistory = HoroscopeHistory(),
         world: WorldSnapshot | None = None,
         world_recovery_x: float = 0,
         object_memory: ObjectMemorySnapshot | None = None,
     ) -> SaveRevision:
         return self._save_snapshot(
-            LoadedPetData(pet, settings, adaptive, True, world, object_memory,
-                          social_history, expected_revision),
+            LoadedPetData(
+                pet,
+                settings,
+                adaptive,
+                True,
+                world,
+                object_memory,
+                social_history,
+                expected_revision,
+                horoscope=horoscope,
+            ),
             world_recovery_x=world_recovery_x,
         )
 
@@ -106,7 +117,10 @@ class SqliteStateStore:
             return self._save_snapshot(session, world_recovery_x=0, imported_at=stamp)
 
     def _save_snapshot(
-        self, session: LoadedPetData, *, world_recovery_x: float,
+        self,
+        session: LoadedPetData,
+        *,
+        world_recovery_x: float,
         imported_at: float | None = None,
     ) -> SaveRevision:
         with storage_failures(self.path):
@@ -155,6 +169,7 @@ class SqliteStateStore:
                     saved_settings,
                     adaptive=saved_adaptive,
                     social_history=session.social_history,
+                    horoscope=session.horoscope,
                     world=session.world,
                     object_memory=session.object_memory,
                     world_recovery_x=world_recovery_x,
@@ -178,7 +193,9 @@ class SqliteStateStore:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             with temporary_database(self.path) as temporary:
                 with open_database(
-                    temporary, initialize=True, transaction="write",
+                    temporary,
+                    initialize=True,
+                    transaction="write",
                 ) as connection:
                     commit_snapshot(connection, initial=True)
                 publish_database(temporary, self.path)

@@ -11,12 +11,14 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
+from test_horoscope import NOW
 from test_sqlite_adaptive_rows import profile
 from test_sqlite_care_evidence import complete_emotional_state
 from test_sqlite_food_handovers import handover_state
 from test_sqlite_horoscope import admitted_day
 from test_sqlite_social_rows import social_history
 
+from aiko_pet.application.horoscope_models import HoroscopeHistory
 from aiko_pet.application.session import SavedPetReader, SavedPetWriter
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.storage_contracts import (
@@ -56,10 +58,14 @@ class SqliteStoreTests(unittest.TestCase):
         )
         self.settings = PetSettings(x=-120, scale=2, zodiac_sign="leo")
         self.adaptive = profile()
-        self.history = replace(social_history(), horoscope=admitted_day())
+        self.history = social_history()
         definitions = build_world_definitions(DEFAULT_CATALOG, load_item_catalog())
         world = WorldState(WorldSurface(800, 600, 96), definitions)
         item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        book = world.place_resting("horoscope_book", 200, ObjectFootprint(64, 48))
+        self.horoscope = HoroscopeHistory((
+            replace(admitted_day(), book_instance_id=book.instance_id),
+        ))
         self.world = world.snapshot()
         self.memory = ObjectMemorySnapshot(
             (
@@ -93,6 +99,7 @@ class SqliteStoreTests(unittest.TestCase):
             expected_revision=revision,
             adaptive=self.adaptive,
             social_history=self.history,
+            horoscope=self.horoscope,
             world=self.world,
             object_memory=self.memory,
         )
@@ -101,6 +108,48 @@ class SqliteStoreTests(unittest.TestCase):
         pet = deepcopy(self.pet)
         pet.restore_checkpoint(replace(pet.capture_checkpoint(), satiety=12))
         return pet
+
+    def test_active_reading_cannot_reference_missing_or_edible_object(self) -> None:
+        self.pet = PetState(updated_at=NOW)
+        for book_id in ("object_1", "object_99"):
+            with self.subTest(book_id=book_id):
+                self.horoscope = HoroscopeHistory((
+                    replace(admitted_day(), book_instance_id=book_id),
+                ))
+                with self.assertRaises(StorageError):
+                    self.save(SaveRevision())
+                self.assertFalse(self.path.exists())
+
+    def test_loading_rejects_reading_bound_to_an_edible_object(self) -> None:
+        self.save(SaveRevision())
+        with closing(sqlite3.connect(self.path)) as connection:
+            connection.execute(
+                "UPDATE local_horoscope_days SET book_id='object_1'"
+            )
+            connection.commit()
+        with self.assertRaises(StorageError):
+            self.store.load_session()
+
+    def test_retired_book_history_survives_an_earlier_pet_clock(self) -> None:
+        day = self.horoscope.days[0]
+        assert day.reading is not None and day.book_instance_id is not None
+        self.horoscope = HoroscopeHistory((replace(
+            day, completed=True, index=len(day.reading.reaction.beats),
+            first_put_down_at=NOW,
+        ),))
+        world = WorldState(self.world.surface, self.world.definitions)
+        world.restore_snapshot(self.world)
+        book = world.get(day.book_instance_id)
+        world.set_book_expiry(book.instance_id, NOW + 3600)
+        world.expire_books(NOW + 3600)
+        self.world = world.snapshot()
+        self.pet = PetState(updated_at=NOW)
+        self.save(SaveRevision())
+        restored = self.store.load_session()
+        self.assertEqual(restored.horoscope, self.horoscope)
+        assert restored.world is not None
+        self.assertNotIn(book.instance_id,
+                         {item.instance_id for item in restored.world.objects})
 
     def test_fresh_load_and_complete_round_trip_never_advance_or_mutate_inputs(
         self,
@@ -126,6 +175,7 @@ class SqliteStoreTests(unittest.TestCase):
         self.assertEqual(
             (loaded.world, loaded.object_memory), (self.world, self.memory)
         )
+        self.assertEqual(loaded.horoscope, self.horoscope)
         self.assertEqual(loaded.revision, revision)
         self.assertEqual(self.save(revision), SaveRevision(2))
 
@@ -155,6 +205,7 @@ class SqliteStoreTests(unittest.TestCase):
         self.assertEqual(failure.exception.kind, StorageFailureKind.INVALID_DATA)
         self.assertEqual(failure.exception.path, self.path)
         loaded = self.store.load_session()
+        self.assertEqual(loaded.horoscope, self.horoscope)
         self.assertEqual(loaded.revision, revision)
         self.assertEqual(
             loaded.state.capture_checkpoint(), self.pet.capture_checkpoint()

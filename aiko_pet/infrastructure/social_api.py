@@ -13,12 +13,6 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from ..application.horoscope import prepare_horoscope
-from ..application.horoscope_models import (
-    ZODIAC_SIGNS,
-    HoroscopeRequest,
-    checked_day,
-)
 from ..application.social_content import (
     PreparedSocialContent,
     SocialCategory,
@@ -59,7 +53,6 @@ class SocialHttpResponse:
 def social_endpoint(
     category: SocialCategory,
     provider: SocialProvider | None = None,
-    horoscope: HoroscopeRequest | None = None,
 ) -> str:
     if (
         not isinstance(category, SocialCategory)
@@ -69,17 +62,7 @@ def social_endpoint(
         raise ValueError("Unknown social endpoint")
     provider = provider or default_provider(category)
     if category == SocialCategory.HOROSCOPE:
-        if (
-            provider != SocialProvider.ASTROWAY
-            or horoscope is None
-            or horoscope.sign not in ZODIAC_SIGNS
-        ):
-            raise ValueError("Missing reviewed horoscope request")
-        checked_day(horoscope.date)
-        return (
-            "https://api.astroway.info/v1/public/horoscope/daily"
-            f"?sign={horoscope.sign}&lang=de&date={horoscope.date}"
-        )
+        raise ValueError("No horoscope HTTP endpoint exists")
     if provider == SocialProvider.QUOTATIONS and category == SocialCategory.SINGLE:
         return "https://api.zitat-service.de/v1/quote?language=de"
     if provider != default_provider(category):
@@ -137,10 +120,9 @@ def _retry_at(
 def fetch_social_response(
     category: SocialCategory,
     provider: SocialProvider | None = None,
-    horoscope: HoroscopeRequest | None = None,
 ) -> SocialHttpResponse:
     request = Request(
-        social_endpoint(category, provider, horoscope),
+        social_endpoint(category, provider),
         headers={
             "Accept": "application/json",
             "User-Agent": "AikoDesktopPet/1.0",
@@ -148,23 +130,15 @@ def fetch_social_response(
     )
     retry_at = None
     try:
-        with urlopen(
-            request, timeout=25 if horoscope else REQUEST_TIMEOUT_SECONDS
-        ) as response:
+        with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
             retry_at = _retry_at(
                 getattr(response, "headers", None), time.time(), success=True
             )
             body = response.read(MAX_RESPONSE_BYTES + 1)
-            if horoscope and response.headers.get("X-AI-Cache", "").upper() == "STALE":
-                raise ValueError("Stale horoscope fallback")
         if len(body) > MAX_RESPONSE_BYTES:
             raise ValueError("Social response exceeds size limit")
         payload = json.loads(body.decode("utf-8"))
-        content = (
-            prepare_horoscope(payload, horoscope)
-            if horoscope
-            else prepare_social_content(category, payload, provider=provider)
-        )
+        content = prepare_social_content(category, payload, provider=provider)
         return SocialHttpResponse(content, retry_at)
     except HTTPError as error:
         try:
@@ -214,11 +188,7 @@ class HttpSocialContentWorker:
 
         def fetch() -> None:
             try:
-                response = (
-                    fetch_social_response(category, provider, token)
-                    if isinstance(token, HoroscopeRequest)
-                    else fetch_social_response(category, provider)
-                )
+                response = fetch_social_response(category, provider)
                 result = SocialFetchResult(
                     token, category, response.content, retry_at=response.retry_at
                 )

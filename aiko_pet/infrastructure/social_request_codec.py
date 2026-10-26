@@ -19,8 +19,12 @@ from ..pet.catalog_validation import enum_value, object_fields
 def decode_social_requests(raw: Any) -> SocialRequestHistory:
     data = object_fields(raw, ("attempts", "blocks"), context="social requests")
     attempts, blocks = data["attempts"], data["blocks"]
-    if (not isinstance(attempts, list) or len(attempts) > MAX_REQUEST_RECEIPTS
-            or not isinstance(blocks, list) or len(blocks) > len(SocialProvider)):
+    if (
+        not isinstance(attempts, list)
+        or len(attempts) > MAX_REQUEST_RECEIPTS + 60
+        or not isinstance(blocks, list)
+        or len(blocks) > len(SocialProvider) + 1
+    ):
         raise ValueError("Unbounded social requests")
 
     def stamp(value: Any) -> float:
@@ -33,6 +37,8 @@ def decode_social_requests(raw: Any) -> SocialRequestHistory:
     counts = dict.fromkeys(SocialProvider, 0)
     for entry in attempts:
         row = object_fields(entry, ("provider", "at"), context="social request")
+        if row["provider"] == "astroway":
+            continue  # Retire the rejected provider from legacy saves.
         provider = enum_value(row["provider"], SocialProvider, context="provider")
         counts[provider] += 1
         if counts[provider] > REQUEST_CAPS[provider][2]:
@@ -42,6 +48,8 @@ def decode_social_requests(raw: Any) -> SocialRequestHistory:
     seen = set()
     for entry in blocks:
         row = object_fields(entry, ("provider", "until"), context="provider block")
+        if row["provider"] == "astroway":
+            continue  # Retire the rejected provider from legacy saves.
         provider = enum_value(row["provider"], SocialProvider, context="provider")
         if provider in seen:
             raise ValueError("Duplicate provider block")
