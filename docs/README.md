@@ -22,7 +22,7 @@ and test-cleanup plans.
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
 | Continuous friendship from mood/Moodlets, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
-| Unterhalten, API-only Single/Two Parts/facts, warming and shared care | [Social content](SOCIAL_CONTENT.md) |
+| Unterhalten, online sayings/jokes/facts and the local horoscope book | [Social content](SOCIAL_CONTENT.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
 | Branches, reviews and CI | [Development workflow](GITHUB_WORKFLOW.md) |
@@ -32,6 +32,14 @@ and test-cleanup plans.
 [CHANGELOG](../CHANGELOG.md) summarizes current unreleased changes and milestones.
 
 ## Validation and acceptance
+
+Local horoscope completion (2026-10-26): 206 targeted integration checks pass,
+including retired-book/clock coverage and actual Windows/Tk
+drag, reading, replay, expiry and restart. Repository Ruff and strict Mypy pass
+on an isolated Git-tree export. The [completion record](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md#completion-verification-2026-10-26)
+separates existing repository test/Pyright failures reproduced on the base
+commit from the local book work. Parallel character files and the normal save
+remain outside this completion.
 
 Latest spontaneous-speech cleanup (PL-6C): **235 targeted tests in 8.699 s**,
 zero failures/errors/skips, longest **0.648 s**, plus scoped Ruff, fresh strict
@@ -243,13 +251,16 @@ separate native Windows acceptance. These additions are not merged into main.
 
 ## Preserved product concepts
 
-The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md), recorded on
-2026-10-23, specifies short one-line jokes and quotations under Sprüche, daily
-horoscope and tarot role performances with original source address retained,
-mandatory free/keyless access, provider budgets and a shared bubble-duration
-review. Only the shared bubble timing has subsequently been authorized and
-implemented, including the final-text allowance and 800 ms punchline pause.
-The new content sources/actions and one-liner filtering remain planned.
+The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) records the
+implemented short one-line jokes/quotations under Sprüche and shared timing,
+including the final-text allowance and 800 ms punchline pause. The AstroWay
+horoscope prototype is **rejected; full replacement is decided**, with no API
+fallback or parallel mode. The [local book replacement plan](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md)
+defines module ownership, reuse/retirement, once-daily continuation, World book
+use and save migration. Its [approved German content reference](horoscope/book-reading-reference.de.md)
+shows Aiko remaining herself while reading a complete book entry and optionally
+commenting. The old twelve pilots are rejected; the implemented catalogue has
+96 newly authored entries. A hat is outside this version. Tarot remains planned.
 
 The following owner-supplied concepts were recorded on 2026-10-19. They preserve
 future product direction, with explicit comparisons against main after PR #10.

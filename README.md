@@ -107,16 +107,16 @@ This source builds on the **v0.13 feature baseline and modular OOP refactor**, w
 ## Getting started
 
 1. [Download the current `main` source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract the complete folder to a writable, permanent location on Windows 10/11. Rock–Paper–Scissors is already included in `main`.
-2. Double-click **[`Aiko_installieren.bat`](Aiko_installieren.bat)**. Setup tests Python 3.11+ and a real Tk window. If the runtime is missing or incomplete, it downloads the official Python 3.13 installer and installs Tcl/Tk for your Windows account; WinGet is unnecessary. It creates an isolated `.venv`, processes [`requirements.txt`](requirements.txt), checks character assets, and creates desktop/Start menu shortcuts. An internet connection is needed if Python or future runtime packages must be downloaded.
-3. Use the **Aiko Desktop Pet** shortcut or double-click `Aiko_starten.bat`. With an existing suitable Python installation, you can also skip setup and run:
+2. Double-click **[`Aiko_installieren.bat`](Aiko_installieren.bat)**. Setup tests Python 3.11+ and a real Tk window. If the runtime is missing or incomplete, it downloads the official Python 3.13 installer and installs Tcl/Tk for your Windows account; WinGet is unnecessary. It creates an isolated `.venv`, processes [`requirements.txt`](requirements.txt), checks character assets, and creates desktop/Start menu shortcuts. An internet connection is needed if Python or runtime packages must be downloaded.
+3. Use the **Aiko Desktop Pet** shortcut or double-click `Aiko_starten.bat`. After setup, you can also run its environment directly:
 
    ```powershell
-   py -m aiko_pet
+   .\.venv\Scripts\python.exe -m aiko_pet
    ```
 
 4. Hover over Aiko to open the care panel. If the window fails to start, use `Aiko_starten_debug.bat` to keep the error output visible.
 
-You can also run `python main.py` or `python -m aiko_pet`. **No third-party Python packages are currently required for normal use.** Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers prefer the local environment. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
+Manual Python environments must install `requirements.txt`, including Astronomy Engine for the offline horoscope. Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers require the local `.venv`; startup checks its offline astronomy calculation before opening a save. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
 
 If the optional Kenney Mini font is already installed, Aiko can use it; otherwise she falls back to Segoe UI. Font files are not redistributed.
 
@@ -209,3 +209,9 @@ Security and private vulnerability reporting are explained in
 
 Aiko Desktop Pet is an independent project, separate from ComfyReview and
 Character Chronicles.
+
+Local horoscope books use [Astronomy Engine](https://github.com/cosinekitty/astronomy)
+2.1.19 (MIT), installed from requirements.txt. Book prose and Aiko comments are
+packaged German content; no horoscope API, account, key or language model is
+used. The [book contract](docs/horoscope/MODULE_AND_CATALOGUE_CONTRACTS.md) covers
+physical placement, one daily entry and the fixed one-hour replay lifetime.

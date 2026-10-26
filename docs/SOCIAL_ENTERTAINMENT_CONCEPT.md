@@ -31,17 +31,18 @@ feature branch; [current social behavior](SOCIAL_CONTENT.md) describes the
 runtime, and the plan records actual verification. Broader translation,
 horoscope and spontaneous-content ideas below remain future work.
 
-The later [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md), recorded
-on 2026-10-23, now defines the documentation-only scope for Sprüche with genuine
-one-liners and quotations, daily horoscope and tarot role performances, free
-keyless providers, request limits and a shared reading-time review. It retains
-the provider's Sie wording inside the announced role; proposed Sie-to-du
-conversion is withdrawn. This supersedes earlier ideas for that selected scope
-without selecting the remaining concepts below. Subsequently the owner
-authorized only the shared bubble timing: its final-text allowance and 800 ms
-punchline pause are now implemented, as described in the
-[current social behavior](SOCIAL_CONTENT.md#bubble-reading-time). New sources,
-actions and one-liner filtering remain planned.
+The later [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) supersedes
+this exploratory source list for selected features. Sprüche with genuine
+one-liners/quotations and shared bubble timing are implemented. The horoscope
+API prototype is **rejected and fully replaced**, without an online
+alternative or fallback. Its [local book replacement plan](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md)
+and [approved content reference](horoscope/book-reading-reference.de.md) now
+govern that work: a placed and picked-up book supplies the text, Aiko remains
+herself and may comment. Hat gating and a floating-book performance are not
+part of its first version. The local replacement contains 96 complete readings
+with a persistent physical book and a fixed one-hour replay deadline.
+Tarot remains separate future work; older source/role/translation suggestions
+below are historical possibilities, not current implementation instructions.
 
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
 existing sequences and their conditions for individual editorial review before

@@ -1,15 +1,18 @@
 # Sayings, daily horoscope and tarot expansion plan
 
-> **Sprüche, shared bubble timing and the daily horoscope baseline implemented;
-> horoscope gift/VN presentation and tarot planned.**
+> **Sprüche and shared bubble timing implemented. The AstroWay horoscope API
+> prototype is replaced by the local held-book version with 96 authored entries.
+> The approved book-reading reference governs Aiko's delivery.
+> Earlier performance pilots rejected; hat extension and tarot deferred.**
 > Initial documentation-only plan recorded on 2026-10-23 at checkout `f6ae2df`
 > on `feature/social-optimization`. The owner later authorized the shared bubble
 > times (including final second and punchline pause), followed by the Sprüche
 > slice: German one-liners, quotations and their request/save/Credits boundaries.
-> The owner subsequently authorized the daily horoscope slice below, then recorded
-> the future hat-gift and VN presentation concept. That extension remains planning
-> only. This documentation update authorizes no implementation, further asset
-> generation, purchases, CI setup, push or merge. Existing parallel work is preserved.
+> The owner subsequently authorized the daily horoscope API prototype, then
+> corrected the local concept to Aiko reading a real held book. This replacement
+> was subsequently authorized for implementation and verified local commits.
+> No further asset generation, purchases, CI setup, push or merge is included.
+> Existing parallel character work is preserved outside these commits.
 
 This is the current planning authority for the selected social expansion.
 The [original concept](SOCIAL_ENTERTAINMENT_CONCEPT.md) preserves earlier ideas;
@@ -24,10 +27,11 @@ the delivery records below retain their individual scope. Tarot remains future w
 | Area | Selected direction |
 | --- | --- |
 | German UI label **Sprüche** | Mix genuine short one-line jokes from JokeAPI with short quotations from Zitat-Service behind one choice. A provider `single` field alone does not qualify as a one-liner. |
-| Daily horoscope baseline | German AstroWay content with direct zodiac selection, a role performance of at most twelve text bubbles and one resumable reading per local calendar day; at most three fetch attempts per day. Birthday assistance is later work. |
-| Planned horoscope gift and VN presentation | Receiving a permanent fortune-teller hat as a gift unlocks the horoscope. Aiko wears it only during the reading. Match its views to the scene's actual head poses and plan a separate floating book. See the [gift and presentation decision](#planned-horoscope-gift-and-vn-presentation). Implementation remains future work. |
+| Rejected API prototype | AstroWay daily horoscope is discarded and must be fully replaced. Its delivered behavior below is retirement/migration evidence, not a retained online option or fallback. |
+| Local horoscope replacement | Local calculation and 96 authored German book entries, with [confirmed reading reference](horoscope/book-reading-reference.de.md) and [module/migration plan](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md). Aiko remains herself and may comment on the passage. The API mode is removed. |
+| Book and later hat concept | One live book: place on the taskbar, pick up, open/read, close/put down. After the first complete reading and put-down it remains replayable for a fixed hour, then dissipates. Interruption does not exhaust it. Reuse the holding pose. Hat and its former gift-unlock requirement remain deferred; the floating-book design is superseded. |
 | Tarot | Aiko explicitly plays the fortune-teller/card-reader role and presents the source's card meaning. |
-| Address | Aiko's ordinary framing uses **du**; source text may retain **Sie** inside the announced role. Preserve source wording. |
+| Address | Local book prose and Aiko's own speech use **du**. Source-preserving **Sie** was a property of the rejected horoscope API prototype and remains a separate consideration for any future sourced Tarot text. |
 | Cost | Content acquisition and operation of these integrations must be free of provider charges. No API keys, accounts, paid fallback or subscriptions. |
 | Reading time | Review actual bubble durations for Spruch, Witz, Kurioser Fakt and Plaudern together, including the new readings. |
 | Later presentation | Card artwork, suitable gestures and subtle effects may extend the performance later. A crystal ball is explicitly outside the first step. |
@@ -35,7 +39,10 @@ the delivery records below retain their individual scope. Tarot remains future w
 The proposed rule-based Sie-to-du converter is withdrawn. No NLP package,
 local language model, translation service or paid inference is part of this
 scope. Authored framing is allowed; replacement authored jokes, quotations,
-horoscopes or card meanings are not selected. Existing Plaudern remains authored.
+horoscopes or card meanings are not selected for the delivered API baseline.
+The later [local horoscope draft](#local-horoscope-alternative-and-complete-scene-draft)
+separately explores authored interpretations; it does not activate them as API
+fallbacks. Existing Plaudern remains authored.
 
 ## Mandatory zero-cost and keyless boundary
 
@@ -55,9 +62,9 @@ horoscopes or card meanings are not selected. Existing Plaudern remains authored
 - No promise of permanent third-party availability is made. The durable product
   rule is that Aiko must not incur provider charges to keep content available.
 
-The existing online-source opt-in remains the admission boundary, off by
-default. Its future German wording must cover the expanded sources. Disabling
-it prevents new network work and invalidates pending online playback.
+The existing online-source opt-in remains the boundary for online providers,
+off by default. Disabling it prevents new network work and invalidates pending
+online playback. The local book reading is independent of that opt-in.
 
 ## Sprüche: short jokes and quotations
 
@@ -141,210 +148,270 @@ The historical timing/test delivery records retain their original scope and resu
 
 ## Daily horoscope and role performance
 
-The owner confirmed this design on 2026-10-23 and subsequently explicitly
-authorized its implementation. The runtime, direct sign option and compatible
-daily save extension now implement these rules. Tarot remains separately planned.
-The [later gift and VN presentation decision](#planned-horoscope-gift-and-vn-presentation)
-is a future extension; the following sections describe the delivered API baseline,
-which does not yet require or display a hat.
+**Rejected and superseded.** Full replacement of the AstroWay API prototype
+is decided. Its previous request rules, source text, role switches and fetch
+attempts are [archived as implementation history](horoscope/rejected-api-prototype.md),
+not current target behavior. Use the local book concept and replacement plan
+below. Existing code is removed during implementation; this documentation task
+changes no runtime.
 
-Use `GET https://api.astroway.info/v1/public/horoscope/daily` with an explicitly
-selected `sign`, `lang=de` and the intended local calendar `date`. The reviewed
-endpoint needs a zodiac sign, not birth date, birth time or birthplace.
+<a id="local-horoscope-alternative-and-complete-scene-draft"></a>
 
-Options belong to the existing `PetSettings` owner:
+## Local horoscope replacement: held book and authored entries
 
-- First version: a direct selection labelled "Sternzeichen fürs Tageshoroskop",
-  containing all twelve signs and "Nicht ausgewählt" as the default. No sign
-  means the horoscope choice is disabled with an explanatory settings hint;
-  never guess a sign.
-- Store one confirmed sign as the canonical choice. Choosing a sign or opening
-  settings/the menu performs no request and starts no reading.
-- Birthday assistance is later work, outside the first version. It could suggest
-  a sign locally from day/month for confirmation, without a birth year. Do not
-  transmit a birthday or introduce a second competing sign preference. Input
-  retention and exact assistance UI remain future decisions.
-- Tarot and Sprüche do not require a birthday or zodiac sign.
+Current planning authority, corrected on **2026-10-25** after content and
+character review: Aiko uses a placed and picked-up book, reads its horoscope
+and may comment while remaining herself. The approved book example replaces
+the rejected performance scripts. The technical plan below specifies the local
+replacement. Implementation was subsequently authorized and completed; its
+current contracts are maintained in the linked module plan. The AstroWay API
+prototype is removed completely, without a retained provider mode.
 
-Aiko announces entering the fortune-teller role, presents the original German
-provider text, then visibly returns to her ordinary voice. The formal address
-is part of this performance. Framing and role exit use du. Do not change
-pronouns, conjugate verbs, claim the reading is Aiko's own observation of the
-user or insert provider statements into subjective Mind/World knowledge. An
-interruption ends the role immediately; resuming briefly announces re-entry.
+### Local calculation and authored interpretation
 
-Selected presentation order (framing examples, not runtime catalogue changes):
+- Selected calculation library: **[Astronomy Engine (Python)](https://github.com/cosinekitty/astronomy/blob/master/source/python/README.md)**,
+  under the [MIT license](https://github.com/cosinekitty/astronomy/blob/master/LICENSE).
+  Version 2.1.19 is pinned; its copyright/license notice is shipped. No provider
+  key, account, paid service, online translation or additional language model
+  is part of this replacement. The library calculates astronomy; it does not
+  supply horoscope prose or validate our interpretations.
+- Implemented basis: geocentric tropical Sun/Moon longitude and lunar phase at
+  local noon converted to UTC, with explicit zodiac and phase boundaries.
+- Keep direct zodiac selection. In the proposed simplified solar-house scheme,
+  the selected sign is the first house and subsequent signs supply relative
+  thematic positions. Birth time, birthplace and a full natal chart are outside
+  this draft.
+- Moon position relative to the selected sign chooses the daily theme; lunar
+  phase chooses its development direction. Sun position is calculated and saved
+  as context; the current entries do not restrict selection by Sun position.
+  These are playful interpretations of astrological symbolism, not scientific
+  predictions. Select a coherent theme before selecting complete authored
+  German passages; do not combine unrelated sentence fragments at random.
+- Date and selected sign should determine a stable daily reading. Keep one
+  resumable reading per day, the twelve-text-bubble ceiling and shared display
+  times. A wholly local replacement would not need HTTP fetch attempts; the
+  three-attempt rule is only a historical property of the rejected API code
+  and is removed with that code at cutover.
+- Author the local book text directly in **du**, separating book prose from
+  Aiko's own voice. The old API text and source-wording rules are history,
+  not a second live mode. Complete replacement of the prototype is decided;
+  the separately authorized implementation now delivers that replacement.
 
-1. Role entry, for example: "Ich schlüpfe mal in die Rolle der Wahrsagerin. Mal
-   sehen, was heute für dein Sternzeichen geschrieben steht."
-2. Present the complete provider AI/entertainment disclaimer.
-3. Read the complete overview and daily advice, retaining original wording and
-   Sie address within the announced role.
-4. Return to Aiko's ordinary voice, for example: "So, die Sterne hatten ihren
-   Auftritt. Jetzt bin ich wieder deine Aiko."
+### Planned text collection: 96 complete scene templates
 
-Keep the original provider footer and source attribution visible with the
-reading; Credits supplement them rather than replacing mandatory visible hints.
-Do not offer a key/payment flow or read an English fallback as horoscope content.
+Owner decision recorded on **2026-10-25**: plan a starting collection of
+**96 complete scene templates shared by all twelve zodiac signs**. This is a
+scope decision only; recording that scope did not authorize new readings,
+pilot texts, catalogue files or runtime implementation. The owner subsequently
+authorized twelve editorial pilots, rejected their direction, and approved one
+new book-reading reference. The subsequently authorized runtime now contains
+all 96 entries, with explicit sign applicability and four-stage Aiko comments.
 
-### Content and twelve-bubble budget
+| Dimension | Planned count | Purpose |
+| --- | --- | --- |
+| Theme families | 12 | The solar-house-inspired families and their editorial boundaries are defined below. |
+| Development directions per theme | 4 | Begin, develop, reflect and conclude, with the agreed lunar-cycle intervals below. |
+| Complete variants per theme/direction pair | 2 | Distinct complete book entries, with separate optional Aiko comments and suitable holding/emote presentation. |
+| Total starting target | **96** | **12 × 4 × 2**, shared across the signs rather than a separate 96-entry collection for each sign. |
 
-Use complete `data.sections.overview` and `data.sections.advice`, not all six
-topics or the full concatenated `data.horoscope`. Validate the successful response
-envelope, daily period, German language, requested sign/date, both complete
-sections, disclaimer and provider footer before admission. An HTTP 200 alone is
-insufficient: the provider can return older or non-German text with fallback
-metadata while computed fields still match the requested date. Check the text's
-actual date/language too; reject stale or non-German fallback content without
-consuming reading eligibility. See the
-[public daily endpoint contract](https://api.astroway.info/en/docs/api/operations/publichoroscopedaily/).
+#### Twelve theme families
 
-The approved bound is **at most twelve text bubbles for one prepared horoscope
-sequence**, including role entry/exit, the complete AI/entertainment disclaimer
-and any spoken attribution. Every text bubble keeps the **125-character limit**.
-Use the existing common reading time, final-text second and reading clicks. The
-actual final text receives the allowance, normally the role exit. The earlier
-eight-bubble proposal is superseded; the five-text budget for other social
-content is not enlarged by this decision.
+Owner decision recorded on **2026-10-25**. These are Aiko's accessible editorial
+adaptations of traditional [house symbolism](https://cafeastrology.com/articles/housesofthehoroscope.html),
+not a complete natal-chart interpretation. The German names identify the planned
+families; they are not new spoken readings or runtime catalogue entries.
 
-The live Widder sample for 2026-10-23 has a 371-character overview and a
-201-character advice section: five content bubbles with current segmentation.
-Its 231-character disclaimer takes three more. With one role-entry and one exit
-bubble, that is ten text bubbles, roughly eighty seconds using the selected
-reading times. This is one sizing sample, not a guarantee for every sign/day.
-Reject content that cannot fit completely within twelve bubbles. Never shorten
-source text, omit a required section or bypass the budget with unrelated reactions.
+| Solar house | Theme family | Editorial scope |
+| --- | --- | --- |
+| 1 | **Selbstbild und Auftreten** | Personal attitude, willingness to be seen and first impressions; focus on how someone presents themselves. |
+| 2 | **Eigene Mittel und Werte** | Time, attention, possessions and what matters personally; choosing and appreciating resources. |
+| 3 | **Austausch und kleine Entdeckungen** | Questions, listening, explaining and learning something through everyday exchange. |
+| 4 | **Vertrautheit und Geborgenheit** | Familiar places and rituals, settling in and a sense of home. |
+| 5 | **Spielfreude und Kreativität** | Experimentation, imagination, hobbies and enjoyment of an idea; room for Aiko's playfulness. |
+| 6 | **Alltag und hilfreiche Gewohnheiten** | Small routines, order, practical help and manageable improvements. |
+| 7 | **Begegnung und Zusammenspiel** | A concrete counterpart: invitations, listening, coordination and doing something as a pair. |
+| 8 | **Veränderung und Vertrauen** | Handling novelty or uncertainty, sharing responsibility and allowing familiar things to change. |
+| 9 | **Neugier und neue Perspektiven** | Broadening a familiar viewpoint, encountering unfamiliar ideas and discovering connections. |
+| 10 | **Ziele und sichtbarer Fortschritt** | Working toward something, noticing a milestone, completing or showing an achievement. |
+| 11 | **Freundschaft und gemeinsame Ideen** | Belonging, shared interests and plans that grow through other people. |
+| 12 | **Ruhe und innere Gedankenwelt** | Retreat, daydreaming, processing impressions and giving thoughts room. |
 
-### Once per day and interrupted delivery
+Keep these boundaries visible during later editorial review:
 
-The selected rule is **one resumable daily reading per local calendar day across
-all signs**, not one reading per sign. Use the user's local date (Europe/Berlin in
-this planning session), with no 24-hour cooldown, offline backlog or request merely
-because midnight passes. Pass the selected date explicitly; the provider's
-default is UTC.
+- **3 versus 9:** immediate exchange and everyday learning versus a broader
+  perspective or unfamiliar conceptual territory.
+- **4 versus 12:** security in familiar surroundings versus inner quiet and
+  retreat.
+- **6 versus 10:** a functioning everyday routine versus a longer-term goal
+  or visible milestone.
+- **7 versus 11:** a concrete one-to-one encounter versus friendship,
+  belonging and shared interests.
 
-| State | Planned selection behavior |
-| --- | --- |
-| Not begun | "Tageshoroskop anhören"; fetch only on deliberate selection if no eligible prepared item exists. |
-| Fetch/preparation failed or content rejected | Leave reading eligibility open, subject to the separate three-attempt request cap and provider pauses. |
-| Interrupted | "Tageshoroskop fortsetzen"; resume the same item's interrupted bubble, without another fetch or care booking. |
-| Full sequence completed, including role exit | "Heute bereits vorgelesen"; another reading is available tomorrow. |
-| Restart | Restore the same daily state and any eligible continuation, without automatic playback or completion. |
+#### Four development directions and lunar phases
 
-- First actual playback admission fixes that day's reading and books the existing
-  talk care once. Full-sequence completion marks the day completed. Continuing
-  the same item repeats neither the care booking nor already completed content
-  bubbles. No new reward formula or wish family is selected.
-- Before playback begins, the sign may change. Invalidate any mismatching
-  prepared item or in-flight result; a discarded request still counts. Once
-  playback has begun, changing the preference applies from tomorrow and neither
-  replaces the active item nor unlocks another reading after completion.
-- A reading already playing at midnight may finish as the previous day's item;
-  it must not mark the new day completed. A paused previous-day reading expires
-  instead of being resumed or completed offline. Today's reading is independently
-  eligible. Late fetch results must never become the new day's reading.
-- Disabling online sources prevents playback/continuation and further requests,
-  while retaining the daily status and already booked care. Re-enabling on the
-  same day can resume the same still-eligible item, without resetting anything.
+Use four consecutive quarters of the calculated lunar phase angle. Astronomy
+Engine defines 0 degrees as new Moon, 90 as first quarter, 180 as full Moon
+and 270 as third/last quarter; see its
+[phase reference](https://github.com/cosinekitty/astronomy/blob/master/source/python/README.md#MoonPhase).
+The interpretations below are our editorial choices, not meanings supplied by
+the calculation library.
 
-Persist a bounded daily record containing date, selected sign, validated content,
-reading progress, admission/care status and completion evidence through the
-existing atomic save owner. Keep settings, provider content and lifecycle evidence
-distinct within that boundary, not in a second mutable store or journal. Existing
-social admission receipts contain hashes/identities, not content or continuation
-state. The implemented version-three social history adds exactly this bounded
-daily record, while continuing to read version-one and version-two histories.
-Development verification uses isolated temporary saves.
+| Direction | Editorial meaning | Lunar-cycle interval | Phase-angle interval |
+| --- | --- | --- | --- |
+| **Beginnen** | Notice a possibility, choose a small starting point or allow something to emerge. | New Moon to first quarter | 0 degrees inclusive to 90 exclusive |
+| **Weiterentwickeln** | Build on something, try it out, develop it and keep going. | First quarter to full Moon | 90 degrees inclusive to 180 exclusive |
+| **Betrachten** | Notice what has emerged, put it in perspective, appreciate it or share observations. | Full Moon to last quarter | 180 degrees inclusive to 270 exclusive |
+| **Abschließen** | Round something off, simplify, let it rest or make room. | Last quarter to the next new Moon | 270 degrees inclusive to 360 exclusive |
 
-### At most three horoscope fetch attempts per day
+At a boundary, use the direction whose interval starts there; a new cycle
+wraps to 0 degrees. These are phase-angle quarters, not fixed seven-day blocks
+or equal illumination-percentage ranges. Membership in an interval does not
+mean the exact named Moon event happens on that local calendar day.
 
-- Normally fetch one successful item per used day and reuse it for playback or
-  continuation. Opening/reopening menus and repeated clicks coalesce matching
-  in-flight work; never fetch merely to prepare a second ready horoscope.
-- Allow **at most three dispatched horoscope HTTP attempts per local calendar
-  day**, shared across all signs. Count timeouts, HTTP errors, rejected/oversized
-  content and discarded stale/sign-mismatched responses as attempts too. Each
-  attempt uses the existing bounded request-admission and persistence boundary.
-- Persist the attempt count independently of successful reading/completion.
-  Restart, sign changes, cancellation and opt-out must not reset it. Once all
-  three attempts are spent, show a retry-later/tomorrow status; an already valid
-  cached reading may still play or resume within its daily eligibility.
-- Retries are deliberate and paced, subject to provider pauses/Retry-After and
-  the shared AstroWay public IP budget of 30 requests per sliding hour. No
-  automatic endless retries, new worker, credential, paid fallback or local
-  replacement horoscope is allowed. Tarot's eventual attempt policy remains
-  undecided and must share the provider budget without inheriting this rule.
+Directions describe what happens **within** a theme. Beginnen can concern a
+small playful occasion; Abschließen need not imply a farewell. Family 8 is the
+subject of change/trust, not a synonym for Abschließen: it can take any of the
+four directions.
+
+#### Selection rules for the local replacement
+
+1. Use the existing directly selected zodiac sign as the first solar house.
+   Count subsequent signs in zodiac order; the Moon's sign relative to that
+   starting point selects the corresponding **leading theme family**.
+2. Use the calculated lunar phase at the fixed daily reference time to select
+   **one development direction** from the intervals above.
+3. Use the Sun's relative position as an optional compatible background.
+   It must not introduce a second compulsory theme or multiply the catalogue
+   into every Sun-house/Moon-house/phase combination.
+4. The Moon's sign may color presentation. It does not add another mandatory
+   collection dimension or justify an interpretation that contradicts the
+   selected theme and direction.
+5. Select one of the two complete variants for the resulting theme/direction
+   pair, respecting the later repetition policy. Actual astronomical facts may
+   appear in complete sentences with validated substitutions. Keep the scene
+   coherent; do not assemble unrelated sentence fragments or change facts to
+   fit a preferred script.
+6. Keep the chosen reading stable for its local date and resumable after an
+   interruption. Eligibility limits take precedence over merely avoiding a
+   recent variant. Storage and the exact stable-selection mechanism remain
+   future implementation work.
+
+This preserves **12 themes × 4 directions × 2 variants = 96** complete templates
+shared across the signs. The twelve pilot scenes should exercise different
+development directions across all four, as well as different scene arcs, before
+the expansion to 48 and 96 templates. These are our own simplified editorial
+rules, not a researched industry standard or proof of content quality. Exact
+eligibility for the approved Stier reference remains to be reviewed; the old
+nine-bubble performance is rejected, not an exception to the selection rules.
+
+#### Complete variants and staged editorial work
+
+A second variant must offer a genuinely different complete book entry, not
+merely replace an interjection, a sign name or an emote. Aiko's optional comment
+must arise from the actual passage; she stays herself throughout. The book
+text must carry the reading even when no personal comment is selected. Keep full-scene coherence rather than
+random sentence-fragment assembly. Friendship-sensitive personal passages may
+have targeted alternatives; four full copies of every scene are not assumed.
+
+Plan the editorial work in cumulative stages:
+
+| Stage | Total complete templates at that stage | Coverage |
+| --- | --- | --- |
+| Pilot | **12** | One complete book reading per theme family, starting from the confirmed style and optional passage-specific Aiko reactions. |
+| Basic coverage | **48** | Expand the pilots to one complete scene for each of the twelve themes and four development directions. |
+| Starting target | **96** | Add a second independent full variant for every theme/direction pair. |
+
+These are cumulative totals, not 12 + 48 + 96 separate scenes. The previous
+twelve drafts are rejected and do not satisfy the pilot milestone. One new
+Stier reading is stylistically approved, but its eligibility still needs review;
+the rest of the pilot collection remains to be written. No new readings are
+created by this documentation correction.
+
+At an average of seven to nine text bubbles, 96 templates imply roughly
+**670–860 text bubbles**, plus staging/emote instructions and any targeted
+friendship alternatives. Seven to nine is a working estimate, not a new fixed
+length; retain the twelve-bubble maximum and shared timing rules.
+
+Before later publication, assess repetition with simulated longer daily
+sequences for all twelve signs. Prefer other eligible variants before repeating
+a scene, while keeping each day's selected reading stable and resumable.
+Ninety-six entries do not guarantee ninety-six different consecutive days:
+sky/theme eligibility narrows the available pool. Do not promise a repetition
+interval before that evaluation. No simulation is run as part of this update.
+
+### Confirmed book-reading concept and content reference
+
+The owner corrected the concept on **2026-10-25** and approved the
+**[Stier book-reading reference](horoscope/book-reading-reference.de.md)**.
+That reference supersedes the earlier role-entry/role-exit scenes.
+
+- The player places a real book on the taskbar by drag-and-drop. Aiko picks
+  it up, opens and reads it, then closes and puts it down. After the first completed
+  reading and put-down it remains for a fixed hour, then dissipates. Manual
+  handover replays the same frozen text from the start without another care
+  credit or deadline extension. Next day uses a newly placed book.
+  Interruption before completion does not exhaust the book. The existing
+  holding pose is reused; the book is a World object, not a floating prop.
+- Aiko remains Aiko throughout. The book supplies a complete, sign-specific
+  horoscope; her own framing and optional response remain clearly separate.
+  Do not say she becomes a fortune-teller and then becomes Aiko again.
+- Write the book entry first: a personal daily situation, disposition,
+  development or tension, followed where appropriate by an impulse. Do not
+  announce internal theme labels, narrate selection rules or stretch one
+  generic coaching recommendation across many bubbles.
+- Add a personal comment only when that passage gives Aiko something to react
+  to. Current reading is already a real occasion; do not invent shared creative
+  projects, free conversation or a mandatory connection to a minigame.
+- Friendship **1–2 / 3–5 / 6–8 / 9–10** affects her own openness and address,
+  not the book text. Current emotional state remains a separate condition.
+  There is no mandatory pair of replacement bubbles or compulsory role break.
+- Reuse the existing text/emote surface and display times. Holding the book
+  continues through text and emote beats. Do not replace that pose with a
+  free-hand gesture that visually drops the book. The approved
+  [four-state V1 asset pack](HOROSCOPE_BOOK_ASSETS.md) exists; fitting its grip
+  to the character pose and runtime registration remain integration work.
+
+### Technical replacement and migration plan
+
+The **[local horoscope implementation plan](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md)**
+records the audited reuse/retirement matrix, implemented module boundaries,
+frozen daily reading and cue progress, legacy-save cases, persistent World-book
+lifecycle, online-provider separation and staged validation.
+Its [concrete module and catalogue contracts](horoscope/MODULE_AND_CATALOGUE_CONTRACTS.md)
+name the objects/functions and divide book prose, Aiko dialogue,
+item assets, UI messages and private SQLite snapshots without duplicating owners.
+
+The current prototype's day/sign settings, reading rules, once-only care path,
+speech player, timing and atomic persistence are foundations to reuse. Its
+mandatory AstroWay footer, nonzero-attempt storage constraints, live HTTP path
+and role-reentry prefix require deliberate replacement. Local text must not
+be stored as a fake provider response. Shared online joke/quotation/fact
+components remain in service. The rejected API prototype is not kept as an
+online option or fallback. Any legacy-save support performs one-way data conversion, without API retrieval
+or playback. The local replacement implements this separation.
+
+### Twelve editorial pilot drafts (rejected)
+
+The previous **[twelve pilot drafts](horoscope/pilot-scenes.de.md)** are retained
+for comparison and explicitly rejected as a starting catalogue. Their static
+length checks did not constitute editorial approval. They overemphasized Aiko's
+own performance and sometimes invented creative collaboration with the player.
+The approved Stier entry remains the style reference. The replacement
+`pilot-book-entries.de.json` contains the separately authored and reviewed 96
+complete entries; the rejected drafts are not counted toward that coverage.
+
+The older nine-bubble scene and full hat/gift/floating-book concept are
+[preserved separately as superseded history](horoscope/superseded-scenes-and-hat.md).
+They must not be used as current production instructions.
 
 ## Planned horoscope gift and VN presentation
 
-Owner decision recorded on **2026-10-23**. This is an approved product direction
-for later implementation, not a description of current runtime behavior or a
-production-asset approval.
-
-### Permanent gift and horoscope unlock
-
-- The fortune-teller hat is a **permanent gift/item** that the player gives Aiko.
-  Actual receipt unlocks the horoscope; choosing a zodiac sign or merely selecting
-  an item in a menu is not receipt. Before the gift, the future horoscope action
-  remains locked. The direct zodiac selection remains a separate prerequisite.
-- Keep the gift and resulting access across sessions. The hat is retained for
-  later readings and is not consumed by a reading. Its acquisition route and
-  concrete save representation remain future design work.
-- Aiko wears the hat **only while performing the horoscope reading**. At completion
-  or interruption she leaves the role and removes it from the scene while retaining
-  the item. Resuming the daily reading restores the role and hat without another
-  gift or a second reading admission.
-- The once-per-day/resumable-reading rule, twelve-text-bubble ceiling and common
-  reading times, including the final second, remain in place. This decision adds
-  no friendship, care or reward-balance changes.
-- Future implementation must respect the existing [World ownership boundaries](WORLD_OBJECT_CONTRACTS.md):
-  durable item receipt/possession and temporary scene appearance are distinct.
-  Do not make a visible hat overlay the authority for gift ownership or unlock.
-
-### Anime/VN scene and hat perspectives
-
-- Treat the reading as an activity in Aiko's Desktop-Tamagotchi life: the gift gives
-  her an occasion to try the fortune-teller role with the player. Coordinate her
-  existing poses, emotes, pauses and text bubbles as a small VN scene.
-- Aiko's own curiosity, pride, hesitation or spontaneous comments may emerge from
-  the particular reading. An apology or explicit return-to-role joke is not a
-  mandatory repeated step. Example dialogue and the exact choreography remain
-  drafts, not an approved text catalogue.
-- Limit the initial hat artwork to the head views actually selected for this
-  scene, such as facing the player, looking at the book and a chosen head tilt.
-  Standing at a fixed desktop position does not keep the head angle fixed.
-- Match hat perspective, position, scale and hair overlap to those poses and their
-  transitions; keep Aiko's face readable and her identity/proportions consistent.
-  One front-facing overlay must not be assumed to fit every gaze or animation
-  frame. Exact views, anchor data and production counts require a later review.
-- Emotes currently replace text on the same speech surface. Place them between
-  text bubbles; simultaneous surrounding particles would be additional presentation
-  work. Coordinated pose changes within the reading also need later orchestration.
-
-### Separate floating book
-
-- Plan the book as its **own scene asset**, with a perspective that lets Aiko
-  visibly look into the pages. The first placement candidate is slightly in front
-  of her on screen-right near chest level, matching the existing down-right gaze.
-  Keep her face, hands and speech area readable; final size and position are open.
-- Gentle floating motion and occasional page-turn animation are later asset and
-  choreography work. Opening/closing states are candidates to review with that
-  sequence, not a fixed frame-production order. Aiko need not hold the book.
-- The first concept image supports the hat/book direction only. Its malformed book
-  is a composition placeholder, not approved book artwork; it must not become a
-  runtime asset. The hat's fit and perspectives also still need a proper asset pass.
-- Follow the local character-asset workflow for any later authorized production:
-  inspect the selected existing poses, preserve originals outside Git and review
-  the complete composition and transitions before a separate integration decision.
-
-### Scope of this decision
-
-This records the hat gift/unlock, scene-only wearing, suitable hat perspectives
-and floating-book direction. It does not select a replacement horoscope provider,
-a local astronomical library or a generated-text system. Those options remain
-under discussion; the earlier AstroWay implementation and its delivery evidence
-are retained as the current baseline. Sprüche and tarot retain their separate
-existing scope. No code, saves, runtime assets or dependencies are changed here.
+**Deferred/superseded for the first book version.** The current concept uses
+only a placed, picked-up and held book. A hat is not a prerequisite for this
+version; its former gift-unlock rule is not carried into this delivery plan.
+A future hat/gift feature needs a separate decision. Its historical perspectives
+and production notes remain in the archive above. The book does not float,
+and page-turn/particle effects are optional later work.
 
 ## Tarot
 
@@ -516,13 +583,12 @@ Ordinary tests use provider-shaped fixtures and temporary saves. Keep live
 provider checks separate and limited. No new reward formula or wish family is
 selected; adding two menu choices must not leave duplicate contact/need writers.
 
-The daily horoscope now uses the existing worker on demand, a visible original
-footer beneath every spoken bubble, and the existing atomic save for daily
-attempts, validated text, current bubble, care admission and full completion.
-Admission and care are persisted together before display; each bubble transition
-is persisted before the next bubble is shown. A failed write prevents dispatch
-or stops playback. A resumed role introduction does not advance provider-text
-progress. No additional completion reward or wish family is introduced.
+The local horoscope uses its independent book coordinator and the existing
+atomic session save for frozen text/cues, current progress, admission and expiry.
+Admission and care persist together before display; each cue transition persists
+before the next cue is shown. A failed write prevents dispatch or stops playback.
+No footer, HTTP worker, provider retry counter, additional completion reward or
+horoscope wish family is introduced. The former API behavior below is historical.
 
 Remaining work after separate authorization: tarot lifecycle/presentation,
 birthday assistance, optional role effects and assets. Subjective practical

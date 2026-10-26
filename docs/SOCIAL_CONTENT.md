@@ -1,24 +1,21 @@
-# Conversations and API entertainment
+# Conversations, API entertainment and local horoscope books
 
-The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) records the
-implemented Sprüche/quotation slice, zero-cost/keyless boundaries and the shared
-reading-time policy. Daily horoscope now implements the selected role performance,
-direct sign choice and resumable daily reading. Tarot remains planned.
-The later [hat-gift and VN presentation direction](SOCIAL_EXPANSION_PLAN.md#planned-horoscope-gift-and-vn-presentation)
-is documented as future work: a permanent gifted hat unlocks the horoscope and
-is worn only during its reading, with matching hat perspectives and a separate
-floating book. The current runtime described here has no hat ownership gate or
-hat/book presentation; the concept does not yet replace its content provider.
+The [social expansion plan](SOCIAL_EXPANSION_PLAN.md) records the zero-cost
+boundaries and shared reading-time policy. The rejected AstroWay prototype is
+replaced by the [local horoscope book](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md).
+Its [old behavior](horoscope/rejected-api-prototype.md) is historical only.
+Tarot remains planned. Aiko reads an actual placed/held book and stays herself.
 
 The **Unterhalten** toolbar button opens five choices: **Plaudern**,
 **Sprüche**, **Witz erzählen**, **Kurioser Fakt** and **Tageshoroskop**. Plaudern
-keeps the existing authored, context-sensitive conversations. The four online categories
-use API content exclusively.
+keeps the existing authored, context-sensitive conversations. Sprüche, Witze
+and Fakten use API content exclusively; Tageshoroskop places a local book.
 
-Enable **Onlinequellen für Sprüche, Zitate, Witze, Fakten und Tageshoroskop
-verwenden** in settings to use the API categories. It defaults to off, including when loading older saves without
-the option. With online sources off, Plaudern remains available and the four
-API choices show disabled controls with a settings hint.
+Enable **Onlinequellen für Sprüche, Zitate, Witze und Fakten verwenden** in
+settings to use the API categories. It defaults to off, including when loading
+older saves without the option. With online sources off, Plaudern and the local
+book remain available; the three API choices show a settings hint. The book
+requires a directly selected zodiac sign and permits only one live instance.
 
 ## Providers and preparation
 
@@ -27,7 +24,6 @@ API choices show disabled controls with a settings hint.
 | Sprüche: Einzeiler | [JokeAPI](https://jokeapi.dev/), German `type=single`, Safe Mode and excluded flags | `joke`, numeric `id`, `lang`, `safe`, `flags` |
 | Sprüche: Zitate | [Zitat-Service](https://api.zitat-service.de/), public `/v1/quote?language=de` | `quote`, `language`, stable `link`, `authorName`, optional `authorLink`, `source`, `sourceLink` |
 | Witz erzählen | JokeAPI with `type=twopart` and the same language/filter settings | `setup`, `delivery` and the same metadata |
-| Tageshoroskop | [AstroWay public daily endpoint](https://api.astroway.info/en/docs/api/operations/publichoroscopedaily/), explicit `sign`, `lang=de`, local `date` | `ok`, `sign`, `date`, `period`, `language`, complete `sections.overview`/`advice`, `disclaimer`, `_footer`; reject fallback metadata/STALE cache |
 | Kurioser Fakt | [Random Useless Facts](https://uselessfacts.jsph.pl/), v2 random endpoint with `language=de` | `text`, string `id`, `source`, `source_url`, `language`, `permalink` |
 
 A Sprüche item is complete and at most **125 characters**, including spaces and
@@ -72,38 +68,25 @@ The Credits view retains the most recently accepted item's source and API-entry 
 Links open only when clicked. Source metadata remains attached to the prepared
 item; it is not added to Aiko's personal experiences or World knowledge.
 
-## Daily horoscope
+## Local daily horoscope book
 
-Choose **Sternzeichen fürs Tageshoroskop** in behaviour settings: twelve direct
-signs plus **Nicht ausgewählt** (default). No birth date is collected or sent.
-The horoscope button stays disabled without a sign and shows a settings hint.
-Sign selection/menu opening never requests a horoscope.
+The local book works without online opt-in, requests, keys or provider footers.
+Direct sign selection stays in settings. Actual Sun/Moon/phase values come from
+Astronomy Engine 2.1.19 (MIT); authored German entries come from the packaged
+96-reading catalogue. Optional passage comments use the existing friendship and
+emotional context. No translation/generation model is added.
 
-Selecting the horoscope loads it on demand through the same single worker. Aiko
-announces the fortune-teller role in du, reads the complete provider disclaimer,
-overview and advice in the original Sie wording, then returns to her normal
-voice. The entire prepared reading has at most twelve 125-character text bubbles
-with the common timing and final second; oversized content is rejected whole.
-The complete original AstroWay footer is visible beneath each bubble, without
-using a spoken slot. Credits additionally link to the provider. No translation,
-local prediction/fallback or personal-memory claim is introduced.
-
-One reading is admitted per local calendar day across all signs. Admission books
-the existing talk care once and persists it with the daily episode before display.
-Interruption ends the role; **Tageshoroskop fortsetzen** briefly reintroduces the
-role and repeats the interrupted bubble, without repeating completed content,
-fetching or booking care. Full delivery including role exit completes the day.
-Restart restores progress without automatic playback. Sign changes after admission
-apply tomorrow. Opt-out stops playback/network but preserves progress and quotas.
-A running old-day reading may finish; paused old-day content expires.
-
-Each day allows at most three dispatched attempts across signs, counting failed,
-rejected and discarded replies. Retries require another deliberate selection and
-respect 60-second spacing and provider pauses. Matching repeated selections join
-an in-flight request; there is no warming or automatic retry. A cached eligible
-reading is still available after attempt three. HTTP 200 alone is insufficient:
-wrong dates/languages/signs/periods, fallback metadata and STALE cache responses
-are rejected. The public endpoint needs no key/account/payment.
+Select a book under Unterhalten and place it by drag/drop. Aiko notices,
+identifies, picks it up, opens and reads it using the existing holding pose.
+The first reading freezes that local day's sign/text/cues and admits normal
+conversation care once. Interruptions resume at the saved cursor.
+After the first full reading's actual put-down, the book remains for a fixed
+hour. Handing it back restarts the same frozen text without extra care or a
+renewed deadline. At the hour it dissipates in any custody. Next day a new book
+contains the new entry after old stock retires. Only one live book is allowed.
+An incomplete previous-day book is retired at the day boundary. Restart
+preserves progress and the absolute expiry.
+Details: [owners, data and lifecycle](horoscope/MODULE_AND_CATALOGUE_CONTRACTS.md).
 
 ## Bubble reading time
 
@@ -154,8 +137,8 @@ Waiting suppresses incidental speech and autonomous activity but allows another
 deliberate care action to cancel the selection. Normal conversation playback
 keeps its existing protection, including blank pauses and reading clicks.
 
-Sayings/jokes/facts have an eight-second network timeout; horoscope allows 25
-seconds for provider generation. All responses are bounded to 16 KiB.
+Sayings/jokes/facts have an eight-second network timeout. All their responses
+are bounded to 16 KiB. Local horoscope books do not use the worker or network.
 There is no separate four-second display deadline. Errors end the waiting
 attempt with a brief menu message; choosing the category retries. Failures never
 select local authored entertainment or silently switch to Plaudern. Other ready
@@ -188,8 +171,7 @@ paid fallback or new dependency. HTTP redirects are refused; changed access
 requirements remain unavailable. Provider documentation/terms were rechecked on
 2026-10-23: JokeAPI documents 120 requests/minute per client; Zitat-Service and
 Random Useless Facts have no numeric quota in the reviewed public documentation.
-AstroWay publishes 30 public calls per sliding hour per IP, shared with any
-other clients on that IP. Unknown limits are not treated as unlimited.
+Unknown limits are not treated as unlimited. The local book makes no HTTP calls.
 
 These are **Aiko client caps**, not claims about undocumented provider quotas:
 
@@ -198,7 +180,6 @@ These are **Aiko client caps**, not claims about undocumented provider quotas:
 | JokeAPI, shared by Einzeiler and Witz | 5 seconds | 60 | 300 |
 | Zitat-Service | 10 seconds | 20 | 60 |
 | Random Useless Facts | 10 seconds | 20 | 60 |
-| AstroWay | 60 seconds | 30 | 60 (plus at most **3 per local day**) |
 
 HTTP 429 respects Retry-After (seconds or HTTP date) and JokeAPI's HTTP-date
 RateLimit-Reset; without usable metadata it pauses for fifteen minutes. A valid
@@ -211,7 +192,7 @@ Each reservation is atomically saved **before HTTP dispatch**, through the
 existing persistence owner without advancing pet time. A failed save prevents
 network dispatch. Restart and opt-out do not reset caps or provider pauses.
 Bounded bookkeeping expires after its rolling window; no permanent request log
-is introduced. Only the bounded daily horoscope text is persisted for continuation. Shared-IP provider rejection remains
+is introduced. The local reading has independent bounded persistence. Shared-IP provider rejection remains
 possible even when this client's own cap is not exhausted.
 
 ## Care and persistence
@@ -266,16 +247,18 @@ fields. See [PL-6C delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6c-delivery-gro
 
 `settings.online_social` is an optional Boolean within the existing version-one
 legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never
-saved. The `social_history` transfer section now uses version four: up to 100
+saved. The `social_history` transfer section now uses version five: up to 100
 admission receipts per category (300 total), plus bounded expiring request timestamps
-and provider pauses, plus one bounded daily horoscope record (date, attempts,
-validated sign/text/footer, interrupted bubble, care admission and completion).
+and provider pauses. Local horoscope days and frozen cues are stored separately
+from online request history in the same atomic session checkpoint.
 Receipt fields are category, namespaced provider identity, SHA-256 fingerprint
 of normalized provider words and nullable `intro_variant` (0, 1 or 2). Quote identities use
 `zitat-service:<entry-id>` in the existing `single` category. These three
 receipt categories do not store source words, URLs, buffers or pending tokens.
-Version-one receipt-only, version-two request and version-three horoscope histories remain
-readable; no history means empty defaults. Opt-out clears buffers and retains admission/request bookkeeping.
+Versions one through four remain readable. Migration preserves old horoscope
+admission/completion markers while discarding provider prose, counters and retired
+provider request metadata. No history means empty defaults. Opt-out clears online
+buffers and retains admission/request bookkeeping; the local book stays available.
 
 The session restorer carries this value to the existing content coordinator
 before online warming starts. Actual admission saves care and its receipt
@@ -298,12 +281,14 @@ is added. See [storage and import](DATA_AND_SAVES.md).
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
 - `application/social_history.py` supplies immutable bounded admission receipts;
-  `infrastructure/social_history_codec.py` validates the compatible version-four
-  section, independently of pet experiences. `application/horoscope.py` validates
-  the daily text; `application/horoscope_models.py` defines immutable values without
-  depending on preparation. `infrastructure/horoscope_codec.py` bounds the saved record.
-  `desktop/horoscope_playback.py` joins that record to the existing player,
-  visible footer and one-time care admission.
+  `infrastructure/social_history_codec.py` validates the compatible version-five
+  section, independently of pet experiences.
+- `application/horoscope_coordinator.py` independently freezes the local daily
+  book entry, sign and Aiko cues, owns resumable progress and one-time admission,
+  and preserves the original replay deadline. `application/horoscope.py` assembles
+  the authored sequence; the models and codec bound the saved values.
+  `desktop/horoscope_playback.py` uses the existing player while World owns the
+  physical book. There is no provider footer.
 - `application/social_requests.py` supplies finite provider budgets and immutable
   expiring metadata; `infrastructure/social_request_codec.py` validates it in the
   existing save boundary.
@@ -363,7 +348,7 @@ saves cover restart, pre-dispatch quota persistence, failed writes and old-histo
 compatibility. Separate bounded live checks validated short German provider data;
 normal tests do not depend on live endpoints. Horoscope and tarot remain planned.
 
-## Daily horoscope delivery verification (2026-10-23)
+## Historical rejected API delivery verification (2026-10-23)
 
 The complete Windows/Python 3.11.9 suite passes **1,776 tests**, including twenty
 new horoscope tests (four with native Tk and isolated saves). Ruff, strict Mypy

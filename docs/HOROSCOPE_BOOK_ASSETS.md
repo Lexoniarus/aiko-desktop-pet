@@ -49,18 +49,22 @@ Full native originals stay unmodified. Icons retain normal RGBA transparency.
 
 ## Agreed object lifecycle
 
-The current owner direction is a physical, single-use book for one available
-entry: the player places it, Aiko walks to it, picks it up, opens and reads from
-it, closes it and puts it down; it may then dissipate. The next available entry
-requires a newly placed book. This supersedes the earlier floating-book prop
-direction and the briefly discussed reusable-book variant. The separate hat
-gift idea is outside this asset delivery.
+The latest owner decision is one physical book per day's entry. After the
+first full reading and actual put-down, it remains for a fixed hour. Manual
+handover replays the same frozen entry from the start, without another care
+credit or extending the hour. It dissipates at that absolute deadline in any
+custody; the next day needs a newly placed book. Interruption of the first
+reading alone does not start the hour. This supersedes immediate single-use
+retirement as well as the original floating-book/hat gate concept.
 
-This delivery prepares book artwork and metadata. World registration, menu
-availability, pickup/reading orchestration, consumption, persistence and a
-fitted character reading pose belong to the subsequent feature implementation.
-The book is deliberately not inserted into the food/weapon item catalogue.
-No care, reward, wish, horoscope content or save behavior changes here.
+Runtime registration now uses the shared ItemCatalog readables declaration,
+World READ capability and existing item overlay. The artwork/provenance itself
+is unchanged; no generated character pose or new page-turn animation is claimed.
+
+The original asset delivery prepared artwork and metadata. The subsequent local
+feature now integrates World registration, menu availability, pickup/reading,
+put-down and persistence. The book is registered separately under readables,
+without food/weapon effects. No character artwork changed during integration.
 
 ## Authoring and validation
 
@@ -85,3 +89,13 @@ variation. The world view is smaller; this is not acceptance of a seamless
 pickup animation or fitted hand contact. Ten repository asset/link checks
 passed. The [validation summary](../aiko_pet/assets/horoscope_book/v1/validation.json)
 identifies the retained private evidence.
+
+### Runtime registration correction
+
+Closed World/cursor display uses `world_registration.zoom = 2` (native 2x
+source preferred), so a placed book is no longer a tiny prop. World and cursor
+share its size and bottom support pivot. The held registration retains the
+owner's middle +12px adjustment at 1x for pickup, catching and reading. The
+four prepared PNG states and private originals are unchanged. Selection now
+uses the same press/drag/release gesture as food, including existing-instance
+relocation and handover.

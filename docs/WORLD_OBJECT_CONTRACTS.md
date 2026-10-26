@@ -186,3 +186,19 @@ replacements. `ObjectConsumption.apply_portion` is the shared atomic intake
 owner; restoration loads World and memory before time progression. Live food
 breaks reuse the existing SearchTask and safe put-down path before sleep.
 See [sleep rules](SLEEP_SYSTEM.md) and [data and saves](DATA_AND_SAVES.md).
+
+
+## Drag heartbeat regression, 2026-10-26
+
+World overlay projection resolves only held-action clips. Passive body poses
+remain owned by AnimatedPet and bypass the held-item overlay completely. A body
+turn must not raise KeyError and stop all cursor-item updates. The shared World frame
+reschedules in finally while surfacing the original callback failure; one
+presentation error cannot permanently disable dragging, falling or expiry.
+
+`test_world_drag_regression.py` covers all four body clips with food, drink and
+book gestures and verifies heartbeat recovery after one injected render failure.
+The targeted 81-test batch passed. An isolated native Windows mouse drag also
+confirmed cookie release, falling/bouncing and ground contact with the heartbeat
+still active. No normal save, provider behavior or character artwork changed in
+this repair.

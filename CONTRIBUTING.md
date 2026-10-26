@@ -6,7 +6,10 @@ Thanks for helping improve Aiko. The aim is a reliable, **local-first** Windows 
 
 Read [README.md](README.md) for setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for object ownership, and [docs/GITHUB_WORKFLOW.md](docs/GITHUB_WORKFLOW.md) for the branch/PR workflow.
 
-The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Running Aiko requires **no third-party Python package**. Some CI quality tools are installed only for development and tests.
+The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11.
+Install `requirements.txt` in the interpreter you use for Aiko and tests; it
+pins Astronomy Engine for the offline horoscope. CI quality tools are separate
+development dependencies. The Windows setup creates and verifies `.venv`.
 
 ## Development workflow
 

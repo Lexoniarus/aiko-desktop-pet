@@ -26,7 +26,8 @@ in finally while surfacing errors, so a presentation failure cannot disable drag
 
 Local daily selection, one-time care credit and persistence of a frozen reading
 belong to the horoscope coordinator, not to these generic object contracts.
-The retired API is replaced in the following integration slice.
+The [local integration](horoscope/MODULE_AND_CATALOGUE_CONTRACTS.md) replaces
+the retired API and uses these same object contracts.
 
 Verification for this slice: 76 staged-tree tests, including readable uniqueness,
 physical failure/put-down, body-pose drag regression, food, World and SQLite
