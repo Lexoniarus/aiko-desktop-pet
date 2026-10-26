@@ -241,7 +241,7 @@ class WalkControllerTests(unittest.TestCase):
         self.walker.remaining_distance = 2.0
         step = self.walker.plan_step(self.conditions())
         assert step is not None
-        self.assertEqual(step.animation, "running-right")
+        self.assertEqual(step.direction, 1)
         self.assertEqual(step.pixels, 2.0)
         self.assertTrue(self.walker.record_displacement(2.0, now=15))
         self.assertEqual(self.walker.remaining_distance, 0.0)
@@ -250,7 +250,7 @@ class WalkControllerTests(unittest.TestCase):
         self.walker.remaining_distance = -10
         step = self.walker.plan_step(self.conditions(x=0))
         assert step is not None
-        self.assertEqual(step.animation, "running-left")
+        self.assertEqual(step.direction, -1)
         self.assertLess(step.pixels, 0)
         self.assertTrue(self.walker.record_displacement(0, now=15, blocked=True))
         self.assertEqual(self.walker.remaining_distance, 0)
@@ -295,7 +295,7 @@ class WalkControllerTests(unittest.TestCase):
         ):
             step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
         assert step is not None
-        self.assertEqual(step.animation, "running-right")
+        self.assertEqual(step.direction, 1)
         self.assertEqual(self.walker.remaining_distance, 136)
         self.assertEqual(self.walker.next_walk_at, float("inf"))
 

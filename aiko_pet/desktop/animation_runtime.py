@@ -72,11 +72,14 @@ class DesktopAnimationRuntime:
         self, now: float, elapsed: float, *, game_mode: bool,
     ) -> str | None:
         """Advance host movement at the current Tk sprite frame cadence."""
-        return self._walk.step(
+        step = self._walk.step(
             now, elapsed, game_mode=game_mode,
             attention_active=(now < self._ports.attention_until()
                               or self._visual.orienting),
         )
+        if step is None:
+            return None
+        return "running-right" if step.direction > 0 else "running-left"
 
     def walk_active(self) -> bool:
         return self._walk.movement.remaining_distance != 0

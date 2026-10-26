@@ -5,6 +5,7 @@ from dataclasses import dataclass, replace
 
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
+from aiko_pet.pet.movement.contracts import WalkStep
 
 
 @dataclass
@@ -44,8 +45,10 @@ class WalkDriverTests(unittest.TestCase):
             self.settings.x = round(x)
 
         self.driver = WalkDriver(
-            state=WalkNeeds(), settings=self.settings,
-            adaptive=FocusReadings(), monitor=ActivityReadings(),
+            state=WalkNeeds(),
+            settings=self.settings,
+            adaptive=FocusReadings(),
+            monitor=ActivityReadings(),
             walk_cycle_seconds=1.28,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 800, 800),
@@ -58,9 +61,8 @@ class WalkDriverTests(unittest.TestCase):
     def test_movement_runs_to_completion_without_any_canvas(self) -> None:
         self.driver.movement.remaining_distance = 12
         self.assertEqual(
-            self.driver.step(100.0, 0.5, game_mode=False,
-                             attention_active=False),
-            "running-right",
+            self.driver.step(100.0, 0.5, game_mode=False, attention_active=False),
+            WalkStep(12, 1),
         )
         self.assertEqual(self.settings.x, 112)
         self.assertEqual(self.driver.movement.remaining_distance, 0.0)
@@ -69,20 +71,21 @@ class WalkDriverTests(unittest.TestCase):
     def test_game_mode_does_not_advance_existing_walk(self) -> None:
         self.driver.movement.remaining_distance = -40
         self.assertIsNone(
-            self.driver.step(100.0, 1.0, game_mode=True,
-                             attention_active=False),
+            self.driver.step(100.0, 1.0, game_mode=True, attention_active=False),
         )
         self.assertEqual(self.settings.x, 100)
         self.assertEqual(self.driver.movement.remaining_distance, -40)
 
     def test_menu_use_preserves_committed_object_approach(self) -> None:
         self.driver.ports = replace(
-            self.driver.ports, menu_engaged=lambda: True, committed_goal=lambda: True,
+            self.driver.ports,
+            menu_engaged=lambda: True,
+            committed_goal=lambda: True,
         )
         self.driver.movement.set_goal(112)
         self.assertEqual(
-            self.driver.step(100, .5, game_mode=False, attention_active=True),
-            "running-right",
+            self.driver.step(100, 0.5, game_mode=False, attention_active=True),
+            WalkStep(12, 1),
         )
         self.assertEqual(self.settings.x, 112)
         self.assertEqual(self.driver.movement.goal_x, 112)
@@ -91,7 +94,7 @@ class WalkDriverTests(unittest.TestCase):
         self.driver.ports = replace(self.driver.ports, menu_engaged=lambda: True)
         self.driver.movement.remaining_distance = 12
         self.assertIsNone(
-            self.driver.step(100, .5, game_mode=False, attention_active=False),
+            self.driver.step(100, 0.5, game_mode=False, attention_active=False),
         )
         self.assertEqual(self.settings.x, 100)
 

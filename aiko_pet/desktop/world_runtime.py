@@ -355,7 +355,7 @@ class DesktopWorldRuntime:
             self._finish_sleep_care()
         self.awareness.intentions.complete(token, self.now, consumed=consumed)
         self._behavior.request_orientation()
-        self._walk.movement.set_goal(None)
+        self._walk.set_world_goal(None)
         self._visual.object_target = None
         self._contact = None
         self._care = None
@@ -580,7 +580,7 @@ class DesktopWorldRuntime:
         )
         gaze = observation.gaze
         if observation.absence_noticed:
-            self._walk.movement.set_goal(None)
+            self._walk.set_world_goal(None)
             self.cursor.offer_ready = False
         self._visual.object_target = (
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
@@ -608,20 +608,20 @@ class DesktopWorldRuntime:
             self._show_search(motion)
             return
         if isinstance(motion, Hold):
-            self._walk.movement.set_goal(None)
+            self._walk.set_world_goal(None)
             return
         goal = motion.target
         approach = self._ground_approach(goal.x)
         if approach is None:
-            self._walk.movement.set_goal(None)
+            self._walk.set_world_goal(None)
             self._behavior.unreachable(now=self.now)
             return
-        self._walk.movement.set_goal(approach.standing_x)
+        self._walk.set_world_goal(approach.standing_x)
         if not approach.arrived(self.settings.x or 0):
             return
         instance = self.awareness.instance_for_record(goal.token)
         if instance is not None and self._can_acquire(instance):
-            self._walk.movement.set_goal(None)
+            self._walk.set_world_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
         elif (
@@ -635,7 +635,7 @@ class DesktopWorldRuntime:
             # A failed local reach is not evidence that the place is empty.
             # Stop the approach and let the normal timed absence perception
             # establish the loss before announcing or beginning a search.
-            self._walk.movement.set_goal(None)
+            self._walk.set_world_goal(None)
 
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
@@ -643,7 +643,7 @@ class DesktopWorldRuntime:
         base = track.clamp_x(
             track.left + search.center - self.width / 2, int(self.width)
         )
-        self._walk.movement.set_goal(base)
+        self._walk.set_world_goal(base)
         self._visual.object_target = (
             base + self.width / 2 + (direction or 1) * self.width,
             track.ground_y - self.width * 0.15,
@@ -659,7 +659,7 @@ class DesktopWorldRuntime:
     ) -> None:
         """Keep care protected; game admission runs after its pending flag clears."""
         self.awareness.intentions.cancel(self.now)
-        self._walk.movement.set_goal(None)
+        self._walk.set_world_goal(None)
         self._visual.object_target = None
         self.user_action_pending = True
 
@@ -727,7 +727,7 @@ class DesktopWorldRuntime:
                 )
                 self._behavior.request_orientation()
                 if record is not None and self.interaction.target_taken(record):
-                    self._walk.movement.set_goal(None)
+                    self._walk.set_world_goal(None)
 
         self._request_relocation(acquire)
 

@@ -3,7 +3,19 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
+
+MotionSource = Literal["world", "cursor", "idle"]
+MotionKind = Literal["step", "walk", "run"]
+
+
+@dataclass(frozen=True, slots=True)
+class MotionRequest:
+    source: MotionSource
+    token: int
+    target_x: float
+    kind: MotionKind = "run"
+    until: float = float("inf")
 
 
 class HorizontalTrack(Protocol):
@@ -42,4 +54,5 @@ class WalkStep:
     """Requested horizontal displacement and matching sprite animation."""
 
     pixels: float
-    animation: str
+    direction: int
+    kind: MotionKind = "run"

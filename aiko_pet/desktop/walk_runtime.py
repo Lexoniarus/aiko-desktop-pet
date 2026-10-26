@@ -14,7 +14,7 @@ from typing import Callable, Protocol
 from ..pet.animation.character import FRAME_WIDTH
 from ..pet.balance import BALANCE
 from ..pet.movement import WalkConditions, WalkController
-from ..pet.movement.contracts import HorizontalTrack
+from ..pet.movement.contracts import HorizontalTrack, MotionRequest, WalkStep
 
 
 class BusyReading(Protocol):
@@ -83,6 +83,8 @@ class WalkDriverPorts:
     place_x: Callable[[float], None]
     walk_finished: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
+    cursor_allowed: Callable[[], bool] = lambda: False
+    cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
 
 
 class WalkDriver:
@@ -117,6 +119,15 @@ class WalkDriver:
         self.movement.interrupt()
         self.movement.pause(now)
 
+    def set_world_goal(self, x: float | None) -> None:
+        self.movement.set_goal(x)
+
+    def clear_cursor_request(self) -> None:
+        self.movement.release_request("cursor")
+
+    def submit_cursor_intent(self, request: MotionRequest) -> None:
+        self.movement.replace_request("cursor", request)
+
     def step(
         self,
         now: float,
@@ -124,10 +135,12 @@ class WalkDriver:
         *,
         game_mode: bool,
         attention_active: bool,
-    ) -> str | None:
+    ) -> WalkStep | None:
         """Plan motion and apply only actual bounded desktop displacement."""
         if game_mode:
             return None
+        if not self.ports.cursor_allowed():
+            self.clear_cursor_request()
         observed = self.adaptive.current
         committed = self.movement.goal_x is not None and self.ports.committed_goal()
         busy = (
@@ -162,7 +175,8 @@ class WalkDriver:
         if step is None:
             return None
         if step.pixels == 0:
-            return step.animation
+            return step
+        source, token = self.movement.source, self.movement.token
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
@@ -173,6 +187,8 @@ class WalkDriver:
             >= track.right - FRAME_WIDTH * self.settings.scale
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
-            if self.movement.goal_x is None:
+            if source == "cursor":
+                self.ports.cursor_finished(token, now)
+            elif self.movement.goal_x is None:
                 self.ports.walk_finished(now)
-        return step.animation
+        return step
