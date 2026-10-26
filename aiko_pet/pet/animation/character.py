@@ -29,6 +29,11 @@ class AnimationClip:
     return_to: str = "idle"
     playback_order: tuple[int, ...] = ()
     hold_last: bool = False
+    movement: bool = False
+    family: str = ""
+    heading: int = 0
+    head_direction: int | None = None
+    stride: float = 0.0
 
     @property
     def timings(self) -> tuple[int, ...]:

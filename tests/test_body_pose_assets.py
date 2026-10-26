@@ -15,12 +15,22 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 
 
 class BodyPoseAssetTests(unittest.TestCase):
+    def test_step_clips_share_timing_and_family_across_head_axes(self) -> None:
+        clips = load_character_catalog().body_clips
+        for side in ("left", "right"):
+            variants = [c for c in clips.values() if c.family == f"body-step-{side}"]
+            self.assertEqual(len(variants), 6)
+            self.assertTrue(all(c.timings == variants[0].timings for c in variants))
+            self.assertTrue(all(c.stride == 16 for c in variants))
+            self.assertTrue(all(c.movement and c.loop for c in variants))
     def test_installed_pack_keeps_normal_catalog_independent(self) -> None:
         catalog = load_character_catalog()
         self.assertEqual(len(catalog.clips), 16)
-        self.assertEqual(len(catalog.body_clips), 4)
+        self.assertEqual(len(catalog.body_clips), 18)
         for name, clip in catalog.body_clips.items():
-            self.assertEqual(len(clip.frames), 5 if "turn" in name else 9)
+            self.assertEqual(
+                len(clip.frames), 6 if clip.movement else 5 if "turn" in name else 9,
+            )
             for frame in clip.frames:
                 with Image.open(frame.file) as image:
                     self.assertEqual(image.size, (384, 416))

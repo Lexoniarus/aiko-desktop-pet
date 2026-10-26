@@ -60,8 +60,56 @@ def export_body_poses(package: Path, assets: Path) -> dict[str, Any]:
             clips[turn_name].append(relative)
     if not (assets / "frames_2x/idle/00.png").is_file():
         raise FileNotFoundError("Body orientation needs the existing idle HD pose")
-    manifest = {"version": 1, "size": list(HD_FRAME_SIZE), "clips": clips,
-                "sources": sources}
+    locomotion: dict[str, dict[str, Any]] = {}
+    if data.get("locomotion"):
+        keys = ("stand", "01", "03", "07", "00", "stand")
+        for side, german, heading in (("left", "links", -1), ("right", "rechts", 1)):
+            orient = f"body-orient-{side}"
+            clips[orient] = ["frames_2x/idle/00.png"]
+            for index in range(1, 9):
+                relative = f"body_poses/{orient}/{index:02}.png"
+                prepared[relative] = source(f"orient-{side}/{index:02}.png")
+                clips[orient].append(relative)
+            locomotion[orient] = dict(
+                kind="turn",
+                heading=heading,
+                gaze=None,
+                durations=[140] * 9,
+                family="",
+                stride=0,
+            )
+            axes = range(2, 7) if side == "right" else range(10, 15)
+            for axis in ["profil", *(f"{v:02}" for v in axes)]:
+                name = f"body-step-{side}-{axis}"
+                clips[name] = []
+                for key in keys:
+                    body = source(f"step-{side}/{key}.png")
+                    head = source(f"step-head-{side}/{axis}.png")
+                    frame = Image.new("RGBA", HD_FRAME_SIZE)
+                    frame.paste(head, (0, {"01": 2, "03": -2}.get(key, 0)))
+                    if axis == "profil":
+                        frame = Image.alpha_composite(body, frame)
+                    else:
+                        frame.alpha_composite(body)
+                    relative = f"body_poses/{name}/{key}.png"
+                    prepared[relative] = frame
+                    clips[name].append(relative)
+                locomotion[name] = dict(
+                    kind="step",
+                    heading=heading,
+                    gaze=None if axis == "profil" else int(axis),
+                    durations=[60, 110, 100, 130, 120, 100],
+                    family=f"body-step-{side}",
+                    stride=16,
+                )
+    manifest = {
+        "version": 1,
+        "size": list(HD_FRAME_SIZE),
+        "clips": clips,
+        "sources": sources,
+    }
+    if locomotion:
+        manifest.update(version=2, locomotion=locomotion)
     # Finish validation and PNG encoding before replacing any installed file.
     assets.parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix="body-poses-", dir=assets.parent) as folder:
@@ -74,7 +122,8 @@ def export_body_poses(package: Path, assets: Path) -> dict[str, Any]:
             frame.save(path)
         manifest_relative = "body_poses/manifest.json"
         (staging / manifest_relative).write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", "utf-8",
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+            "utf-8",
         )
         for relative in (*prepared, manifest_relative):
             target = assets / relative
