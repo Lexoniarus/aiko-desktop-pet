@@ -33,6 +33,15 @@ class IdleMonitor:
 
 
 class StandaloneAnimatedPetTests(unittest.TestCase):
+    def test_step_head_change_keeps_playback_progress(self) -> None:
+        now = time.monotonic()
+        self.anim.show_frame("body-step-right-02", now)
+        self.anim.show_frame("body-step-right-02", now + .08)
+        index = self.anim.frame_clock.frame_index
+        self.anim.show_frame("body-step-right-06", now + .09)
+        self.assertEqual(self.anim.frame_clock.frame_index, index)
+        self.assertEqual(self.anim.frame_clock.active_key, ("body-step-right", None))
+
     @classmethod
     def setUpClass(cls) -> None:
         try:
@@ -113,11 +122,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         )
 
     def _step_walk(self, now: float, elapsed: float) -> str | None:
-        return self.walk.step(
-            now,
-            elapsed,
-            game_mode=self.anim.game_mode,
-            attention_active=now < self.anim._cursor_snapshot.attention_until,
+        return self.animation.advance_walk(
+            now, elapsed, game_mode=self.anim.game_mode,
         )
 
     def test_sprites_and_gaze_do_not_require_hover_ui(self) -> None:

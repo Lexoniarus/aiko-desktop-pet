@@ -154,9 +154,13 @@ class WalkDriver:
                 now=now,
                 elapsed_seconds=elapsed,
                 speed_pixels_per_second=(
-                    BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                    (
+                        16 / 0.62
+                        if self.movement.kind == "step"
+                        else BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                        / self.walk_cycle_seconds
+                    )
                     * self.settings.scale
-                    / self.walk_cycle_seconds
                 ),
                 stride_pixels=BALANCE.integer("walk", "stride_pixels_at_scale_one")
                 * self.settings.scale,

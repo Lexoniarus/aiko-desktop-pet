@@ -35,10 +35,28 @@ class BodyOrientation:
         self._candidate_since = 0.0
         self._next_step_at = 0.0
         self._look_direction = 0
+        self._motion = False
+
+    @property
+    def motion_ready(self) -> bool:
+        return self._motion and self.phase == 8
+
+    def orient_for_motion(self, now: float, direction: int) -> SpriteSelection:
+        """Turn through existing whole poses before translating the body."""
+        self._motion = True
+        if self.phase == 0:
+            self.side = direction
+        if now >= self._next_step_at - 1e-6:
+            self.phase += 1 if self.side == direction else -1
+            self.phase = max(0, min(8, self.phase))
+            self._next_step_at = now + TURN_STEP_SECONDS
+        label = "right" if self.side == 1 else "left"
+        return SpriteSelection(f"body-orient-{label}", self.phase)
 
     def select(self, now: float, choice: SpriteSelection) -> SpriteSelection:
         """Follow sustained left/right attention, not the gaze's steepness."""
         direction = choice.fixed_frame if choice.animation == "look" else None
+        self._motion = False
         if choice.animation not in ("idle", "look"):
             self.reset()
             return choice
@@ -67,7 +85,9 @@ class BodyOrientation:
                 return choice
         elif now >= self._next_step_at - 1e-6:
             if self._target == self.side:
-                self.phase = min(4, self.phase + 1)
+                self.phase = (
+                    self.phase - 1 if self.phase > 4 else min(4, self.phase + 1)
+                )
             else:
                 self.phase -= 1
             self._next_step_at = now + TURN_STEP_SECONDS
@@ -76,7 +96,8 @@ class BodyOrientation:
             return choice
         label = "right" if self.side == 1 else "left"
         compatible = direction is not None and (
-            0 <= direction <= 8 if self.side == 1
+            0 <= direction <= 8
+            if self.side == 1
             else direction == 0 or 8 <= direction <= 15
         )
         if compatible and direction is not None:
@@ -88,4 +109,5 @@ class BodyOrientation:
                 f"body-look-{label}",
                 body_look_index(self.side, self._look_direction),
             )
-        return SpriteSelection(f"body-turn-{label}", self.phase)
+        family = "body-orient" if self.phase > 4 else "body-turn"
+        return SpriteSelection(f"{family}-{label}", self.phase)

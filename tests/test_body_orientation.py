@@ -21,38 +21,44 @@ class BodyOrientationTests(unittest.TestCase):
 
     def test_brief_pointer_glances_only_move_head(self) -> None:
         self.assertEqual(self.look(0, 4), SpriteSelection("look", 4))
-        self.assertEqual(self.look(.14, 12), SpriteSelection("look", 12))
-        self.assertEqual(self.look(.28, 4), SpriteSelection("look", 4))
+        self.assertEqual(self.look(0.14, 12), SpriteSelection("look", 12))
+        self.assertEqual(self.look(0.28, 4), SpriteSelection("look", 4))
         self.assertEqual(self.body.phase, 0)
 
     def test_sustained_look_uses_each_existing_step_then_independent_head(self):
         self.assertEqual(self.look(0, 4), SpriteSelection("look", 4))
         self.assertEqual(self.look(1.19, 4), SpriteSelection("look", 4))
         actual = [self.look(t, 4) for t in (1.20, 1.34, 1.48, 1.62)]
-        self.assertEqual(actual, [
-            SpriteSelection("body-turn-right", 1),
-            SpriteSelection("body-turn-right", 2),
-            SpriteSelection("body-turn-right", 3),
-            SpriteSelection("body-look-right", 4),
-        ])
+        self.assertEqual(
+            actual,
+            [
+                SpriteSelection("body-turn-right", 1),
+                SpriteSelection("body-turn-right", 2),
+                SpriteSelection("body-turn-right", 3),
+                SpriteSelection("body-look-right", 4),
+            ],
+        )
         self.assertEqual(self.look(1.76, 5), SpriteSelection("body-look-right", 5))
 
     def test_diagonal_glances_turn_after_same_dwell_as_horizontal(self) -> None:
         for direction in (1, 2, 6, 7, 9, 10, 14, 15):
             self.body.reset()
-            for at in (0, .3, .6, .9):
+            for at in (0, 0.3, 0.6, 0.9):
                 self.assertEqual(
-                    self.look(at, direction), SpriteSelection("look", direction),
+                    self.look(at, direction),
+                    SpriteSelection("look", direction),
                 )
             side = "right" if direction < 8 else "left"
             self.assertEqual(
-                self.look(1.2, direction), SpriteSelection(f"body-turn-{side}", 1),
+                self.look(1.2, direction),
+                SpriteSelection(f"body-turn-{side}", 1),
             )
 
     def test_head_sector_changes_on_same_side_do_not_reset_dwell(self) -> None:
-        for at, direction in ((0, 1), (.4, 3), (.8, 6)):
+        for at, direction in ((0, 1), (0.4, 3), (0.8, 6)):
             self.assertEqual(
-                self.look(at, direction), SpriteSelection("look", direction),
+                self.look(at, direction),
+                SpriteSelection("look", direction),
             )
         self.assertEqual(self.look(1.2, 7), SpriteSelection("body-turn-right", 1))
 
@@ -64,7 +70,8 @@ class BodyOrientationTests(unittest.TestCase):
         for index in range(30):
             direction = 4 if index % 2 else 12
             self.assertEqual(
-                self.look(index * .1, direction), SpriteSelection("look", direction),
+                self.look(index * 0.1, direction),
+                SpriteSelection("look", direction),
             )
             self.assertEqual(self.body.phase, 0)
 
@@ -78,13 +85,16 @@ class BodyOrientationTests(unittest.TestCase):
         self.orient_right()
         self.assertEqual(self.look(1.76, 12), SpriteSelection("body-look-right", 4))
         actual = [self.look(t, 12) for t in (2.96, 3.10, 3.24, 3.38, 3.52)]
-        self.assertEqual(actual, [
-            SpriteSelection("body-turn-right", 3),
-            SpriteSelection("body-turn-right", 2),
-            SpriteSelection("body-turn-right", 1),
-            SpriteSelection("look", 12),
-            SpriteSelection("body-turn-left", 1),
-        ])
+        self.assertEqual(
+            actual,
+            [
+                SpriteSelection("body-turn-right", 3),
+                SpriteSelection("body-turn-right", 2),
+                SpriteSelection("body-turn-right", 1),
+                SpriteSelection("look", 12),
+                SpriteSelection("body-turn-left", 1),
+            ],
+        )
 
     def test_neutral_idle_returns_with_steps_and_preserves_blink_selection(self):
         self.orient_right()
@@ -100,9 +110,10 @@ class BodyOrientationTests(unittest.TestCase):
         self.assertEqual(self.look(2.96, 8), SpriteSelection("body-turn-right", 3))
 
     def test_vertical_gaze_starts_and_stays_frontal(self) -> None:
-        for at, direction in ((0, 0), (.7, 8), (1.4, 0), (2.1, 8)):
+        for at, direction in ((0, 0), (0.7, 8), (1.4, 0), (2.1, 8)):
             self.assertEqual(
-                self.look(at, direction), SpriteSelection("look", direction),
+                self.look(at, direction),
+                SpriteSelection("look", direction),
             )
             self.assertEqual(self.body.phase, 0)
 
@@ -123,3 +134,19 @@ class BodyOrientationTests(unittest.TestCase):
             body_look_index(1, 12)
         with self.assertRaises(ValueError):
             body_look_index(-1, 4)
+
+
+class MotionOrientationTests(unittest.TestCase):
+    def test_profile_ready_only_after_all_turn_poses_and_return_is_ordered(self):
+        from aiko_pet.pet.animation.animation import SpriteSelection
+        from aiko_pet.pet.animation.body_orientation import BodyOrientation
+
+        body = BodyOrientation()
+        phases = []
+        for i in range(8):
+            pose = body.orient_for_motion(i * 0.14, 1)
+            phases.append(pose.fixed_frame)
+            self.assertEqual(body.motion_ready, i == 7)
+        self.assertEqual(phases, list(range(1, 9)))
+        pose = body.select(1.12, SpriteSelection("idle"))
+        self.assertEqual(pose.fixed_frame, 7)
