@@ -47,6 +47,7 @@ class WalkConditions:
     observing_computer: bool
     computer_busy: bool
     quiet_period: bool
+    small_idle_steps: bool = False
 
 
 @dataclass(frozen=True)

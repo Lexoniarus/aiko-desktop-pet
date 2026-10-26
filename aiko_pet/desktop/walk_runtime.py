@@ -86,6 +86,7 @@ class WalkDriverPorts:
     committed_goal: Callable[[], bool] = lambda: False
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
+    idle_steps: Callable[[], bool] = lambda: False
 
 
 class WalkDriver:
@@ -210,6 +211,7 @@ class WalkDriver:
                 observing_computer=self.settings.observe_computer,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),
+                small_idle_steps=self.ports.idle_steps(),
             )
         )
         if step is None:

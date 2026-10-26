@@ -32,7 +32,7 @@ class WalkController:
 
     @property
     def kind(self) -> MotionKind:
-        return self._active.kind if self._active is not None else "run"
+        return self._active.kind if self._active is not None else self.random_walk.kind
 
     @property
     def token(self) -> int:

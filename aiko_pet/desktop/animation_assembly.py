@@ -76,6 +76,7 @@ def assemble_animation(
             committed_goal=ports.world.focused,
             cursor_allowed=ports.cursor_allowed,
             cursor_finished=ports.cursor_finished,
+            idle_steps=lambda: "body-step-right-profil" in assets.body_clips,
         ),
     )
     visual = DesktopVisualObservation(
