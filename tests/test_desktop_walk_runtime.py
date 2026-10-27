@@ -83,11 +83,10 @@ class WalkDriverTests(unittest.TestCase):
             committed_goal=lambda: True,
         )
         self.driver.movement.set_goal(112)
-        self.assertEqual(
+        self.assertIsNone(
             self.driver.step(100, 0.5, game_mode=False, attention_active=True),
-            WalkStep(12, 1),
         )
-        self.assertEqual(self.settings.x, 112)
+        self.assertEqual(self.settings.x, 100)
         self.assertEqual(self.driver.movement.goal_x, 112)
 
     def test_menu_use_still_holds_incidental_wandering(self) -> None:

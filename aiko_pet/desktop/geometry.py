@@ -70,3 +70,12 @@ class TaskbarTrack:
                 or not self.left <= pet_x <= self.right - sprite_width):
             return False
         return abs(object_x - (pet_x + sprite_width / 2)) <= reach
+
+
+def sprite_access_contains(
+    point: tuple[int, int], origin: tuple[int, int], scale: int,
+) -> bool:
+    """Idle alpha bounds plus six logical pixels; never shrinks native hit area."""
+    x, y = point[0] - origin[0], point[1] - origin[1]
+    return (45 * scale <= x <= 146 * scale
+            and 32 * scale <= y <= 200 * scale)

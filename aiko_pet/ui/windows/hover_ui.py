@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable
 
 from ...application.settings import SettingKey
@@ -71,6 +71,8 @@ class HoverUiPorts:
     can_interact: Callable[[str], bool] = lambda _action: True
     game_ready: Callable[[], bool] = lambda: True
     allow_sprite_hover: Callable[[], bool] = lambda: True
+    sprite_access: Callable[[int, int], bool] = lambda _x, _y: False
+    claim_access: Callable[[], None] = lambda: None
     cards: GameCardPorts | None = None
     codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
@@ -546,6 +548,11 @@ class HoverUi:
         if self.settings_window is not None:
             self.settings_window.refresh()
 
+    def configure_cursor_access(
+        self, contains: Callable[[int, int], bool], claim: Callable[[], None],
+    ) -> None:
+        self._ports = replace(self._ports, sprite_access=contains, claim_access=claim)
+
     def pointer_inside(self, x: int, y: int) -> bool:
         widget = self.root.winfo_containing(x, y)
         over_sprite = widget is self.root or widget is self.canvas
@@ -553,7 +560,7 @@ class HoverUi:
         over_toolbar = toolbar is not None and (
             toolbar.contains_pointer(x, y) or toolbar.contains_bridge(x, y)
         )
-        return bool(over_sprite or over_toolbar)
+        return bool(over_sprite or over_toolbar or self._ports.sprite_access(x, y))
 
     def _auto_hide_toolbar(self) -> None:
         toolbar = self.toolbar
@@ -590,12 +597,13 @@ class HoverUi:
         if self.pointer_inside(x, y):
             self.last_hover = now
             widget = self.root.winfo_containing(x, y)
-            if (
-                widget in (self.root, self.canvas)
-                and not self._ports.allow_sprite_hover()
-            ):
+            over_sprite = (widget in (self.root, self.canvas)
+                           or self._ports.sprite_access(x, y))
+            if over_sprite and not self._ports.allow_sprite_hover():
                 return
-            if widget in (self.root, self.canvas) and (
+            if over_sprite:
+                self._ports.claim_access()
+            if over_sprite and (
                 toolbar is None or not toolbar.visible
             ):
                 self._ports.open_sprite_hover()

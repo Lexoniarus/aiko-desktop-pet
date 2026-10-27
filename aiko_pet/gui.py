@@ -330,6 +330,7 @@ class DesktopPet:
             self.root, self.canvas,
             DesktopInputActions(
                 enter=self._on_enter,
+                claim_access=lambda point: self._pointer_runtime.claim_access(point),
                 allow_hover=lambda: self._pointer_runtime.allow_hover(),
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,

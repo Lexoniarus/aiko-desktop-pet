@@ -26,6 +26,7 @@ class DesktopInputActions:
     quit: Callable[[], None]
     closed: Callable[[], bool]
     allow_hover: Callable[[], bool] = lambda: True
+    claim_access: Callable[[tuple[int, int] | None], None] = lambda _point: None
 
 
 class DesktopInput:
@@ -55,8 +56,8 @@ class DesktopInput:
         """Baseline global button state before installing interactive handlers."""
         self.mouse.clicked()
         self.canvas.bind("<Enter>", self.on_enter)
-        self.canvas.bind("<Button-1>", self.actions.left_click)
-        self.canvas.bind("<Button-3>", self.actions.right_click)
+        self.canvas.bind("<Button-1>", self.on_left_click)
+        self.canvas.bind("<Button-3>", self.on_right_click)
         self.canvas.bind("<Shift-Button-3>", self.on_menu)
         self.root.bind("<Control-q>", lambda _event: self.actions.quit())
         self.root.bind("<F2>", lambda _event: self.actions.open_status())
@@ -66,11 +67,23 @@ class DesktopInput:
 
     def on_menu(self, event: tk.Event) -> None:
         if not self._stopped:
+            self.actions.claim_access((event.x_root, event.y_root))
             self.actions.show_menu(event.x_root, event.y_root)
 
     def on_enter(self, event: tk.Event | None = None) -> None:
         if not self._stopped and self.actions.allow_hover():
+            self.actions.claim_access(None)
             self.actions.enter(event)
+
+    def on_left_click(self, event: tk.Event | None = None) -> None:
+        if not self._stopped:
+            self.actions.claim_access((event.x_root, event.y_root) if event else None)
+            self.actions.left_click(event)
+
+    def on_right_click(self, event: tk.Event | None = None) -> None:
+        if not self._stopped:
+            self.actions.claim_access((event.x_root, event.y_root) if event else None)
+            self.actions.right_click(event)
 
     def on_tk_press(self, event: tk.Event) -> None:
         """Handle clicks inside Tk windows without losing focus to them."""

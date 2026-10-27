@@ -73,6 +73,15 @@ class DesktopInputTests(unittest.TestCase):
         self.input.on_enter()
         self.assertEqual(self.events, ["left", "enter"])
 
+    def test_native_click_claims_before_dispatch_without_hover(self):
+        self.input.actions = replace(
+            self.input.actions, allow_hover=lambda: False,
+            claim_access=lambda _point: self.events.append("claim"),
+        )
+        self.input.on_left_click()
+        self.input.on_right_click()
+        self.assertEqual(self.events, ["claim", "left", "claim", "right"])
+
     def test_initial_bindings_preserve_sprite_events(self) -> None:
         self.input.initialize()
         self.assertEqual(self.mouse.calls, 1)

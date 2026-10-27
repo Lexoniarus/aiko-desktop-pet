@@ -33,6 +33,8 @@ class CursorContactOriginTests(unittest.TestCase):
         opened, recorded = Mock(), Mock()
         hover._ports = SimpleNamespace(
             allow_sprite_hover=lambda: False,
+            sprite_access=lambda _x, _y: False,
+            claim_access=Mock(),
             open_sprite_hover=opened,
             record_contact=recorded,
         )

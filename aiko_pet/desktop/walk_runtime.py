@@ -93,6 +93,7 @@ class WalkDriverPorts:
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
     idle_steps: Callable[[], bool] = lambda: False
+    hard_access: Callable[[], bool] = lambda: False
 
 
 class WalkDriver:
@@ -213,6 +214,9 @@ class WalkDriver:
     ) -> WalkStep | None:
         """Plan motion and apply only actual bounded desktop displacement."""
         if game_mode:
+            return None
+        if self.ports.hard_access() or self.ports.menu_engaged():
+            self.clear_cursor_request(now)
             return None
         if not self.ports.cursor_allowed():
             self.clear_cursor_request(now)

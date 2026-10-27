@@ -54,6 +54,10 @@ class CursorBehaviourCoordinator:
         self._policy.reset()
         self.intent = CursorIntent()
 
+    def claim_access(self, now: float) -> None:
+        self._policy.claim_access(now)
+        self.intent = self._policy.current
+
     @property
     def watching(self) -> bool:
         return (

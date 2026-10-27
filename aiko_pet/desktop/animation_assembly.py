@@ -7,7 +7,7 @@ retains its own behavior. There is one walk controller and one ambient policy.
 from __future__ import annotations
 
 import tkinter as tk
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable
 
 from ..application.contact import ContactCoordinator
@@ -46,7 +46,7 @@ def assemble_pointer(
     walk: WalkDriver,
 ) -> PointerRuntime:
     """Keep pointer wiring at the existing desktop composition boundary."""
-    return PointerRuntime(
+    pointer = PointerRuntime(
         observer,
         PointerRuntimePorts(
             sample=inputs.pointer_sample,
@@ -58,10 +58,14 @@ def assemble_pointer(
             foreground_active=lambda: not contact.can_interact("pet"),
             world_protected=world.cursor_protected,
             pointer_inside=hover.pointer_inside,
+            sprite_origin=lambda: (inputs.root.winfo_x(), inputs.root.winfo_y()),
         ),
         behaviour=behaviour,
         walk=walk,
     )
+    hover.configure_cursor_access(pointer.access_contains, pointer.claim_access)
+    walk.ports = replace(walk.ports, hard_access=pointer.control_active)
+    return pointer
 
 
 @dataclass(frozen=True, slots=True)
