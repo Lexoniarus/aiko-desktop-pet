@@ -18,6 +18,7 @@ from aiko_pet.desktop.walk_runtime import WalkDriver
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
+from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement.contracts import WalkStep
 from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
@@ -38,6 +39,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.visual.observe.return_value = PassiveObservation(None, False)
         self.visual.orienting = False
         self.visual.cursor_watching = False
+        self.visual.cursor_intent = CursorIntent()
         self.action_until = 0.0
         self.action_clip_id = "review"
         self.holding_readable = False
@@ -194,11 +196,13 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         )
         self.assertEqual(self.walk.step.call_count, 2)
 
-    def test_priority_interruptions_require_fresh_body_turn_dwell(self) -> None:
+    def test_priority_resets_body_and_new_plan_restarts_steps(self) -> None:
         for priority in ("sleep", "game", "action", "walk", "handover", "book"):
             with self.subTest(priority=priority):
                 self.create_runtime_fixture()
                 self.visual.observe.return_value = PassiveObservation(4, False)
+                self.visual.cursor_intent = CursorIntent("observe", side=1,
+                                                       body="three_quarter")
                 for now in (100, 101.20, 101.34, 101.48, 101.62):
                     turned = self.choose(now=now)
                 self.assertEqual(turned.sprite, SpriteSelection("body-look-right", 4))
@@ -215,10 +219,13 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
                 self.action_until = 0
                 self.walk.step.return_value = None
                 self.ready_for_handover = self.holding_readable = False
+                self.visual.cursor_intent = CursorIntent("observe")
                 for now in (103, 104):
                     self.assertEqual(
                         self.choose(now=now).sprite, SpriteSelection("look", 4)
                     )
+                self.visual.cursor_intent = CursorIntent("observe", side=1,
+                                                       body="three_quarter")
                 self.assertEqual(
                     self.choose(now=104.2).sprite, SpriteSelection("body-turn-right", 1)
                 )

@@ -230,5 +230,8 @@ class DesktopAnimationRuntime:
             forward_gaze=observation.forward_gaze,
         )
         if self._assets.body_clips:
-            selection = self._body_orientation.select(now, selection)
+            intent = self._visual.cursor_intent
+            selection = self._body_orientation.select(
+                now, selection, intent=intent.body, side=intent.side,
+            )
         return RenderDecision(selection, clear_action=True)
