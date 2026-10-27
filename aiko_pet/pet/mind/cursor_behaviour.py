@@ -1,14 +1,17 @@
-"""Local cursor interpretation, independent of input, windows and animation."""
+"""Select bounded cursor encounters; raw motion never commands body animation."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
+from uuid import uuid4
 
 from ..balance import BALANCE
+from ..interaction_events import CursorExperience
 from .cursor_attention import CursorPerception
 
 CursorReaction = Literal["ignore", "observe", "approach", "avoid", "flee", "startle"]
+BodyIntent = Literal["front", "three_quarter", "profile"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +30,11 @@ class CursorIntent:
     token: int = 0
     until: float = 0.0
     reason: str = "no-interest"
+    target: tuple[int, int] | None = None
+    body: BodyIntent = "front"
+    strength: int = 0
+    experience: CursorExperience | None = None
+    steps: int = 1
 
     @property
     def gaze(self) -> bool:
@@ -42,91 +50,202 @@ def parameter(key: str) -> float:
 
 
 class CursorBehaviourPolicy:
-    """Own one transient response, bounded attempts and their recovery."""
+    """One session-scoped episode, fresh evidence, and deliberate body intent."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, session_id: str | None = None) -> None:
+        self._session = session_id or uuid4().hex
         self._serial = 0
         self.reset()
 
     def reset(self) -> None:
         self.current = CursorIntent()
         self.recover_until = 0.0
+        self._encounter = False
+        self._retreated = False
+        self._access = False
+        self._outside_since: float | None = None
+        self._calm_since: float | None = None
+        self._calm_side = 0
+        self._last_sample = -100.0
+        self._selected_at = -100.0
+        self._look_until = 0.0
+        self._curiosity_level = 0
+        self._fear_level = 0
+        self._trust = 0.0
+        self._willing = False
 
-    def _choose(
-        self,
-        reaction: CursorReaction,
-        side: int,
-        now: float,
-        seconds: float,
-        reason: str,
-    ) -> CursorIntent:
-        self._serial += 1
-        self.current = CursorIntent(reaction, side, self._serial, now + seconds, reason)
-        return self.current
+    def claim_access(self, now: float) -> None:
+        """Contact owns input; a lingering impression cannot restart this attempt."""
+        self._access = True
+        self.note_motion_finished(self.current.token, now)
+        self.current = CursorIntent(reason="direct-access")
 
     def note_motion_finished(self, token: int, now: float) -> None:
         if self.current.token != token or not self.current.moving:
             return
-        self.current = CursorIntent("observe", reason="motion-finished")
         self.recover_until = max(
             self.recover_until,
-            now + parameter("attempt_pause_seconds"),
+            now
+            + (
+                parameter("attempt_pause_seconds")
+                if self.current.reaction == "approach"
+                else parameter("recovery_seconds")
+            ),
+        )
+        self.current = replace(
+            self.current,
+            reaction="observe",
+            body="front",
+            until=now + 2,
+            experience=None,
+            reason="motion-finished",
+        )
+        self._look_until = now + 2
+
+    def _evidence(
+        self, feeling: Literal["curiosity", "fear"], level: int
+    ) -> CursorExperience:
+        return CursorExperience(
+            f"{self._session}:{self._serial}:{feeling}:{level}", feeling, level
         )
 
     def evaluate(
-        self,
-        perception: CursorPerception,
-        context: CursorBehaviourContext,
-        now: float,
+        self, perception: CursorPerception, context: CursorBehaviourContext, now: float
     ) -> CursorIntent:
         p = perception
+        self.current = replace(self.current, experience=None)
         if not p.valid or not 0 <= now - p.sampled_at <= 0.5:
-            self.reset()
+            self.note_motion_finished(self.current.token, now)
+            self._calm_since = None
+            self.current = CursorIntent(reason="invalid-sample")
             return self.current
-        trust = max(0.0, min(1.0, (context.friendship_level - 1) / 9))
+        continuous = 0 <= p.sampled_at - self._last_sample <= 1.5
+        self._last_sample = p.sampled_at
+        if p.distance > parameter("interest_distance"):
+            self._calm_since = None
+            if self._outside_since is None:
+                self._outside_since = now
+            if now - self._outside_since >= parameter("encounter_release_seconds"):
+                recovery = self.recover_until
+                self.reset()
+                self.recover_until = recovery
+            self.current = CursorIntent(reason="distant")
+            return self.current
+        self._outside_since = None
+        if not self._encounter:
+            self._encounter = True
+            self._serial += 1
+            self._trust = max(0, min(1, (context.friendship_level - 1) / 9))
+            self._willing = (
+                context.energy >= 25
+                and context.mood >= 30
+                and (context.affection <= 75 or context.fun <= 75 or self._trust > 0.5)
+            )
+            self._look_until = now + 3
+            self._selected_at = now
+            self.current = CursorIntent(
+                "observe", token=self._serial, until=self._look_until, target=p.pointer
+            )
         threat = (
             p.distance < parameter("threat_distance")
             and p.speed > parameter("fast_speed")
             and p.closing_speed > parameter("closing_speed")
         )
-        if threat and now >= self.recover_until:
+        if (
+            threat
+            and not self._retreated
+            and not self._access
+            and now >= self.recover_until
+        ):
+            self._retreated = True
+            level = min(3, max(1, round(3 - 2 * self._trust + (context.energy < 25))))
+            self._fear_level = level
             reaction: CursorReaction = (
                 "flee"
-                if trust < 0.45 and context.energy >= 25
+                if self._trust < 0.45 and context.energy >= 25
                 else "avoid"
                 if context.energy >= 12
                 else "startle"
             )
-            duration = parameter("flight_seconds") + 1.5 if reaction == "flee" else 2.2
-            self.recover_until = now + parameter("recovery_seconds") * (
-                1.5 - trust * 0.5
+            self._look_until = now + 3
+            self.recover_until = now + parameter("recovery_seconds")
+            self.current = CursorIntent(
+                reaction,
+                -p.side or 1,
+                self._serial,
+                now + 15,
+                "near-fast-approach",
+                p.pointer,
+                "profile",
+                level,
+                self._evidence("fear", level),
             )
-            return self._choose(
-                reaction, -p.side or 1, now, duration, "near-fast-approach"
-            )
-        if self.current.reaction in ("avoid", "flee", "startle"):
+            return self.current
+        if self.current.moving:
             if now < self.current.until:
                 return self.current
-        if self.current.reaction == "approach" and now < self.current.until:
-            if p.reachable and p.stationary_seconds >= parameter("curiosity_seconds"):
-                return self.current
             self.note_motion_finished(self.current.token, now)
-        elif self.current.reaction == "approach":
-            self.note_motion_finished(self.current.token, now)
-        interested = p.distance <= parameter("interest_distance")
+        if self.current.reaction == "startle" and now < self._look_until:
+            return self.current
+        calm = p.speed <= parameter("calm_speed") and p.side != 0
+        if not calm or self._calm_side != p.side or not continuous:
+            self._calm_since = now if calm else None
+            self._calm_side = p.side
+        elif self._calm_since is None:
+            self._calm_since = now
+        duration = 0 if self._calm_since is None else now - self._calm_since
+        experience = None
         if (
-            now >= self.recover_until
-            and p.reachable
-            and p.side
-            and parameter("stop_distance") < p.distance < parameter("approach_distance")
-            and p.stationary_seconds >= parameter("curiosity_seconds")
-            and context.energy >= 25
-            and context.mood >= 30
-            and (context.affection <= 75 or context.fun <= 75 or trust > 0.5)
+            duration >= parameter("curiosity_seconds")
+            and not self._access
+            and not self._retreated
+            and p.distance <= parameter("approach_distance")
         ):
-            return self._choose("approach", p.side, now, 2.5, "calm-reachable-pointer")
-        reaction = "observe" if interested and p.stationary_seconds < 8 else "ignore"
+            # Strength is frozen from actual encounter context, never moodlet feedback.
+            level = (
+                1 + int(self._trust >= 0.4) + int(self._trust >= 0.8 and self._willing)
+            )
+            if level > self._curiosity_level:
+                self._curiosity_level = level
+                experience = self._evidence("curiosity", level)
+        engaged = self._curiosity_level > 0 and calm and not self._retreated
+        body: BodyIntent = (
+            "three_quarter"
+            if engaged
+            and duration >= parameter("body_interest_seconds")
+            and not self._access
+            else "front"
+        )
+        reaction = "observe" if (now < self._look_until or engaged) else "ignore"
+        until = now + 2 if engaged else self._look_until
+        if (
+            not self._access
+            and not self._retreated
+            and self._willing
+            and now >= self.recover_until
+            and engaged
+            and p.reachable
+            and parameter("stop_distance") < p.distance < parameter("approach_distance")
+            and duration >= parameter("approach_wait_seconds")
+        ):
+            reaction, body, until = "approach", "profile", now + 15
+        target = self.current.target
+        if target is None or now - self._selected_at >= parameter(
+            "target_hold_seconds"
+        ):
+            # A side change must settle before it can retarget the selected look.
+            if target is None or duration >= 0.6 or not calm:
+                target, self._selected_at = p.pointer, now
         self.current = CursorIntent(
-            reaction, reason="watch" if interested else "distant"
+            reaction,
+            p.side if body != "front" else 0,
+            self._serial,
+            until,
+            "calm-interest" if engaged else "brief-look",
+            target,
+            body,
+            self._curiosity_level,
+            experience,
+            2 if self._trust >= 0.7 else 1,
         )
         return self.current

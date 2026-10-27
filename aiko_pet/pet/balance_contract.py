@@ -384,6 +384,12 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "approach_distance": "number",
         "stop_distance": "number",
         "curiosity_seconds": "number",
+        "body_interest_seconds": "number",
+        "approach_wait_seconds": "number",
+        "encounter_release_seconds": "number",
+        "target_hold_seconds": "number",
+        "calm_speed": "number",
+
         "step_width_fraction": "number",
         "flight_width_multiplier": "number",
         "idle_step_minimum_seconds": "number",

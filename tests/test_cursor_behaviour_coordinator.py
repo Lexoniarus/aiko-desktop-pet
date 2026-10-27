@@ -30,7 +30,9 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.coordinator = CursorBehaviourCoordinator(
             PetState(), self.settings, observer, CursorBehaviourPolicy()
         )
-        self.coordinator.begin_frame(10, CursorActivityContext())
+        for n in range(47):
+            observer.current = replace(observer.current, sampled_at=5.4 + n / 10)
+            self.coordinator.begin_frame(5.4 + n / 10, CursorActivityContext())
 
     def test_same_tick_world_change_denies_without_reselecting(self):
         intent = self.coordinator.intent

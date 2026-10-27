@@ -123,3 +123,19 @@ InteractionEvent = (
     | WithholdingObserved | WithholdingEnded | ArrangementDisrupted
     | HelpfulInteraction
 )
+
+
+@dataclass(frozen=True, slots=True)
+class CursorExperience:
+    """Qualified local stimulus, distinct from care/reward interaction events."""
+
+    evidence_id: str
+    feeling: Literal["curiosity", "fear"]
+    level: int
+
+    def __post_init__(self) -> None:
+        if (not isinstance(self.evidence_id, str) or not self.evidence_id
+                or len(self.evidence_id) > 128
+                or self.feeling not in ("curiosity", "fear")
+                or type(self.level) is not int or not 1 <= self.level <= 3):
+            raise ValueError("Invalid qualified cursor impression")
