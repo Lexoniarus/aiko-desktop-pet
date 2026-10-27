@@ -32,10 +32,10 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.decide(now + .1, speed=2, closing_speed=-2)
         return self.decide(now + .2, speed=8, closing_speed=8)
 
-    def calm_until(self, seconds, **fields):
+    def interest_until(self, seconds, **fields):
         result = self.decide()
         for n in range(round(seconds * 10) + 1):
-            result = self.decide(10 + n / 10, **fields)
+            result = self.decide(10 + n / 10, speed=2, **fields)
         return result
 
     def test_attention_precedes_selected_gaze_and_tracks_one_encounter(self):
@@ -133,7 +133,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             assert fear.experience is not None
             self.assertEqual(fear.experience.feeling, "fear")
             self.policy.reset()
-            self.assertIsNotNone(self.calm_until(1).experience)
+            self.assertIsNotNone(self.interest_until(5.9).experience)
         self.policy.reset()
         self.policy = CursorBehaviourPolicy(session_id="exhausted")
         self.context = replace(self.context, energy=5)
@@ -158,25 +158,36 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.assertEqual(result.reaction, "ignore")
 
     def test_sampling_gap_invalidates_calm_without_rearming_escape(self):
-        self.calm_until(2)
+        self.interest_until(2)
         self.assertEqual(self.decide(20, reachable=True).body, "front")
         self.assertFalse(self.decide(21, sampled_at=0).gaze)
         self.assertFalse(self.decide(22, reachable=True).moving)
 
     def test_completed_attempt_pauses_and_old_receipts_do_not_repeat(self):
-        first = self.calm_until(4.6, reachable=True)
-        self.policy.note_motion_finished(first.token, 15)
+        first = self.interest_until(6, reachable=True)
+        self.policy.note_motion_finished(first.token, 16)
         for n in range(1, 100):
-            result = self.decide(15 + n / 10, reachable=True)
+            result = self.decide(16 + n / 10, reachable=True)
             self.assertFalse(result.moving)
             self.assertIsNone(result.experience)
-        self.assertGreaterEqual(self.policy.recover_until, 27)
+        self.assertGreaterEqual(self.policy.recover_until, 28)
 
     def test_invalid_far_and_high_pointer_cannot_approach(self):
         self.assertFalse(self.decide(sampled_at=0).gaze)
-        self.assertFalse(self.calm_until(6, reachable=False).moving)
+        self.assertFalse(self.interest_until(6, reachable=False).moving)
+
+    def test_resting_pointer_never_qualifies_and_breaks_positive_duration(self):
+        for n in range(100):
+            self.decide(10 + n / 10, stationary_seconds=2)
+        self.assertEqual(self.policy._curiosity_level, 0)
+        self.policy.reset()
+        self.interest_until(5)
+        self.decide(15.1, stationary_seconds=.5)
+        for n in range(1, 20):
+            self.assertIsNone(self.decide(15.1 + n / 10, speed=2).experience)
+        self.assertEqual(self.policy._curiosity_level, 0)
 
     def test_context_mood_does_not_generate_new_evidence_without_new_stimulus(self):
-        self.calm_until(1)
+        self.interest_until(6)
         self.context = replace(self.context, friendship_level=10, mood=100)
-        self.assertIsNone(self.decide(11.1).experience)
+        self.assertIsNone(self.decide(16.1).experience)

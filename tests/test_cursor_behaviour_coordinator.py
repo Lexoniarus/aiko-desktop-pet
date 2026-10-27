@@ -22,7 +22,7 @@ class CursorCoordinatorTests(unittest.TestCase):
             10,
             (400, 194),
             0.6,
-            stationary_seconds=4,
+            speed=2,
             side=1,
             reachable=True,
             valid=True,
@@ -30,9 +30,9 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.coordinator = CursorBehaviourCoordinator(
             PetState(), self.settings, observer, CursorBehaviourPolicy()
         )
-        for n in range(47):
-            observer.current = replace(observer.current, sampled_at=5.4 + n / 10)
-            self.coordinator.begin_frame(5.4 + n / 10, CursorActivityContext())
+        for n in range(65):
+            observer.current = replace(observer.current, sampled_at=3.6 + n / 10)
+            self.coordinator.begin_frame(3.6 + n / 10, CursorActivityContext())
 
     def test_same_tick_world_change_denies_without_reselecting(self):
         intent = self.coordinator.intent

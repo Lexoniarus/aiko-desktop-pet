@@ -127,7 +127,6 @@ class CursorBehaviourCoordinator:
         if self.intent.reaction == "approach" and (
             not p.reachable
             or p.side != self.intent.side
-            or p.speed > parameter("calm_speed")
             or p.distance <= parameter("stop_distance")
         ):
             return None

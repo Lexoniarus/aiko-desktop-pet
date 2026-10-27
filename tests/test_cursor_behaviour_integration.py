@@ -1,5 +1,6 @@
 """Real headless observation, policy, driver and animation cooperate."""
 
+import math
 import unittest
 from dataclasses import replace
 
@@ -34,7 +35,7 @@ class IdleComputer:
 
 
 class CursorIntegrationTests(unittest.TestCase):
-    def test_calm_pointer_turns_then_takes_one_bounded_step_and_recovers(self):
+    def test_moving_pointer_turns_then_takes_one_bounded_step_and_recovers(self):
         settings = PetSettings(
             x=100, scale=1, auto_walk=True, follow_cursor=True, observe_computer=False
         )
@@ -84,11 +85,16 @@ class CursorIntegrationTests(unittest.TestCase):
         )
         before = settings.x
         seen = []
-        for i in range(80):
+        for i in range(120):
             now = i * 0.14
             clock[0] = now
+            point = (
+                (round(196 + 192 * (2.4 + .7 * math.cos(i * .14 * 4.5))),
+                 round(82 - 192 * (.8 + .7 * math.sin(i * .14 * 4.5))))
+                if i < 65 else (420 if i == 65 else 540, 194)
+            )
             observer.observe(
-                (420, 194),
+                point,
                 now,
                 game_mode=False,
                 eyes=((settings.x or 0) + 96, 82),
@@ -97,7 +103,7 @@ class CursorIntegrationTests(unittest.TestCase):
             coordinator.begin_frame(now, activity[0])
             walk.apply_cursor_intent(coordinator.admit_motion(activity[0], now), now)
             choice = runtime.select_animation(
-                now, (420, 194), observer.attention.last_pointer_move, False, None
+                now, point, observer.attention.last_pointer_move, False, None
             )
             seen.append(choice.sprite.animation)
             if choice.sprite.animation.startswith("body-step"):
@@ -188,6 +194,23 @@ class CursorTrajectory:
     def eyes(self):
         return ((self.settings.x or 0) + 96 * self.scale, 82 * self.scale)
 
+    def interest(self):
+        for n in range(65):
+            x, y = self.eyes()
+            width = 192 * self.scale
+            angle = n * .14 * 4.5
+            self.tick((
+                round(x + width * (2.4 + .7 * math.cos(angle))),
+                round(y - width * (.8 + .7 * math.sin(angle))),
+            ))
+
+    def offer_moving_target(self):
+        origin = self.settings.x or 0
+        self.tick((origin + 320 * self.scale, 194 * self.scale))
+        self.tick((origin + 440 * self.scale, 194 * self.scale))
+        for _ in range(30):
+            self.tick((origin + 440 * self.scale, 194 * self.scale))
+
     def tick(self, point, dt=0.14):
         self.now += dt
         self.state.advance(1800000000 + self.now, elapsed_seconds=dt)
@@ -221,9 +244,8 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
         for scale, friendship, steps in ((1, 10, 1), (2, 90, 2)):
             with self.subTest(scale=scale, friendship=friendship):
                 scene = CursorTrajectory(scale, friendship)
-                point = (500 + 320 * scale, 194 * scale)
-                for _ in range(90):
-                    scene.tick(point)
+                scene.interest()
+                scene.offer_moving_target()
                 self.assertEqual(scene.settings.x, 500 + steps * 16 * scale)
                 self.assertEqual(len(scene.completions), 1)
                 self.assertEqual(scene.completions[0].reason, "reached")
@@ -237,8 +259,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
     def test_curiosity_then_real_threat_one_retreat_and_five_seconds_standing(self):
         for scale in (1, 2):
             scene = CursorTrajectory(scale, friendship=10)
-            for _ in range(12):
-                scene.tick((500 + 320 * scale, 194 * scale))
+            scene.interest()
             # Establish far native motion then fast closing into the near region.
             scene.tick((500 + 550 * scale, 100 * scale))
             scene.tick((500 + 150 * scale, 100 * scale))
@@ -265,8 +286,8 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
         self.assertFalse(scene.feedback)
         self.assertEqual(scene.settings.x, 500)
         scene.activity = CursorActivityContext()
-        for _ in range(40):
-            scene.tick((820, 194))
+        scene.interest()
+        scene.offer_moving_target()
         scene.coordinator.claim_access(scene.now)
         scene.walk.clear_cursor_request(scene.now)
         scene.activity = CursorActivityContext(direct_contact=True)
