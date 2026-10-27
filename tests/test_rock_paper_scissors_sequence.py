@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from collections.abc import Callable
 
-from aiko_pet.games.contracts import GameRoundEvent
+from aiko_pet.games.contracts import GameRoundEvent, RockPaperScissorsDetails
 from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
 from aiko_pet.ui.windows.rock_paper_scissors_dialogue import GameDialogue, outcome_event
 from aiko_pet.ui.windows.rock_paper_scissors_sequence import (
@@ -88,9 +88,10 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.assertEqual(self.flow.score.games, 1)
         self.assertEqual([e.outcome for e in self.rounds], [None, "win"])
         details = self.rounds[1].details
-        assert details is not None
-        self.assertEqual((details.player_move, details.aiko_move),
-                         (Move.ROCK, Move.SCISSORS))
+        assert isinstance(details, RockPaperScissorsDetails)
+        self.assertEqual(
+            (details.player_move, details.aiko_move), (Move.ROCK, Move.SCISSORS)
+        )
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.step()
         self.assertEqual(self.animations[-1], "failed")

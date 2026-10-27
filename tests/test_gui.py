@@ -43,7 +43,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def _step_walk(self, now: float, elapsed: float) -> str | None:
         return self.app._animation.advance_walk(
-            now, elapsed, game_mode=self.app._animated.game_mode,
+            now,
+            elapsed,
+            game_mode=self.app._animated.game_mode,
         )
 
     @property
@@ -89,7 +91,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             set(bar.buttons),
             {"place_item", "play", "pet", "sleep", "talk"},
         )
-        self.assertEqual(bar.buttons["talk"].cget("text"), "Unterhalten  â€º")
+        self.assertEqual(bar.buttons["talk"].cget("text"), "Unterhalten  ›")
         self.assertEqual(bar.pin_button.cget("text"), "")
         bar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
@@ -158,7 +160,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.set_observe_computer(False)
         self.assertFalse(self.app.settings.observe_computer)
         self.assertIn("deaktiviert", self.toolbar.hardware.cget("text"))
-        self.assertIn("SÃ¤ttigung", self.toolbar.readouts["satiety"].label.cget("text"))
+        self.assertIn("Sättigung", self.toolbar.readouts["satiety"].label.cget("text"))
         self.app.set_observe_computer(True)
         self.assertTrue(self.app.settings.observe_computer)
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
@@ -359,7 +361,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=second):
             self.app._activity.react_to_computer(base + 7, self.app.context)
             self.toolbar.refresh()
-            self.assertIn("deutlich erhÃ¶ht", self.toolbar.workload.cget("text"))
+            self.assertIn("deutlich erhöht", self.toolbar.workload.cget("text"))
             self.assertIsNotNone(self.app._activity.pending_computer_line)
             self.app._activity.react_to_computer(base + 10, self.app.context)
         self.assertTrue(self.toolbar.visible)
@@ -416,11 +418,25 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._hover.refresh_hover(time.monotonic())
         self.assertFalse(self.toolbar.visible)
 
-    def test_far_away_desktop_cursor_still_gets_a_gaze_frame(self):
-        self.assertEqual(self.app._visual.gaze_direction((99999, -99999)), 2)
-        self.assertIn(self.app._visual.gaze_direction((-99999, -99999)), (14, 15))
+    def test_general_cursor_gaze_uses_current_interest_and_respects_option(self):
+        now = time.monotonic()
+        eyes = self.app._animated.cursor_eye_position
+        nearby = (round(eyes[0] + 180), round(eyes[1]))
+        for pointer in ((99999, -99999), nearby):
+            for sample_time in (now, now + 0.14):
+                self.app._cursor_observation.observe(
+                    pointer, sample_time, game_mode=False, eyes=eyes,
+                    screen_width=1920, scale=self.app.settings.scale,
+                )
+                self.app._pointer_runtime.begin_behaviour(sample_time)
+            direction = self.app._visual.gaze_direction(pointer)
+            if pointer == nearby:
+                self.assertIsNotNone(direction)
+            else:
+                self.assertIsNone(direction)
+            now += 0.28
         self.app.set_follow_cursor(False)
-        self.assertIsNone(self.app._visual.gaze_direction((99999, -99999)))
+        self.assertIsNone(self.app._visual.gaze_direction(nearby))
 
     def test_hover_bar_has_brand_and_meal_aware_button(self):
         from datetime import datetime
@@ -433,11 +449,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._on_enter()
         self.assertEqual(self.toolbar.today.cget("text"), "Aiko")
         self.assertEqual(
-            self.toolbar.buttons["place_item"].cget("text"), "FrÃ¼hstÃ¼ck  â€º",
+            self.toolbar.buttons["place_item"].cget("text"),
+            "Frühstück  ›",
         )
         self.app.state.interact("feed", now=morning)
         self.toolbar.refresh()
-        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Snack  â€º")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Snack  ›")
 
     def test_startup_geometry_is_explicitly_applied_before_first_frame(self):
         # Covers the original flash at (0,0) and saved coordinates which
@@ -504,6 +521,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
     def test_chatter_switch_suppresses_autonomous_lines(self):
         from unittest.mock import patch
 
+        # Give spontaneous speech a real reason; a healthy neutral pet may stay silent.
+        set_test_pet_values(self.app.state, mood=10)
         self.app.set_spontaneous_talk(False)
         now = time.monotonic()
         self.app._attention.next_comment = now - 1
@@ -538,7 +557,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.toolbar.refresh()
         assert self.toolbar.details is not None
         self.assertEqual(
-            self.toolbar.details.text("emotional_state_label"), "Stimmung: Zufrieden",
+            self.toolbar.details.text("emotional_state_label"),
+            "Stimmung: Zufrieden",
         )
         self.assertIn("Schlaf", self.toolbar.details.text("hint"))
 

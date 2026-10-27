@@ -17,7 +17,7 @@ from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
 from .application.social_coordinator import SocialContentWorker
 from .config import load_env_file
-from .desktop import game_assembly
+from .desktop import animation_assembly, game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
 from .desktop.care_runtime import DesktopCareRuntime
@@ -27,10 +27,8 @@ from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.maintenance import DesktopMaintenance
 from .desktop.persistence import DesktopPersistence
-from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
-from .application.cursor_behaviour import CursorActivityContext
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.social_runtime import SocialConversationRuntime
 from .desktop.startup import run_desktop
@@ -239,8 +237,7 @@ class DesktopPet:
             started_at=self._runtime.last_tick,
         )
         self._views = DesktopPresentation(
-            self.state, self.settings, self.adaptive,
-            self.activity_monitor,
+            self.state, self.settings, self.adaptive, self.activity_monitor,
             context=lambda: self.context,
             sprite_size=lambda: (self._window.width, self._window.height),
             object_status=self._world_access.object_status,
@@ -275,7 +272,7 @@ class DesktopPet:
                 game_completed=lambda score: self._care_runtime.complete_game(score),
                 game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
-                allow_sprite_hover=self._allow_sprite_hover,
+                allow_sprite_hover=lambda: self._pointer_runtime.allow_hover(),
                 record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
@@ -333,7 +330,7 @@ class DesktopPet:
             self.root, self.canvas,
             DesktopInputActions(
                 enter=self._on_enter,
-                allow_hover=self._allow_sprite_hover,
+                allow_hover=lambda: self._pointer_runtime.allow_hover(),
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,
                 show_menu=self._hover.open_settings,
@@ -375,16 +372,11 @@ class DesktopPet:
                 foreground_active=self._object_feedback_active,
             ),
         )
-        self._pointer_runtime = PointerRuntime(
-            self._cursor_observation, PointerRuntimePorts(
-                sample=self._input.pointer_sample,
-                game_mode=lambda: self._animated.game_mode,
-                eyes=lambda: self._animated.cursor_eye_position,
-                on_motion=self._attention_runtime.cursor_moved,
-                scale=lambda: self.settings.scale,
-                activity=self._cursor_activity,
-            ),
-            behaviour=self._cursor_behaviour, walk=self._walk,
+        self._pointer_runtime = animation_assembly.assemble_pointer(
+            observer=self._cursor_observation, behaviour=self._cursor_behaviour,
+            inputs=self._input, animated=self._animated, settings=self.settings,
+            attention=self._attention_runtime, contact=self._contact,
+            hover=self._hover, world=self._world_access, walk=self._walk,
         )
         self._session_runtime = DesktopSessionRuntime(
             activity=self._activity, attention=self._attention_runtime,
@@ -402,17 +394,15 @@ class DesktopPet:
             ),
         )
         self._preferences = DesktopPreferences(
-            settings=self.settings,
-            adaptive=self.adaptive,
+            settings=self.settings, adaptive=self.adaptive,
             activity=self._activity,
             attention=self._attention,
             animated=self._animated, walk=self._walk,
             visual=self._visual, window=self._window,
-            hover=self._hover,
-            speech=self._speech,
+            hover=self._hover, speech=self._speech,
             overlay_stack=self._overlay_stack,
             ports=DesktopPreferencePorts(
-                reset_cursor=self._reset_cursor_behaviour,
+                reset_cursor=self._pointer_runtime.reset,
                 place_x=self._place_x,
                 save=self._save,
                 set_context=self._set_context,
@@ -422,15 +412,11 @@ class DesktopPet:
             ),
         )
         self._lifecycle = DesktopLifecycle(
-            root=self.root,
-            inputs=self._input,
-            runtime=self._runtime,
-            monitor=self.activity_monitor,
-            application=self.application,
-            overlays=self._overlay_stack,
+            root=self.root, inputs=self._input,
+            runtime=self._runtime, monitor=self.activity_monitor,
+            application=self.application, overlays=self._overlay_stack,
             hover=self._hover,
-            reaction=self._reaction_player,
-            speech=self._speech,
+            reaction=self._reaction_player, speech=self._speech,
             place_initially=self._place_initially,
             save=self._save,
             stop_animation=self._animated.close,
@@ -491,24 +477,10 @@ class DesktopPet:
             self._world.interaction.active or self._world.cursor.carrying
         )
 
-    def _cursor_activity(self) -> CursorActivityContext:
-        return CursorActivityContext(
-            game_open=self._hover.game_open, menu_engaged=self._hover.menu_engaged,
-            foreground_active=not self._contact.can_interact("pet"),
-            world_protected=self._world_access.cursor_protected(),
-            direct_contact=self._hover.pointer_inside(*self._cursor_observation.current.pointer)
-            and self._allow_sprite_hover(),
-        )
-
-    def _reset_cursor_behaviour(self) -> None:
-        self.mind.cursor_attention.reset()
-        self._cursor_behaviour.reset()
-        self._walk.clear_cursor_request()
-
     def _set_game_mode(self, enabled: bool) -> None:
         self._action_playback.cancel_at(time.monotonic())
         self._animated.set_game_mode(enabled)
-        self._reset_cursor_behaviour()
+        self._pointer_runtime.reset()
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -538,14 +510,7 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        if self._allow_sprite_hover():
-            self._contact.enter()
-
-    def _allow_sprite_hover(self) -> bool:
-        return self._cursor_observation.classify_contact(
-            (self.root.winfo_pointerx(), self.root.winfo_pointery()),
-            pet_moved_at=self._walk.last_placement_at,
-        )
+        self._contact.enter()
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
         if not self._world.cursor.carrying:

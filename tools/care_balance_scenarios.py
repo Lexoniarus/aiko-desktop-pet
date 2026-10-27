@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from aiko_pet.games.contracts import GameId, RoundOutcome  # noqa: E402
+from aiko_pet.games.contracts import GameId, GameResult, RoundOutcome  # noqa: E402
 from aiko_pet.pet.consumption import ConsumptionOrigin  # noqa: E402
 from aiko_pet.pet.food import FoodActivity  # noqa: E402
 from aiko_pet.pet.fun import GameExperience  # noqa: E402
@@ -154,7 +154,9 @@ class CareScenario:
                 definitions=WISH_CATALOG.definitions,
             )
             outcomes: tuple[RoundOutcome, ...] = ("win", "loss", "draw")
-            outcome = self.results.choice(outcomes)
+            outcome: GameResult = self.results.choice(outcomes)
+            if game == GameId.QUIZ.value:
+                outcome = "completed"
             round_id = f"{session}:{number}"
             pet.record_completed_game_round(
                 game_id=game, round_id=round_id, outcome=outcome
@@ -172,9 +174,11 @@ class CareScenario:
             wins += outcome == "win"
             losses += outcome == "loss"
             self.rounds += 1
-        pet.record_game_experience(
-            GameExperience(game, 2, wins, 2 - wins - losses, losses), now=pet.updated_at
+        experience = (
+            GameExperience(game, 2) if game == GameId.QUIZ.value
+            else GameExperience(game, 2, wins, 2 - wins - losses, losses)
         )
+        pet.record_game_experience(experience, now=pet.updated_at)
         pet.complete_play_session(
             game_id=game, session_id=session, round_id=f"{session}:2"
         )

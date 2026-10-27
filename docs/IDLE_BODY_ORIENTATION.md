@@ -33,14 +33,19 @@ wechseln. Für diese Umsetzung wurde kein Bild neu generiert.
 
 Die Dreiviertelschritte sind ausschließlich Ausrichtungs-/Drehschritte. Sie
 ändern weder Fensterposition noch `PetState` noch den Bewegungsauftrag. Die
-seitliche Fortbewegung braucht einen eigenständigen Profil-Gehbaustein; die
-zurückgewiesene experimentelle Gehschleife wird hier nicht installiert.
+seitliche Fortbewegung verwendet inzwischen den separat abgenommenen kleinen
+Profilschritt; die zurückgewiesene experimentelle Gehschleife bleibt ausgeschlossen.
+Vor Ortswechsel wird über alle acht Drehphasen bis zum Profil gedreht; danach
+kehrt der Körper geordnet über Dreiviertel zur Front zurück. Kleine Idle-Schritte
+und zugelassene Cursorannäherung nutzen denselben Bewegungsbesitzer.
+Siehe [Umsetzung und Grenzen](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md).
 
 ## Daten und Zuständigkeiten
 
 `assets/body_poses/manifest.json` beschreibt ein eigenständiges optionales
-HD-Paket. Es enthält acht vorhandene Drehbilder und 18 offline montierte
-Kopf-/Körperkombinationen. Die vollständigen Standkörper einschließlich
+HD-Paket. Version 2 enthält 18 Clips mit insgesamt 102 PNGs: die bisherigen
+acht Drehbilder und 18 Kopf-/Körperkombinationen plus 16 volle Drehphasen
+und 60 Schritt-/Kopfmontagen. Die vollständigen Standkörper einschließlich
 Kleidung und Beinen werden als Grundlage erhalten. Die Körperbewegung während
 des Drehens kommt aus den vorhandenen ganzen Drehzeichnungen.
 
@@ -51,7 +56,8 @@ binäres Alpha wie der bisherige Atlas. Das verhindert halbtransparente
 Farbsäume im Windows-Farbtransparenzfenster, ohne echte türkise Haarbereiche
 anhand ihrer Farbe zu löschen.
 
-- `BodyOrientation` besitzt ausschließlich den passiven Drehfortschritt.
+- `BodyOrientation` besitzt die körperliche Ausrichtung und den Drehfortschritt
+  für passive Blicke und die Profilbereitschaft vor einem Schritt.
 - `DesktopAnimationRuntime` wendet ihn nach der bestehenden Prioritätsauswahl an.
 - `CharacterCatalog.body_clips` ergänzt den unveränderten regulären Katalog.
 - `BodyPoseCache` lädt die HD-Bilder erst bei Bedarf und hält skalierte Ansichten.
@@ -79,3 +85,13 @@ die Mitte, Prioritäten, Unterbrechungen und das Anzeigen in beiden Größen.
 Ein verspäteter Tick darf keine Drehphase verschlucken. Die Bildprüfungen
 kontrollieren Paketabmessungen und binäres Alpha; ein separater Hashabgleich
 hält die bestehenden 241 Atlasdateien unverändert.
+
+
+Das optionale Exportpaket mit `locomotion: true` in `package.json` ergänzt
+`step-left/`, `step-right/`, `step-head-left/`, `step-head-right/` und
+vollständige `orient-left/`, `orient-right/` für beide
+Seiten. Es nutzt vorhandene abgenommene Zeichnungen und Halsmasken. Der
+Laufzeitschritt enthält sechs Phasen in 620 ms und 16 logischen Pixeln Strecke;
+identische Anfangs-/Endbilder werden als dieselbe PNG referenziert. Fünf
+passende Kopfachsen und das vollständige Profil je Seite teilen eine
+Bewegungsfamilie, sodass Kopfwechsel den Schritt nicht neu starten.

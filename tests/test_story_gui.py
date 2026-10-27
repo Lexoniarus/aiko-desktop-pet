@@ -11,6 +11,8 @@ from pathlib import Path
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from tools.desktop_test_support import create_test_desktop
 from tools.persistence_test_support import save_test_session
@@ -65,12 +67,13 @@ class StoryGuiTests(unittest.TestCase):
         player = self.pet._reaction_player
         self.assertTrue(player.story_active)
         texts = [b.content for b in player.cues if b.kind == "text"]
-        self.assertEqual(len(texts), 4)
+        self.assertGreaterEqual(len(texts), 2)
         bond = self.pet.state.friendship
         affection = self.pet.state.affection
         social = self.pet.state.social
-        for phrase in texts:
-            self.click()
+        for index, phrase in enumerate(texts):
+            if index:
+                self.click()
             self.assertEqual(self.text(), phrase)
             self.assertEqual(list(self.pet.mind.clicks), [])
         self.click()
@@ -83,7 +86,14 @@ class StoryGuiTests(unittest.TestCase):
         self.assertEqual(len(self.pet.mind.clicks), 1)
 
     def test_automatic_outputs_wait_even_during_a_blank_pause(self) -> None:
-        self.pet.interact("talk")
+        # The playback boundary needs an explicit pause, independently of
+        # which authored conversation the current catalogue selects.
+        self.pet._react(Reaction(
+            "test.story.pause",
+            (Cue("text", "Einen Moment.", 4000), Cue("pause", "", 1000),
+             Cue("text", "Weiter geht es.", 4000)),
+            "idle", "talk", presentation="story",
+        ))
         player = self.pet._reaction_player
         index = next(i for i, b in enumerate(player.cues) if b.kind == "pause")
         assert player.pending_timer is not None

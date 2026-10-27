@@ -23,6 +23,7 @@ class BodyPoseAssetTests(unittest.TestCase):
             self.assertTrue(all(c.timings == variants[0].timings for c in variants))
             self.assertTrue(all(c.stride == 16 for c in variants))
             self.assertTrue(all(c.movement and c.loop for c in variants))
+
     def test_installed_pack_keeps_normal_catalog_independent(self) -> None:
         catalog = load_character_catalog()
         self.assertEqual(len(catalog.clips), 16)

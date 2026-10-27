@@ -2,6 +2,7 @@
 
 import unittest
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import Mock
 
 from aiko_pet.application.cursor_observation import CursorObservation
@@ -20,7 +21,7 @@ class CursorContactOriginTests(unittest.TestCase):
         self.assertTrue(observer.classify_contact((105, 100), pet_moved_at=11))
 
     def test_polling_does_not_open_or_register_self_contact(self):
-        hover = object.__new__(HoverUi)
+        hover: Any = object.__new__(HoverUi)
         root = SimpleNamespace(winfo_pointerx=lambda: 100, winfo_pointery=lambda: 100)
         root.winfo_containing = lambda _x, _y: root
         hover.root = root

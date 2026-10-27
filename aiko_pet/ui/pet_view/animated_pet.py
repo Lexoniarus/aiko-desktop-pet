@@ -347,9 +347,7 @@ class AnimatedPet:
         self._body_cache.close()
 
     def render(
-        self,
-        now: float,
-        pointer: tuple[int, int],
+        self, now: float, pointer: tuple[int, int],
         *,
         attention: CursorAttentionSnapshot | None = None,
     ) -> None:

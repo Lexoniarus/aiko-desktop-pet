@@ -37,6 +37,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.visual = MagicMock(spec=DesktopVisualObservation)
         self.visual.observe.return_value = PassiveObservation(None, False)
         self.visual.orienting = False
+        self.visual.cursor_watching = False
         self.action_until = 0.0
         self.action_clip_id = "review"
         self.holding_readable = False
@@ -161,6 +162,37 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
                 runtime.select_animation(now, (100, 0), now - 1, False, None),
                 RenderDecision(SpriteSelection("look", 4), clear_action=True),
             )
+
+    def test_older_optional_pack_uses_existing_motion_without_missing_clips(self):
+        old_clips = {
+            name: clip
+            for name, clip in self.assets.body_clips.items()
+            if name.startswith(("body-look-", "body-turn-"))
+        }
+        runtime = DesktopAnimationRuntime(
+            state=self.state,
+            settings=self.settings,
+            assets=replace(self.assets, body_clips=MappingProxyType(old_clips)),
+            walk=cast(WalkDriver, self.walk),
+            visual=cast(DesktopVisualObservation, self.visual),
+            ports=AnimationRuntimePorts(
+                action_until=lambda: 0.0,
+                action_clip_id=lambda: "idle",
+                attention_until=lambda: -100.0,
+            ),
+        )
+        self.walk.movement.kind = "step"
+        self.walk.movement.source = "cursor"
+        self.walk.movement.remaining_distance = 16
+        self.walk.step.return_value = WalkStep(0, 1, "step")
+        self.assertEqual(
+            runtime.select_animation(100, (100, 0), 99, False, None).sprite,
+            SpriteSelection("running-right"),
+        )
+        self.assertEqual(
+            runtime.advance_walk(100.1, 0.1, game_mode=False), "running-right"
+        )
+        self.assertEqual(self.walk.step.call_count, 2)
 
     def test_priority_interruptions_require_fresh_body_turn_dwell(self) -> None:
         for priority in ("sleep", "game", "action", "walk", "handover", "book"):

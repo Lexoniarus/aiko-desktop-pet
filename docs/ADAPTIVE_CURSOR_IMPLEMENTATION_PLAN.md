@@ -1,7 +1,8 @@
 # Adaptive Mauswahrnehmung: Module, OOP-Verträge und Commitfolge
 
-Stand: 27.10.2026. Geprüfter lokaler Stand: `93f1c22` auf
-`feature/social-optimization`. Dies ist ausschließlich Planung.
+Stand: 27.10.2026. Umsetzung auf `feature/social-optimization`, ausgehend von
+`93f1c22`. Die Freigabe zur Umsetzung erfolgte nach diesem Plan; lokaler
+Abschluss und verbleibende Abnahmen sind unten getrennt festgehalten.
 Produktgrundlage: [Mauswahrnehmungs-Konzept](ADAPTIVE_CURSOR_CONCEPT.md).
 
 ## Umfang und Arbeitsweise
@@ -24,7 +25,9 @@ wiederverwendet; kein Generierungsauftrag entsteht durch diesen Plan.
 **Pro Commit ausschließlich die gezielten Tests seines Änderungsumfangs.
 Gesamtsuite, globale statische Prüfungen und echte GitHub-CI erst im Abschluss.**
 Keine Computer-Use-/UI-Fernsteuerung; praktische Sichtung übernimmt der Nutzer.
-Planung erteilt keinen Commit-, Push-, PR- oder Merge-Auftrag.
+Die anschließende Umsetzungsfreigabe umfasst die lokale Commitfolge.
+Push und PR bleiben dem unten beschriebenen Freigabeschritt vorbehalten;
+ein Merge ist nicht beauftragt.
 
 ## Existierende Module, die angepasst werden müssen
 
@@ -227,9 +230,10 @@ Unit- oder erforderlichen Integrationstests.
 
 Die bisherigen Commits bleiben unverändert:
 `d72176e` (Exporter), `11b8df8` (HD-Assets), `93f1c22` (Körperausrichtung).
-Aktuell sind nur dieser Plan und der Konzeptverweis offen. Die zwölf lokalen
-Commits gegenüber dem vorhandenen Remote-Tracking-Stand enthalten auch getrennte
-parallele Arbeiten; sie werden weder neu gepackt noch umgeschrieben.
+Zum Planungsbeginn waren nur dieser Plan und der Konzeptverweis offen.
+Die damals zwölf lokalen Commits gegenüber dem vorhandenen Remote-Tracking-Stand
+enthalten auch getrennte parallele Arbeiten; sie werden weder neu gepackt
+noch umgeschrieben.
 
 In der Testspalte sind Modulnamen relativ zu `tests/` angegeben.
 `Neu:` kennzeichnet erst mit diesem Commit zu erstellende Tests.
@@ -305,3 +309,109 @@ Nähe-/Geschwindigkeitsschwellen, Erholung, Häufigkeit eigener Idle-Schritte,
 maximale Annäherung pro Versuch und Fluchtdauer werden anhand der gezielten
 Zeitreihen und späterer Nutzersichtung abgestimmt. Das erzeugt weder zusätzliche
 persistente Zustände noch einen pauschalen Auftrag zur Bildgenerierung.
+
+
+## Umsetzungsstand und Prüfnachweis
+
+Die fachlichen Schritte sind lokal umgesetzt. Es gibt genau zwei neue
+Produktionsmodule: die reine Cursorpolicy und ihren Anwendungskoordinator.
+`assemble_pointer()` bleibt im vorhandenen Desktop-Assemblymodul; Eingabe,
+Kontaktprüfung und Reset gehören zu `PointerRuntime`, nicht in die GUI.
+`application/object_behavior.py` erlaubt beim kleinen Seitenschritt passende
+Kopfachsen derselben Seite; World-/Objektphasen behalten Vorrang.
+
+| Schritt | Commit | Gezielter Nachweis vor diesem Commit |
+| --- | --- | --- |
+| 1 | `f8abc6a` | Plan, Pfade und Zuständigkeiten geprüft |
+| 2 | `2b8959a` | 12 Beobachtungs-/Pointertests |
+| 3 | `d51e7ed` | 16 Policy-/Ressourcentests |
+| 4 | `37265a4` | 26 Bewegungs-/Worldtests |
+| 5 | `bbde658` | 10 Herkunfts-/Eingabetests |
+| 6 | `c40d3ce` | 11 Export-/Katalog-/Cachetests; Atlas-Hashes unverändert |
+| 7 | `97f2c60` | 52 Animations-/Orientierungs-/Fortschrittstests |
+| 8 | `586d14a` | 25 Koordinator-/Runtime-/Präferenztests und 7 Integrations-/Worldtests |
+| 9 | `fd4a531` | 26 Idle-/Controller-/Ambienttests |
+| 10 | Abschlusscommit | Gesamtsuite und globale Prüfungen, Ergebnis siehe unten |
+
+Der Abschluss korrigiert zusätzlich durch die Gesamtkontrolle aufgedeckte
+Verdrahtung, Typisierung und Testadapter. Der bestehende GUI-Größenvertrag
+bleibt bei 640 Zeilen. Ein vorhandener Schere-Stein-Papier-Test erhielt nur
+eine konkrete Typprüfung seiner Detaildaten für Pyright; das Spielverhalten
+wurde nicht verändert. Die Windows-CI erfasst die neuen Testmodule ausdrücklich.
+Die Gesamtsuite deckte außerdem einen schon vorher vorhandenen, veralteten
+Quiz-Aufruf im Pflege-Simulationswerkzeug auf: Quizrunden werden dort nun wie
+im Produkt als `completed` ohne Wettbewerbsresultate geführt. Der Sprachschalter-
+Test erhält einen echten Niedrigstimmungsanlass statt eine Äußerung ohne Grund
+zu erwarten; entfernte Cursor und der Neustart nach Spielen werden über die
+neue Wahrnehmung geprüft. Parallele UI-Implementierungen bleiben unverändert.
+Die World-Komponententests veröffentlichen vor manuellen World-Ticks die
+gemeinsame Wahrnehmung und Absicht. Ein eigener Test sichert aktuelle native
+Greifpositionen zwischen zwei Sensor-Ticks. Ältere Testdaten erhalten vom
+Gedächtnisbesitzer vergebene Kennungen; Dialogtests prüfen die ausgewählte
+Folge und genau einen regulären Abschluss statt eine feste alte Textanzahl.
+Die bereits bestehende Annahme unerwünschten Essens mit anschließendem
+Hinlegen bleibt erhalten; weder der Besitz- noch der Verzehrvertrag wird
+für einen alten Test verschärft.
+Alte optionale Posenpakete ohne Schrittbilder behalten die bisherige
+Bewegungsdarstellung; die neue Drehbereitschaft verlangt dann keine fehlenden Clips.
+
+Aktuelle Startwerte: Körperreaktion nach 1,2 Sekunden auf derselben Blickseite,
+Neugier nach 2,5 Sekunden ruhigem erreichbarem Zeiger, ein Schritt von
+16 logischen Pixeln (32 in 2X), mindestens 12 Sekunden Pause nach einem Versuch.
+Idle plant nach kleinen Schritten 35–65 Sekunden Ruhe und geht pro
+Schritt ebenfalls 16 logische Pixel. Nähe/Geschwindigkeit werden in Figurenbreiten
+normiert; eine Flucht ist auf 0,35 Figurenbreiten begrenzt. Diese Werte sind
+Abstimmungswerte, keine neue persistente Persönlichkeitsskala.
+
+Das optionale HD-Posenpaket umfasst 18 Clips mit 102 PNGs: die bisherigen
+26 Bilder plus 76 zusätzliche Exporte aus bereits abgenommenen Quellen.
+Private Originale bleiben außerhalb Git, beide regulären Atlanten unverändert.
+Es wurden keine Bilder generiert. Die vorhandene Renndarstellung bleibt für
+kurze Flucht und bestehende World-Wege erhalten; eine neue längere Geh-/Rennfolge,
+ständiges Mausverfolgen und autonomes Berühren sind nicht Teil dieses Schritts.
+
+Praktische Sichtabnahme durch den Nutzer und echte GitHub-CI stehen noch aus.
+Computer Use wurde nicht verwendet. Ein Branch-Push allein startet den
+vorhandenen vollständigen Tests-Workflow nicht; hierfür ist der freizugebende
+Push-/PR-Schritt erforderlich.
+
+
+### Noch offene praktische Sichtabnahme
+
+Für den neuen Python-Code die Anwendung einmal neu starten. Computer Use ist
+nicht Teil der Abnahme; der Nutzer beurteilt die Darstellung selbst.
+
+1. Idle mit Blinzeln beobachten: leichtes Schwanken und gelegentliches Umsehen
+   bleiben erhalten; kleine Ortswechsel zeigen den ganzen Körper in Bewegung.
+2. Den Zeiger kurz links/rechts wechseln, danach auf einer Seite halten:
+   zunächst Kopfreaktion, erst bei anhaltender Richtung Körperdrehung.
+3. Einen erreichbaren Zeiger ruhig halten: höchstens ein kleiner Versuch,
+   danach Ruhe; ein bewegter Zeiger zieht Aiko nicht endlos hinterher.
+4. Langsame Nähe, schnelle seitliche Vorbeifahrt und schnelle Annäherung
+   vergleichen: Nähe allein ist kein Fluchtgrund, die Richtung zählt mit.
+5. Während Menü, Spiel, Schlaf, Gespräch und Objektübergabe prüfen, dass diese
+   Interaktionen Vorrang behalten. Bewegung unter einem ruhenden Zeiger darf
+   weder die Toolbar öffnen noch absichtlichen Benutzerkontakt verbuchen.
+6. In beiden Größen Bodenlinie, Halsübergänge, passende Kopfachsen und die
+   Rückkehr über Dreiviertel zur Front sichten.
+
+
+### Lokale Abschlussprüfung
+
+Am abschließenden Code-Stand unter Windows mit Python 3.11.9 erfolgreich:
+
+- `python -X faulthandler -m unittest discover -s tests -q`: **2.284 Tests, OK**
+  (343,047 Sekunden; vollständiger erneuter Lauf nach den Korrekturen).
+- `python -m ruff check aiko_pet tests main.py tools`: **grün**.
+- `python -m mypy --strict --no-incremental aiko_pet main.py tools`:
+  **keine Fehler in 360 Quelldateien**.
+- `python -m pyright --project pyrightconfig.json`: **0 Fehler, 0 Warnungen**.
+- Git-Diff-Prüfung ohne Whitespacefehler; beide regulären Atlanten unverändert
+  gegenüber dem Ausgangsstand `93f1c22`. Genau zwei neue Produktionsmodule.
+- 86 vorhandene/ergänzte Windows-Testmuster auf vorhandene Dateien und doppelte
+  Einträge geprüft. Die neue Abdeckung bleibt im vorhandenen Tests-Workflow.
+
+Diese lokale Abnahme ersetzt die noch ausstehende GitHub-CI und praktische
+Nutzersichtung nicht. Auf der Arbeitsbranch existiert bereits PR #11;
+nach der vorgesehenen Push-Freigabe kann dessen vollständiger Tests-Workflow
+am neuen Head laufen. Kein Merge ist beauftragt.

@@ -49,6 +49,7 @@ class VisualAttentionPorts:
     activity_active: Callable[[], bool] = lambda: False
     orientation_side: Callable[[], LookSide | None] = lambda: None
     cursor_interest: Callable[[], bool] | None = None
+    walk_kind: Callable[[], str] = lambda: "run"
 
 
 class DesktopVisualObservation:
@@ -76,6 +77,13 @@ class DesktopVisualObservation:
     @property
     def orienting(self) -> bool:
         return self._attention.orientation_side() is not None
+
+    @property
+    def cursor_watching(self) -> bool:
+        return (
+            self._attention.cursor_interest is not None
+            and self._attention.cursor_interest()
+        )
 
     def reset(self) -> None:
         """Clear gaze hysteresis on game, scale or cursor-setting changes."""
@@ -113,6 +121,7 @@ class DesktopVisualObservation:
 
         attention = choose_object_attention(
             self._attention.phase(),
+            mobile_cursor=self._attention.walk_kind() == "step",
             sleeping=self._attention.sleeping(),
             game_open=game_mode,
             walking=self._attention.walking(),

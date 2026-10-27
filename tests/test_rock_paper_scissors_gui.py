@@ -289,8 +289,18 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         cancel.assert_called_once()
         self.assertFalse(visual._game_mode)
         self.assertLessEqual(self.pet._action_playback.until, time.monotonic())
+        # Closing a game resets interest. Fresh nearby input restores it.
+        now = time.monotonic()
+        eyes = visual.cursor_eye_position
+        pointer = (round(eyes[0] + 180), round(eyes[1]))
+        for sample_time in (now, now + 0.14):
+            self.pet._cursor_observation.observe(
+                pointer, sample_time, game_mode=False, eyes=eyes,
+                screen_width=1920, scale=self.pet.settings.scale,
+            )
+            self.pet._pointer_runtime.begin_behaviour(sample_time)
         self.assertIsNotNone(
-            self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode)
+            self.pet._visual.gaze_direction(pointer, game_mode=visual.game_mode)
         )
 
     def test_close_cancels_outstanding_bubble_and_session(self) -> None:

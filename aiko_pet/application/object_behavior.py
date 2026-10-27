@@ -27,19 +27,30 @@ from .object_orientation import OrientationProgress, has_learned_places
 
 
 def choose_object_attention(
-    phase: InteractionPhase, *, sleeping: bool, game_open: bool,
-    walking: float, following_cursor: bool = False,
+    phase: InteractionPhase,
+    *,
+    sleeping: bool,
+    game_open: bool,
+    walking: float,
+    following_cursor: bool = False,
     activity_active: bool = False,
     tracking_feedback: bool = False,
     orientation_side: LookSide | None = None,
-    cursor: tuple[float, float] | None, target: tuple[float, float] | None,
+    mobile_cursor: bool = False,
+    cursor: tuple[float, float] | None,
+    target: tuple[float, float] | None,
 ) -> ObjectAttention:
     """Derive attention from the existing action and movement owners only."""
     if sleeping or game_open:
         return ObjectAttention("unavailable", None)
     if phase in (
-        "inspect", "recognize", "decide", "handover", "eat",
-        "put_down", "finish",
+        "inspect",
+        "recognize",
+        "decide",
+        "handover",
+        "eat",
+        "put_down",
+        "finish",
     ):
         return ObjectAttention("object", target)
     if phase in ("await_return", "await_settle", "recognize_offer", "decide_offer"):
@@ -54,6 +65,14 @@ def choose_object_attention(
     if following_cursor and cursor is not None:
         subject = target or cursor
         return ObjectAttention("object", subject, focused_place=True)
+    if (
+        walking
+        and mobile_cursor
+        and cursor is not None
+        and cursor[0] * walking >= 0
+        and abs(cursor[1]) <= abs(cursor[0])
+    ):
+        return ObjectAttention("cursor", cursor)
     if walking:
         return ObjectAttention("moving", (1 if walking > 0 else -1, 0))
     if target is not None:

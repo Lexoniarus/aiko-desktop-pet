@@ -29,6 +29,22 @@ class Monitor:
 
 
 class DesktopVisualObservationTests(unittest.TestCase):
+    def test_step_uses_compatible_cursor_axis_for_perception_and_head(self):
+        observer = DesktopVisualObservation(
+            settings=PetSettings(),
+            monitor=Monitor(),
+            eyes=lambda: (100.0, 200.0),
+            attention=VisualAttentionPorts(
+                walking=lambda: 10,
+                walk_kind=lambda: "step",
+                cursor_interest=lambda: True,
+            ),
+        )
+        self.assertEqual(observer.observe(100, (250, 150), 99, False).gaze_direction, 3)
+        self.assertEqual(
+            observer.observe(100, (-100, 150), 99, False).gaze_direction, 4
+        )
+
     def setUp(self) -> None:
         self.settings = PetSettings()
         self.monitor = Monitor()

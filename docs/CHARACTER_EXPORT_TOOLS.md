@@ -40,3 +40,12 @@ the modular V3 packages.
 Synthetic package tests exercise complete installation, protected pixels,
 provenance checks and failure without partial publication. Tests of the shipped
 catalogue and renderer belong to the corresponding asset/runtime changes.
+
+
+The optional body package supports `locomotion: true` in `package.json`.
+It adds complete turn phases and reviewed step bodies/heads, publishing version
+2 metadata for movement kind, heading, head direction, shared clock family and
+stride. Step head variants reuse whole-body frames and a common 620 ms clock;
+there is no image generation or runtime leg composition. Older version 1
+packages remain readable. See [body orientation](IDLE_BODY_ORIENTATION.md) and
+[the implementation ledger](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md).

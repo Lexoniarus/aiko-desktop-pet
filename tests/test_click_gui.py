@@ -111,12 +111,19 @@ class ClickGuiTests(unittest.TestCase):
         for _ in range(5):
             self.click(3)
         self.assertTrue(player.story_active)
-        for _ in range(sum(cue.kind == "text" for cue in player.cues) + 1):
-            self.click()
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+        with patch.object(
+            self.pet._care_runtime, "complete_social",
+            wraps=self.pet._care_runtime.complete_social,
+        ) as completed:
+            for _ in range(sum(cue.kind == "text" for cue in player.cues) + 1):
+                if not player.story_active:
+                    break
+                self.click()
+            completed.assert_called_once()
         self.assertFalse(player.story_active)
         self.assertEqual(list(self.pet.mind.clicks), [])
         self.assertEqual(self.pet.mind.irritation_reaction_until, irritation)
-        self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
     def test_replaced_click_reply_cannot_unlock_other_playback(self) -> None:
         self.click()

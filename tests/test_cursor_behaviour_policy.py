@@ -62,3 +62,11 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         intent = self.decide(reachable=True, stationary_seconds=4)
         self.policy.note_motion_finished(intent.token, 11)
         self.assertFalse(self.decide(12, reachable=True, stationary_seconds=6).moving)
+
+    def test_expired_approach_starts_pause_without_completion_callback(self):
+        first = self.decide(reachable=True, stationary_seconds=4)
+        self.assertTrue(first.moving)
+        expired = self.decide(first.until + 0.1, reachable=True, stationary_seconds=7)
+        self.assertFalse(expired.moving)
+        self.assertGreater(self.policy.recover_until, first.until + 10)
+        self.assertFalse(self.decide(14, reachable=True, stationary_seconds=8).moving)

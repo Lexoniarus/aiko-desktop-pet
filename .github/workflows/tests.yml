@@ -62,6 +62,18 @@ jobs:
         shell: pwsh
         run: |
           $patterns = @(
+            "test_cursor_behaviour*.py",
+            "test_cursor_contact_origin.py",
+            "test_movement_requests.py",
+            "test_idle_steps.py",
+            "test_body_orientation.py",
+            "test_body_pose*.py",
+            "test_character_body_pose_export.py",
+            "test_cursor_front_pose.py",
+            "test_animated_pet_isolation.py",
+            "test_desktop_animation_runtime.py",
+            "test_desktop_visual_observation.py",
+            "test_desktop_input_controller.py",
             "test_world*.py",
             "test_object*.py",
             "test_german_object_phrases.py",

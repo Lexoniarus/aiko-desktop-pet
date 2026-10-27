@@ -657,6 +657,21 @@ class WorldGuiTests(unittest.TestCase):
     def test_fast_observed_cursor_relocation_at_scale_one(self):
         self._fast_observed_cursor_relocation(1)
 
+    def test_native_relocation_reads_event_pointer_between_sensor_samples(self):
+        world = self.app._world
+        world._character_action_busy = lambda: True
+        item = world.world.place_resting(
+            "dango", world._body_x() + world.width, ObjectFootprint(8, 8),
+        )
+        assert item.position is not None
+        self.look_at(item.position.x)
+        self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "dango", "food")
+        # The last heartbeat points elsewhere; native input has already moved.
+        world._pointer_snapshot = lambda: (-99999, -99999)
+        world.begin_relocate(item.instance_id, item.revision)
+        self.assertEqual(world.awareness._tracker.following_instance, item.instance_id)
+
     def test_fast_observed_cursor_relocation_at_scale_two(self):
         self._fast_observed_cursor_relocation(2)
 
@@ -1218,6 +1233,22 @@ class WorldGuiTests(unittest.TestCase):
 
         self.enterContext(patch.object(self.app._window, "place_x",
                                       side_effect=settled_place))
+        world_update = self.app._world.update
+
+        def observed_update(now):
+            now = max(now, self.app._cursor_observation.current.sampled_at + .001)
+            x, y, width = self.app._input.pointer_sample()
+            self.app._cursor_observation.observe(
+                (x, y), now, game_mode=self.app._animated.game_mode,
+                eyes=self.app._animated.cursor_eye_position,
+                screen_width=width, scale=self.app.settings.scale,
+            )
+            self.app._pointer_runtime.begin_behaviour(now)
+            world_update(now)
+            self.app._pointer_runtime.admit_behaviour(now)
+
+        self.enterContext(patch.object(self.app._world, "update",
+                                      side_effect=observed_update))
         self.app.root.update_idletasks()
 
     def look_at(self, x, height=0):
@@ -1228,9 +1259,19 @@ class WorldGuiTests(unittest.TestCase):
                                       return_value=pointer[0]))
         self.enterContext(patch.object(self.app.root, "winfo_pointery",
                                       return_value=pointer[1]))
-        cursor = self.app.mind.cursor_attention
-        cursor.observe((-1, -1), time.monotonic())
-        cursor.observe(pointer, time.monotonic())
+        # Manual World ticks must first publish the same observation/intent
+        # that DesktopRuntime supplies before World in the real heartbeat.
+        now = time.monotonic()
+        observer = self.app._cursor_observation
+        observer.attention.reset()
+        for sample_time in (now - .14, now):
+            observer.observe(
+                pointer, sample_time, game_mode=False,
+                eyes=self.app._animated.cursor_eye_position,
+                screen_width=self.app.root.winfo_screenwidth(),
+                scale=self.app.settings.scale,
+            )
+            self.app._pointer_runtime.begin_behaviour(sample_time)
 
     def finish_orientation(self):
         """Drive the public gaze/sensor sequence; leave cue receipts untouched."""
@@ -1561,9 +1602,9 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_unknown_absence_finishes_without_search_before_new_discovery(self):
         world = self.app._world
-        world.awareness.memory.update((ObjectObservation(
+        record = world.awareness.memory.observe_find(ObjectObservation(
             "earlier", None, None, world._body_x() - 80, 0, True, 0,
-        ),), now=0)
+        ), now=0, record=None, claimed=frozenset(), maximum_distance=0)
         world.world.place_resting("cookie", world._body_x() + 80,
                                   ObjectFootprint(8, 8))
         cues = []
@@ -1584,7 +1625,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(cues[0].event, "object_place_missing")
         self.assertIsNone(cues[0].identity)
         self.complete_feedback()
-        self.assertIsNone(world.awareness.memory.get("earlier"))
+        self.assertIsNone(world.awareness.memory.get(record))
         self.assertEqual(cues[1].event, "object_notice")
         for _ in range(5):
             world.now += .25
@@ -1595,10 +1636,10 @@ class WorldGuiTests(unittest.TestCase):
     def test_missing_unwanted_reserve_starts_one_bounded_search(self):
         world = self.app._world
         set_test_pet_values(self.app.state, energy=100)
-        world.awareness.memory.update((ObjectObservation(
+        record = world.awareness.memory.observe_find(ObjectObservation(
             "reserve", "energy_drink", "drink", world._body_x(), 0, True, 0,
-        ),), now=0)
-        world.awareness.memory.mark_assessed("reserve")
+        ), now=0, record=None, claimed=frozenset(), maximum_distance=0)
+        world.awareness.memory.mark_assessed(record)
         cues = []
         present = world._present_feedback
 
@@ -2086,6 +2127,10 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(self.app.state.friendship, 15)
 
     def test_recognized_drink_handover_then_unknown_full_drink_is_examined(self):
+        self.enterContext(patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ))
         app, world = self.app, self.app._world
         set_test_pet_values(app.state, energy=40)
         x = (app.settings.x or 0) + 96
@@ -2214,7 +2259,11 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
         self.assertEqual(self.app.state.food.last_food_id, "cookie")
 
-    def test_refused_identified_offer_still_falls_instead_of_entering_hands(self):
+    def test_unwanted_known_food_can_be_received_without_consumption(self):
+        self.enterContext(patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ))
         world = self.app._world
         set_test_pet_values(self.app.state, satiety=100)
         pointer_x = (self.app.settings.x or 0) + 96
@@ -2234,9 +2283,15 @@ class WorldGuiTests(unittest.TestCase):
             self.assertTrue(known.assessed)
             self.assertFalse(world.cursor.offer_ready)
             world.cursor.release()
-        self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
-        self.assertFalse(world.interaction.active)
+        self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+        self.assertEqual(world.interaction.phase, "handover")
+        self.complete_feedback()
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.assertEqual(world.world.get(token).state, ObjectState.RESTING)
         self.assertIsNone(self.app.state.food.last_food_id)
+        self.assertEqual(self.app.state.satiety, 100)
 
     def test_missing_unknown_approach_target_releases_without_patrol(self):
         world = self.app._world

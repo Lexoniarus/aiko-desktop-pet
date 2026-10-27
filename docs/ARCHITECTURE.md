@@ -438,7 +438,20 @@ subtle idle motion, `animation.py` owns frame-selection and timing policies,
 `timing.py` validates already-decoded animation profiles, and the
 `RandomWalkPlanner` selects departures separately from the `WalkController`'s
 movement execution. `pet/mind/cursor_attention.py` retains only short-lived
-pointer-attention timestamps, not operating-system access.
+pointer samples, filtered velocity and attention timestamps, not operating-system access.
+`application/cursor_observation.py` derives normalized body distance, approach
+speed and contact origin from that one history. The new pure
+`pet/mind/cursor_behaviour.py` owns transient curiosity/threat/recovery; the new
+`application/cursor_behaviour.py` coordinates its one decision with current
+activity facts. Neither writes PetState, friendship or window position.
+
+The existing `WalkController` arbitrates source-specific World, cursor and Idle
+requests in that order and alone owns remaining distance and subpixel progress.
+`WalkDriver` applies actual bounded displacement through the existing placement
+port. `BodyOrientation` owns turning before a small step; whole-body exported
+images and family-based frame timing allow compatible head changes without
+resetting the step. Small Idle departures reuse `RandomWalkPlanner`; no new
+movement timer or per-leg runtime rig is introduced.
 
 `ui/pet_view/` owns the concrete renderer and overlays:
 
@@ -550,7 +563,8 @@ visual observer, animation runtime and sprite as one bounded assembly.
 `desktop/session_runtime.py` coordinates lifecycle advancement, window
 refresh and the advance-before-persist sequence through narrow effect ports.
 
-- `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
+- `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs. Pointer sampling precedes cursor-policy evaluation; World observes that shared gaze next, then cursor movement is admitted against the resulting World/activity state. Frame callbacks recheck hard admission before displacement. Native item grabs use the current event position between sensor ticks without evaluating the cursor policy again.
+- `PointerRuntime` supplies the same observed pointer to World and cursor behavior. Native Enter and hover polling share contact-origin admission; walking under a stationary pointer does not count as intentional user contact. Settings/scale/game changes reset transient cursor state and release its request without clearing World goals.
 - `DesktopAnimationRuntime` chooses sprite intent without importing Tk.
   `WalkDriver` executes bounded host displacement, while
   `DesktopVisualObservation` resolves cursor and measured workload inputs.

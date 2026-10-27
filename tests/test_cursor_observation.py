@@ -8,6 +8,7 @@ from aiko_pet.pet.mind.cursor_attention import CursorAttention
 
 class CursorObservationTests(unittest.TestCase):
     def test_stationary_samples_accumulate_time_without_motion(self) -> None:
+        result = None
         for i in range(12):
             result = self.observer.observe(
                 (250, 160),
@@ -16,6 +17,7 @@ class CursorObservationTests(unittest.TestCase):
                 eyes=(100, 82),
                 screen_width=1920,
             )
+        assert result is not None
         self.assertIsNone(result.motion)
         self.assertGreater(result.perception.stationary_seconds, 1.5)
         self.assertTrue(result.perception.reachable)
@@ -24,6 +26,7 @@ class CursorObservationTests(unittest.TestCase):
         readings = []
         for scale in (1, 2):
             observer = CursorObservation(CursorAttention())
+            result = None
             for i in range(4):
                 result = observer.observe(
                     ((400 - i * 30) * scale, 80 * scale),
@@ -33,12 +36,14 @@ class CursorObservationTests(unittest.TestCase):
                     screen_width=1920,
                     scale=scale,
                 )
+            assert result is not None
             readings.append(result.perception)
         self.assertAlmostEqual(readings[0].speed, readings[1].speed)
         self.assertAlmostEqual(readings[0].distance, readings[1].distance)
         self.assertGreater(readings[0].closing_speed, 0)
 
     def test_own_motion_and_sample_gap_do_not_invent_mouse_attack(self) -> None:
+        result = None
         for i in range(4):
             result = self.observer.observe(
                 (400, 160),
@@ -47,6 +52,7 @@ class CursorObservationTests(unittest.TestCase):
                 eyes=(100 + i * 25, 82),
                 screen_width=1920,
             )
+        assert result is not None
         self.assertEqual(result.perception.speed, 0)
         result = self.observer.observe(
             (10, 160),
@@ -56,6 +62,7 @@ class CursorObservationTests(unittest.TestCase):
             screen_width=1920,
         )
         self.assertFalse(result.perception.valid)
+        assert result is not None
         self.assertEqual(result.perception.speed, 0)
 
     def test_fast_motion_away_and_passing_have_no_closing_threat(self) -> None:
@@ -81,6 +88,7 @@ class CursorObservationTests(unittest.TestCase):
             eyes=(96, 82),
             screen_width=1920,
         )
+        assert result is not None
         self.assertIsNone(result.motion)
         self.assertEqual(self.clock.previous_pointer, (10, 20))
 

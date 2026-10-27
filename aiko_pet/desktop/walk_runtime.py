@@ -148,7 +148,14 @@ class WalkDriver:
         )
         width = FRAME_WIDTH * self.settings.scale
         x = self.settings.x or 0
-        target = self.ports.track().clamp_x(x + intent.side * width * amount, width)
+        track = self.ports.track()
+        target = max(
+            track.left,
+            min(
+                round(x + intent.side * width * amount),
+                max(track.left, track.right - width),
+            ),
+        )
         if target == x:
             self.ports.cursor_finished(intent.token, now)
             return

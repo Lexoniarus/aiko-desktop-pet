@@ -10,6 +10,9 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable
 
+from ..application.contact import ContactCoordinator
+from ..application.cursor_behaviour import CursorBehaviourCoordinator
+from ..application.cursor_observation import CursorObservation
 from ..application.settings import PetSettings
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..infrastructure.item_assets import load_item_catalog
@@ -19,10 +22,45 @@ from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
+from ..ui.windows.hover_ui import HoverUi
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
+from .attention_runtime import DesktopAttentionRuntime
+from .input import DesktopInput
+from .pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .visual_observation import DesktopVisualObservation, VisualAttentionPorts
 from .walk_runtime import WalkDriver, WalkDriverPorts
 from .world_access import WorldRuntimeAccess
+
+
+def assemble_pointer(
+    observer: CursorObservation,
+    behaviour: CursorBehaviourCoordinator,
+    inputs: DesktopInput,
+    animated: AnimatedPet,
+    settings: PetSettings,
+    attention: DesktopAttentionRuntime,
+    contact: ContactCoordinator,
+    hover: HoverUi,
+    world: WorldRuntimeAccess,
+    walk: WalkDriver,
+) -> PointerRuntime:
+    """Keep pointer wiring at the existing desktop composition boundary."""
+    return PointerRuntime(
+        observer,
+        PointerRuntimePorts(
+            sample=inputs.pointer_sample,
+            game_mode=lambda: animated.game_mode,
+            eyes=lambda: animated.cursor_eye_position,
+            on_motion=attention.cursor_moved,
+            scale=lambda: settings.scale,
+            menu_engaged=lambda: hover.menu_engaged,
+            foreground_active=lambda: not contact.can_interact("pet"),
+            world_protected=world.cursor_protected,
+            pointer_inside=hover.pointer_inside,
+        ),
+        behaviour=behaviour,
+        walk=walk,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,14 +97,22 @@ class AnimationComponents:
 
 
 def assemble_animation(
-    *, root: tk.Tk, canvas: tk.Canvas, state: PetState,
-    settings: PetSettings, adaptive: AdaptiveRoutine,
-    monitor: ActivityMonitor, assets: CharacterCatalog,
+    *,
+    root: tk.Tk,
+    canvas: tk.Canvas,
+    state: PetState,
+    settings: PetSettings,
+    adaptive: AdaptiveRoutine,
+    monitor: ActivityMonitor,
+    assets: CharacterCatalog,
     ports: AnimationAssemblyPorts,
 ) -> AnimationComponents:
     """Wire a single runtime graph without claiming its mutable state."""
     walk = WalkDriver(
-        state=state, settings=settings, adaptive=adaptive, monitor=monitor,
+        state=state,
+        settings=settings,
+        adaptive=adaptive,
+        monitor=monitor,
         walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
         ports=WalkDriverPorts(
             track=ports.track,
@@ -80,19 +126,27 @@ def assemble_animation(
         ),
     )
     visual = DesktopVisualObservation(
-        settings=settings, monitor=monitor, eyes=ports.gaze_origin,
+        settings=settings,
+        monitor=monitor,
+        eyes=ports.gaze_origin,
         attention=VisualAttentionPorts(
-            phase=ports.world.phase, sleeping=lambda: state.sleeping,
+            phase=ports.world.phase,
+            sleeping=lambda: state.sleeping,
             walking=lambda: walk.movement.remaining_distance,
             following_subject=ports.world.following_record,
             feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
             orientation_side=ports.world.orientation_side,
             cursor_interest=ports.cursor_interest,
+            walk_kind=lambda: walk.movement.kind,
         ),
     )
     animation = DesktopAnimationRuntime(
-        state=state, settings=settings, assets=assets, walk=walk, visual=visual,
+        state=state,
+        settings=settings,
+        assets=assets,
+        walk=walk,
+        visual=visual,
         ports=AnimationRuntimePorts(
             action_until=ports.action_until,
             action_clip_id=ports.action_clip_id,
@@ -104,10 +158,15 @@ def assemble_animation(
     )
     items = load_item_catalog()
     sprite = AnimatedPet(
-        root, canvas, state, settings,
+        root,
+        canvas,
+        state,
+        settings,
         AnimatedPorts(
             walk_step=lambda now, elapsed: animation.advance_walk(
-                now, elapsed, game_mode=ports.game_mode(),
+                now,
+                elapsed,
+                game_mode=ports.game_mode(),
             ),
             walk_active=animation.walk_active,
             interrupt_walk=animation.interrupt_walk,

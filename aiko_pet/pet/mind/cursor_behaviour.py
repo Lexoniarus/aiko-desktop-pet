@@ -101,13 +101,17 @@ class CursorBehaviourPolicy:
             self.recover_until = now + parameter("recovery_seconds") * (
                 1.5 - trust * 0.5
             )
-            return self._choose(reaction, -p.side or 1, now, duration, "near-fast-approach")
+            return self._choose(
+                reaction, -p.side or 1, now, duration, "near-fast-approach"
+            )
         if self.current.reaction in ("avoid", "flee", "startle"):
             if now < self.current.until:
                 return self.current
         if self.current.reaction == "approach" and now < self.current.until:
             if p.reachable and p.stationary_seconds >= parameter("curiosity_seconds"):
                 return self.current
+            self.note_motion_finished(self.current.token, now)
+        elif self.current.reaction == "approach":
             self.note_motion_finished(self.current.token, now)
         interested = p.distance <= parameter("interest_distance")
         if (

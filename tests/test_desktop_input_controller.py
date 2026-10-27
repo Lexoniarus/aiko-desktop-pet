@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.desktop.input import DesktopInput, DesktopInputActions
@@ -61,6 +62,16 @@ class DesktopInputTests(unittest.TestCase):
             patch.object(self.root, "winfo_screenwidth", return_value=1920),
         ):
             self.assertEqual(self.input.pointer_sample(), (321, 654, 1920))
+
+    def test_entry_checks_origin_before_dispatch_but_keeps_clicks(self) -> None:
+        self.input.actions = replace(self.input.actions, allow_hover=lambda: False)
+        self.input.on_enter()
+        self.assertEqual(self.events, [])
+        self.input.actions.left_click(None)
+        self.assertEqual(self.events, ["left"])
+        self.input.actions = replace(self.input.actions, allow_hover=lambda: True)
+        self.input.on_enter()
+        self.assertEqual(self.events, ["left", "enter"])
 
     def test_initial_bindings_preserve_sprite_events(self) -> None:
         self.input.initialize()

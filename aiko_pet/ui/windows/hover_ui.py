@@ -590,7 +590,10 @@ class HoverUi:
         if self.pointer_inside(x, y):
             self.last_hover = now
             widget = self.root.winfo_containing(x, y)
-            if widget in (self.root, self.canvas) and not self._ports.allow_sprite_hover():
+            if (
+                widget in (self.root, self.canvas)
+                and not self._ports.allow_sprite_hover()
+            ):
                 return
             if widget in (self.root, self.canvas) and (
                 toolbar is None or not toolbar.visible

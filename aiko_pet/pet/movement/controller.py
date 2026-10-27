@@ -6,6 +6,8 @@ from ..balance import BALANCE
 from .contracts import MotionKind, MotionRequest, MotionSource, WalkConditions, WalkStep
 from .random_walk import RandomWalkPlanner
 
+_PRIORITY: tuple[MotionSource, ...] = ("world", "cursor", "idle")
+
 
 class WalkController:
     """Own remaining travel, subpixel motion and safe interruptions."""
@@ -91,7 +93,7 @@ class WalkController:
         request = next(
             (
                 self._requests[source]
-                for source in ("world", "cursor", "idle")
+                for source in _PRIORITY
                 if source in self._requests
                 and now <= self._requests[source].until
                 and self._completed.get(source) != self._requests[source].token

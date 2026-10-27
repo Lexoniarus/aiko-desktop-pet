@@ -23,7 +23,10 @@ class PointerRuntimePorts:
     eyes: Callable[[], tuple[float, float]]
     on_motion: Callable[[float, int, float], None]
     scale: Callable[[], int] = lambda: 1
-    activity: Callable[[], CursorActivityContext] = CursorActivityContext
+    menu_engaged: Callable[[], bool] = lambda: False
+    foreground_active: Callable[[], bool] = lambda: False
+    world_protected: Callable[[], bool] = lambda: False
+    pointer_inside: Callable[[int, int], bool] = lambda _x, _y: False
 
 
 class PointerRuntime:
@@ -42,12 +45,12 @@ class PointerRuntime:
 
     def begin_behaviour(self, now: float) -> None:
         if self._behaviour is not None:
-            self._behaviour.begin_frame(now, self._ports.activity())
+            self._behaviour.begin_frame(now, self.activity())
 
     def admit_behaviour(self, now: float) -> None:
         if self._behaviour is not None and self._walk is not None:
             self._walk.apply_cursor_intent(
-                self._behaviour.admit_motion(self._ports.activity(), now),
+                self._behaviour.admit_motion(self.activity(), now),
                 now,
             )
 
@@ -55,11 +58,37 @@ class PointerRuntime:
         return (
             self._behaviour is not None
             and self._behaviour.admit_motion(
-                self._ports.activity(),
+                self.activity(),
                 time.monotonic(),
             )
             is not None
         )
+
+    def activity(self) -> CursorActivityContext:
+        return CursorActivityContext(
+            game_open=self._ports.game_mode(),
+            menu_engaged=self._ports.menu_engaged(),
+            foreground_active=self._ports.foreground_active(),
+            world_protected=self._ports.world_protected(),
+            direct_contact=self._ports.pointer_inside(*self._observer.current.pointer)
+            and self.allow_hover(),
+        )
+
+    def allow_hover(self) -> bool:
+        x, y, _width = self._ports.sample()
+        return self._observer.classify_contact(
+            (x, y),
+            pet_moved_at=self._walk.last_placement_at
+            if self._walk is not None
+            else -1000,
+        )
+
+    def reset(self) -> None:
+        self._observer.attention.reset()
+        if self._behaviour is not None:
+            self._behaviour.reset()
+        if self._walk is not None:
+            self._walk.clear_cursor_request()
 
     def snapshot_pointer(self) -> tuple[int, int]:
         current = self._observer.current

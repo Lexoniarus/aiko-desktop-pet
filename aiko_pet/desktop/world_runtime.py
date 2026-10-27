@@ -508,10 +508,14 @@ class DesktopWorldRuntime:
             - (self.settings.y or 0),
         )
 
-    def _attention(self) -> ObjectAttention:
+    def _attention(self, pointer: tuple[int, int] | None = None) -> ObjectAttention:
         """Sample before perception; translate native eyes to World coordinates."""
-        pointer = (self._pointer_snapshot() if self._pointer_snapshot is not None
-                   else (self.root.winfo_pointerx(), self.root.winfo_pointery()))
+        if pointer is None:
+            pointer = (
+                self._pointer_snapshot()
+                if self._pointer_snapshot is not None
+                else (self.root.winfo_pointerx(), self.root.winfo_pointery())
+            )
         attention = self._visual.attention(
             pointer,
             game_mode=self._game_open(),
@@ -714,17 +718,26 @@ class DesktopWorldRuntime:
             return
         self._sync_geometry()
         item = self.world.get(token)
-        if (self.cursor.carrying or item.state != ObjectState.RESTING
-                or item.revision != revision):
+        if (
+            self.cursor.carrying
+            or item.state != ObjectState.RESTING
+            or item.revision != revision
+        ):
             return
         assert item.position is not None
         previous_position = (item.position.x, item.position.height)
-        attention = self._attention()
+        # A native grab may arrive between heartbeat samples. Read its current
+        # location without advancing the shared perception/policy a second time.
+        attention = self._attention(
+            (self.root.winfo_pointerx(), self.root.winfo_pointery())
+        )
 
         def acquire() -> None:
             if self.cursor.begin_existing(token, revision):
                 record = self.awareness.witness_take(
-                    token, position=previous_position, now=self.now,
+                    token,
+                    position=previous_position,
+                    now=self.now,
                     attention=attention,
                     committed=self.interaction.focus_record,
                 )

@@ -68,6 +68,7 @@ class DesktopAnimationRuntime:
         self._state = state
         self._settings = settings
         self._assets = assets
+        self._has_locomotion = "body-orient-right" in assets.body_clips
         self._walk = walk
         self._visual = visual
         self._ports = ports
@@ -86,6 +87,7 @@ class DesktopAnimationRuntime:
         """Advance host movement at the current Tk sprite frame cadence."""
         if (
             elapsed > 0
+            and self._has_locomotion
             and (
                 self._walk.movement.kind == "step"
                 or self._walk.movement.source == "cursor"
@@ -98,7 +100,9 @@ class DesktopAnimationRuntime:
             elapsed,
             game_mode=game_mode,
             attention_active=(
-                now < self._ports.attention_until() or self._visual.orienting
+                now < self._ports.attention_until()
+                or self._visual.orienting
+                or self._visual.cursor_watching
             ),
         )
         if step is None:
@@ -107,7 +111,7 @@ class DesktopAnimationRuntime:
 
     def _motion_clip(self, step: WalkStep, now: float) -> str:
         side = "right" if step.direction > 0 else "left"
-        if step.kind != "step":
+        if step.kind != "step" or not self._has_locomotion:
             return f"running-{side}"
         observation = self._visual.observe(
             now,
@@ -119,7 +123,7 @@ class DesktopAnimationRuntime:
         compatible = axis is not None and (
             2 <= axis <= 6 if step.direction > 0 else 10 <= axis <= 14
         )
-        key = f"{axis:02}" if compatible else "profil"
+        key = f"{axis:02}" if compatible and self._visual.cursor_watching else "profil"
         return f"body-step-{side}-{key}"
 
     def walk_active(self) -> bool:
@@ -181,7 +185,7 @@ class DesktopAnimationRuntime:
 
         walking = self.advance_walk(now, 0, game_mode=game_mode)
         if walking is not None:
-            if (
+            if self._has_locomotion and (
                 self._walk.movement.kind == "step"
                 or self._walk.movement.source == "cursor"
             ):
