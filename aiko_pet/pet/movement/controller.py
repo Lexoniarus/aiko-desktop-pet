@@ -3,7 +3,14 @@
 from __future__ import annotations
 
 from ..balance import BALANCE
-from .contracts import MotionKind, MotionRequest, MotionSource, WalkConditions, WalkStep
+from .contracts import (
+    MotionKind,
+    MotionRequest,
+    MotionSource,
+    MotionStopReason,
+    WalkConditions,
+    WalkStep,
+)
 from .random_walk import RandomWalkPlanner
 
 _PRIORITY: tuple[MotionSource, ...] = ("world", "cursor", "idle")
@@ -22,6 +29,9 @@ class WalkController:
         self._requests: dict[MotionSource, MotionRequest] = {}
         self._active: MotionRequest | None = None
         self._completed: dict[MotionSource, int] = {}
+        self._progress: dict[MotionSource, tuple[int, float, float]] = {}
+        self._planned_speed = 0.0
+        self.completion_reason: MotionStopReason = "reached"
 
     @property
     def goal_x(self) -> float | None:
@@ -45,11 +55,17 @@ class WalkController:
             raise ValueError("Movement request source mismatch")
         if self._requests.get(source) == request:
             return
+        if (
+            self._requests.get(source) is None
+            or self._requests[source].token != request.token
+        ):
+            self._progress[source] = (request.token, 0.0, 0.0)
         self._requests[source] = request
         self._completed.pop(source, None)
 
     def release_request(self, source: MotionSource) -> None:
         self._requests.pop(source, None)
+        self._progress.pop(source, None)
         self._completed.pop(source, None)
         if self._active is not None and self._active.source == source:
             self._active = None
@@ -153,12 +169,23 @@ class WalkController:
         if self.remaining_distance == 0:
             return None
         direction = 1 if self.remaining_distance > 0 else -1
-        pixels = direction * min(
-            abs(self.remaining_distance),
-            max(0.0, conditions.speed_pixels_per_second * conditions.elapsed_seconds),
-        )
-        if conditions.elapsed_seconds > 0:
+        elapsed = conditions.elapsed_seconds
+        boundary = abs(self.remaining_distance)
+        budget_distance = float("inf")
+        if request is not None:
+            _, spent, travelled = self._progress[request.source]
+            remaining_time = max(0, request.movement_seconds - spent)
+            elapsed = min(elapsed, remaining_time)
+            budget_distance = remaining_time * conditions.speed_pixels_per_second
+            if request.step_pixels > 0:
+                within = travelled % request.step_pixels
+                boundary = min(boundary, request.step_pixels - within)
+        self._planned_speed = conditions.speed_pixels_per_second
+        allowance = max(0.0, self._planned_speed * elapsed)
+        pixels = direction * min(boundary, allowance)
+        if elapsed > 0:
             pixels += self._residual
+            pixels = direction * min(direction * pixels, boundary, budget_distance)
         self._requested = pixels
         return WalkStep(pixels=pixels, direction=direction, kind=self.kind)
 
@@ -172,7 +199,19 @@ class WalkController:
         """Consume actual clamped movement; return true when walking stops."""
         self.remaining_distance -= moved_pixels
         self._residual = self._requested - moved_pixels
-        if blocked or abs(self.remaining_distance) < 1:
+        exhausted = False
+        if self._active is not None and moved_pixels:
+            token, spent, travelled = self._progress[self._active.source]
+            spent += abs(moved_pixels) / max(self._planned_speed, 1e-9)
+            travelled += abs(moved_pixels)
+            self._progress[self._active.source] = (token, spent, travelled)
+            exhausted = (
+                self._active.movement_seconds - spent
+            ) * self._planned_speed < 1
+        if blocked or exhausted or abs(self.remaining_distance) < 1:
+            self.completion_reason = (
+                "blocked" if blocked else "budget" if exhausted else "reached"
+            )
             if self._active is not None:
                 self._completed[self._active.source] = self._active.token
             self.pause(now)

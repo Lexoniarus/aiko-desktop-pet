@@ -7,6 +7,7 @@ from typing import Literal, Protocol
 
 MotionSource = Literal["world", "cursor", "idle"]
 MotionKind = Literal["step", "walk", "run"]
+MotionStopReason = Literal["reached", "blocked", "cancelled", "budget", "expired"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,6 +17,16 @@ class MotionRequest:
     target_x: float
     kind: MotionKind = "run"
     until: float = float("inf")
+    movement_seconds: float = float("inf")
+    step_pixels: float = 0.0
+
+
+@dataclass(frozen=True, slots=True)
+class MotionCompletion:
+    source: MotionSource
+    token: int
+    at: float
+    reason: MotionStopReason
 
 
 class HorizontalTrack(Protocol):

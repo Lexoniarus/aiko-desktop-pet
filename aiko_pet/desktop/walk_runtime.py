@@ -15,7 +15,13 @@ from ..pet.animation.character import FRAME_WIDTH
 from ..pet.balance import BALANCE
 from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.movement import WalkConditions, WalkController
-from ..pet.movement.contracts import HorizontalTrack, MotionRequest, WalkStep
+from ..pet.movement.contracts import (
+    HorizontalTrack,
+    MotionCompletion,
+    MotionRequest,
+    MotionStopReason,
+    WalkStep,
+)
 
 
 class BusyReading(Protocol):
@@ -85,7 +91,7 @@ class WalkDriverPorts:
     walk_finished: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
     cursor_allowed: Callable[[], bool] = lambda: False
-    cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
+    cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
     idle_steps: Callable[[], bool] = lambda: False
 
 
@@ -125,12 +131,22 @@ class WalkDriver:
     def set_world_goal(self, x: float | None) -> None:
         self.movement.set_goal(x)
 
-    def clear_cursor_request(self, now: float | None = None) -> None:
+    def clear_cursor_request(
+        self,
+        now: float | None = None,
+        *,
+        reason: MotionStopReason = "cancelled",
+    ) -> None:
         old = self.movement.request("cursor")
         self.movement.release_request("cursor")
         if old is not None:
             self.ports.cursor_finished(
-                old.token, time.monotonic() if now is None else now
+                MotionCompletion(
+                    "cursor",
+                    old.token,
+                    time.monotonic() if now is None else now,
+                    reason,
+                )
             )
 
     def apply_cursor_intent(self, intent: CursorIntent | None, now: float) -> None:
@@ -140,7 +156,8 @@ class WalkDriver:
         old = self.movement.request("cursor")
         if old is not None and old.token == intent.token:
             return
-        amount = BALANCE.number(
+        steps = intent.steps if intent.reaction == "approach" else 1
+        amount = steps * BALANCE.number(
             "cursor_behaviour",
             "flight_width_multiplier"
             if intent.reaction == "flee"
@@ -157,7 +174,14 @@ class WalkDriver:
             ),
         )
         if target == x:
-            self.ports.cursor_finished(intent.token, now)
+            self.ports.cursor_finished(
+                MotionCompletion(
+                    "cursor",
+                    intent.token,
+                    now,
+                    "blocked",
+                )
+            )
             return
         self.submit_cursor_intent(
             MotionRequest(
@@ -166,6 +190,13 @@ class WalkDriver:
                 target,
                 "run" if intent.reaction == "flee" else "step",
                 intent.until,
+                movement_seconds=BALANCE.number("cursor_behaviour", "flight_seconds")
+                if intent.reaction == "flee"
+                else float("inf"),
+                step_pixels=width
+                * BALANCE.number("cursor_behaviour", "step_width_fraction")
+                if intent.reaction != "flee"
+                else 0,
             )
         )
 
@@ -225,7 +256,7 @@ class WalkDriver:
             return None
         if step.pixels == 0:
             return step
-        source, token = self.movement.source, self.movement.token
+        source = self.movement.source
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
@@ -239,7 +270,6 @@ class WalkDriver:
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
             if source == "cursor":
-                self.ports.cursor_finished(token, now)
-            elif self.movement.goal_x is None:
-                self.ports.walk_finished(now)
+                self.clear_cursor_request(now, reason=self.movement.completion_reason)
+            # Autonomous and cursor steps deliberately carry no spoken completion.
         return step

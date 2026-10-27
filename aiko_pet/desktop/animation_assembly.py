@@ -20,7 +20,7 @@ from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.cursor_behaviour import CursorIntent
-from ..pet.movement.contracts import HorizontalTrack
+from ..pet.movement.contracts import HorizontalTrack, MotionCompletion
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from ..ui.windows.hover_ui import HoverUi
@@ -83,7 +83,7 @@ class AnimationAssemblyPorts:
     activity_active: Callable[[], bool] = lambda: False
     cursor_intent: Callable[[], CursorIntent] = CursorIntent
     cursor_allowed: Callable[[], bool] = lambda: False
-    cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
+    cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
 
 
 @dataclass(frozen=True, slots=True)

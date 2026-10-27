@@ -172,7 +172,7 @@ class CursorBehaviourPolicy:
             self.current = CursorIntent(
                 reaction,
                 -p.side or 1,
-                self._serial,
+                self._serial * 4 + 2,
                 now + 15,
                 "near-fast-approach",
                 p.pointer,
@@ -239,7 +239,7 @@ class CursorBehaviourPolicy:
         self.current = CursorIntent(
             reaction,
             p.side if body != "front" else 0,
-            self._serial,
+            self._serial * 4 + 1 if reaction == "approach" else self._serial * 4,
             until,
             "calm-interest" if engaged else "brief-look",
             target,

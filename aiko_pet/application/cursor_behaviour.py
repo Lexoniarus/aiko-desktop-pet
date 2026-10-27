@@ -8,7 +8,9 @@ from ..pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
     CursorBehaviourPolicy,
     CursorIntent,
+    parameter,
 )
+from ..pet.movement.contracts import MotionCompletion
 from ..pet.state import PetState
 from .cursor_observation import CursorObservation
 from .settings import PetSettings
@@ -99,7 +101,19 @@ class CursorBehaviourCoordinator:
             or not 0 <= now - self._observer.current.sampled_at <= 0.5
         ):
             return None
+        p = self._observer.current
+        if self.intent.reaction == "approach" and (
+            not p.reachable
+            or p.side != self.intent.side
+            or p.speed > parameter("calm_speed")
+            or p.distance <= parameter("stop_distance")
+        ):
+            return None
         return self.intent
+
+    def finish_motion(self, result: MotionCompletion) -> None:
+        if result.source == "cursor":
+            self.note_motion_finished(result.token, result.at)
 
     def note_motion_finished(self, token: int, now: float) -> None:
         self._policy.note_motion_finished(token, now)

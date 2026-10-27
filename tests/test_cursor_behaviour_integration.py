@@ -61,7 +61,7 @@ class CursorIntegrationTests(unittest.TestCase):
                 walk_finished=lambda _: None,
                 cursor_allowed=lambda: coordinator.admit_motion(activity[0], clock[0])
                 is not None,
-                cursor_finished=coordinator.note_motion_finished,
+                cursor_finished=coordinator.finish_motion,
             ),
         )
         walk.movement.random_walk.next_walk_at = 999

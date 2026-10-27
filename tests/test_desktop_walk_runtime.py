@@ -66,7 +66,7 @@ class WalkDriverTests(unittest.TestCase):
         )
         self.assertEqual(self.settings.x, 112)
         self.assertEqual(self.driver.movement.remaining_distance, 0.0)
-        self.assertEqual(self.finished, [100.0])
+        self.assertEqual(self.finished, [])
 
     def test_game_mode_does_not_advance_existing_walk(self) -> None:
         self.driver.movement.remaining_distance = -40
@@ -104,3 +104,54 @@ class WalkDriverTests(unittest.TestCase):
         self.assertFalse(self.settings.auto_walk)
         self.assertEqual(self.driver.movement.remaining_distance, 0.0)
         self.assertGreater(self.driver.movement.next_walk_at, 100.0)
+
+    def test_escape_budget_counts_translation_only_and_completes_once(self):
+        from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
+
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.setUp()
+                self.settings.scale = scale
+                completed = []
+                self.driver.ports = replace(
+                    self.driver.ports,
+                    cursor_allowed=lambda: True,
+                    cursor_finished=completed.append,
+                )
+                self.driver.apply_cursor_intent(CursorIntent("flee", 1, 7, 1000), 10)
+                # Zero elapsed selection/turning and game pause spend no budget.
+                for now in (10, 20, 30):
+                    self.driver.step(now, 0, game_mode=False, attention_active=True)
+                self.driver.step(31, 5, game_mode=True, attention_active=False)
+                before = self.settings.x
+                for i in range(20):
+                    self.driver.step(
+                        32 + i * 0.1, 0.1, game_mode=False, attention_active=True
+                    )
+                distance = self.settings.x - before
+                self.assertLessEqual(distance, 68 / 1.28 * scale + 0.5)
+                self.assertGreater(distance, 50 * scale)
+                self.assertEqual(
+                    [(c.token, c.reason) for c in completed], [(7, "budget")]
+                )
+
+    def test_second_step_is_admitted_at_boundary_and_can_be_cancelled(self):
+        from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
+
+        allowed = [True]
+        completed = []
+        self.driver.ports = replace(
+            self.driver.ports,
+            cursor_allowed=lambda: allowed[0],
+            cursor_finished=completed.append,
+        )
+        self.driver.apply_cursor_intent(
+            CursorIntent("approach", 1, 9, 100, steps=2), 10
+        )
+        self.driver.step(10, 2, game_mode=False, attention_active=True)
+        self.assertEqual(self.settings.x, 116)
+        allowed[0] = False
+        self.driver.step(11, 2, game_mode=False, attention_active=True)
+        self.driver.step(12, 2, game_mode=False, attention_active=True)
+        self.assertEqual(self.settings.x, 116)
+        self.assertEqual([(c.token, c.reason) for c in completed], [(9, "cancelled")])
