@@ -1,5 +1,43 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Connect Four follow-up — 2026-10-27
+
+The owner approved the final clickable Connect Four revision at
+`../design-previews/connect-four-2026-10-27/preview.html`, relative to the checkout
+root. Its README and `approval-record.json` record the approval and reviewed file
+hashes. This is the visual authority for Connect Four; earlier geometric board
+drafts and the two-part flight remain local comparison history.
+
+- Shared white title, near-white rose body, pale-blue phase/result surface,
+  manual **Nächste Runde** button and compact player/Aiko/draw session tally.
+  The stationary player window remains freely draggable; Aiko's presentation
+  stays with her.
+- A distinctive saturated blue illustrated board with a curved top rail, rounded
+  side pillars, painted highlights, dark outlines and small feet. An exact 7×6
+  presentation mask supplies the openings. The matching custom yellow/player and
+  red/Aiko discs replace the Kenney placeholders in this approved reference.
+  Native artwork, exports, exact built-in Imagegen prompts and provenance remain
+  in the external bundle; no production files are replaced by this approval.
+- Aiko is a mischievous little trap-setter. Short Chibi comments respond to real
+  wins, blocks and legally reachable threats, including double threats. Her
+  bubble and a small red chip stack remain beside her on the desktop.
+- Column selection immediately drops the player's yellow chip. Input stays
+  locked during resolution. Aiko uses unchanged existing pickup frames: contact,
+  lift, release, one upward parabolic arc over the board, then a vertical fall
+  through the chosen column. Incoming downward speed carries into the fall;
+  the board changes only when the chip lands.
+- Results persist until **Nächste Runde**; the player starts the first round and
+  subsequent starters alternate. Close, reset and example changes cancel motion
+  without late moves. Reduced motion uses a quiet hold and direct placement.
+- Review selectors, fixtures, local search and narrow-browser stacking are demo
+  affordances. The illustrated direction and throw concept are approved; final
+  native grip/release timing, trajectory tuning, animation/speech priorities and
+  relationship-sensitive dialogue still require implementation work.
+
+This approval is for the design and its documentation. Application code,
+production assets, game rules, World objects and saves remain unchanged.
+Mastermind is the next design discussion; no new Mastermind design is approved.
+
 ## Approved Tic-Tac-Toe follow-up — 2026-10-27
 
 The owner approved the final clickable revision at

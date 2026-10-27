@@ -44,8 +44,22 @@ one-shot character reactions. Her bubble stays with her; no extra taskbar item.
 records the 31 existing character-frame copies. No production asset is replaced.
 Local tests and screenshots are retained in the same preview folder.
 
-No application implementation is authorized. Connect Four (Vier gewinnt) is the
-next discussion topic; no new Connect Four visual follow-up is approved yet.
+### Approved game-specific follow-up: Connect Four
+
+On 2026-10-27 the owner approved the final Connect Four revision at
+`../design-previews/connect-four-2026-10-27/preview.html`, relative to the checkout
+root. Its `README.md` and `approval-record.json` retain the approval and file
+hashes. Use the [canonical design](UI_VN_DESIGN.md#approved-connect-four-follow-up--2026-10-27)
+for the full accepted direction: illustrated saturated blue board, matching
+custom yellow/red chips, Aiko as a mischievous Chibi trap-setter, a red chip stack,
+existing pickup poses and a single parabolic toss over the board into its column.
+
+The bundle retains exact built-in Imagegen prompts, native artwork, exports,
+registration/provenance, browser screenshots and validation. Earlier geometric
+boards and the rejected two-part flight remain under its `history/` directory.
+Timing and native integration remain later work. No application implementation
+or production-asset replacement is authorized. Mastermind is the next discussion
+topic; no new Mastermind follow-up is approved yet.
 
 ### Original shared bundle
 
