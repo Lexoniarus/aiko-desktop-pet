@@ -179,7 +179,9 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(len(self.game.board.find_withtag("row")), 10)
         self.pet._hover.set_topmost(False)
         assert self.code.window is not None and self.code.canvas is not None
-        self.assertFalse(bool(self.code.window.wm_attributes("-topmost")))
+        self.assertFalse(self.code.window.tk.getboolean(
+            self.code.window.wm_attributes("-topmost"),
+        ))
         self.pet.settings.scale = 2
         self.pet._game_visuals.move()
         self.pet.root.update()
