@@ -1273,6 +1273,7 @@ class WorldGuiTests(unittest.TestCase):
         now = time.monotonic()
         observer = self.app._cursor_observation
         observer.attention.reset()
+        self.app._cursor_behaviour.reset()
         for sample_time in (now - .14, now):
             observer.observe(
                 pointer, sample_time, game_mode=False,

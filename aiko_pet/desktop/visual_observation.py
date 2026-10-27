@@ -15,6 +15,7 @@ from ..application.object_feedback import InteractionPhase
 from ..pet.animation.animation import PassiveObservation
 from ..pet.animation.character import FRAME_WIDTH
 from ..pet.animation.gaze import gaze_sector
+from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.mind.object_attention import LookSide, ObjectAttention
 
 
@@ -48,7 +49,7 @@ class VisualAttentionPorts:
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
     orientation_side: Callable[[], LookSide | None] = lambda: None
-    cursor_interest: Callable[[], bool] | None = None
+    cursor_intent: Callable[[], CursorIntent] = CursorIntent
     walk_kind: Callable[[], str] = lambda: "run"
 
 
@@ -80,10 +81,11 @@ class DesktopVisualObservation:
 
     @property
     def cursor_watching(self) -> bool:
-        return (
-            self._attention.cursor_interest is not None
-            and self._attention.cursor_interest()
-        )
+        return self._settings.follow_cursor and self.cursor_intent.gaze
+
+    @property
+    def cursor_intent(self) -> CursorIntent:
+        return self._attention.cursor_intent()
 
     def reset(self) -> None:
         """Clear gaze hysteresis on game, scale or cursor-setting changes."""
@@ -132,17 +134,10 @@ class DesktopVisualObservation:
             ),
             activity_active=self._attention.activity_active(),
             orientation_side=self._attention.orientation_side(),
-            cursor=relative(pointer)
-            if self._settings.follow_cursor
-            and (
-                (
-                    self._attention.cursor_interest()
-                    if self._attention.cursor_interest is not None
-                    else pointer_recent
-                )
-                or following is not None
-            )
-            else None,
+            cursor=(relative(pointer) if following is not None else
+                    relative(self.cursor_intent.target)
+                    if self.cursor_watching and self.cursor_intent.target is not None
+                    else None) if self._settings.follow_cursor else None,
             target=relative(self.object_target)
             if self.object_target is not None
             else None,

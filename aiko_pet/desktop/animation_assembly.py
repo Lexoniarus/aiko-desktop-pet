@@ -19,6 +19,7 @@ from ..infrastructure.item_assets import load_item_catalog
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
@@ -80,7 +81,7 @@ class AnimationAssemblyPorts:
     world: WorldRuntimeAccess
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
-    cursor_interest: Callable[[], bool] | None = None
+    cursor_intent: Callable[[], CursorIntent] = CursorIntent
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[int, float], None] = lambda _token, _now: None
 
@@ -137,7 +138,7 @@ def assemble_animation(
             feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
             orientation_side=ports.world.orientation_side,
-            cursor_interest=ports.cursor_interest,
+            cursor_intent=ports.cursor_intent,
             walk_kind=lambda: walk.movement.kind,
         ),
     )

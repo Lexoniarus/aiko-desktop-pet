@@ -173,7 +173,7 @@ class DesktopPet:
                 action_until=lambda: self._action_playback.until,
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
-                cursor_interest=lambda: self._cursor_behaviour.watching,
+                cursor_intent=lambda: self._cursor_behaviour.intent,
                 cursor_allowed=lambda: self._pointer_runtime.motion_allowed(),
                 cursor_finished=self._cursor_behaviour.note_motion_finished,
                 extend_action=self._action_playback.extend,

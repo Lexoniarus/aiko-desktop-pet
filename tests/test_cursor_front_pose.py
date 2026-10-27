@@ -30,6 +30,7 @@ from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.gaze import gaze_sector
 from aiko_pet.pet.animation.priority import RenderDecision
+from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement.contracts import WalkStep
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
@@ -58,10 +59,12 @@ class ForwardGazeTests(unittest.TestCase):
     def test_front_is_distinct_from_absent_attention_and_avoids_workload(self):
         settings = PetSettings()
         monitor = MagicMock()
+        selected = CursorIntent("observe", target=(100, 200))
         observer = DesktopVisualObservation(
             settings=settings,
             monitor=monitor,
             eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(cursor_intent=lambda: selected),
         )
         for scale in (1, 2):
             settings.scale = scale
@@ -70,6 +73,7 @@ class ForwardGazeTests(unittest.TestCase):
             self.assertEqual(result, PassiveObservation(None, False, True))
             self.assertIsNone(observer.sector)
         monitor.latest.assert_not_called()
+        selected = CursorIntent()
         self.assertFalse(observer.observe(10, (100, 200), 0, False).forward_gaze)
         self.assertFalse(observer.observe(11, (100, 200), 11, True).forward_gaze)
         settings.follow_cursor = False

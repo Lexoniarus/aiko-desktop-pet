@@ -70,7 +70,7 @@ class CursorIntegrationTests(unittest.TestCase):
             monitor=IdleComputer(),
             eyes=lambda: ((settings.x or 0) + 96, 82),
             attention=VisualAttentionPorts(
-                cursor_interest=lambda: coordinator.watching
+                cursor_intent=lambda: coordinator.intent
             ),
         )
         runtime = DesktopAnimationRuntime(
@@ -87,7 +87,7 @@ class CursorIntegrationTests(unittest.TestCase):
         )
         before = settings.x
         seen = []
-        for i in range(50):
+        for i in range(80):
             now = i * 0.14
             clock[0] = now
             observer.observe(
