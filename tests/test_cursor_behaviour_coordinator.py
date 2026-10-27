@@ -69,3 +69,13 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.coordinator.note_motion_finished(token, 10)
         self.coordinator.begin_frame(10.1, CursorActivityContext())
         self.assertFalse(self.coordinator.intent.moving)
+
+
+    def test_qualified_event_commits_once_at_pet_endpoint(self):
+        pet = self.coordinator._state
+        self.assertEqual(len(pet.moodlets.active), 1)
+        checkpoint = pet.capture_checkpoint()
+        self.coordinator.begin_frame(10, CursorActivityContext())
+        self.assertEqual(pet.capture_checkpoint(), checkpoint)
+        self.coordinator.reset()
+        self.assertEqual(pet.capture_checkpoint(), checkpoint)

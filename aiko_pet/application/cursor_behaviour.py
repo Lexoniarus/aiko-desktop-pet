@@ -46,6 +46,7 @@ class CursorBehaviourCoordinator:
         self._state, self._settings = state, settings
         self._observer, self._policy = observer, policy
         self.intent = CursorIntent()
+        self._delivered: list[str] = []
 
     def reset(self) -> None:
         self._policy.reset()
@@ -79,6 +80,11 @@ class CursorBehaviourCoordinator:
             ),
             now,
         )
+
+        event = self.intent.experience
+        if event is not None and event.evidence_id not in self._delivered:
+            self._state.experience_cursor(event)
+            self._delivered = [*self._delivered[-5:], event.evidence_id]
 
     def admit_motion(
         self, context: CursorActivityContext, now: float

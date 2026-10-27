@@ -30,6 +30,7 @@ from .care_experiences import (
 )
 from .care_result import CareEffect, CareResult
 from .consumption import ConsumptionOrigin
+from .cursor_experiences import apply_cursor_experience
 from .food import (
     FoodActivity,
     FoodId,
@@ -51,6 +52,7 @@ from .friendship import (
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
 from .interaction_events import (
+    CursorExperience,
     FoodConsumed,
     HelpfulInteraction,
     InteractionEvent,
@@ -671,6 +673,13 @@ class PetState:
             relationship=begin_continuous_friendship(self.friendship_history,
                                                       lived_seconds),
         )
+
+    def experience_cursor(self, event: CursorExperience) -> None:
+        """Record qualified impressions at the already-advanced lifecycle endpoint."""
+        self._change(moodlets=apply_cursor_experience(
+            self.moodlets, event, elapsed=self.lived_seconds,
+            definitions=MOODLET_CATALOG.definitions,
+        ))
 
     def experience_interaction(self, event: InteractionEvent) -> bool:
         """Commit a perceived fact; continuing emotions never repeat direct loss."""
