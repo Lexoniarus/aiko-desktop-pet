@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction_state import SearchPosition
 from aiko_pet.application.session import PetSessionRestorer
-from aiko_pet.desktop.geometry import FOOT_BASELINE
+from aiko_pet.desktop.geometry import FOOT_BASELINE, TaskbarTrack
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.emotions import EmotionalState
@@ -659,6 +659,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_native_relocation_reads_event_pointer_between_sensor_samples(self):
         world = self.app._world
+        self.app._place_x(world._track().left)
         world._character_action_busy = lambda: True
         item = world.world.place_resting(
             "dango", world._body_x() + world.width, ObjectFootprint(8, 8),
@@ -801,12 +802,15 @@ class WorldGuiTests(unittest.TestCase):
             # measured from the eyes (including their height above ground).
             "dango", base + side * 1.25 * width, ObjectFootprint(8, 8),
         )
-        runtime.world.place_resting(
-            "apple", runtime.world.snapshot().surface.ground_x(
-                max(0, base + side * 2.1 * width), ObjectFootprint(8, 8),
-            ), ObjectFootprint(8, 8),
-        )
         assert target.position is not None
+        footprint = ObjectFootprint(8, 8)
+        outer_x = runtime.world.snapshot().surface.ground_x(
+            max(0, base + side * 2.1 * width), footprint,
+        )
+        # On narrow desktops both positions clamp to the same edge. The
+        # optional farther stock must not hide the unknown test subject.
+        if abs(outer_x - target.position.x) >= footprint.left + footprint.right:
+            runtime.world.place_resting("apple", outer_x, footprint)
         self.look_at(target.position.x)
         looks = set()
         for _ in range(60):
@@ -841,6 +845,11 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_new_unknown_right_item_resumes_after_native_orientation_at_scale_two(self):
         self._new_unknown_investigation_after_native_orientation(1)
+
+    def test_unknown_orientation_subject_stays_visible_on_a_narrow_track(self):
+        track = self.app._window.track
+        self.app._window.track = TaskbarTrack(0, 1024, track.ground_y)
+        self._new_unknown_investigation_after_native_orientation(-1)
 
     def _relocated_unknown_pair_after_inspection(self, scale):
         self._resize_for_search_test(scale)
