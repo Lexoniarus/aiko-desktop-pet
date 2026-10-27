@@ -58,7 +58,6 @@ class CursorIntegrationTests(unittest.TestCase):
                 track=lambda: TaskbarTrack(0, 1200, 600),
                 menu_engaged=lambda: False,
                 place_x=place,
-                walk_finished=lambda _: None,
                 cursor_allowed=lambda: coordinator.admit_motion(activity[0], clock[0])
                 is not None,
                 cursor_finished=coordinator.finish_motion,

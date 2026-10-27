@@ -52,7 +52,8 @@ def assemble_pointer(
             sample=inputs.pointer_sample,
             game_mode=lambda: animated.game_mode,
             eyes=lambda: animated.cursor_eye_position,
-            on_motion=attention.cursor_moved,
+            on_motion=lambda _distance, _width, _now: None,
+            on_experience=attention.cursor_experience,
             scale=lambda: settings.scale,
             menu_engaged=lambda: hover.menu_engaged,
             foreground_active=lambda: not contact.can_interact("pet"),
@@ -75,7 +76,6 @@ class AnimationAssemblyPorts:
     track: Callable[[], HorizontalTrack]
     menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
-    walk_finished: Callable[[float], None]
     gaze_origin: Callable[[], tuple[float, float]]
     game_mode: Callable[[], bool]
     action_until: Callable[[], float]
@@ -123,7 +123,6 @@ def assemble_animation(
             track=ports.track,
             menu_engaged=ports.menu_engaged,
             place_x=ports.place_x,
-            walk_finished=ports.walk_finished,
             committed_goal=ports.world.focused,
             cursor_allowed=ports.cursor_allowed,
             cursor_finished=ports.cursor_finished,

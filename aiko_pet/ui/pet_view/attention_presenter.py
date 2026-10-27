@@ -35,5 +35,9 @@ class AttentionPresenter:
     def show_idle_emote(self, emote: str, duration_ms: int = 1100) -> None:
         self._ports.show_emote(emote, duration_ms)
 
+    def show_cursor_emote(self, emote: str, duration_ms: int) -> None:
+        """A cue has no action/reaction ownership and never locks contact."""
+        self._ports.show_emote(emote, duration_ms)
+
     def show_notification(self, text: str, duration_ms: int = 3500) -> None:
         self._ports.show_text(text, duration_ms)

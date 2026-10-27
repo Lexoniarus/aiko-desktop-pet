@@ -34,3 +34,10 @@ class AttentionPresenterTests(unittest.TestCase):
     def test_notification_text_is_not_interpreted(self) -> None:
         self.presenter.show_notification("Kalender: Termin gleich.")
         self.text.assert_called_once_with("Kalender: Termin gleich.", 3500)
+
+    def test_cursor_cue_only_uses_unlocked_emote_output(self):
+        self.presenter.show_cursor_emote("question", 1500)
+        self.emote.assert_called_once_with("question", 1500)
+        self.react.assert_not_called()
+        self.animate.assert_not_called()
+        self.text.assert_not_called()

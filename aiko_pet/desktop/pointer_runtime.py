@@ -11,6 +11,7 @@ from ..application.cursor_behaviour import (
     CursorBehaviourCoordinator,
 )
 from ..application.cursor_observation import CursorObservation
+from ..pet.interaction_events import CursorExperience
 from .geometry import sprite_access_contains
 from .walk_runtime import WalkDriver
 
@@ -23,6 +24,7 @@ class PointerRuntimePorts:
     game_mode: Callable[[], bool]
     eyes: Callable[[], tuple[float, float]]
     on_motion: Callable[[float, int, float], None]
+    on_experience: Callable[[CursorExperience], None] = lambda _event: None
     scale: Callable[[], int] = lambda: 1
     menu_engaged: Callable[[], bool] = lambda: False
     foreground_active: Callable[[], bool] = lambda: False
@@ -78,6 +80,8 @@ class PointerRuntime:
             self.claim_access((x, y))
         if self._behaviour is not None:
             self._behaviour.begin_frame(now, self.activity())
+            if self._behaviour.feedback is not None:
+                self._ports.on_experience(self._behaviour.feedback)
 
     def admit_behaviour(self, now: float) -> None:
         if self._behaviour is not None and self._walk is not None:

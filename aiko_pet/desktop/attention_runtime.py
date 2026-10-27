@@ -12,6 +12,7 @@ from typing import Callable
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
 from ..pet.animation.idle_emote import choose_idle_emote
+from ..pet.interaction_events import CursorExperience
 from ..pet.routine import TimeContext
 from ..ui.pet_view.attention_presenter import AttentionPresenter
 
@@ -60,30 +61,17 @@ class DesktopAttentionRuntime:
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
 
-    def cursor_moved(
-        self,
-        distance: float,
-        screen_width: int,
-        now: float,
-    ) -> None:
-        if self._ports.foreground_active() or self._ports.reaction_pending():
+    def cursor_experience(self, event: CursorExperience) -> None:
+        """Brief feeling cue in a free speech slot; drop rather than queue."""
+        ports = self._ports
+        if (ports.game_open() or ports.foreground_active() or ports.reaction_pending()
+                or ports.bubble_visible() or ports.menu_engaged()
+                or ports.settings_engaged()):
             return
-        reaction = self.attention.cursor_reaction(
-            distance,
-            screen_width,
-            now,
-            self._ports.context(),
-            toolbar_visible=self._ports.menu_engaged(),
-        )
-        if reaction is not None:
-            self._presenter.show_reaction(reaction, 2600)
-
-    def walk_finished(self, now: float) -> None:
-        if self._ports.reaction_pending():
-            return
-        reaction = self.attention.walk_reaction(now, self._ports.context())
-        if reaction is not None:
-            self._presenter.show_reaction(reaction, 2600)
+        emote = ("idea" if event.level >= 2 else "question"
+                 ) if event.feeling == "curiosity" else (
+                     "drops" if event.level >= 2 else "exclamation")
+        self._presenter.show_cursor_emote(emote, 1500)
 
     def idle_emote(self) -> None:
         ports = self._ports

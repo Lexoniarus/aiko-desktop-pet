@@ -1,6 +1,7 @@
 """Application attention decisions are resolved outside the UI presenter."""
 
 import unittest
+from dataclasses import replace
 from unittest.mock import Mock
 
 from aiko_pet.application.activity import TimeProgress
@@ -11,6 +12,7 @@ from aiko_pet.desktop.attention_runtime import (
     DesktopAttentionRuntime,
 )
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
+from aiko_pet.pet.interaction_events import CursorExperience
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
@@ -76,23 +78,23 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.toolbar_refresh.assert_called_once_with()
         self.attention.select_sleep_transition_reaction.assert_not_called()
 
-    def test_cursor_comment_is_selected_before_rendering(self) -> None:
-        reaction = Mock()
-        self.attention.cursor_reaction.return_value = reaction
-        self.runtime.cursor_moved(120.0, 1920, 100.0)
-        self.attention.cursor_reaction.assert_called_once_with(
-            120.0,
-            1920,
-            100.0,
-            self.context,
-            toolbar_visible=False,
-        )
-        self.presenter.show_reaction.assert_called_once_with(reaction, 2600)
-
-    def test_walk_comment_does_not_render_when_suppressed(self) -> None:
-        self.attention.walk_reaction.return_value = None
-        self.runtime.walk_finished(100.0)
+    def test_qualified_cursor_cue_does_not_start_action_or_reaction(self):
+        self.runtime.cursor_experience(CursorExperience("actual:1", "curiosity", 2))
+        self.presenter.show_cursor_emote.assert_called_once_with("idea", 1500)
         self.presenter.show_reaction.assert_not_called()
+        self.presenter.show_animation.assert_not_called()
+        self.attention.cursor_reaction.assert_not_called()
+
+    def test_occupied_slots_drop_cue_without_replay(self):
+        original = self.runtime._ports
+        for guard in ("game_open", "foreground_active", "reaction_pending",
+                      "bubble_visible", "menu_engaged", "settings_engaged"):
+            with self.subTest(guard=guard):
+                self.runtime._ports = replace(original, **{guard: lambda: True})
+                self.runtime.cursor_experience(CursorExperience(guard, "fear", 3))
+                self.presenter.show_cursor_emote.assert_not_called()
+        self.runtime._ports = original
+        self.assertFalse(self.presenter.mock_calls)
 
     def test_notification_is_not_duplicated_or_changed(self) -> None:
         note = IncomingNotification(

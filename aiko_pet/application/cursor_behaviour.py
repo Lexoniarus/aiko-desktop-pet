@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..pet.interaction_events import CursorExperience
 from ..pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
     CursorBehaviourPolicy,
@@ -49,8 +50,10 @@ class CursorBehaviourCoordinator:
         self._observer, self._policy = observer, policy
         self.intent = CursorIntent()
         self._delivered: list[str] = []
+        self.feedback: CursorExperience | None = None
 
     def reset(self) -> None:
+        self.feedback = None
         self._policy.reset()
         self.intent = CursorIntent()
 
@@ -67,6 +70,7 @@ class CursorBehaviourCoordinator:
         )
 
     def begin_frame(self, now: float, context: CursorActivityContext) -> None:
+        self.feedback = None
         if (
             not self._settings.follow_cursor
             or self._state.sleeping
@@ -90,6 +94,7 @@ class CursorBehaviourCoordinator:
         event = self.intent.experience
         if event is not None and event.evidence_id not in self._delivered:
             self._state.experience_cursor(event)
+            self.feedback = event
             self._delivered = [*self._delivered[-5:], event.evidence_id]
 
     def admit_motion(

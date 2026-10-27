@@ -54,7 +54,6 @@ class WalkDriverTests(unittest.TestCase):
                 track=lambda: TaskbarTrack(0, 800, 800),
                 menu_engaged=lambda: False,
                 place_x=place,
-                walk_finished=self.finished.append,
             ),
         )
 

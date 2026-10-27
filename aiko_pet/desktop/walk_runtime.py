@@ -88,7 +88,6 @@ class WalkDriverPorts:
     track: Callable[[], HorizontalTrack]
     menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
-    walk_finished: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None

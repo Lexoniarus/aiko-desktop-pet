@@ -167,7 +167,6 @@ class DesktopPet:
                 track=lambda: self._window.track,
                 menu_engaged=lambda: self._hover.menu_engaged,
                 place_x=self._place_x,
-                walk_finished=self._on_walk_finished,
                 gaze_origin=self._window.gaze_origin,
                 game_mode=lambda: self._animated.game_mode,
                 action_until=lambda: self._action_playback.until,
@@ -592,9 +591,6 @@ class DesktopPet:
 
     def center(self) -> None:
         self._preferences.center()
-
-    def _on_walk_finished(self, now: float) -> None:
-        self._attention_runtime.walk_finished(now)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         self._attention_runtime.maybe_show_idle_emote(now)

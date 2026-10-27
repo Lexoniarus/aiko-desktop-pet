@@ -75,7 +75,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 track=lambda: TaskbarTrack(0, 800, 800),
                 menu_engaged=lambda: False,
                 place_x=self._place_x,
-                walk_finished=lambda _now: None,
             ),
         )
         self.visual = DesktopVisualObservation(
