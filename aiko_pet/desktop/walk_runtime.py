@@ -118,8 +118,8 @@ class WalkDriver:
         self.movement = WalkController(
             next_walk_at=time.monotonic()
             + random.uniform(
-                BALANCE.number("walk", "pause_min_seconds"),
-                BALANCE.number("walk", "pause_max_seconds"),
+                BALANCE.number("cursor_behaviour", "idle_step_minimum_seconds"),
+                BALANCE.number("cursor_behaviour", "idle_step_maximum_seconds"),
             ),
         )
 
@@ -216,6 +216,9 @@ class WalkDriver:
             return None
         if self.ports.hard_access() or self.ports.menu_engaged():
             self.clear_cursor_request(now)
+            self.movement.random_walk.pause(now, quiet_period=False)
+            if self.movement.goal_x is None and self.movement.source == "idle":
+                self.movement.interrupt()
             return None
         if not self.ports.cursor_allowed():
             self.clear_cursor_request(now)

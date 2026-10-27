@@ -36,6 +36,8 @@ class AmbientDirector:
     ) -> None:
         self._between = between
         self._direction = direction
+        self.outing_side = 0
+        self._outing_until = started_at
         self._blink_active = False
         self._motion_started_at = started_at
         self._glance_frame: int | None = None
@@ -46,12 +48,18 @@ class AmbientDirector:
             BALANCE.number("ambient", "glance_gap_maximum_seconds"),
         )
 
+    def finish_outing(self, now: float, side: int) -> None:
+        """A small outing ends with a quiet stand before the ordered front return."""
+        self.outing_side = side
+        self._outing_until = now + self._between(1, 2)
+
     @property
     def blinking(self) -> bool:
         return self._blink_active
 
     def suspend(self, now: float, *, keep_pose_motion: bool = False) -> None:
         """Yield to attention without repeatedly postponing a pending glance."""
+        self.outing_side = 0
         if not keep_pose_motion:
             self._motion_started_at = now
         self._blink_active = False
@@ -74,6 +82,10 @@ class AmbientDirector:
 
     def choose(self, now: float) -> SpriteSelection:
         """Return one stable look pose, active blink or neutral idle rest."""
+        if self.outing_side:
+            if now < self._outing_until:
+                return SpriteSelection("look", 4 if self.outing_side > 0 else 12)
+            self.outing_side = 0
         if self._blink_active:
             return SpriteSelection("idle")
 

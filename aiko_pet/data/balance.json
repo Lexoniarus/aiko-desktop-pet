@@ -297,10 +297,10 @@
     "sway_step_seconds": 0.42,
     "blink_gap_minimum_seconds": 3.0,
     "blink_gap_maximum_seconds": 8.0,
-    "glance_gap_minimum_seconds": 22.0,
-    "glance_gap_maximum_seconds": 46.0,
-    "glance_hold_minimum_seconds": 1.1,
-    "glance_hold_maximum_seconds": 2.2
+    "glance_gap_minimum_seconds": 20.0,
+    "glance_gap_maximum_seconds": 40.0,
+    "glance_hold_minimum_seconds": 1.0,
+    "glance_hold_maximum_seconds": 3.0
   },
   "attention": {
     "comment_initial_minimum_seconds": 180.0,
@@ -477,8 +477,8 @@
     "curiosity_seconds": 1.0,
     "step_width_fraction": 0.08333333333333333,
     "flight_width_multiplier": 0.35,
-    "idle_step_minimum_seconds": 35.0,
-    "idle_step_maximum_seconds": 65.0,
+    "idle_step_minimum_seconds": 45.0,
+    "idle_step_maximum_seconds": 90.0,
     "body_interest_seconds": 3.0,
     "approach_wait_seconds": 4.5,
     "encounter_release_seconds": 0.8,

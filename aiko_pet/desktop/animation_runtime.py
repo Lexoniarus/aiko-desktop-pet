@@ -95,18 +95,22 @@ class DesktopAnimationRuntime:
             and not self._body_orientation.motion_ready
         ):
             return None
+        source = self._walk.movement.source
         step = self._walk.step(
             now,
             elapsed,
             game_mode=game_mode,
             attention_active=(
-                now < self._ports.attention_until()
-                or self._visual.orienting
-                or self._visual.cursor_watching
+                self._visual.orienting
+                or (self._visual.cursor_watching
+                    and self._walk.movement.remaining_distance == 0)
             ),
         )
         if step is None:
             return None
+        if (source == "idle" and step.pixels
+                and self._walk.movement.remaining_distance == 0):
+            self.ambient.finish_outing(now, step.direction)
         return self._motion_clip(step, now)
 
     def _motion_clip(self, step: WalkStep, now: float) -> str:
@@ -232,6 +236,8 @@ class DesktopAnimationRuntime:
         if self._assets.body_clips:
             intent = self._visual.cursor_intent
             selection = self._body_orientation.select(
-                now, selection, intent=intent.body, side=intent.side,
+                now, selection,
+                intent="profile" if self.ambient.outing_side else intent.body,
+                side=self.ambient.outing_side or intent.side,
             )
         return RenderDecision(selection, clear_action=True)

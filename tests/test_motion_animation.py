@@ -31,23 +31,23 @@ class FrameClockTests(unittest.TestCase):
         timings = (120,) * 7 + (220,)
         observed = [clock.next_index("running-right", 0, timings)]
         for index in range(1, 8):
-            now = clock.frame_started_at + timings[index - 1] / 1000 + .15
+            now = clock.frame_started_at + timings[index - 1] / 1000 + 0.15
             observed.append(clock.next_index("running-right", now, timings))
             self.assertEqual(clock.next_delay_ms, timings[index])
         self.assertEqual(observed, list(range(8)))
-        now = clock.frame_started_at + .22
+        now = clock.frame_started_at + 0.22
         self.assertEqual(clock.next_index("running-right", now, timings), 0)
 
     def test_one_shot_holds_every_frame_and_extends_a_late_deadline(self) -> None:
         clock = FrameClock()
         self.assertEqual(clock.next_index("eat", 0, (200, 300), loop=False), 0)
-        self.assertAlmostEqual(clock.end_time, .5)
-        self.assertEqual(clock.next_index("eat", .5, (200, 300), loop=False), 1)
+        self.assertAlmostEqual(clock.end_time, 0.5)
+        self.assertEqual(clock.next_index("eat", 0.5, (200, 300), loop=False), 1)
         self.assertFalse(clock.finished)
-        self.assertAlmostEqual(clock.end_time, .8)
-        self.assertEqual(clock.next_index("eat", .799, (200, 300), loop=False), 1)
+        self.assertAlmostEqual(clock.end_time, 0.8)
+        self.assertEqual(clock.next_index("eat", 0.799, (200, 300), loop=False), 1)
         self.assertFalse(clock.finished)
-        self.assertEqual(clock.next_index("eat", .8, (200, 300), loop=False), 1)
+        self.assertEqual(clock.next_index("eat", 0.8, (200, 300), loop=False), 1)
         self.assertTrue(clock.finished)
         self.assertIsNone(clock.next_delay_ms)
         clock.reset()
@@ -73,15 +73,15 @@ class FrameClockTests(unittest.TestCase):
     def test_motion_progress_tracks_shown_frames_during_late_callbacks(self) -> None:
         clock = FrameClock()
         timings = (160,) * 7 + (293,)
-        clock.next_index('running-right', 0, timings)
-        self.assertAlmostEqual(clock.progress_seconds(.5, timings), .16)
-        clock.next_index('running-right', .5, timings)
-        self.assertAlmostEqual(clock.progress_seconds(.5, timings), .16)
-        now = .5
+        clock.next_index("running-right", 0, timings)
+        self.assertAlmostEqual(clock.progress_seconds(0.5, timings), 0.16)
+        clock.next_index("running-right", 0.5, timings)
+        self.assertAlmostEqual(clock.progress_seconds(0.5, timings), 0.16)
+        now = 0.5
         for duration in timings[1:]:
-            now = clock.frame_started_at + duration / 1000 + .1
+            now = clock.frame_started_at + duration / 1000 + 0.1
             before = clock.progress_seconds(now, timings)
-            clock.next_index('running-right', now, timings)
+            clock.next_index("running-right", now, timings)
             self.assertAlmostEqual(clock.progress_seconds(now, timings), before)
         self.assertEqual(clock.frame_index, 0)
         self.assertAlmostEqual(clock.progress_seconds(now, timings), 1.413)
@@ -110,29 +110,31 @@ class CurrentClipPacingTests(unittest.TestCase):
                     0,
                 )
                 for index in range(1, len(clip.timings)):
-                    now = (clock.frame_started_at
-                           + clip.timings[index - 1] / 1000)
+                    now = clock.frame_started_at + clip.timings[index - 1] / 1000
                     self.assertEqual(
-                        clock.next_index(name, now, clip.timings,
-                                         loop=clip.loop),
+                        clock.next_index(name, now, clip.timings, loop=clip.loop),
                         index,
                     )
                     self.assertEqual(
-                        clock.next_delay_ms, clip.timings[index],
+                        clock.next_delay_ms,
+                        clip.timings[index],
                     )
                     self.assertTrue(
                         0 <= clip.sprite_index(index) < len(clip.frames),
                     )
-                end = (clock.frame_started_at
-                       + clip.timings[-1] / 1000)
+                end = clock.frame_started_at + clip.timings[-1] / 1000
                 last = clock.next_index(
-                    name, end, clip.timings, loop=clip.loop,
+                    name,
+                    end,
+                    clip.timings,
+                    loop=clip.loop,
                 )
                 if clip.loop:
                     self.assertEqual(last, 0)
                     self.assertFalse(clock.finished)
                     self.assertEqual(
-                        clock.next_delay_ms, clip.timings[0],
+                        clock.next_delay_ms,
+                        clip.timings[0],
                     )
                 else:
                     self.assertEqual(last, len(clip.timings) - 1)
@@ -176,13 +178,14 @@ class CurrentClipPacingTests(unittest.TestCase):
         clock = FrameClock()
         timings = (160,) * 8
         self.assertEqual(clock.next_index("waving", 0, timings), 0)
-        self.assertEqual(clock.next_index("waving", .8, timings), 1)
+        self.assertEqual(clock.next_index("waving", 0.8, timings), 1)
         self.assertEqual(clock.next_delay_ms, 160)
 
 
 class PassiveAnimationTests(unittest.TestCase):
     def select(
-        self, *,
+        self,
+        *,
         gaze_direction: int | None = None,
         observing_computer: bool = False,
         computer_busy: bool = False,
@@ -194,14 +197,20 @@ class PassiveAnimationTests(unittest.TestCase):
             gaze_direction=gaze_direction,
             observing_computer=observing_computer,
             computer_busy=computer_busy,
-            energy=energy, mood=mood, satiety=satiety,
+            energy=energy,
+            mood=mood,
+            satiety=satiety,
         )
 
     def test_gaze_overrides_busy_and_low_needs(self) -> None:
         self.assertEqual(
             self.select(
-                gaze_direction=3, observing_computer=True,
-                computer_busy=True, energy=0, mood=0, satiety=0,
+                gaze_direction=3,
+                observing_computer=True,
+                computer_busy=True,
+                energy=0,
+                mood=0,
+                satiety=0,
             ),
             SpriteSelection("look", fixed_frame=3),
         )
@@ -228,12 +237,21 @@ class WalkControllerTests(unittest.TestCase):
 
     def conditions(self, **overrides: object) -> WalkConditions:
         defaults = WalkConditions(
-            now=15.0, elapsed_seconds=0.25, x=300,
-            speed_pixels_per_second=68 / 1.28, stride_pixels=68,
-            track=self.track, sprite_width=128, energy=80,
-            auto_walk=True, sleeping=False, attention_active=False,
-            menu_engaged=False, observing_computer=False,
-            computer_busy=False, quiet_period=False,
+            now=15.0,
+            elapsed_seconds=0.25,
+            x=300,
+            speed_pixels_per_second=68 / 1.28,
+            stride_pixels=68,
+            track=self.track,
+            sprite_width=128,
+            energy=80,
+            auto_walk=True,
+            sleeping=False,
+            attention_active=False,
+            menu_engaged=False,
+            observing_computer=False,
+            computer_busy=False,
+            quiet_period=False,
         )
         return replace(defaults, **overrides)
 
@@ -261,22 +279,28 @@ class WalkControllerTests(unittest.TestCase):
         second = self.walker.plan_step(self.conditions(elapsed_seconds=0))
         assert first is not None
         assert second is not None
-        self.assertAlmostEqual(first.pixels, 68 / 1.28 * .25)
+        self.assertAlmostEqual(first.pixels, 68 / 1.28 * 0.25)
         self.assertEqual(second.pixels, 0)
 
     def test_work_delays_next_walk_and_cancels_movement(self) -> None:
         self.walker.remaining_distance = 100
-        self.assertIsNone(self.walker.plan_step(
-            self.conditions(observing_computer=True, computer_busy=True),
-        ))
+        self.assertIsNone(
+            self.walker.plan_step(
+                self.conditions(observing_computer=True, computer_busy=True),
+            )
+        )
         self.assertEqual(self.walker.remaining_distance, 0)
         with patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=90):
             self.assertIsNone(self.walker.plan_step(self.conditions(now=100)))
         self.assertEqual(self.walker.next_walk_at, 190)
 
     def test_hover_and_manual_disabled_walk_cancel_distance(self) -> None:
-        for settings in ({"menu_engaged": True}, {"auto_walk": False},
-                         {"attention_active": True}, {"sleeping": True}):
+        for settings in (
+            {"menu_engaged": True},
+            {"auto_walk": False},
+            {"attention_active": True},
+            {"sleeping": True},
+        ):
             with self.subTest(settings=settings):
                 self.walker.remaining_distance = 100
                 self.assertIsNone(self.walker.plan_step(self.conditions(**settings)))
@@ -291,12 +315,14 @@ class WalkControllerTests(unittest.TestCase):
     def test_edge_direction_and_quiet_interval(self) -> None:
         with (
             patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=20),
-            patch("aiko_pet.pet.movement.random_walk.random.randint", return_value=2),
+            patch("aiko_pet.pet.movement.random_walk.random.random", return_value=0.8),
         ):
-            step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
+            step = self.walker.plan_step(
+                self.conditions(x=0, quiet_period=True, small_idle_steps=True)
+            )
         assert step is not None
         self.assertEqual(step.direction, 1)
-        self.assertEqual(self.walker.remaining_distance, 136)
+        self.assertEqual(self.walker.remaining_distance, 128 / 12)
         self.assertEqual(self.walker.next_walk_at, float("inf"))
 
     def test_subpixel_motion_survives_short_callbacks_in_both_directions(self) -> None:
@@ -306,19 +332,27 @@ class WalkControllerTests(unittest.TestCase):
                 walker.remaining_distance = 100 * direction
                 x = 300
                 for n in range(250):
-                    step = walker.plan_step(self.conditions(
-                        now=n * .004, elapsed_seconds=.004, x=x,
-                    ))
+                    step = walker.plan_step(
+                        self.conditions(
+                            now=n * 0.004,
+                            elapsed_seconds=0.004,
+                            x=x,
+                        )
+                    )
                     assert step is not None
                     new_x = round(x + step.pixels)
-                    self.assertFalse(walker.record_displacement(
-                        new_x - x, now=n * .004,
-                    ))
+                    self.assertFalse(
+                        walker.record_displacement(
+                            new_x - x,
+                            now=n * 0.004,
+                        )
+                    )
                     x = new_x
-                self.assertAlmostEqual(abs(x - 300), 68 / 1.28, delta=.5)
+                self.assertAlmostEqual(abs(x - 300), 68 / 1.28, delta=0.5)
                 # New 1.28s walking cycles cover 53.125 px in one second.
                 self.assertAlmostEqual(
-                    abs(walker.remaining_distance), 100 - 68 / 1.28,
+                    abs(walker.remaining_distance),
+                    100 - 68 / 1.28,
                     delta=1.0,
                 )
 
@@ -331,11 +365,18 @@ class WalkControllerTests(unittest.TestCase):
         self.assertIsNone(self.walker.plan_step(self.conditions(now=189)))
 
     def test_brief_pointer_attention_does_not_restart_an_idle_pause(self) -> None:
-        self.assertIsNone(self.walker.plan_step(self.conditions(
-            now=9, attention_active=True,
-        )))
+        self.assertIsNone(
+            self.walker.plan_step(
+                self.conditions(
+                    now=9,
+                    attention_active=True,
+                )
+            )
+        )
         self.assertEqual(self.walker.next_walk_at, 10)
-        self.assertIsNotNone(self.walker.plan_step(self.conditions(now=15)))
+        self.assertIsNotNone(
+            self.walker.plan_step(self.conditions(now=15, small_idle_steps=True))
+        )
 
 
 if __name__ == "__main__":

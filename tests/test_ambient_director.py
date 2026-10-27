@@ -47,7 +47,7 @@ class AmbientDirectorTests(unittest.TestCase):
             self.policy.choose(122), SpriteSelection("look", fixed_frame=2),
         )
         self.assertEqual(
-            self.policy.choose(123), SpriteSelection("look", fixed_frame=2),
+            self.policy.choose(122.5), SpriteSelection("look", fixed_frame=2),
         )
         self.assertEqual(self.policy.choose(124), SpriteSelection("idle", 0))
         self.assertGreater(self.policy.next_glance_at, 124)
@@ -120,7 +120,7 @@ class AmbientDirectorTests(unittest.TestCase):
                         energy=80, mood=80, satiety=80,
                     ), expected)
                     self.assertFalse(policy.blinking)
-                self.assertEqual(policy.next_glance_at, 122)
+                self.assertEqual(policy.next_glance_at, 120)
                 self.assertEqual(policy.select_passive_animation(
                     130.1, gaze_direction=None, observing_computer=False,
                     computer_busy=False, energy=80, mood=80, satiety=80,
@@ -130,12 +130,12 @@ class AmbientDirectorTests(unittest.TestCase):
         self.policy.next_blink_at = 1000
         self.assertEqual(self.policy.choose(122), SpriteSelection("look", 2))
         self.policy.suspend(122.2)
-        self.assertEqual(self.policy.next_glance_at, 144.2)
+        self.assertEqual(self.policy.next_glance_at, 142.2)
         self.policy.suspend(130)
-        self.assertEqual(self.policy.next_glance_at, 144.2)
+        self.assertEqual(self.policy.next_glance_at, 142.2)
         self.policy.next_blink_at = 1000
         self.assertEqual(self.policy.choose(130), SpriteSelection("idle", 0))
-        self.assertEqual(self.policy.choose(144.2), SpriteSelection("look", 2))
+        self.assertEqual(self.policy.choose(142.2), SpriteSelection("look", 2))
 
     def test_external_gaze_keeps_sway_without_starting_ambient_blink(self) -> None:
         selected = self.policy.select_passive_animation(
@@ -170,6 +170,16 @@ class AmbientDirectorTests(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             bad.choose(22)
+
+    def test_outing_finishes_with_short_stand_then_yields_front_and_new_attention(self):
+        self.policy.finish_outing(100, -1)
+        self.assertEqual(self.policy.choose(100.5), SpriteSelection("look", 12))
+        self.assertEqual(self.policy.outing_side, -1)
+        self.policy.choose(101.1)
+        self.assertEqual(self.policy.outing_side, 0)
+        self.policy.finish_outing(102, 1)
+        self.policy.suspend(102.2, keep_pose_motion=True)
+        self.assertEqual(self.policy.outing_side, 0)
 
 
 if __name__ == "__main__":
