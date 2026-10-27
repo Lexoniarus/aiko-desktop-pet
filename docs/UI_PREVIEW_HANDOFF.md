@@ -83,6 +83,24 @@ The external folder retains exact Imagegen prompts, unchanged sources,
 browser screenshots and both playable endings. No application implementation,
 production-asset replacement or import of the HTML examples is authorized.
 
+### Approved game-specific concept: Blackjack
+
+On 2026-10-27 the owner accepted the Blackjack visual direction and basic flow
+at `../design-previews/blackjack-2026-10-27/preview.html`, relative to the checkout
+root, while explicitly leaving further animation-flow optimization open.
+`approval-record.json` freezes this reference as an **approved concept**, not a
+fully polished animation. See the [canonical concept](UI_VN_DESIGN.md#approved-blackjack-concept--2026-10-27).
+
+Aiko plays an over-the-top Las Vegas dealer. Her bank hand is on her left, the
+shared deck on her right. Existing Attack frames provide a remote show gesture;
+cards gather, shuffle above the deck and travel individually to both hands.
+All cards use the same 128×128 size and all original faces/backs/frames stay intact.
+The player window uses the VN rose/white shell and an emerald/cream/gold table.
+
+The external README records the remaining timing/sequence refinement. Sources,
+license, comparisons, screenshots and checks remain local companions. No
+application changes or native integration are authorized. Quiz is next to discuss.
+
 ### Original shared bundle
 
 The self-contained reference bundle is outside the Git checkout:

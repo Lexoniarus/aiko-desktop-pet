@@ -1,5 +1,45 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Blackjack concept — 2026-10-27
+
+The owner accepted the visual direction and basic flow of the separate Blackjack
+preview at `../design-previews/blackjack-2026-10-27/preview.html`, relative to the
+checkout root. **Animation pacing and sequencing still need refinement.** This
+is approval of the basic concept, not final acceptance of the animation timing.
+Its README and `approval-record.json` retain the statement, caveat and file hashes.
+
+- Aiko theatrically plays an over-the-top Las Vegas casino dealer for her one
+  VIP guest. Warm Chibi comments, exaggerated professionalism, dramatic reveal
+  and brief flustered reactions carry the role. Existing artwork is reused.
+- The VN window has a white title, near-white rose body, passive blue phase
+  surface, emerald/cream/gold card table, own total, hit/stand actions and session
+  tally. Only player cards appear inside the independent, freely draggable window.
+- Preserve all existing 52 card faces and the back, including frames and colors.
+  **Every card uses the same 128×128 display area**, including Aiko's hand, deck,
+  flying cards and shuffle packets. This supersedes the older mixed-size reference.
+- Aiko's bank hand stays **to her left**; the shared deck is **to her right**.
+  Existing Attack frames act as a remote show gesture toward that deck. Shuffle
+  packets move above the deck without touching her hands; the former pickup
+  gesture and opposite-side arrangement remain local history.
+- The sequence demonstrates gathering old cards, shuffling, alternating four
+  individual initial deals, player hits and dealer draws from the same desktop
+  deck. Flights retain card size and track the dragged player-window destination.
+  Cards and totals appear in a hand on landing; the dealer hole card stays hidden
+  during travel and until the normal reveal, including accessible descriptions.
+- The fixed dealer policy and existing Blackjack rules remain the baseline.
+  The current 2.8-second result pause leads into collection/shuffling/dealing;
+  frozen review examples remain still. Exact pauses, movement curves, gesture
+  transitions and speech coordination are explicitly **open refinements**.
+- Close/reset/example changes cancel movement and pending callbacks. Reduced
+  motion skips nonessential travel. Narrow-browser rearrangement is a preview
+  affordance and retains the common card size.
+
+The external bundle retains unchanged source copies, card provenance/license,
+diagnostic comparisons, screenshots and validation. The concept approval does
+not authorize application changes, production-asset replacement or native
+integration. The complete dialogue catalogue and final native animation/speech
+priorities remain separate work. Quiz is the next design discussion.
+
 ## Approved Mastermind follow-up — 2026-10-27
 
 The owner approved the final clickable Mastermind revision at
