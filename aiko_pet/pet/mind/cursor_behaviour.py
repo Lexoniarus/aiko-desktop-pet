@@ -35,6 +35,8 @@ class CursorIntent:
     strength: int = 0
     experience: CursorExperience | None = None
     steps: int = 1
+    attention: float = 0.0
+    stage: int = 0
 
     @property
     def gaze(self) -> bool:
@@ -67,6 +69,9 @@ class CursorBehaviourPolicy:
         self._calm_since: float | None = None
         self._calm_side = 0
         self._last_sample = -100.0
+        self.attention = 0.0
+        self.stage = 0
+        self._release = [0.0, 0.0, 0.0]
         self._selected_at = -100.0
         self._look_until = 0.0
         self._curiosity_level = 0
@@ -77,11 +82,12 @@ class CursorBehaviourPolicy:
     def suspend(self, now: float) -> None:
         """Yield attention to a real activity without rearming an escape."""
         self.note_motion_finished(self.current.token, now)
-        self._calm_since = None
+        self._clear_attention()
         self.current = CursorIntent(reason="activity")
 
     def claim_access(self, now: float) -> None:
         """Contact owns input; a lingering impression cannot restart this attempt."""
+        self._clear_attention()
         self._access = True
         self.note_motion_finished(self.current.token, now)
         self.current = CursorIntent(reason="direct-access")
@@ -108,6 +114,43 @@ class CursorBehaviourPolicy:
         )
         self._look_until = now + 2
 
+    def _clear_attention(self) -> None:
+        self.attention, self.stage = 0.0, 0
+        self._release = [0.0, 0.0, 0.0]
+        self._last_sample = -100.0
+        self._calm_since = None
+
+    def _integrate(self, p: CursorPerception, dt: float) -> None:
+        band = p.motion_band
+        far = p.distance > parameter("interest_distance")
+        rates = {
+            "still": -parameter("still_loss_per_second"),
+            "slow": -parameter("slow_loss_per_second"),
+            "normal": parameter("normal_gain"),
+            "fast": parameter("fast_gain"),
+            "very_fast": parameter("very_fast_gain"),
+        }
+        rate = rates[band]
+        if far and rate > 0:
+            cap = parameter("far_attention_cap")
+            self.attention = (
+                max(cap, self.attention - parameter("slow_loss_per_second") * dt)
+                if self.attention > cap else min(cap, self.attention + 4 * dt)
+            )
+        else:
+            self.attention = max(0.0, min(100.0, self.attention + rate * dt))
+        for level, key in enumerate(("noticed_at", "focused_at", "strong_at"), 1):
+            if self.attention >= parameter(key):
+                self.stage = max(self.stage, level)
+        for index, key in enumerate((
+            "gaze_release_below", "body_release_below", "strong_release_below",
+        )):
+            self._release[index] = (
+                self._release[index] + dt if self.attention < parameter(key) else 0.0
+            )
+            if self._release[index] + 1e-9 >= parameter("release_hold_seconds"):
+                self.stage = min(self.stage, index)
+
     def _evidence(
         self, feeling: Literal["curiosity", "fear"], level: int
     ) -> CursorExperience:
@@ -123,19 +166,27 @@ class CursorBehaviourPolicy:
         if not p.valid or not 0 <= now - p.sampled_at <= 0.5:
             self.note_motion_finished(self.current.token, now)
             self._calm_since = None
+            self._last_sample = -100.0
             self.current = CursorIntent(reason="invalid-sample")
             return self.current
-        continuous = 0 <= p.sampled_at - self._last_sample <= 1.5
+        dt = p.sampled_at - self._last_sample
+        if dt == 0:
+            return self.current
+        continuous = 0 < dt <= 1.5
         self._last_sample = p.sampled_at
+        self._integrate(p, dt if continuous else 0.0)
         if p.distance > parameter("interest_distance"):
             self._calm_since = None
             if self._outside_since is None:
                 self._outside_since = now
             if now - self._outside_since >= parameter("encounter_release_seconds"):
-                recovery = self.recover_until
-                self.reset()
-                self.recover_until = recovery
-            self.current = CursorIntent(reason="distant")
+                self._encounter = False
+                self._retreated = False
+                self._access = False
+            self.current = CursorIntent(
+                "observe" if self.stage else "ignore", target=p.pointer,
+                attention=self.attention, stage=self.stage, reason="distant",
+            )
             return self.current
         self._outside_since = None
         if not self._encounter:
@@ -222,7 +273,7 @@ class CursorBehaviourPolicy:
             and not self._access
             else "front"
         )
-        reaction = "observe" if (now < self._look_until or engaged) else "ignore"
+        reaction = "observe" if self.stage else "ignore"
         until = now + 2 if engaged else self._look_until
         if (
             not self._access
@@ -235,13 +286,7 @@ class CursorBehaviourPolicy:
             and duration >= parameter("approach_wait_seconds")
         ):
             reaction, body, until = "approach", "profile", now + 15
-        target = self.current.target
-        if target is None or now - self._selected_at >= parameter(
-            "target_hold_seconds"
-        ):
-            # A side change must settle before it can retarget the selected look.
-            if target is None or duration >= 0.6 or not calm:
-                target, self._selected_at = p.pointer, now
+        target = p.pointer if self.stage else None
         self.current = CursorIntent(
             reaction,
             p.side if body != "front" else 0,
@@ -253,5 +298,7 @@ class CursorBehaviourPolicy:
             self._curiosity_level,
             experience,
             2 if self._trust >= 0.7 else 1,
+            self.attention,
+            self.stage,
         )
         return self.current

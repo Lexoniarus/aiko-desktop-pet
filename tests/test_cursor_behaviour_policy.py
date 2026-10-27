@@ -27,17 +27,47 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(10 + n / 10, **fields)
         return result
 
-    def test_head_then_body_then_bounded_approach(self):
-        self.assertEqual(self.decide().body, "front")
-        first = self.calm_until(2.9, reachable=True)
-        self.assertEqual((first.reaction, first.body), ("observe", "front"))
-        turn = self.decide(13, reachable=True)
-        self.assertEqual((turn.reaction, turn.body), ("observe", "three_quarter"))
-        first = self.calm_until(4.6, reachable=True)
-        self.assertEqual(
-            (first.reaction, first.body, first.steps), ("approach", "profile", 1)
-        )
-        self.assertEqual(self.decide(14.7, reachable=True).token, first.token)
+    def test_attention_precedes_selected_gaze_and_tracks_one_encounter(self):
+        self.assertFalse(self.decide().gaze)
+        for n in range(1, 12):
+            intent = self.decide(10 + n / 10, speed=2)
+        self.assertFalse(intent.gaze)
+        intent = self.decide(11.2, speed=2, pointer=(500, 100))
+        self.assertTrue(intent.gaze)
+        self.assertAlmostEqual(intent.attention, 21.6)
+        token = intent.token
+        intent = self.decide(11.3, speed=2, pointer=(510, 100))
+        self.assertEqual((intent.token, intent.target), (token, (510, 100)))
+
+    def test_attention_is_time_based_at_different_tick_rates(self):
+        for hz in (10, 30, 60):
+            self.policy.reset()
+            self.decide(0, speed=2)
+            for n in range(1, 3 * hz + 1):
+                result = self.decide(n / hz, speed=2)
+            self.assertAlmostEqual(result.attention, 54)
+            self.assertEqual(result.stage, 2)
+
+    def test_far_cap_and_smooth_release(self):
+        self.decide(0, speed=4, distance=5)
+        for n in range(1, 101):
+            result = self.decide(n / 10, speed=4, distance=5)
+        self.assertEqual(result.attention, 25)
+        self.assertEqual(result.stage, 1)
+        for n in range(101, 131):
+            result = self.decide(n / 10, stationary_seconds=1, distance=5)
+        self.assertEqual((result.attention, result.stage), (0, 0))
+
+    def test_duplicate_stale_and_gap_do_not_accumulate(self):
+        self.decide(10, speed=2)
+        first = self.decide(11, speed=2)
+        duplicate = self.decide(11, speed=4)
+        self.assertEqual(duplicate.attention, first.attention)
+        self.decide(20, speed=4)
+        self.assertEqual(self.policy.attention, first.attention)
+        self.assertFalse(self.decide(21, sampled_at=10).gaze)
+        self.decide(22, speed=4)
+        self.assertEqual(self.policy.attention, first.attention)
 
     def test_speed_distance_direction_are_combined(self):
         for fields in (
@@ -46,6 +76,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             dict(distance=0.2, speed=0.2, closing_speed=0.2),
         ):
             self.assertFalse(self.decide(**fields).moving)
+        self.policy.reset()
         self.assertEqual(self.decide(speed=8, closing_speed=8).reaction, "flee")
 
     def test_trust_and_state_change_strength_without_unlocking_feelings(self):
