@@ -1,5 +1,10 @@
 # Adaptive Mauswahrnehmung: Module, OOP-Verträge und Commitfolge
 
+> **Aktueller nächster Plan:**
+> [Aufmerksamkeitsstufen und Vorwarnung](CURSOR_ATTENTION_STAGES_PLAN.md)
+> ersetzen widersprechende Zielregeln der bisherigen Fassungen. Noch keine
+> Umsetzung dieser neuen Abstufung; dieser Text bleibt Implementierungshistorie.
+
 > **Nachfolgender Umbauplan, 27.10.2026:**
 > [Idle, Mausinteresse, Moodlets und Menü-Erreichbarkeit](ADAPTIVE_CURSOR_REWORK_PLAN.md).
 > Dieses Dokument bewahrt den ersten technischen Implementierungsverlauf.
