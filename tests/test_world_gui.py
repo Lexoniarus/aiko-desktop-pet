@@ -1278,6 +1278,29 @@ class WorldGuiTests(unittest.TestCase):
         observer = self.app._cursor_observation
         observer.attention.reset()
         self.app._cursor_behaviour.reset()
+        # Build noticed attention through real, safe native movement first.
+        # Keep it below the body threshold; this fixture selects a head view.
+        import math
+
+        from aiko_pet.application.cursor_behaviour import CursorActivityContext
+
+        eyes = self.app._animated.cursor_eye_position
+        width = 192 * self.app.settings.scale
+        for n in range(13):
+            sample_time = now - 2 + n * .14
+            point = (
+                round(eyes[0] + width * (2.4 + .7 * math.cos(n * .63))),
+                round(eyes[1] - width * (.8 + .7 * math.sin(n * .63))),
+            )
+            observer.observe(
+                point, sample_time, game_mode=False, eyes=eyes,
+                screen_width=self.app.root.winfo_screenwidth(),
+                scale=self.app.settings.scale,
+            )
+            self.app._cursor_behaviour.begin_frame(sample_time, CursorActivityContext())
+        # A new native baseline avoids inventing an approach from the fixture's
+        # instantaneous relocation. The selected attention remains policy-owned.
+        observer.attention.reset()
         for sample_time in (now - .14, now):
             observer.observe(
                 pointer, sample_time, game_mode=False,

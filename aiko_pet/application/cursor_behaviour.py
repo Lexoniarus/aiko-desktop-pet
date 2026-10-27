@@ -62,6 +62,7 @@ class CursorBehaviourCoordinator:
         self.intent = CursorIntent()
 
     def claim_access(self, now: float) -> None:
+        self.feedback = None
         self._policy.claim_access(now)
         self.intent = self._policy.current
 
@@ -80,6 +81,7 @@ class CursorBehaviourCoordinator:
             or self._state.sleeping
             or context.game_open
         ):
+            self._observer.reset()
             self.reset()
             return
         if context.direct_contact or context.menu_engaged:

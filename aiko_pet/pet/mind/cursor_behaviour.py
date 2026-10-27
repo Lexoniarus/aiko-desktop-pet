@@ -92,7 +92,7 @@ class CursorBehaviourPolicy:
     def suspend(self, now: float) -> None:
         """Yield attention to a real activity without rearming an escape."""
         self.note_motion_finished(self.current.token, now)
-        self._clear_attention()
+        self._clear_attention(clear_score=False)
         self.current = CursorIntent(reason="activity")
 
     def claim_access(self, now: float) -> None:
@@ -124,8 +124,9 @@ class CursorBehaviourPolicy:
         )
         self._look_until = now + 2
 
-    def _clear_attention(self) -> None:
-        self.attention, self.stage = 0.0, 0
+    def _clear_attention(self, *, clear_score: bool = True) -> None:
+        if clear_score:
+            self.attention, self.stage = 0.0, 0
         self._release = [0.0, 0.0, 0.0]
         self._last_sample = -100.0
         self._positive_since = None

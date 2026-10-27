@@ -11,8 +11,8 @@ from aiko_pet.application.cursor_observation import CursorObservation
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.geometry import sprite_access_contains
 from aiko_pet.desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
-from aiko_pet.pet.interaction_events import CursorExperience
-from aiko_pet.pet.mind.cursor_attention import CursorAttention
+from aiko_pet.pet.interaction_events import CursorExperience, CursorWarningReceipt
+from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from aiko_pet.pet.movement.contracts import MotionRequest
 from aiko_pet.pet.state import PetState
@@ -115,6 +115,42 @@ class CursorMenuAccessTests(unittest.TestCase):
             driver.step(11, 0.5, game_mode=False, attention_active=False)
         )
         self.assertGreater(fixture.settings.x or 0, 100)
+
+    def test_access_clears_attention_and_warning_but_preserves_moodlet(self):
+        policy = self.coordinator._policy
+        from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourContext
+
+        context = CursorBehaviourContext(1, 80, 50)
+        for n in range(40):
+            policy.evaluate(CursorPerception(
+                sampled_at=10 + n / 10, distance=1.5, speed=4, side=1, valid=True,
+            ), context, 10 + n / 10)
+        self.assertEqual(policy.stage, 3)
+        warning = policy.evaluate(CursorPerception(
+            sampled_at=14, distance=.5, speed=4, closing_speed=2,
+            side=1, valid=True,
+        ), context, 14).warning
+        self.assertIsNotNone(warning)
+        self.pet.experience_cursor(CursorExperience("retained", "curiosity", 2))
+        before = self.pet.capture_checkpoint()
+        self.runtime.claim_access((200, 180))
+        policy.note_warning(CursorWarningReceipt(warning.warning_id, 14.1, True))
+        self.assertEqual((policy.attention, policy.stage), (0, 0))
+        self.assertIsNone(policy._warned_at)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
+        self.walk.clear_cursor_request.assert_called_once()
+
+    def test_sleep_and_cursor_off_invalidate_sensor_history_at_owner_boundary(self):
+        from tools.pet_test_support import set_test_pet_values
+
+        for sleeping in (True, False):
+            self.observer.attention.observe((300, 100), 10)
+            self.observer.attention.observe((400, 100), 10.1)
+            set_test_pet_values(self.pet, sleeping=sleeping)
+            self.coordinator._settings.follow_cursor = sleeping
+            self.coordinator.begin_frame(10.1, self.runtime.activity())
+            self.assertIsNone(self.observer.attention.previous_pointer)
+            self.assertFalse(self.observer.current.valid)
 
     def test_mode_reset_invalidates_sample_and_preserves_persisted_impression(self):
         self.pet.experience_cursor(CursorExperience("existing", "fear", 2))

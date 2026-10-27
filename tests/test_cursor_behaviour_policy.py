@@ -111,8 +111,10 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(n / 10, speed=2, distance=4)
         self.assertEqual(result.body, "front")
         self.policy.suspend(5.2)
-        self.assertEqual(self.policy.attention, 0)
+        paused_score = self.policy.attention
+        self.assertGreater(paused_score, 0)
         self.assertEqual(self.decide(5.3, speed=4).body, "front")
+        self.assertEqual(self.policy.attention, paused_score)
 
     def test_speed_distance_direction_are_combined(self):
         for fields in (
