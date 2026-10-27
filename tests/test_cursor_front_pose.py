@@ -111,6 +111,8 @@ class CursorPoseRuntimeTests(unittest.TestCase):
         self.visual = MagicMock(spec=DesktopVisualObservation)
         self.visual.observe.return_value = PassiveObservation(None, False, True)
         self.visual.orienting = False
+        self.visual.cursor_watching = False
+        self.visual.cursor_intent = CursorIntent()
         self.ready = False
         self.runtime = DesktopAnimationRuntime(
             state=self.state,
