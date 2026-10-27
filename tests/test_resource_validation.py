@@ -187,6 +187,12 @@ class ResourceValidationTests(unittest.TestCase):
             ("ambient", "blink_gap_minimum_seconds", 9),
             ("adaptive_learning", "effort_smoothing_seconds", 0),
             ("attention", "cursor_comment_probability", 2),
+            ("cursor_behaviour", "velocity_filter_seconds", 0),
+            ("cursor_behaviour", "attention_fast_speed", .2),
+            ("cursor_behaviour", "far_attention_cap", 30),
+            ("cursor_behaviour", "strong_release_below", 75),
+            ("cursor_behaviour", "side_required_seconds", 3),
+            ("cursor_behaviour", "warning_window_seconds", 10),
             ("simulation", "step_seconds", 1000),  # Retired routine interval.
             ("sleep", "nap_seconds", 2700),
             ("sleep", "manual_protection_seconds", 0),

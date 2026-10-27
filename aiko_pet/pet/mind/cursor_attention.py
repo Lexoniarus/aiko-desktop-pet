@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import Literal
 
 from ..balance import BALANCE
+
+MotionBand = Literal["still", "slow", "normal", "fast", "very_fast"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,6 +32,21 @@ class CursorPerception:
     side: int = 0
     reachable: bool = False
     valid: bool = False
+
+    @property
+    def motion_band(self) -> MotionBand:
+        """Normalized measurement only; interest and feelings belong to policy."""
+        if self.stationary_seconds >= BALANCE.number(
+            "cursor_behaviour", "stationary_override_seconds",
+        ):
+            return "still"
+        if self.speed < BALANCE.number("cursor_behaviour", "slow_speed"):
+            return "slow"
+        if self.speed < BALANCE.number("cursor_behaviour", "attention_fast_speed"):
+            return "normal"
+        if self.speed < BALANCE.number("cursor_behaviour", "very_fast_speed"):
+            return "fast"
+        return "very_fast"
 
 
 @dataclass(slots=True)
@@ -83,7 +101,9 @@ class CursorAttention:
             and not game_mode
         )
         if self.valid and previous is not None:
-            alpha = 1 - math.exp(-dt / 0.12)
+            alpha = 1 - math.exp(-dt / BALANCE.number(
+                "cursor_behaviour", "velocity_filter_seconds",
+            ))
             vx, vy = self.velocity
             self.velocity = (
                 vx + alpha * ((pointer[0] - previous[0]) / dt - vx),

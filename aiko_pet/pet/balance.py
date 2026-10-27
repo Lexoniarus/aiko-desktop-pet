@@ -259,6 +259,27 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             raise ValueError(f"balance.food.{key} must be within 0..1")
     if catalog.number("fun", "high_fun_threshold") >= 100:
         raise ValueError("High-fun reduction must start below 100")
+    cursor = sections["cursor_behaviour"]
+    if (not 0 < cursor["velocity_filter_seconds"] <= 1
+            or not 0 < cursor["stationary_override_seconds"] <= 1
+            or not 0 < cursor["slow_speed"] < cursor["attention_fast_speed"]
+            < cursor["very_fast_speed"]
+            or not 0 < cursor["gaze_release_below"] < cursor["noticed_at"]
+            < cursor["far_attention_cap"] < cursor["body_release_below"]
+            < cursor["focused_at"] < cursor["strong_release_below"]
+            < cursor["strong_at"] <= 100
+            or not 0 < cursor["side_required_seconds"] <= cursor["side_window_seconds"]
+            or not 0 < cursor["warning_candidate_seconds"]
+            < cursor["warning_window_seconds"] < cursor["warning_repeat_seconds"]
+            or not 250 <= cursor["warning_duration_ms"] <= 8000
+            or any(cursor[k] <= 0 for k in (
+                "normal_gain", "fast_gain", "very_fast_gain", "slow_loss_per_second",
+                "still_loss_per_second", "release_hold_seconds",
+                "opposite_hold_seconds",
+                "positive_observation_seconds", "warning_distance", "warning_speed",
+                "warning_closing_speed",
+            ))):
+        raise ValueError("Invalid cursor attention bands, stages or warning timing")
     return catalog
 
 
