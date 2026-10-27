@@ -96,6 +96,15 @@ class DesktopVisualObservation:
     def cursor_intent(self) -> CursorIntent:
         return self._attention.cursor_intent()
 
+    def desired_cursor_gaze(self) -> int | None:
+        """Read the intended sector before pose clamping, without changing sight."""
+        target = self.cursor_intent.target
+        if target is None or not self.cursor_watching:
+            return None
+        x, y = self._eyes()
+        return gaze_sector(x, y, *target, scale=self._settings.scale,
+                           previous=self._sector)
+
     def reset(self) -> None:
         """Clear gaze hysteresis on game, scale or cursor-setting changes."""
         self._sector = None
@@ -133,6 +142,8 @@ class DesktopVisualObservation:
         attention = choose_object_attention(
             self._attention.phase(),
             mobile_cursor=self._attention.walk_kind() == "step",
+            focused_cursor=(self.cursor_watching
+                            and self.cursor_intent.feeling is not None),
             sleeping=self._attention.sleeping(),
             game_open=game_mode,
             walking=self._attention.walking(),

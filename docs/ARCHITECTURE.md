@@ -474,6 +474,34 @@ movement; turning/pauses do not consume it. Native access and active controls
 pause even committed World travel while preserving its request. One shared
 tolerant sprite-access geometry and contact-origin classification prevent
 self-motion from opening the toolbar.
+Native sprite entry and hover polling open controls without claiming click
+ownership. During cursor tracking, `ContactCoordinator` preserves the encounter
+instead of starting a greeting or interrupting the walk. `HoverUi` distinguishes
+toolbar visibility from access to its controls/bridge; real menu use holds
+translation and lets the existing cursor policy retain attention and gaze
+without qualifying new feelings. Explicit clicks retain their immediate priority.
+Cursor curiosity and fear are mutually exclusive at the PetState experience
+endpoint. JSON/SQLite decoding keeps the latest legacy impression, preferring
+fear on equal timestamps, while preserving its exact identity, stage budgets
+and causes. The coordinator projects the actually active feeling into the
+immutable cursor context and intent; elapsed Moodlets cannot leave a stale
+reactive turning mode. Sustained safe samples qualify level-one curiosity,
+then weighted play time raises it at 6/12 seconds. Fresh movement may refresh
+its finite duration every 8 seconds; the coordinator suppresses speech feedback
+for same-level maintenance. Authored onset/escalation/fear comments use the
+existing nonblocking text port and never own a foreground action.
+`BodyOrientation` restores frontal gaze immediately when a pose blocks the
+pointer, then uses compatible existing quarter/profile head banks for cursor
+motion. Ordinary Idle/World turns retain every authored phase. The read-only
+unconstrained gaze projection chooses a pose without granting World sight ahead
+of the actually rendered pose. `RenderDecision.refresh_after_ms` feeds the
+sprite's existing timer without sampling input, advancing PetState or evaluating
+policy. Playback rate and reverse frame order reuse the existing profile bank
+for faster pursuit and pointer-facing retreat; translation remains solely in
+WalkController. Catch attempts are bounded by 3 seconds and total travel,
+retarget across sides without new tokens/budgets, and pause for 1.2 seconds.
+Retarget reversal clears only signed subpixel residue. Crossing a retreat still
+ends its existing allowance safely, rather than renewing a flight.
 `WalkDriver` applies actual bounded displacement through the existing placement
 port. `BodyOrientation` owns turning before a small step; whole-body exported
 images and family-based frame timing allow compatible head changes without

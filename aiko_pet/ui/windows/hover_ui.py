@@ -72,7 +72,7 @@ class HoverUiPorts:
     game_ready: Callable[[], bool] = lambda: True
     allow_sprite_hover: Callable[[], bool] = lambda: True
     sprite_access: Callable[[int, int], bool] = lambda _x, _y: False
-    claim_access: Callable[[], None] = lambda: None
+    cursor_watching: Callable[[], bool] = lambda: False
     cards: GameCardPorts | None = None
     codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
@@ -147,16 +147,23 @@ class HoverUi:
             and toolbar.visible
             and (
                 toolbar.dragging
-                or not self._keep_open
-                or self.pointer_inside(
+                or self.controls_inside(
                     self.root.winfo_pointerx(),
                     self.root.winfo_pointery(),
+                )
+                or not self._ports.cursor_watching() and (
+                    not self._keep_open or self.pointer_inside(
+                        self.root.winfo_pointerx(), self.root.winfo_pointery(),
+                    )
                 )
             )
         )
         return bool(
             using_toolbar
             or self.settings_engaged
+            or any(menu is not None for menu in (
+                self.food_menu, self.game_menu, self.social_menu,
+            ))
             or toolbar is not None
             and toolbar.keyboard_engaged
         )
@@ -549,9 +556,16 @@ class HoverUi:
             self.settings_window.refresh()
 
     def configure_cursor_access(
-        self, contains: Callable[[int, int], bool], claim: Callable[[], None],
+        self, contains: Callable[[int, int], bool],
     ) -> None:
-        self._ports = replace(self._ports, sprite_access=contains, claim_access=claim)
+        self._ports = replace(self._ports, sprite_access=contains)
+
+    def controls_inside(self, x: int, y: int) -> bool:
+        """Toolbar and its access bridge, excluding the sprite itself."""
+        toolbar = self.toolbar
+        return bool(toolbar is not None and toolbar.visible and (
+            toolbar.contains_pointer(x, y) or toolbar.contains_bridge(x, y)
+        ))
 
     def pointer_inside(self, x: int, y: int) -> bool:
         widget = self.root.winfo_containing(x, y)
@@ -601,8 +615,6 @@ class HoverUi:
                            or self._ports.sprite_access(x, y))
             if over_sprite and not self._ports.allow_sprite_hover():
                 return
-            if over_sprite:
-                self._ports.claim_access()
             if over_sprite and (
                 toolbar is None or not toolbar.visible
             ):

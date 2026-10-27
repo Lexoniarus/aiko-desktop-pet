@@ -6170,6 +6170,66 @@
           "content": "Hey, langsamer! Das ist mir zu nah."
         }
       ]
+    },
+    {
+      "id": "cursor-play-start-01",
+      "event": "cursor_play_start",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "❔ Was flitzt denn da herum?"
+        }
+      ]
+    },
+    {
+      "id": "cursor-play-more-01",
+      "event": "cursor_play_more",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "✨ Na warte, dich kriege ich!"
+        }
+      ]
+    },
+    {
+      "id": "cursor-play-peak-01",
+      "event": "cursor_play_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "✨ Hihi, ich bin dir auf den Fersen!"
+        }
+      ]
+    },
+    {
+      "id": "cursor-fear-response-01",
+      "event": "cursor_fear_response",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "💦 Das ist mir zu wild. Ich brauche etwas Abstand!"
+        }
+      ]
     }
   ]
 }

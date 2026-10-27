@@ -512,6 +512,12 @@
     "warning_window_seconds": 3.0,
     "warning_repeat_seconds": 10.0,
     "warning_candidate_seconds": 0.5,
-    "warning_duration_ms": 2000
+    "warning_duration_ms": 2000,
+    "curiosity_level_two_seconds": 6.0,
+    "curiosity_level_three_seconds": 12.0,
+    "curiosity_refresh_seconds": 8.0,
+    "play_attempt_seconds": 3.0,
+    "play_pause_seconds": 1.2,
+    "play_grace_seconds": 1.0
   }
 }

@@ -203,6 +203,9 @@ class AnimatedPet:
         now: float,
         *,
         fixed: int | None = None,
+        refresh_after_ms: int | None = None,
+        playback_rate: float = 1.0,
+        reverse: bool = False,
     ) -> None:
         if self._stopped:
             return
@@ -223,13 +226,16 @@ class AnimatedPet:
             fixed = 0
         walking = clip.movement or state in ("running-left", "running-right")
         clock_key = clip.family or state
+        if playback_rate != 1 or reverse:
+            clock_key += f":{playback_rate:.6f}:{reverse}"
+        timings = tuple(max(1, round(t / playback_rate)) for t in clip.timings)
         if walking and self.frame_clock.active_key != (clock_key, fixed):
             self._last_motion_at = now
             self._walk_progress = 0.0
         index = self.frame_clock.next_index(
             clock_key,
             now,
-            clip.timings,
+            timings,
             fixed=fixed,
             loop=clip.loop,
         )
@@ -240,7 +246,9 @@ class AnimatedPet:
             (FRAME_WIDTH // 2 - clip.anchor[0]) * self.settings.scale,
             (FOOT_BASELINE - clip.anchor[1]) * self.settings.scale,
         )
-        source_index = clip.sprite_index(index)
+        source_index = clip.sprite_index(
+            len(clip.timings) - 1 - index if reverse else index,
+        )
         if self._active_action == state:
             key = (self.action_id, state, index, self.frame_clock.finished)
             if key not in self._emitted:
@@ -280,6 +288,8 @@ class AnimatedPet:
         self._frame_generation += 1
         generation = self._frame_generation
         delay = self.frame_clock.next_delay_ms
+        if refresh_after_ms is not None:
+            delay = refresh_after_ms if delay is None else min(delay, refresh_after_ms)
         if self.frame_clock.finished and self._active_action == state:
             if clip.hold_last:
                 return
@@ -296,7 +306,10 @@ class AnimatedPet:
                 delay = min(delay, motion_wait)
             self._frame_timer = self.root.after(
                 delay,
-                lambda: self._advance_frame(state, fixed, generation),
+                lambda: self._advance_frame(
+                    state, fixed, generation, reselect=refresh_after_ms is not None,
+                    playback_rate=playback_rate, reverse=reverse,
+                ),
             )
 
     def _advance_frame(
@@ -304,16 +317,21 @@ class AnimatedPet:
         state: str,
         fixed: int | None,
         generation: int,
+        *, reselect: bool = False,
+        playback_rate: float = 1.0, reverse: bool = False,
     ) -> None:
         if self._stopped or generation != self._frame_generation:
             return
         self._frame_timer = None
         now = time.monotonic()
+        if reselect:
+            self.render(now, self._last_render_pointer)
+            return
         clip = self.assets.body_clips.get(state) or self.assets.clips[state]
         if clip.movement or state in ("running-left", "running-right"):
             progress = self.frame_clock.progress_seconds(
                 now,
-                clip.timings,
+                tuple(max(1, round(t / playback_rate)) for t in clip.timings),
             )
             elapsed = max(0.0, progress - self._walk_progress)
             self._walk_progress = progress
@@ -323,7 +341,8 @@ class AnimatedPet:
                 self.render(now, self._last_render_pointer)
                 return
             state = moving
-        self.show_frame(state, now, fixed=fixed)
+        self.show_frame(state, now, fixed=fixed,
+                        playback_rate=playback_rate, reverse=reverse)
 
     def stop(self) -> None:
         """Cancel animation callbacks before the desktop destroys Tk."""
@@ -374,4 +393,6 @@ class AnimatedPet:
             decision.sprite.animation,
             now,
             fixed=decision.sprite.fixed_frame,
+            refresh_after_ms=decision.refresh_after_ms,
+            playback_rate=decision.playback_rate, reverse=decision.reverse,
         )

@@ -65,7 +65,7 @@ def assemble_pointer(
         behaviour=behaviour,
         walk=walk,
     )
-    hover.configure_cursor_access(pointer.access_contains, pointer.claim_access)
+    hover.configure_cursor_access(pointer.access_contains)
     walk.ports = replace(walk.ports, hard_access=pointer.control_active)
     return pointer
 

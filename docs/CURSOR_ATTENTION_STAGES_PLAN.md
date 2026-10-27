@@ -107,7 +107,8 @@ Nachlauf der Filtergeschwindigkeit. Eigenbewegung zählt nicht als Zeigerreiz.
 
 ## Kopf, Körper und Seitenwechsel
 
-Eine Dreiviertelzuwendung darf gewählt werden, wenn Aufmerksamkeit mindestens
+Beim normalen Beobachten ohne aktives Cursor-Gefühl darf eine
+Dreiviertelzuwendung gewählt werden, wenn Aufmerksamkeit mindestens
 45 beträgt, der Zeiger seit mindestens zwei Sekunden überwiegend auf derselben
 nahen Seite beobachtet wird und kein vorrangiger Anlass blockiert. Die
 Seitenbeobachtung beginnt beim Bemerken, nicht erst nach Erreichen von 45.
@@ -125,8 +126,25 @@ Warteschlange alter Richtungen und kein direktes Links-nach-rechts-Umspringen.
 Der tatsächliche Körperzustand erlaubt nur passende Kopfachsen. Das ist sowohl
 bei der Darstellung als auch bei der gemeinsamen World-Aufmerksamkeit zu prüfen.
 
-`BodyOrientation` führt die vorhandenen ganzen Drehposen aus. Die bisherigen
-mindestens 140 ms pro Drehphase und geordnete Rückwege bleiben erhalten.
+Bei tatsächlich aktivem Neugier- oder Angst-Moodlet und bereits bemerktem,
+frischem Zeiger hat der Blick Vorrang. Ohne Ortsbewegung ist frontal der
+Normalzustand. Blockiert die tatsächliche Körperpose den neuen Kopfsektor,
+zeigt bereits derselbe Renderaufruf frontal mit passendem Kopf. Für eine
+Cursorbewegung folgt eine passende bestehende Dreiviertel-Kopfpose und nach
+70 ms der Profil-Schrittsatz mit passendem Kopf. Ein Seitenwechsel kann dabei
+über die sofortige Frontkorrektur führen; die frühere Pflicht, erst alle acht
+Drehzwischenbilder abzuspielen, gilt hier nicht mehr. Gerade nach oben/unten
+oder direkt vor die Nase bleibt frontal frei; eine unpassende Profillage hält
+nur die Ortsbewegung, nicht den Blick. Normale Idle-/World-Drehungen behalten
+ihre vollständigen 140-ms-Phasen.
+
+Der vorhandene Sprite-Animationstimer erhält den nächsten Darstellungszeitpunkt
+über `RenderDecision`; der 140-ms-Sensor-/Verhaltenstakt bleibt unverändert.
+Eine Darstellungsauffrischung liest nur die bereits gewählte Absicht und wertet
+Sensor, Policy oder Moodlet-Zeit nicht erneut aus. `desired_cursor_gaze` ist eine
+reine Projektion zur Posewahl: World erhält weiterhin die tatsächlich gezeigte,
+körperkompatible Aufmerksamkeit, keinen vorweggenommenen Gegenblick. Ein
+Moodlet allein startet weder Blick noch Bewegung.
 Gelegentliche eigene Idle-Schritte, Blinzeln und Schwanken bleiben erhalten;
 kurzes Bemerken allein startet keinen neuen Ortswechsel.
 
@@ -213,29 +231,63 @@ Punkte, Symbole und Speicherverträge werden wiederverwendet:
 | Angst | −2 / −4 / −6 | 15 / 30 / 60 s | Schreck, Abstandsschritt, bei starker Angst kurzer Fluchtlauf. |
 
 Aufmerksamkeit 70 oder 100 ist keine automatische Moodlet-Stärke 1 oder 3.
-Stärke wird bei einem echten Anlass aus Situation, Vertrauen und Bereitschaft
-qualifiziert; sie steigt nicht durch wiederholtes Auswerten derselben Lage.
-Vorhandene absolute Stärken und Beleg-IDs bleiben maßgeblich. Neue reale Anlässe
-können verstärken, ein schwächeres Signal stuft keine stärkere Episode abrupt ab.
-Beide Gefühle können nachwirken; eine neue wirkliche Bedrohung hat bei der
-aktuellen Handlungswahl Vorrang. Kein neuer Angst-/Neugier-Langzeitscore,
+Neugier beginnt nach der Qualifikation auf Stufe 1. Weitere frisch beobachtete,
+sichere Bewegung sammelt Spielzeit: Stufe 2 nach 6, Stufe 3 nach 12 gewichteten
+Sekunden ab Beginn dieser Spielphase. Vertrauen gewichtet die Rate mit
+`0,75 + 0,5 * Vertrauen`; Energie und Stimmung gewichten jeweils zwischen 0,5
+und 1. Diese Bereitschaft wird vor dem eigenen Moodlet pro Begegnung festgelegt.
+Geringe Freundschaft sperrt höhere Stufen nicht. Langsame/ruhige Bewegung baut
+den Fortschritt mit einer Sekunde pro Sekunde ab. Tatsächliches Moodlet-Abklingen
+wird aus PetState gelesen und nicht durch einen veralteten Policy-Level umgangen.
+
+Solange sichere interessante Bewegung und bemerkte Aufmerksamkeit bestehen,
+erneuert höchstens alle 8 Sekunden ein frischer Beleg die bestehende endliche
+Moodlet-Dauer. Doppelte Samples, Renderaufrufe, Menünutzung, Ruhe, Ferne oder
+das Moodlet selbst liefern keinen neuen Beleg. Eskalation liefert sofort einen
+neuen Beleg. Identität und absolute Stärke bleiben beim vorhandenen PetState-
+Endpunkt; nach ausbleibendem Reiz laufen die bekannten unteren Stufen ab.
+Neugier und Angst schließen sich aus. Ein neu qualifiziertes Gefühl ersetzt das
+vorherige vollständig. Innerhalb desselben Gefühls bleiben absolute Stärken und
+die bestehenden Budgets maßgeblich. Nach dem begrenzten Rückzug und seiner
+Standruhe kann erst neue, zwei Sekunden lang qualifizierte sichere Bewegung
+wieder Neugier auslösen. Ein Seitenwechsel allein ist kein neuer Gefühlsbeleg.
+Jede neue Qualifikation erhält eine eigene Beleg-ID, auch beim Wechsel zurück
+zur vorherigen Gefühlsart innerhalb derselben Begegnung.
+Kein neuer Angst-/Neugier-Langzeitscore,
 keine Freundschaftsgutschrift/-strafe und kein Care-/Wunschfortschritt.
 
 ### Fangversuch und Rückzug
 
-Ein Fangversuch ist ein kurzer sichtbarer Versuch, einem erreichbaren,
-bewegten Zeiger näherzukommen beziehungsweise ihn zu erreichen. Das ist mehr
-als der bisherige feste Schritt zu einem stillstehenden Punkt. Er übernimmt
-keine Kontrolle über den echten Mauszeiger und benötigt keine neuen Assets.
+Ein Fangversuch folgt dem bewegten Zeiger sichtbar auf der horizontalen
+Taskleistenebene. Ein Zeiger über Kopfhöhe kann verfolgt werden; die frühere
+Handhöhen-/Reichbarkeitsbedingung ist entfernt. Ein horizontaler Abstand von
+0,15 Körperbreiten bleibt erhalten. Direkt über/bei Aiko kann der bestehende
+Auftrag innerhalb seiner Frist warten, statt als blockiert ständig neu zu starten.
 
-Der technische Startumfang übernimmt die vorhandenen Grenzen: bodennahes
-reichbares Ziel, ein oder höchstens zwei kleine Profilschritte je Versuch,
-mindestens zwölf Sekunden bis zum nächsten Versuch. Innerhalb des Versuchs darf
-sich das gewählte Ziel begrenzt aktualisieren. Quellen-ID, verbrauchte Strecke,
-Schrittgrenzen und Restbudget dürfen dabei nicht neu starten. Ein Zielwechsel
-hinter den Körper beendet den Versuch am sicheren Stand statt eines laufenden
-Links-rechts-Pendels. Neue Versuche brauchen neue passende äußere Bewegung;
-ein aktives positives Moodlet allein startet keinen weiteren Versuch.
+Ein Versuch hat höchstens 3 Sekunden Wandzeit und 3/5/7 kleine Schrittbreiten
+Gesamtweg für Neugier 1/2/3; jede Schrittbreite beträgt 1/12 Spritebreite.
+Stufe 1 nutzt Schrittgeschwindigkeit, ab Stufe 2 verwendet der nächste Versuch
+Lauftempo. Nach Ende folgt eine Pause von 1,2 Sekunden. Ein neuer Versuch braucht
+weiterhin passende frische Bewegung, ein Moodlet allein genügt nicht. Der letzte
+passende Reiz darf kurze Unterbrechungen von höchstens einer Sekunde überbrücken.
+
+Seitenwechsel korrigieren denselben Fangauftrag. Token, Wandfrist, verbrauchte
+Zeit, Gesamtweg und Schrittgrenzen bleiben erhalten. Beim Richtungswechsel wird
+nur ein gegenläufiger Subpixelrest gelöscht. Keine neue Position wird außerhalb
+des bestehenden WalkControllers/WalkDrivers geschrieben. Profile verwenden die
+vorhandenen Kopf-Schritt-Banken; die Wiedergabe folgt dem bestehenden Bewegungstempo
+und der deklarierten Schrittweite. Beim Rückzug schaut Aiko weiter zum Zeiger;
+der vorhandene Schrittsatz läuft dafür rückwärts und bei Flucht schneller.
+Das ersetzt keine Assets und erzeugt keine neue Zeichnung.
+
+`cursor_play_start`, `cursor_play_more`, `cursor_play_peak` und
+`cursor_fear_response` wählen kurze deutsche Katalogtexte mit Emoji. Nur Beginn,
+Gefühlswechsel und tatsächliche Verstärkung liefern Kommentarfeedback;
+gleichstarke Auffrischungen bleiben stumm. Alle vier Ereignisse erlauben genau
+einen Text-Cue und nutzen den vorhandenen freien, nicht blockierenden Sprechplatz,
+ohne Action/ReactionPlayer oder Warteschlange. Belegte Sprechplätze bleiben geschützt.
+Eine Spielpause verhindert keine echte Nahannäherungswarnung; vor neuer Angst
+bleibt die bestätigte Vorwarnung erforderlich.
 
 Starke Angst erlaubt den vorhandenen kurzen Fluchtlauf: höchstens eine Sekunde
 wirkliche Laufbewegung, danach mindestens fünf Sekunden Standruhe. Höchstens
@@ -246,13 +298,18 @@ verbrauchten Bewegungsversuch erneut freizugeben.
 
 ## Menü-Erreichbarkeit und Prioritäten
 
-- Bewusster Zugang per Enter, Polling oder Klick hat sofort Vorrang vor
-  Beobachten, Vorwarnung, Fangversuch und Flucht. Der Cursorauftrag wird
-  freigegeben und tatsächliche Ortsbewegung gestoppt.
+- Native `<Enter>`-Ereignisse und Hover-Polling öffnen das Menü sofort. Bei
+  laufender Mausverfolgung ist das Überfahren Aikos keine Bedienübernahme:
+  Aufmerksamkeit, ausgewählter Blick, Moodlet und ein weiterhin gültiger
+  Fangversuch bleiben erhalten. Eine neue Begrüßungsreaktion unterbricht sie nicht.
+- Explizite Klicks haben weiterhin Vorrang und dürfen Cursorabsichten abbrechen.
+  Der Zugang zur sichtbaren Toolbar einschließlich ihrer Brücke, Draggen,
+  Tastaturbedienung und geöffnete Auswahlmenüs halten die Ortsbewegung an.
+  Die bloße Sichtbarkeit der Toolbar beendet keine laufende Mausverfolgung.
 - Der vorhandene gemeinsame Bedienbereich mit sechs logischen Pixeln
   Zusatzrand und die Herkunftsprüfung bleiben erhalten. Eigenbewegung unter
   einen ruhenden Zeiger ist kein absichtlicher Benutzerkontakt.
-- Die Vorwarnung ist ebenso wenig eine Kontaktsperre wie der kurze Gefühls-Emote.
+- Die Vorwarnung und die kurzen Gefühls-Kommentare sperren keinen Kontakt.
   Belegte/geschützte Sprechplätze werden nicht überschrieben.
 - Während echter Toolbar-/Menübedienung stehen auch erhaltene World-Aufträge
   physisch still. Auftrag, Suchfortschritt und Objektbesitz bleiben bestehen.
@@ -263,11 +320,14 @@ verbrauchten Bewegungsversuch erneut freizugeben.
   Laden erzeugt weder Warnung noch Gefühlsbeleg. Vorhandene Moodlets bleiben
   gespeichert und altern auf `PetState.lived_seconds`.
 
-Als technische Startregel verwirft eine Bedienübernahme die flüchtige
-Aufmerksamkeit und ihre Seiten-/Warn-/Fangabsichten. Nach Bedienende beginnt
-ein neuer beobachteter Aufbau; hohe alte Werte und verspätete Anzeigequittungen
-starten keine Bewegung. Geschützte Aktivitäten geben Cursorabsichten ebenfalls
-frei. Ihre Dauer wird danach nicht als beobachtete Aktivität nachintegriert.
+Ein expliziter Klick verwirft die flüchtigen Cursorabsichten. Reine
+Toolbar-/Menübedienung hält dagegen Aufmerksamkeit und Blick aufrecht, beendet
+eine Ortsbewegung sicher und setzt keine dauerhafte Zugangssperre. Dabei werden
+keine neuen Warn-/Gefühlsbelege qualifiziert; ein altes Warnfenster wird verworfen.
+Beim Verlassen der Bedienflächen bleibt die Aufmerksamkeit bestehen. Abgebrochene
+Fangversuche erhalten dadurch keine neuen Tokens oder Budgets; deren Pause bleibt
+maßgeblich. Geschützte Aktivitäten geben Cursorabsichten weiterhin frei. Ihre
+Dauer wird danach nicht als beobachtete Aktivität nachintegriert.
 
 ## Geprüfter Iststand und konkrete Umbauten
 
@@ -417,8 +477,10 @@ Umsetzungsbericht verknüpft; ein früherer grüner Lauf ersetzt diese Prüfung 
   Gleiche oder rückwärts eintreffende Samples verändern die Aufmerksamkeit nicht.
 - Geschützte Aktivität gibt Blick-/Bewegungs-/Warnabsichten und Seitenverlauf
   frei, pausiert aber die bisherige Aufmerksamkeit. Beim Freigeben beginnt eine
-  neue Samplebasis; die unterbrochene Zeit wird nicht integriert. Menüzugang
-  setzt dagegen Aufmerksamkeit und Absichten zurück. Cursor aus, Schlaf,
+  neue Samplebasis; die unterbrochene Zeit wird nicht integriert. Nur explizite
+  Klickübernahme setzt Aufmerksamkeit und Absichten zurück. Hover öffnet sofort;
+  echte Menübedienung hält Blick/Aufmerksamkeit ohne neue Gefühle aufrecht und
+  stoppt die Ortsbewegung. Cursor aus, Schlaf,
   Spiel und Größenwechsel invalidieren zusätzlich beim Übergang die Sensorhistorie.
   Anschließend bleibt die native Herkunftsprüfung für Kontakt aktiv, auch bei
   ausgeschaltetem Cursorverhalten.
@@ -471,3 +533,86 @@ aktualisieren das vorhandene Windows-CI-Testmuster um `test_cursor_warning.py`.
 Ein zwischenzeitlicher fremder UI-Konzeptcommit bleibt unverändert zwischen den
 gezielten Commits erhalten. Die neun Cursor-Commits verändern ihn nicht.
 Kein Merge und keine praktische Verhaltensabnahme durch technische Tests.
+
+## Nachkorrektur der Hover-Kopplung, 27.10.2026
+
+Der vorherige Abschlussstand setzte beim nativen Enter und beim Hover-Polling
+`claim_access` und wertete eine ungepinnte sichtbare Toolbar pauschal als
+Bedienübernahme. Dadurch fiel Aufmerksamkeit von 100 auf 0; die Policy-Sperre
+gegen Körperzuwendung und Fangversuche blieb bis zum Begegnungsende bestehen,
+obwohl das Neugier-Moodlet noch aktiv war. Die bisherigen Zugangstests sicherten
+diese zu grobe Unterbrechung ab.
+
+Die Korrektur bleibt in den vorhandenen Besitzern: `DesktopInput` meldet Hover
+ohne Klickübernahme, `HoverUi` öffnet sofort und unterscheidet während laufender
+Verfolgung sichtbare Oberfläche von tatsächlichem Zugang zu den Bedienelementen.
+`ContactCoordinator` löst beim Überfahren keine Wegunterbrechung/Begrüßung aus.
+`PointerRuntime` hält den nativen Klickpfad getrennt; Menüpausen gehören der
+bestehenden `CursorBehaviourPolicy`. `WalkController` bleibt der einzige Besitzer
+der tatsächlichen Bewegung. Ruhender Zeiger unter Aikos Eigenbewegung bleibt
+von absichtlichem Hover unterschieden; Idle-/World-Bedienpausen bleiben erhalten.
+
+Gezielte Regressionen prüfen Aufmerksamkeit 100 mit aktivem Moodlet, gültigen
+Fangauftrag, native und gepollte Eintritte, tatsächliche Toolbar-Nutzung mit
+erhaltenem World-Auftrag, Freigabe bei weiterhin sichtbarer Toolbar sowie alte
+Warnfenster. Zwei Tk-Tests verbinden die echten Assemblies; der Überflug wird
+bei 1X und 2X geprüft. Assets und parallele UI-Arbeiten bleiben unverändert.
+
+## Vorherige Nachkorrektur: ausschließliche Gefühle und reaktive Drehung, 27.10.2026
+
+Die vorherige Fassung konnte beide Cursor-Moodlets speichern und verzögerte
+auch emotionales Folgen mit der normalen Seitenbeobachtung. Eine kontrollierte
+Folge brauchte nach dem Seitenwechsel 3,8 Sekunden bis zur anderen
+Dreiviertelpose. Diese historische Nachkorrektur wurde durch die oben
+beschriebene Blickpriorität und fortlaufende Spielphase weiterentwickelt.
+Ihr damaliger Stand unterschied:
+
+- Normales Beobachten: unveränderte Aufmerksamkeits-/Seitenhysterese und 140 ms
+  je Drehphase. Ein Moodlet allein erzeugt keine neue Ortsbewegung.
+- Aktive Neugier/Angst: aktuelle Seite sofort als Körperabsicht; alle vorhandenen
+  Drehphasen mit 70 ms. Die Tk-Prüfung zeigt bei 1X und 2X die vollständige Folge
+  Dreiviertel rechts -> frontal -> Dreiviertel links in 560 ms, einschließlich
+  der sichtbaren Frontphase. Eine fertige Front-/Seitenpose plant keine weitere
+  Drehauffrischung. Der Haupttakt und die einzige Verhaltensauswertung bleiben
+  unverändert.
+- Laufender Fang-/Rückzugsversuch: Ein Seitenwechsel hinter den Körper beendet
+  den Versuch sicher. Danach folgt die Körperausrichtung der neuen Seite.
+  Kein neues Token, kein zurückgesetztes Schritt-/Fluchtbudget; die vorhandene
+  Stand-/Versuchspause bleibt erhalten. Eine spätere echte Gefühlsqualifikation
+  kann das andere Moodlet ablösen, ohne eine verbrauchte Flucht freizugeben.
+- Speicherung: `cursor_experiences.py` löst den exklusiven Wechsel auf. Die
+  vorhandenen Codecs normalisieren gültige alte Doppelzustände nach dem letzten
+  Auslösezeitpunkt, bei Gleichstand zugunsten von Angst. Identität, Stärke,
+  Restzeit, untere Stufen, Ursachen und nächste Instanz-ID werden nicht erneuert.
+  Auch SQLite-Snapshots durchlaufen denselben Vertrag; andere Moodlets und
+  Pflege-/Wunsch-/Freundschaftsdaten bleiben erhalten. Kein neues Speicherformat.
+
+Gezielte Tests prüfen beide Wechselrichtungen, erneute sichere Qualifikation
+nach Angst, einmalige frische Belege innerhalb derselben Begegnung, JSON- und
+SQLite-Altdaten, Moodlet-Ablauf, normale Seitenhysterese, schnellen Seitenwechsel
+ohne Bewegung und den tatsächlichen Tk-Animationstimer bei beiden Größen.
+Die zuvor implementierte Hover-Korrektur wird weiterhin mitgeprüft. Es wurden
+keine Assets generiert oder verändert und keine parallelen UI-Arbeiten übernommen.
+
+Prüfstand dieser Nachkorrektur: 250 gezielte Tests einschließlich Hover-,
+World-, Pflege-/Moodlet-, Speicher- und Architekturgrenzen sind grün. Weitere
+25 gezielte Bewegungs-/Animationstests prüfen insbesondere das unveränderte
+Fluchtbudget mit dem schnelleren tatsächlichen Tk-Frameablauf. Ruff, Mypy strict
+und Pyright sind grün. Praktische Sichtabnahme erfolgt nach Neustart der Anwendung;
+die Daten des laufenden Nutzerprozesses wurden durch die Tests nicht verändert.
+
+
+## Prüfstand: Blickführung und fortlaufendes Spiel, 27.10.2026
+
+336 gezielte Tests decken Sensor/Policy/Koordinator, Moodlet-Anwendung und
+Speicherung, Bewegung, tatsächlichen Tk-Animationstimer, native/gepollte Hover-
+Zugänge, freie Kommentare, Dialog- und Balancekataloge sowie Architekturgrenzen ab.
+Längere Trajektorien bei 1X und 2X prüfen Folgen auf beide Seiten, Steigerung bis
+Stufe 3 auch bei geringer Freundschaft, Auffrischung ohne Kommentarspam und Ablauf
+nach ruhendem Zeiger. Der Tk-Test prüft Kopfkorrektur im selben Renderaufruf,
+Fortsetzung desselben Fang-Tokens und unverbrauchtes Restbudget. Flucht behält
+höchstens eine Sekunde tatsächlicher Bewegung und blickt dabei zum Zeiger.
+Ruff, Mypy strict und Pyright sind grün. Dies ist keine vollständige CI-Ausführung.
+Die praktische Sichtabnahme nach Neustart der Anwendung bleibt offen; Tests
+verändern weder den laufenden Nutzerprozess noch seinen Spielstand. Keine Assets,
+Exporte oder parallelen UI-Entwürfe wurden verändert. Push und Merge sind für diese Nachkorrektur nicht freigegeben.

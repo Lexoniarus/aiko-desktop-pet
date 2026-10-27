@@ -46,5 +46,10 @@ class AttentionPresenter:
         display = self._ports.show_nonblocking_text
         return display(text, duration_ms) if display is not None else False
 
+    def show_cursor_comment(self, text: str, duration_ms: int) -> bool:
+        """Speak alongside gaze/motion without taking foreground ownership."""
+        display = self._ports.show_nonblocking_text
+        return display(text, duration_ms) if display is not None else False
+
     def show_notification(self, text: str, duration_ms: int = 3500) -> None:
         self._ports.show_text(text, duration_ms)

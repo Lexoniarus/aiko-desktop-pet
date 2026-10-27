@@ -34,10 +34,13 @@ class CursorContactOriginTests(unittest.TestCase):
         hover._ports = SimpleNamespace(
             allow_sprite_hover=lambda: False,
             sprite_access=lambda _x, _y: False,
-            claim_access=Mock(),
             open_sprite_hover=opened,
             record_contact=recorded,
         )
         hover.refresh_hover(20)
         opened.assert_not_called()
         recorded.assert_not_called()
+        hover._ports.allow_sprite_hover = lambda: True
+        hover.refresh_hover(20.1)
+        opened.assert_called_once()
+        recorded.assert_called_once_with(20.1)

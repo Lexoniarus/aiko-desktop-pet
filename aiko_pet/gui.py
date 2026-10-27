@@ -271,6 +271,7 @@ class DesktopPet:
                 game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
                 allow_sprite_hover=lambda: self._pointer_runtime.allow_hover(),
+                cursor_watching=lambda: self._cursor_behaviour.watching,
                 record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
@@ -322,6 +323,7 @@ class DesktopPet:
                                       and self._reaction_player.event
                                       in (None, "social_wait")),
                 wake_from_clicks=lambda: self._care_runtime.wake_from_clicks(),
+                cursor_watching=lambda: self._cursor_behaviour.watching,
             ),
         )
         self._input = DesktopInput(

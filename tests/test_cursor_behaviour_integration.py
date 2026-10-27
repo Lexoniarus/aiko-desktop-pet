@@ -21,6 +21,8 @@ from aiko_pet.desktop.visual_observation import (
 )
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.pet.animation.gaze import gaze_sector
+from aiko_pet.pet.cursor_experiences import cursor_impression
 from aiko_pet.pet.interaction_events import CursorWarning, CursorWarningReceipt
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttention
@@ -108,8 +110,11 @@ class CursorIntegrationTests(unittest.TestCase):
             seen.append(choice.sprite.animation)
             if choice.sprite.animation.startswith("body-step"):
                 runtime.advance_walk(now, 0.14, game_mode=False)
-        self.assertEqual(settings.x, (before or 0) + 16)
-        self.assertTrue(any(n.startswith("body-orient-right") for n in seen))
+        final_x = settings.x
+        assert final_x is not None
+        self.assertGreater(final_x, (before or 0) + 16)
+        self.assertLessEqual(final_x, (before or 0) + 96)
+        self.assertTrue(any(n == "body-look-right" for n in seen))
         self.assertTrue(any(n.startswith("body-step-right") for n in seen))
         self.assertFalse(coordinator.intent.moving)
         activity[0] = replace(activity[0], world_protected=True)
@@ -240,19 +245,34 @@ class CursorTrajectory:
 
 
 class CompleteCursorTrajectoryTests(unittest.TestCase):
-    def test_two_scales_trust_levels_turn_once_take_one_or_two_steps_then_front(self):
-        for scale, friendship, steps in ((1, 10, 1), (2, 90, 2)):
+    def test_two_scales_follow_high_pointer_then_release_when_it_stops(self):
+        for scale, friendship in ((1, 10), (2, 90)):
             with self.subTest(scale=scale, friendship=friendship):
                 scene = CursorTrajectory(scale, friendship)
-                scene.interest()
-                scene.offer_moving_target()
-                self.assertEqual(scene.settings.x, 500 + steps * 16 * scale)
-                self.assertEqual(len(scene.completions), 1)
-                self.assertEqual(scene.completions[0].reason, "budget")
-                self.assertEqual([e.feeling for e in scene.feedback], ["curiosity"])
-                # Disengagement restores front without deleting the remaining moodlet.
-                for _ in range(20):
-                    scene.tick((3500, 100))
+                positions = []
+                for n in range(90):
+                    x, y = scene.eyes()
+                    width = 192 * scale
+                    choice = scene.tick((
+                        round(x + width * (2.4 + .7 * math.cos(n * .63))),
+                        round(y - width * (.8 + .7 * math.sin(n * .63))),
+                    ))
+                    positions.append(scene.settings.x)
+                    if choice.sprite.animation.startswith("body-step"):
+                        self.assertFalse(scene.observer.current.reachable)
+                self.assertGreater(max(positions) - min(positions), 16 * scale)
+                self.assertTrue(scene.completions)
+                self.assertEqual([(e.feeling, e.level) for e in scene.feedback],
+                                 [("curiosity", 1), ("curiosity", 2)]
+                                 if friendship == 90 else [("curiosity", 1)])
+                stopped_pointer = scene.observer.current.pointer
+                for _ in range(30):
+                    scene.tick(stopped_pointer)
+                stopped_at = scene.settings.x
+                for _ in range(30):
+                    scene.tick(stopped_pointer)
+                self.assertEqual(scene.settings.x, stopped_at)
+                self.assertFalse(scene.coordinator.intent.moving)
                 self.assertEqual(scene.runtime._body_orientation.phase, 0)
                 self.assertEqual(len(scene.state.moodlets.active), 1)
 
@@ -261,22 +281,79 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
             scene = CursorTrajectory(scale, friendship=10)
             scene.interest()
             # Establish far native motion then fast closing into the near region.
-            scene.tick((500 + 550 * scale, 100 * scale))
-            scene.tick((500 + 150 * scale, 100 * scale))
+            scene.tick((round(scene.eyes()[0] + 450 * scale), 100 * scale))
+            scene.tick((round(scene.eyes()[0] + 54 * scale), 100 * scale))
             self.assertFalse(scene.coordinator.intent.moving)
-            scene.tick((500 + 550 * scale, 100 * scale))
-            scene.tick((500 + 150 * scale, 100 * scale))
+            scene.tick((round(scene.eyes()[0] + 450 * scale), 100 * scale))
+            scene.tick((round(scene.eyes()[0] + 54 * scale), 100 * scale))
             self.assertEqual(scene.coordinator.intent.reaction, "flee")
+            fear_token = scene.coordinator.intent.token
+            still = scene.observer.current.pointer
             for _ in range(100):
-                scene.tick((500 + 150 * scale, 100 * scale))
-            self.assertEqual(len(scene.completions), 1)
-            self.assertEqual(scene.completions[0].reason, "budget")
+                scene.tick(still)
+            retreats = [r for r in scene.completions if r.token == fear_token]
+            self.assertEqual(len(retreats), 1)
+            self.assertEqual(retreats[0].reason, "budget")
             self.assertEqual([e.feeling for e in scene.feedback], ["curiosity", "fear"])
             stopped_at = scene.settings.x
-            for i in range(40):
-                scene.tick((500 + (120 if i % 2 else 170) * scale, 100 * scale))
+            count = len(scene.completions)
+            for _ in range(25):
+                scene.tick(still)
             self.assertEqual(scene.settings.x, stopped_at)
-            self.assertEqual(len(scene.completions), 1)
+            self.assertEqual(len(scene.completions), count)
+
+    def test_long_play_follows_both_sides_escalates_and_keeps_head_on_pointer(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                scene = CursorTrajectory(scale, friendship=0)
+                directions, paces = set(), set()
+                first_seen = {}
+                previous_x = scene.settings.x
+                assert previous_x is not None
+                for n in range(400):
+                    x, y = scene.eyes()
+                    width = 192 * scale
+                    point = (round(x + width * 2 * math.cos(n * .25)),
+                             round(y - width * (1 + .3 * math.sin(n * .25))))
+                    axis = gaze_sector(x, y, *point, scale=scale,
+                                       previous=scene.visual.sector)
+                    choice = scene.tick(point)
+                    clip_name = choice.sprite.animation
+                    if scene.coordinator.intent.feeling == "curiosity":
+                        if clip_name.startswith("body-step"):
+                            clip = scene.runtime._assets.body_clips[clip_name]
+                            self.assertEqual(clip.head_direction, axis)
+                            self.assertFalse(choice.reverse)
+                            paces.add(scene.walk.movement.kind)
+                            if scene.walk.movement.kind == "run":
+                                self.assertGreater(choice.playback_rate, 1.5)
+                        elif clip_name == "look":
+                            self.assertEqual(choice.sprite.fixed_frame, axis)
+                    current_x = scene.settings.x
+                    assert current_x is not None
+                    delta = current_x - previous_x
+                    if delta:
+                        directions.add(1 if delta > 0 else -1)
+                    previous_x = current_x
+                    impression = cursor_impression(scene.state.moodlets)
+                    if impression:
+                        first_seen.setdefault(impression.level, scene.now)
+                self.assertEqual(directions, {-1, 1})
+                self.assertEqual(paces, {"step", "run"})
+                self.assertEqual([e.level for e in scene.feedback], [1, 2, 3])
+                self.assertLess(first_seen[1], first_seen[2])
+                self.assertLess(first_seen[2], first_seen[3])
+                # Maintenance extends the bounded moodlet without speech spam.
+                impression = cursor_impression(scene.state.moodlets)
+                assert impression is not None
+                self.assertGreater(impression.last_trigger_at, 45)
+                stopped_pointer = scene.observer.current.pointer
+                for _ in range(700):
+                    scene.tick(stopped_pointer)
+                self.assertFalse(scene.coordinator.intent.moving)
+                self.assertFalse(scene.coordinator.intent.gaze)
+                self.assertIsNone(cursor_impression(scene.state.moodlets))
+                self.assertEqual(len(scene.feedback), 3)
 
     def test_foreground_suspends_evidence_and_contact_immediately_pauses(self):
         scene = CursorTrajectory()

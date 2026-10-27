@@ -51,6 +51,27 @@ class DesktopVisualObservationTests(unittest.TestCase):
         self.assertLess(attention.direction[0], 0)
         self.assertTrue(attention.sees_environment(-400, -200))
 
+    def test_desired_cursor_axis_does_not_grant_world_sight_before_actual_front(self):
+        from aiko_pet.pet.animation.body_orientation import BodyOrientation
+
+        body = BodyOrientation()
+        body.orient_for_gaze_motion(0, 3)
+        body.orient_for_gaze_motion(.07, 3)
+        self.observer.constrain_with(body.constrain_direction)
+        self.selected = CursorIntent("approach", side=-1, target=(-400, 100),
+                                     feeling="curiosity")
+        before = self.observer.sector
+        self.assertEqual(self.observer.desired_cursor_gaze(), 13)
+        self.assertEqual(self.observer.sector, before)
+        actual = self.observer.attention((-400, 100), pointer_recent=True)
+        assert actual.direction is not None
+        self.assertGreater(actual.direction[0], 0)
+        self.assertEqual((body.phase, body.side), (8, 1))
+        body.reset()
+        actual = self.observer.attention((-400, 100), pointer_recent=True)
+        assert actual.direction is not None
+        self.assertLess(actual.direction[0], 0)
+
     def test_step_uses_compatible_cursor_axis_for_perception_and_head(self):
         point = (250, 150)
         observer = DesktopVisualObservation(

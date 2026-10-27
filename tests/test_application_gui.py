@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import tempfile
 import time
 import tkinter as tk
@@ -51,6 +52,95 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
             event_id=identifier, source="test.browser",
             title="Kalender", message="Termin gleich.",
         )
+
+    def _watch_moving_cursor(self):
+        """Build real attention through the assembled sensor/policy path."""
+        self.pet._runtime.stop()
+        self.pet._action_playback.cancel_at(time.monotonic())
+        self.pet._reaction_player.cancel()
+        self.pet.settings.auto_walk = self.pet.settings.follow_cursor = True
+        self.pet.root.update_idletasks()
+        eyes = self.pet._animated.cursor_eye_position
+        width = 192 * self.pet.settings.scale
+        native = [0, 0]
+        self.enterContext(patch.object(self.pet.root, "winfo_pointerx",
+                                      side_effect=lambda: native[0]))
+        self.enterContext(patch.object(self.pet.root, "winfo_pointery",
+                                      side_effect=lambda: native[1]))
+        now = time.monotonic()
+        for n in range(45):
+            sample_time = now - 6.3 + n * .14
+            native[:] = (
+                round(eyes[0] + width * (2.4 + .7 * math.cos(n * .63))),
+                round(eyes[1] - width * (.8 + .7 * math.sin(n * .63))),
+            )
+            self.pet._pointer_runtime.observe(sample_time)
+            self.pet._pointer_runtime.begin_behaviour(sample_time)
+        self.pet._speech.hide()
+        self.assertTrue(self.pet._cursor_behaviour.watching)
+        self.assertEqual(self.pet._cursor_behaviour.intent.attention, 100)
+        return native
+
+    def test_native_and_polled_flyover_open_toolbar_and_preserve_tracking(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.pet._hover.close_toolbar()
+                self.pet.settings.scale = scale
+                self.pet._window.resize()
+                self.pet._animated.reload_sprites()
+                self.pet._pointer_runtime.reset()
+                native = self._watch_moving_cursor()
+                before = self.pet.state.capture_checkpoint()
+                native[:] = (self.pet.root.winfo_x() + 96 * scale,
+                             self.pet.root.winfo_y() + 120 * scale)
+                with patch.object(self.pet._world, "interrupt") as interrupt:
+                    self.pet._input.on_enter()
+                    now = time.monotonic()
+                    self.pet._hover.refresh_hover(now)
+                    self.pet._pointer_runtime.observe(now)
+                    self.pet._pointer_runtime.begin_behaviour(now)
+                interrupt.assert_not_called()
+                toolbar = self.pet._hover.toolbar
+                assert toolbar is not None
+                self.assertTrue(toolbar.visible)
+                self.assertFalse(self.pet._hover.menu_engaged)
+                self.assertFalse(self.pet._pointer_runtime.control_active())
+                self.assertTrue(self.pet._cursor_behaviour.watching)
+                self.assertEqual(self.pet._cursor_behaviour.intent.attention, 100)
+                self.assertFalse(self.pet._cursor_behaviour._policy._access)
+                self.assertEqual(self.pet.state.capture_checkpoint(), before)
+
+    def test_tracking_toolbar_holds_world_motion_then_releases_without_reset(self):
+        native = self._watch_moving_cursor()
+        self.pet._hover.show_toolbar()
+        toolbar = self.pet._hover.toolbar
+        assert toolbar is not None
+        self.pet.root.update_idletasks()
+        native[:] = (toolbar.window.winfo_rootx() + 20,
+                     toolbar.window.winfo_rooty() + 20)
+        self.assertTrue(self.pet._hover.menu_engaged)
+        now = time.monotonic()
+        self.pet._pointer_runtime.observe(now)
+        self.pet._pointer_runtime.begin_behaviour(now)
+        self.assertTrue(self.pet._cursor_behaviour.watching)
+        self.assertEqual(self.pet._cursor_behaviour.intent.attention, 100)
+        self.assertFalse(self.pet._cursor_behaviour._policy._access)
+        x = self.pet.settings.x or 0
+        track = self.pet._window.track
+        goal = x + 40 if x + self.pet._window.width + 40 < track.right else x - 40
+        self.pet._walk.set_world_goal(goal)
+        self.assertIsNone(self.pet._walk.step(
+            now, .1, game_mode=False, attention_active=False,
+        ))
+        self.assertEqual(self.pet.settings.x, x)
+        self.assertEqual(self.pet._walk.movement.goal_x, goal)
+        native[:] = (0, 0)
+        self.assertTrue(toolbar.visible)
+        self.assertFalse(self.pet._hover.menu_engaged)
+        self.assertFalse(self.pet._pointer_runtime.control_active())
+        self.assertIsNotNone(self.pet._walk.step(
+            now + .1, .1, game_mode=False, attention_active=False,
+        ))
 
     def _bubble_text(self) -> str | None:
         bubble = self.pet._speech.bubble

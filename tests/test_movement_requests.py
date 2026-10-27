@@ -92,6 +92,28 @@ class MovementRequestTests(unittest.TestCase):
         self.walk.replace_request("cursor", MotionRequest("cursor", 10, 500))
         self.assertIsNone(self.walk.request("cursor"))
 
+    def test_reversal_drops_only_signed_residual_and_keeps_consumed_budgets(self):
+        self.walk.replace_request("cursor", MotionRequest(
+            "cursor", 8, 200, "step", 20, .5, 8, 16,
+        ))
+        step = self.walk.plan_step(replace(self.conditions, elapsed_seconds=.117))
+        assert step is not None
+        moved = int(step.pixels)
+        self.walk.record_displacement(moved, now=10.1)
+        progress = self.walk._progress["cursor"]
+        self.assertGreater(self.walk._residual, 0)
+        self.assertTrue(self.walk.retarget("cursor", 8, 50))
+        self.assertEqual(self.walk._residual, 0)
+        self.assertEqual(self.walk._progress["cursor"], progress)
+        self.assertEqual(self.walk.remaining_distance, 50 - (100 + moved))
+        next_step = self.walk.plan_step(replace(self.conditions, x=100 + moved))
+        assert next_step is not None
+        self.assertLess(next_step.pixels, 0)
+        request = self.walk.request("cursor")
+        assert request is not None
+        self.assertEqual(request.movement_seconds, .5)
+        self.assertEqual(request.distance_pixels, 16)
+
     def test_same_token_replacement_cannot_extend_deadline_or_budget(self):
         original = MotionRequest("cursor", 3, 150, "step", 20, .5, 8, 16)
         self.walk.replace_request("cursor", original)

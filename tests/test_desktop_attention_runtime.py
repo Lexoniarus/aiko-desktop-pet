@@ -115,8 +115,20 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.presenter.show_cursor_warning.assert_not_called()
 
     def test_qualified_cursor_cue_does_not_start_action_or_reaction(self):
+        from aiko_pet.pet.mind.catalog import Reaction
+
+        self.attention.mind.select_reaction.return_value = Reaction.spoken(
+            "play", "Na warte, dich kriege ich!", "idle", "cursor_play_more",
+        )
+        self.runtime._ports = replace(self.runtime._ports, clock=lambda: 12)
         self.runtime.cursor_experience(CursorExperience("actual:1", "curiosity", 2))
-        self.presenter.show_cursor_emote.assert_called_once_with("idea", 1500)
+        self.presenter.show_cursor_comment.assert_called_once_with(
+            "Na warte, dich kriege ich!", 2200,
+        )
+        self.attention.mind.select_reaction.assert_called_once_with(
+            "cursor_play_more", self.attention.state, self.context, 12,
+        )
+        self.presenter.show_cursor_emote.assert_not_called()
         self.presenter.show_reaction.assert_not_called()
         self.presenter.show_animation.assert_not_called()
         self.attention.cursor_reaction.assert_not_called()

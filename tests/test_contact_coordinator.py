@@ -114,6 +114,25 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.show.assert_called_once()
         self.assertEqual(self.reactions, [(None, 2800)])
 
+    def test_tracking_hover_opens_toolbar_without_interrupting_or_new_reaction(self):
+        self.contact._ports = replace(
+            self.contact._ports, cursor_watching=lambda: True,
+        )
+        with patch.object(self.mind, "return_to_pet") as greeting:
+            self.contact.enter()
+        self.show.assert_called_once()
+        self.hover.assert_called_once()
+        self.interrupt.assert_not_called()
+        greeting.assert_not_called()
+        self.assertFalse(self.reactions)
+
+    def test_explicit_click_still_interrupts_while_tracking(self):
+        self.contact._ports = replace(
+            self.contact._ports, cursor_watching=lambda: True,
+        )
+        self.contact.click("left")
+        self.interrupt.assert_called_once()
+
     def test_petting_refusal_is_semantic_and_playback_blocks_only_until_finished(self):
         set_test_pet_values(self.state, affection=100)
         for _ in range(3):

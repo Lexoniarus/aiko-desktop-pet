@@ -96,7 +96,16 @@ class DesktopAttentionRuntime:
         emote = ("idea" if event.level >= 2 else "question"
                  ) if event.feeling == "curiosity" else (
                      "drops" if event.level >= 2 else "exclamation")
-        self._presenter.show_cursor_emote(emote, 1500)
+        event_name = ("cursor_play_start", "cursor_play_more", "cursor_play_peak")[
+            event.level - 1
+        ] if event.feeling == "curiosity" else "cursor_fear_response"
+        reaction = self.attention.mind.select_reaction(
+            event_name, self.attention.state, ports.context(), ports.clock(),
+        )
+        if reaction is not None:
+            self._presenter.show_cursor_comment(reaction.text, 2200)
+        else:
+            self._presenter.show_cursor_emote(emote, 1500)
 
     def idle_emote(self) -> None:
         ports = self._ports

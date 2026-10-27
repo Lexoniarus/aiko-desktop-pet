@@ -8,6 +8,7 @@ from typing import Literal
 from uuid import uuid4
 
 from ..balance import BALANCE
+from ..cursor_experiences import CursorFeeling
 from ..interaction_events import CursorExperience, CursorWarning, CursorWarningReceipt
 from .cursor_attention import CursorPerception
 
@@ -22,6 +23,8 @@ class CursorBehaviourContext:
     mood: float
     affection: float = 50.0
     fun: float = 50.0
+    cursor_feeling: CursorFeeling | None = None
+    cursor_level: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,6 +42,8 @@ class CursorIntent:
     attention: float = 0.0
     stage: int = 0
     warning: CursorWarning | None = None
+    feeling: CursorFeeling | None = None
+    running: bool = False
 
     @property
     def gaze(self) -> bool:
@@ -61,6 +66,7 @@ class CursorBehaviourPolicy:
         self._serial = 0
         self._motion_serial = 0
         self._warning_serial = 0
+        self._evidence_serial = 0
         self._last_warning_at = -100.0
         self.reset()
 
@@ -82,12 +88,17 @@ class CursorBehaviourPolicy:
         self._far_seconds = 0.0
         self._look_until = 0.0
         self._curiosity_level = 0
+        self._play_seconds = 0.0
+        self._last_play_at = -100.0
+        self._last_curiosity_evidence = -100.0
+        self._play_rate = 1.0
         self._fear_level = 0
         self._trust = 0.0
         self._willing = False
         self._pending_warning: CursorWarning | None = None
         self._warned_at: float | None = None
         self._threat_active = False
+        self._known_feeling: CursorFeeling | None = None
 
     def suspend(self, now: float) -> None:
         """Yield attention to a real activity without rearming an escape."""
@@ -104,6 +115,29 @@ class CursorBehaviourPolicy:
         self.note_motion_finished(self.current.token, now)
         self.current = CursorIntent(reason="direct-access")
 
+    def pause_for_menu(
+        self, perception: CursorPerception, now: float,
+        *, feeling: CursorFeeling | None = None,
+    ) -> None:
+        """Hold interest and gaze during real control use, without new feelings."""
+        self.note_motion_finished(self.current.token, now)
+        fresh = perception.valid and 0 <= now - perception.sampled_at <= 0.5
+        self._last_sample = perception.sampled_at if fresh else -100.0
+        self._positive_since = None
+        self._last_play_at = -100.0
+        self._side_samples.clear()
+        self._opposite_seconds = self._far_seconds = 0.0
+        self._pending_warning = None
+        self._warned_at = None
+        self._threat_active = False
+        self.current = replace(
+            self.current, reaction="observe" if self.stage else "ignore",
+            target=perception.pointer if fresh else self.current.target,
+            body="three_quarter" if self._body_side else "front", side=self._body_side,
+            attention=self.attention, stage=self.stage, experience=None, warning=None,
+            reason="menu-use", feeling=feeling,
+        )
+
     def note_motion_finished(self, token: int, now: float) -> None:
         if self.current.token != token or not self.current.moving:
             return
@@ -111,7 +145,7 @@ class CursorBehaviourPolicy:
             self.recover_until,
             now
             + (
-                parameter("attempt_pause_seconds")
+                parameter("play_pause_seconds")
                 if self.current.reaction == "approach"
                 else parameter("recovery_seconds")
             ),
@@ -132,6 +166,7 @@ class CursorBehaviourPolicy:
         self._release = [0.0, 0.0, 0.0]
         self._last_sample = -100.0
         self._positive_since = None
+        self._last_play_at = -100.0
         self._side_samples.clear()
         self._body_side = 0
         self._opposite_seconds = self._far_seconds = 0.0
@@ -151,13 +186,20 @@ class CursorBehaviourPolicy:
             self._warned_at = receipt.presented_at
             self._last_warning_at = receipt.presented_at
 
-    def _orient_body(self, p: CursorPerception, dt: float) -> None:
+    def _orient_body(
+        self, p: CursorPerception, dt: float, feeling: CursorFeeling | None,
+    ) -> None:
         if dt == 0 or self.stage == 0 or self._access:
             self._side_samples.clear()
             self._body_side = 0
             self._opposite_seconds = self._far_seconds = 0.0
             return
         far = p.distance > parameter("interest_distance")
+        if feeling is not None and not far:
+            self._body_side = 0
+            self._side_samples.clear()
+            self._opposite_seconds = self._far_seconds = 0.0
+            return
         self._far_seconds = self._far_seconds + dt if far else 0.0
         if self.stage < 2 or self._far_seconds >= parameter("release_hold_seconds"):
             self._body_side = 0
@@ -217,9 +259,56 @@ class CursorBehaviourPolicy:
     def _evidence(
         self, feeling: Literal["curiosity", "fear"], level: int
     ) -> CursorExperience:
+        self._evidence_serial += 1
         return CursorExperience(
-            f"{self._session}:{self._serial}:{feeling}:{level}", feeling, level
+            f"{self._session}:{self._serial}:{feeling}:{level}:{self._evidence_serial}",
+            feeling, level,
         )
+
+    def _curiosity(
+        self, p: CursorPerception, context: CursorBehaviourContext,
+        now: float, dt: float, threat: bool,
+    ) -> tuple[CursorExperience | None, bool]:
+        active = context.cursor_feeling == "curiosity" or self._curiosity_level > 0
+        moving = p.motion_band in ("normal", "fast", "very_fast")
+        safe = (dt > 0 and moving and not threat and not self._access
+                and p.distance <= parameter("interest_distance")
+                and (not self._retreated or now >= self.recover_until))
+        if safe and self.attention >= parameter("strong_at"):
+            if self._positive_since is None:
+                self._positive_since = p.sampled_at
+        else:
+            self._positive_since = None
+        qualified = (self._positive_since is not None and p.sampled_at
+                     - self._positive_since + 1e-9
+                     >= parameter("positive_observation_seconds"))
+        if not active and qualified:
+            self._curiosity_level = 1
+            self._play_seconds = 0.0
+            self._last_play_at = p.sampled_at
+            self._last_curiosity_evidence = now
+            return self._evidence("curiosity", 1), True
+        if active and safe and self.stage > 0:
+            self._last_play_at = p.sampled_at
+            self._play_seconds = min(
+                parameter("curiosity_level_three_seconds"),
+                self._play_seconds + dt * self._play_rate,
+            )
+            level = max(self._curiosity_level, context.cursor_level, 1)
+            if self._play_seconds >= parameter("curiosity_level_three_seconds"):
+                level = 3
+            elif self._play_seconds >= parameter("curiosity_level_two_seconds"):
+                level = max(2, level)
+            if (level > self._curiosity_level or now - self._last_curiosity_evidence
+                    >= parameter("curiosity_refresh_seconds")):
+                self._curiosity_level = level
+                self._last_curiosity_evidence = now
+                return self._evidence("curiosity", level), True
+        elif dt > 0:
+            self._play_seconds = max(0, self._play_seconds - dt)
+        engaged = active and self.stage > 0 and (safe or now - self._last_play_at
+                                               <= parameter("play_grace_seconds"))
+        return None, engaged
 
     def evaluate(
         self, perception: CursorPerception, context: CursorBehaviourContext, now: float
@@ -240,14 +329,30 @@ class CursorBehaviourPolicy:
         dt = p.sampled_at - self._last_sample
         if dt <= 0:
             return self.current
+        if context.cursor_feeling != self._known_feeling:
+            self._known_feeling = context.cursor_feeling
+            self._positive_since = None
+            if context.cursor_feeling != "curiosity":
+                self._curiosity_level = 0
+                self._play_seconds = 0.0
+                self._last_play_at = -100.0
+            elif self._curiosity_level == 0:
+                self._curiosity_level = context.cursor_level
+                self._last_curiosity_evidence = now
+            if context.cursor_feeling != "fear":
+                self._fear_level = 0
+        if (context.cursor_feeling == "curiosity" and 0 < context.cursor_level
+                < self._curiosity_level):
+            self._curiosity_level = context.cursor_level
         continuous = 0 < dt <= 1.5
         self._last_sample = p.sampled_at
         if not continuous:
             self._outside_since = None
             self.note_motion_finished(self.current.token, now)
         self._integrate(p, dt if continuous else 0.0)
-        self._orient_body(p, dt if continuous else 0.0)
+        self._orient_body(p, dt if continuous else 0.0, context.cursor_feeling)
         if p.distance > parameter("interest_distance"):
+            self._play_seconds = max(0, self._play_seconds - (dt if continuous else 0))
             self.note_motion_finished(self.current.token, now)
             self._threat_active = False
             self._pending_warning = None
@@ -264,18 +369,21 @@ class CursorBehaviourPolicy:
                 attention=self.attention, stage=self.stage, reason="distant",
                 side=self._body_side,
                 body="three_quarter" if self._body_side else "front",
+                feeling=context.cursor_feeling,
             )
             return self.current
         self._outside_since = None
         if not self._encounter:
             self._encounter = True
             self._serial += 1
-            self._curiosity_level = self._fear_level = 0
+            self._curiosity_level = (context.cursor_level
+                                     if context.cursor_feeling == "curiosity" else 0)
+            self._fear_level = 0
             self._trust = max(0, min(1, (context.friendship_level - 1) / 9))
-            self._willing = (
-                context.energy >= 25
-                and context.mood >= 30
-                and (context.affection <= 75 or context.fun <= 75 or self._trust > 0.5)
+            self._willing = context.energy >= 25 and context.mood >= 30
+            self._play_rate = (.75 + .5 * self._trust) * (
+                max(.5, min(1, context.energy / 60))
+                * max(.5, min(1, context.mood / 60))
             )
             self._look_until = now + 3
             self.current = CursorIntent(
@@ -294,12 +402,16 @@ class CursorBehaviourPolicy:
               or p.motion_band == "still"):
             self._threat_active = False
         warning = None
-        if (new_approach and not self._retreated and not self._access
-                and now >= self.recover_until):
+        if (new_approach and not self._access
+                and (not self._retreated or context.cursor_feeling == "curiosity")
+                and (now >= self.recover_until
+                     or context.cursor_feeling == "curiosity")):
             warned = self._warned_at
             if (warned is not None and warned < p.sampled_at
                     <= warned + parameter("warning_window_seconds")):
-                self._motion_serial += 1
+                can_retreat = not self._retreated
+                if can_retreat:
+                    self._motion_serial += 1
                 self._retreated = True
                 level = min(3, max(1, round(
                     3 - 2 * self._trust + (context.energy < 25)
@@ -307,9 +419,9 @@ class CursorBehaviourPolicy:
                 self._fear_level = level
                 reaction: CursorReaction = (
                     "flee"
-                    if self._trust < 0.45 and context.energy >= 25
+                    if can_retreat and self._trust < 0.45 and context.energy >= 25
                     else "avoid"
-                    if context.energy >= 12
+                    if can_retreat and context.energy >= 12
                     else "startle"
                 )
                 self._look_until = now + 3
@@ -325,6 +437,7 @@ class CursorBehaviourPolicy:
                     level,
                     self._evidence("fear", level),
                     attention=self.attention, stage=self.stage,
+                    feeling="fear",
                 )
                 return self.current
             if now - self._last_warning_at >= parameter("warning_repeat_seconds"):
@@ -337,55 +450,49 @@ class CursorBehaviourPolicy:
                 # A warning may briefly orient the head without earning a moodlet.
                 self.attention = max(self.attention, parameter("noticed_at"))
                 self.stage = max(1, self.stage)
-        if self.current.moving:
-            if (now < self.current.until and not (
-                    self.current.reaction == "approach"
-                    and (not p.reachable or p.side != self.current.side))):
+        if self.current.moving and self.current.reaction != "approach":
+            lost_target = p.side != 0 and self.current.side != -p.side
+            if now < self.current.until and not lost_target:
                 self.current = replace(
                     self.current, target=p.pointer,
                     attention=self.attention, stage=self.stage,
+                    feeling=context.cursor_feeling,
                 )
                 return self.current
             self.note_motion_finished(self.current.token, now)
         if self.current.reaction == "startle" and now < self._look_until:
-            return self.current
-        positive = (
-            continuous and self.attention >= parameter("strong_at")
-            and p.motion_band in ("normal", "fast", "very_fast")
-            and not threat and not self._retreated and not self._access
-        )
-        if not positive:
-            self._positive_since = None
-        elif self._positive_since is None:
-            self._positive_since = p.sampled_at
-        duration = (0.0 if self._positive_since is None
-                    else p.sampled_at - self._positive_since)
-        qualified = duration + 1e-9 >= parameter("positive_observation_seconds")
-        experience = None
-        if qualified:
-            # Encounter context is frozen before its own moodlet can feed back.
-            level = (
-                1 + int(self._trust >= 0.4) + int(self._trust >= 0.8 and self._willing)
+            self.current = replace(
+                self.current, target=p.pointer, side=self._body_side,
+                body="three_quarter" if self._body_side else "front",
+                attention=self.attention, stage=self.stage,
+                feeling=context.cursor_feeling,
             )
-            if level > self._curiosity_level:
-                self._curiosity_level = level
-                experience = self._evidence("curiosity", level)
-        engaged = positive and self._curiosity_level > 0
+            return self.current
+        experience, engaged = self._curiosity(
+            p, context, now, dt if continuous else 0.0, threat,
+        )
+        if self.current.reaction == "approach":
+            if (now < self.current.until and engaged and not threat
+                    and now - self._last_play_at <= parameter("play_grace_seconds")):
+                self.current = replace(
+                    self.current, side=p.side, target=p.pointer,
+                    body="profile" if p.side else "front",
+                    attention=self.attention, stage=self.stage,
+                    experience=experience, feeling="curiosity",
+                )
+                return self.current
+            self.note_motion_finished(self.current.token, now)
         body: BodyIntent = "three_quarter" if self._body_side else "front"
         reaction = "observe" if self.stage else "ignore"
         until = now + 2 if engaged else self._look_until
         if (
-            not self._access
-            and not self._retreated
-            and self._willing
-            and now >= self.recover_until
-            and engaged
-            and p.reachable
-            and parameter("stop_distance") < p.distance < parameter("approach_distance")
-            and self._body_side == p.side and p.side != 0
+            not self._access and self._willing and not threat
+            and now >= self.recover_until and engaged
+            and self._last_play_at == p.sampled_at and p.side != 0
         ):
             self._motion_serial += 1
-            reaction, body, until = "approach", "profile", now + 15
+            reaction, body = "approach", "profile"
+            until = now + parameter("play_attempt_seconds")
         target = p.pointer if self.stage else None
         self.current = CursorIntent(
             reaction,
@@ -397,9 +504,11 @@ class CursorBehaviourPolicy:
             body,
             self._curiosity_level,
             experience,
-            2 if self._trust >= 0.7 else 1,
+            2 * self._curiosity_level + 1,
             self.attention,
             self.stage,
             warning,
+            experience.feeling if experience is not None else context.cursor_feeling,
+            self._curiosity_level >= 2,
         )
         return self.current

@@ -6,11 +6,13 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from test_care_evidence_storage import emotional_state
 from test_emotional_persistence import moodlet_state
 
 from aiko_pet.application.storage_contracts import StorageError, StorageFailureKind
+from aiko_pet.infrastructure.moodlet_codec import encode_moodlets
 from aiko_pet.infrastructure.sqlite.connection import open_database
 from aiko_pet.infrastructure.sqlite.moodlet_rows import (
     read_moodlet_core,
@@ -69,11 +71,31 @@ class SqliteMoodletRowsTests(unittest.TestCase):
             (1, MoodletId.CURSOR_CURIOSITY, (30, 30)),
             (2, MoodletId.CURSOR_FEAR, (15, 15)),
         ))
-        original = MoodletState(next_instance_id=3, active=episodes)
         with open_database(self.path) as connection:
             connection.execute("BEGIN IMMEDIATE")
-            write_moodlet_core(connection, original)
-            self.assertEqual(read_moodlet_core(connection), original)
+            for episode in episodes:
+                original = MoodletState(next_instance_id=3, active=(episode,))
+                write_moodlet_core(connection, original)
+                self.assertEqual(read_moodlet_core(connection), original)
+
+            # Build a previous-version snapshot containing both valid families.
+            legacy = encode_moodlets(MoodletState(next_instance_id=3))
+            legacy["active"] = [encode_moodlets(MoodletState(
+                next_instance_id=3, active=(episode,),
+            ))["active"][0] for episode in episodes]
+            with patch("aiko_pet.infrastructure.sqlite.moodlet_rows.encode_moodlets",
+                       return_value=legacy):
+                write_moodlet_core(connection, MoodletState(next_instance_id=3))
+            connection.commit()
+        with open_database(self.path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            restored = read_moodlet_core(connection)
+            self.assertEqual(restored.active, (episodes[1],))
+            self.assertEqual(restored.next_instance_id, 3)
+            write_moodlet_core(connection, restored)
+            self.assertEqual(connection.execute(
+                "SELECT count(*) FROM moodlet_episodes",
+            ).fetchone(), (1,))
 
     def test_actual_wish_game_food_and_period_causes_round_trip_without_progression(
         self,

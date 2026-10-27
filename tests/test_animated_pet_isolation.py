@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
@@ -29,11 +30,161 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class IdleMonitor:
     def latest(self) -> ComputerSnapshot:
         return ComputerSnapshot(cpu=2)
+
+
+class ResponsiveTurnTimerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        StandaloneAnimatedPetTests.setUpClass()
+
+    def test_opposite_head_returns_front_in_same_render_without_waiting_for_turn(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale), ControlledTkTime() as clock:
+                fixture = StandaloneAnimatedPetTests()
+                fixture.setUp()
+                try:
+                    fixture.settings.scale = scale
+                    fixture.anim.reload_sprites()
+                    eyes = fixture.visual._eyes()
+                    right = (round(eyes[0] + 600 * scale), round(eyes[1]))
+                    left = (round(eyes[0] - 600 * scale), round(eyes[1]))
+                    # A real settled quarter pose from ordinary observation.
+                    fixture.selected_cursor = CursorIntent(
+                        "observe", side=1, body="three_quarter", target=right,
+                    )
+                    for _ in range(4):
+                        fixture.anim.render(clock.monotonic(), right)
+                        clock.advance(.14)
+                    self.assertEqual(fixture.animation._body_orientation.phase, 4)
+                    before = fixture.state.capture_checkpoint()
+                    fixture.selected_cursor = replace(
+                        fixture.selected_cursor, side=-1, target=left,
+                        feeling="curiosity",
+                    )
+                    fixture.anim.render(clock.monotonic(), left)
+                    self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 12))
+                    self.assertEqual(fixture.animation._body_orientation.phase, 0)
+                    clock.advance(.2)
+                    self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 12))
+                    self.assertIsNone(fixture.anim._frame_timer)
+                    self.assertEqual(fixture.state.capture_checkpoint(), before)
+                    self.assertEqual(fixture.settings.x, 100)
+                finally:
+                    fixture.doCleanups()
+
+    def test_run_follows_head_axes_and_reverses_same_attempt_at_both_sizes(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale), ControlledTkTime() as clock:
+                fixture = StandaloneAnimatedPetTests()
+                fixture.setUp()
+                try:
+                    fixture.settings.scale = scale
+                    fixture.anim.reload_sprites()
+                    fixture.walk.ports = replace(fixture.walk.ports,
+                                                 cursor_allowed=lambda: True)
+                    eyes = fixture.visual._eyes()
+                    right = (round(eyes[0] + 600 * scale),
+                             round(eyes[1] - 200 * scale))
+                    left = (round(eyes[0] - 600 * scale), right[1])
+                    fixture.selected_cursor = CursorIntent(
+                        "approach", side=1, token=9, until=clock.monotonic() + 3,
+                        target=right, body="profile", feeling="curiosity",
+                        strength=2, running=True, steps=5,
+                    )
+                    fixture.walk.apply_cursor_intent(fixture.selected_cursor,
+                                                     clock.monotonic())
+                    fixture.anim.render(clock.monotonic(), right)
+                    self.assertEqual(fixture.anim._display_clip, "body-look-right")
+                    clock.advance(.23)
+                    self.assertEqual(fixture.anim._display_clip, "body-step-right-03")
+                    moved_x = fixture.settings.x
+                    assert moved_x is not None
+                    self.assertGreater(moved_x, 100)
+                    consumed = fixture.walk.movement._progress["cursor"]
+                    self.assertGreater(consumed[1], 0)
+                    original = fixture.walk.movement.request("cursor")
+                    assert original is not None
+                    fixture.selected_cursor = replace(
+                        fixture.selected_cursor, side=-1, target=left,
+                    )
+                    fixture.walk.apply_cursor_intent(fixture.selected_cursor,
+                                                     clock.monotonic())
+                    fixture.anim.render(clock.monotonic(), left)
+                    self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 13))
+                    self.assertEqual(fixture.animation._body_orientation.phase, 0)
+                    self.assertEqual(fixture.walk.movement._progress["cursor"],
+                                     consumed)
+                    turned_at = fixture.settings.x
+                    assert turned_at is not None
+                    clock.advance(.24)
+                    self.assertEqual(fixture.anim._display_clip, "body-step-left-13")
+                    moved_x = fixture.settings.x
+                    assert moved_x is not None
+                    self.assertLess(moved_x, turned_at)
+                    current = fixture.walk.movement.request("cursor")
+                    assert current is not None
+                    self.assertEqual(current.token, original.token)
+                    self.assertEqual(current.until, original.until)
+                    self.assertEqual(current.distance_pixels, original.distance_pixels)
+                    self.assertGreater(fixture.walk.movement._progress["cursor"][2],
+                                       consumed[2])
+                    key = fixture.anim.frame_clock.active_key
+                    assert key is not None
+                    self.assertIn(":False", key[0])
+                finally:
+                    fixture.doCleanups()
+
+    def test_responsive_flight_still_spends_only_one_actual_movement_budget(self):
+        with ControlledTkTime() as clock:
+            fixture = StandaloneAnimatedPetTests()
+            fixture.setUp()
+            try:
+                completed = []
+                fixture.walk.ports = replace(
+                    fixture.walk.ports, cursor_allowed=lambda: True,
+                    cursor_finished=completed.append,
+                )
+                eyes = fixture.visual._eyes()
+                target = (round(eyes[0] + 600), round(eyes[1]))
+                fixture.selected_cursor = CursorIntent(
+                    "flee", side=-1, token=7, until=clock.monotonic() + 15,
+                    target=target, body="profile", feeling="fear",
+                )
+                fixture.walk.apply_cursor_intent(
+                    fixture.selected_cursor, clock.monotonic(),
+                )
+                fixture.anim.render(clock.monotonic(), target)
+                clock.advance(.069)
+                self.assertEqual(fixture.settings.x, 100)
+                clock.advance(.24)
+                self.assertEqual(fixture.anim._display_clip, "body-step-right-04")
+                key = fixture.anim.frame_clock.active_key
+                assert key is not None
+                self.assertTrue(key[0].endswith(":True"))
+                direction = fixture.visual.attention(
+                    target, pointer_recent=True,
+                ).direction
+                assert direction is not None
+                self.assertGreater(direction[0], 0)
+                clock.advance(2)
+                self.assertEqual(len(completed), 1)
+                self.assertEqual(completed[0].token, 7)
+                self.assertEqual(completed[0].reason, "budget")
+                stopped = fixture.settings.x
+                assert stopped is not None
+                self.assertGreater(stopped, 45)
+                self.assertLess(stopped, 100)
+                clock.advance(2)
+                self.assertEqual(fixture.settings.x, stopped)
+                self.assertEqual(len(completed), 1)
+            finally:
+                fixture.doCleanups()
 
 
 class StandaloneAnimatedPetTests(unittest.TestCase):

@@ -89,21 +89,66 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(n / 10, speed=2)
         self.assertEqual((result.body, result.side), ("three_quarter", 1))
         for n in range(41, 46):
-            result = self.decide(n / 10, speed=2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
         self.assertEqual(result.side, 1)
         for n in range(46, 56):
-            result = self.decide(n / 10, speed=2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
         self.assertEqual(result.body, "front")
         for n in range(56, 74):
-            result = self.decide(n / 10, speed=2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
         self.assertEqual((result.body, result.side), ("three_quarter", -1))
 
     def test_high_attention_with_alternating_sides_keeps_body_front(self):
         result = self.decide(0, speed=4)
         for n in range(1, 101):
-            result = self.decide(n / 10, speed=4, side=1 if n % 2 else -1)
+            result = self.decide(n / 10, speed=4 if n % 10 else .2,
+                                 side=1 if n % 2 else -1)
             self.assertEqual(result.body, "front")
-        self.assertEqual((result.attention, result.stage), (100, 3))
+        self.assertGreaterEqual(result.attention, 99)
+        self.assertEqual(result.stage, 3)
+
+    def test_active_feeling_without_play_stays_front_and_preserves_gaze(self):
+        for feeling in ("curiosity", "fear"):
+            self.policy.reset()
+            self.policy.attention, self.policy.stage = 60, 2
+            self.context = replace(self.context, cursor_feeling=feeling, cursor_level=1)
+            self.decide(0, speed=.2)
+            for n, side in enumerate((-1, 1, -1, 0), 1):
+                point = (200 + side * 100, 100)
+                result = self.decide(n / 10, speed=.2, side=side, pointer=point)
+                self.assertEqual((result.body, result.side), ("front", 0))
+                self.assertEqual(result.target, point)
+                self.assertEqual(result.feeling, feeling)
+                self.assertFalse(result.moving)
+                self.assertIsNone(result.experience)
+
+    def test_crossing_an_active_retreat_stops_it_without_another_flight_budget(self):
+        first = self.warned_threat()
+        self.assertTrue(first.moving)
+        self.context = replace(self.context, cursor_feeling="fear")
+        result = self.decide(10.3, side=-1, speed=4, closing_speed=-2)
+        self.assertFalse(result.moving)
+        self.assertEqual((result.body, result.side), ("front", 0))
+        self.assertEqual(self.policy._motion_serial, first.token)
+        self.assertGreaterEqual(self.policy.recover_until, 15.3)
+        for n in range(104, 151):
+            result = self.decide(n / 10, side=1, speed=4, closing_speed=2)
+            self.assertFalse(result.moving)
+            self.assertIsNone(result.experience)
+
+    def test_new_safe_observation_can_replace_fear_after_standing_recovery(self):
+        self.warned_threat()
+        self.policy.note_motion_finished(self.policy.current.token, 10.3)
+        self.context = replace(self.context, cursor_feeling="fear")
+        events = []
+        for n in range(104, 190):
+            result = self.decide(n / 10, speed=4, closing_speed=0)
+            if result.experience is not None:
+                events.append((n / 10, result.experience.feeling))
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0][1], "curiosity")
+        self.assertGreaterEqual(events[0][0], 17.3)
+        self.assertEqual(self.policy._motion_serial, 2)
 
     def test_body_releases_after_far_hold_and_activity_clears_side_history(self):
         result = self.decide(0, speed=2)
@@ -175,21 +220,24 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(16 + n / 10, reachable=True)
             self.assertFalse(result.moving)
             self.assertIsNone(result.experience)
-        self.assertGreaterEqual(self.policy.recover_until, 28)
+        self.assertAlmostEqual(self.policy.recover_until, 17.2)
 
-    def test_active_catch_retargets_and_stops_when_target_crosses_behind(self):
+    def test_active_catch_retargets_across_sides_without_restarting_budget(self):
         first = self.interest_until(6, reachable=True)
         self.assertTrue(first.moving)
         retargeted = self.decide(16.1, speed=2, reachable=True, pointer=(500, 194))
         self.assertEqual(retargeted.token, first.token)
         self.assertEqual(retargeted.target, (500, 194))
-        stopped = self.decide(16.2, speed=2, reachable=True, side=-1)
-        self.assertFalse(stopped.moving)
-        self.assertGreaterEqual(self.policy.recover_until, 28.2)
+        crossed = self.decide(16.2, speed=2, reachable=False, side=-1)
+        self.assertTrue(crossed.moving)
+        self.assertEqual((crossed.token, crossed.until), (first.token, first.until))
+        self.assertEqual(crossed.side, -1)
+        self.assertEqual(self.policy.recover_until, 0)
 
-    def test_invalid_far_and_high_pointer_cannot_approach(self):
+    def test_invalid_and_far_block_but_high_pointer_can_be_followed(self):
         self.assertFalse(self.decide(sampled_at=0).gaze)
-        self.assertFalse(self.interest_until(6, reachable=False).moving)
+        self.assertTrue(self.interest_until(6, reachable=False).moving)
+        self.assertFalse(self.decide(16.1, speed=4, distance=5).moving)
 
     def test_resting_pointer_never_qualifies_and_breaks_positive_duration(self):
         for n in range(100):

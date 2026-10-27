@@ -91,6 +91,27 @@ class BodyOrientationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 body_look_index(side, head)
 
+    def test_responsive_turn_keeps_all_poses_and_front_at_seventy_ms(self):
+        self.assertIsNone(self.body.next_delay_ms(0))
+        for n in range(4):
+            self.body.select(n * .07, SpriteSelection("look", 4),
+                             intent="three_quarter", side=1, responsive=True)
+        self.assertEqual((self.body.phase, self.body.side), (4, 1))
+        phases = []
+        for n in range(1, 9):
+            self.body.select(.21 + n * .07, SpriteSelection("look", 12),
+                             intent="three_quarter", side=-1, responsive=True)
+            phases.append((self.body.phase, self.body.side))
+        self.assertEqual(phases, [
+            (3, 1), (2, 1), (1, 1), (0, 0),
+            (1, -1), (2, -1), (3, -1), (4, -1),
+        ])
+        self.assertIsNone(self.body.next_delay_ms(.77))
+
+    def test_responsive_front_hold_has_no_busy_refresh_loop(self):
+        self.body.select(100, SpriteSelection("idle"), responsive=True)
+        self.assertIsNone(self.body.next_delay_ms(100))
+
 
 class MotionOrientationTests(unittest.TestCase):
     def test_profile_ready_only_after_all_turn_poses_and_return_is_ordered(self):

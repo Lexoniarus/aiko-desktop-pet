@@ -72,7 +72,6 @@ class DesktopInput:
 
     def on_enter(self, event: tk.Event | None = None) -> None:
         if not self._stopped and self.actions.allow_hover():
-            self.actions.claim_access(None)
             self.actions.enter(event)
 
     def on_left_click(self, event: tk.Event | None = None) -> None:

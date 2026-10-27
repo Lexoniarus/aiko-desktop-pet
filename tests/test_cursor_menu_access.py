@@ -68,7 +68,7 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.walk.clear_cursor_request.assert_called_once()
         self.assertFalse(self.coordinator.intent.moving)
 
-    def test_self_contact_never_auto_claims_but_deliberate_motion_and_click_do(self):
+    def test_motion_admits_hover_but_only_explicit_click_claims_access(self):
         self.point = (200, 180)
         self.observer.attention.observe(self.point, 10.1)
         self.walk.last_placement_at = 11
@@ -77,10 +77,108 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.walk.clear_cursor_request.assert_not_called()
         self.point = (203, 180)
         self.runtime.begin_behaviour(11.1)
-        self.walk.clear_cursor_request.assert_called_once()
-        self.walk.clear_cursor_request.reset_mock()
+        self.assertTrue(self.runtime.allow_hover())
+        self.walk.clear_cursor_request.assert_not_called()
         self.runtime.claim_access(self.point)
         self.walk.clear_cursor_request.assert_called_once()
+
+    def attend(self):
+        self.point = (800, 100)
+        for n in range(61):
+            self.observer.current = CursorPerception(
+                sampled_at=10 + n / 10, pointer=self.point, distance=1.5,
+                speed=4, side=1, valid=True,
+            )
+            self.runtime.begin_behaviour(10 + n / 10)
+
+    def test_flyover_keeps_attention_moodlet_and_body_after_leaving(self):
+        self.attend()
+        before = self.pet.capture_checkpoint()
+        self.point = (200, 180)
+        self.observer.current = replace(
+            self.observer.current, sampled_at=16.1, pointer=self.point,
+        )
+        self.runtime.begin_behaviour(16.1)
+        self.assertFalse(self.runtime.control_active())
+        self.assertTrue(self.coordinator.watching)
+        self.assertEqual(self.coordinator.intent.attention, 100)
+        self.assertEqual(self.coordinator.intent.body, "profile")
+        self.assertFalse(self.coordinator._policy._access)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
+        self.walk.clear_cursor_request.assert_not_called()
+        self.point = (800, 100)
+        self.observer.current = replace(
+            self.observer.current, sampled_at=16.2, pointer=self.point,
+        )
+        self.runtime.begin_behaviour(16.2)
+        self.assertEqual(self.coordinator.intent.body, "profile")
+        self.assertFalse(self.coordinator._policy._access)
+
+    def test_menu_pauses_motion_without_resetting_attention_or_latching_access(self):
+        self.attend()
+        self.menu = True
+        self.observer.current = replace(self.observer.current, sampled_at=16.1)
+        self.runtime.begin_behaviour(16.1)
+        self.assertTrue(self.runtime.control_active())
+        self.assertTrue(self.coordinator.watching)
+        self.assertEqual(self.coordinator.intent.attention, 100)
+        self.assertFalse(self.coordinator._policy._access)
+        self.assertFalse(self.runtime.motion_allowed())
+        self.menu = False
+        self.observer.current = replace(self.observer.current, sampled_at=16.2)
+        self.runtime.begin_behaviour(16.2)
+        self.assertTrue(self.coordinator.watching)
+        self.assertEqual(self.coordinator.intent.body, "front")
+
+    def test_flyover_does_not_cancel_a_still_valid_catching_attempt(self):
+        self.attend()
+        self.observer.current = replace(
+            self.observer.current, sampled_at=16.1, distance=.6, reachable=True,
+        )
+        self.runtime.begin_behaviour(16.1)
+        first = self.coordinator.intent
+        self.assertTrue(first.moving)
+        self.point = (200, 180)
+        self.observer.current = replace(
+            self.observer.current, sampled_at=16.2, pointer=self.point,
+        )
+        self.runtime.begin_behaviour(16.2)
+        self.runtime.admit_behaviour(16.2)
+        self.assertEqual(self.coordinator.intent.token, first.token)
+        self.assertTrue(self.coordinator.intent.moving)
+        self.assertEqual(self.coordinator.intent.target, self.point)
+        self.walk.apply_cursor_intent.assert_called_once_with(
+            self.coordinator.intent, 16.2,
+        )
+        self.walk.clear_cursor_request.assert_not_called()
+
+    def test_control_use_cannot_turn_an_old_warning_into_new_fear(self):
+        self.attend()
+        self.runtime._ports = replace(
+            self.runtime._ports, on_warning=lambda event, now: CursorWarningReceipt(
+                event.warning_id, now, True,
+            ),
+        )
+        self.observer.current = replace(
+            self.observer.current, sampled_at=16.1, distance=.5, closing_speed=2,
+        )
+        self.runtime.begin_behaviour(16.1)
+        self.assertEqual(self.coordinator._policy._warned_at, 16.1)
+        before = self.pet.capture_checkpoint()
+        self.menu = True
+        for at, closing in ((16.2, -2), (16.3, 2)):
+            self.observer.current = replace(
+                self.observer.current, sampled_at=at, closing_speed=closing,
+            )
+            self.runtime.begin_behaviour(at)
+        self.assertTrue(self.coordinator.watching)
+        self.assertEqual(self.coordinator.intent.attention, 100)
+        self.assertIsNone(self.coordinator._policy._warned_at)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
+        self.menu = False
+        self.observer.current = replace(self.observer.current, sampled_at=16.4)
+        self.runtime.begin_behaviour(16.4)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
 
     def test_lingering_fear_does_not_override_contact_or_restart_escape(self):
         self.pet.experience_cursor(CursorExperience("earlier", "fear", 3))

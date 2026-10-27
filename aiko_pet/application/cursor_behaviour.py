@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..pet.cursor_experiences import active_cursor_feeling, cursor_impression
 from ..pet.interaction_events import (
     CursorExperience,
     CursorWarning,
@@ -13,7 +14,6 @@ from ..pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
     CursorBehaviourPolicy,
     CursorIntent,
-    parameter,
 )
 from ..pet.movement.contracts import MotionCompletion
 from ..pet.state import PetState
@@ -88,14 +88,23 @@ class CursorBehaviourCoordinator:
             self.reset()
             return
         self._disabled = False
-        if context.direct_contact or context.menu_engaged:
+        if context.direct_contact:
             self.claim_access(now)
             return
         if context.foreground_active or context.world_protected:
             self._policy.suspend(now)
             self.intent = self._policy.current
             return
+        if context.menu_engaged:
+            self._policy.pause_for_menu(
+                self._observer.current, now,
+                feeling=active_cursor_feeling(self._state.moodlets),
+            )
+            self.intent = self._policy.current
+            return
         state = self._state
+        feeling = active_cursor_feeling(state.moodlets)
+        impression = cursor_impression(state.moodlets)
         self.intent = self._policy.evaluate(
             self._observer.current,
             CursorBehaviourContext(
@@ -104,6 +113,8 @@ class CursorBehaviourCoordinator:
                 state.mood,
                 state.affection,
                 state.fun,
+                feeling,
+                impression.level if impression is not None and feeling else 0,
             ),
             now,
         )
@@ -113,7 +124,9 @@ class CursorBehaviourCoordinator:
         event = self.intent.experience
         if event is not None and event.evidence_id not in self._delivered:
             self._state.experience_cursor(event)
-            self.feedback = event
+            if (feeling != event.feeling or impression is None
+                    or event.level > impression.level):
+                self.feedback = event
             self._delivered = [*self._delivered[-5:], event.evidence_id]
 
     def admit_motion(
@@ -127,13 +140,6 @@ class CursorBehaviourCoordinator:
             or not self.intent.moving
             or now > self.intent.until
             or not 0 <= now - self._observer.current.sampled_at <= 0.5
-        ):
-            return None
-        p = self._observer.current
-        if self.intent.reaction == "approach" and (
-            not p.reachable
-            or p.side != self.intent.side
-            or p.distance <= parameter("stop_distance")
         ):
             return None
         return self.intent

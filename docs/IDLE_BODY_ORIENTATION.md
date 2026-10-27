@@ -1,5 +1,17 @@
 # Körperausrichtung beim Umgucken
 
+> **Ergänzung 27.10.2026 – Blick zuerst:** Normales Beobachten behält die
+> Seitenwartezeiten und vollständigen Drehphasen. Bei aktiver Cursor-Neugier
+> oder -Angst bleibt Aiko ohne Ortsbewegung frontal. Ein blockierter Kopfsektor
+> führt noch im selben Renderaufruf zur passenden frontalen Blickpose. Für
+> Cursorbewegung folgen eine vorhandene passende Dreiviertel-Kopfpose und nach
+> 70 ms passende Profil-Schrittframes. Ein Gegenblick wartet hier nicht mehr
+> auf alle Zwischenposen. Beim Rückzug bleibt der Kopf zum Zeiger gerichtet.
+> Vorhandene Schrittframes werden im Bewegungstempo wiedergegeben, bei Rückzug
+> rückwärts. Hover öffnet weiterhin ohne Abbruch der Verfolgung. Der
+> [aktuelle Aufmerksamkeitsvertrag](CURSOR_ATTENTION_STAGES_PLAN.md) beschreibt
+> Spielzeit, Eskalation, endliche Auffrischung und erhaltene Bewegungsbudgets.
+
 > **Aktuell umgesetzte Abstufung:** Der
 > [Aufmerksamkeits-/Vorwarnplan](CURSOR_ATTENTION_STAGES_PLAN.md) ersetzt als Ziel
 > die folgende Ruhe-/Verweildauerregel: Körperzuwendung soll Aufmerksamkeit ab
@@ -17,7 +29,9 @@ sind frontal frei verfügbar. `BodyOrientation` führt ausschließlich explizite
 Front-/Dreiviertel-/Profilabsichten aus; die frühere Ableitung aus einem
 Kopfsektor mit 1,2 Sekunden Verweilen ist entfernt.
 
-## Verhalten
+## Verhalten des ursprünglichen Idle-/World-Umbaus
+
+Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
 
 - Die Cursorpolicy wählt eine begrenzte Aufmerksamkeit mit stabilem Ziel.
   Ruhiges Interesse kann nach drei Sekunden eine Dreivierteldrehung erlauben.

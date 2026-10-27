@@ -271,6 +271,11 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             or not 0 < cursor["side_required_seconds"] <= cursor["side_window_seconds"]
             or not 0 < cursor["warning_candidate_seconds"]
             < cursor["warning_window_seconds"] < cursor["warning_repeat_seconds"]
+            or not 0 < cursor["curiosity_level_two_seconds"]
+            < cursor["curiosity_level_three_seconds"]
+            or not 0 < cursor["play_grace_seconds"] < cursor["play_attempt_seconds"]
+            or not 0 < cursor["play_pause_seconds"] < cursor["play_attempt_seconds"]
+            or not 0 < cursor["curiosity_refresh_seconds"]
             or not 250 <= cursor["warning_duration_ms"] <= 8000
             or any(cursor[k] <= 0 for k in (
                 "normal_gain", "fast_gain", "very_fast_gain", "slow_loss_per_second",

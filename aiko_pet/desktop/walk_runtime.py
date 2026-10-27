@@ -156,17 +156,9 @@ class WalkDriver:
         old = self.movement.request("cursor")
         if old is not None and old.token == intent.token:
             if intent.reaction == "approach" and intent.target is not None:
-                width = FRAME_WIDTH * self.settings.scale
-                target = intent.target[0] - width / 2 - intent.side * width * (
-                    BALANCE.number("cursor_behaviour", "stop_distance")
+                self.movement.retarget(
+                    "cursor", intent.token, self._cursor_target(intent),
                 )
-                track = self.ports.track()
-                target = max(track.left, min(target, track.right - width))
-                x = self.settings.x or 0
-                if (target - x) * intent.side <= 0:
-                    self.clear_cursor_request(now)
-                else:
-                    self.movement.retarget("cursor", intent.token, target)
             return
         if old is not None:
             self.clear_cursor_request(now)
@@ -180,7 +172,7 @@ class WalkDriver:
         width = FRAME_WIDTH * self.settings.scale
         x = self.settings.x or 0
         track = self.ports.track()
-        target = max(
+        target: float = max(
             track.left,
             min(
                 round(x + intent.side * width * amount),
@@ -188,19 +180,10 @@ class WalkDriver:
             ),
         )
         if intent.reaction == "approach" and intent.target is not None:
-            desired = intent.target[0] - width / 2 - intent.side * width * (
-                BALANCE.number("cursor_behaviour", "stop_distance")
-            )
-            target = round(min(target, desired) if intent.side > 0
-                           else max(target, desired))
-        if (target - x) * intent.side <= 0:
+            target = self._cursor_target(intent)
+        if (target - x) * intent.side <= 0 and intent.reaction != "approach":
             self.ports.cursor_finished(
-                MotionCompletion(
-                    "cursor",
-                    intent.token,
-                    now,
-                    "blocked",
-                )
+                MotionCompletion("cursor", intent.token, now, "blocked")
             )
             return
         self.submit_cursor_intent(
@@ -208,7 +191,7 @@ class WalkDriver:
                 "cursor",
                 intent.token,
                 target,
-                "run" if intent.reaction == "flee" else "step",
+                "run" if intent.reaction == "flee" or intent.running else "step",
                 intent.until,
                 movement_seconds=BALANCE.number("cursor_behaviour", "flight_seconds")
                 if intent.reaction == "flee"
@@ -221,6 +204,26 @@ class WalkDriver:
                 else 0,
             )
         )
+
+    def _cursor_target(self, intent: CursorIntent) -> float:
+        """Project the pointer onto the track, keeping a horizontal stopping gap."""
+        assert intent.target is not None
+        width = FRAME_WIDTH * self.settings.scale
+        x = self.settings.x or 0
+        desired = intent.target[0] - width / 2 - intent.side * width * (
+            BALANCE.number("cursor_behaviour", "stop_distance")
+        )
+        target = (max(x, desired) if intent.side > 0 else min(x, desired)
+                  if intent.side < 0 else x)
+        track = self.ports.track()
+        return max(track.left, min(target, max(track.left, track.right - width)))
+
+    @property
+    def speed_pixels_per_second(self) -> float:
+        speed = (16 / 0.62 if self.movement.kind == "step" else
+                 BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                 / self.walk_cycle_seconds)
+        return speed * self.settings.scale
 
     def submit_cursor_intent(self, request: MotionRequest) -> None:
         self.movement.replace_request("cursor", request)
@@ -255,15 +258,7 @@ class WalkDriver:
             WalkConditions(
                 now=now,
                 elapsed_seconds=elapsed,
-                speed_pixels_per_second=(
-                    (
-                        16 / 0.62
-                        if self.movement.kind == "step"
-                        else BALANCE.integer("walk", "stride_pixels_at_scale_one")
-                        / self.walk_cycle_seconds
-                    )
-                    * self.settings.scale
-                ),
+                speed_pixels_per_second=self.speed_pixels_per_second,
                 stride_pixels=BALANCE.integer("walk", "stride_pixels_at_scale_one")
                 * self.settings.scale,
                 x=self.settings.x or 0,

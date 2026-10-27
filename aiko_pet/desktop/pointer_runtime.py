@@ -62,7 +62,7 @@ class PointerRuntime:
         ))
 
     def claim_access(self, point: tuple[int, int] | None = None) -> None:
-        """An admitted native entry/click takes control immediately between ticks."""
+        """Explicit clicks take control immediately; hover never claims access."""
         self._access_claimed = True
         now = time.monotonic()
         if self._behaviour is not None:
@@ -76,15 +76,16 @@ class PointerRuntime:
             return True
         x, y, _width = self._ports.sample()
         inside = self.access_contains(x, y) or self._ports.pointer_inside(x, y)
-        return inside and (self._access_claimed or self.allow_hover())
+        watching = self._behaviour is not None and self._behaviour.watching
+        return inside and (
+            self._access_claimed or not watching and self.allow_hover()
+        )
 
     def begin_behaviour(self, now: float) -> None:
         x, y, _width = self._ports.sample()
         inside = self.access_contains(x, y) or self._ports.pointer_inside(x, y)
         if not inside and not self._ports.menu_engaged():
             self._access_claimed = False
-        elif self.control_active() and not self._access_claimed:
-            self.claim_access((x, y))
         if self._behaviour is not None:
             self._behaviour.begin_frame(now, self.activity())
             event = self._behaviour.feedback
@@ -116,7 +117,7 @@ class PointerRuntime:
             menu_engaged=self._ports.menu_engaged(),
             foreground_active=self._ports.foreground_active(),
             world_protected=self._ports.world_protected(),
-            direct_contact=self.control_active(),
+            direct_contact=self._access_claimed and self.control_active(),
         )
 
     def allow_hover(self) -> bool:

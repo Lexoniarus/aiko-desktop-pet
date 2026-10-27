@@ -43,6 +43,7 @@ class ContactPorts:
     care_holding: Callable[[], bool] = lambda: False
     advance_time: Callable[[], None] = lambda: None
     wake_from_clicks: Callable[[], None] = lambda: None
+    cursor_watching: Callable[[], bool] = lambda: False
 
 
 class ContactCoordinator:
@@ -78,10 +79,11 @@ class ContactCoordinator:
     def record_contact(self, now: float) -> None:
         self._mind.last_contact = now
 
-    def enter(self) -> None:
-        """Preserve toolbar and walk-interruption order on pointer entry."""
+    def enter(self, *, preserve_cursor: bool = True) -> None:
+        """Open controls immediately; an observed flyover is not a new action."""
         now = time.monotonic()
-        if self._ports.care_holding() or not self.can_interact("pet"):
+        if (preserve_cursor and self._ports.cursor_watching()
+                or self._ports.care_holding() or not self.can_interact("pet")):
             self._ports.mark_hover(now)
             self._ports.show_toolbar()
             return
@@ -131,7 +133,7 @@ class ContactCoordinator:
         ):
             return
         self._ports.advance_time()
-        self.enter()
+        self.enter(preserve_cursor=False)
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
         reaction = self._mind.click(

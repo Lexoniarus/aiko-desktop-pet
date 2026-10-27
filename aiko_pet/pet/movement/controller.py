@@ -81,6 +81,10 @@ class WalkController:
         updated = replace(old, target_x=target_x)
         self._requests[source] = updated
         if self._active == old:
+            remaining = target_x - (old.target_x - self.remaining_distance)
+            if remaining * self.remaining_distance <= 0:
+                self._residual = 0
+            self.remaining_distance = remaining
             self._active = updated
         return True
 

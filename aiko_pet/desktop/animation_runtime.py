@@ -13,7 +13,10 @@ from typing import Callable, Protocol
 
 from ..pet.animation.ambient import AmbientDirector
 from ..pet.animation.animation import SpriteSelection
-from ..pet.animation.body_orientation import BodyOrientation
+from ..pet.animation.body_orientation import (
+    REACTIVE_TURN_STEP_SECONDS,
+    BodyOrientation,
+)
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.priority import RenderDecision, choose_animation_priority
 from ..pet.movement.contracts import WalkStep
@@ -95,6 +98,11 @@ class DesktopAnimationRuntime:
             and not self._body_orientation.motion_ready
         ):
             return None
+        if elapsed > 0 and self._gaze_first:
+            axis = self._visual.desired_cursor_gaze()
+            if (axis is None or axis not in (*range(2, 7), *range(10, 15))
+                    or not self._body_orientation.supports_gaze(axis)):
+                return None
         source = self._walk.movement.source
         step = self._walk.step(
             now,
@@ -115,6 +123,11 @@ class DesktopAnimationRuntime:
 
     def _motion_clip(self, step: WalkStep, now: float) -> str:
         side = "right" if step.direction > 0 else "left"
+        if self._gaze_first and self._has_locomotion:
+            axis = self._visual.desired_cursor_gaze()
+            side = "right" if self._body_orientation.side > 0 else "left"
+            if axis is not None:
+                return f"body-step-{side}-{axis:02}"
         if step.kind != "step" or not self._has_locomotion:
             return f"running-{side}"
         observation = self._visual.observe(
@@ -129,6 +142,21 @@ class DesktopAnimationRuntime:
         )
         key = f"{axis:02}" if compatible and self._visual.cursor_watching else "profil"
         return f"body-step-{side}-{key}"
+
+    @property
+    def _gaze_first(self) -> bool:
+        return (self._visual.cursor_watching
+                and self._visual.cursor_intent.feeling is not None)
+
+    def _front_gaze(self, direction: int | None, *, refresh: bool) -> RenderDecision:
+        self._body_orientation.reset()
+        return RenderDecision(
+            SpriteSelection("idle", 0) if direction is None
+            else SpriteSelection("look", direction),
+            clear_action=True,
+            refresh_after_ms=(round(REACTIVE_TURN_STEP_SECONDS * 1000)
+                              if refresh else None),
+        )
 
     def walk_active(self) -> bool:
         return self._walk.movement.remaining_distance != 0
@@ -187,22 +215,50 @@ class DesktopAnimationRuntime:
                 clear_action=priority.clear_action,
             )
 
+        gaze = self._visual.desired_cursor_gaze() if self._gaze_first else None
+        if self._gaze_first and not self._body_orientation.supports_gaze(gaze):
+            self.ambient.suspend(now)
+            return self._front_gaze(gaze, refresh=True)
+
         walking = self.advance_walk(now, 0, game_mode=game_mode)
         if walking is not None:
+            direction = 1 if self._walk.movement.remaining_distance > 0 else -1
             if self._has_locomotion and (
                 self._walk.movement.kind == "step"
                 or self._walk.movement.source == "cursor"
             ):
                 direction = 1 if self._walk.movement.remaining_distance > 0 else -1
-                pose = self._body_orientation.orient_for_motion(now, direction)
+                if self._gaze_first:
+                    if gaze is None or gaze not in (*range(2, 7), *range(10, 15)):
+                        self.ambient.suspend(now)
+                        return self._front_gaze(gaze, refresh=False)
+                    pose = self._body_orientation.orient_for_gaze_motion(now, gaze)
+                    walking = self._motion_clip(
+                        WalkStep(0, direction, self._walk.movement.kind), now,
+                    )
+                else:
+                    pose = self._body_orientation.orient_for_motion(now, direction)
                 if not self._body_orientation.motion_ready:
                     self.ambient.suspend(now)
-                    return RenderDecision(pose, clear_action=True)
+                    return RenderDecision(
+                        pose, clear_action=True,
+                        refresh_after_ms=self._body_orientation.next_delay_ms(now)
+                        if self._visual.cursor_intent.feeling is not None else None,
+                    )
             else:
                 self._body_orientation.reset()
             self.ambient.suspend(now)
-            return RenderDecision(SpriteSelection(walking), clear_action=True)
+            clip = self._assets.body_clips.get(walking)
+            rate = (self._walk.speed_pixels_per_second * clip.duration_seconds
+                    / (clip.stride * self._walk.settings.scale)
+                    if self._gaze_first and clip is not None and clip.stride else 1.0)
+            return RenderDecision(
+                SpriteSelection(walking), clear_action=True, playback_rate=rate,
+                reverse=self._gaze_first and direction != self._body_orientation.side,
+            )
 
+        if self._gaze_first:
+            self._body_orientation.reset()
         observation = self._visual.observe(
             now,
             pointer,
@@ -237,7 +293,13 @@ class DesktopAnimationRuntime:
             intent = self._visual.cursor_intent
             selection = self._body_orientation.select(
                 now, selection,
-                intent="profile" if self.ambient.outing_side else intent.body,
+                intent=("front" if self._gaze_first else
+                        "profile" if self.ambient.outing_side else intent.body),
                 side=self.ambient.outing_side or intent.side,
+                responsive=intent.feeling is not None and self._visual.cursor_watching,
             )
-        return RenderDecision(selection, clear_action=True)
+        return RenderDecision(
+            selection, clear_action=True,
+            refresh_after_ms=self._body_orientation.next_delay_ms(now)
+            if self._visual.cursor_intent.feeling is not None else None,
+        )

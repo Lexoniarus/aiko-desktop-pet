@@ -37,6 +37,7 @@ def choose_object_attention(
     tracking_feedback: bool = False,
     orientation_side: LookSide | None = None,
     mobile_cursor: bool = False,
+    focused_cursor: bool = False,
     cursor: tuple[float, float] | None,
     target: tuple[float, float] | None,
 ) -> ObjectAttention:
@@ -65,6 +66,8 @@ def choose_object_attention(
     if following_cursor and cursor is not None:
         subject = target or cursor
         return ObjectAttention("object", subject, focused_place=True)
+    if focused_cursor and cursor is not None and target is None:
+        return ObjectAttention("cursor", cursor)
     if (
         walking
         and mobile_cursor

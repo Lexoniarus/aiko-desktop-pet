@@ -11,6 +11,7 @@ from ..pet.catalog_validation import (
     number_value,
     object_fields,
 )
+from ..pet.cursor_experiences import normalize_cursor_impressions
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import FoodRepetitionMemory, InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
@@ -167,7 +168,9 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                  if "poor_care" in row else None)
     evidence = (None if "care_evidence" not in row else
                 decode_care_evidence(row["care_evidence"], baseline, elapsed))
-    return MoodletState(baseline, next_id, tuple(episodes), memory, poor_care, evidence)
+    return normalize_cursor_impressions(
+        MoodletState(baseline, next_id, tuple(episodes), memory, poor_care, evidence),
+    )
 
 
 def valid_moodlets(raw: Any, elapsed: float) -> bool:
@@ -179,6 +182,7 @@ def valid_moodlets(raw: Any, elapsed: float) -> bool:
 
 
 def encode_moodlets(state: MoodletState) -> dict[str, Any]:
+    state = normalize_cursor_impressions(state)
     encoded = dict(
         version=1, baseline=state.baseline, next_instance_id=state.next_instance_id,
         interactions=dict(

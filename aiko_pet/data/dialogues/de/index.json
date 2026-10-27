@@ -1585,6 +1585,10 @@
     "horoscope-comment-value-small-things-friend",
     "horoscope-comment-value-small-things-close",
     "horoscope-book-closing",
-    "cursor-warning-near-fast-01"
+    "cursor-warning-near-fast-01",
+    "cursor-play-start-01",
+    "cursor-play-more-01",
+    "cursor-play-peak-01",
+    "cursor-fear-response-01"
   ]
 }
