@@ -58,6 +58,54 @@ class MovementRequestTests(unittest.TestCase):
         self.walk.replace_request("cursor", MotionRequest("cursor", 2, 116, "step", 9))
         self.assertIsNone(self.walk.plan_step(self.conditions))
 
+    def test_retarget_preserves_total_distance_time_step_boundaries_and_residual(self):
+        self.walk.replace_request("cursor", MotionRequest(
+            "cursor", 10, 200, "step", 30, movement_seconds=1,
+            step_pixels=8, distance_pixels=16,
+        ))
+        x = 100.0
+        total = 0.0
+        for n in range(8):
+            if n:
+                before = self.walk._progress["cursor"]
+                residual = self.walk._residual
+                self.assertTrue(self.walk.retarget("cursor", 10, 220 + n))
+                self.assertEqual(self.walk._progress["cursor"], before)
+                self.assertEqual(self.walk._residual, residual)
+            step = self.walk.plan_step(replace(self.conditions, x=x, now=10 + n / 10))
+            if step is None:
+                break
+            # Native integer displacement leaves a fractional residual.
+            moved = int(step.pixels)
+            x += moved
+            total += moved
+            if self.walk.record_displacement(moved, now=10 + n / 10):
+                break
+        self.assertEqual(total, 16)
+        self.assertEqual(self.walk.completion_reason, "budget")
+        self.assertFalse(self.walk.retarget("cursor", 10, 500))
+        self.walk.release_request("cursor")
+        self.walk.replace_request("cursor", MotionRequest("cursor", 10, 500))
+        self.assertIsNone(self.walk.request("cursor"))
+
+    def test_same_token_replacement_cannot_extend_deadline_or_budget(self):
+        original = MotionRequest("cursor", 3, 150, "step", 20, .5, 8, 16)
+        self.walk.replace_request("cursor", original)
+        self.walk.plan_step(self.conditions)
+        self.walk.record_displacement(4, now=10.1)
+        self.walk.replace_request("cursor", replace(
+            original, target_x=180, movement_seconds=10,
+            distance_pixels=1000, until=100,
+        ))
+        selected = self.walk.request("cursor")
+        self.assertEqual(selected, replace(original, target_x=180))
+        self.assertEqual(self.walk._progress["cursor"][2], 4)
+        self.walk.set_goal(50)
+        self.walk.plan_step(replace(self.conditions, attention_active=False))
+        self.assertTrue(self.walk.retarget("cursor", 3, 200))
+        self.assertEqual(self.walk.goal_x, 50)
+        self.assertEqual(self.walk._progress["cursor"][2], 4)
+
     def test_attention_does_not_bypass_menu_or_sleep(self):
         self.walk.replace_request("cursor", MotionRequest("cursor", 1, 116, "step", 20))
         self.assertIsNone(

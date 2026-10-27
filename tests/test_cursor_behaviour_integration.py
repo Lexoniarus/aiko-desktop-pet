@@ -248,7 +248,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                 scene.offer_moving_target()
                 self.assertEqual(scene.settings.x, 500 + steps * 16 * scale)
                 self.assertEqual(len(scene.completions), 1)
-                self.assertEqual(scene.completions[0].reason, "reached")
+                self.assertEqual(scene.completions[0].reason, "budget")
                 self.assertEqual([e.feeling for e in scene.feedback], ["curiosity"])
                 # Disengagement restores front without deleting the remaining moodlet.
                 for _ in range(20):

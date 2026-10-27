@@ -172,6 +172,16 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             self.assertIsNone(result.experience)
         self.assertGreaterEqual(self.policy.recover_until, 28)
 
+    def test_active_catch_retargets_and_stops_when_target_crosses_behind(self):
+        first = self.interest_until(6, reachable=True)
+        self.assertTrue(first.moving)
+        retargeted = self.decide(16.1, speed=2, reachable=True, pointer=(500, 194))
+        self.assertEqual(retargeted.token, first.token)
+        self.assertEqual(retargeted.target, (500, 194))
+        stopped = self.decide(16.2, speed=2, reachable=True, side=-1)
+        self.assertFalse(stopped.moving)
+        self.assertGreaterEqual(self.policy.recover_until, 28.2)
+
     def test_invalid_far_and_high_pointer_cannot_approach(self):
         self.assertFalse(self.decide(sampled_at=0).gaze)
         self.assertFalse(self.interest_until(6, reachable=False).moving)

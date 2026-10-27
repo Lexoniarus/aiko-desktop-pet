@@ -155,6 +155,18 @@ class WalkDriver:
             return
         old = self.movement.request("cursor")
         if old is not None and old.token == intent.token:
+            if intent.reaction == "approach" and intent.target is not None:
+                width = FRAME_WIDTH * self.settings.scale
+                target = intent.target[0] - width / 2 - intent.side * width * (
+                    BALANCE.number("cursor_behaviour", "stop_distance")
+                )
+                track = self.ports.track()
+                target = max(track.left, min(target, track.right - width))
+                x = self.settings.x or 0
+                if (target - x) * intent.side <= 0:
+                    self.clear_cursor_request(now)
+                else:
+                    self.movement.retarget("cursor", intent.token, target)
             return
         if old is not None:
             self.clear_cursor_request(now)
@@ -175,7 +187,13 @@ class WalkDriver:
                 max(track.left, track.right - width),
             ),
         )
-        if target == x:
+        if intent.reaction == "approach" and intent.target is not None:
+            desired = intent.target[0] - width / 2 - intent.side * width * (
+                BALANCE.number("cursor_behaviour", "stop_distance")
+            )
+            target = round(min(target, desired) if intent.side > 0
+                           else max(target, desired))
+        if (target - x) * intent.side <= 0:
             self.ports.cursor_finished(
                 MotionCompletion(
                     "cursor",
@@ -195,6 +213,8 @@ class WalkDriver:
                 movement_seconds=BALANCE.number("cursor_behaviour", "flight_seconds")
                 if intent.reaction == "flee"
                 else float("inf"),
+                distance_pixels=width * amount
+                if intent.reaction != "flee" else float("inf"),
                 step_pixels=width
                 * BALANCE.number("cursor_behaviour", "step_width_fraction")
                 if intent.reaction != "flee"

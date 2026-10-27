@@ -19,6 +19,7 @@ class MotionRequest:
     until: float = float("inf")
     movement_seconds: float = float("inf")
     step_pixels: float = 0.0
+    distance_pixels: float = float("inf")
 
 
 @dataclass(frozen=True, slots=True)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from ..balance import BALANCE
 from .contracts import (
     MotionKind,
@@ -53,7 +55,14 @@ class WalkController:
     def replace_request(self, source: MotionSource, request: MotionRequest) -> None:
         if source != request.source:
             raise ValueError("Movement request source mismatch")
+        if source == "cursor" and request.token <= self._completed.get(source, -1):
+            return
         if self._requests.get(source) == request:
+            return
+        previous = self._requests.get(source)
+        if (source == "cursor" and previous is not None
+                and previous.token == request.token):
+            self.retarget(source, request.token, request.target_x)
             return
         if (
             self._requests.get(source) is None
@@ -61,12 +70,27 @@ class WalkController:
         ):
             self._progress[source] = (request.token, 0.0, 0.0)
         self._requests[source] = request
-        self._completed.pop(source, None)
+        if source != "cursor":
+            self._completed.pop(source, None)
+
+    def retarget(self, source: MotionSource, token: int, target_x: float) -> bool:
+        """Only the selected point may change; consumed budgets remain authoritative."""
+        old = self._requests.get(source)
+        if old is None or old.token != token or self._completed.get(source) == token:
+            return False
+        updated = replace(old, target_x=target_x)
+        self._requests[source] = updated
+        if self._active == old:
+            self._active = updated
+        return True
 
     def release_request(self, source: MotionSource) -> None:
-        self._requests.pop(source, None)
+        old = self._requests.pop(source, None)
         self._progress.pop(source, None)
-        self._completed.pop(source, None)
+        if source == "cursor" and old is not None:
+            self._completed[source] = max(old.token, self._completed.get(source, -1))
+        elif source != "cursor":
+            self._completed.pop(source, None)
         if self._active is not None and self._active.source == source:
             self._active = None
             self.remaining_distance = 0
@@ -176,7 +200,11 @@ class WalkController:
             _, spent, travelled = self._progress[request.source]
             remaining_time = max(0, request.movement_seconds - spent)
             elapsed = min(elapsed, remaining_time)
-            budget_distance = remaining_time * conditions.speed_pixels_per_second
+            budget_distance = min(
+                remaining_time * conditions.speed_pixels_per_second,
+                max(0, request.distance_pixels - travelled),
+            )
+            boundary = min(boundary, budget_distance)
             if request.step_pixels > 0:
                 within = travelled % request.step_pixels
                 boundary = min(boundary, request.step_pixels - within)
@@ -206,8 +234,9 @@ class WalkController:
             travelled += abs(moved_pixels)
             self._progress[self._active.source] = (token, spent, travelled)
             exhausted = (
-                self._active.movement_seconds - spent
-            ) * self._planned_speed < 1
+                (self._active.movement_seconds - spent) * self._planned_speed < 1
+                or self._active.distance_pixels - travelled < 1
+            )
         if blocked or exhausted or abs(self.remaining_distance) < 1:
             self.completion_reason = (
                 "blocked" if blocked else "budget" if exhausted else "reached"

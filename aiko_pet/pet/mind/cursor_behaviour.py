@@ -59,6 +59,7 @@ class CursorBehaviourPolicy:
     def __init__(self, *, session_id: str | None = None) -> None:
         self._session = session_id or uuid4().hex
         self._serial = 0
+        self._motion_serial = 0
         self._warning_serial = 0
         self._last_warning_at = -100.0
         self.reset()
@@ -285,6 +286,7 @@ class CursorBehaviourPolicy:
             warned = self._warned_at
             if (warned is not None and warned < p.sampled_at
                     <= warned + parameter("warning_window_seconds")):
+                self._motion_serial += 1
                 self._retreated = True
                 level = min(3, max(1, round(
                     3 - 2 * self._trust + (context.energy < 25)
@@ -302,7 +304,7 @@ class CursorBehaviourPolicy:
                 self.current = CursorIntent(
                     reaction,
                     -p.side or 1,
-                    self._serial * 4 + 2,
+                    self._motion_serial,
                     now + 15,
                     "near-fast-approach",
                     p.pointer,
@@ -322,7 +324,13 @@ class CursorBehaviourPolicy:
                 self.attention = max(self.attention, parameter("noticed_at"))
                 self.stage = max(1, self.stage)
         if self.current.moving:
-            if now < self.current.until:
+            if (now < self.current.until and not (
+                    self.current.reaction == "approach"
+                    and (not p.reachable or p.side != self.current.side))):
+                self.current = replace(
+                    self.current, target=p.pointer,
+                    attention=self.attention, stage=self.stage,
+                )
                 return self.current
             self.note_motion_finished(self.current.token, now)
         if self.current.reaction == "startle" and now < self._look_until:
@@ -362,12 +370,13 @@ class CursorBehaviourPolicy:
             and parameter("stop_distance") < p.distance < parameter("approach_distance")
             and self._body_side == p.side and p.side != 0
         ):
+            self._motion_serial += 1
             reaction, body, until = "approach", "profile", now + 15
         target = p.pointer if self.stage else None
         self.current = CursorIntent(
             reaction,
             p.side if body == "profile" else self._body_side,
-            self._serial * 4 + 1 if reaction == "approach" else self._serial * 4,
+            self._motion_serial if reaction == "approach" else self._serial * 4,
             until,
             "observed-interest" if engaged else "attention",
             target,
