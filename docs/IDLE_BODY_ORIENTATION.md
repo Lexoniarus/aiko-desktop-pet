@@ -1,5 +1,13 @@
 # Körperausrichtung beim Umgucken
 
+> **Status 27.10.2026:** Die folgenden Regeln beschreiben den bisherigen
+> Einbau. Der Nutzer hat sein Zusammenspiel mit dem Mausinteresse noch nicht
+> abgenommen. Der [neue Konzept- und Umbauplan](ADAPTIVE_CURSOR_REWORK_PLAN.md)
+> ersetzt als Ziel insbesondere die automatische Körperdrehung nach 1,2 s
+> Seitenblick durch eine bewusste gemeinsame Absicht. Frontal bleiben alle
+> 16 Kopfblickrichtungen nutzbar. In dieser Dokumentationsrunde wurde der
+> beschriebene Laufzeitcode nicht geändert.
+
 Die vorhandene Halbprofil-/Dreiviertel-Standbasis und die kleinen Drehschritte
 sind in die passive Darstellung eingebunden. Die frontale Haltung ist die
 Ausgangs- und Ruhehaltung. Der Körper folgt erst nach länger anhaltendem Blick

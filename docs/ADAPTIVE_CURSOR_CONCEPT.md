@@ -1,5 +1,13 @@
 # Adaptive cursor perception and interaction concept
 
+> **Current product decision, 2026-10-27:** the
+> [revised behavior and module plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) supersedes
+> conflicting historical assumptions below. Frontal full-direction gaze is the
+> normal posture; body turns express selected intent. Curiosity/fear receive
+> short Moodlets, and reliable pointer access to controls takes precedence over
+> the earlier idea of intentionally making Aiko harder to click. This is a
+> documented target, not an implemented or visually accepted revision.
+
 > **Preserved product concept; implementation covers a subset.** Recorded on
 > 2026-10-19 from the owner's German conceptual draft v1.0 dated 2026-10-15.
 > Current-owner notes were checked against `fd8414a` (main after PR #10).

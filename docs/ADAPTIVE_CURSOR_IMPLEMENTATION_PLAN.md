@@ -1,5 +1,13 @@
 # Adaptive Mauswahrnehmung: Module, OOP-Verträge und Commitfolge
 
+> **Nachfolgender Umbauplan, 27.10.2026:**
+> [Idle, Mausinteresse, Moodlets und Menü-Erreichbarkeit](ADAPTIVE_CURSOR_REWORK_PLAN.md).
+> Dieses Dokument bewahrt den ersten technischen Implementierungsverlauf.
+> Dessen spätere vollständige CI ist auf `2ecca2f` grün, aber die praktische
+> Verhaltenswirkung ist vom Nutzer ausdrücklich nicht abgenommen: Aiko führt
+> Kopf und Körper noch zu hektisch nach. Die neue Konzeptfassung ersetzt die
+> widersprechenden Zielregeln; der neue Umbau ist noch nicht implementiert.
+
 Stand: 27.10.2026. Umsetzung auf `feature/social-optimization`, ausgehend von
 `93f1c22`. Die Freigabe zur Umsetzung erfolgte nach diesem Plan; lokaler
 Abschluss und verbleibende Abnahmen sind unten getrennt festgehalten.

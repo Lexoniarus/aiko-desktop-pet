@@ -432,6 +432,12 @@ The application never imports Tkinter or native system monitor implementations.
 
 ## Pet animation, UI views and Tk widgets
 
+The [cursor/Idle rework plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) records the
+2026-10-27 product revision, existing owners to change, short cursor Moodlets,
+reliable menu access and the future targeted-test/commit sequence. It is a plan;
+the descriptions below still document the current implementation. Passing CI
+on `2ecca2f` does not constitute user acceptance of its visual behavior.
+
 Pet-owned pure behaviour lives in `pet/animation/` and `pet/movement/`:
 `gaze.py` computes sixteen directional sectors, `ambient.py` schedules
 subtle idle motion, `animation.py` owns frame-selection and timing policies,
