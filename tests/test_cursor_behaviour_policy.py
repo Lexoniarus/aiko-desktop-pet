@@ -80,6 +80,40 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.decide(22, speed=4)
         self.assertEqual(self.policy.attention, first.attention)
 
+    def test_held_side_turns_and_opposite_returns_through_front(self):
+        self.decide(0, speed=2)
+        for n in range(1, 41):
+            result = self.decide(n / 10, speed=2)
+        self.assertEqual((result.body, result.side), ("three_quarter", 1))
+        for n in range(41, 46):
+            result = self.decide(n / 10, speed=2, side=-1)
+        self.assertEqual(result.side, 1)
+        for n in range(46, 56):
+            result = self.decide(n / 10, speed=2, side=-1)
+        self.assertEqual(result.body, "front")
+        for n in range(56, 74):
+            result = self.decide(n / 10, speed=2, side=-1)
+        self.assertEqual((result.body, result.side), ("three_quarter", -1))
+
+    def test_high_attention_with_alternating_sides_keeps_body_front(self):
+        self.decide(0, speed=4)
+        for n in range(1, 101):
+            result = self.decide(n / 10, speed=4, side=1 if n % 2 else -1)
+            self.assertEqual(result.body, "front")
+        self.assertEqual((result.attention, result.stage), (100, 3))
+
+    def test_body_releases_after_far_hold_and_activity_clears_side_history(self):
+        self.decide(0, speed=2)
+        for n in range(1, 41):
+            self.decide(n / 10, speed=2)
+        self.assertEqual(self.decide(4.1, speed=2, distance=4).side, 1)
+        for n in range(42, 52):
+            result = self.decide(n / 10, speed=2, distance=4)
+        self.assertEqual(result.body, "front")
+        self.policy.suspend(5.2)
+        self.assertEqual(self.policy.attention, 0)
+        self.assertEqual(self.decide(5.3, speed=4).body, "front")
+
     def test_speed_distance_direction_are_combined(self):
         for fields in (
             dict(distance=5, speed=8, closing_speed=8),

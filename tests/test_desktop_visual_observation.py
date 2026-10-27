@@ -30,6 +30,25 @@ class Monitor:
 
 
 class DesktopVisualObservationTests(unittest.TestCase):
+    def test_world_attention_reads_actual_body_until_front_is_reached(self):
+        from aiko_pet.pet.animation.animation import SpriteSelection
+        from aiko_pet.pet.animation.body_orientation import BodyOrientation
+
+        body = BodyOrientation()
+        self.observer.constrain_with(body.constrain_direction)
+        for n in range(4):
+            body.select(n * .14, SpriteSelection("look", 4),
+                        intent="three_quarter", side=1)
+        self.selected = CursorIntent("observe", target=(-400, 200))
+        attention = self.observer.attention((-400, 200), pointer_recent=True)
+        self.assertGreater(attention.direction[0], 0)
+        self.assertFalse(attention.sees_environment(-400, -200))
+        for n in range(4):
+            body.select(.56 + n * .14, SpriteSelection("look", 12))
+        attention = self.observer.attention((-400, 200), pointer_recent=True)
+        self.assertLess(attention.direction[0], 0)
+        self.assertTrue(attention.sees_environment(-400, -200))
+
     def test_step_uses_compatible_cursor_axis_for_perception_and_head(self):
         point = (250, 150)
         observer = DesktopVisualObservation(

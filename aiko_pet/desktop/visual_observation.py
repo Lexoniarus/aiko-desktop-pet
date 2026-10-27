@@ -69,7 +69,16 @@ class DesktopVisualObservation:
         self._eyes = eyes
         self._attention = attention
         self._sector: int | None = None
+        self._constrain_direction: Callable[
+            [tuple[float, float]], tuple[float, float]
+        ] = lambda direction: direction
         self.object_target: tuple[float, float] | None = None
+
+    def constrain_with(
+        self, read_pose: Callable[[tuple[float, float]], tuple[float, float]],
+    ) -> None:
+        """Use the animation owner's actual pose; keep no duplicate pose state."""
+        self._constrain_direction = read_pose
 
     @property
     def sector(self) -> int | None:
@@ -142,6 +151,10 @@ class DesktopVisualObservation:
             if self.object_target is not None
             else None,
         )
+        if attention.direction is not None:
+            attention = replace(
+                attention, direction=self._constrain_direction(attention.direction),
+            )
         return replace(attention, origin=(eyes_x, -eyes_y), width=width)
 
     def _gaze(self, attention: ObjectAttention) -> int | None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass, replace
 from typing import Literal
 from uuid import uuid4
@@ -75,6 +76,10 @@ class CursorBehaviourPolicy:
         self.attention = 0.0
         self.stage = 0
         self._release = [0.0, 0.0, 0.0]
+        self._side_samples: deque[tuple[float, float, int]] = deque()
+        self._body_side = 0
+        self._opposite_seconds = 0.0
+        self._far_seconds = 0.0
         self._selected_at = -100.0
         self._look_until = 0.0
         self._curiosity_level = 0
@@ -125,6 +130,9 @@ class CursorBehaviourPolicy:
         self._release = [0.0, 0.0, 0.0]
         self._last_sample = -100.0
         self._calm_since = None
+        self._side_samples.clear()
+        self._body_side = 0
+        self._opposite_seconds = self._far_seconds = 0.0
         self._pending_warning = None
         self._warned_at = None
         self._threat_active = False
@@ -140,6 +148,38 @@ class CursorBehaviourPolicy:
         if receipt.presented:
             self._warned_at = receipt.presented_at
             self._last_warning_at = receipt.presented_at
+
+    def _orient_body(self, p: CursorPerception, dt: float) -> None:
+        if dt == 0 or self.stage == 0 or self._access:
+            self._side_samples.clear()
+            self._body_side = 0
+            self._opposite_seconds = self._far_seconds = 0.0
+            return
+        far = p.distance > parameter("interest_distance")
+        self._far_seconds = self._far_seconds + dt if far else 0.0
+        if self.stage < 2 or self._far_seconds >= parameter("release_hold_seconds"):
+            self._body_side = 0
+        cutoff = p.sampled_at - parameter("side_window_seconds")
+        self._side_samples.append((
+            p.sampled_at - dt, p.sampled_at, p.side if not far else 0,
+        ))
+        while self._side_samples and self._side_samples[0][1] <= cutoff:
+            self._side_samples.popleft()
+        if self._body_side:
+            self._opposite_seconds = (
+                self._opposite_seconds + dt if p.side == -self._body_side else 0.0
+            )
+            if self._opposite_seconds + 1e-9 >= parameter("opposite_hold_seconds"):
+                self._body_side = 0
+                self._side_samples.clear()
+                self._opposite_seconds = 0.0
+            return
+        if self.attention < parameter("focused_at") or far or p.side == 0:
+            return
+        held = sum(end - max(start, cutoff) for start, end, side in self._side_samples
+                   if side == p.side)
+        if held + 1e-9 >= parameter("side_required_seconds"):
+            self._body_side = p.side
 
     def _integrate(self, p: CursorPerception, dt: float) -> None:
         band = p.motion_band
@@ -199,6 +239,7 @@ class CursorBehaviourPolicy:
         continuous = 0 < dt <= 1.5
         self._last_sample = p.sampled_at
         self._integrate(p, dt if continuous else 0.0)
+        self._orient_body(p, dt if continuous else 0.0)
         if p.distance > parameter("interest_distance"):
             self._threat_active = False
             self._pending_warning = None
@@ -213,6 +254,8 @@ class CursorBehaviourPolicy:
             self.current = CursorIntent(
                 "observe" if self.stage else "ignore", target=p.pointer,
                 attention=self.attention, stage=self.stage, reason="distant",
+                side=self._body_side,
+                body="three_quarter" if self._body_side else "front",
             )
             return self.current
         self._outside_since = None
@@ -309,13 +352,7 @@ class CursorBehaviourPolicy:
                 self._curiosity_level = level
                 experience = self._evidence("curiosity", level)
         engaged = self._curiosity_level > 0 and calm and not self._retreated
-        body: BodyIntent = (
-            "three_quarter"
-            if engaged
-            and duration >= parameter("body_interest_seconds")
-            and not self._access
-            else "front"
-        )
+        body: BodyIntent = "three_quarter" if self._body_side else "front"
         reaction = "observe" if self.stage else "ignore"
         until = now + 2 if engaged else self._look_until
         if (
@@ -332,7 +369,7 @@ class CursorBehaviourPolicy:
         target = p.pointer if self.stage else None
         self.current = CursorIntent(
             reaction,
-            p.side if body != "front" else 0,
+            p.side if body == "profile" else self._body_side,
             self._serial * 4 + 1 if reaction == "approach" else self._serial * 4,
             until,
             "calm-interest" if engaged else "brief-look",

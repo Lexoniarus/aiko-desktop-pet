@@ -6,6 +6,8 @@ position or replace the distinct profile walking/running clips.
 
 from __future__ import annotations
 
+import math
+
 from ..mind.cursor_behaviour import BodyIntent
 from .animation import SpriteSelection
 
@@ -38,6 +40,19 @@ class BodyOrientation:
     @property
     def motion_ready(self) -> bool:
         return self._motion and self.phase == 8
+
+    def constrain_direction(
+        self, direction: tuple[float, float],
+    ) -> tuple[float, float]:
+        """Read actual pose compatibility, also used by subjective World sight."""
+        if self.phase == 0:
+            return direction
+        if self.phase == 4 and direction[0] * self.side >= 0:
+            return direction
+        if self.phase == 4:
+            angle = self._look_direction * math.pi / 8
+            return (math.sin(angle), math.cos(angle))
+        return (float(self.side), 0.0)
 
     def orient_for_motion(self, now: float, direction: int) -> SpriteSelection:
         """Turn through existing whole poses before translating the body."""

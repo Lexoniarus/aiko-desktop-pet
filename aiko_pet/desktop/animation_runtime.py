@@ -73,6 +73,7 @@ class DesktopAnimationRuntime:
         self._ports = ports
         self.ambient = AmbientDirector(started_at=time.monotonic())
         self._body_orientation = BodyOrientation()
+        visual.constrain_with(self._body_orientation.constrain_direction)
         self._pointer: tuple[int, int] = (0, 0)
         self._last_pointer_move = -100.0
 

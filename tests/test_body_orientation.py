@@ -71,6 +71,17 @@ class BodyOrientationTests(unittest.TestCase):
         self.assertEqual(phases[:7], list(range(7, 0, -1)))
         self.assertEqual(self.body.phase, 0)
 
+    def test_shared_sight_cannot_face_opposite_the_actual_body(self):
+        self.orient_right()
+        self.pose(.56, 2, 1, "three_quarter")
+        direction = self.body.constrain_direction((-2, 0))
+        self.assertGreater(direction[0], 0)
+        self.assertEqual(self.body.constrain_direction((2, 1)), (2, 1))
+        for n in range(4):
+            self.pose(.7 + n * .14, 12)
+        self.assertEqual(self.body.phase, 0)
+        self.assertEqual(self.body.constrain_direction((-2, 0)), (-2, 0))
+
     def test_active_visuals_reset_and_impossible_body_look_is_rejected(self):
         self.orient_right()
         choice = SpriteSelection("sleep")
