@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import tempfile
 import time
 import tkinter as tk
@@ -289,16 +290,27 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         cancel.assert_called_once()
         self.assertFalse(visual._game_mode)
         self.assertLessEqual(self.pet._action_playback.until, time.monotonic())
-        # Closing a game resets interest. Fresh nearby input restores it.
+        # Closing a game resets interest. New sustained movement builds it again.
         now = time.monotonic()
         eyes = visual.cursor_eye_position
-        pointer = (round(eyes[0] + 180), round(eyes[1]))
-        for sample_time in (now, now + 0.14):
+        self.assertFalse(self.pet._cursor_behaviour.watching)
+        pointer = (round(eyes[0]), round(eyes[1]))
+        for n in range(14):
+            sample_time = now + n * .14
+            width = 192 * self.pet.settings.scale
+            pointer = (
+                round(eyes[0] + width * (2.4 + .7 * math.cos(n * .63))),
+                round(eyes[1] - width * (.8 + .7 * math.sin(n * .63))),
+            )
             self.pet._cursor_observation.observe(
                 pointer, sample_time, game_mode=False, eyes=eyes,
                 screen_width=1920, scale=self.pet.settings.scale,
             )
-            self.pet._pointer_runtime.begin_behaviour(sample_time)
+            with (
+                patch.object(self.pet.root, "winfo_pointerx", return_value=pointer[0]),
+                patch.object(self.pet.root, "winfo_pointery", return_value=pointer[1]),
+            ):
+                self.pet._pointer_runtime.begin_behaviour(sample_time)
         self.assertIsNotNone(
             self.pet._visual.gaze_direction(pointer, game_mode=visual.game_mode)
         )

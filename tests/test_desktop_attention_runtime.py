@@ -87,9 +87,11 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.attention.mind.select_reaction.return_value = reaction
         self.presenter.show_cursor_warning.return_value = True
         before = self.attention.state.capture_checkpoint()
+        self.runtime._ports = replace(self.runtime._ports, clock=lambda: 10.1)
         receipt = self.runtime.cursor_warning(CursorWarning("fresh", 10), 10)
         self.assertTrue(receipt.presented)
         self.assertEqual(receipt.warning_id, "fresh")
+        self.assertEqual(receipt.presented_at, 10.1)
         self.attention.mind.select_reaction.assert_called_once_with(
             "cursor_warning_near_fast", self.attention.state, self.context, 10,
         )

@@ -1,11 +1,11 @@
 # Körperausrichtung beim Umgucken
 
-> **Nächste Abstufung, noch nicht umgesetzt:** Der
+> **Aktuell umgesetzte Abstufung:** Der
 > [Aufmerksamkeits-/Vorwarnplan](CURSOR_ATTENTION_STAGES_PLAN.md) ersetzt als Ziel
 > die folgende Ruhe-/Verweildauerregel: Körperzuwendung soll Aufmerksamkeit ab
 > 45 und zwei Sekunden überwiegende Seitenbeobachtung brauchen. Der Rückweg
 > erfolgt unter 30 nach einer Sekunde; alle frontalen Kopfrichtungen bleiben frei.
-> Die folgenden Abschnitte beschreiben weiterhin den aktuellen Code.
+> Die folgenden Abschnitte bewahren den vorausgehenden Implementierungsverlauf.
 
 > **Stand 27.10.2026:** Der
 > [Cursor-/Idle-Umbau](ADAPTIVE_CURSOR_REWORK_PLAN.md) ist im Code umgesetzt.

@@ -41,11 +41,13 @@ class DesktopVisualObservationTests(unittest.TestCase):
                         intent="three_quarter", side=1)
         self.selected = CursorIntent("observe", target=(-400, 200))
         attention = self.observer.attention((-400, 200), pointer_recent=True)
+        assert attention.direction is not None
         self.assertGreater(attention.direction[0], 0)
         self.assertFalse(attention.sees_environment(-400, -200))
         for n in range(4):
             body.select(.56 + n * .14, SpriteSelection("look", 12))
         attention = self.observer.attention((-400, 200), pointer_recent=True)
+        assert attention.direction is not None
         self.assertLess(attention.direction[0], 0)
         self.assertTrue(attention.sees_environment(-400, -200))
 

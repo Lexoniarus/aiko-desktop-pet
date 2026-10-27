@@ -69,10 +69,14 @@ class MovementRequestTests(unittest.TestCase):
             if n:
                 before = self.walk._progress["cursor"]
                 residual = self.walk._residual
+                if n == 1:
+                    self.assertGreater(residual, 0)
                 self.assertTrue(self.walk.retarget("cursor", 10, 220 + n))
                 self.assertEqual(self.walk._progress["cursor"], before)
                 self.assertEqual(self.walk._residual, residual)
-            step = self.walk.plan_step(replace(self.conditions, x=x, now=10 + n / 10))
+            step = self.walk.plan_step(replace(
+                self.conditions, x=x, now=10 + n / 10, elapsed_seconds=.117,
+            ))
             if step is None:
                 break
             # Native integer displacement leaves a fractional residual.

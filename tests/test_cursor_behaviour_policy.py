@@ -39,7 +39,8 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         return result
 
     def test_attention_precedes_selected_gaze_and_tracks_one_encounter(self):
-        self.assertFalse(self.decide().gaze)
+        intent = self.decide()
+        self.assertFalse(intent.gaze)
         for n in range(1, 12):
             intent = self.decide(10 + n / 10, speed=2)
         self.assertFalse(intent.gaze)
@@ -53,14 +54,14 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
     def test_attention_is_time_based_at_different_tick_rates(self):
         for hz in (10, 30, 60):
             self.policy.reset()
-            self.decide(0, speed=2)
+            result = self.decide(0, speed=2)
             for n in range(1, 3 * hz + 1):
                 result = self.decide(n / hz, speed=2)
             self.assertAlmostEqual(result.attention, 54)
             self.assertEqual(result.stage, 2)
 
     def test_far_cap_and_smooth_release(self):
-        self.decide(0, speed=4, distance=5)
+        result = self.decide(0, speed=4, distance=5)
         for n in range(1, 101):
             result = self.decide(n / 10, speed=4, distance=5)
         self.assertEqual(result.attention, 25)
@@ -74,6 +75,8 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         first = self.decide(11, speed=2)
         duplicate = self.decide(11, speed=4)
         self.assertEqual(duplicate.attention, first.attention)
+        self.decide(11, sampled_at=10.8, speed=4)
+        self.assertEqual(self.decide(11, speed=4).attention, first.attention)
         self.decide(20, speed=4)
         self.assertEqual(self.policy.attention, first.attention)
         self.assertFalse(self.decide(21, sampled_at=10).gaze)
@@ -81,7 +84,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.assertEqual(self.policy.attention, first.attention)
 
     def test_held_side_turns_and_opposite_returns_through_front(self):
-        self.decide(0, speed=2)
+        result = self.decide(0, speed=2)
         for n in range(1, 41):
             result = self.decide(n / 10, speed=2)
         self.assertEqual((result.body, result.side), ("three_quarter", 1))
@@ -96,14 +99,14 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.assertEqual((result.body, result.side), ("three_quarter", -1))
 
     def test_high_attention_with_alternating_sides_keeps_body_front(self):
-        self.decide(0, speed=4)
+        result = self.decide(0, speed=4)
         for n in range(1, 101):
             result = self.decide(n / 10, speed=4, side=1 if n % 2 else -1)
             self.assertEqual(result.body, "front")
         self.assertEqual((result.attention, result.stage), (100, 3))
 
     def test_body_releases_after_far_hold_and_activity_clears_side_history(self):
-        self.decide(0, speed=2)
+        result = self.decide(0, speed=2)
         for n in range(1, 41):
             self.decide(n / 10, speed=2)
         self.assertEqual(self.decide(4.1, speed=2, distance=4).side, 1)

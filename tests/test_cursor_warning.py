@@ -4,7 +4,7 @@ import unittest
 from dataclasses import replace
 
 from aiko_pet.pet.interaction_events import CursorWarningReceipt
-from aiko_pet.pet.mind.catalog import Line
+from aiko_pet.pet.mind.catalog import DialogueBook, Line
 from aiko_pet.pet.mind.cursor_attention import CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
@@ -24,8 +24,8 @@ class CursorWarningTests(unittest.TestCase):
         )
         return self.policy.evaluate(replace(perception, **fields), self.context, now)
 
-    def receipt(self, first, at=10, shown=True):
-        self.assertIsNotNone(first.warning)
+    def receipt(self, first, at: float = 10, shown=True):
+        assert first.warning is not None
         self.policy.note_warning(CursorWarningReceipt(
             first.warning.warning_id, at, shown,
         ))
@@ -39,15 +39,27 @@ class CursorWarningTests(unittest.TestCase):
         self.assertIsNone(self.sample(10.1).experience)
         self.sample(10.2, closing_speed=-2)
         fear = self.sample(10.3)
+        assert fear.experience is not None
         self.assertEqual(fear.experience.feeling, "fear")
         self.assertTrue(fear.moving)
+        self.assertEqual(fear.attention, self.policy.attention)
+        self.assertEqual(fear.stage, self.policy.stage)
         self.assertIsNone(self.sample(10.4).experience)
+
+    def test_speed_threshold_flutter_during_same_approach_is_not_new_pressure(self):
+        first = self.sample(10)
+        self.receipt(first)
+        self.sample(10.1, speed=1.4, closing_speed=1)
+        self.assertIsNone(self.sample(10.2).experience)
+        self.sample(10.3, closing_speed=-1)
+        self.assertIsNotNone(self.sample(10.4).experience)
 
     def test_dropped_late_wrong_and_reset_receipts_cannot_arm_fear(self):
         for variant in ("dropped", "late", "wrong", "reset"):
             with self.subTest(variant=variant):
                 self.policy.reset()
                 first = self.sample(10)
+                assert first.warning is not None
                 warning_id = first.warning.warning_id
                 if variant == "reset":
                     self.policy.claim_access(10.1)
@@ -84,6 +96,22 @@ class CursorWarningTests(unittest.TestCase):
                        dict(closing_speed=.5), dict(stationary_seconds=.4)):
             self.policy.reset()
             self.assertIsNone(self.sample(10, **fields).warning)
+
+    def test_canonical_warning_is_available_at_every_friendship_stage(self):
+        from aiko_pet.pet.mind import PetMind
+        from aiko_pet.pet.routine import context_at
+        from aiko_pet.pet.state import PetState
+
+        mind = PetMind(DialogueBook.from_file())
+        for friendship in (0, 30, 60, 100):
+            reaction = mind.select_reaction(
+                "cursor_warning_near_fast", PetState(friendship=friendship),
+                context_at(1800000000), 10,
+            )
+            assert reaction is not None
+            self.assertEqual(len(reaction.beats), 1)
+            self.assertEqual(reaction.beats[0].kind, "text")
+            self.assertIn("zu nah", reaction.text)
 
     def test_warning_catalogue_rejects_multiple_cues(self):
         raw = dict(

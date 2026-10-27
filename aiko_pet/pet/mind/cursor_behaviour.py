@@ -93,7 +93,9 @@ class CursorBehaviourPolicy:
         """Yield attention to a real activity without rearming an escape."""
         self.note_motion_finished(self.current.token, now)
         self._clear_attention(clear_score=False)
-        self.current = CursorIntent(reason="activity")
+        self.current = CursorIntent(
+            reason="activity", attention=self.attention, stage=self.stage,
+        )
 
     def claim_access(self, now: float) -> None:
         """Contact owns input; a lingering impression cannot restart this attempt."""
@@ -231,16 +233,22 @@ class CursorBehaviourPolicy:
             self._pending_warning = None
             self._warned_at = None
             self._threat_active = False
-            self.current = CursorIntent(reason="invalid-sample")
+            self.current = CursorIntent(
+                reason="invalid-sample", attention=self.attention, stage=self.stage,
+            )
             return self.current
         dt = p.sampled_at - self._last_sample
-        if dt == 0:
+        if dt <= 0:
             return self.current
         continuous = 0 < dt <= 1.5
         self._last_sample = p.sampled_at
+        if not continuous:
+            self._outside_since = None
+            self.note_motion_finished(self.current.token, now)
         self._integrate(p, dt if continuous else 0.0)
         self._orient_body(p, dt if continuous else 0.0)
         if p.distance > parameter("interest_distance"):
+            self.note_motion_finished(self.current.token, now)
             self._threat_active = False
             self._pending_warning = None
             self._warned_at = None
@@ -280,7 +288,11 @@ class CursorBehaviourPolicy:
             and p.motion_band not in ("still", "slow")
         )
         new_approach = threat and not self._threat_active
-        self._threat_active = threat
+        if threat:
+            self._threat_active = True
+        elif (p.closing_speed <= 0 or p.distance > parameter("warning_distance")
+              or p.motion_band == "still"):
+            self._threat_active = False
         warning = None
         if (new_approach and not self._retreated and not self._access
                 and now >= self.recover_until):
@@ -312,6 +324,7 @@ class CursorBehaviourPolicy:
                     "front" if reaction == "startle" else "profile",
                     level,
                     self._evidence("fear", level),
+                    attention=self.attention, stage=self.stage,
                 )
                 return self.current
             if now - self._last_warning_at >= parameter("warning_repeat_seconds"):

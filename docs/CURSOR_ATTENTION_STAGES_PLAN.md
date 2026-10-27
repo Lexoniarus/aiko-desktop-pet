@@ -1,9 +1,10 @@
 # Mausaufmerksamkeit: Stufen, Vorwarnung und Gefühlsreaktionen
 
-Stand: 27.10.2026. Geprüfte Codebasis: `9a233d7` auf
-`feature/social-optimization`. **Konzept und zukünftiger Umbauplan; noch nicht
-implementiert.** In dieser Runde ändern sich ausschließlich Dokumente. Kein
-Implementierungs-, Commit-, Push- oder Merge-Auftrag durch dieses Dokument.
+Stand: 27.10.2026. Ausgangsbasis: `9a233d7` auf
+`feature/social-optimization`. **Der dokumentierte Umbau ist in den neun
+geplanten Schritten umgesetzt.** Die praktische Verhaltensabnahme durch den
+Nutzer steht aus. Assets und parallele UI-Arbeiten bleiben unverändert; kein
+Merge ist freigegeben. Die folgende Spezifikation ist der aktuelle Vertrag.
 
 Dieser Plan ersetzt widersprechende Zielregeln des
 [bisherigen Cursor-/Idle-Umbaus](ADAPTIVE_CURSOR_REWORK_PLAN.md): Aufmerksamkeit
@@ -393,7 +394,7 @@ jedem kleinen Commit. Erst nach der fachlichen Umsetzung:
    Prüfung und sichtbare Verhaltensabnahme bleiben getrennt.
 
 Der bisherige Head `9a233d7` hatte eine grüne vollständige CI; das ist ein
-historischer Befund und bestätigt diesen zukünftigen Umbau nicht. Der bereits
+historischer Befund und bestätigt den neuen Umbau nicht. Der bereits
 belegte lokale Debian-Mastermind-Sonderfehler ist im
 [bisherigen Prüfprotokoll](ADAPTIVE_CURSOR_REWORK_PLAN.md) dokumentiert und auf
 `2ecca2f` identisch. Nicht pauschal Tests überspringen oder UI-Erwartungen lockern.
@@ -403,6 +404,70 @@ Bei langsamen Windows-Bind-Mounts kann eine lokale isolierte Kopie statt einer
 Änderung des Repositorys verwendet werden.
 
 Assets, private Originale, parallele UI-Arbeiten und vorhandene Exporte bleiben
-außerhalb des Umbaus. Es wird nichts neu generiert. Für diese Dokumentationsrunde
-werden ausschließlich Links, Pfade, Werte-/Zustandskonsistenz und der Git-Diff
-geprüft; keine Implementierung, Testsuite, CI, Commits, Pushes oder Merges.
+außerhalb des Umbaus. Es wird nichts neu generiert. Die Umsetzung wurde
+ausdrücklich in neun Commits
+mit gezielten Tests je Schritt und abschließender Gesamtsuite sowie vollständiger
+CI beauftragt. Der endgültige CI-Lauf und sein exakter Head werden im
+Umsetzungsbericht verknüpft; ein früherer grüner Lauf ersetzt diese Prüfung nicht.
+
+## Umgesetzte Modulgrenzen
+
+- `CursorAttention` filtert ausschließlich Messwerte. `CursorBehaviourPolicy`
+  integriert neue gültige Samplezeit in 0–100 und hält Stufen/Seitenbeobachtung.
+  Gleiche oder rückwärts eintreffende Samples verändern die Aufmerksamkeit nicht.
+- Geschützte Aktivität gibt Blick-/Bewegungs-/Warnabsichten und Seitenverlauf
+  frei, pausiert aber die bisherige Aufmerksamkeit. Beim Freigeben beginnt eine
+  neue Samplebasis; die unterbrochene Zeit wird nicht integriert. Menüzugang
+  setzt dagegen Aufmerksamkeit und Absichten zurück. Cursor aus, Schlaf,
+  Spiel und Größenwechsel invalidieren zusätzlich beim Übergang die Sensorhistorie.
+  Anschließend bleibt die native Herkunftsprüfung für Kontakt aktiv, auch bei
+  ausgeschaltetem Cursorverhalten.
+- Der Warnkatalog erlaubt genau einen Textcue. `SpeechPresenter` quittiert einen
+  tatsächlich freien, nicht blockierenden Sprechplatz; `PointerRuntime` gibt
+  diese Quittung zurück, ohne die Policy erneut auszuwerten. Die bestätigte
+  Anzeigezeit eröffnet das Drei-Sekunden-Fenster. Erst ein neuer Nah-Anflug nach
+  einer zwischenzeitlichen Entschärfung qualifiziert Angst. Doppelte Samples
+  oder fortdauernd derselbe Anflug reichen nicht.
+- Die World-Wahrnehmung liest dieselbe tatsächliche Kopf-/Körperkompatibilität
+  wie die Darstellung. Es gibt keinen zweiten Posebesitzer. Bei Gegenseite
+  erreicht Aiko erst wieder frontal die volle Kopffreiheit.
+- `WalkController` besitzt weiterhin alle tatsächlichen Bewegungsfortschritte.
+  Fangziele werden innerhalb desselben aktiven Tokens aktualisiert; Gesamtweg,
+  Schrittgrenzen, Restbudget, Restpixel und Ablaufzeit bleiben erhalten.
+  Freigegebene oder abgeschlossene Tokens werden nicht wiederbelebt.
+- Moodlet-Familien, absolute Stärken, Speicherung, Care-/Wunsch- und
+  Freundschaftsgrenzen bleiben erhalten. Ein stiller Zeiger oder ein bereits
+  aktives Moodlet startet keine neue Neugier und keinen neuen Fangversuch.
+
+Die bisherigen harten Verhaltenserwartungen wurden mit realen Zeitreihen
+migriert: sichere kreisende Mausbewegung baut Interesse auf, danach kann ein
+bewegtes bodennahes Ziel einen begrenzten Fangversuch auslösen. World-Fixtures
+bauen das Bemerken durch echte Sensor-/Policy-Samples auf; native Klicks
+ersetzen weiterhin keine ausgewählte Aufmerksamkeit oder Objektkenntnis.
+
+
+## Prüfstand des Abschlusscommits
+
+Die acht vorausgehenden fachlichen Commits enthalten jeweils ihre gezielten
+Prüfungen. Die Abschlussschritte prüfen zusätzlich die durchgehende Übergabe
+Sensor -> Policy -> Coordinator -> Anzeigequittung -> Gefühl -> Bewegung und
+aktualisieren das vorhandene Windows-CI-Testmuster um `test_cursor_warning.py`.
+
+- Ruff über `aiko_pet tests main.py tools`: grün.
+- Mypy strict ohne inkrementellen Cache: 361 Quelldateien grün.
+- Pyright einschließlich Tests: keine Fehler oder Warnungen.
+- Vollständiger lokaler Windows-/Tk-Lauf: 2336 Tests grün. Der danach ergänzte
+  Übergangsfall „Cursor aus, Herkunftsprüfung bleibt aktiv“ ist zusammen mit den
+  zugehörigen Kontakt-/Preferences-/Coordinator-Tests grün (27 gezielte Tests).
+  Ein weiterer kompletter Lauf prüft diesen abschließenden Stand ebenfalls.
+- Bestehende Kontakttexte sind inhaltlich unverändert; ergänzt ist ausschließlich
+  die neue Warnzeile. Keine Bild-/Exportdateien geändert. Die parallelen
+  UI-Dokumente wurden gegen ihren eigenständigen Commit unverändert geprüft.
+- Die vollständige bestehende CI auf PR #11 wird am finalen Head geprüft:
+  Linux Python 3.11 und 3.13 einschließlich aller statischen Gates/Gesamtsuite,
+  außerdem Windows setup and desktop boundaries. Exakter Head, Lauf und
+  Abschlussstatus gehören in den Umsetzungsbericht, nicht zu einem älteren Lauf.
+
+Ein zwischenzeitlicher fremder UI-Konzeptcommit bleibt unverändert zwischen den
+gezielten Commits erhalten. Die neun Cursor-Commits verändern ihn nicht.
+Kein Merge und keine praktische Verhaltensabnahme durch technische Tests.

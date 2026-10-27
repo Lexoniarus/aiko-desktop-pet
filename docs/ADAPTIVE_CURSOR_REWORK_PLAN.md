@@ -1,11 +1,11 @@
 # Idle, Mausinteresse und erreichbare Bedienung: Konzept und Umbauplan
 
 > **Nachfolgende Konzeptkorrektur, 27.10.2026:** Der
-> [Stufen- und Vorwarnplan](CURSOR_ATTENTION_STAGES_PLAN.md) hat für die nächste
-> Umsetzung Vorrang. Er trennt aufbauende/abklingende Aufmerksamkeit von Gefühlen,
+> [Stufen- und Vorwarnplan](CURSOR_ATTENTION_STAGES_PLAN.md) ist umgesetzt und hat
+> Vorrang. Er trennt aufbauende/abklingende Aufmerksamkeit von Gefühlen,
 > führt eine sichtbare Vorwarnung vor neuer Angst ein und plant Fangversuche.
-> Er ist noch nicht implementiert. Dieser bisherige elfteilige Umbau bleibt
-> als Iststand/Prüfverlauf erhalten; Ruhe-als-Neugier und Sofortangst sind keine
+> Dieser bisherige elfteilige Umbau bleibt
+> als historischer Prüfverlauf erhalten; Ruhe-als-Neugier und Sofortangst sind keine
 > gültigen Zielregeln der neuen Fassung.
 
 Stand: 27.10.2026. Ausgangsbasis: `2ecca2f` auf

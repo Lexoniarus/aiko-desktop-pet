@@ -53,6 +53,7 @@ class CursorBehaviourCoordinator:
         self._state, self._settings = state, settings
         self._observer, self._policy = observer, policy
         self.intent = CursorIntent()
+        self._disabled = False
         self._delivered: list[str] = []
         self.feedback: CursorExperience | CursorWarning | None = None
 
@@ -81,9 +82,12 @@ class CursorBehaviourCoordinator:
             or self._state.sleeping
             or context.game_open
         ):
-            self._observer.reset()
+            if not self._disabled:
+                self._observer.reset()
+            self._disabled = True
             self.reset()
             return
+        self._disabled = False
         if context.direct_contact or context.menu_engaged:
             self.claim_access(now)
             return

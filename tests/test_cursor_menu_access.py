@@ -130,7 +130,7 @@ class CursorMenuAccessTests(unittest.TestCase):
             sampled_at=14, distance=.5, speed=4, closing_speed=2,
             side=1, valid=True,
         ), context, 14).warning
-        self.assertIsNotNone(warning)
+        assert warning is not None
         self.pet.experience_cursor(CursorExperience("retained", "curiosity", 2))
         before = self.pet.capture_checkpoint()
         self.runtime.claim_access((200, 180))
@@ -144,6 +144,9 @@ class CursorMenuAccessTests(unittest.TestCase):
         from tools.pet_test_support import set_test_pet_values
 
         for sleeping in (True, False):
+            set_test_pet_values(self.pet, sleeping=False)
+            self.coordinator._settings.follow_cursor = True
+            self.coordinator.begin_frame(9, self.runtime.activity())
             self.observer.attention.observe((300, 100), 10)
             self.observer.attention.observe((400, 100), 10.1)
             set_test_pet_values(self.pet, sleeping=sleeping)
@@ -151,6 +154,20 @@ class CursorMenuAccessTests(unittest.TestCase):
             self.coordinator.begin_frame(10.1, self.runtime.activity())
             self.assertIsNone(self.observer.attention.previous_pointer)
             self.assertFalse(self.observer.current.valid)
+
+    def test_cursor_off_keeps_contact_origin_after_the_transition_reset(self):
+        self.coordinator._settings.follow_cursor = False
+        self.coordinator.begin_frame(10, self.runtime.activity())
+        self.point = (200, 180)
+        self.observer.attention.observe(self.point, 10.1)
+        self.observer.attention.observe(self.point, 10.2)
+        self.walk.last_placement_at = 11
+        self.coordinator.begin_frame(11, self.runtime.activity())
+        self.assertEqual(self.observer.attention.previous_pointer, self.point)
+        self.assertFalse(self.runtime.allow_hover())
+        self.point = (204, 180)
+        self.assertTrue(self.runtime.allow_hover())
+        self.assertFalse(self.coordinator.watching)
 
     def test_mode_reset_invalidates_sample_and_preserves_persisted_impression(self):
         self.pet.experience_cursor(CursorExperience("existing", "fear", 2))

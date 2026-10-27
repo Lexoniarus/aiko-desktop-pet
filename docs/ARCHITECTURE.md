@@ -432,13 +432,16 @@ The application never imports Tkinter or native system monitor implementations.
 
 ## Pet animation, UI views and Tk widgets
 
-The next [staged attention and warning plan](CURSOR_ATTENTION_STAGES_PLAN.md)
-is documentation only. It assigns the transient 0–100 attention value to the
-existing `CursorBehaviourPolicy`, preserves `CursorAttention` as sensor history,
-and plans an acknowledged nonblocking warning before new fear evidence.
-No new production manager/module or second position/emotion owner is planned.
-The following describes the implemented `9a233d7` baseline; the new stages,
-warning protocol and bounded moving-target catching are not implemented yet.
+The implemented [staged attention and warning contract](CURSOR_ATTENTION_STAGES_PLAN.md)
+assigns the transient 0–100 attention value to the existing
+`CursorBehaviourPolicy` and preserves `CursorAttention` as sensor history.
+An actually displayed nonblocking warning must precede new fear evidence;
+its receipt never reevaluates policy or advances PetState. Body-compatible
+attention is shared with World. Bounded catch retargeting preserves movement
+progress in the sole `WalkController`. No new production manager/module or
+second position/emotion owner was introduced.
+The historical `9a233d7` baseline is superseded by the staged contract above;
+existing sensor, contact, feeling and movement boundaries remain canonical.
 
 The [cursor/Idle rework plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) records the
 2026-10-27 product revision, existing owners to change, short cursor Moodlets,

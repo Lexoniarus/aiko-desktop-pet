@@ -6,6 +6,7 @@ event, this desktop adapter coordinates the host snapshot and presentation.
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from typing import Callable
 
@@ -36,6 +37,7 @@ class AttentionRuntimePorts:
     action_until: Callable[[], float]
     refresh_toolbar: Callable[[], None]
     foreground_active: Callable[[], bool] = lambda: False
+    clock: Callable[[], float] = lambda: time.monotonic()
 
 
 class DesktopAttentionRuntime:
@@ -80,7 +82,9 @@ class DesktopAttentionRuntime:
                 displayed = self._presenter.show_cursor_warning(
                     reaction.text, int(parameter("warning_duration_ms")),
                 )
-        return CursorWarningReceipt(event.warning_id, now, displayed)
+        return CursorWarningReceipt(
+            event.warning_id, ports.clock() if displayed else now, displayed,
+        )
 
     def cursor_experience(self, event: CursorExperience) -> None:
         """Brief feeling cue in a free speech slot; drop rather than queue."""

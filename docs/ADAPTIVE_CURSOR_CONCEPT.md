@@ -4,8 +4,9 @@
 > [staged attention and warning plan](CURSOR_ATTENTION_STAGES_PLAN.md).
 > Movement builds transient attention; calm reduces it. Feeling qualification
 > follows situational assessment, and a displayed warning precedes new fear.
-> This next revision is documented and planned, not implemented. Historical
-> implemented status below applies to the preceding revision only.
+> This revision is implemented in the nine planned steps; practical user
+> acceptance is pending. Historical implemented status below applies to the
+> preceding revision only.
 
 > **Current product decision, 2026-10-27:** the
 > [revised behavior and module plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) supersedes
