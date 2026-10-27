@@ -1,12 +1,53 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Tic-Tac-Toe follow-up — 2026-10-27
+
+The owner approved the final clickable revision at
+`../design-previews/ttt-2026-10-27/preview.html` relative to the checkout root,
+including Aiko's revised Chibi voice and existing character reactions. Its README
+and `approval-record.json` retain the explicit approval and reviewed file hashes.
+This supersedes the earlier Tic-Tac-Toe visual reference. The generic and dry
+analyst drafts remain local history, not the approved character direction.
+
+- White title, near-white rose body, stable pale-blue phase/result surface,
+  large square board with nine recessed light cells, existing blue X for the
+  player and rose O for Aiko, and a compact player/Aiko/draw session tally.
+- A free-cell click immediately places X. Quiet hover/focus previews, temporary
+  input lock while Aiko thinks, a brief last-move outline, and a highlighted
+  winning line communicate the round. Occupied marks retain full contrast.
+- The result stays visible. A rose **Nächste Runde** button keeps its reserved
+  place, is disabled during play and enables after the result. The player starts
+  the first round; subsequent starters alternate. No automatic round restart.
+- Aiko is a small, curious, competitive Chibi desktop companion who thinks
+  aloud, gets briefly flustered and enjoys a clever win. She discusses real
+  winning paths and draw possibilities with playful seriousness, without
+  percentage claims, bureaucratic analyst language or comments detached from
+  the board. Her own mistake can prompt a sheepish correction.
+- Board reading distinguishes immediate threats, double threats, a uniquely
+  safe move and outcomes under best replies by both sides. This analysis is
+  for commentary; the preview's existing opponent move policy is unchanged.
+- Speech and existing character reactions remain beside Aiko. No extra taskbar
+  item. Reuse unchanged gaze/Review poses, mild Failed poses and the existing
+  happy jump. Reactions play once, can be interrupted and cancel on close;
+  reduced motion and frozen examples use suitable existing stills. No new art.
+- Review controls, local example scores, static scenarios and narrow-browser
+  stacking are preview affordances. The 1.4-second thinking pause and selected
+  reaction holds illustrate pacing; final native timing, relationship variants
+  and animation/speech priority integration remain later work.
+
+The approved HTML, copied images, provenance and review evidence remain outside
+Git. This approval authorizes documentation only; application code, production
+assets, dialogue catalogue, game rules and saves are unchanged. Player windows
+retain the established stationary/free-drag contract; Aiko's bubble follows her.
+
 ## Approved Rock–Paper–Scissors follow-up — 2026-10-27
 
 The owner approved the separate clickable follow-up at
 `../design-previews/rps-2026-10-27/preview.html` relative to the checkout root.
 Its README and `approval-record.json` retain the explicit approval and file hashes.
 This is the newer visual/interaction authority for Rock–Paper–Scissors; the
-2026-10-20 bundle remains the reference for the other surfaces. No application
+2026-10-20 bundle remains the reference for surfaces without a newer approved
+follow-up. No application
 code, production artwork or dialogue catalogue is changed by this approval.
 
 - Aiko is a spontaneous, slightly cheeky fellow player. Her revealed hand sign

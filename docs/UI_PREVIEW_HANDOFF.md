@@ -25,9 +25,27 @@ For this game the follow-up supersedes the 2026-10-20 layout/countdown concept:
 large own-hand display, immediate selection/start, own hand visible immediately,
 Aiko's sign revealed in her bubble, persistent result and compact session tally.
 See the [canonical approved follow-up](UI_VN_DESIGN.md#approved-rockpaperscissors-follow-up--2026-10-27).
-The owner explicitly retained the no-application-code boundary. The other game
-references below remain unchanged; Tic-Tac-Toe is the next discussion topic,
-without a new follow-up design approved yet.
+The owner explicitly retained the no-application-code boundary. Other game
+references remain unchanged except for separately approved follow-ups below.
+
+### Approved game-specific follow-up: Tic-Tac-Toe
+
+On 2026-10-27 the owner approved the final Tic-Tac-Toe revision at
+`../design-previews/ttt-2026-10-27/preview.html`, relative to the checkout root.
+Its `README.md` and `approval-record.json` retain the decisions, explicit approval
+and file hashes. This is the approved final Chibi-voice/reaction revision;
+the earlier generic and dry analyst drafts are only historical comparisons.
+
+Use the [canonical design](UI_VN_DESIGN.md) for the full approved behavior:
+large shared board, explicit Nächste Runde, alternating starters, actual-board
+qualitative comments in Aiko's warm, playfully competitive Chibi voice and existing
+one-shot character reactions. Her bubble stays with her; no extra taskbar item.
+`asset-provenance.json` records unchanged UI copies; `reaction-provenance.json`
+records the 31 existing character-frame copies. No production asset is replaced.
+Local tests and screenshots are retained in the same preview folder.
+
+No application implementation is authorized. Connect Four (Vier gewinnt) is the
+next discussion topic; no new Connect Four visual follow-up is approved yet.
 
 ### Original shared bundle
 
