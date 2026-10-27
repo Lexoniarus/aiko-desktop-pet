@@ -177,11 +177,16 @@ class MastermindGuiTests(unittest.TestCase):
         self.game.board_scroll.canvas.yview_moveto(1)
         self.pet.root.update()
         self.assertEqual(len(self.game.board.find_withtag("row")), 10)
-        self.pet._hover.set_topmost(False)
         assert self.code.window is not None and self.code.canvas is not None
-        self.assertFalse(self.code.window.tk.getboolean(
-            self.code.window.wm_attributes("-topmost"),
-        ))
+        # Xvfb has no window manager to acknowledge the topmost state change.
+        # Verify the native request and its canonical preference together.
+        with patch.object(
+            self.code.window, "wm_attributes", wraps=self.code.window.wm_attributes,
+        ) as attrs:
+            self.pet.set_topmost(False)
+        attrs.assert_called_once_with("-topmost", False)
+        self.assertFalse(self.pet.settings.always_on_top)
+        self.assertFalse(self.pet._overlay_stack.enabled)
         self.pet.settings.scale = 2
         self.pet._game_visuals.move()
         self.pet.root.update()
