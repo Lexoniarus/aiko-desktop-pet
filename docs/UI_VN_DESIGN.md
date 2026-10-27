@@ -1,5 +1,36 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Rock–Paper–Scissors follow-up — 2026-10-27
+
+The owner approved the separate clickable follow-up at
+`../design-previews/rps-2026-10-27/preview.html` relative to the checkout root.
+Its README and `approval-record.json` retain the explicit approval and file hashes.
+This is the newer visual/interaction authority for Rock–Paper–Scissors; the
+2026-10-20 bundle remains the reference for the other surfaces. No application
+code, production artwork or dialogue catalogue is changed by this approval.
+
+- Aiko is a spontaneous, slightly cheeky fellow player. Her revealed hand sign
+  appears in her speech bubble with a short reaction. No extra taskbar item.
+- White title, near-white rose body, a stable pale-blue phase/result area, a large
+  central display of the player's own hand, three rose choice buttons, and one
+  compact player/Aiko/draw tally. No duplicate Aiko-hand display in the player window.
+- Choosing a sign immediately starts the round; no separate Los or next-round
+  button. The player's chosen sign appears immediately, superseding the older
+  previous-hand-during-countdown concept. Aiko's sign stays hidden until reveal.
+- Lock input during the short countdown, then reveal Aiko's sign with the result.
+  Both signs and the result remain until the player chooses again.
+- Replace the literal rock illustration with a closed fist matching the existing
+  paper/scissors hands. The approved new fist remains in the external preview;
+  production export/registration still require a later implementation step.
+- Review selectors, sample scores, local random rounds, reset and narrow-browser
+  stacking belong to the preview. Sample dialogue is illustrative; relationship
+  variants and final native timing remain to be developed. The preview's 650 ms
+  beats do not prescribe final runtime pacing or change game rules.
+
+The player window remains stationary and freely draggable; only Aiko's bubble
+follows her, consistent with the existing window contract. This design approval
+does not authorize native UI integration, character artwork or gameplay changes.
+
 **Selector focus and Quiz frontend (2026-10-26):** ScrollRegion ignores FocusIn
 events from ancestor frames and its own canvas before consuming a pressed
 button's pointer-focus guard. Focusing the full content frame previously scrolled

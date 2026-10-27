@@ -13,6 +13,24 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved game-specific follow-up: Rock–Paper–Scissors
+
+On 2026-10-27 the owner approved the revised Rock–Paper–Scissors concept at
+`../design-previews/rps-2026-10-27/preview.html`, relative to the checkout root.
+Its `README.md` records the decisions; `approval-record.json` freezes the reviewed
+files by hash. Its `asset-provenance.json` retains the built-in Imagegen prompt
+and references for the new closed-fist sign. No production asset is replaced.
+
+For this game the follow-up supersedes the 2026-10-20 layout/countdown concept:
+large own-hand display, immediate selection/start, own hand visible immediately,
+Aiko's sign revealed in her bubble, persistent result and compact session tally.
+See the [canonical approved follow-up](UI_VN_DESIGN.md#approved-rockpaperscissors-follow-up--2026-10-27).
+The owner explicitly retained the no-application-code boundary. The other game
+references below remain unchanged; Tic-Tac-Toe is the next discussion topic,
+without a new follow-up design approved yet.
+
+### Original shared bundle
+
 The self-contained reference bundle is outside the Git checkout:
 
 `../design-previews/vn-ui-2026-10-20/` relative to the checkout root.
