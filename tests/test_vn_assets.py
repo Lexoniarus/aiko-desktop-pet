@@ -20,7 +20,11 @@ class VnAssetTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         self.assertEqual(len(catalog["icons"]), 54)
         self.assertEqual(len(catalog["source_sha256"]), 62)
-        self.assertEqual(len(set(MOODLET_ICONS.values())), len(MOODLET_ICONS))
+        aliases = {"cursor_curiosity": "moodlet_enthusiastic",
+                   "cursor_fear": "moodlet_uncertain"}
+        self.assertEqual({k: MOODLET_ICONS[k] for k in aliases}, aliases)
+        original = {k: v for k, v in MOODLET_ICONS.items() if k not in aliases}
+        self.assertEqual(len(set(original.values())), len(original))
         self.assertLessEqual(set(MOODLET_ICONS.values()), set(catalog["icons"]))
         for path, expected in catalog["source_sha256"].items():
             self.assertEqual(

@@ -94,9 +94,14 @@ def calculate_moodlet_contributions(
         return MoodletContributions()
     groups: dict[MoodletGroup, float] = {}
     long_positive = long_negative = 0.0
+    cursor_positive = cursor_negative = 0.0
     for episode in state.active:
         definition = definitions[episode.definition_id]
         points = definition.level_points[episode.level - 1]
+        if definition.group == MoodletGroup.CURSOR:
+            cursor_positive += max(0, points)
+            cursor_negative += min(0, points)
+            continue
         if definition.group == MoodletGroup.LONG_TERM:
             long_positive += max(0, points)
             long_negative += min(0, points)
@@ -114,9 +119,11 @@ def calculate_moodlet_contributions(
     return MoodletContributions(
         min(BALANCE.number("moodlets", "positive_cap_points"),
             sum(max(0, value) for value in groups.values())
+            + cursor_positive
             + min(long_term_policy.positive_mood_cap_points, long_positive)),
         max(-BALANCE.number("moodlets", "negative_cap_points"),
             sum(min(0, value) for value in groups.values())
+            + cursor_negative
             + max(-long_term_policy.negative_mood_cap_points, long_negative)),
     )
 
@@ -220,6 +227,8 @@ def reinforce_moodlet(
     Repeated-poke/petting escalation counts only subsequent qualifying events.
     """
     definition = definitions[definition_id]
+    if definition.group == MoodletGroup.CURSOR:
+        raise ValueError("Cursor impressions require qualified cursor evidence")
     maximum = len(definition.level_points)
     if (not math.isfinite(elapsed) or elapsed < state.baseline
             or type(level) is not int or not 1 <= level <= maximum):

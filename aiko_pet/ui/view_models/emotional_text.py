@@ -9,6 +9,8 @@ from .contracts import MoodletView, WishView
 from .moodlet_causes import cause_description
 
 MOODLET_ICONS = {
+    "cursor_curiosity": "moodlet_enthusiastic",
+    "cursor_fear": "moodlet_uncertain",
     "food_fulfilled": "moodlet_food_fulfilled",
     "shared_play": "moodlet_shared_play",
     "pride": "moodlet_pride",
@@ -46,6 +48,8 @@ GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_to
 
 
 def duration_text(seconds: float) -> str:
+    if 0 < seconds < 60:
+        return GERMAN_TEXT.format("vn.seconds", seconds=str(math.ceil(seconds)))
     minutes = max(0, math.ceil(seconds / 60))
     if minutes >= 60:
         hours, rest = divmod(minutes, 60)

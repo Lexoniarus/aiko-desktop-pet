@@ -469,6 +469,48 @@
         "minimum_incidents": 3,
         "minimum_incident_span_seconds": 14400
       }
+    },
+    {
+      "id": "cursor_curiosity",
+      "polarity": "positive",
+      "direction": "cheerful",
+      "group": "cursor",
+      "level_points": [
+        1,
+        2,
+        3
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 30,
+      "relief_seconds": 0,
+      "parameters": {
+        "stage_seconds": [
+          30,
+          30,
+          30
+        ]
+      }
+    },
+    {
+      "id": "cursor_fear",
+      "polarity": "negative",
+      "direction": "uncertain",
+      "group": "cursor",
+      "level_points": [
+        -2,
+        -4,
+        -6
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 15,
+      "relief_seconds": 0,
+      "parameters": {
+        "stage_seconds": [
+          15,
+          15,
+          30
+        ]
+      }
     }
   ],
   "long_term_policy": {

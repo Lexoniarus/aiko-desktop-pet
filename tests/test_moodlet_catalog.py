@@ -21,6 +21,7 @@ from aiko_pet.pet.moodlets import (
     EmotionalDirection,
     FoodMonotonyParameters,
     MoodletDecay,
+    MoodletGroup,
     MoodletId,
     MoodletPolarity,
     PettingParameters,
@@ -37,9 +38,9 @@ class MoodletCatalogTests(unittest.TestCase):
     def test_packaged_families_preserve_approved_strengths_and_durations(self):
         catalog = load_packaged_moodlet_catalog()
         self.assertEqual(catalog, MOODLET_CATALOG)
-        self.assertEqual(len(catalog.definitions), 26)
+        self.assertEqual(len(catalog.definitions), 28)
         self.assertEqual(sum(d.polarity == MoodletPolarity.POSITIVE
-                             for d in catalog.definitions.values()), 11)
+                             for d in catalog.definitions.values()), 12)
         for key, seconds in (
             (MoodletId.POKING, 1200), (MoodletId.CROWDED, 1200),
             (MoodletId.WITHHELD, 1200), (MoodletId.DISRUPTED, 1800),
@@ -52,6 +53,7 @@ class MoodletCatalogTests(unittest.TestCase):
             self.assertEqual(definition.level_points, (-5, -10, -15))
         for definition in catalog.definitions.values():
             if (definition.polarity == MoodletPolarity.POSITIVE
+                    and definition.group != MoodletGroup.CURSOR
                     and not isinstance(definition.parameters,
                                        LongTermPatternParameters)):
                 self.assertEqual(definition.decay_stage_seconds, 7200)
@@ -88,7 +90,8 @@ class MoodletCatalogTests(unittest.TestCase):
 
     def test_packaged_emotional_directions_cover_the_agreed_composition(self):
         expected = {
-            "cheerful": {"food_fulfilled", "shared_play", "cheerful", "enthusiastic"},
+            "cheerful": {"food_fulfilled", "shared_play", "cheerful", "enthusiastic",
+                         "cursor_curiosity"},
             "proud": {"pride"}, "relieved": {"relief"},
             "affectionate": {"connection", "secure", "appreciated"},
             "irritated": {"poking", "food_monotony", "exhaustion_irritated"},
@@ -97,7 +100,7 @@ class MoodletCatalogTests(unittest.TestCase):
             "downcast": {"hunger_worn", "disappointed", "food_wish_disregarded"},
             "lonely": {"lonely", "missing_closeness", "overlooked"},
             "safe": {"trusting"}, "optimistic": {"optimistic"},
-            "uncertain": {"uncertain"}, "guarded": {"guarded"},
+            "uncertain": {"uncertain", "cursor_fear"}, "guarded": {"guarded"},
         }
         self.assertEqual({direction.value: {
             d.id.value for d in MOODLET_CATALOG.definitions.values()

@@ -209,6 +209,16 @@ def decode_moodlet_causes(
             )
         ):
             raise ValueError("Incompatible Moodlet period or handover facts")
+        cursor = MOODLET_CATALOG.definitions[key].group == MoodletGroup.CURSOR
+        if ((kind == MoodletCauseKind.CURSOR) != cursor
+                and kind != MoodletCauseKind.LEGACY
+                or kind == MoodletCauseKind.CURSOR and (
+                    target != "cursor" or outcome != MoodletOutcome.COMPLETED
+                    or wish is not None or game is not None or object_id is not None
+                    or period is not None or handover is not None
+                    or row["attribution"] != MoodletAttribution.UNKNOWN.value
+                )):
+            raise ValueError("Incompatible cursor impression evidence")
         # Read the superseded per-stage metadata without using it to discard
         # real receipts. New saves retain only the canonical chronological list.
         if row.get("level") is not None:

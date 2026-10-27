@@ -171,3 +171,38 @@ class PositiveMoodletTimingTests(unittest.TestCase):
             broken = {**raw, "moodlets": {**raw["moodlets"], field: cap + 1}}
             with self.subTest(field=field), self.assertRaises(ValueError):
                 parse_balance(broken)
+
+
+class CursorMoodletProfileTests(unittest.TestCase):
+    def test_exact_tiers_expire_and_round_trip_without_extending_old_wish_stages(self):
+        from aiko_pet.pet.moodlet_timing import initial_stage_seconds
+        from aiko_pet.ui.view_models.emotional_text import duration_text
+        for key, totals in ((MoodletId.CURSOR_CURIOSITY, (30, 60, 90)),
+                            (MoodletId.CURSOR_FEAR, (15, 30, 60))):
+            for level, total in enumerate(totals, 1):
+                with self.subTest(key=key, level=level):
+                    stages = initial_stage_seconds(DEFINITIONS[key], level)
+                    self.assertEqual(sum(stages), total)
+                    episode = MoodletEpisode(1, key, level, 0, 0, stages[-1],
+                                             lower_stage_seconds=stages[:-1])
+                    state = MoodletState(next_instance_id=2, active=(episode,))
+                    self.assertEqual(decode_moodlets(encode_moodlets(state), 0), state)
+                    self.assertTrue(age(state, total - .001).active)
+                    self.assertFalse(age(state, total).active)
+        self.assertEqual(duration_text(15), "15 Sek.")
+        self.assertEqual(duration_text(30.2), "31 Sek.")
+        self.assertEqual(duration_text(60), "1 Min.")
+
+    def test_mixed_group_preserves_both_signed_contributions(self):
+        from aiko_pet.pet.moodlets import calculate_moodlet_contributions
+        state = MoodletState(next_instance_id=3, active=(
+            MoodletEpisode(1, MoodletId.CURSOR_CURIOSITY, 3, 0, 0, 30,
+                           lower_stage_seconds=(30, 30)),
+            MoodletEpisode(2, MoodletId.CURSOR_FEAR, 3, 0, 0, 30,
+                           lower_stage_seconds=(15, 15)),
+        ))
+        value = calculate_moodlet_contributions(
+            state, definitions=DEFINITIONS,
+            long_term_policy=MOODLET_CATALOG.long_term_policy,
+        )
+        self.assertEqual((value.positive_points, value.negative_points), (3, -6))

@@ -4,6 +4,8 @@ from enum import StrEnum
 
 
 class MoodletId(StrEnum):
+    CURSOR_CURIOSITY = "cursor_curiosity"
+    CURSOR_FEAR = "cursor_fear"
     FOOD_FULFILLED = "food_fulfilled"
     SHARED_PLAY = "shared_play"
     PRIDE = "pride"

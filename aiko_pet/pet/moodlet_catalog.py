@@ -15,6 +15,7 @@ from .catalog_validation import (
     object_fields,
 )
 from .content import GERMAN_TEXT
+from .moodlet_models import CursorImpressionParameters
 from .moodlet_pattern_catalog import (
     PATTERN_TYPES,
     parse_long_term_policy,
@@ -69,6 +70,12 @@ def _parameters(
     key: MoodletId, value: Any, policy: LongTermMoodletPolicy,
 ) -> MoodletParameters:
     context = f"moodlets.{key}.parameters"
+    if key in (MoodletId.CURSOR_CURIOSITY, MoodletId.CURSOR_FEAR):
+        row = object_fields(value, ("stage_seconds",), context=context)
+        stages = row["stage_seconds"]
+        if not isinstance(stages, list) or len(stages) != 3:
+            raise ValueError(f"{context}: expected three cursor stage budgets")
+        return CursorImpressionParameters(tuple(_seconds(v, context) for v in stages))
     if key in PATTERN_TYPES:
         return parse_pattern_parameters(key, value, policy)
     if key == MoodletId.POKING:
@@ -199,6 +206,7 @@ def parse_moodlet_catalog(
         )
         parameters = _parameters(key, row["parameters"], policy)
         pattern = isinstance(parameters, LongTermPatternParameters)
+        cursor = isinstance(parameters, CursorImpressionParameters)
         pattern_direction = {
             MoodletId.TRUSTING: EmotionalDirection.SAFE,
             MoodletId.APPRECIATED: EmotionalDirection.AFFECTIONATE,
@@ -211,8 +219,13 @@ def parse_moodlet_catalog(
         positive = polarity == MoodletPolarity.POSITIVE
         if (positive != positive_direction
                 or pattern and direction != pattern_direction
-                or group != MoodletGroup.LONG_TERM and positive != positive_group
-                or ((positive and not pattern) or setback)
+                or group not in (MoodletGroup.LONG_TERM, MoodletGroup.CURSOR)
+                and positive != positive_group
+                or (group == MoodletGroup.CURSOR) != cursor
+                or cursor and (positive != (key == MoodletId.CURSOR_CURIOSITY)
+                               or direction != (EmotionalDirection.CHEERFUL if positive
+                                                else EmotionalDirection.UNCERTAIN))
+                or ((positive and not pattern and not cursor) or setback)
                 != (parameters is None)
                 or (group == MoodletGroup.LONG_TERM) != pattern
                 or (group == MoodletGroup.FOOD_SETBACK)
@@ -235,7 +248,7 @@ def parse_moodlet_catalog(
             _seconds(row["decay_stage_seconds"], str(key)),
             _seconds(row["relief_seconds"], str(key), minimum=0), parameters,
         )
-        if (positive or pattern or setback) and definition.relief_seconds:
+        if (positive or pattern or setback or cursor) and definition.relief_seconds:
             raise ValueError(f"{key}: this impression cannot receive relief")
         if not {definition.label_key, definition.description_key} <= set(text_keys):
             raise ValueError(f"{key}: missing localized label or description")

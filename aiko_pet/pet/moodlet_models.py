@@ -43,6 +43,7 @@ class MoodletCauseKind(StrEnum):
     INTERACTION = "interaction"
     POOR_CARE = "poor_care"
     LONG_TERM = "long_term"
+    CURSOR = "cursor"
 
 
 @dataclass(frozen=True, slots=True)
@@ -143,6 +144,7 @@ class MoodletGroup(StrEnum):
     GAME_SETBACK = "game_setback"
     FOOD_SETBACK = "food_setback"
     LONG_TERM = "long_term"
+    CURSOR = "cursor"
 
 
 class MoodletDecay(StrEnum):
@@ -208,10 +210,15 @@ class PoorCareParameters:
     need: Literal["satiety", "energy", "fun", "social", "affection"]
 
 
+@dataclass(frozen=True, slots=True)
+class CursorImpressionParameters:
+    stage_seconds: tuple[int, ...]
+
+
 MoodletParameters = (
     PokingParameters | PettingParameters | FoodMonotonyParameters
     | WithholdingParameters | RelocationParameters | PoorCareParameters
-    | LongTermPatternParameters | None
+    | LongTermPatternParameters | CursorImpressionParameters | None
 )
 
 
@@ -239,6 +246,12 @@ class MoodletDefinition:
         return self.polarity == MoodletPolarity.POSITIVE and self.group in (
             MoodletGroup.FOOD_WISH, MoodletGroup.GAME_WISH,
             MoodletGroup.SOCIAL_WISH, MoodletGroup.AFFECTION_WISH,
+        )
+
+    @property
+    def uses_explicit_stage_budgets(self) -> bool:
+        return self.uses_positive_stage_budgets or isinstance(
+            self.parameters, CursorImpressionParameters,
         )
 
     @property

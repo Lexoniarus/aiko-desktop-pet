@@ -13,6 +13,8 @@ from ...pet.wishes import (
 
 
 def _target_label(target: str) -> str:
+    if target == "cursor":
+        return GERMAN_TEXT.format("vn.cursor_target")
     for key in (f"need.{target}", f"moodlet.{target}.label"):
         if key in GERMAN_TEXT.messages:
             return GERMAN_TEXT.format(key)
@@ -58,7 +60,7 @@ def cause_description(cause: MoodletCause) -> str:
             "vn.cause_target", target=_target_label(cause.target_id),
         ))
     if (cause.kind not in (MoodletCauseKind.LEGACY, MoodletCauseKind.POOR_CARE,
-                           MoodletCauseKind.LONG_TERM)
+                           MoodletCauseKind.LONG_TERM, MoodletCauseKind.CURSOR)
             and (cause.game is None or cause.game.round_outcome != cause.outcome)):
         parts.append(GERMAN_TEXT.format(
             "vn.cause_result",

@@ -14,6 +14,7 @@ from ..pet.catalog_validation import (
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import FoodRepetitionMemory, InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
+from ..pet.moodlet_models import CursorImpressionParameters
 from ..pet.moodlets import (
     FoodMonotonyParameters,
     MoodletAttribution,
@@ -66,8 +67,11 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                                maximum=elapsed, context="Moodlet start")
         trigger = number_value(entry["last_trigger_at"], minimum=started,
                                maximum=elapsed, context="Moodlet trigger")
-        staged_positive = definition.uses_positive_stage_budgets
-        cap = BALANCE.integer("moodlets", "positive_stage_cap_seconds")
+        staged_positive = definition.uses_explicit_stage_budgets
+        cursor_profile = definition.parameters
+        cap = (max(cursor_profile.stage_seconds)
+               if isinstance(cursor_profile, CursorImpressionParameters)
+               else BALANCE.integer("moodlets", "positive_stage_cap_seconds"))
         remaining = number_value(entry["remaining_seconds"], minimum=0,
                                  maximum=max(definition.decay_stage_seconds,
                                              cap if staged_positive else 0),
@@ -79,6 +83,12 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         lower = tuple(number_value(v, minimum=0, maximum=cap,
                                    context="lower Moodlet stage remaining")
                       for v in lower_raw)
+        if isinstance(cursor_profile, CursorImpressionParameters):
+            if (remaining > cursor_profile.stage_seconds[level - 1]
+                    or len(lower) != level - 1
+                    or any(v > cursor_profile.stage_seconds[i]
+                           for i, v in enumerate(lower))):
+                raise ValueError("Invalid cursor stage budgets")
         levels = entry["relieved_levels"]
         if not isinstance(levels, list) or len(levels) > len(definition.level_points):
             raise ValueError("Unbounded Moodlet relief usage")

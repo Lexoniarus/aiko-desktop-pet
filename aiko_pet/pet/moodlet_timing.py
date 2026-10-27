@@ -6,6 +6,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from .balance import BALANCE
+from .moodlet_models import CursorImpressionParameters
 
 if TYPE_CHECKING:
     from .moodlet_models import MoodletDefinition, MoodletEpisode
@@ -30,6 +31,8 @@ def initial_stage_seconds(
     definition: MoodletDefinition,
     level: int,
 ) -> tuple[float, ...]:
+    if isinstance(definition.parameters, CursorImpressionParameters):
+        return tuple(float(v) for v in definition.parameters.stage_seconds[:level])
     if not definition.uses_positive_stage_budgets:
         return (float(definition.decay_stage_seconds),) * level
     return tuple(

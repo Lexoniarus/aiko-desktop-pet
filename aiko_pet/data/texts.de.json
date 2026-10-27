@@ -463,6 +463,13 @@
     "social.horoscope.bound": "Dein Horoskopbuch liegt bereits bereit",
     "social.horoscope.choose_sign": "Zuerst Sternzeichen auswählen",
     "settings.horoscope_note": "Lokales Horoskop zur Unterhaltung. Keine wissenschaftliche Vorhersage. Keine Internetverbindung nötig.",
-    "social.horoscope.unavailable": "Ich kann den Eintrag gerade nicht lesen. Ich lege das Buch erst mal wieder ab."
+    "social.horoscope.unavailable": "Ich kann den Eintrag gerade nicht lesen. Ich lege das Buch erst mal wieder ab.",
+    "moodlet.cursor_curiosity.label": "Neugierig auf den Mauszeiger",
+    "moodlet.cursor_curiosity.description": "Die ruhige Bewegung in meiner Nähe macht mich neugierig.",
+    "moodlet.cursor_fear.label": "Vom Mauszeiger erschreckt",
+    "moodlet.cursor_fear.description": "Der Mauszeiger ist schnell auf mich zugekommen. Ich brauche kurz Ruhe.",
+    "vn.seconds": "{seconds} Sek.",
+    "vn.cause.cursor": "Eindruck vom Mauszeiger",
+    "vn.cursor_target": "Mauszeiger"
   }
 }

@@ -59,6 +59,22 @@ class SqliteMoodletRowsTests(unittest.TestCase):
             )
             connection.commit()
 
+    def test_cursor_profiles_and_evidence_round_trip(self):
+        episodes = tuple(MoodletEpisode(
+            i, key, 3, 100, 100, 30,
+            lower_stage_seconds=lower,
+            causes=(MoodletCause(MoodletCauseKind.CURSOR, 100, f"session:{i}",
+                                target_id="cursor", outcome=MoodletOutcome.COMPLETED),),
+        ) for i, key, lower in (
+            (1, MoodletId.CURSOR_CURIOSITY, (30, 30)),
+            (2, MoodletId.CURSOR_FEAR, (15, 15)),
+        ))
+        original = MoodletState(next_instance_id=3, active=episodes)
+        with open_database(self.path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            write_moodlet_core(connection, original)
+            self.assertEqual(read_moodlet_core(connection), original)
+
     def test_actual_wish_game_food_and_period_causes_round_trip_without_progression(
         self,
     ) -> None:
