@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..pet.interaction_events import CursorExperience
+from ..pet.interaction_events import (
+    CursorExperience,
+    CursorWarning,
+    CursorWarningReceipt,
+)
 from ..pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
     CursorBehaviourPolicy,
@@ -50,7 +54,7 @@ class CursorBehaviourCoordinator:
         self._observer, self._policy = observer, policy
         self.intent = CursorIntent()
         self._delivered: list[str] = []
-        self.feedback: CursorExperience | None = None
+        self.feedback: CursorExperience | CursorWarning | None = None
 
     def reset(self) -> None:
         self.feedback = None
@@ -98,6 +102,8 @@ class CursorBehaviourCoordinator:
             now,
         )
 
+        if self.intent.warning is not None:
+            self.feedback = self.intent.warning
         event = self.intent.experience
         if event is not None and event.evidence_id not in self._delivered:
             self._state.experience_cursor(event)
@@ -126,6 +132,9 @@ class CursorBehaviourCoordinator:
         ):
             return None
         return self.intent
+
+    def note_warning(self, receipt: CursorWarningReceipt) -> None:
+        self._policy.note_warning(receipt)
 
     def finish_motion(self, result: MotionCompletion) -> None:
         if result.source == "cursor":

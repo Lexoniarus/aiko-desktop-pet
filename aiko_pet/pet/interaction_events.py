@@ -139,3 +139,18 @@ class CursorExperience:
                 or self.feeling not in ("curiosity", "fear")
                 or type(self.level) is not int or not 1 <= self.level <= 3):
             raise ValueError("Invalid qualified cursor impression")
+
+
+@dataclass(frozen=True, slots=True)
+class CursorWarning:
+    """A transient candidate; selection alone is not evidence of presentation."""
+
+    warning_id: str
+    created_at: float
+
+
+@dataclass(frozen=True, slots=True)
+class CursorWarningReceipt:
+    warning_id: str
+    presented_at: float
+    presented: bool

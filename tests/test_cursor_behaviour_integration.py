@@ -20,6 +20,7 @@ from aiko_pet.desktop.visual_observation import (
 )
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.pet.interaction_events import CursorWarning, CursorWarningReceipt
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttention
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
@@ -199,7 +200,11 @@ class CursorTrajectory:
             scale=self.scale,
         )
         self.coordinator.begin_frame(self.now, self.activity)
-        if self.coordinator.feedback is not None:
+        if isinstance(self.coordinator.feedback, CursorWarning):
+            self.coordinator.note_warning(CursorWarningReceipt(
+                self.coordinator.feedback.warning_id, self.now, True,
+            ))
+        elif self.coordinator.feedback is not None:
             self.feedback.append(self.coordinator.feedback)
         self.walk.apply_cursor_intent(
             self.coordinator.admit_motion(self.activity, self.now), self.now
@@ -237,6 +242,9 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
             # Establish far native motion then fast closing into the near region.
             scene.tick((500 + 550 * scale, 100 * scale))
             scene.tick((500 + 150 * scale, 100 * scale))
+            self.assertFalse(scene.coordinator.intent.moving)
+            scene.tick((500 + 550 * scale, 100 * scale))
+            scene.tick((500 + 150 * scale, 100 * scale))
             self.assertEqual(scene.coordinator.intent.reaction, "flee")
             for _ in range(100):
                 scene.tick((500 + 150 * scale, 100 * scale))
@@ -272,6 +280,9 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
 
     def test_exhausted_pet_only_startles_and_keeps_frontal_body(self):
         scene = CursorTrajectory(energy=5)
+        scene.tick((1050, 100))
+        scene.tick((650, 100))
+        self.assertFalse(scene.coordinator.intent.moving)
         scene.tick((1050, 100))
         scene.tick((650, 100))
         self.assertEqual(scene.coordinator.intent.reaction, "startle")

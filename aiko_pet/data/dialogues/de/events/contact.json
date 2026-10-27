@@ -71,7 +71,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, schön, wieder bei dir zu sein!"
+          "content": "Hallo, schÃ¶n, wieder bei dir zu sein!"
         }
       ],
       "stages": [
@@ -185,7 +185,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du! Hach, schön, wieder bei dir zu sein."
+          "content": "Du! Hach, schÃ¶n, wieder bei dir zu sein."
         }
       ],
       "stages": [
@@ -204,7 +204,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wieder zusammen. So gefällt mir der Start schon viel besser."
+          "content": "Wieder zusammen. So gefÃ¤llt mir der Start schon viel besser."
         }
       ],
       "stages": [
@@ -261,7 +261,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Willkommen zurück. Ich habe dich gerade bemerkt."
+          "content": "Willkommen zurÃ¼ck. Ich habe dich gerade bemerkt."
         }
       ],
       "stages": [
@@ -299,7 +299,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo zurück! Schön, dass du wieder nach mir siehst."
+          "content": "Hallo zurÃ¼ck! SchÃ¶n, dass du wieder nach mir siehst."
         }
       ],
       "stages": [
@@ -318,7 +318,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, du bist zurück. Ich freue mich über deinen Besuch."
+          "content": "Ah, du bist zurÃ¼ck. Ich freue mich Ã¼ber deinen Besuch."
         }
       ],
       "stages": [
@@ -375,7 +375,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hey, zurück bei mir! Ich hätte Lust, etwas mit dir zu machen."
+          "content": "Hey, zurÃ¼ck bei mir! Ich hÃ¤tte Lust, etwas mit dir zu machen."
         }
       ],
       "stages": [
@@ -432,7 +432,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hach, komm her. Schön, dass wir wieder Zeit zusammen haben."
+          "content": "Hach, komm her. SchÃ¶n, dass wir wieder Zeit zusammen haben."
         }
       ],
       "stages": [
@@ -451,7 +451,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da ist ja mein Lieblingsbesuch. Bleibst du diesmal ein bisschen länger?"
+          "content": "Da ist ja mein Lieblingsbesuch. Bleibst du diesmal ein bisschen lÃ¤nger?"
         }
       ],
       "stages": [
@@ -468,7 +468,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis zum nächsten Start. Mach's gut."
+          "content": "Bis zum nÃ¤chsten Start. Mach's gut."
         }
       ],
       "stages": [
@@ -485,7 +485,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dann bis zum nächsten Mal. Danke für die Zeit zusammen."
+          "content": "Dann bis zum nÃ¤chsten Mal. Danke fÃ¼r die Zeit zusammen."
         }
       ],
       "stages": [
@@ -502,7 +502,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du schließt mich jetzt? Gut, dann auf Wiedersehen."
+          "content": "Du schlieÃŸt mich jetzt? Gut, dann auf Wiedersehen."
         }
       ],
       "stages": [
@@ -536,7 +536,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis bald, du. Schön war's mit dir."
+          "content": "Bis bald, du. SchÃ¶n war's mit dir."
         }
       ],
       "stages": [
@@ -553,7 +553,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dann mache ich hier Schluss. Bis zum nächsten Mal!"
+          "content": "Dann mache ich hier Schluss. Bis zum nÃ¤chsten Mal!"
         }
       ],
       "stages": [
@@ -587,7 +587,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis bald! Unser nächstes Spiel steht aber noch aus."
+          "content": "Bis bald! Unser nÃ¤chstes Spiel steht aber noch aus."
         }
       ],
       "stages": [
@@ -604,7 +604,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mach's gut, du. Beim nächsten Start bin ich wieder dabei."
+          "content": "Mach's gut, du. Beim nÃ¤chsten Start bin ich wieder dabei."
         }
       ],
       "stages": [
@@ -638,7 +638,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Tschüss, du. Ich habe unsere Zeit heute gern mit dir verbracht."
+          "content": "TschÃ¼ss, du. Ich habe unsere Zeit heute gern mit dir verbracht."
         }
       ],
       "stages": [
@@ -655,7 +655,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis zum nächsten Start! Ich freue mich jetzt schon auf dich."
+          "content": "Bis zum nÃ¤chsten Start! Ich freue mich jetzt schon auf dich."
         }
       ],
       "stages": [
@@ -674,7 +674,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm … ich schlafe gerade."
+          "content": "Mhm â€¦ ich schlafe gerade."
         }
       ],
       "stages": [
@@ -712,7 +712,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm? Ich möchte die Augen noch nicht aufmachen."
+          "content": "Hm? Ich mÃ¶chte die Augen noch nicht aufmachen."
         }
       ],
       "stages": [
@@ -731,7 +731,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Noch ein bisschen schlafen, bitte …"
+          "content": "Noch ein bisschen schlafen, bitte â€¦"
         }
       ],
       "stages": [
@@ -750,7 +750,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mmmh … ich bin noch nicht ausgeschlafen."
+          "content": "Mmmh â€¦ ich bin noch nicht ausgeschlafen."
         }
       ],
       "stages": [
@@ -788,7 +788,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du erwischst mich mitten im Nickerchen. Später, ja?"
+          "content": "Du erwischst mich mitten im Nickerchen. SpÃ¤ter, ja?"
         }
       ],
       "stages": [
@@ -807,7 +807,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm … ich habe gerade so schön geschlafen."
+          "content": "Mhm â€¦ ich habe gerade so schÃ¶n geschlafen."
         }
       ],
       "stages": [
@@ -845,7 +845,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du … lass mich noch ein bisschen schlummern."
+          "content": "Du â€¦ lass mich noch ein bisschen schlummern."
         }
       ],
       "stages": [
@@ -902,7 +902,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade mit der Arbeit beschäftigt. Können wir danach reden?"
+          "content": "Ich bin gerade mit der Arbeit beschÃ¤ftigt. KÃ¶nnen wir danach reden?"
         }
       ],
       "stages": [
@@ -921,7 +921,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte das hier erst fertig machen. Danach höre ich gern zu."
+          "content": "Ich mÃ¶chte das hier erst fertig machen. Danach hÃ¶re ich gern zu."
         }
       ],
       "stages": [
@@ -959,7 +959,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde gern reden, muss mich aber noch konzentrieren."
+          "content": "Ich wÃ¼rde gern reden, muss mich aber noch konzentrieren."
         }
       ],
       "stages": [
@@ -997,7 +997,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich merke mir, dass du reden möchtest. Lass mich das hier erst beenden."
+          "content": "Ich merke mir, dass du reden mÃ¶chtest. Lass mich das hier erst beenden."
         }
       ],
       "stages": [
@@ -1016,7 +1016,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hach, du erwischst mich mitten in der Arbeit. Ich würde lieber mit dir quatschen."
+          "content": "Hach, du erwischst mich mitten in der Arbeit. Ich wÃ¼rde lieber mit dir quatschen."
         }
       ],
       "stages": [
@@ -1035,7 +1035,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du lenkst mich gerade sehr schön ab. Aber ich muss erst hiermit fertig werden."
+          "content": "Du lenkst mich gerade sehr schÃ¶n ab. Aber ich muss erst hiermit fertig werden."
         }
       ],
       "stages": [
@@ -1054,7 +1054,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde gern zu dir rüberplappern. Erst muss ich das hier schaffen."
+          "content": "Ich wÃ¼rde gern zu dir rÃ¼berplappern. Erst muss ich das hier schaffen."
         }
       ],
       "stages": [
@@ -1073,7 +1073,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, ich würde dich gern für mich haben. Aber erst muss ich hier fertig werden."
+          "content": "Du, ich wÃ¼rde dich gern fÃ¼r mich haben. Aber erst muss ich hier fertig werden."
         }
       ],
       "stages": [
@@ -1130,7 +1130,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm? Kann ich etwas für dich tun?"
+          "content": "Hm? Kann ich etwas fÃ¼r dich tun?"
         }
       ],
       "stages": [
@@ -1206,7 +1206,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du siehst nach mir. Schön!"
+          "content": "Oh, du siehst nach mir. SchÃ¶n!"
         }
       ],
       "stages": [
@@ -1263,7 +1263,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na, kommst du für ein Spiel oder nur zum Hallo sagen?"
+          "content": "Na, kommst du fÃ¼r ein Spiel oder nur zum Hallo sagen?"
         }
       ],
       "stages": [
@@ -1282,7 +1282,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, Besuch! Für dich bleibe ich gern stehen."
+          "content": "Oh, Besuch! FÃ¼r dich bleibe ich gern stehen."
         }
       ],
       "stages": [
@@ -1339,7 +1339,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Stupser von dir. Jetzt möchte ich aber auch etwas von deiner Zeit."
+          "content": "Ein Stupser von dir. Jetzt mÃ¶chte ich aber auch etwas von deiner Zeit."
         }
       ],
       "stages": [
@@ -1358,7 +1358,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, ein Rechtsklick. Wolltest du etwas auswählen?"
+          "content": "Oh, ein Rechtsklick. Wolltest du etwas auswÃ¤hlen?"
         }
       ],
       "stages": [
@@ -1415,7 +1415,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Rechtsklick zur Begrüßung? Hallo zurück."
+          "content": "Ein Rechtsklick zur BegrÃ¼ÃŸung? Hallo zurÃ¼ck."
         }
       ],
       "stages": [
@@ -1453,7 +1453,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm? Ich sehe schon, du möchtest etwas auswählen."
+          "content": "Hm? Ich sehe schon, du mÃ¶chtest etwas auswÃ¤hlen."
         }
       ],
       "stages": [
@@ -1510,7 +1510,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Rechtsklick? Du machst mich gespannt auf deinen nächsten Schritt."
+          "content": "Rechtsklick? Du machst mich gespannt auf deinen nÃ¤chsten Schritt."
         }
       ],
       "stages": [
@@ -1529,7 +1529,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kennst ja den Weg zu mir. Na, was möchtest du machen?"
+          "content": "Du kennst ja den Weg zu mir. Na, was mÃ¶chtest du machen?"
         }
       ],
       "stages": [
@@ -1590,7 +1590,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Vielleicht könntest du mich auch ein bisschen streicheln."
+          "content": "Oh. Vielleicht kÃ¶nntest du mich auch ein bisschen streicheln."
         }
       ],
       "stages": [
@@ -1609,7 +1609,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist da … ein wenig Streicheln wäre gerade in Ordnung."
+          "content": "Du bist da â€¦ ein wenig Streicheln wÃ¤re gerade in Ordnung."
         }
       ],
       "stages": [
@@ -1632,7 +1632,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du schon nach mir siehst, wäre etwas Zuwendung ganz angenehm."
+          "content": "Wenn du schon nach mir siehst, wÃ¤re etwas Zuwendung ganz angenehm."
         }
       ],
       "stages": [
@@ -1678,7 +1678,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hätte gerade gern deine Hand auf meinem Kopf."
+          "content": "Ich hÃ¤tte gerade gern deine Hand auf meinem Kopf."
         }
       ],
       "stages": [
@@ -1701,7 +1701,7 @@
         },
         {
           "kind": "text",
-          "content": "Hallo! Ein bisschen länger bei mir bleiben wäre schön."
+          "content": "Hallo! Ein bisschen lÃ¤nger bei mir bleiben wÃ¤re schÃ¶n."
         }
       ],
       "stages": [
@@ -1770,7 +1770,7 @@
         },
         {
           "kind": "text",
-          "content": "Ein Klick ist nett. Streicheln würde mir gerade noch besser gefallen."
+          "content": "Ein Klick ist nett. Streicheln wÃ¼rde mir gerade noch besser gefallen."
         }
       ],
       "stages": [
@@ -1793,7 +1793,7 @@
         },
         {
           "kind": "text",
-          "content": "Du, bleib bei mir. Ich hätte jetzt gern eine richtige Streichelpause."
+          "content": "Du, bleib bei mir. Ich hÃ¤tte jetzt gern eine richtige Streichelpause."
         }
       ],
       "stages": [
@@ -1839,7 +1839,7 @@
         },
         {
           "kind": "text",
-          "content": "Klick angekommen! Jetzt möchte ich bitte ein bisschen länger etwas von dir haben."
+          "content": "Klick angekommen! Jetzt mÃ¶chte ich bitte ein bisschen lÃ¤nger etwas von dir haben."
         }
       ],
       "stages": [
@@ -1862,7 +1862,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh, ein Besuch. Darüber freue ich mich gerade."
+          "content": "Oh, ein Besuch. DarÃ¼ber freue ich mich gerade."
         }
       ],
       "stages": [
@@ -1885,7 +1885,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast Zeit für mich? Ein wenig Gesellschaft wäre schön."
+          "content": "Du hast Zeit fÃ¼r mich? Ein wenig Gesellschaft wÃ¤re schÃ¶n."
         }
       ],
       "stages": [
@@ -1908,7 +1908,7 @@
         },
         {
           "kind": "text",
-          "content": "Hallo. Ich hätte gerade gern jemanden zum Reden."
+          "content": "Hallo. Ich hÃ¤tte gerade gern jemanden zum Reden."
         }
       ],
       "stages": [
@@ -1931,7 +1931,7 @@
         },
         {
           "kind": "text",
-          "content": "Schön, dass du nach mir siehst. Mir hat Gesellschaft gefehlt."
+          "content": "SchÃ¶n, dass du nach mir siehst. Mir hat Gesellschaft gefehlt."
         }
       ],
       "stages": [
@@ -2115,7 +2115,7 @@
         },
         {
           "kind": "text",
-          "content": "Schön, dass du mich besuchst. Allein herumzulaufen ersetzt dich eben nicht."
+          "content": "SchÃ¶n, dass du mich besuchst. Allein herumzulaufen ersetzt dich eben nicht."
         }
       ],
       "stages": [
@@ -2184,7 +2184,7 @@
         },
         {
           "kind": "text",
-          "content": "Ja? Ich möchte gerade lieber hier stehen bleiben."
+          "content": "Ja? Ich mÃ¶chte gerade lieber hier stehen bleiben."
         }
       ],
       "stages": [
@@ -2207,7 +2207,7 @@
         },
         {
           "kind": "text",
-          "content": "Hallo. Ich hatte es mir gemütlich gemacht, aber du kannst gern bleiben."
+          "content": "Hallo. Ich hatte es mir gemÃ¼tlich gemacht, aber du kannst gern bleiben."
         }
       ],
       "stages": [
@@ -2230,7 +2230,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? Ich war gerade so schön bei mir angekommen."
+          "content": "Hm? Ich war gerade so schÃ¶n bei mir angekommen."
         }
       ],
       "stages": [
@@ -2368,7 +2368,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich habe es mir bequem gemacht. Für dich schaue ich gern wieder auf."
+          "content": "Ich habe es mir bequem gemacht. FÃ¼r dich schaue ich gern wieder auf."
         }
       ],
       "stages": [
@@ -2391,7 +2391,7 @@
         },
         {
           "kind": "text",
-          "content": "Du und ich, und gerade drängt nichts. So mag ich es."
+          "content": "Du und ich, und gerade drÃ¤ngt nichts. So mag ich es."
         }
       ],
       "stages": [
@@ -2529,7 +2529,7 @@
         },
         {
           "kind": "text",
-          "content": "Erst streicheln, dann stupsen? Du hältst mich beschäftigt."
+          "content": "Erst streicheln, dann stupsen? Du hÃ¤ltst mich beschÃ¤ftigt."
         }
       ],
       "stages": [
@@ -2621,7 +2621,7 @@
         },
         {
           "kind": "text",
-          "content": "Mhm … du bist noch da. Ich hatte die Streichelpause gern."
+          "content": "Mhm â€¦ du bist noch da. Ich hatte die Streichelpause gern."
         }
       ],
       "stages": [
@@ -2644,7 +2644,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast mich gerade so schön verwöhnt. Jetzt bin ich gern bei dir."
+          "content": "Du hast mich gerade so schÃ¶n verwÃ¶hnt. Jetzt bin ich gern bei dir."
         }
       ],
       "stages": [
@@ -2762,7 +2762,7 @@
         },
         {
           "kind": "text",
-          "content": "Hey, du. Ein Besuch zwischendurch ist schön, aber ich muss bei der Sache bleiben."
+          "content": "Hey, du. Ein Besuch zwischendurch ist schÃ¶n, aber ich muss bei der Sache bleiben."
         }
       ],
       "stages": [
@@ -2786,7 +2786,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? Ich bin noch am Arbeiten. Schön, dass du nach mir siehst."
+          "content": "Hm? Ich bin noch am Arbeiten. SchÃ¶n, dass du nach mir siehst."
         }
       ],
       "stages": [
@@ -2878,7 +2878,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das stört mich beim Arbeiten. Ich möchte mich konzentrieren."
+          "content": "Das stÃ¶rt mich beim Arbeiten. Ich mÃ¶chte mich konzentrieren."
         }
       ],
       "stages": [
@@ -2946,7 +2946,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde gern fertig werden. Bitte lenk mich nicht ständig ab."
+          "content": "Ich wÃ¼rde gern fertig werden. Bitte lenk mich nicht stÃ¤ndig ab."
         }
       ],
       "stages": [
@@ -2966,7 +2966,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt bitte aufhören. Ich muss bei meiner Arbeit bleiben."
+          "content": "Jetzt bitte aufhÃ¶ren. Ich muss bei meiner Arbeit bleiben."
         },
         {
           "kind": "emote",
@@ -2990,7 +2990,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte nicht weiter unterbrochen werden."
+          "content": "Ich mÃ¶chte nicht weiter unterbrochen werden."
         },
         {
           "kind": "emote",
@@ -3014,7 +3014,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Lass mich bitte fertig arbeiten. Die vielen Klicks stören mich."
+          "content": "Lass mich bitte fertig arbeiten. Die vielen Klicks stÃ¶ren mich."
         }
       ],
       "stages": [
@@ -3058,7 +3058,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du weißt, dass ich arbeite. Lass mich jetzt bitte dranbleiben."
+          "content": "Du weiÃŸt, dass ich arbeite. Lass mich jetzt bitte dranbleiben."
         },
         {
           "kind": "emote",
@@ -3082,7 +3082,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So kann ich mich nicht konzentrieren. Jetzt hör bitte auf."
+          "content": "So kann ich mich nicht konzentrieren. Jetzt hÃ¶r bitte auf."
         }
       ],
       "stages": [
@@ -3154,7 +3154,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich habe wieder etwas Luft. Was möchtest du machen?"
+          "content": "Ich habe wieder etwas Luft. Was mÃ¶chtest du machen?"
         }
       ],
       "stages": [
@@ -3178,7 +3178,7 @@
         },
         {
           "kind": "text",
-          "content": "Hey, du! Jetzt habe ich wieder einen freien Kopf für dich."
+          "content": "Hey, du! Jetzt habe ich wieder einen freien Kopf fÃ¼r dich."
         }
       ],
       "stages": [
@@ -3202,7 +3202,7 @@
         },
         {
           "kind": "text",
-          "content": "Geschafft, und du schaust vorbei. Das passt schön zusammen."
+          "content": "Geschafft, und du schaust vorbei. Das passt schÃ¶n zusammen."
         }
       ],
       "stages": [
@@ -3318,7 +3318,7 @@
         },
         {
           "kind": "text",
-          "content": "Du willst mich wohl ärgern, was?"
+          "content": "Du willst mich wohl Ã¤rgern, was?"
         }
       ],
       "stages": [
@@ -3434,7 +3434,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen frech ist das schon. Nicht übertreiben, bitte."
+          "content": "Ein bisschen frech ist das schon. Nicht Ã¼bertreiben, bitte."
         },
         {
           "kind": "emote",
@@ -3462,7 +3462,7 @@
         },
         {
           "kind": "text",
-          "content": "Hihi … he! Nicht die ganze Zeit, du."
+          "content": "Hihi â€¦ he! Nicht die ganze Zeit, du."
         }
       ],
       "stages": [
@@ -3554,7 +3554,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe dich bemerkt. Mehr möchte ich gerade nicht."
+          "content": "Ich habe dich bemerkt. Mehr mÃ¶chte ich gerade nicht."
         },
         {
           "kind": "emote",
@@ -3578,7 +3578,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist mir heute zu viel. Lass mich bitte etwas für mich sein."
+          "content": "Das ist mir heute zu viel. Lass mich bitte etwas fÃ¼r mich sein."
         },
         {
           "kind": "emote",
@@ -3602,7 +3602,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, ich bin heute nicht gut drauf. Bitte hör auf damit."
+          "content": "Du, ich bin heute nicht gut drauf. Bitte hÃ¶r auf damit."
         },
         {
           "kind": "emote",
@@ -3650,7 +3650,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde dich gerade lieber ohne die vielen Klicks bei mir haben."
+          "content": "Ich wÃ¼rde dich gerade lieber ohne die vielen Klicks bei mir haben."
         },
         {
           "kind": "emote",
@@ -3674,7 +3674,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte hör auf, so oft zu klicken. Das ist unangenehm."
+          "content": "Bitte hÃ¶r auf, so oft zu klicken. Das ist unangenehm."
         },
         {
           "kind": "emote",
@@ -3722,7 +3722,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das wird mir zu viel. Ich möchte, dass du aufhörst."
+          "content": "Das wird mir zu viel. Ich mÃ¶chte, dass du aufhÃ¶rst."
         },
         {
           "kind": "emote",
@@ -3746,7 +3746,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "He! Das mag ich nicht. Hör bitte auf."
+          "content": "He! Das mag ich nicht. HÃ¶r bitte auf."
         },
         {
           "kind": "emote",
@@ -3794,7 +3794,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das macht mir keinen Spaß mehr. Jetzt hör bitte auf damit."
+          "content": "Das macht mir keinen SpaÃŸ mehr. Jetzt hÃ¶r bitte auf damit."
         },
         {
           "kind": "emote",
@@ -3842,7 +3842,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe ja mitgelacht. Aber dauernd möchte ich das nicht."
+          "content": "Ich habe ja mitgelacht. Aber dauernd mÃ¶chte ich das nicht."
         },
         {
           "kind": "emote",
@@ -3866,7 +3866,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt hätte ich gern eine Pause davon."
+          "content": "Jetzt hÃ¤tte ich gern eine Pause davon."
         }
       ],
       "stages": [
@@ -3910,7 +3910,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hihi … genug, du. Ich möchte jetzt aufhören."
+          "content": "Hihi â€¦ genug, du. Ich mÃ¶chte jetzt aufhÃ¶ren."
         },
         {
           "kind": "emote",
@@ -3934,7 +3934,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Spaß hatte ich. Jetzt reicht es mir aber."
+          "content": "Ein bisschen SpaÃŸ hatte ich. Jetzt reicht es mir aber."
         },
         {
           "kind": "emote",
@@ -3958,7 +3958,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte hör jetzt auf. Es ist nicht mehr lustig für mich."
+          "content": "Bitte hÃ¶r jetzt auf. Es ist nicht mehr lustig fÃ¼r mich."
         },
         {
           "kind": "emote",
@@ -4006,7 +4006,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nein, ich möchte das nicht weiter mitmachen."
+          "content": "Nein, ich mÃ¶chte das nicht weiter mitmachen."
         }
       ],
       "stages": [
@@ -4050,7 +4050,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe dich gebeten aufzuhören. Das meinte ich auch so."
+          "content": "Ich habe dich gebeten aufzuhÃ¶ren. Das meinte ich auch so."
         },
         {
           "kind": "emote",
@@ -4094,7 +4094,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte jetzt nicht mehr angeklickt werden."
+          "content": "Ich mÃ¶chte jetzt nicht mehr angeklickt werden."
         },
         {
           "kind": "emote",
@@ -4118,7 +4118,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hör bitte auf. Das gefällt mir nicht."
+          "content": "HÃ¶r bitte auf. Das gefÃ¤llt mir nicht."
         },
         {
           "kind": "emote",
@@ -4162,7 +4162,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt reicht’s. Lass mich bitte."
+          "content": "Jetzt reichtâ€™s. Lass mich bitte."
         },
         {
           "kind": "emote",
@@ -4230,7 +4230,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe dich gebeten aufzuhören. Bitte lass mich jetzt."
+          "content": "Ich habe dich gebeten aufzuhÃ¶ren. Bitte lass mich jetzt."
         }
       ],
       "stages": [
@@ -4250,7 +4250,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nein. Ich möchte das nicht mehr."
+          "content": "Nein. Ich mÃ¶chte das nicht mehr."
         },
         {
           "kind": "emote",
@@ -4274,7 +4274,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte lass es jetzt gut sein. Ich möchte das nicht mehr."
+          "content": "Bitte lass es jetzt gut sein. Ich mÃ¶chte das nicht mehr."
         }
       ],
       "stages": [
@@ -4318,7 +4318,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, ich will das nicht. Hör auf."
+          "content": "Du, ich will das nicht. HÃ¶r auf."
         }
       ],
       "stages": [
@@ -4366,7 +4366,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin gerade zu müde für viel Aufmerksamkeit."
+          "content": "Ich bin gerade zu mÃ¼de fÃ¼r viel Aufmerksamkeit."
         }
       ],
       "stages": [
@@ -4414,7 +4414,7 @@
         },
         {
           "kind": "text",
-          "content": "Bitte lass mich etwas ausruhen. Ich bin müde."
+          "content": "Bitte lass mich etwas ausruhen. Ich bin mÃ¼de."
         }
       ],
       "stages": [
@@ -4438,7 +4438,7 @@
         },
         {
           "kind": "text",
-          "content": "Mhm, du bist's. Ich bin gerade ziemlich schläfrig."
+          "content": "Mhm, du bist's. Ich bin gerade ziemlich schlÃ¤frig."
         }
       ],
       "stages": [
@@ -4462,7 +4462,7 @@
         },
         {
           "kind": "text",
-          "content": "Du, ich würde dir gern mehr Aufmerksamkeit schenken. Aber ich gähne nur noch."
+          "content": "Du, ich wÃ¼rde dir gern mehr Aufmerksamkeit schenken. Aber ich gÃ¤hne nur noch."
         }
       ],
       "stages": [
@@ -4506,7 +4506,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin müde. Bitte lass das wiederholte Anklicken."
+          "content": "Ich bin mÃ¼de. Bitte lass das wiederholte Anklicken."
         },
         {
           "kind": "emote",
@@ -4530,7 +4530,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das strengt mich gerade an. Ich möchte mich ausruhen."
+          "content": "Das strengt mich gerade an. Ich mÃ¶chte mich ausruhen."
         },
         {
           "kind": "emote",
@@ -4574,7 +4574,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, ich bin schon so müde. Das ist mir jetzt zu viel."
+          "content": "Du, ich bin schon so mÃ¼de. Das ist mir jetzt zu viel."
         },
         {
           "kind": "emote",
@@ -4642,7 +4642,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe dich bemerkt. Ich möchte gerade nicht viel reden."
+          "content": "Ich habe dich bemerkt. Ich mÃ¶chte gerade nicht viel reden."
         }
       ],
       "stages": [
@@ -4702,7 +4702,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist's. Schön. Ich bin heute trotzdem etwas neben mir."
+          "content": "Du bist's. SchÃ¶n. Ich bin heute trotzdem etwas neben mir."
         }
       ],
       "stages": [
@@ -4762,7 +4762,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte gerade Abstand. Bitte hör auf."
+          "content": "Ich mÃ¶chte gerade Abstand. Bitte hÃ¶r auf."
         },
         {
           "kind": "emote",
@@ -4830,7 +4830,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, das ist mir heute wirklich zu viel. Hör bitte auf."
+          "content": "Du, das ist mir heute wirklich zu viel. HÃ¶r bitte auf."
         },
         {
           "kind": "emote",
@@ -4878,7 +4878,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "He, genug. Ich möchte gerade einfach etwas für mich sein."
+          "content": "He, genug. Ich mÃ¶chte gerade einfach etwas fÃ¼r mich sein."
         }
       ],
       "stages": [
@@ -4904,7 +4904,7 @@
         },
         {
           "kind": "text",
-          "content": "So spät noch ein Besuch? Hallo."
+          "content": "So spÃ¤t noch ein Besuch? Hallo."
         }
       ],
       "stages": [
@@ -4956,7 +4956,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? Um die Uhrzeit möchte ich es langsam angehen lassen."
+          "content": "Hm? Um die Uhrzeit mÃ¶chte ich es langsam angehen lassen."
         }
       ],
       "stages": [
@@ -5008,7 +5008,7 @@
         },
         {
           "kind": "text",
-          "content": "Ein später Besuch von dir. Dafür mache ich die Augen noch mal richtig auf."
+          "content": "Ein spÃ¤ter Besuch von dir. DafÃ¼r mache ich die Augen noch mal richtig auf."
         }
       ],
       "stages": [
@@ -5034,7 +5034,7 @@
         },
         {
           "kind": "text",
-          "content": "Hach, du schaust noch nach mir. So spät freue ich mich besonders über Gesellschaft."
+          "content": "Hach, du schaust noch nach mir. So spÃ¤t freue ich mich besonders Ã¼ber Gesellschaft."
         }
       ],
       "stages": [
@@ -5058,7 +5058,7 @@
         },
         {
           "kind": "text",
-          "content": "Dein Mauszeiger flitzt ganz schön über den Bildschirm."
+          "content": "Dein Mauszeiger flitzt ganz schÃ¶n Ã¼ber den Bildschirm."
         }
       ],
       "stages": [
@@ -5226,7 +5226,7 @@
         },
         {
           "kind": "text",
-          "content": "Da oben komme ich mit meinen Füßen nicht hin."
+          "content": "Da oben komme ich mit meinen FÃ¼ÃŸen nicht hin."
         }
       ],
       "stages": [
@@ -5274,7 +5274,7 @@
         },
         {
           "kind": "text",
-          "content": "Du flitzt ganz schön weit weg. Kommst du nachher wieder zu mir?"
+          "content": "Du flitzt ganz schÃ¶n weit weg. Kommst du nachher wieder zu mir?"
         }
       ],
       "stages": [
@@ -5298,7 +5298,7 @@
         },
         {
           "kind": "text",
-          "content": "Hach, da oben müsste ich lange Beine haben, um mitzukommen."
+          "content": "Hach, da oben mÃ¼sste ich lange Beine haben, um mitzukommen."
         }
       ],
       "stages": [
@@ -5352,7 +5352,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin am Arbeiten. Ein bisschen Streicheln nebenbei wäre aber in Ordnung."
+          "content": "Ich bin am Arbeiten. Ein bisschen Streicheln nebenbei wÃ¤re aber in Ordnung."
         }
       ],
       "stages": [
@@ -5382,7 +5382,7 @@
         },
         {
           "kind": "text",
-          "content": "Ja? Gerade arbeite ich noch. Etwas Zuwendung würde mir trotzdem guttun."
+          "content": "Ja? Gerade arbeite ich noch. Etwas Zuwendung wÃ¼rde mir trotzdem guttun."
         }
       ],
       "stages": [
@@ -5412,7 +5412,7 @@
         },
         {
           "kind": "text",
-          "content": "Du kommst richtig. Ich muss arbeiten, aber deine Hand hätte ich gern hier."
+          "content": "Du kommst richtig. Ich muss arbeiten, aber deine Hand hÃ¤tte ich gern hier."
         }
       ],
       "stages": [
@@ -5442,7 +5442,7 @@
         },
         {
           "kind": "text",
-          "content": "Hach, du. Ich bin noch beschäftigt. Ein bisschen Streicheln wäre trotzdem schön."
+          "content": "Hach, du. Ich bin noch beschÃ¤ftigt. Ein bisschen Streicheln wÃ¤re trotzdem schÃ¶n."
         }
       ],
       "stages": [
@@ -5494,7 +5494,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, hallo. Zum großen Winken bin ich gerade etwas müde."
+          "content": "Oh, hallo. Zum groÃŸen Winken bin ich gerade etwas mÃ¼de."
         }
       ],
       "stages": [
@@ -5520,7 +5520,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Ich freue mich über dich, auch mit meinen müden Augen."
+          "content": "Hallo, du. Ich freue mich Ã¼ber dich, auch mit meinen mÃ¼den Augen."
         }
       ],
       "stages": [
@@ -5546,7 +5546,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bin ich wieder bei dir. Ich gähne nur gerade öfter als ich winke."
+          "content": "Da bin ich wieder bei dir. Ich gÃ¤hne nur gerade Ã¶fter als ich winke."
         }
       ],
       "stages": [
@@ -5573,7 +5573,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo zurück. Ich bin heute etwas stiller."
+          "content": "Hallo zurÃ¼ck. Ich bin heute etwas stiller."
         }
       ],
       "stages": [
@@ -5654,7 +5654,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Ich freue mich über dich, auch wenn ich gerade etwas durchhänge."
+          "content": "Hallo, du. Ich freue mich Ã¼ber dich, auch wenn ich gerade etwas durchhÃ¤nge."
         }
       ],
       "stages": [
@@ -5687,7 +5687,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist zurück. Ich bin gerade etwas gereizt. Bitte keine Klickserie."
+          "content": "Du bist zurÃ¼ck. Ich bin gerade etwas gereizt. Bitte keine Klickserie."
         }
       ],
       "stages": [
@@ -5720,7 +5720,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du, du. Schön! Nur meine Geduld ist heute ziemlich kurz."
+          "content": "Da bist du, du. SchÃ¶n! Nur meine Geduld ist heute ziemlich kurz."
         }
       ],
       "stages": [
@@ -5764,7 +5764,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast mich angeklickt. Was möchtest du machen?"
+          "content": "Du hast mich angeklickt. Was mÃ¶chtest du machen?"
         }
       ]
     },
@@ -5804,7 +5804,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich schaue zu dir. Wolltest du mich begrüßen?"
+          "content": "Ich schaue zu dir. Wolltest du mich begrÃ¼ÃŸen?"
         }
       ]
     },
@@ -5864,7 +5864,7 @@
         },
         {
           "kind": "text",
-          "content": "Ein Rechtsklick bei mir. Was möchtest du auswählen?"
+          "content": "Ein Rechtsklick bei mir. Was mÃ¶chtest du auswÃ¤hlen?"
         }
       ]
     },
@@ -5928,7 +5928,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Huch … ich bin wach. Das war mir zu viel Geklicke."
+          "content": "Huch â€¦ ich bin wach. Das war mir zu viel Geklicke."
         },
         {
           "kind": "emote",
@@ -5952,7 +5952,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mmpf … jetzt bin ich wach. Das war kein sanftes Wecken."
+          "content": "Mmpf â€¦ jetzt bin ich wach. Das war kein sanftes Wecken."
         },
         {
           "kind": "emote",
@@ -5976,7 +5976,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich wollte noch schlafen. Bitte hör mit dem Geklicke auf."
+          "content": "Ich wollte noch schlafen. Bitte hÃ¶r mit dem Geklicke auf."
         },
         {
           "kind": "emote",
@@ -6024,7 +6024,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Uff … ich bin wach. Du, das viele Klicken war gerade echt unangenehm."
+          "content": "Uff â€¦ ich bin wach. Du, das viele Klicken war gerade echt unangenehm."
         },
         {
           "kind": "emote",
@@ -6072,7 +6072,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mmpf. Schlaf vorbei. Bitte weck mich nächstes Mal etwas sanfter."
+          "content": "Mmpf. Schlaf vorbei. Bitte weck mich nÃ¤chstes Mal etwas sanfter."
         },
         {
           "kind": "emote",
@@ -6144,7 +6144,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So … jetzt bin ich wach. Nähe mag ich, aus dem Schlaf geklickt werden nicht."
+          "content": "So â€¦ jetzt bin ich wach. NÃ¤he mag ich, aus dem Schlaf geklickt werden nicht."
         },
         {
           "kind": "emote",
@@ -6154,6 +6154,21 @@
       ],
       "stages": [
         "close"
+      ]
+    },
+    {
+      "id": "cursor-warning-near-fast-01",
+      "event": "cursor_warning_near_fast",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hey, langsamer! Das ist mir zu nah."
+        }
       ]
     }
   ]

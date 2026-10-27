@@ -11,7 +11,11 @@ from ..application.cursor_behaviour import (
     CursorBehaviourCoordinator,
 )
 from ..application.cursor_observation import CursorObservation
-from ..pet.interaction_events import CursorExperience
+from ..pet.interaction_events import (
+    CursorExperience,
+    CursorWarning,
+    CursorWarningReceipt,
+)
 from .geometry import sprite_access_contains
 from .walk_runtime import WalkDriver
 
@@ -25,6 +29,9 @@ class PointerRuntimePorts:
     eyes: Callable[[], tuple[float, float]]
     on_motion: Callable[[float, int, float], None]
     on_experience: Callable[[CursorExperience], None] = lambda _event: None
+    on_warning: Callable[[CursorWarning, float], CursorWarningReceipt] = (
+        lambda event, now: CursorWarningReceipt(event.warning_id, now, False)
+    )
     scale: Callable[[], int] = lambda: 1
     menu_engaged: Callable[[], bool] = lambda: False
     foreground_active: Callable[[], bool] = lambda: False
@@ -80,8 +87,11 @@ class PointerRuntime:
             self.claim_access((x, y))
         if self._behaviour is not None:
             self._behaviour.begin_frame(now, self.activity())
-            if self._behaviour.feedback is not None:
-                self._ports.on_experience(self._behaviour.feedback)
+            event = self._behaviour.feedback
+            if isinstance(event, CursorWarning):
+                self._behaviour.note_warning(self._ports.on_warning(event, now))
+            elif event is not None:
+                self._ports.on_experience(event)
 
     def admit_behaviour(self, now: float) -> None:
         if self._behaviour is not None and self._walk is not None:

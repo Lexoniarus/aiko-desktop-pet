@@ -54,6 +54,7 @@ def assemble_pointer(
             eyes=lambda: animated.cursor_eye_position,
             on_motion=lambda _distance, _width, _now: None,
             on_experience=attention.cursor_experience,
+            on_warning=attention.cursor_warning,
             scale=lambda: settings.scale,
             menu_engaged=lambda: hover.menu_engaged,
             foreground_active=lambda: not contact.can_interact("pet"),

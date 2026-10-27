@@ -7,7 +7,7 @@ from typing import Literal
 from uuid import uuid4
 
 from ..balance import BALANCE
-from ..interaction_events import CursorExperience
+from ..interaction_events import CursorExperience, CursorWarning, CursorWarningReceipt
 from .cursor_attention import CursorPerception
 
 CursorReaction = Literal["ignore", "observe", "approach", "avoid", "flee", "startle"]
@@ -37,6 +37,7 @@ class CursorIntent:
     steps: int = 1
     attention: float = 0.0
     stage: int = 0
+    warning: CursorWarning | None = None
 
     @property
     def gaze(self) -> bool:
@@ -57,6 +58,8 @@ class CursorBehaviourPolicy:
     def __init__(self, *, session_id: str | None = None) -> None:
         self._session = session_id or uuid4().hex
         self._serial = 0
+        self._warning_serial = 0
+        self._last_warning_at = -100.0
         self.reset()
 
     def reset(self) -> None:
@@ -78,6 +81,9 @@ class CursorBehaviourPolicy:
         self._fear_level = 0
         self._trust = 0.0
         self._willing = False
+        self._pending_warning: CursorWarning | None = None
+        self._warned_at: float | None = None
+        self._threat_active = False
 
     def suspend(self, now: float) -> None:
         """Yield attention to a real activity without rearming an escape."""
@@ -119,6 +125,21 @@ class CursorBehaviourPolicy:
         self._release = [0.0, 0.0, 0.0]
         self._last_sample = -100.0
         self._calm_since = None
+        self._pending_warning = None
+        self._warned_at = None
+        self._threat_active = False
+
+    def note_warning(self, receipt: CursorWarningReceipt) -> None:
+        """Consume a matching, fresh display receipt without advancing pet time."""
+        pending = self._pending_warning
+        if (pending is None or receipt.warning_id != pending.warning_id
+                or not 0 <= receipt.presented_at - pending.created_at
+                <= parameter("warning_candidate_seconds")):
+            return
+        self._pending_warning = None
+        if receipt.presented:
+            self._warned_at = receipt.presented_at
+            self._last_warning_at = receipt.presented_at
 
     def _integrate(self, p: CursorPerception, dt: float) -> None:
         band = p.motion_band
@@ -162,11 +183,14 @@ class CursorBehaviourPolicy:
         self, perception: CursorPerception, context: CursorBehaviourContext, now: float
     ) -> CursorIntent:
         p = perception
-        self.current = replace(self.current, experience=None)
+        self.current = replace(self.current, experience=None, warning=None)
         if not p.valid or not 0 <= now - p.sampled_at <= 0.5:
             self.note_motion_finished(self.current.token, now)
             self._calm_since = None
             self._last_sample = -100.0
+            self._pending_warning = None
+            self._warned_at = None
+            self._threat_active = False
             self.current = CursorIntent(reason="invalid-sample")
             return self.current
         dt = p.sampled_at - self._last_sample
@@ -176,6 +200,9 @@ class CursorBehaviourPolicy:
         self._last_sample = p.sampled_at
         self._integrate(p, dt if continuous else 0.0)
         if p.distance > parameter("interest_distance"):
+            self._threat_active = False
+            self._pending_warning = None
+            self._warned_at = None
             self._calm_since = None
             if self._outside_since is None:
                 self._outside_since = now
@@ -192,6 +219,7 @@ class CursorBehaviourPolicy:
         if not self._encounter:
             self._encounter = True
             self._serial += 1
+            self._curiosity_level = self._fear_level = 0
             self._trust = max(0, min(1, (context.friendship_level - 1) / 9))
             self._willing = (
                 context.energy >= 25
@@ -204,40 +232,55 @@ class CursorBehaviourPolicy:
                 "observe", token=self._serial, until=self._look_until, target=p.pointer
             )
         threat = (
-            p.distance < parameter("threat_distance")
-            and p.speed > parameter("fast_speed")
-            and p.closing_speed > parameter("closing_speed")
+            p.distance <= parameter("warning_distance")
+            and p.speed >= parameter("warning_speed")
+            and p.closing_speed >= parameter("warning_closing_speed")
+            and p.motion_band not in ("still", "slow")
         )
-        if (
-            threat
-            and not self._retreated
-            and not self._access
-            and now >= self.recover_until
-        ):
-            self._retreated = True
-            level = min(3, max(1, round(3 - 2 * self._trust + (context.energy < 25))))
-            self._fear_level = level
-            reaction: CursorReaction = (
-                "flee"
-                if self._trust < 0.45 and context.energy >= 25
-                else "avoid"
-                if context.energy >= 12
-                else "startle"
-            )
-            self._look_until = now + 3
-            self.recover_until = now + parameter("recovery_seconds")
-            self.current = CursorIntent(
-                reaction,
-                -p.side or 1,
-                self._serial * 4 + 2,
-                now + 15,
-                "near-fast-approach",
-                p.pointer,
-                "front" if reaction == "startle" else "profile",
-                level,
-                self._evidence("fear", level),
-            )
-            return self.current
+        new_approach = threat and not self._threat_active
+        self._threat_active = threat
+        warning = None
+        if (new_approach and not self._retreated and not self._access
+                and now >= self.recover_until):
+            warned = self._warned_at
+            if (warned is not None and warned < p.sampled_at
+                    <= warned + parameter("warning_window_seconds")):
+                self._retreated = True
+                level = min(3, max(1, round(
+                    3 - 2 * self._trust + (context.energy < 25)
+                )))
+                self._fear_level = level
+                reaction: CursorReaction = (
+                    "flee"
+                    if self._trust < 0.45 and context.energy >= 25
+                    else "avoid"
+                    if context.energy >= 12
+                    else "startle"
+                )
+                self._look_until = now + 3
+                self.recover_until = now + parameter("recovery_seconds")
+                self.current = CursorIntent(
+                    reaction,
+                    -p.side or 1,
+                    self._serial * 4 + 2,
+                    now + 15,
+                    "near-fast-approach",
+                    p.pointer,
+                    "front" if reaction == "startle" else "profile",
+                    level,
+                    self._evidence("fear", level),
+                )
+                return self.current
+            if now - self._last_warning_at >= parameter("warning_repeat_seconds"):
+                self._warning_serial += 1
+                warning = CursorWarning(
+                    f"{self._session}:{self._serial}:warning:{self._warning_serial}",
+                    now,
+                )
+                self._pending_warning = warning
+                # A warning may briefly orient the head without earning a moodlet.
+                self.attention = max(self.attention, parameter("noticed_at"))
+                self.stage = max(1, self.stage)
         if self.current.moving:
             if now < self.current.until:
                 return self.current
@@ -300,5 +343,6 @@ class CursorBehaviourPolicy:
             2 if self._trust >= 0.7 else 1,
             self.attention,
             self.stage,
+            warning,
         )
         return self.current

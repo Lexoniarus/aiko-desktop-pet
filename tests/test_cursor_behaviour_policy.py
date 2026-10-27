@@ -3,6 +3,7 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.pet.interaction_events import CursorWarningReceipt
 from aiko_pet.pet.mind.cursor_attention import CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import (
     CursorBehaviourContext,
@@ -20,6 +21,16 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             sampled_at=now, pointer=(400, 194), distance=0.6, side=1, valid=True
         )
         return self.policy.evaluate(replace(p, **values), self.context, now)
+
+    def warned_threat(self, now=10.0):
+        first = self.decide(now, speed=8, closing_speed=8)
+        self.assertIsNone(first.experience)
+        assert first.warning is not None
+        self.policy.note_warning(CursorWarningReceipt(
+            first.warning.warning_id, now, True,
+        ))
+        self.decide(now + .1, speed=2, closing_speed=-2)
+        return self.decide(now + .2, speed=8, closing_speed=8)
 
     def calm_until(self, seconds, **fields):
         result = self.decide()
@@ -77,30 +88,31 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         ):
             self.assertFalse(self.decide(**fields).moving)
         self.policy.reset()
-        self.assertEqual(self.decide(speed=8, closing_speed=8).reaction, "flee")
+        self.assertEqual(self.warned_threat().reaction, "flee")
 
     def test_trust_and_state_change_strength_without_unlocking_feelings(self):
         for trust, expected in ((1, "flee"), (10, "avoid")):
-            self.policy.reset()
+            self.policy = CursorBehaviourPolicy(session_id="fixture")
             self.context = replace(self.context, friendship_level=trust)
-            fear = self.decide(speed=8, closing_speed=8)
+            fear = self.warned_threat()
             self.assertEqual(fear.reaction, expected)
             assert fear.experience is not None
             self.assertEqual(fear.experience.feeling, "fear")
             self.policy.reset()
             self.assertIsNotNone(self.calm_until(1).experience)
         self.policy.reset()
+        self.policy = CursorBehaviourPolicy(session_id="exhausted")
         self.context = replace(self.context, energy=5)
-        self.assertEqual(self.decide(speed=8, closing_speed=8).reaction, "startle")
+        self.assertEqual(self.warned_threat().reaction, "startle")
 
     def test_one_retreat_until_confirmed_exit_and_five_seconds_standing(self):
-        first = self.decide(speed=8, closing_speed=8)
+        first = self.warned_threat()
         self.policy.note_motion_finished(first.token, 10.5)
         for t in (11, 12, 15, 20):
             self.assertFalse(self.decide(t, speed=8, closing_speed=8).moving)
         self.decide(21, distance=5)
         self.decide(22, distance=5)
-        self.assertTrue(self.decide(23, speed=8, closing_speed=8).moving)
+        self.assertTrue(self.warned_threat(23).moving)
 
     def test_hectic_sides_only_look_briefly_without_body_chasing(self):
         result = self.decide()

@@ -12,7 +12,12 @@ from typing import Callable
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
 from ..pet.animation.idle_emote import choose_idle_emote
-from ..pet.interaction_events import CursorExperience
+from ..pet.interaction_events import (
+    CursorExperience,
+    CursorWarning,
+    CursorWarningReceipt,
+)
+from ..pet.mind.cursor_behaviour import parameter
 from ..pet.routine import TimeContext
 from ..ui.pet_view.attention_presenter import AttentionPresenter
 
@@ -60,6 +65,22 @@ class DesktopAttentionRuntime:
         )
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
+
+    def cursor_warning(self, event: CursorWarning, now: float) -> CursorWarningReceipt:
+        ports = self._ports
+        displayed = False
+        if (0 <= now - event.created_at <= parameter("warning_candidate_seconds")
+                and not any((ports.game_open(), ports.foreground_active(),
+                             ports.reaction_pending(), ports.bubble_visible(),
+                             ports.menu_engaged(), ports.settings_engaged()))):
+            reaction = self.attention.mind.select_reaction(
+                "cursor_warning_near_fast", self.attention.state, ports.context(), now,
+            )
+            if reaction is not None:
+                displayed = self._presenter.show_cursor_warning(
+                    reaction.text, int(parameter("warning_duration_ms")),
+                )
+        return CursorWarningReceipt(event.warning_id, now, displayed)
 
     def cursor_experience(self, event: CursorExperience) -> None:
         """Brief feeling cue in a free speech slot; drop rather than queue."""

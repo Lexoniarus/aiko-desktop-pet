@@ -274,6 +274,9 @@ class Line:
             raise ValueError("Invalid dialogue beats")
         beats = tuple(Cue.parse(beat) for beat in raw_beats)
         texts = [beat.content for beat in beats if beat.kind == "text"]
+        if data["event"] == "cursor_warning_near_fast" and (
+                len(beats) != 1 or beats[0].kind != "text"):
+            raise ValueError("Cursor warning requires exactly one text cue")
         presentation = data.get("presentation", "short")
         if presentation not in ("short", "story"):
             raise ValueError("Invalid presentation")

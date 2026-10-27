@@ -341,6 +341,7 @@ class DesktopPet:
         )
         self._attention_view = AttentionPresenter(AttentionViewPorts(
             show_nonblocking_emote=self._speech.show_cursor_emote,
+            show_nonblocking_text=self._speech.show_cursor_warning,
             start_action=lambda name, duration: self._start_action(
                 name, duration,
             ),

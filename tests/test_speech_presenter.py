@@ -44,6 +44,17 @@ class SpeechPresenterTests(unittest.TestCase):
         self.presenter.hide()
         self.assertFalse(self.presenter.blocks_contact)
 
+    def test_warning_reports_actual_vacant_slot_without_contact_lock(self):
+        self.assertTrue(self.presenter.show_cursor_warning("Langsamer!", 2000))
+        before = self.presenter.bubble
+        self.assertFalse(self.presenter.blocks_contact)
+        self.assertFalse(self.presenter.show_cursor_warning("Noch einmal", 2000))
+        self.assertIs(before, self.presenter.bubble)
+        self.presenter.hide()
+        self.presenter.show_text("Geschichte", 6000)
+        self.assertFalse(self.presenter.show_cursor_warning("Langsamer!", 2000))
+        self.assertTrue(self.presenter.blocks_contact)
+
     def test_speech_renders_plain_text_with_existing_tail(self) -> None:
         self.presenter.show_text("Hallo <b>Browser</b>!", 6000)
         bubble = self.presenter.bubble

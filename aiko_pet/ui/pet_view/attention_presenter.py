@@ -16,6 +16,7 @@ class AttentionViewPorts:
     react: Callable[[Reaction | None, int], None]
     show_emote: Callable[[str, int], None]
     show_text: Callable[[str, int], None]
+    show_nonblocking_text: Callable[[str, int], bool] | None = None
     show_nonblocking_emote: Callable[[str, int], None] | None = None
 
 
@@ -40,6 +41,10 @@ class AttentionPresenter:
         """A cue has no action/reaction ownership and never locks contact."""
         display = self._ports.show_nonblocking_emote or self._ports.show_emote
         display(emote, duration_ms)
+
+    def show_cursor_warning(self, text: str, duration_ms: int) -> bool:
+        display = self._ports.show_nonblocking_text
+        return display(text, duration_ms) if display is not None else False
 
     def show_notification(self, text: str, duration_ms: int = 3500) -> None:
         self._ports.show_text(text, duration_ms)

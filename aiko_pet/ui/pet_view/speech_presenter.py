@@ -73,6 +73,14 @@ class SpeechPresenter:
         self.show_emote(emote, duration_ms)
         self._nonblocking = True
 
+    def show_cursor_warning(self, text: str, duration_ms: int) -> bool:
+        """Report actual vacant-slot presentation, with contact still available."""
+        if self.bubble is not None:
+            return False
+        self.show_text(text, duration_ms)
+        self._nonblocking = True
+        return self.bubble is not None
+
     def release_images(self) -> None:
         """Release cached images at root destruction on Tk's owner thread."""
         self.emote_images.clear()

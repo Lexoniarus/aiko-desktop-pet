@@ -12,7 +12,7 @@ from aiko_pet.desktop.attention_runtime import (
     DesktopAttentionRuntime,
 )
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
-from aiko_pet.pet.interaction_events import CursorExperience
+from aiko_pet.pet.interaction_events import CursorExperience, CursorWarning
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
@@ -77,6 +77,40 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         )
         self.toolbar_refresh.assert_called_once_with()
         self.attention.select_sleep_transition_reaction.assert_not_called()
+
+    def test_warning_uses_catalogue_and_reports_only_actual_display(self):
+        from aiko_pet.pet.mind.catalog import Reaction
+
+        reaction = Reaction.spoken(
+            "warning", "Hey, langsamer!", "idle", "cursor_warning_near_fast",
+        )
+        self.attention.mind.select_reaction.return_value = reaction
+        self.presenter.show_cursor_warning.return_value = True
+        before = self.attention.state.capture_checkpoint()
+        receipt = self.runtime.cursor_warning(CursorWarning("fresh", 10), 10)
+        self.assertTrue(receipt.presented)
+        self.assertEqual(receipt.warning_id, "fresh")
+        self.attention.mind.select_reaction.assert_called_once_with(
+            "cursor_warning_near_fast", self.attention.state, self.context, 10,
+        )
+        self.presenter.show_reaction.assert_not_called()
+        self.assertEqual(before, self.attention.state.capture_checkpoint())
+        self.presenter.show_cursor_warning.return_value = False
+        receipt = self.runtime.cursor_warning(CursorWarning("next", 11), 11)
+        self.assertFalse(receipt.presented)
+
+    def test_warning_drops_in_protected_or_occupied_slot_and_when_stale(self):
+        original = self.runtime._ports
+        for guard in ("game_open", "foreground_active", "reaction_pending",
+                      "bubble_visible", "menu_engaged", "settings_engaged"):
+            self.runtime._ports = replace(original, **{guard: lambda: True})
+            self.assertFalse(
+                self.runtime.cursor_warning(CursorWarning(guard, 10), 10).presented
+            )
+        self.runtime._ports = original
+        receipt = self.runtime.cursor_warning(CursorWarning("old", 10), 11)
+        self.assertFalse(receipt.presented)
+        self.presenter.show_cursor_warning.assert_not_called()
 
     def test_qualified_cursor_cue_does_not_start_action_or_reaction(self):
         self.runtime.cursor_experience(CursorExperience("actual:1", "curiosity", 2))
