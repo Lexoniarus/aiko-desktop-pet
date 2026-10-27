@@ -196,8 +196,11 @@ class ResourceValidationTests(unittest.TestCase):
             ("cursor_behaviour", "curiosity_level_two_seconds", 12),
             ("cursor_behaviour", "curiosity_level_three_seconds", 6),
             ("cursor_behaviour", "curiosity_refresh_seconds", 0),
-            ("cursor_behaviour", "play_pause_seconds", 3),
-            ("cursor_behaviour", "play_grace_seconds", 3),
+            ("cursor_behaviour", "play_pause_seconds", 5),
+            ("cursor_behaviour", "play_grace_seconds", 5),
+            ("cursor_behaviour", "run_release_distance", .65),
+            ("cursor_behaviour", "playful_score", 101),
+            ("cursor_behaviour", "playful_minimum_mood", -1),
             ("simulation", "step_seconds", 1000),  # Retired routine interval.
             ("sleep", "nap_seconds", 2700),
             ("sleep", "manual_protection_seconds", 0),

@@ -57,7 +57,7 @@ Reichweite stammen aus der vorhandenen normierten Körpergeometrie von
 | Situation innerhalb von drei W Körperabstand | Änderungsrate |
 | --- | --- |
 | Bewegung unter 0,5 W/s, außerhalb des Stillstandstoleranzbereichs | −8 Punkte/s |
-| Normale Bewegung ab 0,5 und unter 1,5 W/s | +4 Punkte/s |
+| Normale Bewegung ab 0,5 und unter 1,5 W/s | +12 Punkte/s |
 | Schnelle Bewegung ab 1,5 und unter 3 W/s | +18 Punkte/s |
 | Sehr schnelle Bewegung ab 3 W/s | +24 Punkte/s |
 | Stillstand innerhalb der vorhandenen Jittertoleranz | −15 Punkte/s |
@@ -208,16 +208,35 @@ ihre tatsächlichen übrigen Aufrufer nicht geprüft sind.
 
 ## Neugier, Angst und vorhandene Moodlets
 
-**Neugier** kann bei mindestens 70 Aufmerksamkeit entstehen, wenn die Situation
-mindestens zwei Sekunden interessant und ungefährlich bleibt. Schnelle Bewegung
-kann dafür ausdrücklich positiv sein. Langsames oder ruhiges Halten allein
-qualifiziert keine neue Neugier. Die positiven zwei Sekunden werden nur aus
-wirklich beobachteter passender Bewegung gesammelt; ein alter Moodlet-Level
-oder eine Körperdrehung ist kein Ersatz dafür.
-Als präziser Startvertrag beginnt diese Qualifikationszeit ab 70 Punkten;
-es braucht zwei Sekunden gültiger positiver Beobachtung mit mindestens 70.
-Ruhe, Bedrängen oder eine Beobachtungslücke unterbrechen diese Qualifikation.
-Sie ist eine Dauer innerhalb derselben Policy, kein separater Timer.
+**Neugier** kann ab bemerkter Aufmerksamkeit (20) nach einer Sekunde
+passender, ungefährlicher Bewegung entstehen. Normale Bewegung baut mit
+12 Punkten/s auf; schnelle/sehr schnelle Bewegung behält 18/24 Punkte/s.
+Kontrollierte kontinuierliche Proben bei 1/2/4 Körperbreiten pro Sekunde
+qualifizieren damit nach 2,7/2,2/1,9 Sekunden statt 19,5/5,9/5 Sekunden.
+Ein einzelner Vorbeiflug oder ruhiges Halten erzeugt kein sofortiges Moodlet.
+Ruhe, bedrängende Bewertung und eine echte Beobachtungslücke unterbrechen die
+Qualifikation. Menüpausen erhalten nur die zuvor wirklich beobachtete Zeit:
+Die vorhandene Policy verschiebt ihren Qualifikationsbeginn um die gültigen
+Menü-Sampleintervalle, statt Menüzeit als sichere Bewegung zu zählen.
+
+Die Bewertung einer schnellen Nahannäherung erfolgt vor dem Text:
+- Ein bestehendes Angst-Moodlet bleibt defensiv.
+- Bei mindestens 25 Energie gilt bestehende Neugier ab Stimmung 45 als
+  spielerisch; alternativ genügt `Stimmung + 3 * (Freundschaftsstufe - 1) >= 75`.
+  Damit können sowohl gute Stimmung bei geringer Freundschaft als auch
+  Vertrautheit bei mittlerer Stimmung positives Interesse ermöglichen.
+- Schnelles Vorbeiflitzen überschreibt eine spielerische Bewertung nicht pauschal
+  mit Angst. Ändern sich Zustand oder Bewertung defensiv, braucht neue Angst
+  weiterhin eine eigene tatsächlich angezeigte defensive Vorwarnung.
+- Spielerisches Vorbeiflitzen wählt `cursor_notice_playful`. Nur eine defensive
+  tatsächliche Nahannäherung wählt `cursor_warning_near_fast`.
+
+Der bestehende flüchtige `CursorWarning` transportiert dafür einen typisierten
+Ton (`playful`/`cautious`, bisherige Konstruktoren bleiben vorsichtig).
+Die Quittung einer spielerischen Anzeige darf niemals ein Angst-Warnfenster
+öffnen oder dessen Wiederholungssperre verbrauchen. Texte bleiben kurze
+Katalog-Cues ohne Aktionsbesitz; Annäherungshinweise stehen 2,8 Sekunden,
+qualifizierte Gefühls-Kommentare 3 Sekunden. Belegte Sprechplätze bleiben geschützt.
 
 **Angst** entsteht erst nach dem oben bestätigten Warnablauf und einem neuen
 bedrängenden Anlass. Vorwarnung allein verändert keine Stimmungspunkte.
@@ -249,7 +268,7 @@ Endpunkt; nach ausbleibendem Reiz laufen die bekannten unteren Stufen ab.
 Neugier und Angst schließen sich aus. Ein neu qualifiziertes Gefühl ersetzt das
 vorherige vollständig. Innerhalb desselben Gefühls bleiben absolute Stärken und
 die bestehenden Budgets maßgeblich. Nach dem begrenzten Rückzug und seiner
-Standruhe kann erst neue, zwei Sekunden lang qualifizierte sichere Bewegung
+Standruhe kann erst neue, eine Sekunde lang qualifizierte sichere Bewegung
 wieder Neugier auslösen. Ein Seitenwechsel allein ist kein neuer Gefühlsbeleg.
 Jede neue Qualifikation erhält eine eigene Beleg-ID, auch beim Wechsel zurück
 zur vorherigen Gefühlsart innerhalb derselben Begegnung.
@@ -264,12 +283,22 @@ Handhöhen-/Reichbarkeitsbedingung ist entfernt. Ein horizontaler Abstand von
 0,15 Körperbreiten bleibt erhalten. Direkt über/bei Aiko kann der bestehende
 Auftrag innerhalb seiner Frist warten, statt als blockiert ständig neu zu starten.
 
-Ein Versuch hat höchstens 3 Sekunden Wandzeit und 3/5/7 kleine Schrittbreiten
+Ein Versuch hat höchstens 5 Sekunden Wandzeit und 3/5/7 kleine Schrittbreiten
 Gesamtweg für Neugier 1/2/3; jede Schrittbreite beträgt 1/12 Spritebreite.
-Stufe 1 nutzt Schrittgeschwindigkeit, ab Stufe 2 verwendet der nächste Versuch
-Lauftempo. Nach Ende folgt eine Pause von 1,2 Sekunden. Ein neuer Versuch braucht
-weiterhin passende frische Bewegung, ein Moodlet allein genügt nicht. Der letzte
-passende Reiz darf kurze Unterbrechungen von höchstens einer Sekunde überbrücken.
+Ein längerer Laufauftrag erhält mindestens eine vorhandene Laufzyklus-Strecke
+(68 logische Pixel), damit alle acht Rennframes gezeigt werden können.
+Nach Ende folgt eine kurze Pause von 0,35 Sekunden. Ein neuer Versuch braucht
+weiterhin passende frische Bewegung; ein Moodlet allein genügt nicht. Kurze
+Unterbrechungen dürfen bis zu zwei Sekunden überbrückt werden.
+
+Das Tempo richtet sich nach tatsächlicher horizontaler Reststrecke statt nach
+dem Moodlet-Level: ab 0,65 Spritebreiten darf Aiko rennen, unter 0,35 wechselt
+sie wieder zum Gehen. Die Hysterese verhindert ständigen Tempowechsel. Die
+vorhandenen `running-left`/`running-right` enthalten fest gezeichnete Seitenköpfe.
+Deshalb werden sie bei passendem horizontalem Blick (04/12) unverändert und im
+Originaltakt verwendet. Für diagonale Kopfachsen bleiben die vorhandenen
+Profil-Gehbanken bei echter Gehgeschwindigkeit zuständig. Blickführung hat Vorrang;
+keine beschleunigten Gehframes als Ersatz fürs Rennen und keine neue Kopfmontage.
 
 Seitenwechsel korrigieren denselben Fangauftrag. Token, Wandfrist, verbrauchte
 Zeit, Gesamtweg und Schrittgrenzen bleiben erhalten. Beim Richtungswechsel wird
@@ -277,7 +306,7 @@ nur ein gegenläufiger Subpixelrest gelöscht. Keine neue Position wird außerha
 des bestehenden WalkControllers/WalkDrivers geschrieben. Profile verwenden die
 vorhandenen Kopf-Schritt-Banken; die Wiedergabe folgt dem bestehenden Bewegungstempo
 und der deklarierten Schrittweite. Beim Rückzug schaut Aiko weiter zum Zeiger;
-der vorhandene Schrittsatz läuft dafür rückwärts und bei Flucht schneller.
+die passende vorhandene Geh-/Rennfolge wird für den Rückzug rückwärts abgespielt.
 Das ersetzt keine Assets und erzeugt keine neue Zeichnung.
 
 `cursor_play_start`, `cursor_play_more`, `cursor_play_peak` und
@@ -324,9 +353,13 @@ Ein expliziter Klick verwirft die flüchtigen Cursorabsichten. Reine
 Toolbar-/Menübedienung hält dagegen Aufmerksamkeit und Blick aufrecht, beendet
 eine Ortsbewegung sicher und setzt keine dauerhafte Zugangssperre. Dabei werden
 keine neuen Warn-/Gefühlsbelege qualifiziert; ein altes Warnfenster wird verworfen.
-Beim Verlassen der Bedienflächen bleibt die Aufmerksamkeit bestehen. Abgebrochene
-Fangversuche erhalten dadurch keine neuen Tokens oder Budgets; deren Pause bleibt
-maßgeblich. Geschützte Aktivitäten geben Cursorabsichten weiterhin frei. Ihre
+Beim Verlassen der Bedienflächen bleiben Aufmerksamkeit und bereits gesammelte
+positive Beobachtungszeit bestehen. Menüzeit lädt weder Gefühle noch Spielzeit
+auf; vorhandene Moodlets altern normal weiter. Ein gehaltenes Interesse kann
+bei neuer passender Bewegung sofort einen neuen begrenzten Versuch erlauben.
+Der während der Bedienung sicher beendete alte Bewegungsauftrag wird nicht mit
+zurückgesetztem Budget wiederbelebt. Eine Menüpause erzwingt keine zusätzliche
+Fangversuchs-Abkühlung; explizite Klicks behalten ihre harte Übernahme. Geschützte Aktivitäten geben Cursorabsichten weiterhin frei. Ihre
 Dauer wird danach nicht als beobachtete Aktivität nachintegriert.
 
 ## Geprüfter Iststand und konkrete Umbauten
@@ -616,3 +649,33 @@ Ruff, Mypy strict und Pyright sind grün. Dies ist keine vollständige CI-Ausfü
 Die praktische Sichtabnahme nach Neustart der Anwendung bleibt offen; Tests
 verändern weder den laufenden Nutzerprozess noch seinen Spielstand. Keine Assets,
 Exporte oder parallelen UI-Entwürfe wurden verändert. Push und Merge sind für diese Nachkorrektur nicht freigegeben.
+
+
+## Nachkorrektur: situative Reaktionen, Menüfortsetzung und echte Rennfolge
+
+Der Auftrag vom 27.10.2026 ersetzt die vorige pauschal negative Vorwarnung,
+70-plus-zwei-Sekunden-Qualifikation und Moodlet-Level-Tempowahl durch die oben
+beschriebenen aktuellen Regeln. Zuständigkeiten bleiben in Policy, Koordinator,
+WalkDriver/WalkController und bestehendem Animationstimer. Kein neues Bild,
+keine Exportänderung und keine neue Bewegungs- oder Gefühlsinstanz.
+
+Gezielte Ablaufprüfungen decken positive/negative Bewertungen einschließlich
+Zustandswechsel, nicht als Angstbeleg nutzbare positive Anzeigequittungen,
+früheren Einstieg ohne Sofort-Moodlet, Menüzeit ohne Aufladung, erhaltene
+Moodlet-Identität mit normalem Zeitablauf, unmittelbare Wiederaufnahme und
+unveränderte Bedien-/World-/Klickprioritäten ab. Tempo-/Zielkorrekturen erhalten
+Token, Frist sowie verbrauchte Zeit-/Wegbudgets. Der echte Tk-Timer zeigt bei 1X
+und 2X sämtliche acht Original-Rennframes mit tatsächlichem Ortswechsel;
+diagonales Kopffolgen bleibt Gehen. Die praktische Sichtabnahme steht aus.
+
+
+Prüfstand dieser Nachkorrektur: Die vollständige lokale Suite besteht mit
+2.374 Tests. Zusätzliche Tk-Prüfungen zeigen sämtliche Original-Rennframes
+links und rechts bei beiden Größen. Ruff, Mypy strict (361 Quelldateien) und
+Pyright sind grün. Der Quittungstest verwendet jetzt ausdrücklich eine defensive
+Stimmung; seine Prüfung unveränderter Policy-/Pet-Zeit bleibt bestehen. Ein
+Menüeintritt unmittelbar nach dem ersten Moodlet und dessen späterer Ablauf
+sind separat gegen eine Wiederbelebung aus alten Beobachtungsmarken geprüft.
+Assets und parallele UI-Arbeiten bleiben unverändert. Kein Push, keine neue
+Remote-CI und keine Mergefreigabe für diese Nachkorrektur.
+Die laufende Nutzerinstanz und ihr Spielstand wurden nicht verändert.

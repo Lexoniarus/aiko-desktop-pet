@@ -13,6 +13,7 @@ from aiko_pet.pet.interaction_events import CursorExperience, CursorWarningRecei
 from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class CursorCoordinatorTests(unittest.TestCase):
@@ -34,6 +35,58 @@ class CursorCoordinatorTests(unittest.TestCase):
         for n in range(65):
             observer.current = replace(observer.current, sampled_at=3.6 + n / 10)
             self.coordinator.begin_frame(3.6 + n / 10, CursorActivityContext())
+
+    def test_short_menu_preserves_interest_and_releases_without_a_restart_delay(self):
+        co = self.coordinator
+        before = co._state.moodlets.active[0]
+        score = co.intent.attention
+        for n in range(101, 121):
+            co._state.advance(co._state.updated_at + .1, elapsed_seconds=.1)
+            co._observer.current = replace(co._observer.current, sampled_at=n / 10)
+            co.begin_frame(n / 10, CursorActivityContext(menu_engaged=True))
+            self.assertFalse(co.intent.moving)
+            self.assertTrue(co.watching)
+            self.assertIsNone(co.feedback)
+        after = co._state.moodlets.active[0]
+        self.assertEqual((after.instance_id, after.level),
+                         (before.instance_id, before.level))
+        self.assertAlmostEqual(after.remaining_seconds, before.remaining_seconds - 2)
+        self.assertEqual(co.intent.attention, score)
+        co._observer.current = replace(co._observer.current, sampled_at=12.1)
+        co.begin_frame(12.1, CursorActivityContext())
+        self.assertTrue(co.intent.moving)
+        self.assertEqual(co.intent.feeling, "curiosity")
+        self.assertEqual(co._state.moodlets.active[0].instance_id, before.instance_id)
+
+    def test_menu_immediately_after_first_moodlet_does_not_revive_it_after_expiry(self):
+        observer = CursorObservation(CursorAttention())
+        co = CursorBehaviourCoordinator(
+            PetState(), self.settings, observer, CursorBehaviourPolicy(),
+        )
+        at = 0.0
+        for n in range(40):
+            at = n / 10
+            observer.current = CursorPerception(
+                sampled_at=at, pointer=(500, 100), distance=1.5,
+                speed=2, side=1, valid=True,
+            )
+            co.begin_frame(at, CursorActivityContext())
+            if co.intent.experience is not None:
+                break
+        self.assertEqual(co.intent.feeling, "curiosity")
+        self.assertIsNone(co._policy._known_feeling)
+        for n in range(1, 411):
+            co._state.advance(co._state.updated_at + .1, elapsed_seconds=.1)
+            observer.current = replace(observer.current, sampled_at=at + n / 10)
+            co.begin_frame(at + n / 10, CursorActivityContext(menu_engaged=True))
+            self.assertIsNone(co.feedback)
+            self.assertFalse(co.intent.moving)
+        self.assertFalse(co._state.moodlets.active)
+        observer.current = replace(observer.current, sampled_at=at + 41.1)
+        co.begin_frame(at + 41.1, CursorActivityContext())
+        self.assertIsNone(co.intent.experience)
+        self.assertIsNone(co.intent.feeling)
+        self.assertFalse(co.intent.moving)
 
     def test_same_tick_world_change_denies_without_reselecting(self):
         intent = self.coordinator.intent
@@ -152,6 +205,7 @@ class CursorCoordinatorTests(unittest.TestCase):
 
         for n in range(101, 221):
             sample(n / 10)
+        set_test_pet_values(co._state, mood=20)
         sample(22.1, 2, .5)
         warning = co.intent.warning
         assert warning is not None

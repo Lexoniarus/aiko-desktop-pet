@@ -485,7 +485,11 @@ endpoint. JSON/SQLite decoding keeps the latest legacy impression, preferring
 fear on equal timestamps, while preserving its exact identity, stage budgets
 and causes. The coordinator projects the actually active feeling into the
 immutable cursor context and intent; elapsed Moodlets cannot leave a stale
-reactive turning mode. Sustained safe samples qualify level-one curiosity,
+reactive turning mode. Appraisal distinguishes playful and defensive approach
+cues before text selection; only an actually displayed defensive warning can
+arm fear. Level-one curiosity needs one second of safe observation after the
+noticed threshold. Menu pauses retain observed progress without counting menu
+time or renewing Moodlets. Sustained safe samples qualify level-one curiosity,
 then weighted play time raises it at 6/12 seconds. Fresh movement may refresh
 its finite duration every 8 seconds; the coordinator suppresses speech feedback
 for same-level maintenance. Authored onset/escalation/fear comments use the
@@ -496,10 +500,13 @@ motion. Ordinary Idle/World turns retain every authored phase. The read-only
 unconstrained gaze projection chooses a pose without granting World sight ahead
 of the actually rendered pose. `RenderDecision.refresh_after_ms` feeds the
 sprite's existing timer without sampling input, advancing PetState or evaluating
-policy. Playback rate and reverse frame order reuse the existing profile bank
-for faster pursuit and pointer-facing retreat; translation remains solely in
-WalkController. Catch attempts are bounded by 3 seconds and total travel,
-retarget across sides without new tokens/budgets, and pause for 1.2 seconds.
+policy. Distance-based pace selection lives in WalkDriver, with 0.65/0.35
+sprite-width hysteresis. Existing unmodified running clips play at authored speed
+for compatible horizontal side gaze; other head axes use the modular bank at
+walking speed. Reverse playback keeps retreat facing the pointer. Translation
+remains solely in WalkController. Catch attempts are bounded by 5 seconds and
+total travel, retarget/repace without renewing budgets, and pause for 0.35 seconds.
+Menu use ends translation without imposing a new catch cooldown.
 Retarget reversal clears only signed subpixel residue. Crossing a retreat still
 ends its existing allowance safely, rather than renewing a flight.
 `WalkDriver` applies actual bounded displacement through the existing placement

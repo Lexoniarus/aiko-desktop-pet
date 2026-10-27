@@ -16,6 +16,7 @@ from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from aiko_pet.pet.movement.contracts import MotionRequest
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class CursorMenuAccessTests(unittest.TestCase):
@@ -128,7 +129,7 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.observer.current = replace(self.observer.current, sampled_at=16.2)
         self.runtime.begin_behaviour(16.2)
         self.assertTrue(self.coordinator.watching)
-        self.assertEqual(self.coordinator.intent.body, "front")
+        self.assertEqual(self.coordinator.intent.body, "profile")
 
     def test_flyover_does_not_cancel_a_still_valid_catching_attempt(self):
         self.attend()
@@ -154,6 +155,7 @@ class CursorMenuAccessTests(unittest.TestCase):
 
     def test_control_use_cannot_turn_an_old_warning_into_new_fear(self):
         self.attend()
+        set_test_pet_values(self.pet, mood=20)
         self.runtime._ports = replace(
             self.runtime._ports, on_warning=lambda event, now: CursorWarningReceipt(
                 event.warning_id, now, True,

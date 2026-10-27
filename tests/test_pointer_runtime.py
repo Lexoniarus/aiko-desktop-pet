@@ -11,12 +11,14 @@ from aiko_pet.pet.interaction_events import CursorWarningReceipt
 from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class PointerRuntimeTests(unittest.TestCase):
     def test_display_receipt_cannot_tick_policy_or_mutate_pet(self):
         observer = CursorObservation(CursorAttention())
         pet = PetState()
+        set_test_pet_values(pet, mood=20)
         policy = CursorBehaviourPolicy(session_id="bridge")
         coordinator = CursorBehaviourCoordinator(pet, PetSettings(), observer, policy)
         experiences = []
@@ -44,6 +46,7 @@ class PointerRuntimeTests(unittest.TestCase):
             )
             runtime.begin_behaviour(at)
         self.assertEqual(len(warnings), 1)
+        self.assertEqual(warnings[0].tone, "cautious")
         self.assertFalse(experiences)
         self.assertEqual(pet.capture_checkpoint(), checkpoint)
         observer.current = CursorPerception(

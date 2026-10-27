@@ -6230,6 +6230,21 @@
           "content": "💦 Das ist mir zu wild. Ich brauche etwas Abstand!"
         }
       ]
+    },
+    {
+      "id": "cursor-notice-playful-01",
+      "event": "cursor_notice_playful",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "✨ Hui, spielst du Fangen mit mir?"
+        }
+      ]
     }
   ]
 }

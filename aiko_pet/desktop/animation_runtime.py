@@ -103,6 +103,12 @@ class DesktopAnimationRuntime:
             if (axis is None or axis not in (*range(2, 7), *range(10, 15))
                     or not self._body_orientation.supports_gaze(axis)):
                 return None
+        if self._gaze_first:
+            self._walk.align_cursor_pace(self._visual.desired_cursor_gaze())
+            if self._body_orientation.motion_ready:
+                axis = self._visual.desired_cursor_gaze()
+                if axis is not None:
+                    self._body_orientation.orient_for_gaze_motion(now, axis)
         source = self._walk.movement.source
         step = self._walk.step(
             now,
@@ -126,6 +132,8 @@ class DesktopAnimationRuntime:
         if self._gaze_first and self._has_locomotion:
             axis = self._visual.desired_cursor_gaze()
             side = "right" if self._body_orientation.side > 0 else "left"
+            if step.kind == "run" and axis in (4, 12):
+                return f"running-{side}"
             if axis is not None:
                 return f"body-step-{side}-{axis:02}"
         if step.kind != "step" or not self._has_locomotion:

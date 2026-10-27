@@ -73,12 +73,15 @@ class WalkController:
         if source != "cursor":
             self._completed.pop(source, None)
 
-    def retarget(self, source: MotionSource, token: int, target_x: float) -> bool:
-        """Only the selected point may change; consumed budgets remain authoritative."""
+    def retarget(
+        self, source: MotionSource, token: int, target_x: float,
+        *, kind: MotionKind | None = None,
+    ) -> bool:
+        """Retarget or change pace without renewing consumed time/distance budgets."""
         old = self._requests.get(source)
         if old is None or old.token != token or self._completed.get(source) == token:
             return False
-        updated = replace(old, target_x=target_x)
+        updated = replace(old, target_x=target_x, kind=kind or old.kind)
         self._requests[source] = updated
         if self._active == old:
             remaining = target_x - (old.target_x - self.remaining_distance)

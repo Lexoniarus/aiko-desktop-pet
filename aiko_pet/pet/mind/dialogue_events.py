@@ -77,6 +77,7 @@ DIALOGUE_EVENTS = frozenset({
     "computer_uptime",
     "computer_uptime_grounded",
     "cursor_warning_near_fast",
+    "cursor_notice_playful",
     "cursor_play_start",
     "cursor_play_more",
     "cursor_play_peak",

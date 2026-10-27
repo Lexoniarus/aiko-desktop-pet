@@ -7,8 +7,9 @@
 > Cursorbewegung folgen eine vorhandene passende Dreiviertel-Kopfpose und nach
 > 70 ms passende Profil-Schrittframes. Ein Gegenblick wartet hier nicht mehr
 > auf alle Zwischenposen. Beim Rückzug bleibt der Kopf zum Zeiger gerichtet.
-> Vorhandene Schrittframes werden im Bewegungstempo wiedergegeben, bei Rückzug
-> rückwärts. Hover öffnet weiterhin ohne Abbruch der Verfolgung. Der
+> Größere Reststrecken nutzen bei horizontal passendem Seitenkopf die vorhandene
+> echte Rennfolge, mit Distanzhysterese zurück zum Gehen. Andere Kopfachsen nutzen
+> die vorhandenen Gehvarianten bei Gehgeschwindigkeit. Rückzug läuft rückwärts. Hover öffnet weiterhin ohne Abbruch der Verfolgung. Der
 > [aktuelle Aufmerksamkeitsvertrag](CURSOR_ATTENTION_STAGES_PLAN.md) beschreibt
 > Spielzeit, Eskalation, endliche Auffrischung und erhaltene Bewegungsbudgets.
 

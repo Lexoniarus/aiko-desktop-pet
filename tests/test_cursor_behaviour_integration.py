@@ -29,6 +29,7 @@ from aiko_pet.pet.mind.cursor_attention import CursorAttention
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.pet_test_support import set_test_pet_values
 
 
 class IdleComputer:
@@ -113,7 +114,7 @@ class CursorIntegrationTests(unittest.TestCase):
         final_x = settings.x
         assert final_x is not None
         self.assertGreater(final_x, (before or 0) + 16)
-        self.assertLessEqual(final_x, (before or 0) + 96)
+        self.assertLessEqual(final_x, 540 - 96)
         self.assertTrue(any(n == "body-look-right" for n in seen))
         self.assertTrue(any(n.startswith("body-step-right") for n in seen))
         self.assertFalse(coordinator.intent.moving)
@@ -263,8 +264,9 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                 self.assertGreater(max(positions) - min(positions), 16 * scale)
                 self.assertTrue(scene.completions)
                 self.assertEqual([(e.feeling, e.level) for e in scene.feedback],
-                                 [("curiosity", 1), ("curiosity", 2)]
-                                 if friendship == 90 else [("curiosity", 1)])
+                                 [("curiosity", 1), ("curiosity", 2), ("curiosity", 3)]
+                                 if friendship == 90 else
+                                 [("curiosity", 1), ("curiosity", 2)])
                 stopped_pointer = scene.observer.current.pointer
                 for _ in range(30):
                     scene.tick(stopped_pointer)
@@ -280,6 +282,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
         for scale in (1, 2):
             scene = CursorTrajectory(scale, friendship=10)
             scene.interest()
+            set_test_pet_values(scene.state, mood=20)
             # Establish far native motion then fast closing into the near region.
             scene.tick((round(scene.eyes()[0] + 450 * scale), 100 * scale))
             scene.tick((round(scene.eyes()[0] + 54 * scale), 100 * scale))
@@ -324,9 +327,11 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                             clip = scene.runtime._assets.body_clips[clip_name]
                             self.assertEqual(clip.head_direction, axis)
                             self.assertFalse(choice.reverse)
-                            paces.add(scene.walk.movement.kind)
-                            if scene.walk.movement.kind == "run":
-                                self.assertGreater(choice.playback_rate, 1.5)
+                            paces.add("step")
+                            self.assertAlmostEqual(choice.playback_rate, 1)
+                        elif clip_name.startswith("running-"):
+                            paces.add("run")
+                            self.assertIn(axis, (4, 12))
                         elif clip_name == "look":
                             self.assertEqual(choice.sprite.fixed_frame, axis)
                     current_x = scene.settings.x
@@ -339,7 +344,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                     if impression:
                         first_seen.setdefault(impression.level, scene.now)
                 self.assertEqual(directions, {-1, 1})
-                self.assertEqual(paces, {"step", "run"})
+                self.assertEqual(paces, {"step"})
                 self.assertEqual([e.level for e in scene.feedback], [1, 2, 3])
                 self.assertLess(first_seen[1], first_seen[2])
                 self.assertLess(first_seen[2], first_seen[3])
@@ -365,6 +370,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
         scene.activity = CursorActivityContext()
         scene.interest()
         scene.offer_moving_target()
+        feedback_before_contact = list(scene.feedback)
         scene.coordinator.claim_access(scene.now)
         scene.walk.clear_cursor_request(scene.now)
         scene.activity = CursorActivityContext(direct_contact=True)
@@ -374,7 +380,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
             scene.tick((820, 194))
         self.assertEqual(scene.settings.x, stopped_at)
         self.assertEqual(scene.walk.movement.goal_x, 900)
-        self.assertEqual(len(scene.feedback), 1)
+        self.assertEqual(scene.feedback, feedback_before_contact)
 
     def test_exhausted_pet_only_startles_and_keeps_frontal_body(self):
         scene = CursorTrajectory(energy=5)

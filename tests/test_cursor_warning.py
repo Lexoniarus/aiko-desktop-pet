@@ -30,6 +30,47 @@ class CursorWarningTests(unittest.TestCase):
             first.warning.warning_id, at, shown,
         ))
 
+    def test_appraisal_distinguishes_good_mood_friendship_and_existing_fear(self):
+        cases = (
+            (CursorBehaviourContext(1, 80, 90), "playful"),
+            (CursorBehaviourContext(10, 80, 60), "playful"),
+            (CursorBehaviourContext(1, 80, 40), "cautious"),
+            (CursorBehaviourContext(10, 80, 25), "cautious"),
+            (CursorBehaviourContext(1, 80, 60, cursor_feeling="curiosity"), "playful"),
+            (CursorBehaviourContext(10, 80, 90, cursor_feeling="fear"), "cautious"),
+        )
+        for context, tone in cases:
+            self.policy.reset()
+            self.context = context
+            result = self.sample(10)
+            assert result.warning is not None
+            self.assertEqual(result.warning.tone, tone)
+            self.assertIsNone(result.experience)
+
+    def test_playful_receipt_cannot_authorize_fear_after_mood_change(self):
+        self.context = CursorBehaviourContext(10, 80, 90)
+        first = self.sample(10)
+        self.receipt(first)
+        self.assertIsNone(self.policy._warned_at)
+        self.context = replace(self.context, mood=20)
+        self.sample(10.1, closing_speed=-2)
+        cautious = self.sample(10.2)
+        self.assertIsNone(cautious.experience)
+        assert cautious.warning is not None
+        self.assertEqual(cautious.warning.tone, "cautious")
+        self.receipt(cautious, at=10.2)
+        self.sample(10.3, closing_speed=-2)
+        event = self.sample(10.4).experience
+        assert event is not None
+        self.assertEqual(event.feeling, "fear")
+
+    def test_fast_close_flyover_stays_playful_while_the_pet_is_playing(self):
+        self.context = CursorBehaviourContext(10, 80, 90, cursor_feeling="curiosity")
+        first = self.sample(10, distance=.1, closing_speed=8, speed=8)
+        assert first.warning is not None
+        self.assertEqual(first.warning.tone, "playful")
+        self.assertIsNone(first.experience)
+
     def test_only_new_approach_after_display_can_qualify(self):
         first = self.sample(10)
         self.assertIsNone(first.experience)

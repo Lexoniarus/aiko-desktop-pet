@@ -101,6 +101,28 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         receipt = self.runtime.cursor_warning(CursorWarning("next", 11), 11)
         self.assertFalse(receipt.presented)
 
+    def test_playful_approach_uses_its_own_catalogue_event_without_action(self):
+        from aiko_pet.pet.mind.catalog import Reaction
+
+        self.attention.mind.select_reaction.return_value = Reaction.spoken(
+            "playful", "Hui, spielst du Fangen mit mir?", "idle",
+            "cursor_notice_playful",
+        )
+        self.presenter.show_cursor_warning.return_value = True
+        self.runtime._ports = replace(self.runtime._ports, clock=lambda: 10.1)
+        receipt = self.runtime.cursor_warning(
+            CursorWarning("playful", 10, "playful"), 10,
+        )
+        self.assertTrue(receipt.presented)
+        self.attention.mind.select_reaction.assert_called_once_with(
+            "cursor_notice_playful", self.attention.state, self.context, 10,
+        )
+        self.presenter.show_cursor_warning.assert_called_once_with(
+            "Hui, spielst du Fangen mit mir?", 2800,
+        )
+        self.presenter.show_reaction.assert_not_called()
+        self.presenter.show_animation.assert_not_called()
+
     def test_warning_drops_in_protected_or_occupied_slot_and_when_stale(self):
         original = self.runtime._ports
         for guard in ("game_open", "foreground_active", "reaction_pending",
@@ -123,7 +145,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.runtime._ports = replace(self.runtime._ports, clock=lambda: 12)
         self.runtime.cursor_experience(CursorExperience("actual:1", "curiosity", 2))
         self.presenter.show_cursor_comment.assert_called_once_with(
-            "Na warte, dich kriege ich!", 2200,
+            "Na warte, dich kriege ich!", 3000,
         )
         self.attention.mind.select_reaction.assert_called_once_with(
             "cursor_play_more", self.attention.state, self.context, 12,

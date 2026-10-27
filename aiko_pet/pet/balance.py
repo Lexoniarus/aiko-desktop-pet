@@ -275,6 +275,10 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             < cursor["curiosity_level_three_seconds"]
             or not 0 < cursor["play_grace_seconds"] < cursor["play_attempt_seconds"]
             or not 0 < cursor["play_pause_seconds"] < cursor["play_attempt_seconds"]
+            or not 0 < cursor["run_release_distance"] < cursor["run_distance"]
+            or not 0 <= cursor["playful_minimum_mood"] <= 100
+            or not 0 < cursor["playful_score"] <= 100
+            or not 0 < cursor["playful_friendship_weight"] <= 10
             or not 0 < cursor["curiosity_refresh_seconds"]
             or not 250 <= cursor["warning_duration_ms"] <= 8000
             or any(cursor[k] <= 0 for k in (

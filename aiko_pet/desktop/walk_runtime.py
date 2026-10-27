@@ -186,17 +186,27 @@ class WalkDriver:
                 MotionCompletion("cursor", intent.token, now, "blocked")
             )
             return
+        running = intent.reaction == "flee" or (
+            intent.reaction == "approach" and abs(target - x)
+            >= width * BALANCE.number("cursor_behaviour", "run_distance")
+        )
+        distance_budget = width * amount
+        if running:
+            distance_budget = max(
+                distance_budget, BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                * self.settings.scale,
+            )
         self.submit_cursor_intent(
             MotionRequest(
                 "cursor",
                 intent.token,
                 target,
-                "run" if intent.reaction == "flee" or intent.running else "step",
+                "run" if running else "step",
                 intent.until,
                 movement_seconds=BALANCE.number("cursor_behaviour", "flight_seconds")
                 if intent.reaction == "flee"
                 else float("inf"),
-                distance_pixels=width * amount
+                distance_pixels=distance_budget
                 if intent.reaction != "flee" else float("inf"),
                 step_pixels=width
                 * BALANCE.number("cursor_behaviour", "step_width_fraction")
@@ -204,6 +214,23 @@ class WalkDriver:
                 else 0,
             )
         )
+
+    def align_cursor_pace(self, gaze: int | None) -> None:
+        """Use the real run only where its baked side head matches current gaze."""
+        request = self.movement.request("cursor")
+        if request is None:
+            return
+        width = FRAME_WIDTH * self.settings.scale
+        remaining = abs(request.target_x - (self.settings.x or 0))
+        threshold = BALANCE.number(
+            "cursor_behaviour", "run_release_distance" if request.kind == "run"
+            else "run_distance",
+        ) * width
+        running = gaze in (4, 12) and (
+            request.movement_seconds != float("inf") or remaining >= threshold
+        )
+        self.movement.retarget("cursor", request.token, request.target_x,
+                               kind="run" if running else "step")
 
     def _cursor_target(self, intent: CursorIntent) -> float:
         """Project the pointer onto the track, keeping a horizontal stopping gap."""

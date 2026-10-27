@@ -147,6 +147,7 @@ class CursorWarning:
 
     warning_id: str
     created_at: float
+    tone: Literal["cautious", "playful"] = "cautious"
 
 
 @dataclass(frozen=True, slots=True)

@@ -43,7 +43,7 @@ class CursorIntent:
     stage: int = 0
     warning: CursorWarning | None = None
     feeling: CursorFeeling | None = None
-    running: bool = False
+    running: bool = False  # Legacy cue; WalkDriver owns distance-based pace.
 
     @property
     def gaze(self) -> bool:
@@ -68,6 +68,7 @@ class CursorBehaviourPolicy:
         self._warning_serial = 0
         self._evidence_serial = 0
         self._last_warning_at = -100.0
+        self._last_playful_notice_at = -100.0
         self.reset()
 
     def reset(self) -> None:
@@ -120,11 +121,23 @@ class CursorBehaviourPolicy:
         *, feeling: CursorFeeling | None = None,
     ) -> None:
         """Hold interest and gaze during real control use, without new feelings."""
-        self.note_motion_finished(self.current.token, now)
         fresh = perception.valid and 0 <= now - perception.sampled_at <= 0.5
+        paused = perception.sampled_at - self._last_sample if fresh else 0.0
+        if 0 < paused <= 1.5:
+            if self._positive_since is not None:
+                self._positive_since += paused
+            if self._last_play_at > -100:
+                self._last_play_at += paused
+        elif not fresh or paused > 1.5:
+            self._positive_since = None
         self._last_sample = perception.sampled_at if fresh else -100.0
-        self._positive_since = None
-        self._last_play_at = -100.0
+        if feeling != self._known_feeling:
+            self._positive_since = None
+        self._known_feeling = feeling
+        if feeling != "curiosity":
+            self._curiosity_level = 0
+            self._play_seconds = 0.0
+            self._last_play_at = -100.0
         self._side_samples.clear()
         self._opposite_seconds = self._far_seconds = 0.0
         self._pending_warning = None
@@ -183,8 +196,11 @@ class CursorBehaviourPolicy:
             return
         self._pending_warning = None
         if receipt.presented:
-            self._warned_at = receipt.presented_at
-            self._last_warning_at = receipt.presented_at
+            if pending.tone == "cautious":
+                self._warned_at = receipt.presented_at
+                self._last_warning_at = receipt.presented_at
+            else:
+                self._last_playful_notice_at = receipt.presented_at
 
     def _orient_body(
         self, p: CursorPerception, dt: float, feeling: CursorFeeling | None,
@@ -265,6 +281,18 @@ class CursorBehaviourPolicy:
             feeling, level,
         )
 
+    @staticmethod
+    def _playful_appraisal(context: CursorBehaviourContext) -> bool:
+        score = context.mood + parameter("playful_friendship_weight") * (
+            context.friendship_level - 1
+        )
+        return (
+            context.cursor_feeling != "fear" and context.energy >= 25
+            and (context.cursor_feeling == "curiosity"
+                 and context.mood >= parameter("playful_minimum_mood")
+                 or score >= parameter("playful_score"))
+        )
+
     def _curiosity(
         self, p: CursorPerception, context: CursorBehaviourContext,
         now: float, dt: float, threat: bool,
@@ -274,7 +302,7 @@ class CursorBehaviourPolicy:
         safe = (dt > 0 and moving and not threat and not self._access
                 and p.distance <= parameter("interest_distance")
                 and (not self._retreated or now >= self.recover_until))
-        if safe and self.attention >= parameter("strong_at"):
+        if safe and self.attention >= parameter("noticed_at"):
             if self._positive_since is None:
                 self._positive_since = p.sampled_at
         else:
@@ -389,19 +417,34 @@ class CursorBehaviourPolicy:
             self.current = CursorIntent(
                 "observe", token=self._serial, until=self._look_until, target=p.pointer
             )
-        threat = (
+        near_approach = (
             p.distance <= parameter("warning_distance")
             and p.speed >= parameter("warning_speed")
             and p.closing_speed >= parameter("warning_closing_speed")
             and p.motion_band not in ("still", "slow")
         )
+        playful = self._playful_appraisal(context)
+        threat = near_approach and not playful
+        if playful:
+            self._warned_at = None
+        new_playful = near_approach and playful and not self._threat_active
         new_approach = threat and not self._threat_active
-        if threat:
+        if near_approach:
             self._threat_active = True
         elif (p.closing_speed <= 0 or p.distance > parameter("warning_distance")
               or p.motion_band == "still"):
             self._threat_active = False
         warning = None
+        if (new_playful and not self._access and now - self._last_playful_notice_at
+                >= parameter("warning_repeat_seconds")):
+            self._warning_serial += 1
+            warning = CursorWarning(
+                f"{self._session}:{self._serial}:playful:{self._warning_serial}",
+                now, "playful",
+            )
+            self._pending_warning = warning
+            self.attention = max(self.attention, parameter("noticed_at"))
+            self.stage = max(1, self.stage)
         if (new_approach and not self._access
                 and (not self._retreated or context.cursor_feeling == "curiosity")
                 and (now >= self.recover_until
@@ -478,7 +521,7 @@ class CursorBehaviourPolicy:
                     self.current, side=p.side, target=p.pointer,
                     body="profile" if p.side else "front",
                     attention=self.attention, stage=self.stage,
-                    experience=experience, feeling="curiosity",
+                    experience=experience, warning=warning, feeling="curiosity",
                 )
                 return self.current
             self.note_motion_finished(self.current.token, now)
@@ -509,6 +552,6 @@ class CursorBehaviourPolicy:
             self.stage,
             warning,
             experience.feeling if experience is not None else context.cursor_feeling,
-            self._curiosity_level >= 2,
+            False,
         )
         return self.current

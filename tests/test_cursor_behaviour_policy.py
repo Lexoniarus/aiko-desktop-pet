@@ -38,6 +38,36 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(10 + n / 10, speed=2, **fields)
         return result
 
+    def test_first_curiosity_arrives_earlier_without_an_instant_moodlet(self):
+        for speed, expected in ((1, 2.7), (2, 2.2), (4, 1.9)):
+            self.policy.reset()
+            self.decide(0, speed=speed, distance=1.5)
+            first = None
+            for n in range(1, 40):
+                result = self.decide(n / 10, speed=speed, distance=1.5)
+                if result.experience is not None:
+                    first = n / 10
+                    break
+            assert first is not None
+            self.assertAlmostEqual(first, expected)
+
+    def test_menu_preserves_observed_progress_but_never_counts_menu_time(self):
+        self.decide(0, speed=2, distance=1.5)
+        for n in range(1, 18):
+            self.decide(n / 10, speed=2, distance=1.5)
+        score = self.policy.attention
+        for n in range(18, 69):
+            point = CursorPerception(sampled_at=n / 10, pointer=(400, 194),
+                                     distance=1.5, speed=4, side=1, valid=True)
+            self.policy.pause_for_menu(point, n / 10)
+            self.assertIsNone(self.policy.current.experience)
+            self.assertFalse(self.policy.current.moving)
+        self.assertEqual(self.policy.attention, score)
+        for n in range(69, 73):
+            self.assertIsNone(self.decide(n / 10, speed=2, distance=1.5).experience)
+        result = self.decide(7.3, speed=2, distance=1.5)
+        self.assertIsNotNone(result.experience)
+
     def test_attention_precedes_selected_gaze_and_tracks_one_encounter(self):
         intent = self.decide()
         self.assertFalse(intent.gaze)
@@ -86,16 +116,16 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
     def test_held_side_turns_and_opposite_returns_through_front(self):
         result = self.decide(0, speed=2)
         for n in range(1, 41):
-            result = self.decide(n / 10, speed=2)
+            result = self.decide(n / 10, speed=2 if n % 8 else .2)
         self.assertEqual((result.body, result.side), ("three_quarter", 1))
         for n in range(41, 46):
-            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 8 else .2, side=-1)
         self.assertEqual(result.side, 1)
         for n in range(46, 56):
-            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 8 else .2, side=-1)
         self.assertEqual(result.body, "front")
         for n in range(56, 74):
-            result = self.decide(n / 10, speed=2 if n % 10 else .2, side=-1)
+            result = self.decide(n / 10, speed=2 if n % 8 else .2, side=-1)
         self.assertEqual((result.body, result.side), ("three_quarter", -1))
 
     def test_high_attention_with_alternating_sides_keeps_body_front(self):
@@ -147,7 +177,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
                 events.append((n / 10, result.experience.feeling))
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0][1], "curiosity")
-        self.assertGreaterEqual(events[0][0], 17.3)
+        self.assertGreaterEqual(events[0][0], 16.3)
         self.assertEqual(self.policy._motion_serial, 2)
 
     def test_body_releases_after_far_hold_and_activity_clears_side_history(self):
@@ -177,13 +207,13 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
     def test_trust_and_state_change_strength_without_unlocking_feelings(self):
         for trust, expected in ((1, "flee"), (10, "avoid")):
             self.policy = CursorBehaviourPolicy(session_id="fixture")
-            self.context = replace(self.context, friendship_level=trust)
+            self.context = replace(self.context, friendship_level=trust, mood=40)
             fear = self.warned_threat()
             self.assertEqual(fear.reaction, expected)
             assert fear.experience is not None
             self.assertEqual(fear.experience.feeling, "fear")
             self.policy.reset()
-            self.assertIsNotNone(self.interest_until(5.9).experience)
+            self.assertIsNotNone(self.interest_until(2.2).experience)
         self.policy.reset()
         self.policy = CursorBehaviourPolicy(session_id="exhausted")
         self.context = replace(self.context, energy=5)
@@ -198,10 +228,10 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.decide(22, distance=5)
         self.assertTrue(self.warned_threat(23).moving)
 
-    def test_hectic_sides_only_look_briefly_without_body_chasing(self):
+    def test_slow_side_changes_do_not_start_play_or_body_chasing(self):
         result = self.decide()
         for n in range(50):
-            result = self.decide(10 + n * 0.1, side=1 if n % 2 else -1, speed=1)
+            result = self.decide(10 + n * 0.1, side=1 if n % 2 else -1, speed=.2)
             self.assertEqual(result.body, "front")
             self.assertFalse(result.moving)
             self.assertIsNone(result.experience)
@@ -220,7 +250,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             result = self.decide(16 + n / 10, reachable=True)
             self.assertFalse(result.moving)
             self.assertIsNone(result.experience)
-        self.assertAlmostEqual(self.policy.recover_until, 17.2)
+        self.assertAlmostEqual(self.policy.recover_until, 16.35)
 
     def test_active_catch_retargets_across_sides_without_restarting_budget(self):
         first = self.interest_until(6, reachable=True)
@@ -244,10 +274,10 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             self.decide(10 + n / 10, stationary_seconds=2)
         self.assertEqual(self.policy._curiosity_level, 0)
         self.policy.reset()
-        self.interest_until(5)
-        self.decide(15.1, stationary_seconds=.5)
-        for n in range(1, 20):
-            self.assertIsNone(self.decide(15.1 + n / 10, speed=2).experience)
+        self.interest_until(1.8)
+        self.decide(11.9, stationary_seconds=.5)
+        for n in range(1, 10):
+            self.assertIsNone(self.decide(11.9 + n / 10, speed=2).experience)
         self.assertEqual(self.policy._curiosity_level, 0)
 
     def test_context_mood_does_not_generate_new_evidence_without_new_stimulus(self):

@@ -76,7 +76,9 @@ class DesktopAttentionRuntime:
                              ports.reaction_pending(), ports.bubble_visible(),
                              ports.menu_engaged(), ports.settings_engaged()))):
             reaction = self.attention.mind.select_reaction(
-                "cursor_warning_near_fast", self.attention.state, ports.context(), now,
+                ("cursor_notice_playful" if event.tone == "playful"
+                 else "cursor_warning_near_fast"),
+                self.attention.state, ports.context(), now,
             )
             if reaction is not None:
                 displayed = self._presenter.show_cursor_warning(
@@ -103,7 +105,7 @@ class DesktopAttentionRuntime:
             event_name, self.attention.state, ports.context(), ports.clock(),
         )
         if reaction is not None:
-            self._presenter.show_cursor_comment(reaction.text, 2200)
+            self._presenter.show_cursor_comment(reaction.text, 3000)
         else:
             self._presenter.show_cursor_emote(emote, 1500)
 

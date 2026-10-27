@@ -276,7 +276,7 @@ class Line:
         texts = [beat.content for beat in beats if beat.kind == "text"]
         if data["event"] in (
                 "cursor_warning_near_fast", "cursor_play_start", "cursor_play_more",
-                "cursor_play_peak", "cursor_fear_response",
+                "cursor_play_peak", "cursor_fear_response", "cursor_notice_playful",
         ) and (
                 len(beats) != 1 or beats[0].kind != "text"):
             raise ValueError("Cursor feedback requires exactly one text cue")
