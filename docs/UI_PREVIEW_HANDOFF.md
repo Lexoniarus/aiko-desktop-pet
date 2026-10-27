@@ -58,8 +58,30 @@ The bundle retains exact built-in Imagegen prompts, native artwork, exports,
 registration/provenance, browser screenshots and validation. Earlier geometric
 boards and the rejected two-part flight remain under its `history/` directory.
 Timing and native integration remain later work. No application implementation
-or production-asset replacement is authorized. Mastermind is the next discussion
-topic; no new Mastermind follow-up is approved yet.
+or production-asset replacement is authorized. Mastermind has a separately
+approved follow-up below.
+
+### Approved game-specific follow-up: Mastermind
+
+On 2026-10-27 the owner approved the corrected Mastermind revision at
+`../design-previews/mastermind-2026-10-27/preview.html`, relative to the checkout
+root. Its `README.md` and `approval-record.json` record the approval and reviewed
+file hashes. See the [canonical design](UI_VN_DESIGN.md#approved-mastermind-follow-up--2026-10-27)
+for the full accepted flow and scope.
+
+The lavender/silver code console shares the VN window family. Aiko guards her
+own donut in the little anime safe **to her right**, on the same floor baseline.
+The corrected opening uses the actual closed and open drawings through a
+continuous hinge transition, ending with the original open-door perspective.
+The distorted closed-texture flip is rejected history. On a cracked code she
+thanks the player and eats; after ten failed attempts she opens with her spare
+key and eats anyway. The snack is a visual gag without satiety or other pet,
+reward or World effects. Existing eating frames and food artwork are reused.
+
+The external folder retains exact Imagegen prompts, unchanged sources,
+`safe-animation/` with nine registered frame samples and its provenance/checks,
+browser screenshots and both playable endings. No application implementation,
+production-asset replacement or import of the HTML examples is authorized.
 
 ### Original shared bundle
 

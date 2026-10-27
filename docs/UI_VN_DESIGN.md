@@ -1,5 +1,51 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Mastermind follow-up — 2026-10-27
+
+The owner approved the final clickable Mastermind revision at
+`../design-previews/mastermind-2026-10-27/preview.html`, relative to the checkout
+root, including the corrected safe opening and both snack endings. Its README
+and `approval-record.json` retain the explicit approval and reviewed file hashes.
+The earlier distorted/mirrored door projection remains rejected local history.
+
+- Shared white title, near-white rose body, passive blue phase surface and rose
+  actions surround a lavender/silver console with restrained gold star details.
+  Four code places, six color/symbol stones, repeated colors allowed and ten
+  attempts. The active editable row stands out; previous guesses remain visible.
+- Color selection or drag/drop edits only the active draft. Existing stones can
+  be picked up and swapped; invalid drops preserve the draft. **Code prüfen**
+  submits a complete row. Gold diamond markers mean correct color and place;
+  light round markers mean correct color elsewhere. Their grouped order does
+  not identify code positions. Input locks during evaluation and the ending.
+- Aiko playfully guards her own snack, with exaggerated seriousness and warm
+  Chibi curiosity. The player cracks the safe for her. Her comments respond to
+  the ordinary visible feedback, without leaking extra secret information.
+- The small lavender-blue anime safe stands **to Aiko's right**, in the accepted
+  slight three-quarter view, with its feet on her straight floor baseline.
+  Bubble and safe belong to her desktop presentation; the independent player
+  window remains stationary and freely draggable.
+- The corrected continuous opening uses both actual door drawings. The closed
+  face narrows to the hinge view, then the real open face widens into the supplied
+  open artwork. No negative-scale mirror of the closed face. Housing and feet
+  stay fixed. The 1560 ms opening and nine sampled frames illustrate the accepted
+  motion; final native timing and animation/speech priorities remain later work.
+- On success Aiko thanks the player, the code is revealed, the safe opens and
+  she eats the rescued donut. After ten failed attempts she uses her spare key,
+  opens it herself and eats the donut too. Both outcomes intentionally end with
+  the same playful snack moment, with different comments and result labels.
+- Eating reuses existing character frames, food artwork and documented food
+  anchors. This gag has **no satiety, need, wish, Moodlet, reward or World-object
+  effect**. The result stays until manual **Nächste Runde**; close/reset/example
+  changes cancel pending motion. Reduced motion uses a quiet alternative.
+- Direct opening replay, example codes, fixtures, local counters and narrow-
+  browser stacking are review affordances. The complete relationship-sensitive
+  dialogue catalogue and native integration are separate implementation work.
+
+The external bundle retains native artwork, exact built-in Imagegen prompts,
+source provenance, animation samples, browser checks and screenshots. This is a
+design/documentation approval, not authorization to change application code,
+production assets, game rules or saves. The HTML examples remain outside Git.
+
 ## Approved Connect Four follow-up — 2026-10-27
 
 The owner approved the final clickable Connect Four revision at
@@ -36,7 +82,7 @@ drafts and the two-part flight remain local comparison history.
 
 This approval is for the design and its documentation. Application code,
 production assets, game rules, World objects and saves remain unchanged.
-Mastermind is the next design discussion; no new Mastermind design is approved.
+Mastermind has a separately approved follow-up above.
 
 ## Approved Tic-Tac-Toe follow-up — 2026-10-27
 
