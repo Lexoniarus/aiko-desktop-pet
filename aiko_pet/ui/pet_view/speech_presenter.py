@@ -53,6 +53,7 @@ class SpeechPresenter:
         self._emote_assets = emote_assets
         self._ui_images = ui_images
         self.bubble: tk.Toplevel | None = None
+        self._nonblocking = False
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
         self.game_hand_images: dict[Move, tk.PhotoImage] = {}
@@ -60,6 +61,17 @@ class SpeechPresenter:
         root.bind("<Destroy>", lambda event: (
             self.release_images() if event.widget is root else None
         ), add="+")
+
+    @property
+    def blocks_contact(self) -> bool:
+        return self.bubble is not None and not self._nonblocking
+
+    def show_cursor_emote(self, emote: str, duration_ms: int) -> None:
+        """Use a vacant speech slot without acquiring an interaction lock."""
+        if self.bubble is not None:
+            return
+        self.show_emote(emote, duration_ms)
+        self._nonblocking = True
 
     def release_images(self) -> None:
         """Release cached images at root destruction on Tk's owner thread."""
@@ -253,6 +265,7 @@ class SpeechPresenter:
 
     def hide(self) -> None:
         """Cancel the old timeout so a previous bubble cannot hide a new one."""
+        self._nonblocking = False
         if self.pending_timer is not None:
             self._root.after_cancel(self.pending_timer)
             self.pending_timer = None

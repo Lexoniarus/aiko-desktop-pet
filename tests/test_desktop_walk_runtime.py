@@ -126,7 +126,7 @@ class WalkDriverTests(unittest.TestCase):
                     self.driver.step(
                         32 + i * 0.1, 0.1, game_mode=False, attention_active=True
                     )
-                distance = self.settings.x - before
+                distance = (self.settings.x or 0) - (before or 0)
                 self.assertLessEqual(distance, 68 / 1.28 * scale + 0.5)
                 self.assertGreater(distance, 50 * scale)
                 self.assertEqual(

@@ -13,13 +13,17 @@ from aiko_pet.desktop.animation_runtime import (
     DesktopAnimationRuntime,
 )
 from aiko_pet.desktop.geometry import TaskbarTrack
-from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.desktop.visual_observation import (
+    DesktopVisualObservation,
+    VisualAttentionPorts,
+)
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.animation.character import FRAME_WIDTH
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
+from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement import WalkController
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -77,9 +81,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 place_x=self._place_x,
             ),
         )
+        self.selected_cursor = CursorIntent()
         self.visual = DesktopVisualObservation(
             settings=self.settings,
             monitor=IdleMonitor(),
+            attention=VisualAttentionPorts(cursor_intent=lambda: self.selected_cursor),
             eyes=lambda: (
                 self.root.winfo_x() + (FRAME_WIDTH // 2) * self.settings.scale,
                 self.root.winfo_y() + 82 * self.settings.scale,
@@ -94,7 +100,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
             ports=AnimationRuntimePorts(
                 action_until=lambda: 0.0,
                 action_clip_id=lambda: "idle",
-                attention_until=lambda: self.anim._cursor_snapshot.attention_until,
             ),
         )
         self.anim = AnimatedPet(
@@ -121,6 +126,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.settings.x = round(value)
 
     def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
+        self.selected_cursor = CursorIntent("observe", target=pointer)
         return self.visual.gaze_direction(
             pointer,
             game_mode=self.anim.game_mode,
@@ -381,7 +387,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         ambient._direction = lambda _options: 12
         eyes_x, eyes_y = self.visual._eyes()
         self.visual.object_target = (eyes_x + 1000, eyes_y)
-        expected = [("look", 4), ("look", 4), ("body-turn-right", 1)]
+        expected = [("look", 4)] * 3
         for tick, key in zip((now, now + 1, now + 2), expected):
             self.anim.render(tick, (0, 0))
             self.assertEqual(self.anim.frame_clock.active_key, key)
@@ -391,11 +397,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.render(now + 3, (0, 0))
         self.assertEqual(self.visual.sector, None)
         self.assertEqual(ambient._glance_frame, 12)
-        self.assertEqual(self.anim.frame_clock.active_key, ("body-turn-right", 2))
+        self.assertEqual(self.anim.frame_clock.active_key, ("look", 12))
         self.visual.object_target = (eyes_x + 1000, eyes_y)
         self.anim.render(now + 3.1, (0, 0))
         self.assertEqual(self.visual.sector, 4)
-        self.assertEqual(self.anim.frame_clock.active_key, ("body-turn-right", 2))
+        self.assertEqual(self.anim.frame_clock.active_key, ("look", 4))
         self.assertGreater(ambient.next_glance_at, now + 3.1)
 
     def test_spontaneous_glance_never_overrides_sleep_or_game(self) -> None:
@@ -435,6 +441,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         now = time.monotonic()
         self.anim._ambient.suspend(now)
         pointer = (99999, 20)
+        self.selected_cursor = CursorIntent("observe", target=pointer)
         self.anim.render(
             now,
             pointer,
@@ -446,7 +453,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         for elapsed in (1.20, 1.34, 1.48, 1.62):
             self.anim.render(now + elapsed, pointer)
         key = self.anim.frame_clock.active_key
-        self.assertEqual(key, ("body-look-right", old_key[1]))
+        self.assertEqual(key, ("look", old_key[1]))
         original = self.canvas.itemcget(self.anim.image_item, "image")
         self.anim.render(now + 2.20, pointer)
         self.assertEqual(self.anim.frame_clock.active_key, key)
@@ -463,6 +470,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim._ambient.next_glance_at = now + 200
         initial_position = self.settings.x, self.settings.y
         pointer = (99999, 20)
+        self.selected_cursor = CursorIntent("observe", side=1, target=pointer,
+                                            body="three_quarter")
         for elapsed in (0, 1.20, 1.34, 1.48, 1.62):
             self.anim.render(
                 now + elapsed,

@@ -78,6 +78,13 @@ class CursorBehaviourCoordinator:
         ):
             self.reset()
             return
+        if context.direct_contact or context.menu_engaged:
+            self.claim_access(now)
+            return
+        if context.foreground_active or context.world_protected:
+            self._policy.suspend(now)
+            self.intent = self._policy.current
+            return
         state = self._state
         self.intent = self._policy.evaluate(
             self._observer.current,

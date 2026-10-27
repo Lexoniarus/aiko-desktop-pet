@@ -156,6 +156,8 @@ class WalkDriver:
         old = self.movement.request("cursor")
         if old is not None and old.token == intent.token:
             return
+        if old is not None:
+            self.clear_cursor_request(now)
         steps = intent.steps if intent.reaction == "approach" else 1
         amount = steps * BALANCE.number(
             "cursor_behaviour",

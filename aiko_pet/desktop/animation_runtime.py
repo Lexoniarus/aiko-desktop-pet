@@ -46,7 +46,6 @@ class AnimationRuntimePorts:
 
     action_until: Callable[[], float]
     action_clip_id: Callable[[], str]
-    attention_until: Callable[[], float]
     ready_for_handover: Callable[[], bool] = lambda: False
     holding_readable: Callable[[], bool] = lambda: False
     cursor_gaze_point: Callable[[], tuple[float, float] | None] = lambda: None

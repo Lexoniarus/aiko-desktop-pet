@@ -1,43 +1,38 @@
 # Körperausrichtung beim Umgucken
 
-> **Status 27.10.2026:** Die folgenden Regeln beschreiben den bisherigen
-> Einbau. Der Nutzer hat sein Zusammenspiel mit dem Mausinteresse noch nicht
-> abgenommen. Der [neue Konzept- und Umbauplan](ADAPTIVE_CURSOR_REWORK_PLAN.md)
-> ersetzt als Ziel insbesondere die automatische Körperdrehung nach 1,2 s
-> Seitenblick durch eine bewusste gemeinsame Absicht. Frontal bleiben alle
-> 16 Kopfblickrichtungen nutzbar. In dieser Dokumentationsrunde wurde der
-> beschriebene Laufzeitcode nicht geändert.
+> **Stand 27.10.2026:** Der
+> [Cursor-/Idle-Umbau](ADAPTIVE_CURSOR_REWORK_PLAN.md) ist im Code umgesetzt.
+> Die praktische Sichtung des Verhaltens mit dem Nutzer steht aus. Vorhandene
+> Grafiken und die 1X-/2X-Exporte sind unverändert.
 
-Die vorhandene Halbprofil-/Dreiviertel-Standbasis und die kleinen Drehschritte
-sind in die passive Darstellung eingebunden. Die frontale Haltung ist die
-Ausgangs- und Ruhehaltung. Der Körper folgt erst nach länger anhaltendem Blick
-nach links oder rechts; Kopfvarianten können innerhalb der passenden Richtung
-wechseln. Für diese Umsetzung wurde kein Bild neu generiert.
+Frontal ist die normale Ausgangs- und Ruhehaltung. Alle 16 Kopfblickrichtungen
+sind frontal frei verfügbar. `BodyOrientation` führt ausschließlich explizite
+Front-/Dreiviertel-/Profilabsichten aus; die frühere Ableitung aus einem
+Kopfsektor mit 1,2 Sekunden Verweilen ist entfernt.
 
 ## Verhalten
 
-- Die ersten 1,2 Sekunden auf derselben Blickseite reagiert nur der Kopf.
-  Kurzes Mauswechseln löst keine dauernden Körperdrehungen aus.
-- Alle rechten Blicksektoren 1–7 und linken Sektoren 9–15 zählen jeweils als
-  dieselbe Seite. Kleine Kopfbewegungen innerhalb dieser Seite starten die
-  Wartezeit nicht neu. Es gibt keine Bedingung für einen besonders seitlichen
-  Blickwinkel; auch ein längerer diagonaler Blick kann den Körper mitnehmen.
-- Ein kurzer Blick auf die Gegenseite lässt einen schon gedrehten Körper
-  ebenfalls stehen. Erst nach 1,2 Sekunden anhaltender neuer Blickseite dreht
-  er über die Mitte um. Bis dahin bleibt der Kopf innerhalb der zur aktuellen
-  Körperausrichtung passenden Posen.
-- Rein vertikale Blicke starten frontal. Nach längerem vertikalem Blick
-  kehrt auch ein zuvor gedrehter Körper zur Front zurück. Endet die
-  Aufmerksamkeit ganz, beginnt der Rückweg ohne zusätzliche Wartezeit.
-- Die vorhandenen Fußhebe-/Umsetzphasen 1–3 führen zum Dreiviertel-Stand.
-  Jede Drehphase bleibt mindestens 140 ms sichtbar; verspätete Aufrufe
-  überspringen keine Zeichnung.
-- Bei einem Seitenwechsel dreht Aiko zuerst über die Mitte zurück. Ein nach
-  links ausgerichteter Körper bekommt keinen nach rechts blickenden Kopf.
-- Wenn die Aufmerksamkeit endet, führen die Drehschritte zurück zur Front.
-  Die bestehende Idle-Steuerung für Blinzeln und Schwanken bleibt aktiv.
-- Schlafen, Aktionen, Übergabe und vorhandene Ortsbewegung behalten Vorrang.
-  Sie setzen die passive Körperausrichtung zurück.
+- Die Cursorpolicy wählt eine begrenzte Aufmerksamkeit mit stabilem Ziel.
+  Ruhiges Interesse kann nach drei Sekunden eine Dreivierteldrehung erlauben.
+  Ein kurzer oder hektisch wechselnder Blick bleibt frontal.
+- Eine mögliche Annäherung braucht weitere ruhige Beobachtung, erreichbare
+  Position und Bereitschaft. Der Körper dreht vor tatsächlichen Schritten bis
+  ins Profil. Ein abgebrochener Auftrag wird nicht als alter Blick nachgespielt.
+- Jede Drehphase bleibt mindestens 140 ms sichtbar. Späte Aufrufe überspringen
+  keine Zeichnung. Beim Seitenwechsel führt die Folge über die Front.
+- Ein gedrehter Körper erhält ausschließlich passende Kopfvarianten. Ein
+  Gegenblick setzt keinen unmöglichen Kopf an den bisherigen Körper.
+- `WalkController` und `WalkDriver` bleiben die einzigen Bewegungsbesitzer.
+  Kleine Idle-Ausflüge erfolgen nach 45–90 Sekunden Ruhe, normalerweise mit
+  einem, gelegentlich zwei Schritten. Ein kurzer Mausblick lenkt einen laufenden
+  Idle-Ausflug nicht sofort um; reale Bedienung und World-/Aktionsvorrang gelten.
+- Nach dem Idle-Schritt bleibt eine kurze Stand-/Blickpause, dann die geordnete
+  Rückkehr zur Front. Ohne Schrittpaket bleibt die Figur stehen.
+- Selbstständige Kopfblickgelegenheiten liegen bei 20–40 Sekunden und halten
+  ein bis drei Sekunden. Der bestehende Blink-/Schwankrhythmus bleibt erhalten.
+- Schlaf, Spiel, Aktionen, Übergabe und Halten behalten Vorrang. Absichtlicher
+  Mauszugang und aktive Bedienung stoppen Ortsbewegung sofort. World-Ziele
+  bleiben dabei gespeichert und können anschließend weiter ausgeführt werden.
 
 Die Dreiviertelschritte sind ausschließlich Ausrichtungs-/Drehschritte. Sie
 ändern weder Fensterposition noch `PetState` noch den Bewegungsauftrag. Die

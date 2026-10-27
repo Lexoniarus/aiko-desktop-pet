@@ -195,6 +195,7 @@ class WorldGuiTests(unittest.TestCase):
                 self.assertIn("mein onigiri", phrase.casefold())
         self.assertIsNone(app.state.food.last_food_id)
         # The physically original portion is now another unknown exemplar.
+        self.leave_controls()
         current = runtime.world.get(original.instance_id)
         runtime.world.move_resting(
             current.instance_id, runtime._body_x() + .4 * runtime.width,
@@ -580,6 +581,9 @@ class WorldGuiTests(unittest.TestCase):
         runtime._present_feedback = capture
         for offset in (1, 2, 1):
             current = runtime.world.get(item.instance_id)
+            assert current.position is not None
+            # This is observed relocation: attend to the item before the native grab.
+            self.look_at(current.position.x)
             with (
                 patch.object(app.root, "winfo_pointerx", return_value=int(
                     runtime._track().left + runtime._body_x() + offset * runtime.width,
@@ -1309,6 +1313,11 @@ class WorldGuiTests(unittest.TestCase):
         self.complete_feedback()
         self.complete_feedback()
 
+    def leave_controls(self):
+        """End deliberate input before expecting autonomous translation to resume."""
+        self.app._hover.close_toolbar()
+        self.look_at(self.app._world._body_x() + 2 * self.app._world.width)
+
     def restart(self):
         store = self.app.store
         self.app.quit()
@@ -1438,6 +1447,10 @@ class WorldGuiTests(unittest.TestCase):
         before = self.app.settings.x or 0
         self.app.mind.cursor_attention.attention_until = time.monotonic() + 100
         self.app._animation.advance_walk(time.monotonic(), .2, game_mode=False)
+        self.assertEqual(self.app.settings.x, before)
+        self.assertEqual(world.interaction.memory_id, record)
+        self.leave_controls()
+        self.app._animation.advance_walk(time.monotonic(), .2, game_mode=False)
         self.assertNotEqual(self.app.settings.x, before)
 
     def test_taken_target_is_followed_through_hops_and_resumes_at_both_scales(self):
@@ -1501,6 +1514,7 @@ class WorldGuiTests(unittest.TestCase):
                 self.assertEqual(world.interaction.phase, "approach")
                 self.assertEqual(world.interaction.feedback_key.interaction_id, episode)
                 self.complete_feedback()
+                self.leave_controls()
                 for index in range(10):
                     self.app._walk.step(time.monotonic() + index, 1,
                                         game_mode=False, attention_active=False)
@@ -2082,6 +2096,12 @@ class WorldGuiTests(unittest.TestCase):
         self.assertIsNone(world.awareness.intentions.goal)
         self.assertIsNone(world._visual.object_target)
         eyes_x, eyes_y = self.app._window.gaze_origin()
+        # A raw argument cannot invent a new selected look after the item focus ends.
+        self.assertIsNone(world._visual.gaze_direction(
+            (round(eyes_x + 200), round(eyes_y)),
+        ))
+        self.look_at(world._body_x() + 200,
+                     height=round(world._track().ground_y - eyes_y))
         self.assertEqual(world._visual.gaze_direction(
             (round(eyes_x + 200), round(eyes_y)),
         ), 4)

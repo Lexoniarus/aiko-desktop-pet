@@ -192,6 +192,7 @@ class CursorMoodletProfileTests(unittest.TestCase):
         self.assertEqual(duration_text(15), "15 Sek.")
         self.assertEqual(duration_text(30.2), "31 Sek.")
         self.assertEqual(duration_text(60), "1 Min.")
+        self.assertEqual(duration_text(90, precise_seconds=True), "90 Sek.")
 
     def test_mixed_group_preserves_both_signed_contributions(self):
         from aiko_pet.pet.moodlets import calculate_moodlet_contributions

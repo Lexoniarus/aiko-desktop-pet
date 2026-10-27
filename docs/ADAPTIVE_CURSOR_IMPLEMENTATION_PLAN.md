@@ -6,7 +6,8 @@
 > Dessen spätere vollständige CI ist auf `2ecca2f` grün, aber die praktische
 > Verhaltenswirkung ist vom Nutzer ausdrücklich nicht abgenommen: Aiko führt
 > Kopf und Körper noch zu hektisch nach. Die neue Konzeptfassung ersetzt die
-> widersprechenden Zielregeln; der neue Umbau ist noch nicht implementiert.
+> widersprechenden Zielregeln. Der neue Umbau ist inzwischen umgesetzt; seine
+> technische Prüfung und noch offene praktische Abnahme stehen im neuen Plan.
 
 Stand: 27.10.2026. Umsetzung auf `feature/social-optimization`, ausgehend von
 `93f1c22`. Die Freigabe zur Umsetzung erfolgte nach diesem Plan; lokaler

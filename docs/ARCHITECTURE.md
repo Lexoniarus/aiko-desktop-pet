@@ -434,8 +434,8 @@ The application never imports Tkinter or native system monitor implementations.
 
 The [cursor/Idle rework plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) records the
 2026-10-27 product revision, existing owners to change, short cursor Moodlets,
-reliable menu access and the future targeted-test/commit sequence. It is a plan;
-the descriptions below still document the current implementation. Passing CI
+reliable menu access and the implemented targeted-test/commit sequence.
+Practical behavioral acceptance is still pending. Passing CI
 on `2ecca2f` does not constitute user acceptance of its visual behavior.
 
 Pet-owned pure behaviour lives in `pet/animation/` and `pet/movement/`:
@@ -449,10 +449,20 @@ pointer samples, filtered velocity and attention timestamps, not operating-syste
 speed and contact origin from that one history. The new pure
 `pet/mind/cursor_behaviour.py` owns transient curiosity/threat/recovery; the new
 `application/cursor_behaviour.py` coordinates its one decision with current
-activity facts. Neither writes PetState, friendship or window position.
+activity facts. Qualified immutable `CursorExperience` values are applied once
+through `PetState.experience_cursor` and the pure `pet/cursor_experiences.py`;
+only the two short Moodlet families change, never care/wish/friendship history.
+The policy never writes position. `BodyOrientation` executes explicit body
+intent instead of deriving turns from head sectors. Visual observation and World
+share the selected gaze; native grab events retain their actual event coordinates.
 
 The existing `WalkController` arbitrates source-specific World, cursor and Idle
-requests in that order and alone owns remaining distance and subpixel progress.
+requests in that order and alone owns remaining distance, subpixel progress and
+actual translation budgets. Cursor escape consumes at most one second of real
+movement; turning/pauses do not consume it. Native access and active controls
+pause even committed World travel while preserving its request. One shared
+tolerant sprite-access geometry and contact-origin classification prevent
+self-motion from opening the toolbar.
 `WalkDriver` applies actual bounded displacement through the existing placement
 port. `BodyOrientation` owns turning before a small step; whole-body exported
 images and family-based frame timing allow compatible head changes without

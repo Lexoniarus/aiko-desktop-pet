@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.interaction_events import CursorExperience
 from aiko_pet.pet.routine import context_at
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.settings_window import SettingsWindow
@@ -418,17 +419,43 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._hover.refresh_hover(time.monotonic())
         self.assertFalse(self.toolbar.visible)
 
+    def test_cursor_emote_does_not_lock_contact_or_shared_visual_attention(self):
+        self.app._runtime.stop()
+        self.app._action_playback.cancel_at(time.monotonic())
+        self.app._reaction_player.cancel()
+        self.app._speech.hide()
+        self.app._hover.close_toolbar()
+        self.app._attention_runtime.cursor_experience(
+            CursorExperience("real-cue", "fear", 3),
+        )
+        self.assertIsNotNone(self.app._speech.bubble)
+        self.assertFalse(self.app._speech.blocks_contact)
+        self.assertTrue(self.app._contact.can_interact("pet"))
+        attention = self.app._visual.attention((0, 0), pointer_recent=True)
+        self.assertNotEqual(attention.mode, "unavailable")
+        self.assertFalse(self.app._reaction_player.active)
+
     def test_general_cursor_gaze_uses_current_interest_and_respects_option(self):
+        self.app._runtime.stop()
+        self.app._action_playback.cancel_at(time.monotonic())
+        self.app._hover.close_toolbar()
         now = time.monotonic()
         eyes = self.app._animated.cursor_eye_position
-        nearby = (round(eyes[0] + 180), round(eyes[1]))
+        nearby = (round(eyes[0] + 180 * self.app.settings.scale), round(eyes[1]))
         for pointer in ((99999, -99999), nearby):
             for sample_time in (now, now + 0.14):
                 self.app._cursor_observation.observe(
                     pointer, sample_time, game_mode=False, eyes=eyes,
                     screen_width=1920, scale=self.app.settings.scale,
                 )
-                self.app._pointer_runtime.begin_behaviour(sample_time)
+                # Use the sampled point as the same native point for access guards.
+                with (
+                    patch.object(self.app.root, "winfo_pointerx",
+                                 return_value=pointer[0]),
+                    patch.object(self.app.root, "winfo_pointery",
+                                 return_value=pointer[1]),
+                ):
+                    self.app._pointer_runtime.begin_behaviour(sample_time)
             direction = self.app._visual.gaze_direction(pointer)
             if pointer == nearby:
                 self.assertIsNotNone(direction)
@@ -478,8 +505,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.context = context_at(
             datetime(2026, 10, 12, 15, 0).timestamp(),
         )
-        self.assertIn("_on_click_left", str(self.app.canvas.bind("<Button-1>")))
-        self.assertIn("_on_click_right", str(self.app.canvas.bind("<Button-3>")))
+        self.assertIn("on_left_click", str(self.app.canvas.bind("<Button-1>")))
+        self.assertIn("on_right_click", str(self.app.canvas.bind("<Button-3>")))
         self.app._on_click_left()
         self.assertIsNotNone(self.app._speech.bubble)
         self.assertEqual(

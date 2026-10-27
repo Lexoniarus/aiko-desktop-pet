@@ -4,6 +4,7 @@ import math
 
 from ...asset_paths import CONNECT_FOUR_DIR, MASTERMIND_DIR, PLAYING_CARDS_DIR
 from ...pet.content import GERMAN_TEXT
+from ...pet.moodlet_types import MoodletId
 from ...pet.wishes import WishId, WishObjective, WishTargetKind
 from .contracts import MoodletView, WishView
 from .moodlet_causes import cause_description
@@ -47,9 +48,9 @@ GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_to
               "quiz": "status_fun"}
 
 
-def duration_text(seconds: float) -> str:
-    if 0 < seconds < 60:
-        return GERMAN_TEXT.format("vn.seconds", seconds=str(math.ceil(seconds)))
+def duration_text(seconds: float, *, precise_seconds: bool = False) -> str:
+    if precise_seconds or 0 < seconds < 60:
+        return GERMAN_TEXT.format("vn.seconds", seconds=str(max(0, math.ceil(seconds))))
     minutes = max(0, math.ceil(seconds / 60))
     if minutes >= 60:
         hours, rest = divmod(minutes, 60)
@@ -63,6 +64,7 @@ def duration_text(seconds: float) -> str:
 
 def moodlet_description(view: MoodletView) -> str:
     value = view.value
+    precise = value.definition_id in (MoodletId.CURSOR_CURIOSITY, MoodletId.CURSOR_FEAR)
     parts = [
         view.label + " · " + GERMAN_TEXT.format(
             "vn.moodlet_strength", level=str(value.level),
@@ -82,8 +84,8 @@ def moodlet_description(view: MoodletView) -> str:
     parts.append(
         GERMAN_TEXT.format(
             "vn.decay_work",
-            stage=duration_text(value.remaining_stage_seconds),
-            total=duration_text(value.remaining_decay_seconds),
+            stage=duration_text(value.remaining_stage_seconds, precise_seconds=precise),
+            total=duration_text(value.remaining_decay_seconds, precise_seconds=precise),
         )
     )
     parts.extend(GERMAN_TEXT.format(

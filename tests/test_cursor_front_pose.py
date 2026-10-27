@@ -121,7 +121,6 @@ class CursorPoseRuntimeTests(unittest.TestCase):
             ports=AnimationRuntimePorts(
                 action_until=lambda: 0,
                 action_clip_id=lambda: "review",
-                attention_until=lambda: 0,
                 ready_for_handover=lambda: self.ready,
             ),
         )

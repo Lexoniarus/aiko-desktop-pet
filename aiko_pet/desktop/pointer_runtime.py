@@ -120,7 +120,7 @@ class PointerRuntime:
 
     def reset(self) -> None:
         self._access_claimed = False
-        self._observer.attention.reset()
+        self._observer.reset()
         if self._behaviour is not None:
             self._behaviour.reset()
         if self._walk is not None:

@@ -6,7 +6,7 @@
 > normal posture; body turns express selected intent. Curiosity/fear receive
 > short Moodlets, and reliable pointer access to controls takes precedence over
 > the earlier idea of intentionally making Aiko harder to click. This is a
-> documented target, not an implemented or visually accepted revision.
+> implemented revision with practical visual acceptance still pending.
 
 > **Preserved product concept; implementation covers a subset.** Recorded on
 > 2026-10-19 from the owner's German conceptual draft v1.0 dated 2026-10-15.

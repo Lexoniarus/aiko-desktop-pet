@@ -70,7 +70,6 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.coordinator.begin_frame(10.1, CursorActivityContext())
         self.assertFalse(self.coordinator.intent.moving)
 
-
     def test_qualified_event_commits_once_at_pet_endpoint(self):
         pet = self.coordinator._state
         self.assertEqual(len(pet.moodlets.active), 1)

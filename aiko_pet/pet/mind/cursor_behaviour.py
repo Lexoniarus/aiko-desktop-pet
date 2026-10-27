@@ -74,6 +74,12 @@ class CursorBehaviourPolicy:
         self._trust = 0.0
         self._willing = False
 
+    def suspend(self, now: float) -> None:
+        """Yield attention to a real activity without rearming an escape."""
+        self.note_motion_finished(self.current.token, now)
+        self._calm_since = None
+        self.current = CursorIntent(reason="activity")
+
     def claim_access(self, now: float) -> None:
         """Contact owns input; a lingering impression cannot restart this attempt."""
         self._access = True
@@ -176,7 +182,7 @@ class CursorBehaviourPolicy:
                 now + 15,
                 "near-fast-approach",
                 p.pointer,
-                "profile",
+                "front" if reaction == "startle" else "profile",
                 level,
                 self._evidence("fear", level),
             )

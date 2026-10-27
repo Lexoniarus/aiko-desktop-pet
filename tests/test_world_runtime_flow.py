@@ -97,7 +97,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.run_for(.3)
         return record
 
-    def test_stationary_hover_opens_ui_without_pausing_search_or_candidate(self):
+    def test_stationary_hover_pauses_travel_and_preserves_search_and_candidate(self):
         record = self.begin_native_search()
         app, world = self.app, self.app._world
         app.root.update_idletasks()
@@ -148,7 +148,11 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             world.cursor.cancel()
             before = app.settings.x
             self.run_for(.2)
-            self.assertNotEqual(app.settings.x, before)
+            self.assertEqual(app.settings.x, before)
+        app._hover.close_toolbar()
+        before = app.settings.x
+        self.run_for(.35)
+        self.assertNotEqual(app.settings.x, before)
         focus = world.interaction.memory_id
         assert focus is not None
         self.assertEqual(world.awareness.instance_for_record(focus),
@@ -194,7 +198,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 progress = world.interaction.search_progress
                 self.run_for(.35)
                 self.assertIsNotNone(app._speech.bubble)
-                self.assertNotEqual(app.settings.x, before)
+                self.assertEqual(app.settings.x, before)
                 self.assertTrue(world.interaction.search_ready)
                 self.assertEqual(world.interaction.search_progress, progress)
                 self.assertEqual(world.interaction.memory_id, record)
@@ -205,6 +209,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                                  relationship.penalties)
                 self.assertAlmostEqual(app.state.social, social, delta=.05)
                 self.assertEqual(list(app.mind.clicks), [])
+        app._hover.close_toolbar()
+        before = app.settings.x
+        self.run_for(.35)
+        self.assertNotEqual(app.settings.x, before)
         direction = -1 if app._walk.movement.remaining_distance < 0 else 1
         world.world.place_resting(
             "onigiri", world._body_x() + direction * 1.5 * world.width,

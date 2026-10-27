@@ -1,17 +1,17 @@
 # Idle, Mausinteresse und erreichbare Bedienung: Konzept und Umbauplan
 
-Stand: 27.10.2026. Geprüfte Ausgangsbasis: `2ecca2f` auf
-`feature/social-optimization`. **Nur Dokumentation und Planung.**
-Produktionscode, Tests, Konfiguration, Assets und Laufzeit sind durch dieses
-Dokument nicht verändert. Es erteilt keinen Implementierungs-, Commit-, Push-
-oder Merge-Auftrag.
+Stand: 27.10.2026. Ausgangsbasis: `2ecca2f` auf
+`feature/social-optimization`. Der Nutzer hat anschließend die Umsetzung in den
+elf unten aufgeführten Commits einschließlich gezielter Tests und abschließender
+vollständiger CI beauftragt. **Der Codeumbau ist umgesetzt; praktische
+Verhaltensabnahme durch den Nutzer steht aus.** Kein Merge ist freigegeben.
+Assets und private Originale wurden nicht verändert.
 
-Diese Fassung hält die anschließende Nutzerbesprechung fest und hat für den
-geplanten Umbau Vorrang vor widersprechenden älteren Cursor- und Drehregeln.
+Diese Fassung hat Vorrang vor widersprechenden historischen Cursor-/Drehregeln.
 Der [erste Implementierungsplan](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md) bleibt
-als technischer Verlauf erhalten. Seine grüne CI war keine praktische Abnahme
-des Verhaltens: Der Nutzer beobachtet weiterhin hektisches Nachführen und
-konkurrierende Kopf-/Körperausrichtung.
+als Verlauf erhalten. Eine grüne CI belegt technische Prüfungen, keine praktische
+Abnahme der sichtbaren Wirkung. Die früher beobachtete hektische Konkurrenz
+zwischen Live-Blick und Körperdrehung war der Anlass dieses Umbaus.
 
 ## Verbindliche Richtung
 
@@ -215,7 +215,7 @@ das wertet die Verhaltenspolicy nicht erneut aus und dreht Aikos Wahrnehmung
 nicht künstlich zum Klickort. Kontakt und wahrgenommenes Objektwissen bleiben
 unterschiedliche Fakten.
 
-## Befund am bestehenden Code
+## Ausgangsbefund vor dem Umbau (`2ecca2f`)
 
 | Bestehender Vertrag | Konsequenz für den Umbau |
 | --- | --- |
@@ -231,17 +231,17 @@ unterschiedliche Fakten.
 | `ContactCoordinator.enter()` und `WalkDriver` besitzen bereits Unterbrechungs-/Platzierungspfade. | Diese verbinden; keinen zweiten Kontakt- oder Positionsbesitzer schaffen. |
 | `SpeechPresenter.show_emote()` ersetzt die aktuelle Sprechblase; `ReactionPlayer` kann Interaktionen sperren. | Vor der Darstellung fachlich zulassen; kurze Cursor-Emotes erzeugen keine geschützte ReactionPlayer-Aktion. |
 
-## Modul- und OOP-Plan
+## Umgesetzte Modul- und OOP-Zuständigkeiten
 
 Pfade sind relativ zu `aiko_pet/`, soweit nicht anders benannt. Neue Werte und
 kleine Methoden gehören zu diesen Besitzern; keine neue Managerhierarchie.
 
-| Existierendes Modul / Besitzer | Geplanter konkreter Vertrag |
+| Modul / Besitzer | Umgesetzter Vertrag |
 | --- | --- |
 | `pet/mind/cursor_attention.py` / `CursorAttention` | Einziger Besitzer roher Zeigerhistorie und geglätteter Geschwindigkeit. Messungen von subjektivem Interesse getrennt halten. |
 | `application/cursor_observation.py` / `CursorObservation` | Gemeinsame Geometrie, Reichweite, Nähe und Eingabeherkunft liefern; keine Moodlet- oder Bewegungsentscheidung. |
 | `pet/mind/cursor_behaviour.py` / `CursorBehaviourPolicy` | Eine Begegnung mit stabiler Identität, gewähltem Aufmerksamkeitsziel, beabsichtigter Körperrichtung, begrenzter Bewegungsfolge, Erholung und Freigabebedingung besitzen. Unveränderliche Entscheidung plus höchstens neu qualifizierte Gefühlsbelege zurückgeben. |
-| `application/cursor_behaviour.py` / `CursorBehaviourCoordinator` | Den vorhandenen Pet-Zustand einschließlich Cursor-Moodlet-Stufen lesen, einmal pro Eingabephase entscheiden, neue Belege genau einmal über PetState verbuchen, Absicht an alle Leser teilen und Bewegung nach World sowie vor Frames erneut zulassen. Kein eigener Moodlet-Zustand. |
+| `application/cursor_behaviour.py` / `CursorBehaviourCoordinator` | Den kanonischen Pet-Zustand lesen, einmal pro Eingabephase entscheiden, neue Belege genau einmal über PetState verbuchen, Absicht an alle Leser teilen und Bewegung nach World sowie vor Frames erneut zulassen. Kein eigener Moodlet-Zustand. |
 | `pet/interaction_events.py` | Kleinen unveränderlichen `CursorExperience`-Wert mit Begegnungs-/Belegidentität, Art und absoluter Stärke ergänzen. Nicht als vorhandene Pflege-/HelpfulInteraction behandeln. |
 | `pet/state.py` / `PetState` | Dünne öffentliche Methode `experience_cursor(event)` als einziger veränderlicher Zugang. Die reine Cursor-Erfahrungsfunktion liefert den neuen MoodletState; keine Fenster-/UI-Zugriffe. |
 | `pet/moodlet_types.py`, `pet/moodlet_models.py` | Eigene IDs `CURSOR_CURIOSITY` und `CURSOR_FEAR`, eine kurze Gruppe `CURSOR` und kleine Profilparameter für die expliziten drei Stufen vorsehen. Bestehende Richtungen `CHEERFUL` beziehungsweise `UNCERTAIN` wiederverwenden; die konkreten Familien behalten ihre eigenen Namen und Ursachen. |
@@ -259,7 +259,7 @@ kleine Methoden gehören zu diesen Besitzern; keine neue Managerhierarchie.
 | `desktop/runtime.py`, `application/assembly.py`, `desktop/animation_assembly.py`, `desktop/preferences.py`, `gui.py` | Bestehende Instanzen einmal verdrahten, Reset-/Kontakt-/Abschlusswege erweitern. GUI bleibt Composition Root innerhalb ihrer bestehenden Größen-/Abhängigkeitsgrenzen. |
 | `data/balance.json`, `pet/balance_contract.py` | Zeitwerte, Geometrie und Reaktionsgrenzen an einem validierten Ort führen. Moodlet-Punkte und Stufenprofile gehören dagegen in den Moodlet-Katalog; keine doppelten Zahlenquellen. |
 
-### Genau ein geplantes neues Produktionsmodul
+### Genau ein neues Produktionsmodul
 
 `pet/cursor_experiences.py` enthält die kleine reine Funktion
 `apply_cursor_experience(...) -> MoodletState`. Sie wendet bereits qualifizierte
@@ -305,8 +305,7 @@ Vertrags-/Ereignismodulen. Neue Testmodule sind keine neuen Produktionsbesitzer.
 
 ## Geplante lokale Commitfolge
 
-Die folgende Reihenfolge ist ein zukünftiger Umsetzungsplan. Aktuell werden
-nur die Dokumente geschrieben. Jeder Funktionscommit migriert seine unmittelbar
+Die folgende Reihenfolge wurde für diesen Umbau umgesetzt. Jeder Funktionscommit migriert seine unmittelbar
 betroffenen Signaturen/Aufrufer gemeinsam; keine bewusst kaputten Imports und
 keine zweite dauerhafte Legacy-Verfolgung neben dem neuen Besitzer.
 
@@ -330,8 +329,7 @@ abgeschwächte fachliche Erwartungen grün machen.
 | 10 — `refactor(idle): choose quiet one or two step outings` | Vorhandenen RandomWalkPlanner und AmbientDirector auf 45–90 s freie Idle-Gelegenheiten, 20–40 s Kopfblickgelegenheiten, bewusste Dreh-/Schrittfolge und Rückkehr zur Front abstimmen. Ohne Schrittpaket stehen bleiben; kein Idle-Rennen und kein Kommentar. | `test_idle_steps.py`, `test_ambient_director.py`, `test_pet_idle_emote_boundary.py`, passende `test_desktop_animation_runtime.py`-/`test_cursor_behaviour_integration.py`-Fälle. Blinkschwanken, volle frontale Blickfreiheit, ein/zwei Schritte, Unterbrechung, fehlendes Paket und keine alte Textreaktion. |
 | 11 — `test(cursor): verify complete behavior trajectories and final CI` | Bestehende Assemblies/Resets vollständig verbinden, Zeitreihen und praktische Abnahmeliste vervollständigen, Architektur-/Verhaltensdocs auf den tatsächlich erreichten Stand bringen, neue Testmuster im vorhandenen Windows-Job ergänzen. | Zuerst gezielte Integrations-/Assembly-/Präferenz-/World-Grenzfälle; danach einmal alle lokalen Tests und globalen statischen Gates sowie die echte vollständige GitHub-CI am finalen Head. Vorgehen unten. |
 
-Für den rein dokumentierenden Schritt 1 ist diese Dokumentänderung die
-vorbereitete Arbeitsgrundlage; sie wird in dieser Planungsrunde nicht committed.
+Schritt 1 enthält die vor der Umsetzung vorbereiteten Konzeptdokumente.
 
 ### Gezielte World- und Kontaktregressionen
 
@@ -404,9 +402,64 @@ Der neue Zugangsvertrag muss den vorhandenen Pflege-/Story-/World-Schutz erhalte
    entsprechende Nutzersichtung ist die Verhaltenswirkung weiterhin offen;
    aus grüner CI allein folgt diesmal kein Urteil „verhaltensseitig fertig“.
 
-## Prüfung dieser Dokumentationsrunde
+## Ursprüngliche Prüfung der Dokumentationsrunde
 
 Vorgesehen sind ausschließlich relative Dokumentlinks, Modul-/Testpfade,
 eindeutige Zuständigkeiten, widerspruchsfreie Zeiten und ein kontrollierter
 Git-Diff. Die hier geplanten Funktionen und neuen Testmodule werden dafür
 nicht angelegt. Keine Laufzeittests oder vollständige CI durch bloßes Planen.
+
+
+## Umsetzungsprüfung vom 27.10.2026
+
+Die elf Schritte wurden in der festgelegten Reihenfolge ausgeführt. Die ersten
+zehn Commits enthalten jeweils den abgeschlossenen Fachvertrag mit gezielter
+Prüfung; Schritt 11 verbindet die tatsächlichen Assemblies/Resets, ergänzt
+kontrollierte längere Abläufe und führt die abschließenden globalen Gates aus.
+Neue Produktionsdatei ist ausschließlich `pet/cursor_experiences.py`.
+
+Zusätzliche Befunde aus der Gesamtsuite:
+
+- Renderer-Tests geben die ausgewählte Aufmerksamkeit und explizite Körperabsicht
+  jetzt über den echten Port vor. Ein Raw-Pointer-Argument allein ist keine
+  fachliche Auswahl und löst keine automatische Körperdrehung mehr aus.
+- Beobachteter Objekttransport setzt eine tatsächlich ausgewählte Sicht auf den
+  Gegenstand vor dem nativen Grab voraus. Die Ereigniskoordinate bleibt frisch;
+  sie erzeugt keine erfundene Blick-/Wissensänderung.
+- World-Tests prüfen während Hover/Bedienung ausdrücklich Stillstand und danach
+  die Fortsetzung desselben Ziels. Frühere Erwartungen, während geöffnetem
+  Zugriff weiterzulaufen, widersprachen der neuen Erreichbarkeitsregel.
+- `SpeechPresenter.blocks_contact` unterscheidet eine kurze Cursor-Emoji-Anzeige
+  von geschützter Sprache. Ein freier Cursorhinweis blockiert weder Kontakt noch
+  gemeinsame visuelle Wahrnehmung und kann vorhandene Sprache nicht ersetzen.
+- Ein Reset verwirft sowohl Rohhistorie als auch abgeleitete Zeigerbeobachtung;
+  gespeicherte Moodlets und fremde World-Aufträge bleiben bestehen.
+
+Die vollständigen lokalen Ergebnisse und der exakte GitHub-CI-Head werden im
+Abschlussbericht belegt. Die Nutzer-Sichtung nach Neustart bleibt ausdrücklich
+getrennt: frontales Umsehen, bewusste Drehung, ein/zwei Schritte, Ruhe nach
+Schreck und Toolbarzugang bei aktivem Angst-Moodlet. Keine automatische
+Computer-Use-Sichtung und kein Merge.
+
+
+### Abschließende lokale technische Befunde
+
+- Globales Ruff: bestanden.
+- Striktes Mypy über Anwendung, Einstieg und Tools: 361 Dateien, bestanden.
+- Repository-weites Pyright einschließlich Tests: 0 Fehler/Warnungen.
+- Windows-Gesamtsuite mit echten Tk-Grenzen: 2.308 Tests, bestanden.
+- Linux/Xvfb (lokaler Debian-Container, Python 3.11.2): 2.308 Tests,
+  acht bestehende Plattform-Skips, genau ein Mastermind-Layoutfehler.
+  `test_first_mapping_shows_all_ten_rows_when_body_has_room_without_input`
+  misst dort 496 statt benötigter 504 Pixel. Der gezielte Vergleich auf dem
+  unveränderten Ausgangscommit `2ecca2f` ergibt exakt denselben Fehler.
+  An diesem UI-Code und dieser Test-Erwartung wurde nichts geändert.
+  Alle neuen Cursor-/Moodlet-/Bewegungs- und World-Grenzfälle bestehen.
+- Das ältere Containerimage benötigte die bereits in `requirements.txt`
+  vorgeschriebene `astronomy-engine==2.1.19`. Sie wurde ausschließlich in der
+  isolierten Testumgebung ergänzt. Keine gelockerten Abhängigkeits-/Starttests.
+- Der Asset-Diff gegenüber `2ecca2f` ist leer. Die GUI-Composition-Root bleibt
+  mit 637 Zeilen innerhalb der bestehenden Grenze von 640.
+
+Die echte Ubuntu-3.11-/3.13- und Windows-CI wird am abschließenden Commit auf
+PR #11 geprüft; ihr exakter Head und Befund gehören in den Abschlussbericht.

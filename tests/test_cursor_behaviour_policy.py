@@ -22,6 +22,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         return self.policy.evaluate(replace(p, **values), self.context, now)
 
     def calm_until(self, seconds, **fields):
+        result = self.decide()
         for n in range(round(seconds * 10) + 1):
             result = self.decide(10 + n / 10, **fields)
         return result
@@ -53,6 +54,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             self.context = replace(self.context, friendship_level=trust)
             fear = self.decide(speed=8, closing_speed=8)
             self.assertEqual(fear.reaction, expected)
+            assert fear.experience is not None
             self.assertEqual(fear.experience.feeling, "fear")
             self.policy.reset()
             self.assertIsNotNone(self.calm_until(1).experience)
@@ -70,6 +72,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.assertTrue(self.decide(23, speed=8, closing_speed=8).moving)
 
     def test_hectic_sides_only_look_briefly_without_body_chasing(self):
+        result = self.decide()
         for n in range(50):
             result = self.decide(10 + n * 0.1, side=1 if n % 2 else -1, speed=1)
             self.assertEqual(result.body, "front")

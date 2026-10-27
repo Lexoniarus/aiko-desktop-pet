@@ -35,6 +35,7 @@ class PetMovementBoundaryTests(unittest.TestCase):
             sprite_width=128, energy=85, auto_walk=True, sleeping=False,
             attention_active=False, menu_engaged=False,
             observing_computer=False, computer_busy=False, quiet_period=False,
+            small_idle_steps=True,
         )
         planner = RandomWalkPlanner(next_walk_at=10)
         distance = planner.plan_departure(conditions)

@@ -171,7 +171,6 @@ class DesktopPet:
                 game_mode=lambda: self._animated.game_mode,
                 action_until=lambda: self._action_playback.until,
                 action_clip_id=lambda: self._action_playback.clip_id,
-                attention_until=lambda: self.mind.cursor_attention.attention_until,
                 cursor_intent=lambda: self._cursor_behaviour.intent,
                 cursor_allowed=lambda: self._pointer_runtime.motion_allowed(),
                 cursor_finished=self._cursor_behaviour.finish_motion,
@@ -181,7 +180,7 @@ class DesktopPet:
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
                     or self._social_runtime.waiting
                     or ((self._reaction_player.pending_timer is not None
-                         or self._speech.bubble is not None)
+                         or self._speech.blocks_contact)
                         and not self._world_access.contact_feedback_active())),
             ),
         )
@@ -316,7 +315,7 @@ class DesktopPet:
                 playback_active=lambda: (time.monotonic() < self._action_playback.until
                     or self._social_runtime.waiting
                     or self._reaction_player.pending_timer is not None
-                    or self._speech.bubble is not None),
+                    or self._speech.blocks_contact),
                 interruptible_playback=lambda: self._reaction_player.interruptible,
                 reaction_event=lambda: self._reaction_player.event,
                 care_holding=lambda: (self._social_runtime.waiting
@@ -341,6 +340,7 @@ class DesktopPet:
             ),
         )
         self._attention_view = AttentionPresenter(AttentionViewPorts(
+            show_nonblocking_emote=self._speech.show_cursor_emote,
             start_action=lambda name, duration: self._start_action(
                 name, duration,
             ),
@@ -362,6 +362,7 @@ class DesktopPet:
                 bubble_visible=lambda: self._speech.bubble is not None,
                 reaction_pending=lambda: (
                     self._reaction_player.pending_timer is not None
+                    or self._reaction_player.story_active
                     or self._social_runtime.waiting
                 ),
                 walking=lambda: (

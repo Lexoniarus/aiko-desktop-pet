@@ -2,6 +2,7 @@
 
 import unittest
 from dataclasses import replace
+from typing import Literal
 
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.pet.cursor_experiences import apply_cursor_experience
@@ -14,12 +15,13 @@ from aiko_pet.pet.state import PetState
 class CursorExperienceTests(unittest.TestCase):
     def test_absolute_strength_weaker_revision_and_both_families(self):
         pet = PetState(lived_seconds=100)
-        for receipt, feeling, level in (
+        facts: tuple[tuple[str, Literal["curiosity", "fear"], int], ...] = (
             ("one", "curiosity", 2),
             ("two", "curiosity", 2),
             ("three", "curiosity", 1),
             ("four", "fear", 3),
-        ):
+        )
+        for receipt, feeling, level in facts:
             pet.experience_cursor(CursorExperience(receipt, feeling, level))
         self.assertEqual(
             [(e.definition_id, e.level) for e in pet.moodlets.active],

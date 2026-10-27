@@ -80,7 +80,6 @@ class AnimationAssemblyPorts:
     game_mode: Callable[[], bool]
     action_until: Callable[[], float]
     action_clip_id: Callable[[], str]
-    attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
     world: WorldRuntimeAccess
     feedback_subject: Callable[[], str | None] = lambda: None
@@ -154,7 +153,6 @@ def assemble_animation(
         ports=AnimationRuntimePorts(
             action_until=ports.action_until,
             action_clip_id=ports.action_clip_id,
-            attention_until=ports.attention_until,
             ready_for_handover=ports.world.ready_for_handover,
             holding_readable=ports.world.holding_readable,
             cursor_gaze_point=ports.world.cursor_gaze_point,

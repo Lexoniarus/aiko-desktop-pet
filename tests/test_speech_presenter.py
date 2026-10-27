@@ -31,6 +31,19 @@ class SpeechPresenterTests(unittest.TestCase):
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.presenter.hide)
 
+    def test_cursor_cue_is_nonblocking_and_cannot_replace_existing_speech(self):
+        self.presenter.show_cursor_emote("question", 1500)
+        self.assertIsNotNone(self.presenter.bubble)
+        self.assertFalse(self.presenter.blocks_contact)
+        self.presenter.hide()
+        self.presenter.show_text("Geschichte", 6000)
+        before = self.presenter.bubble
+        self.presenter.show_cursor_emote("drops", 1500)
+        self.assertIs(self.presenter.bubble, before)
+        self.assertTrue(self.presenter.blocks_contact)
+        self.presenter.hide()
+        self.assertFalse(self.presenter.blocks_contact)
+
     def test_speech_renders_plain_text_with_existing_tail(self) -> None:
         self.presenter.show_text("Hallo <b>Browser</b>!", 6000)
         bubble = self.presenter.bubble

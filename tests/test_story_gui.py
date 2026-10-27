@@ -11,6 +11,7 @@ from pathlib import Path
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.interaction_events import CursorExperience
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
@@ -105,8 +106,9 @@ class StoryGuiTests(unittest.TestCase):
         self.pet._attention.next_comment = -1000000
         self.pet._action_playback.until = 0
         self.pet._maybe_speak_spontaneously(time.monotonic())
-        self.pet._attention_runtime.cursor_moved(200, 1920, time.monotonic())
-        self.pet._on_walk_finished(time.monotonic())
+        self.pet._attention_runtime.cursor_experience(
+            CursorExperience("during-story", "fear", 3),
+        )
         self.assertEqual(tuple(self.pet.mind.book.recent), recent)
         self.assertTrue(player.story_active)
 

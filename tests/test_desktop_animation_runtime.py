@@ -54,7 +54,6 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
             ports=AnimationRuntimePorts(
                 action_until=lambda: self.action_until,
                 action_clip_id=lambda: self.action_clip_id,
-                attention_until=lambda: -100.0,
                 holding_readable=lambda: self.holding_readable,
                 ready_for_handover=lambda: self.ready_for_handover,
             ),
@@ -154,7 +153,6 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
             ports=AnimationRuntimePorts(
                 action_until=lambda: 0.0,
                 action_clip_id=lambda: "idle",
-                attention_until=lambda: -100.0,
             ),
         )
         runtime.ambient.next_blink_at = runtime.ambient.next_glance_at = 1000.0
@@ -180,7 +178,6 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
             ports=AnimationRuntimePorts(
                 action_until=lambda: 0.0,
                 action_clip_id=lambda: "idle",
-                attention_until=lambda: -100.0,
             ),
         )
         self.walk.movement.kind = "step"

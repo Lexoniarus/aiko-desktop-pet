@@ -82,6 +82,7 @@ class EmotionalCompositionTests(unittest.TestCase):
             expected = {
                 MoodletId.TRUSTING: EmotionalState.AFFECTIONATE,
                 MoodletId.UNCERTAIN: EmotionalState.TENSE,
+                MoodletId.CURSOR_FEAR: EmotionalState.TENSE,
                 MoodletId.GUARDED: EmotionalState.RESERVED,
             }.get(key)
             self.assertEqual(
@@ -97,9 +98,9 @@ class EmotionalCompositionTests(unittest.TestCase):
             if d.polarity == "positive"
         ]
         result = derive(*positive)
-        self.assertEqual(len(result.influences), 11)
-        self.assertEqual(result.positive_intensity, 31)
-        self.assertEqual(sum(n for _, n in result.directions), 31)
+        self.assertEqual(len(result.influences), 12)
+        self.assertEqual(result.positive_intensity, 34)
+        self.assertEqual(sum(n for _, n in result.directions), 34)
         self.assertEqual(result.primary, EmotionalState.CHEERFUL)
 
     def test_equal_positive_negative_preserve_both_as_ambivalent(self):

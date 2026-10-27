@@ -23,7 +23,7 @@ class CursorMotion:
 
 @dataclass(frozen=True, slots=True)
 class CursorObservationResult:
-    """Every sample provides evidence; only changed positions emit remarks."""
+    """Every sample provides evidence; only changed positions emit motion facts."""
 
     perception: CursorPerception
     motion: CursorMotion | None
@@ -34,6 +34,11 @@ class CursorObservation:
 
     def __init__(self, attention: CursorAttention) -> None:
         self.attention = attention
+        self.current = CursorPerception()
+
+    def reset(self) -> None:
+        """Forget both the history and its derived sample on mode/scale changes."""
+        self.attention.reset()
         self.current = CursorPerception()
 
     def classify_contact(

@@ -20,7 +20,7 @@ from aiko_pet.pet.state import PetState
 
 class CursorMenuAccessTests(unittest.TestCase):
     def setUp(self):
-        self.point = (110, 140)
+        self.point: tuple[int, int] = (110, 140)
         self.menu = False
         self.observer = CursorObservation(CursorAttention())
         self.observer.attention.observe(self.point, 10)
@@ -107,11 +107,25 @@ class CursorMenuAccessTests(unittest.TestCase):
         request = driver.movement.request("world")
         driver.submit_cursor_intent(MotionRequest("cursor", 7, 116, "step", 100))
         self.assertIsNone(driver.step(10, 0.5, game_mode=False, attention_active=False))
-        self.assertEqual(fixture.settings.x, 100)
+        self.assertEqual(fixture.settings.x or 0, 100)
         self.assertIs(driver.movement.request("world"), request)
         self.assertIsNone(driver.movement.request("cursor"))
         active[0] = False
         self.assertIsNotNone(
             driver.step(11, 0.5, game_mode=False, attention_active=False)
         )
-        self.assertGreater(fixture.settings.x, 100)
+        self.assertGreater(fixture.settings.x or 0, 100)
+
+    def test_mode_reset_invalidates_sample_and_preserves_persisted_impression(self):
+        self.pet.experience_cursor(CursorExperience("existing", "fear", 2))
+        before = self.pet.capture_checkpoint()
+        self.observer.observe((100, 100), 10, game_mode=False,
+                              eyes=(196, 182), screen_width=1000)
+        self.observer.observe((110, 100), 10.14, game_mode=False,
+                              eyes=(196, 182), screen_width=1000)
+        self.assertTrue(self.observer.current.valid)
+        self.runtime.reset()
+        self.assertFalse(self.observer.current.valid)
+        self.assertIsNone(self.observer.attention.previous_pointer)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
+        self.walk.set_world_goal.assert_not_called()
