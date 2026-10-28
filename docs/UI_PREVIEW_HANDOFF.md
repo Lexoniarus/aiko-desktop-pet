@@ -13,6 +13,22 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved Tic-Tac-Toe Denkbrett and V3 follow-up
+
+On 2026-10-28 the owner approved
+`../design-previews/ttt-v3-2026-10-28/preview.html`, relative to the checkout root.
+Read the [latest TTT direction](UI_VN_DESIGN.md#approved-tic-tac-toe-denkbrett-and-v3-staging--2026-10-28)
+and its README/`approval-record.json`; the earlier TTT bundle remains preserved.
+
+The blue-violet enamel-style rim, cream recessed cells and unchanged X/O signs
+give the game its own toy-board identity. Aiko's installed V3 gaze/body poses
+target the actual board/placement; existing emoji interludes complement her
+approved little-strategist comments. Original board analysis, move selection,
+manual next and alternating starters remain unchanged. The external source
+copies, code-native frame SVG, checks and screenshots are local companion files.
+Native timing/priorities and practical Windows validation remain later work;
+application or production-asset integration is not authorized by this approval.
+
 ### Approved RPS identity and animation follow-up
 
 On 2026-10-28 the owner approved the Fingerduell revision at

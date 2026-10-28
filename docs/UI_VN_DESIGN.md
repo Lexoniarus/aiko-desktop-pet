@@ -1,5 +1,40 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Tic-Tac-Toe Denkbrett and V3 staging — 2026-10-28
+
+The owner approved the revised Tic-Tac-Toe reference at
+`../design-previews/ttt-v3-2026-10-28/preview.html`, relative to the checkout root.
+Its README and `approval-record.json` retain the approval and reviewed hashes.
+This extends the 2026-10-27 approval below with its own board identity and newer
+character presentation; the previous bundle remains unchanged.
+
+- A lightly enamelled toy board has a blue-violet illustrated rim, light edge
+  reflections, small cream corner stars and nine warm recessed cells. Keep the
+  existing blue X/player and rose O/Aiko artwork. A small X/O title emblem and
+  "Aikos kleines Denkbrett" identify the game within the white/rose VN shell.
+- Keep Aiko's approved little-strategist Chibi voice and real qualitative board
+  analysis: concrete threats, actual winning paths and her own mistakes, without
+  invented percentages. The analysis and opponent move selection are unchanged.
+- Reuse installed V3 idle/gaze and compatible body/turn poses. She holds a
+  three-quarter stance while thinking, looks toward real relevant board fields
+  and her latest placement, then returns toward the player for commentary.
+  Direction follows the window's actual position; her desktop anchor stays fixed.
+  Existing emotes briefly replace text between commentary beats, then restore
+  that text. A new move/comment or close cancels stale presentation. Existing
+  happy jumps remain selected outcome reactions. No extra taskbar object.
+- Legal cell selection, the 1400 ms preview thinking pause, temporary input lock,
+  last-move marker, winning line, persistent result, manual **Nächste Runde** and
+  alternating starters retain the earlier accepted flow. Reduced motion keeps
+  gameplay timing/input gates with appropriate still poses.
+
+The external bundle retains unchanged source copies, provenance, the code-native
+board SVG, analysis/browser checks and screenshots. Animated examples and
+narrow-browser stacking are review affordances. Native speech/animation pacing,
+priorities and Windows input/DPI/placement validation remain separate work.
+The newer private character-head study is not imported by this preview. Design
+approval authorizes no application changes, production installation, game-rule,
+dialogue-catalogue, World or save changes. HTML examples stay outside Git.
+
 ## Approved Rock–Paper–Scissors identity and animation — 2026-10-28
 
 The owner approved the Fingerduell revision at
@@ -235,6 +270,7 @@ The owner approved the final clickable revision at
 `../design-previews/ttt-2026-10-27/preview.html` relative to the checkout root,
 including Aiko's revised Chibi voice and existing character reactions. Its README
 and `approval-record.json` retain the explicit approval and reviewed file hashes.
+The 2026-10-28 Denkbrett follow-up above extends its board identity and V3 staging.
 This supersedes the earlier Tic-Tac-Toe visual reference. The generic and dry
 analyst drafts remain local history, not the approved character direction.
 
