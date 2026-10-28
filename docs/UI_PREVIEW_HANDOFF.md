@@ -13,6 +13,30 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved game-specific follow-up: Quiz
+
+On 2026-10-28 the owner accepted the revised Quiz design at
+`../design-previews/quiz-2026-10-27/preview.html`, relative to the checkout root.
+Read the [canonical design](UI_VN_DESIGN.md#approved-quiz-follow-up--2026-10-28)
+and the external README before continuing. `approval-record.json` freezes the
+reference, owner statement and the reported preview limitation.
+
+The blue-violet small quiz studio, centered answer podiums and question-star
+emblem give the game its own identity within the VN shell. Aiko moderates the
+question and individual options, each becoming visible with its announcement;
+input unlocks only after her release cue. Installed V3 gaze/body poses, existing
+emotes and personal asides carry the host role. While waiting she occasionally
+clasps her hands, looks around and comments; choices stay enabled and interrupt
+her immediately. Source questions and factual explanations remain unchanged.
+
+The owner reported that the automatic waiting sequence appeared to depend on
+hovering the answer buttons. They accepted the design and deferred that preview
+issue; its cause is unconfirmed. **Native waiting must start without hover** and
+be checked with real Windows input. Passing local automation is not acceptance
+of this observed execution behavior. Final timing and the complete dialogue pool
+remain later work. No application changes or production-asset installation are
+authorized; previews, source copies and validation remain outside Git.
+
 ### Approved game-specific follow-up: Rock–Paper–Scissors
 
 On 2026-10-27 the owner approved the revised Rock–Paper–Scissors concept at
@@ -99,7 +123,8 @@ The player window uses the VN rose/white shell and an emerald/cream/gold table.
 
 The external README records the remaining timing/sequence refinement. Sources,
 license, comparisons, screenshots and checks remain local companions. No
-application changes or native integration are authorized. Quiz is next to discuss.
+application changes or native integration are authorized. Quiz has a separately
+approved follow-up above.
 
 ### Original shared bundle
 

@@ -1,5 +1,66 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Quiz follow-up — 2026-10-28
+
+The owner accepted the revised Quiz design and moderation concept at
+`../design-previews/quiz-2026-10-27/preview.html`, relative to the checkout root.
+Its README and `approval-record.json` retain the acceptance, reviewed file hashes
+and the preview limitation below. This is design approval, not native execution
+or animation-timing acceptance; application integration remains separate work.
+
+- Keep the shared white title and near-white rose shell. The quiz has its own
+  blue-violet miniature studio, curtain arcs, soft spotlights, cream/gold question
+  board, rose answer podiums, question-mark/star emblem and ten progress bulbs.
+  Answer text is centered on both axes, with independent left-middle A–D badges
+  and bottom-center status labels. Short answers use two columns, long ones one;
+  their reserved spaces prevent layout jumps as options appear.
+- Aiko is the exaggerated host of her own small anime quiz show. Formal host
+  announcements alternate with warm personal asides about her own performance,
+  such as providing the applause herself. The question, choices and factual
+  explanation come unchanged from the existing local catalogue. The ten sampled
+  questions and example remarks demonstrate direction, not a final dialogue pool.
+- She presents the full question, then A, B, C and D individually. **Each answer
+  button becomes visible only when its own introduction begins.** Previously
+  introduced answers remain visible. All inputs stay locked through the final
+  release cue; unseen options are also hidden from accessibility. A fresh
+  question resets visibility. There is no player response time limit.
+- Choice immediately locks all answers and marks the selection without revealing
+  correctness. Aiko acknowledges it, performs her suspense aside, then reveals
+  the solution and current point. Her explanation and continuation cue finish
+  before manual **Nächste Frage** becomes available. After ten questions her
+  closing gates **Neue Quizrunde**. There is no opponent score against Aiko.
+- Reuse installed V3 2X idle/gaze, compatible body-look/body-turn poses and
+  existing emotes. Reading carries a sustained three-quarter stance toward the
+  actual question-window position, with neutral looks between board and cue
+  cards. Player address returns frontal; personal asides use deliberate side/up
+  looks. Emotes replace text between beats. Selected existing happy jumps add
+  emphasis after disclosure, never hint at the solution beforehand.
+- While awaiting a choice, use occasional frontal hands-together/head-lowering
+  poses from the existing V3 `waiting` sequence, side/up/down looks and sparse
+  host comments, including occasional repetition of the actual question.
+  **This waiting behavior starts automatically after release, without hover or
+  other player input.** Answers remain enabled throughout. Choice immediately
+  interrupts the waiting gesture/comment; closing, reset and scene changes
+  cancel pending presentation. This gesture has no wish, care or state effect.
+- Preview timing starts with a gesture at about 9 seconds and a comment at about
+  24 seconds, then roughly 25–30 seconds between comments. These are review
+  values, not final native timing. Fast review, frozen examples, controlled-clock
+  checks and narrow-browser stacking are preview affordances. Reduced motion
+  preserves moderation and input gates while showing appropriate still poses.
+
+**Recorded preview limitation:** the owner observed that the waiting sequence
+seemed to start or resume only after hovering answer buttons, then accepted the
+design without requesting a preview fix. The cause has not been established.
+Automated checks passed, but do not override that observation. Reliable automatic
+start without hover and interruption under native Windows input must be verified
+when implementation is separately authorized. Final pacing, speech/animation
+priorities and relationship-sensitive dialogue variants also remain open.
+
+The external bundle retains source provenance, unchanged asset copies, checks
+and screenshots. The HTML examples stay outside Git. No application changes,
+production-asset installation, catalogue, game-rule, World or save changes are
+authorized by this approval.
+
 ## Approved Blackjack concept — 2026-10-27
 
 The owner accepted the visual direction and basic flow of the separate Blackjack
@@ -38,7 +99,7 @@ The external bundle retains unchanged source copies, card provenance/license,
 diagnostic comparisons, screenshots and validation. The concept approval does
 not authorize application changes, production-asset replacement or native
 integration. The complete dialogue catalogue and final native animation/speech
-priorities remain separate work. Quiz is the next design discussion.
+priorities remain separate work. Quiz has a separately approved follow-up above.
 
 ## Approved Mastermind follow-up — 2026-10-27
 
