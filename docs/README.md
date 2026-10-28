@@ -35,7 +35,7 @@ and test-cleanup plans.
 
 | Topic | Status and document |
 | --- | --- |
-| State-dependent Idle sequences, V3 reuse and grounded gestures | Implementation authorized and in progress; [Idle V3 behaviour plan](IDLE_V3_BEHAVIOUR_PLAN.md) contains module owners, transitional assets and six commits with focused tests and a final full suite. No new assets or push/merge authorized. |
+| State-dependent Idle sequences, V3 reuse and grounded gestures | Implemented in six local commits; [Idle V3 behaviour plan](IDLE_V3_BEHAVIOUR_PLAN.md) records module owners, transitional assets, focused tests and 2,417 passing tests plus all local static gates. Assets unchanged; practical review pending. No push or merge. |
 
 ## Validation and acceptance
 

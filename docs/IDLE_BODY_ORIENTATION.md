@@ -56,25 +56,29 @@ Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
 - Ein gedrehter Körper erhält ausschließlich passende Kopfvarianten. Ein
   Gegenblick setzt keinen unmöglichen Kopf an den bisherigen Körper.
 - `WalkController` und `WalkDriver` bleiben die einzigen Bewegungsbesitzer.
-  Kleine Idle-Ausflüge erfolgen nach 45–90 Sekunden Ruhe, normalerweise mit
-  einem, gelegentlich zwei Schritten. Ein kurzer Mausblick lenkt einen laufenden
-  Idle-Ausflug nicht sofort um; reale Bedienung und World-/Aktionsvorrang gelten.
+  Kleine Idle-Ausflüge verwenden 45–90 Sekunden Basisruhe, multipliziert mit
+  dem Zustandsprofil. Ruhige Profile erlauben höchstens einen Schritt; sonst
+  bleibt es bei einem, gelegentlich zwei Schritten. Ein kurzer Mausblick lenkt
+  einen laufenden Idle-Ausflug nicht sofort um; reale Bedienung und
+  World-/Aktionsvorrang gelten.
 - Nach etwa jedem zweiten kleinen Idle-Ausflug dreht Aiko vom Profil bis
-  Dreiviertel zurück und bleibt dort drei bis sechs Sekunden mit passenden
+  Dreiviertel zurück und bleibt dort mit passenden
   Kopfblicken stehen. Die Zeit beginnt erst in der erreichten Standpose.
   Dazwischen folgt nach dem Schritt eine kurze Blickpause mit Rückkehr zur
   Front. Die tatsächliche letzte Ortsbewegung startet genau eine Standfolge;
   das Beenden der alten Bewegung darf sie nicht im selben Frame löschen.
   Cursor- und World-Abschlüsse starten keine eigene Idle-Ankunftsfolge.
   Ohne Schrittpaket bleibt die Figur stehen.
-- Selbstständige Kopfblickgelegenheiten liegen bei 20–40 Sekunden und halten
-  ein bis drei Sekunden. Der bestehende Blink-/Schwankrhythmus bleibt erhalten.
-- Mit vorhandenem Körperpaket richtet etwa jedes dritte eigene Umsehen auch
-  den Körper nach links oder rechts in Dreiviertel aus. `AmbientDirector`
+- Selbstständige Kopfblickgelegenheiten verwenden 20–40 Sekunden Basisabstand
+  mit Profilfaktor und halten ein bis drei Sekunden. Der bestehende
+  Blink-/Schwankrhythmus bleibt erhalten.
+- Mit vorhandenem Körperpaket richtet je nach Profil jedes zweite, dritte
+  oder vierte eigene Umsehen auch den Körper nach links oder rechts in
+  Dreiviertel aus. `AmbientDirector`
   liefert dafür eine unveränderliche `AmbientIntent` aus Sprite, Körperabsicht
   und Seite. `BodyOrientation` spielt die vorhandenen Drehphasen und bestätigt
-  erst die tatsächlich erreichte Standpose. Dann beginnen drei bis sechs
-  Sekunden Ruhe mit einem passenden seitlichen Kopfblickwechsel. Die Rückkehr
+  erst die tatsächlich erreichte Standpose. Dann beginnt die profilabhängige
+  Ruhe mit einem passenden seitlichen Kopfblickwechsel. Die Rückkehr
   erfolgt über die vorhandenen Drehbilder. Ohne Körperpaket bleibt es bei
   endlichen Kopfblicken. Externe Aufmerksamkeit beendet die eigene Folge,
   ohne sie später als veraltete Pose fortzusetzen.
@@ -82,10 +86,27 @@ Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
   Mauszugang und aktive Bedienung stoppen Ortsbewegung sofort. World-Ziele
   bleiben dabei gespeichert und können anschließend weiter ausgeführt werden.
 
-Die vorhandene Zufallsauswahl der zusätzlichen Gesten `waiting`, `review` und
-`idle` im `AttentionCoordinator` ist von diesem Umbau (Punkte 1–4) ausdrücklich
-ausgenommen. Ihre genaue Bedeutung und Auswahl wird separat mit dem Nutzer
-besprochen. Es werden weder neue Bilder benötigt noch Charakter-Assets geändert.
+Der anschließende [Idle-/V3-Umbau](IDLE_V3_BEHAVIOUR_PLAN.md) ergänzt fünf
+Zustandsprofile: entspannt 6–10 s Seitenruhe, aktiv 4–8 s, müde 10–15 s,
+zurückgezogen 8–12 s und angespannt 4–7 s. Eine gewählte Folge behält ihr
+Profil bis zum Ende; neue Folgen lesen den aktuellen Zustand. Müdigkeit und
+echte Energiegrenzen begrenzen eigene Schritte. Erreichte eigene Standrichtung
+kann den nächsten Schritt lenken, Taskleistenränder bleiben maßgeblich.
+
+Die frühere Zufallsauswahl aus `waiting`, `review`, `idle` entfällt. Ein echter
+zulässiger Essens-/Kontaktwunsch kann nach der Rückkehr zur Front eine
+Frage-/Bitte-Geste auslösen. Der Desktop-Abspielalias `idle-question-request`
+nutzt unveränderte `waiting`-Frames einmal vollständig und kehrt zu Idle zurück.
+Die Geste erfüllt keinen Wunsch und quittiert keinen Text. Explizite Spiel-/
+Dialogauslöser und reale Rechnerlast-Beobachtung bleiben erhalten. Seitliche
+Blinzelbilder bleiben offen; 1X enthält weiterhin ältere reguläre Atlasbilder.
+
+Abschluss des anschließenden IV3-Umbaus: 2.417 Tests und alle lokalen
+Lint-/Typprüfungen sind grün. Neue tatsächliche Tk-Zeitfolgen prüfen beide
+Maßstäbe und Seiten sowie den vollständigen Einmalzyklus der Bitte-Geste.
+Assets bleiben unverändert; praktische Nutzersichtung und Remote-CI sind
+damit nicht vorweggenommen. Die folgende Zahl beschreibt weiterhin nur den
+damaligen Stand der Punkte 1–4.
 
 Prüfstand 28.10.2026 für Punkte 1–4: 137 gezielte Prüfungen und die vollständige
 lokale Suite mit 2.395 Tests sind grün, ebenso Ruff, striktes Mypy und Pyright.

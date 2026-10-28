@@ -23,12 +23,18 @@ from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.animation.character import FRAME_WIDTH
+from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
+from aiko_pet.pet.animation.idle_gesture import (
+    QUESTION_REQUEST_CLIP,
+    with_idle_gestures,
+)
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement import WalkController
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from aiko_pet.ui.pet_view.action_playback import ActionPlayback
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
@@ -43,6 +49,112 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         StandaloneAnimatedPetTests.setUpClass()
+
+    def test_grounded_gesture_plays_all_frames_once_at_both_sizes(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale), ControlledTkTime() as clock:
+                fixture = StandaloneAnimatedPetTests()
+                fixture.setUp()
+                try:
+                    fixture.settings.scale = scale
+                    fixture.settings.auto_walk = False
+                    fixture.settings.follow_cursor = False
+                    fixture.settings.observe_computer = False
+                    fixture.anim.reload_sprites()
+                    assets = fixture.anim.assets
+                    action = ActionPlayback(
+                        assets, begin=fixture.anim.begin_action,
+                        cancel=fixture.anim.cancel_action,
+                    )
+                    fixture.animation._ports = replace(
+                        fixture.animation._ports,
+                        action_until=lambda: action.until,
+                        action_clip_id=lambda: action.clip_id,
+                        cancel_action=action.cancel_at,
+                    )
+                    fixture.anim.ports = replace(
+                        fixture.anim.ports, extend_action=action.extend,
+                    )
+                    events = []
+                    fixture.anim.on_playback = events.append
+                    before = fixture.state.capture_checkpoint()
+                    clip = assets.clips[QUESTION_REQUEST_CLIP]
+                    for index in range(len(clip.frames)):
+                        self.assertIs(fixture.anim.sprites[QUESTION_REQUEST_CLIP][index],
+                                      fixture.anim.sprites["waiting"][index])
+                    action.start(QUESTION_REQUEST_CLIP, 1.6,
+                                 started_at=clock.monotonic())
+                    clock.advance(clip.duration_seconds + .05)
+                    frames = [event.source_index for event in events
+                              if event.clip_id == QUESTION_REQUEST_CLIP
+                              and not event.finished]
+                    self.assertEqual(frames, list(range(len(clip.frames))))
+                    self.assertEqual(sum(event.finished for event in events), 1)
+                    self.assertEqual(fixture.anim._display_clip, "idle")
+                    self.assertIsNone(fixture.anim._active_action)
+                    clock.advance(2)
+                    self.assertEqual(sum(event.finished for event in events), 1)
+                    self.assertEqual(fixture.state.capture_checkpoint(), before)
+                    self.assertEqual(fixture.settings.x, 100)
+                finally:
+                    fixture.doCleanups()
+
+    def test_changed_profile_keeps_settled_episode_then_applies_to_next_one(self):
+        for scale, side in product((1, 2), (-1, 1)):
+            with self.subTest(scale=scale, side=side), ControlledTkTime() as clock:
+                fixture = StandaloneAnimatedPetTests()
+                fixture.setUp()
+                try:
+                    fixture.settings.scale = scale
+                    fixture.settings.auto_walk = False
+                    fixture.settings.follow_cursor = False
+                    fixture.settings.observe_computer = False
+                    fixture.anim.reload_sprites()
+                    ambient = fixture.animation.ambient
+                    ambient._between = lambda low, _high: low
+                    ambient._direction = lambda options: (
+                        next(value for value in options
+                             if (value < 8) == (side == 1)))
+                    active = IdleBehaviourProfile(
+                        mode="active", hold_minimum=4, hold_maximum=4,
+                        body_glance_every=2,
+                    )
+                    tired = IdleBehaviourProfile(
+                        mode="tired", hold_minimum=10, hold_maximum=10,
+                        body_glance_every=4, allow_steps=False,
+                        maximum_steps=1, prefer_lower_gaze=True,
+                    )
+                    fixture.animation.set_idle_profile(active)
+                    ambient._glance_count = 1
+                    ambient.next_glance_at = clock.monotonic()
+                    ambient.next_blink_at = 10000
+                    before = fixture.state.capture_checkpoint()
+                    fixture.anim.render(clock.monotonic(), (0, 0))
+                    clock.advance(.7)
+                    self.assertTrue(ambient._body_settled)
+                    deadline = ambient._glance_until
+                    fixture.animation.set_idle_profile(tired)
+                    for _ in range(10):
+                        fixture.anim.render(clock.monotonic(), (0, 0))
+                        clock.advance(.14)
+                    self.assertIs(ambient._episode_profile, active)
+                    self.assertEqual(ambient._glance_until, deadline)
+                    self.assertEqual(fixture.animation._body_orientation.phase, 4)
+                    clock.advance(deadline - clock.monotonic() + .02)
+                    fixture.anim.render(clock.monotonic(), (0, 0))
+                    clock.advance(.6)
+                    self.assertEqual(fixture.animation._body_orientation.phase, 0)
+                    ambient._glance_count = 3
+                    ambient.next_glance_at = clock.monotonic()
+                    fixture.anim.render(clock.monotonic(), (0, 0))
+                    clock.advance(.7)
+                    self.assertIs(ambient._episode_profile, tired)
+                    self.assertEqual(ambient._body_hold_seconds, 10)
+                    self.assertEqual(ambient._glance_side, side)
+                    self.assertEqual(fixture.settings.x, 100)
+                    self.assertEqual(fixture.state.capture_checkpoint(), before)
+                finally:
+                    fixture.doCleanups()
 
     def test_idle_steps_arrive_once_and_hold_without_extra_desktop_displacement(self):
         for scale, side, count in product((1, 2), (-1, 1), (1, 2)):
@@ -331,7 +443,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.state = PetState()
         self.settings = PetSettings(x=100, y=500)
         self.action_deadlines: list[float] = []
-        assets = load_character_catalog()
+        assets = with_idle_gestures(load_character_catalog())
         self.walk = WalkDriver(
             state=self.state,
             settings=self.settings,

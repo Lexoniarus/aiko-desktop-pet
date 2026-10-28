@@ -71,6 +71,8 @@ jobs:
             "test_cursor_warning.py",
             "test_movement_requests.py",
             "test_idle_steps.py",
+            "test_idle_behaviour.py",
+            "test_idle_gesture.py",
             "test_body_orientation.py",
             "test_body_pose*.py",
             "test_character_body_pose_export.py",

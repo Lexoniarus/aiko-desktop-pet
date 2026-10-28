@@ -1,7 +1,7 @@
 # Zustandsabhängige Idle-Abläufe und V3-Bausteine
 
-Stand: 28.10.2026. **Umsetzung in sechs Commits beauftragt; in Arbeit.**
-Der Folgeauftrag erlaubt den dokumentierten Codeumbau mit gezielten Prüfungen.
+Stand: 28.10.2026. **In sechs lokalen Commits umgesetzt und vollständig lokal geprüft.**
+Der Folgeauftrag erlaubte den dokumentierten Codeumbau mit gezielten Prüfungen.
 Keine Bildgenerierung, Assetinstallation oder Save-Migration; kein Push/Merge.
 Die vorgeschlagenen Zeiten sind Startwerte für die spätere Sichtung.
 
@@ -12,15 +12,15 @@ Commits `3f4a0ef`, `009fc90`, `e94186f` und `32ac4c0` haben die zuvor freigegebe
 Punkte 1–4 umgesetzt: seitliche Cursor-Standabsicht, kompatible Darstellung mit
 Blickvorrang, eigene Körperblicke und erhaltene Standpause nach Idle-Schritten.
 Sie sind die technische Grundlage dieses Plans, nicht bereits seine Umsetzung.
-Ihr letzter vollständiger lokaler Prüflauf bestand aus 2.395 Tests; dies ist
-kein Prüfergebnis für den hier erst geplanten Umbau.
+Ihr damaliger vollständiger lokaler Prüflauf bestand aus 2.395 Tests.
+Die Ergebnisse des neuen Umbaus stehen unten im Umsetzungsstand.
 
-Aktuell wählt `AmbientDirector` etwa jedes dritte eigene Umsehen mit Körper
-und etwa jeden zweiten kleinen Ausflug mit drei bis sechs Sekunden
-Dreiviertel-Stand. Diese Auswahl hängt noch nicht von allen unten beschriebenen
-Zuständen ab. `AttentionCoordinator.select_idle_animation()` wählt weiterhin
-zufällig `waiting`, `review` oder `idle`; diese bisher ausgeklammerte Auswahl
-soll mit dem nun geplanten Umbau fachlich passend werden.
+Vor diesem Umbau wählte `AmbientDirector` etwa jedes dritte eigene Umsehen mit
+Körper und etwa jeden zweiten kleinen Ausflug mit drei bis sechs Sekunden
+Dreiviertel-Stand. Die Auswahl war noch nicht zustandsabhängig.
+`AttentionCoordinator.select_idle_animation()` wählte zufällig `waiting`,
+`review` oder `idle`. Die sechs IV3-Schritte ersetzen diese Ausgangslage durch
+die beschriebenen Profile und echte anlassgebundene Gesten.
 
 Dieser Plan präzisiert den nächsten Idle-Umbau. Bestehende aktive Cursor-,
 World-, Schlaf-, Pflege- und Spielverträge behalten ihren Vorrang. Aktuelle
@@ -58,7 +58,7 @@ Die Zustände beschreiben Varianten des vorhandenen Zustandsmodells. Sie sind
 keine neuen Bedürfnisse oder persistierten Gefühlswerte. Ein Kontakt- oder
 Versorgungswunsch ist ein zusätzlicher Anlass, kein zweiter emotionaler Zustand.
 
-| Zustand | Grundlage aus vorhandenen Werten | Geplante Folge | Bewegungs- und Ruhecharakter |
+| Zustand | Grundlage aus vorhandenen Werten | Folge | Bewegungs- und Ruhecharakter |
 | --- | --- | --- | --- |
 | Ausgeglichen und entspannt | Vorhandene Gesamtgefühlslage, insbesondere `CALM`, `SATISFIED`, `CAREFREE`; ausreichende Energie | Frontal ruhen, gelegentlich Dreiviertel, dort kurz hoch/seitlich/herunter schauen, weiter stehen bleiben | Seitliche Ruhe zunächst etwa 6–10 s nach erreichter Pose; Schritt optional |
 | Wach und unternehmungslustig | Ausreichende Energie und zur Aktivität passende Gefühlslage; geringer Spielspaß kann bei sonst passendem Zustand eine Gelegenheit begünstigen | Dreiviertel umsehen, ins Profil, ein oder zwei Schritte, wieder Dreiviertel derselben Seite, Ruhe | Etwas mehr eigene Orientierung und kleine Ausflüge innerhalb der vorhandenen Grenzen; kein normales Idle-Rennen |
@@ -147,10 +147,10 @@ erfüllen. Herkunft und Freigabestatus bleiben davon getrennt.
 
 ## Module, OOP-Aufbau und Datenfluss
 
-| Eigentümer | Existierende Aufgabe | Geplanter Umbau |
+| Eigentümer | Existierende Aufgabe | Umgesetzte Zuständigkeit |
 | --- | --- | --- |
 | `application/read_snapshot.py::snapshot_pet`, `pet/emotions.py`, `pet/wishes.py` | Kanonischer Zustandslesestand, Gesamtgefühl, echte Wünsche und deren Grenzen | Bestehende Werte und reine Zulassungsregeln wiederverwenden; keine neuen Gefühlsskalen oder Wish-Schreibwege |
-| Neu: `pet/animation/idle_behaviour.py` | Noch kein Modul | Kleine reine Profilregel mit unveränderlichen Werten `IdleBehaviourContext` und `IdleBehaviourProfile`; keine Uhr, kein Timer, kein `PetState`, keine Desktopkoordinaten oder eigene Episode |
+| `pet/animation/idle_behaviour.py` | Neue reine Profilregel | Unveränderliche Werte `IdleBehaviourContext` und `IdleBehaviourProfile`; keine Uhr, kein Timer, kein `PetState`, keine Desktopkoordinaten oder eigene Episode |
 | `application/attention.py::AttentionCoordinator` | Aufmerksamkeits-/Ausdrucksfristen, Wunschkontext und Auswahl von Gesten | Lesestand in den kleinen Regelkontext abbilden; anlassbezogene Gesten auswählen; bisherige Zufallsauswahl ablösen |
 | `desktop/attention_runtime.py::DesktopAttentionRuntime` | Anwendungsentscheidung unter aktuellen Desktop-Sperren präsentieren | Einmal im bestehenden Haupttick den aktuellen unveränderlichen Idle-Lesestand/Profileingang vorbereiten; Gestenausgabe gegen Vordergrund, Menü, Blase und Aktionen zulassen |
 | `pet/animation/ambient.py::AmbientDirector` | Eine laufende passive Blick-/Standfolge samt Blink-/Schwankrhythmus | Bestehende Folge um zustandsabhängige Auswahl, Halten, passende Kopfblicke und Ankunft ergänzen; keine zweite Idle-Engine |
@@ -225,7 +225,7 @@ Gefühls-/Bedürfnisableitung und übernehmen keinen Vordergrunddialog.
   oder Standdrehungen. Fehlende Energie und echte Bewegungsblockaden gelten
   auch nach einer bereits begonnenen Drehung.
 
-## Geplante Commitfolge
+## Vereinbarte Commitfolge
 
 Die Bezeichnungen IV3-1 bis IV3-6 gehören zu diesem neuen Plan. Sie sind nicht
 die bereits abgeschlossenen Punkte 1–4. **Die Umsetzung dieser sechs Commits ist beauftragt.** Jeder Commit enthält seine Dokumentationsanpassung
@@ -240,10 +240,10 @@ und ausschließlich die betroffenen gezielten Tests; keine Gesamtsuite pro Stufe
 | IV3-5 — `refactor(idle): select grounded gestures through semantic clip mappings` | `AttentionCoordinator.select_idle_animation`, passive Auswahl in `animation.py`, `DesktopAttentionRuntime`, vorhandener Presenter/Katalogzugriff: Zufall aus `waiting/review/idle` ablösen; echte Bitte mit frontalem Ein-/Ausgang und vollständiger Clipdauer; technische IDs zentral zuordnen. Automatischer `failed`-Einsatz allein wegen schlechter Stimmung/Müdigkeit weicht dem Profil. Explizite Nicht-Idle-Aufrufer erst prüfen und erhalten. | `test_attention_policy.py`, `test_attention_decisions.py`, `test_desktop_attention_runtime.py`, `test_attention_presenter.py`, `test_wish_expression.py`, `test_pet_idle_emote_boundary.py`, `test_cursor_front_pose.py`, betroffene passive Auswahlfälle aus `test_motion_animation.py`: wirklicher zulässiger Anlass, freier Slot, keine pauschale Bitte/Verbeugung, vollständiger Einmalzyklus, keine Wunschtextquittung/Care durch Bilder, Abbruch ohne Nachspiel, ältere Clip-IDs und vorhandene Freude-/Renntrigger bleiben gültig. |
 | IV3-6 — `test(idle): verify state transitions and complete local regression` | Verbleibende Integrationsfälle und endgültige Dokumentation; Herkunfts-/Maßstabsgrenzen ausdrücklich festhalten. Danach einmal die komplette lokale Prüfung. | Zuerst relevante Fälle in `test_cursor_behaviour_integration.py`, `test_cursor_menu_access.py`, `test_desktop_visual_observation.py`, `test_world_runtime_flow.py` und `test_animated_pet_isolation.py`: lange Folgen und Zustandswechsel, kein Bewegungspendeln, Hover/Bedienzugang, Gegenblick und echte World-Sicht, Style-/Größenfallback ohne fehlende Clips. Anschließend Gesamtsuite und vollständige statische Prüfungen. |
 
-Vor jedem zukünftigen Commit: Status/Diff prüfen, fremde Arbeit erhalten, nur
+Vor jedem Commit: Status/Diff prüfen, fremde Arbeit erhalten, nur
 die benannten Pfade aufnehmen und gezielte Tests sowie passende lokale
-Lint-/Typprüfung ausführen. Neue Testmodule sind in der Tabelle ausdrücklich
-als geplant gekennzeichnet. Vorhandene Tests werden bei geänderter Semantik
+Lint-/Typprüfung ausführen. Die Tabelle hält den ursprünglichen Testplan fest;
+die tatsächlichen Prüfungen stehen im Umsetzungsstand. Vorhandene Tests werden bei geänderter Semantik
 begründet angepasst; Grenzen für Blick, Pflege, Wünsche und Eingaben werden
 nicht zur Bequemlichkeit abgeschwächt.
 
@@ -281,9 +281,9 @@ Diskussions-/Sichtungsaufgaben. Daraus folgt kein Generierungsauftrag und kein
 pauschaler Ersatz aller älteren Frames. Für die normale Idle-Grundfolge werden
 die vorhandenen Stand-, Blick-, Dreh- und Schrittbilder wiederverwendet.
 
-Dokumentationsprüfung dieses Planungsauftrags ist getrennt von den erst später
-auszuführenden Umsetzungstests. Private Originale und die gemeinsame
-Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen.
+Die anfängliche Dokumentationsprüfung und die Ergebnisse der Umsetzung sind
+getrennt festgehalten. Private Originale und die gemeinsame Assetkonzeption
+bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen.
 
 ## Umsetzung IV3
 
@@ -314,3 +314,26 @@ Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen
   `review` sowie explizite Spiel-/Dialogaufrufer bleiben erhalten.
   100 gezielte Tests fuer Auswahl, Wunschzulassung, Frontuebergang,
   Unterbrechung und Einmalzyklus sind gruen.
+- IV3-6: Zusätzliche tatsächliche Tk-Zeitfolgen prüfen bei 1X/2X alle acht
+  Gestenframes genau einmal, die Rückkehr zu Idle, identische Quellbilder,
+  unveränderten Pet-Zustand und Ortsanker. Beide Seiten halten eine erreichte
+  Episode trotz Profilwechsel; erst die neue Folge nutzt das neue Profil.
+  Die neuen Policy-/Gestentests sind auch im bestehenden Windows-CI-Job
+  aufgenommen. 80 gezielte Integrationsprüfungen sind grün.
+
+Abschließender lokaler Lauf: **2.417 Tests bestanden in 353,746 s**.
+Ruff über Anwendung, Tests und Tools, striktes Mypy ohne inkrementellen Cache
+über alle 363 Anwendungs-/Tooldateien und Pyright einschließlich Tests sind
+grün. Charakter-Assets und `aiko_pet/ui` sind gegenüber `32ac4c0` unverändert.
+Der externe Konzeptionseinstieg verweist auf diesen Umsetzungsstand.
+Kein Push, keine Remote-CI und kein Merge; die praktische Nutzersichtung der
+Ruhe-/Bewegungswirkung bleibt offen.
+
+| Schritt | Lokaler Commit |
+| --- | --- |
+| IV3-1: unveränderliche Zustandsprofile | `85a4757` |
+| IV3-2: gemeinsamer Lesestand und Verdrahtung | `3cadcdb` |
+| IV3-3: zustandsabhängige Stand-/Blickfolgen | `0430aea` |
+| IV3-4: begrenzte Ausflüge und Ruhe | `9cb0ffb` |
+| IV3-5: echte Bitte und semantischer Einmalclip | `201621e` |
+| IV3-6: Integration und vollständiger lokaler Abschluss | dieser Abschlusscommit |
