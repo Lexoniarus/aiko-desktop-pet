@@ -292,3 +292,6 @@ Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen
 - IV3-2: Ein unveraenderliches Profil wird in der bestehenden Renderphase
   nach Lifecycle/World/Cursor vorbereitet und an beide Besitzer weitergegeben.
   Framecallbacks berechnen es nicht neu; 60 gezielte Tests und scoped Mypy gruen.
+- IV3-3: Stand-/Blickabschnitte halten das bei Beginn gewaehlte Profil;
+  aktuelle Profile gelten erst fuer neue Abschnitte. Passende Hoch-/Runterblicke
+  und ruhigere Blickabstaende sind vorhanden; 77 gezielte Pruefungen gruen.

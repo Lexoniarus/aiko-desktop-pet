@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 
 from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import SpriteSelection
+from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
 
 
 class AmbientDirectorTests(unittest.TestCase):
@@ -181,6 +183,34 @@ class AmbientDirectorTests(unittest.TestCase):
 
 
 class AmbientBodyIntentTests(unittest.TestCase):
+    def test_profile_hold_and_head_plan_survive_harmless_mid_episode_changes(self):
+        policy = self.policy()
+        policy.profile = IdleBehaviourProfile(mode="calm", body_glance_every=1,
+                                              hold_minimum=6, hold_maximum=10)
+        first = self.sample(policy, 10)
+        self.assertEqual(first.body, "three_quarter")
+        policy.note_body_settled(11, 1)
+        policy.profile = replace(policy.profile, mode="active", hold_minimum=4,
+                                 hold_maximum=8)
+        self.assertEqual(policy.preferred_step_side, 1)
+        self.assertEqual(self.sample(policy, 16.9).side, 1)
+        self.assertEqual(self.sample(policy, 17.01).body, "front")
+        self.assertEqual(policy.preferred_step_side, 0)
+
+    def test_quiet_profile_uses_lower_axes_without_inventing_eye_frames(self):
+        policy = self.policy()
+        policy.profile = IdleBehaviourProfile(mode="tired", body_glance_every=1,
+                                              prefer_lower_gaze=True,
+                                              glance_gap_multiplier=1.5)
+        first = self.sample(policy, 10)
+        self.assertIn(first.sprite.fixed_frame, (4, 5, 6))
+        policy.note_body_settled(11, 1)
+        second = self.sample(policy, 12.6)
+        self.assertIn(second.sprite.fixed_frame, (4, 5, 6))
+        self.assertNotEqual(first.sprite, second.sprite)
+        policy.suspend(13)
+        self.assertEqual(policy.next_glance_at, 43)
+
     def policy(self, *, side=1, body_poses=True):
         policy = AmbientDirector(
             0, between=lambda low, _high: low,

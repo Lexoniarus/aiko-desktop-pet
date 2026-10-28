@@ -49,6 +49,7 @@ class AmbientDirector:
     ) -> None:
         self._between = between
         self.profile = IdleBehaviourProfile()
+        self._episode_profile = self.profile
         self._direction = direction
         self._body_poses = body_poses
         self._glance_count = 0
@@ -75,19 +76,34 @@ class AmbientDirector:
         body_side = side if self._body_poses and (
             (self._outing_count - 1) % BALANCE.integer("ambient", "body_outing_every")
         ) == 0 else 0
-        duration = (self._between(
-            BALANCE.number("ambient", "body_hold_minimum_seconds"),
-            BALANCE.number("ambient", "body_hold_maximum_seconds"),
-        ) if body_side else self._between(1, 2))
+        duration = self._body_duration() if body_side else self._between(1, 2)
         self._start_glance(now, 4 if side > 0 else 12, body_side, duration)
 
     def _start_glance(self, now: float, head: int, side: int, duration: float) -> None:
+        self._episode_profile = self.profile
         self._blink_active = False
         self._glance_frame, self._glance_side = head, side
         self._body_settled = False
         self._body_hold_seconds = duration
         self._glance_until = now + duration
         self._next_head_at = float("inf")
+
+    @property
+    def preferred_step_side(self) -> int:
+        """Only an ongoing own stance supplies a departure preference."""
+        return self._glance_side if self._body_settled else 0
+
+    def _body_duration(self) -> float:
+        if self.profile.mode == "neutral":
+            return self._between(BALANCE.number("ambient", "body_hold_minimum_seconds"),
+                                 BALANCE.number("ambient", "body_hold_maximum_seconds"))
+        return self._between(self.profile.hold_minimum, self.profile.hold_maximum)
+
+    def _glance_gap(self) -> float:
+        return self._between(
+            BALANCE.number("ambient", "glance_gap_minimum_seconds"),
+            BALANCE.number("ambient", "glance_gap_maximum_seconds"),
+        ) * self.profile.glance_gap_multiplier
 
     @property
     def blinking(self) -> bool:
@@ -101,10 +117,7 @@ class AmbientDirector:
         # An interrupted glance is consumed, not resumed as a stale held pose.
         # A merely pending glance keeps its due time and waits for free Idle.
         if self._glance_frame is not None:
-            self.next_glance_at = now + self._between(
-                BALANCE.number("ambient", "glance_gap_minimum_seconds"),
-                BALANCE.number("ambient", "glance_gap_maximum_seconds"),
-            )
+            self.next_glance_at = now + self._glance_gap()
         self._glance_frame = None
         self._glance_side = 0
         self._body_settled = False
@@ -127,7 +140,19 @@ class AmbientDirector:
             if (now < self._glance_until
                     or self._glance_side and not self._body_settled):
                 if now >= self._next_head_at:
-                    directions = (2, 3, 4) if self._glance_side > 0 else (12, 13, 14)
+                    directions: tuple[int, ...]
+                    if self._episode_profile.mode == "neutral":
+                        directions = (2, 3, 4) if self._glance_side > 0 else (
+                            12, 13, 14,
+                        )
+                    elif self._episode_profile.prefer_lower_gaze:
+                        directions = (4, 5, 6) if self._glance_side > 0 else (
+                            10, 11, 12,
+                        )
+                    else:
+                        directions = (2, 3, 4, 5, 6) if self._glance_side > 0 else (
+                            10, 11, 12, 13, 14,
+                        )
                     options = tuple(n for n in directions if n != self._glance_frame)
                     self._glance_frame = self._direction(options)
                     if self._glance_frame not in options:
@@ -136,27 +161,24 @@ class AmbientDirector:
                 return SpriteSelection("look", fixed_frame=self._glance_frame)
             self._glance_frame = None
             self._glance_side = 0
-            self.next_glance_at = now + self._between(
-                BALANCE.number("ambient", "glance_gap_minimum_seconds"),
-                BALANCE.number("ambient", "glance_gap_maximum_seconds"),
-            )
+            self.next_glance_at = now + self._glance_gap()
 
         if now >= self.next_glance_at:
-            index = self._direction(_DIRECTIONS)
-            if index not in _DIRECTIONS:
+            directions = (4, 5, 6, 12, 11, 10) if self.profile.prefer_lower_gaze else (
+                _DIRECTIONS
+            )
+            index = self._direction(directions)
+            if index not in directions:
                 raise ValueError("Invalid autonomous glance direction")
             self._glance_count += 1
             side = (
                 (1 if index < 8 else -1)
-                if self._body_poses and self._glance_count % BALANCE.integer(
-                    "ambient", "body_glance_every",
-                ) == 0 else 0
+                if self._body_poses and self._glance_count
+                % self.profile.body_glance_every == 0 else 0
             )
-            duration = self._between(
-                BALANCE.number("ambient", "body_hold_minimum_seconds"
-                               if side else "glance_hold_minimum_seconds"),
-                BALANCE.number("ambient", "body_hold_maximum_seconds"
-                               if side else "glance_hold_maximum_seconds"),
+            duration = self._body_duration() if side else self._between(
+                BALANCE.number("ambient", "glance_hold_minimum_seconds"),
+                BALANCE.number("ambient", "glance_hold_maximum_seconds"),
             )
             self._start_glance(now, index, side, duration)
             return SpriteSelection("look", fixed_frame=index)
