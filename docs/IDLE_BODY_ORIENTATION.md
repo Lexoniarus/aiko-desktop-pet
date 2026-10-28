@@ -2,11 +2,16 @@
 
 > **Ergänzung 27.10.2026 – Blick zuerst:** Normales Beobachten behält die
 > Seitenwartezeiten und vollständigen Drehphasen. Bei aktiver Cursor-Neugier
-> oder -Angst bleibt Aiko ohne Ortsbewegung frontal. Ein blockierter Kopfsektor
+> oder -Angst darf beständige Seitenbeobachtung auch im Stand zu Dreiviertel
+> führen. Die passende vorhandene Kopf-/Körperpose erhält dabei den Blick;
+> feste Zwischenköpfe werden für diese reaktive Zuwendung nicht abgespielt.
+> Ein blockierter Kopfsektor
 > führt noch im selben Renderaufruf zur passenden frontalen Blickpose. Für
 > Cursorbewegung folgen eine vorhandene passende Dreiviertel-Kopfpose und nach
 > 70 ms passende Profil-Schrittframes. Ein Gegenblick wartet hier nicht mehr
 > auf alle Zwischenposen. Beim Rückzug bleibt der Kopf zum Zeiger gerichtet.
+> Beim Anhalten kann dieselbe Körperseite als Dreiviertel-Standpose erhalten
+> bleiben. Ein neuer Gegenblick oder Blick direkt vor Aiko erhält sofort Front.
 > Größere Reststrecken nutzen bei horizontal passendem Seitenkopf die vorhandene
 > echte Rennfolge, mit Distanzhysterese zurück zum Gehen. Andere Kopfachsen nutzen
 > die vorhandenen Gehvarianten bei Gehgeschwindigkeit. Rückzug läuft rückwärts. Hover öffnet weiterhin ohne Abbruch der Verfolgung. Der

@@ -265,8 +265,6 @@ class DesktopAnimationRuntime:
                 reverse=self._gaze_first and direction != self._body_orientation.side,
             )
 
-        if self._gaze_first:
-            self._body_orientation.reset()
         observation = self._visual.observe(
             now,
             pointer,
@@ -299,13 +297,16 @@ class DesktopAnimationRuntime:
         )
         if self._assets.body_clips:
             intent = self._visual.cursor_intent
-            selection = self._body_orientation.select(
-                now, selection,
-                intent=("front" if self._gaze_first else
-                        "profile" if self.ambient.outing_side else intent.body),
-                side=self.ambient.outing_side or intent.side,
-                responsive=intent.feeling is not None and self._visual.cursor_watching,
-            )
+            if self._gaze_first:
+                selection = self._body_orientation.select_gaze_stance(
+                    now, selection, intent=intent.body, side=intent.side,
+                )
+            else:
+                selection = self._body_orientation.select(
+                    now, selection,
+                    intent="profile" if self.ambient.outing_side else intent.body,
+                    side=self.ambient.outing_side or intent.side,
+                )
         return RenderDecision(
             selection, clear_action=True,
             refresh_after_ms=self._body_orientation.next_delay_ms(now)

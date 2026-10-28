@@ -143,6 +143,45 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
             attention_active=True,
         )
 
+    def test_emotional_stand_keeps_body_intent_and_immediate_opposite_gaze(self):
+        self.visual.cursor_watching = True
+        self.visual.cursor_intent = CursorIntent(
+            "observe", side=1, body="three_quarter", feeling="curiosity",
+        )
+        self.visual.desired_cursor_gaze.return_value = 4
+        self.visual.observe.return_value = PassiveObservation(4, False)
+        for now in (100, 100.1, 102):
+            self.assertEqual(self.choose(now=now).sprite,
+                             SpriteSelection("body-look-right", 4))
+            self.assertEqual(self.runtime._body_orientation.phase, 4)
+        self.visual.desired_cursor_gaze.return_value = 12
+        self.visual.observe.return_value = PassiveObservation(12, False)
+        self.assertEqual(self.choose(now=102.1).sprite, SpriteSelection("look", 12))
+        self.assertEqual(self.runtime._body_orientation.phase, 0)
+        # The policy has not approved a leftward body yet; the head still follows.
+        self.assertEqual(self.choose(now=102.2).sprite, SpriteSelection("look", 12))
+        self.visual.cursor_intent = replace(self.visual.cursor_intent, side=-1)
+        self.assertEqual(self.choose(now=104).sprite,
+                         SpriteSelection("body-look-left", 5))
+        self.visual.desired_cursor_gaze.return_value = None
+        self.assertEqual(self.choose(now=104.1).sprite, SpriteSelection("idle", 0))
+        self.assertEqual(self.runtime._body_orientation.phase, 0)
+
+    def test_finished_cursor_profile_settles_to_compatible_quarter_without_front(self):
+        self.visual.cursor_watching = True
+        self.visual.cursor_intent = CursorIntent(
+            "observe", side=1, body="three_quarter", feeling="curiosity",
+        )
+        self.visual.desired_cursor_gaze.return_value = 3
+        self.visual.observe.return_value = PassiveObservation(3, False)
+        body = self.runtime._body_orientation
+        body.orient_for_gaze_motion(99, 3)
+        body.orient_for_gaze_motion(99.07, 3)
+        self.assertTrue(body.motion_ready)
+        self.assertEqual(self.choose().sprite, SpriteSelection("body-look-right", 3))
+        self.assertFalse(body.motion_ready)
+        self.assertEqual(body.phase, 4)
+
     def test_optional_pack_missing_preserves_frontal_gaze_after_long_attention(self):
         runtime = DesktopAnimationRuntime(
             state=self.state,

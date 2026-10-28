@@ -108,6 +108,32 @@ class BodyOrientation:
         label = "right" if self.side == 1 else "left"
         return SpriteSelection(f"body-orient-{label}", self.phase)
 
+    def select_gaze_stance(
+        self, now: float, choice: SpriteSelection, *, intent: BodyIntent, side: int,
+    ) -> SpriteSelection:
+        """Hold a compatible baked head without replaying fixed-head turn art.
+
+        Emotional cursor gaze uses the same compact quarter pose as departure.
+        Returning from a moving profile keeps that side instead of resetting to
+        front. An incompatible or centered gaze restores frontal immediately.
+        """
+        direction = choice.fixed_frame if choice.animation == "look" else None
+        compatible = direction is not None and side in (-1, 1) and (
+            0 <= direction <= 8 if side == 1
+            else direction == 0 or 8 <= direction <= 15
+        )
+        if intent == "front" or not compatible or direction is None:
+            self.reset()
+            return choice
+        if self.phase != 4 or self.side != side:
+            self._next_step_at = now + REACTIVE_TURN_STEP_SECONDS
+        self.side, self.phase = side, 4
+        self._target, self._limit = side, 4
+        self._look_direction = direction
+        self._motion = self._gaze_motion = False
+        label = "right" if side == 1 else "left"
+        return SpriteSelection(f"body-look-{label}", body_look_index(side, direction))
+
     def select(
         self, now: float, choice: SpriteSelection, *,
         intent: BodyIntent = "front", side: int = 0,

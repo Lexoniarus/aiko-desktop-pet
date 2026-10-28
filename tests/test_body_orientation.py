@@ -114,6 +114,35 @@ class BodyOrientationTests(unittest.TestCase):
 
 
 class MotionOrientationTests(unittest.TestCase):
+    def test_gaze_stance_retains_each_compatible_head_after_profile_motion(self):
+        for side, directions in ((1, range(9)), (-1, (0, *range(8, 16)))):
+            for direction in directions:
+                body = BodyOrientation()
+                body.orient_for_gaze_motion(0, 4 if side == 1 else 12)
+                body.orient_for_gaze_motion(.07, 4 if side == 1 else 12)
+                self.assertTrue(body.motion_ready)
+                pose = body.select_gaze_stance(
+                    .08, SpriteSelection("look", direction),
+                    intent="three_quarter", side=side,
+                )
+                self.assertEqual(pose, SpriteSelection(
+                    "body-look-right" if side == 1 else "body-look-left",
+                    body_look_index(side, direction),
+                ))
+                self.assertEqual((body.phase, body.side), (4, side))
+                self.assertFalse(body.motion_ready)
+                self.assertIsNone(body.next_delay_ms(.08))
+
+    def test_gaze_stance_rejects_opposite_and_center_without_clamping_target(self):
+        body = BodyOrientation()
+        for choice in (SpriteSelection("look", 12), SpriteSelection("idle", 0)):
+            body.select_gaze_stance(0, SpriteSelection("look", 4),
+                                    intent="three_quarter", side=1)
+            self.assertEqual(body.select_gaze_stance(
+                .1, choice, intent="three_quarter", side=1,
+            ), choice)
+            self.assertEqual(body.phase, 0)
+
     def test_profile_ready_only_after_all_turn_poses_and_return_is_ordered(self):
         body = BodyOrientation()
         phases = []

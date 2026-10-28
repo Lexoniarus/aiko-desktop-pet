@@ -71,7 +71,9 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 12))
                     self.assertEqual(fixture.animation._body_orientation.phase, 0)
                     clock.advance(.2)
-                    self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 12))
+                    self.assertEqual(fixture.anim.frame_clock.active_key,
+                                     ("body-look-left", 5))
+                    self.assertEqual(fixture.animation._body_orientation.phase, 4)
                     self.assertIsNone(fixture.anim._frame_timer)
                     self.assertEqual(fixture.state.capture_checkpoint(), before)
                     self.assertEqual(fixture.settings.x, 100)
