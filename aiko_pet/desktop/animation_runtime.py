@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Callable, Protocol
+from typing import Callable, Literal, Protocol
 
 from ..pet.animation.ambient import AmbientDirector
 from ..pet.animation.animation import SpriteSelection
@@ -19,6 +19,7 @@ from ..pet.animation.body_orientation import (
 )
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.idle_behaviour import IdleBehaviourProfile
+from ..pet.animation.idle_gesture import QUESTION_REQUEST_CLIP
 from ..pet.animation.priority import RenderDecision, choose_animation_priority
 from ..pet.movement.contracts import WalkStep
 from .visual_observation import DesktopVisualObservation
@@ -53,6 +54,7 @@ class AnimationRuntimePorts:
     ready_for_handover: Callable[[], bool] = lambda: False
     holding_readable: Callable[[], bool] = lambda: False
     cursor_gaze_point: Callable[[], tuple[float, float] | None] = lambda: None
+    cancel_action: Callable[[float], None] = lambda _now: None
 
 
 class DesktopAnimationRuntime:
@@ -82,6 +84,7 @@ class DesktopAnimationRuntime:
         visual.constrain_with(self._body_orientation.constrain_direction)
         self._pointer: tuple[int, int] = (0, 0)
         self._last_pointer_move = -100.0
+        self._idle_gesture_front = False
 
     def advance_walk(
         self,
@@ -184,6 +187,23 @@ class DesktopAnimationRuntime:
     def interrupt_walk(self) -> None:
         self._walk.movement.interrupt()
 
+    def idle_gesture_duration(self, clip_id: str) -> float:
+        return self._assets.clips[clip_id].duration_seconds
+
+    def prepare_idle_gesture(
+        self, requested: bool, now: float,
+    ) -> Literal["blocked", "turning", "ready"]:
+        """Return through actual turn phases; attention owns the bounded request."""
+        self._idle_gesture_front = requested and not any((
+            self._state.sleeping, self.walk_active(),
+            now < self._ports.action_until(), self._visual.cursor_watching,
+            self._visual.orienting, self._visual.object_target is not None,
+            self._ports.ready_for_handover(), self._ports.holding_readable(),
+        ))
+        if not self._idle_gesture_front:
+            return "blocked"
+        return "ready" if self._body_orientation.phase == 0 else "turning"
+
     def select_animation(
         self,
         now: float,
@@ -194,6 +214,13 @@ class DesktopAnimationRuntime:
     ) -> RenderDecision:
         """Preserve game/sleep/action/walk/gaze/idle priority without Tk."""
         self._pointer, self._last_pointer_move = pointer, last_pointer_move
+        if (active_action == QUESTION_REQUEST_CLIP and any((
+            game_mode, self._state.sleeping, self._visual.cursor_watching,
+            self._visual.orienting, self._visual.object_target is not None,
+            self._ports.ready_for_handover(), self._ports.holding_readable(),
+        ))):
+            self._ports.cancel_action(now)
+            active_action = None
         if (
             not game_mode
             and not self._state.sleeping
@@ -293,6 +320,14 @@ class DesktopAnimationRuntime:
                     - 1,
                 ),
                 clear_action=True,
+            )
+        if (self._idle_gesture_front
+                and self.prepare_idle_gesture(True, now) != "blocked"):
+            self.ambient.suspend(now)
+            selection = self._body_orientation.select(now, SpriteSelection("idle"))
+            return RenderDecision(
+                selection, clear_action=True,
+                refresh_after_ms=self._body_orientation.next_delay_ms(now),
             )
         ambient = self.ambient.select_passive_animation(
             now,

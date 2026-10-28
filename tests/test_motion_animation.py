@@ -222,11 +222,11 @@ class PassiveAnimationTests(unittest.TestCase):
         )
         self.assertEqual(self.select(computer_busy=True).animation, "idle")
 
-    def test_urgent_needs_take_priority_over_waiting(self) -> None:
-        self.assertEqual(self.select(energy=9, satiety=0).animation, "failed")
-        self.assertEqual(self.select(mood=9, satiety=0).animation, "failed")
-        self.assertEqual(self.select(energy=23).animation, "waiting")
-        self.assertEqual(self.select(satiety=19).animation, "waiting")
+    def test_needs_use_profiles_without_inventing_requests_or_defeat(self) -> None:
+        self.assertEqual(self.select(energy=9, satiety=0).animation, "idle")
+        self.assertEqual(self.select(mood=9, satiety=0).animation, "idle")
+        self.assertEqual(self.select(energy=23).animation, "idle")
+        self.assertEqual(self.select(satiety=19).animation, "idle")
         self.assertEqual(self.select(energy=24, satiety=20).animation, "idle")
 
 

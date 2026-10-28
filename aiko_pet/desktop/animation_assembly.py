@@ -88,6 +88,7 @@ class AnimationAssemblyPorts:
     cursor_intent: Callable[[], CursorIntent] = CursorIntent
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
+    cancel_action: Callable[[float], None] = lambda _now: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,6 +155,7 @@ def assemble_animation(
         ports=AnimationRuntimePorts(
             action_until=ports.action_until,
             action_clip_id=ports.action_clip_id,
+            cancel_action=ports.cancel_action,
             ready_for_handover=ports.world.ready_for_handover,
             holding_readable=ports.world.holding_readable,
             cursor_gaze_point=ports.world.cursor_gaze_point,

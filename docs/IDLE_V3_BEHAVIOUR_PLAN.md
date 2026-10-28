@@ -299,3 +299,18 @@ Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen
   erreichte eigene Standrichtung ist eine Praeferenz, Raender haben Vorrang.
   Harte Idle-Grenzen beeinflussen keine World-/Cursorauftraege; gezielte
   Controller-/Driver- und tatsaechliche Tk-Ankunftspruefungen sind gruen.
+- IV3-5: Die zufaellige Gestenauswahl ist durch einen echten, fachlich
+  zulaessigen Essens-/Kontaktwunsch ersetzt. Die Zulassung wird bis zum
+  tatsaechlich erreichten Frontstand erneut gelesen; Sperren oder ein
+  verfallener Wunsch verwerfen die Vorbereitung ohne Warteschlange.
+  `idle-question-request` ist ein ausschliesslich im Desktopkatalog angelegter
+  Einmal-Abspielalias von `waiting`: identische Dateien, Kopf-/Fussanker und
+  Phasen, volle Katalogdauer, danach `idle`. Der bestehende Frameabschluss
+  verlaengert bei verspaeteten Callbacks die Wiedergabe statt Bilder abzuschneiden.
+  Wunschtextquittung und Care werden durch das Bild nicht ausgeloest.
+  Aktives Maus-/Objektinteresse kann die eigene Geste ueber den bestehenden
+  ActionPlayback-Besitzer unterbrechen. Niedrige Werte allein waehlen keine
+  pauschale Bitte oder Verbeugung. Der reale Rechnerlast-Ausloeser fuer
+  `review` sowie explizite Spiel-/Dialogaufrufer bleiben erhalten.
+  100 gezielte Tests fuer Auswahl, Wunschzulassung, Frontuebergang,
+  Unterbrechung und Einmalzyklus sind gruen.

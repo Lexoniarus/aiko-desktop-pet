@@ -100,13 +100,9 @@ class AttentionPolicyTests(unittest.TestCase):
             201, action_until=0, walking=False, toolbar_visible=True,
         ))
         self.attention.next_idle_emote = 0
-        with patch(
-            "aiko_pet.application.attention.random.choice",
-            return_value="review",
-        ):
-            self.assertEqual(self.attention.select_idle_animation(
-                202, action_until=0, walking=False, toolbar_visible=False,
-            ), "review")
+        self.assertIsNone(self.attention.select_idle_animation(
+            202, action_until=0, walking=False, toolbar_visible=False,
+        ))
 
     def test_cursor_comment_cooldown_and_proximity(self) -> None:
         self.attention.next_cursor_line = 0.0

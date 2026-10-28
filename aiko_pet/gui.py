@@ -40,6 +40,7 @@ from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
 from .infrastructure.hardware.monitor import ActivityMonitor
 from .infrastructure.persistence import StateStore
+from .pet.animation.idle_gesture import with_idle_gestures
 from .pet.content import GERMAN_TEXT
 from .pet.food import FoodId
 from .pet.mind.catalog import Reaction
@@ -77,7 +78,7 @@ class DesktopPet:
         self.settings = session.settings
         self.adaptive = session.adaptive
         self.context: TimeContext = context_at(time.time())
-        self._character_assets = load_character_catalog()
+        self._character_assets = with_idle_gestures(load_character_catalog())
         self._window = DesktopWindow(self.settings)
         self.root = self._window.root
         self.canvas = self._window.canvas
@@ -168,6 +169,7 @@ class DesktopPet:
                 game_mode=lambda: self._animated.game_mode,
                 action_until=lambda: self._action_playback.until,
                 action_clip_id=lambda: self._action_playback.clip_id,
+                cancel_action=self._action_playback.cancel_at,
                 cursor_intent=lambda: self._cursor_behaviour.intent,
                 cursor_allowed=lambda: self._pointer_runtime.motion_allowed(),
                 cursor_finished=self._cursor_behaviour.finish_motion,
@@ -341,9 +343,7 @@ class DesktopPet:
         self._attention_view = AttentionPresenter(AttentionViewPorts(
             show_nonblocking_emote=self._speech.show_cursor_emote,
             show_nonblocking_text=self._speech.show_cursor_warning,
-            start_action=lambda name, duration: self._start_action(
-                name, duration,
-            ),
+            start_action=self._start_action,
             react=partial(self._react, incidental=True),
             show_emote=lambda emote, duration: self._speech.show_emote(
                 emote, duration,
@@ -365,13 +365,13 @@ class DesktopPet:
                     or self._reaction_player.story_active
                     or self._social_runtime.waiting
                 ),
-                walking=lambda: (
-                    self._walk.movement.remaining_distance != 0
-                ),
+                walking=self._animation.walk_active,
                 action_until=lambda: self._action_playback.until,
                 refresh_toolbar=self._hover.refresh_toolbar,
                 foreground_active=self._object_feedback_active,
                 apply_idle_profile=self._animation.set_idle_profile,
+                prepare_idle_gesture=self._animation.prepare_idle_gesture,
+                idle_gesture_duration=self._animation.idle_gesture_duration,
                 render_character=lambda now, pointer: self._animated.render(
                     now, pointer, attention=self.mind.cursor_attention.snapshot()),
             ),

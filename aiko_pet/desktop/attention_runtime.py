@@ -8,12 +8,13 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Literal
 
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
 from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.idle_emote import choose_idle_emote
+from ..pet.animation.idle_gesture import IdleGestureChoice
 from ..pet.interaction_events import (
     CursorExperience,
     CursorWarning,
@@ -41,6 +42,10 @@ class AttentionRuntimePorts:
     clock: Callable[[], float] = lambda: time.monotonic()
     apply_idle_profile: Callable[[IdleBehaviourProfile], None] = lambda _profile: None
     render_character: Callable[[float, tuple[int, int]], None] = lambda _now, _p: None
+    prepare_idle_gesture: Callable[
+        [bool, float], Literal["blocked", "turning", "ready"]
+    ] = lambda _requested, _now: "blocked"
+    idle_gesture_duration: Callable[[str], float] = lambda _clip: 0.0
 
 
 class DesktopAttentionRuntime:
@@ -55,6 +60,7 @@ class DesktopAttentionRuntime:
         self.attention = attention
         self._presenter = presenter
         self._ports = ports
+        self._idle_gesture: IdleGestureChoice | None = None
 
     def handle_time_progress(self, progress: TimeProgress, now: float) -> None:
         """Present period transitions, leaving domain dialogue to attention."""
@@ -133,17 +139,36 @@ class DesktopAttentionRuntime:
 
     def maybe_show_idle_emote(self, now: float) -> None:
         ports = self._ports
-        if ports.game_open() or ports.foreground_active() or ports.reaction_pending():
+        if any((ports.game_open(), ports.foreground_active(), ports.reaction_pending(),
+                ports.menu_engaged(), ports.settings_engaged(), ports.bubble_visible(),
+                ports.walking(), now < ports.action_until())):
+            self._idle_gesture = None
+            ports.prepare_idle_gesture(False, now)
             return
-        animation = self.attention.select_idle_animation(
-            now,
-            action_until=ports.action_until(),
-            walking=ports.walking(),
-            toolbar_visible=ports.menu_engaged(),
-        )
-        if animation is not None:
-            self._presenter.show_animation(animation, 1.6)
-            self.idle_emote()
+        if self._idle_gesture is not None:
+            if (self._idle_gesture != self.attention.idle_gesture_choice()
+                    or now >= self.attention.next_idle_emote):
+                self._idle_gesture = None
+                ports.prepare_idle_gesture(False, now)
+                return
+        else:
+            self._idle_gesture = self.attention.select_idle_animation(
+                now, action_until=ports.action_until(), walking=False,
+                toolbar_visible=False,
+            )
+        if self._idle_gesture is None:
+            ports.prepare_idle_gesture(False, now)
+            return
+        status = ports.prepare_idle_gesture(True, now)
+        if status == "turning":
+            return
+        choice, self._idle_gesture = self._idle_gesture, None
+        ports.prepare_idle_gesture(False, now)
+        if status == "ready":
+            duration = ports.idle_gesture_duration(choice.clip_id)
+            if duration > 0:
+                self._presenter.show_animation(choice.clip_id, duration)
+                self.idle_emote()
 
     def maybe_speak_spontaneously(self, now: float) -> None:
         ports = self._ports

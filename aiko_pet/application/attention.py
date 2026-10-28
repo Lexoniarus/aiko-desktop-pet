@@ -15,6 +15,7 @@ from ..pet.animation.idle_behaviour import (
     IdleBehaviourProfile,
     derive_idle_profile,
 )
+from ..pet.animation.idle_gesture import IdleGestureChoice
 from ..pet.balance import BALANCE
 from ..pet.interaction_rules import petting_is_welcome
 from ..pet.mind import PetMind
@@ -25,7 +26,7 @@ from ..pet.moodlets import MoodletId
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
 from ..pet.wish_catalog import WISH_CATALOG
-from ..pet.wishes import WishContext, wish_to_express
+from ..pet.wishes import WishContext, WishId, wish_to_express
 from .care_requests import choose_care_request
 from .events import IncomingNotification
 from .ports import ComputerReadings
@@ -223,8 +224,8 @@ class AttentionCoordinator:
         action_until: float,
         walking: bool,
         toolbar_visible: bool,
-    ) -> str | None:
-        """Return one gesture only when Aiko is free to express herself."""
+    ) -> IdleGestureChoice | None:
+        """Use the existing expression clock for an actual request, or silence."""
         if now < self.next_idle_emote:
             return None
         self.next_idle_emote = now + random.uniform(
@@ -233,7 +234,22 @@ class AttentionCoordinator:
         )
         if self.state.sleeping or now < action_until or walking or toolbar_visible:
             return None
-        return random.choice(("waiting", "review", "idle"))
+        return self.idle_gesture_choice()
+
+    def idle_gesture_choice(self) -> IdleGestureChoice | None:
+        """Read disclosure and restrictions without creating or acknowledging wishes."""
+        wish = wish_to_express(
+            self.state.wishes, elapsed=self.state.lived_seconds,
+            sleeping=self.state.sleeping, friendship_level=self.state.friendship_level,
+            mood=self.state.mood, context=self.wish_context(),
+            definitions=WISH_CATALOG.definitions,
+        )
+        if wish is None or wish.definition_id not in (
+            WishId.FOOD, WishId.PET, WishId.SOCIAL_ANY, WishId.CHAT,
+            WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT,
+        ):
+            return None
+        return IdleGestureChoice(wish.instance_id)
 
     def spontaneous(
         self,
