@@ -94,6 +94,7 @@ class WalkDriverPorts:
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
     idle_steps: Callable[[], bool] = lambda: False
     hard_access: Callable[[], bool] = lambda: False
+    idle_heading: Callable[[], int] = lambda: 0
 
 
 class WalkDriver:
@@ -302,6 +303,8 @@ class WalkDriver:
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),
                 small_idle_steps=self.ports.idle_steps(),
+                idle_profile=self.idle_profile,
+                idle_heading=self.ports.idle_heading(),
             )
         )
         if step is None:

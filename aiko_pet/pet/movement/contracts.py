@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from ..animation.idle_behaviour import IdleBehaviourProfile
+
 MotionSource = Literal["world", "cursor", "idle"]
 MotionKind = Literal["step", "walk", "run"]
 MotionStopReason = Literal["reached", "blocked", "cancelled", "budget", "expired"]
@@ -60,6 +62,8 @@ class WalkConditions:
     computer_busy: bool
     quiet_period: bool
     small_idle_steps: bool = False
+    idle_profile: IdleBehaviourProfile = IdleBehaviourProfile()
+    idle_heading: int = 0
 
 
 @dataclass(frozen=True)

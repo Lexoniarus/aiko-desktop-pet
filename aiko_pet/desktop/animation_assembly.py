@@ -160,6 +160,8 @@ def assemble_animation(
         ),
     )
     items = load_item_catalog()
+    walk.ports = replace(walk.ports,
+                         idle_heading=lambda: animation.ambient.preferred_step_side)
     sprite = AnimatedPet(
         root,
         canvas,

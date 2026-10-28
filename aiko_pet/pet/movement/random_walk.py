@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 
+from ..animation.idle_behaviour import IdleBehaviourProfile
 from ..balance import BALANCE
 from .contracts import MotionKind, WalkConditions
 
@@ -14,22 +15,25 @@ class RandomWalkPlanner:
     def __init__(self, *, next_walk_at: float = 0.0) -> None:
         self.next_walk_at = next_walk_at
         self.kind: MotionKind = "run"
+        self._profile = IdleBehaviourProfile()
 
     def pause(self, now: float, *, quiet_period: bool) -> None:
         """Schedule rest from the moment a walk ended or became blocked."""
         self.next_walk_at = now + random.uniform(
             BALANCE.number("cursor_behaviour", "idle_step_minimum_seconds"),
             BALANCE.number("cursor_behaviour", "idle_step_maximum_seconds"),
-        )
+        ) * self._profile.step_gap_multiplier
 
     def plan_departure(self, conditions: WalkConditions) -> float | None:
         """Choose an allowed random stride; leave movement execution to caller."""
         if conditions.now < self.next_walk_at:
             return None
+        self._profile = conditions.idle_profile
         if not conditions.small_idle_steps:
             self.pause(conditions.now, quiet_period=conditions.quiet_period)
             return None
-        if conditions.energy < BALANCE.integer("walk", "minimum_energy"):
+        if (not self._profile.allow_steps
+                or conditions.energy < BALANCE.integer("walk", "minimum_energy")):
             self.pause(conditions.now, quiet_period=conditions.quiet_period)
             return None
 
@@ -41,10 +45,13 @@ class RandomWalkPlanner:
         elif conditions.x >= limit - BALANCE.integer("walk", "edge_margin_pixels"):
             direction = -1
         else:
-            direction = random.choice((-1, 1))
+            direction = conditions.idle_heading if conditions.idle_heading in (-1, 1) \
+                else random.choice((-1, 1))
         self.next_walk_at = float("inf")
         self.kind = "step"
-        count = 2 if random.random() < .2 else 1
+        count = 2 if self._profile.maximum_steps == 2 and (
+            random.random() < self._profile.two_step_probability
+        ) else 1
         amount = count * conditions.sprite_width * BALANCE.number(
             "cursor_behaviour", "step_width_fraction",
         )

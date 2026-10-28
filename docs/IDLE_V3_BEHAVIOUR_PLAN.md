@@ -295,3 +295,7 @@ Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen
 - IV3-3: Stand-/Blickabschnitte halten das bei Beginn gewaehlte Profil;
   aktuelle Profile gelten erst fuer neue Abschnitte. Passende Hoch-/Runterblicke
   und ruhigere Blickabstaende sind vorhanden; 77 gezielte Pruefungen gruen.
+- IV3-4: Der bestehende Planer begrenzt Schrittzahl und Ruhe nach Profil;
+  erreichte eigene Standrichtung ist eine Praeferenz, Raender haben Vorrang.
+  Harte Idle-Grenzen beeinflussen keine World-/Cursorauftraege; gezielte
+  Controller-/Driver- und tatsaechliche Tk-Ankunftspruefungen sind gruen.

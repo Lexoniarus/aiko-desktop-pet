@@ -174,6 +174,7 @@ class WalkController:
             or conditions.sleeping
             or attending
             or conditions.menu_engaged
+            or self.source == "idle" and not conditions.idle_profile.allow_steps
         ):
             self.interrupt()
             return None
