@@ -143,6 +143,7 @@ class DesktopWorldRuntime:
         self.awareness = ObjectAwareness(
             restored_memory if restored_world is not None else None,
         )
+        self.awareness.reconcile_books(self.world.snapshot())
         self.time_progression = SessionTimeProgression(
             self.world,
             self.awareness.memory,
@@ -812,6 +813,7 @@ class DesktopWorldRuntime:
                 if self.cursor.instance_id == book:
                     self.cursor.cancel()
             if expired:
+                self.awareness.reconcile_books(self.world.snapshot())
                 self._save()
             self._sync_geometry()
             self.world.advance_motion(elapsed, self._motion_parameters)

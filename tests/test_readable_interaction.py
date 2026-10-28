@@ -105,3 +105,28 @@ class ReadableInteractionTests(unittest.TestCase):
         self.assertEqual(self.owner.phase, "read")
         reader.call_args.args[1](True)
         self.assert_put_down()
+
+    def test_book_cannot_start_a_loss_notice_or_search(self):
+        known = self.memory.get(self.item.instance_id)
+        assert known is not None
+        self.assertTrue(self.owner.notice_absence(known))
+        self.assertFalse(self.owner.active)
+        self.assertFalse(self.owner.search_active)
+        self.owner.begin_goal(
+            ObjectGoal(self.item.instance_id, "book", "book", 100, 0, 0)
+        )
+        self.owner.start_search()
+        self.assertFalse(self.owner.active)
+        self.assertFalse(self.owner.search_active)
+        self.assertEqual(self.memory.get(known.token), known)
+
+    def test_lost_visual_continuity_with_taken_book_finishes_without_search(self):
+        self.owner.begin_goal(
+            ObjectGoal(self.item.instance_id, "book", "book", 100, 0, 0)
+        )
+        self.assertTrue(self.owner.target_taken(self.item.instance_id))
+        known = self.memory.snapshot()
+        self.owner.observe_target_state(None)
+        self.assertFalse(self.owner.active)
+        self.assertFalse(self.owner.search_active)
+        self.assertEqual(self.memory.snapshot(), known)

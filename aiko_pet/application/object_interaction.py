@@ -236,6 +236,10 @@ class ObjectInteractionCoordinator:
             known = self._memory.get(episode.memory_id)
             self._finish(False)
             if known is not None:
+                if known.kind == "book":
+                    # Losing visual continuity is not a lost horoscope book.
+                    # Only its explicit lifecycle owner retires the memory.
+                    return
                 if known.recognized:
                     self._memory.mark_missing(known.token)
                     self.notice_absence(known)
@@ -470,6 +474,9 @@ class ObjectInteractionCoordinator:
 
     def notice_absence(self, known: ObjectKnowledge) -> bool:
         """Give a checked empty place priority, using the existing action owner."""
+        if known.kind == "book":
+            self._memory.retract_missing(known.token)
+            return True
         if self._search is not None:
             if not known.recognized:
                 self._memory.forget(known.token)
@@ -510,6 +517,11 @@ class ObjectInteractionCoordinator:
         if self.phase not in ("approach", "notice_absence") or self.memory_id is None:
             return
         known = self._memory.get(self.memory_id)
+        if known is not None and known.kind == "book":
+            self._memory.retract_missing(known.token)
+            self._finish(False)
+            self._stop()
+            return
         if known is None or not known.recognized:
             record = self.memory_id
             self._memory.forget(record)

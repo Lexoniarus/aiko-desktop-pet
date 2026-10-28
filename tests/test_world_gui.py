@@ -16,7 +16,7 @@ from aiko_pet.desktop.geometry import FOOT_BASELINE, TaskbarTrack
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.emotions import EmotionalState
-from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
 from aiko_pet.pet.sleep import SleepEpisode
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
@@ -1853,6 +1853,36 @@ class WorldGuiTests(unittest.TestCase):
             self.app._world._frame()
         self.assertEqual(self.app._world.world.get(book.instance_id).state,
                          ObjectState.REMOVED)
+        self.assertFalse(any(item.kind == "book"
+                             for item in self.app._world.awareness.memory.snapshot()))
+
+    def test_restart_retires_old_missing_books_without_touching_missing_food(self):
+        world = self.app._world
+        entries: tuple[tuple[str, ConsumableKind], ...] = (
+            ("horoscope_book", "book"), ("horoscope_book", "book"),
+            ("cookie", "food"),
+        )
+        for identity, kind in entries:
+            item = world.world.place_resting(identity, world._body_x(),
+                                            ObjectFootprint(8, 8))
+            world.awareness.memory.observe_find(
+                ObjectObservation("learned", identity, kind, world._body_x(),
+                                  0, True, world.now),
+                now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+                instance_id=item.instance_id,
+            )
+            world.world.remove(item.instance_id, expected_revision=item.revision)
+        world.awareness.memory.restore_snapshot(tuple(
+            replace(item, place_status="missing")
+            for item in world.awareness.memory.snapshot()
+        ))
+        food = next(item for item in world.awareness.memory.snapshot()
+                    if item.kind == "food")
+        self.restart()
+        known = self.app._world.awareness.memory.snapshot()
+        self.assertEqual([item.token for item in known], [food.token])
+        self.assertEqual(known[0].place_status, "missing")
+        self.assertEqual(self.app._world.object_status().missing, 1)
 
     def test_book_drag_drop_and_relocation_preserve_one_physical_object(self):
         world = self.app._world

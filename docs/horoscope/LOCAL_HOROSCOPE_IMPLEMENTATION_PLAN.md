@@ -79,6 +79,15 @@ retired at the day boundary so it cannot block today's reading. At most two day
 records are retained. Aiko does not autonomously reread completed books.
 The earlier immediate single-use/used_up proposal is superseded.
 
+Horoscope books never enter missing-item reactions or searches. Aiko remembers
+her own put-down while the book remains available for a personal replay. Planned
+expiry retires its object-memory record as well as physical stock, even if it is
+currently held or being reread. Startup also retires orphaned book records from
+older saves and clears legacy missing flags for retained books; other missing
+objects are unchanged. Neither operation locates a hidden object or identifies
+an unknown one. Daily reading history and the fixed one-hour deadline survive
+independently, so replay cannot renew the book or grant care a second time.
+
 ## Reuse and replacement
 
 Reuse direct sign selection, atomic session persistence, shared conversation

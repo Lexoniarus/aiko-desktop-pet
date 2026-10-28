@@ -75,6 +75,15 @@ seizes attention. Every confirmed missing known portion joins one SearchTask and
 gets its own readable, named bubble before candidate investigation begins.
 A continuing appetite wish cannot bypass that ordering.
 
+Readable books are ephemeral replay objects, not missing reserves. Neither an
+empty remembered book place nor lost visual continuity may mark a book missing,
+announce its loss or start a search. At startup and book expiry, ObjectAwareness
+reconciles only the book lifecycle: retire records for removed instances and
+withdraw legacy missing flags on retained books. This grants no new position,
+identity or executable sensory binding and does not alter food/drink memories.
+The horoscope history remains separate; manual replay keeps its original story,
+care admission and one-hour deadline after the first completed put-down.
+
 A different occupant at an old learned place does not conceal the loss. The old
 portion is missing and the replacement is unknown. There is no pending-occupant
 exception that lets the replacement be investigated before the confirmed loss.

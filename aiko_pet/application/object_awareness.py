@@ -118,6 +118,30 @@ class ObjectAwareness:
     def record_for_instance(self, instance: str) -> str | None:
         return self._world_records.get(instance)
 
+    def reconcile_books(self, world: WorldSnapshot) -> None:
+        """Retire ephemeral book records at recovery/expiry, never infer food loss.
+
+        This explicit lifecycle boundary grants no new identity or location.
+        A retained book is replayable; its planned disappearance is not a loss.
+        Legacy records without an acquired instance survive only while a book
+        remains in stock, without associating them with that physical instance.
+        """
+        definitions = {item.definition_id for item in world.definitions
+                       if ObjectInteraction.READ in item.interactions}
+        present = {item.instance_id for item in world.objects
+                   if item.definition_id in definitions
+                   and item.state not in (ObjectState.REMOVED, ObjectState.CONSUMED)}
+        for known in self.memory.snapshot():
+            if known.kind != "book":
+                continue
+            self._absence.discard(known.token)
+            self._absences.pop(known.token, None)
+            if (known.instance_id not in present if known.instance_id is not None
+                    else not present):
+                self.memory.forget(known.token)
+            else:
+                self.memory.retract_missing(known.token)
+
     def instance_for_record(self, record: str) -> str | None:
         return next(
             (

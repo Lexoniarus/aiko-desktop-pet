@@ -10,6 +10,14 @@ from aiko_pet.pet.mind.object_knowledge import (
     SavedObjectKnowledge,
 )
 from aiko_pet.pet.state import PetState
+from aiko_pet.world.contracts import (
+    ObjectDefinition,
+    ObjectFootprint,
+    ObjectInteraction,
+    WorldSurface,
+)
+from aiko_pet.world.state import WorldState
+from tools.pet_test_support import object_test_attention
 
 
 class ReadableAutonomyTests(unittest.TestCase):
@@ -60,6 +68,49 @@ class ReadableAutonomyTests(unittest.TestCase):
         goal = self.choose()
         assert goal is not None
         self.assertEqual(goal.token, "memory_2")
+
+    def test_eligible_book_never_generates_empty_place_loss(self):
+        self.awareness.readable = lambda _book: True
+        world = WorldState(WorldSurface(800, 600), (ObjectDefinition("book", "book"),))
+        for now in (0, .3, .6, .9):
+            self.awareness.update(
+                world.snapshot(), self.pet, now=now, x=100, height=0, width=100,
+                attention=object_test_attention(100, width=100), blocked=True,
+            )
+            self.assertFalse(self.awareness.checking_absence)
+            self.assertEqual(self.awareness.absences, ())
+            known = self.awareness.memory.get("memory_1")
+            assert known is not None
+            self.assertEqual(known.place_status, "remembered")
+
+    def test_recovery_keeps_present_book_without_inventing_its_new_location(self):
+        world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
+            "book", "book", interactions=frozenset((ObjectInteraction.READ,)),
+        ),))
+        world.place_resting("book", 600, ObjectFootprint(8, 8))
+        self.awareness.memory.restore_snapshot((replace(
+            self.awareness.memory.snapshot()[0], place_status="missing",
+        ),))
+        self.awareness.reconcile_books(world.snapshot())
+        known, = self.awareness.memory.snapshot()
+        self.assertEqual((known.instance_id, known.x, known.place_status),
+                         ("object_1", 100, "remembered"))
+        self.assertIsNone(self.awareness.instance_for_record(known.token))
+
+    def test_recovery_retires_legacy_unbound_books_only_when_stock_is_gone(self):
+        world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
+            "book", "book", interactions=frozenset((ObjectInteraction.READ,)),
+        ),))
+        book = world.place_resting("book", 600, ObjectFootprint(8, 8))
+        self.awareness.memory.restore_snapshot((replace(
+            self.awareness.memory.snapshot()[0], instance_id=None,
+        ),))
+        self.awareness.reconcile_books(world.snapshot())
+        self.assertEqual(len(self.awareness.memory.snapshot()), 1)
+        self.assertIsNone(self.awareness.memory.snapshot()[0].instance_id)
+        world.remove(book.instance_id, expected_revision=book.revision)
+        self.awareness.reconcile_books(world.snapshot())
+        self.assertEqual(self.awareness.memory.snapshot(), ())
 
 
 if __name__ == "__main__":
