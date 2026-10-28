@@ -1,5 +1,11 @@
 # Körperausrichtung beim Umgucken
 
+> **Geplanter nächster Umbau, 28.10.2026:** Der
+> [zustandsabhängige Idle-/V3-Plan](IDLE_V3_BEHAVIOUR_PLAN.md) dokumentiert
+> längere zusammenhängende Ruhefolgen, passende Gesten und ihre vorhandenen
+> V3-/Übergangsbausteine. Er ist noch nicht implementiert. Die folgenden
+> Abschnitte beschreiben die bereits vorhandene technische Grundlage.
+
 > **Ergänzung 27.10.2026 – Blick zuerst:** Normales Beobachten behält die
 > Seitenwartezeiten und vollständigen Drehphasen. Bei aktiver Cursor-Neugier
 > oder -Angst darf beständige Seitenbeobachtung auch im Stand zu Dreiviertel

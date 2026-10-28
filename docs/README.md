@@ -31,6 +31,12 @@ and test-cleanup plans.
 [Contributing](../CONTRIBUTING.md) gives local test and quality commands;
 [CHANGELOG](../CHANGELOG.md) summarizes current unreleased changes and milestones.
 
+## Planned changes, not implemented
+
+| Topic | Status and document |
+| --- | --- |
+| State-dependent Idle sequences, V3 reuse and grounded gestures | Implementation authorized and in progress; [Idle V3 behaviour plan](IDLE_V3_BEHAVIOUR_PLAN.md) contains module owners, transitional assets and six commits with focused tests and a final full suite. No new assets or push/merge authorized. |
+
 ## Validation and acceptance
 
 Local horoscope completion (2026-10-26): 206 targeted integration checks pass,

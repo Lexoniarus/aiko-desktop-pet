@@ -10,6 +10,11 @@ import random
 from dataclasses import dataclass
 from typing import Callable
 
+from ..pet.animation.idle_behaviour import (
+    IdleBehaviourContext,
+    IdleBehaviourProfile,
+    derive_idle_profile,
+)
 from ..pet.balance import BALANCE
 from ..pet.interaction_rules import petting_is_welcome
 from ..pet.mind import PetMind
@@ -24,6 +29,7 @@ from ..pet.wishes import WishContext, wish_to_express
 from .care_requests import choose_care_request
 from .events import IncomingNotification
 from .ports import ComputerReadings
+from .read_snapshot import snapshot_pet
 from .router import ApplicationRouter
 from .settings import PetSettings
 
@@ -75,6 +81,12 @@ class AttentionCoordinator:
 
     def mark_spoken(self, now: float) -> None:
         self.last_spoken = now
+
+    def idle_profile(self) -> IdleBehaviourProfile:
+        read = snapshot_pet(self.state, wish_context=self.wish_context())
+        return derive_idle_profile(IdleBehaviourContext(
+            read.energy, read.emotions.primary, read.need_conditions, read.sleeping,
+        ))
 
     def wish_context(self) -> WishContext:
         """Read existing capabilities and care admission without executing care."""

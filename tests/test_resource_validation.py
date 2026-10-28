@@ -31,6 +31,17 @@ DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
 
 class ResourceValidationTests(unittest.TestCase):
+    def test_idle_profile_parameters_reject_zero_cadence_and_invalid_ranges(self):
+        original = load_json(DATA / "balance.json")
+        for key, value in (("quiet_body_glance_every", 0),
+                           ("tired_step_gap_multiplier", 0),
+                           ("calm_hold_minimum_seconds", 11),
+                           ("active_two_step_probability", 2)):
+            raw = copy.deepcopy(original)
+            raw["idle_behaviour"][key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                parse_balance(raw)
+
     def test_ambient_body_episodes_require_finite_positive_cadence_and_hold(self):
         original = load_json(DATA / "balance.json")
         for key, value in (("body_glance_every", 0),

@@ -60,6 +60,9 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    if any(value <= 0 for key, value in sections["idle_behaviour"].items()
+           if not key.endswith("_probability")):
+        raise ValueError("Idle behaviour requires positive durations and cadence")
     if (catalog.integer("ambient", "body_glance_every") < 1
             or catalog.integer("ambient", "body_outing_every") < 1
             or catalog.number("ambient", "body_hold_minimum_seconds") <= 0):
