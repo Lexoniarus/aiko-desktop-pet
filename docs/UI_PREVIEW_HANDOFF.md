@@ -13,6 +13,22 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved Connect Four V3 expression follow-up
+
+On 2026-10-28 the owner accepted
+`../design-previews/connect-four-v3-2026-10-28/preview.html`, relative to the checkout
+root. Read the [V3 staging direction](UI_VN_DESIGN.md#approved-connect-four-v3-staging--2026-10-28)
+and its README/`approval-record.json`. The approved blue board, custom chips and
+entire pickup/toss/drop sequence remain unchanged from the original bundle below.
+
+Installed V3 gaze precedes pickup; a placed-chip body glance, return to the
+player and existing emoji interludes follow landing. Manual pickup owns the
+sprite throughout its sequence. Columns remain usable during reactions, with
+immediate interruption and cleanup on selection/close. The external bundle
+contains unchanged sources plus model, flight, flow and presentation checks.
+Native timing/priorities and Windows validation remain later work; no application
+or production integration is authorized by this design approval.
+
 ### Approved Tic-Tac-Toe Denkbrett and V3 follow-up
 
 On 2026-10-28 the owner approved

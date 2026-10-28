@@ -1,5 +1,36 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Connect Four V3 staging — 2026-10-28
+
+The owner accepted the expression follow-up at
+`../design-previews/connect-four-v3-2026-10-28/preview.html`, relative to the
+checkout root. Its README and `approval-record.json` retain acceptance and
+reviewed hashes. This supplements the approved 2026-10-27 board/chips/toss below;
+it does not replace their artwork or motion. The original bundle is unchanged.
+
+- Before pickup, installed V3 frontal gaze follows the real board situation.
+  During the short thinking interval, avoid a large body turn that competes
+  with pickup. The original pickup/hold/release/recovery remains the sole owner
+  of the sprite during its sequence, including existing foreground hands and
+  chip-contact coordinates.
+- After landing, Aiko looks at her actual placed chip in a compatible
+  three-quarter stance, then turns toward the player for her mischievous
+  trap-setter comment. Direction follows window placement; her floor anchor
+  stays fixed. Existing emotes briefly replace and then restore the text in
+  quiet player/result phases. Threat comments refer to actual legal threats.
+- All legal columns remain usable during reactions. Selection immediately
+  dismisses the emote and cancels stale presentation; close/reset/scene changes
+  do likewise. Frozen examples stay still. Reduced motion preserves game input
+  and the previously accepted reduced toss behavior.
+
+The blue board, custom chips, complete throw sequence, parabola/fall geometry,
+hand masks and game model are unchanged. Source/hash comparisons and updated
+model, flight, full-flow and presentation checks remain in the external bundle.
+Mobile stacking and example scenes are review affordances. Native pacing,
+animation/speech priorities and practical Windows input/DPI/placement validation
+remain separate work. Approval authorizes no application changes, production
+installation, game-rule, dialogue-catalogue, World or save changes.
+
 ## Approved Tic-Tac-Toe Denkbrett and V3 staging — 2026-10-28
 
 The owner approved the revised Tic-Tac-Toe reference at
@@ -233,6 +264,8 @@ The owner approved the final clickable Connect Four revision at
 root. Its README and `approval-record.json` record the approval and reviewed file
 hashes. This is the visual authority for Connect Four; earlier geometric board
 drafts and the two-part flight remain local comparison history.
+The 2026-10-28 follow-up above supplements character expression before and after
+this preserved toss.
 
 - Shared white title, near-white rose body, pale-blue phase/result surface,
   manual **Nächste Runde** button and compact player/Aiko/draw session tally.
