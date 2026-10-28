@@ -202,20 +202,13 @@ class CursorBehaviourPolicy:
             else:
                 self._last_playful_notice_at = receipt.presented_at
 
-    def _orient_body(
-        self, p: CursorPerception, dt: float, feeling: CursorFeeling | None,
-    ) -> None:
+    def _orient_body(self, p: CursorPerception, dt: float) -> None:
         if dt == 0 or self.stage == 0 or self._access:
             self._side_samples.clear()
             self._body_side = 0
             self._opposite_seconds = self._far_seconds = 0.0
             return
         far = p.distance > parameter("interest_distance")
-        if feeling is not None and not far:
-            self._body_side = 0
-            self._side_samples.clear()
-            self._opposite_seconds = self._far_seconds = 0.0
-            return
         self._far_seconds = self._far_seconds + dt if far else 0.0
         if self.stage < 2 or self._far_seconds >= parameter("release_hold_seconds"):
             self._body_side = 0
@@ -378,7 +371,7 @@ class CursorBehaviourPolicy:
             self._outside_since = None
             self.note_motion_finished(self.current.token, now)
         self._integrate(p, dt if continuous else 0.0)
-        self._orient_body(p, dt if continuous else 0.0, context.cursor_feeling)
+        self._orient_body(p, dt if continuous else 0.0)
         if p.distance > parameter("interest_distance"):
             self._play_seconds = max(0, self._play_seconds - (dt if continuous else 0))
             self.note_motion_finished(self.current.token, now)

@@ -35,6 +35,12 @@ Frontal bleiben alle 16 Kopfrichtungen verfügbar. Kopf und Körper teilen eine
 gewählte Aufmerksamkeit; ihre Positionsänderung startet nicht bei jedem
 Rohpunkt eine neue Begegnung, Drehung oder Schrittfolge.
 
+Auch bei bestehender Neugier oder Angst darf die Policy nach ausreichender
+Aufmerksamkeit und beständiger Seitenbeobachtung eine Dreiviertel-Standhaltung
+anfordern. Das Gefühl selbst löst weder diese Drehung noch neue Bewegung oder
+Erfahrungsbelege aus. Kurze wechselnde Seitenblicke bleiben frontal; das
+Blickziel folgt unabhängig von der gehaltenen Körperabsicht weiter dem Zeiger.
+
 ## Vereinbarte Aufmerksamkeitsstufen
 
 Die Bereiche sind die Eintrittsstufen. Für den Rückweg gelten bewusst andere

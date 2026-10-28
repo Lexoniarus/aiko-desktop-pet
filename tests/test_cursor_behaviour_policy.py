@@ -137,7 +137,7 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
         self.assertGreaterEqual(result.attention, 99)
         self.assertEqual(result.stage, 3)
 
-    def test_active_feeling_without_play_stays_front_and_preserves_gaze(self):
+    def test_brief_alternating_feeling_gaze_stays_front_without_play(self):
         for feeling in ("curiosity", "fear"):
             self.policy.reset()
             self.policy.attention, self.policy.stage = 60, 2
@@ -151,6 +151,31 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
                 self.assertEqual(result.feeling, feeling)
                 self.assertFalse(result.moving)
                 self.assertIsNone(result.experience)
+
+    def test_active_feelings_allow_held_side_without_creating_motion_or_evidence(self):
+        for feeling in ("curiosity", "fear"):
+            for side in (-1, 1):
+                with self.subTest(feeling=feeling, side=side):
+                    self.policy.reset()
+                    self.policy.attention, self.policy.stage = 100, 3
+                    self.context = replace(self.context, cursor_feeling=feeling,
+                                           cursor_level=1)
+                    point = (200 + side * 100, 100)
+                    for n in range(22):
+                        result = self.decide(
+                            n / 10, speed=.2, side=side, pointer=point,
+                            distance=1.5, reachable=False,
+                        )
+                        self.assertFalse(result.moving)
+                        self.assertIsNone(result.experience)
+                        self.assertEqual(result.target, point)
+                    self.assertEqual((result.body, result.side),
+                                     ("three_quarter", side))
+                    result = self.decide(2.2, speed=.2, side=-side,
+                                         pointer=(200 - side * 100, 100),
+                                         distance=1.5, reachable=False)
+                    self.assertEqual(result.side, side)
+                    self.assertEqual(result.target, (200 - side * 100, 100))
 
     def test_crossing_an_active_retreat_stops_it_without_another_flight_budget(self):
         first = self.warned_threat()
