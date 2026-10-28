@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from ..balance import BALANCE
 from ..mind.cursor_behaviour import BodyIntent
 from .animation import SpriteSelection, choose_passive_animation
+from .idle_behaviour import IdleBehaviourProfile
 
 _DIRECTIONS = (2, 3, 4, 12, 13, 14)
 # Repeating positions make the one-pixel sway gentler and less busy.
@@ -47,6 +48,7 @@ class AmbientDirector:
         body_poses: bool = False,
     ) -> None:
         self._between = between
+        self.profile = IdleBehaviourProfile()
         self._direction = direction
         self._body_poses = body_poses
         self._glance_count = 0

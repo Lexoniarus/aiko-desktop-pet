@@ -12,6 +12,7 @@ from typing import Callable
 
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
+from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.idle_emote import choose_idle_emote
 from ..pet.interaction_events import (
     CursorExperience,
@@ -38,6 +39,8 @@ class AttentionRuntimePorts:
     refresh_toolbar: Callable[[], None]
     foreground_active: Callable[[], bool] = lambda: False
     clock: Callable[[], float] = lambda: time.monotonic()
+    apply_idle_profile: Callable[[IdleBehaviourProfile], None] = lambda _profile: None
+    render_character: Callable[[float, tuple[int, int]], None] = lambda _now, _p: None
 
 
 class DesktopAttentionRuntime:
@@ -67,6 +70,11 @@ class DesktopAttentionRuntime:
         )
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
+
+    def render_character(self, now: float, pointer: tuple[int, int]) -> None:
+        """Prepare once after lifecycle/attention admission in the main tick."""
+        self._ports.apply_idle_profile(self.attention.idle_profile())
+        self._ports.render_character(now, pointer)
 
     def cursor_warning(self, event: CursorWarning, now: float) -> CursorWarningReceipt:
         ports = self._ports

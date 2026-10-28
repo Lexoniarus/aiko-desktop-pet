@@ -20,6 +20,22 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAttentionRuntimeTests(unittest.TestCase):
+    def test_render_prepares_one_profile_before_forwarding_the_frame(self):
+        from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
+
+        profile = IdleBehaviourProfile()
+        self.attention.idle_profile.return_value = profile
+        calls = []
+        self.runtime._ports = replace(
+            self.runtime._ports,
+            apply_idle_profile=lambda value: calls.append(("profile", value)),
+            render_character=lambda now, pointer: calls.append(
+                ("render", now, pointer)),
+        )
+        self.runtime.render_character(100, (200, 300))
+        self.assertEqual(calls, [("profile", profile), ("render", 100, (200, 300))])
+        self.attention.idle_profile.assert_called_once_with()
+
     def setUp(self) -> None:
         self.attention = Mock(spec=AttentionCoordinator)
         self.attention.state = PetState()

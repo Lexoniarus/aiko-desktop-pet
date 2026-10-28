@@ -18,6 +18,7 @@ from ..pet.animation.body_orientation import (
     BodyOrientation,
 )
 from ..pet.animation.character import CharacterCatalog
+from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.priority import RenderDecision, choose_animation_priority
 from ..pet.movement.contracts import WalkStep
 from .visual_observation import DesktopVisualObservation
@@ -174,6 +175,11 @@ class DesktopAnimationRuntime:
 
     def walk_active(self) -> bool:
         return self._walk.movement.remaining_distance != 0
+
+    def set_idle_profile(self, profile: IdleBehaviourProfile) -> None:
+        """Distribute one immutable read; frame callbacks never derive it again."""
+        self.ambient.profile = profile
+        self._walk.idle_profile = profile
 
     def interrupt_walk(self) -> None:
         self._walk.movement.interrupt()

@@ -99,10 +99,7 @@ class DesktopPet:
                 ),
                 observe_pointer=lambda now: self._pointer_runtime.observe(now),
                 render_character=lambda now, _elapsed, pointer: (
-                    self._animated.render(
-                        now, pointer,
-                        attention=self.mind.cursor_attention.snapshot(),
-                    )
+                    self._attention_runtime.render_character(now, pointer)
                 ),
                 show_idle_emote=self._maybe_show_idle_emote,
                 speak_spontaneously=self._maybe_speak_spontaneously,
@@ -374,6 +371,9 @@ class DesktopPet:
                 action_until=lambda: self._action_playback.until,
                 refresh_toolbar=self._hover.refresh_toolbar,
                 foreground_active=self._object_feedback_active,
+                apply_idle_profile=self._animation.set_idle_profile,
+                render_character=lambda now, pointer: self._animated.render(
+                    now, pointer, attention=self.mind.cursor_attention.snapshot()),
             ),
         )
         self._pointer_runtime = animation_assembly.assemble_pointer(

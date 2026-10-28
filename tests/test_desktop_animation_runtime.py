@@ -26,6 +26,16 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAnimationRuntimeTests(unittest.TestCase):
+    def test_main_tick_profile_is_shared_and_frames_do_not_replace_it(self):
+        from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
+
+        profile = IdleBehaviourProfile(mode="tired", maximum_steps=1)
+        self.runtime.set_idle_profile(profile)
+        for now in (100, 100.1, 101):
+            self.choose(now=now)
+            self.assertIs(self.runtime.ambient.profile, profile)
+            self.assertIs(self.walk.idle_profile, profile)
+
     def setUp(self) -> None:
         self.create_runtime_fixture()
 

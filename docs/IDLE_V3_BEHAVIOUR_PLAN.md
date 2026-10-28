@@ -289,3 +289,6 @@ Assetkonzeption bleiben außerhalb Git; dort wird auf diesen Modulplan verwiesen
 
 - IV3-1: Reine unveränderliche Profile und kanonischer Anwendungslesestand;
   körperliche Energiegrenzen gehen positiver Aktivitätsneigung vor.
+- IV3-2: Ein unveraenderliches Profil wird in der bestehenden Renderphase
+  nach Lifecycle/World/Cursor vorbereitet und an beide Besitzer weitergegeben.
+  Framecallbacks berechnen es nicht neu; 60 gezielte Tests und scoped Mypy gruen.

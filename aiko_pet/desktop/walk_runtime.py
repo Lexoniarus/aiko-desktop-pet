@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 
 from ..pet.animation.character import FRAME_WIDTH
+from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.balance import BALANCE
 from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.movement import WalkConditions, WalkController
@@ -109,6 +110,7 @@ class WalkDriver:
         walk_cycle_seconds: float,
     ) -> None:
         self.state = state
+        self.idle_profile = IdleBehaviourProfile()
         self.settings = settings
         self.adaptive = adaptive
         self.monitor = monitor
