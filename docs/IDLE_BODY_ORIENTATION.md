@@ -57,6 +57,15 @@ Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
   Rückkehr zur Front. Ohne Schrittpaket bleibt die Figur stehen.
 - Selbstständige Kopfblickgelegenheiten liegen bei 20–40 Sekunden und halten
   ein bis drei Sekunden. Der bestehende Blink-/Schwankrhythmus bleibt erhalten.
+- Mit vorhandenem Körperpaket richtet etwa jedes dritte eigene Umsehen auch
+  den Körper nach links oder rechts in Dreiviertel aus. `AmbientDirector`
+  liefert dafür eine unveränderliche `AmbientIntent` aus Sprite, Körperabsicht
+  und Seite. `BodyOrientation` spielt die vorhandenen Drehphasen und bestätigt
+  erst die tatsächlich erreichte Standpose. Dann beginnen drei bis sechs
+  Sekunden Ruhe mit einem passenden seitlichen Kopfblickwechsel. Die Rückkehr
+  erfolgt über die vorhandenen Drehbilder. Ohne Körperpaket bleibt es bei
+  endlichen Kopfblicken. Externe Aufmerksamkeit beendet die eigene Folge,
+  ohne sie später als veraltete Pose fortzusetzen.
 - Schlaf, Spiel, Aktionen, Übergabe und Halten behalten Vorrang. Absichtlicher
   Mauszugang und aktive Bedienung stoppen Ortsbewegung sofort. World-Ziele
   bleiben dabei gespeichert und können anschließend weiter ausgeführt werden.

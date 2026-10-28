@@ -95,7 +95,7 @@ class AmbientDirectorTests(unittest.TestCase):
                 now, gaze_direction=4 if tracking_pointer else None,
                 observing_computer=False, computer_busy=False,
                 energy=80, mood=80, satiety=80,
-            )
+            ).sprite
             if tracking_pointer:
                 self.assertEqual(selected, SpriteSelection("look", 4))
             elif selected.animation == "look":
@@ -118,13 +118,13 @@ class AmbientDirectorTests(unittest.TestCase):
                         now, gaze_direction=gaze, forward_gaze=forward,
                         observing_computer=False, computer_busy=False,
                         energy=80, mood=80, satiety=80,
-                    ), expected)
+                    ).sprite, expected)
                     self.assertFalse(policy.blinking)
                 self.assertEqual(policy.next_glance_at, 120)
                 self.assertEqual(policy.select_passive_animation(
                     130.1, gaze_direction=None, observing_computer=False,
                     computer_busy=False, energy=80, mood=80, satiety=80,
-                ), SpriteSelection("look", 2))
+                ).sprite, SpriteSelection("look", 2))
 
     def test_interrupted_glance_is_cancelled_and_schedules_one_fresh_gap(self) -> None:
         self.policy.next_blink_at = 1000
@@ -141,7 +141,7 @@ class AmbientDirectorTests(unittest.TestCase):
         selected = self.policy.select_passive_animation(
             101.0, gaze_direction=3, observing_computer=True,
             computer_busy=True, energy=0, mood=0, satiety=0,
-        )
+        ).sprite
         self.assertEqual(selected, SpriteSelection("look", fixed_frame=3))
         self.assertEqual(self.policy.motion_offset(101.0), 1)
         self.assertFalse(self.policy.blinking)
@@ -150,7 +150,7 @@ class AmbientDirectorTests(unittest.TestCase):
         selected = self.policy.select_passive_animation(
             101.0, gaze_direction=None, observing_computer=True,
             computer_busy=True, energy=80, mood=80, satiety=80,
-        )
+        ).sprite
         self.assertEqual(selected, SpriteSelection("review"))
         self.assertEqual(self.policy.motion_offset(101.0), 0)
         self.assertFalse(self.policy.blinking)
@@ -159,7 +159,7 @@ class AmbientDirectorTests(unittest.TestCase):
         selected = self.policy.select_passive_animation(
             103.0, gaze_direction=None, observing_computer=False,
             computer_busy=False, energy=80, mood=80, satiety=80,
-        )
+        ).sprite
         self.assertEqual(selected, SpriteSelection("idle"))
         self.assertTrue(self.policy.blinking)
 
@@ -180,6 +180,59 @@ class AmbientDirectorTests(unittest.TestCase):
         self.policy.finish_outing(102, 1)
         self.policy.suspend(102.2, keep_pose_motion=True)
         self.assertEqual(self.policy.outing_side, 0)
+
+
+class AmbientBodyIntentTests(unittest.TestCase):
+    def policy(self, *, side=1, body_poses=True):
+        policy = AmbientDirector(
+            0, between=lambda low, _high: low,
+            direction=lambda options: options[0] if side == 1 else options[-1],
+            body_poses=body_poses,
+        )
+        policy.next_blink_at = 10000
+        for now in (0, 5):
+            policy.next_glance_at = now
+            policy.choose(now)
+            policy.choose(now + 3.1)
+        policy.next_glance_at = 10
+        return policy
+
+    def sample(self, policy, now, gaze=None):
+        return policy.select_passive_animation(
+            now, gaze_direction=gaze, observing_computer=False,
+            computer_busy=False, energy=80, mood=80, satiety=80,
+        )
+
+    def test_third_glance_turns_and_holds_only_after_actual_body_settles(self):
+        for side in (-1, 1):
+            with self.subTest(side=side):
+                policy = self.policy(side=side)
+                first = self.sample(policy, 10)
+                self.assertEqual((first.body, first.side), ("three_quarter", side))
+                self.assertEqual(self.sample(policy, 20), first)
+                policy.note_body_settled(20, side)
+                self.assertEqual(self.sample(policy, 21), first)
+                changed = self.sample(policy, 21.6)
+                self.assertNotEqual(changed.sprite, first.sprite)
+                self.assertEqual((changed.body, changed.side),
+                                 ("three_quarter", side))
+                self.assertEqual(self.sample(policy, 22.9), changed)
+                self.assertEqual(self.sample(policy, 23.01).body, "front")
+
+    def test_attention_cancels_body_episode_without_resuming_an_old_pose(self):
+        policy = self.policy()
+        self.sample(policy, 10)
+        policy.note_body_settled(10.5, 1)
+        target = self.sample(policy, 10.6, gaze=12)
+        self.assertEqual(target.sprite, SpriteSelection("look", 12))
+        self.assertEqual(target.body, "front")
+        policy.next_blink_at = 10000
+        self.assertEqual(self.sample(policy, 11).sprite, SpriteSelection("idle", 0))
+
+    def test_missing_body_pack_keeps_finite_head_only_glances(self):
+        policy = self.policy(body_poses=False)
+        self.assertEqual(self.sample(policy, 10).body, "front")
+        self.assertEqual(self.sample(policy, 13).sprite, SpriteSelection("idle", 0))
 
 
 if __name__ == "__main__":

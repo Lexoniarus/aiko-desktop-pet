@@ -31,6 +31,17 @@ DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
 
 class ResourceValidationTests(unittest.TestCase):
+    def test_ambient_body_episodes_require_finite_positive_cadence_and_hold(self):
+        original = load_json(DATA / "balance.json")
+        for key, value in (("body_glance_every", 0),
+                           ("body_hold_minimum_seconds", 0),
+                           ("body_hold_minimum_seconds", 7)):
+            with self.subTest(key=key, value=value):
+                raw = copy.deepcopy(original)
+                raw["ambient"][key] = value
+                with self.assertRaises(ValueError):
+                    parse_balance(raw)
+
     def test_dialogue_weights_use_integer_scale_not_normalized_fractions(self) -> None:
         original = load_json(DATA / "balance.json")
         line = dialogue_source_fixture()["lines"][0]

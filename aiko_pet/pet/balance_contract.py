@@ -447,6 +447,9 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "glance_gap_maximum_seconds": "number",
         "glance_hold_minimum_seconds": "number",
         "glance_hold_maximum_seconds": "number",
+        "body_glance_every": "integer",
+        "body_hold_minimum_seconds": "number",
+        "body_hold_maximum_seconds": "number",
     },
     "attention": {
         "comment_initial_minimum_seconds": "number",

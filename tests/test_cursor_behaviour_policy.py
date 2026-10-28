@@ -161,7 +161,9 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
                     self.context = replace(self.context, cursor_feeling=feeling,
                                            cursor_level=1)
                     point = (200 + side * 100, 100)
-                    for n in range(22):
+                    result = self.decide(0, speed=.2, side=side, pointer=point,
+                                         distance=1.5, reachable=False)
+                    for n in range(1, 22):
                         result = self.decide(
                             n / 10, speed=.2, side=side, pointer=point,
                             distance=1.5, reachable=False,

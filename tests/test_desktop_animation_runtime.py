@@ -16,6 +16,7 @@ from aiko_pet.desktop.animation_runtime import (
 from aiko_pet.desktop.visual_observation import DesktopVisualObservation
 from aiko_pet.desktop.walk_runtime import WalkDriver
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
@@ -181,6 +182,35 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.assertEqual(self.choose().sprite, SpriteSelection("body-look-right", 3))
         self.assertFalse(body.motion_ready)
         self.assertEqual(body.phase, 4)
+
+    def test_idle_body_episode_uses_real_turns_settled_hold_and_ordered_return(self):
+        policy = AmbientDirector(0, between=lambda low, _high: low,
+                                 direction=lambda options: options[0], body_poses=True)
+        policy.next_blink_at = 10000
+        for now in (0, 5):
+            policy.next_glance_at = now
+            policy.choose(now)
+            policy.choose(now + 3.1)
+        policy.next_glance_at = 100
+        self.runtime.ambient = policy
+        result = self.choose(now=100)
+        self.assertEqual(self.runtime._body_orientation.phase, 1)
+        self.assertEqual(result.refresh_after_ms, 140)
+        for n in range(1, 4):
+            result = self.choose(now=100 + n * .14)
+            self.assertEqual(self.runtime._body_orientation.phase, n + 1)
+            self.assertEqual(result.refresh_after_ms, 140 if n < 3 else None)
+        self.assertEqual(result.sprite, SpriteSelection("body-look-right", 2))
+        self.assertAlmostEqual(policy._glance_until, 103.42)
+        self.assertEqual(self.choose(now=102).sprite,
+                         SpriteSelection("body-look-right", 3))
+        result = self.choose(now=103.5)
+        self.assertEqual(self.runtime._body_orientation.phase, 3)
+        for n in range(1, 4):
+            result = self.choose(now=103.5 + n * .14)
+            self.assertEqual(self.runtime._body_orientation.phase, 3 - n)
+        self.assertEqual(result.sprite, SpriteSelection("idle", 0))
+        self.assertEqual(self.settings.x, None)
 
     def test_optional_pack_missing_preserves_frontal_gaze_after_long_attention(self):
         runtime = DesktopAnimationRuntime(

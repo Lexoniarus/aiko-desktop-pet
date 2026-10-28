@@ -74,7 +74,9 @@ class DesktopAnimationRuntime:
         self._walk = walk
         self._visual = visual
         self._ports = ports
-        self.ambient = AmbientDirector(started_at=time.monotonic())
+        self.ambient = AmbientDirector(started_at=time.monotonic(), body_poses=bool(
+            {"body-look-left", "body-look-right"} <= assets.body_clips.keys(),
+        ))
         self._body_orientation = BodyOrientation()
         visual.constrain_with(self._body_orientation.constrain_direction)
         self._pointer: tuple[int, int] = (0, 0)
@@ -285,7 +287,7 @@ class DesktopAnimationRuntime:
                 ),
                 clear_action=True,
             )
-        selection = self.ambient.select_passive_animation(
+        ambient = self.ambient.select_passive_animation(
             now,
             gaze_direction=observation.gaze_direction,
             observing_computer=self._settings.observe_computer,
@@ -295,6 +297,7 @@ class DesktopAnimationRuntime:
             satiety=self._state.satiety,
             forward_gaze=observation.forward_gaze,
         )
+        selection = ambient.sprite
         if self._assets.body_clips:
             intent = self._visual.cursor_intent
             if self._gaze_first:
@@ -304,11 +307,14 @@ class DesktopAnimationRuntime:
             else:
                 selection = self._body_orientation.select(
                     now, selection,
-                    intent="profile" if self.ambient.outing_side else intent.body,
-                    side=self.ambient.outing_side or intent.side,
+                    intent=("profile" if self.ambient.outing_side else
+                            ambient.body if ambient.side else intent.body),
+                    side=self.ambient.outing_side or ambient.side or intent.side,
                 )
+            if (ambient.side and self._body_orientation.phase == 4
+                    and self._body_orientation.side == ambient.side):
+                self.ambient.note_body_settled(now, ambient.side)
         return RenderDecision(
             selection, clear_action=True,
-            refresh_after_ms=self._body_orientation.next_delay_ms(now)
-            if self._visual.cursor_intent.feeling is not None else None,
+            refresh_after_ms=self._body_orientation.next_delay_ms(now),
         )

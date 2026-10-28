@@ -300,7 +300,10 @@
     "glance_gap_minimum_seconds": 20.0,
     "glance_gap_maximum_seconds": 40.0,
     "glance_hold_minimum_seconds": 1.0,
-    "glance_hold_maximum_seconds": 3.0
+    "glance_hold_maximum_seconds": 3.0,
+    "body_glance_every": 3,
+    "body_hold_minimum_seconds": 3.0,
+    "body_hold_maximum_seconds": 6.0
   },
   "attention": {
     "comment_initial_minimum_seconds": 180.0,
