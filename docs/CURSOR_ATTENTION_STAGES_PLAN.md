@@ -133,14 +133,17 @@ Der tatsächliche Körperzustand erlaubt nur passende Kopfachsen. Das ist sowohl
 bei der Darstellung als auch bei der gemeinsamen World-Aufmerksamkeit zu prüfen.
 
 Bei tatsächlich aktivem Neugier- oder Angst-Moodlet und bereits bemerktem,
-frischem Zeiger hat der Blick Vorrang. Ohne Ortsbewegung ist frontal der
-Normalzustand. Blockiert die tatsächliche Körperpose den neuen Kopfsektor,
+frischem Zeiger hat der Blick Vorrang. Frontal ist die Grundhaltung; beständige
+Seitenbeobachtung kann auch ohne Ortsbewegung die gewählte Dreiviertelpose
+halten. Blockiert die tatsächliche Körperpose den neuen Kopfsektor,
 zeigt bereits derselbe Renderaufruf frontal mit passendem Kopf. Für eine
 Cursorbewegung folgt eine passende bestehende Dreiviertel-Kopfpose und nach
 70 ms der Profil-Schrittsatz mit passendem Kopf. Ein Seitenwechsel kann dabei
 über die sofortige Frontkorrektur führen; die frühere Pflicht, erst alle acht
 Drehzwischenbilder abzuspielen, gilt hier nicht mehr. Gerade nach oben/unten
-oder direkt vor die Nase bleibt frontal frei; eine unpassende Profillage hält
+oder direkt vor die Nase bleibt frontal frei; passende vertikale Kopfsektoren
+sind auch in Dreiviertel erlaubt. Körperbegrenzung und Kopfwahl nutzen dafür
+dieselben Sektorgrenzen einschließlich Hysterese. Eine unpassende Profillage hält
 nur die Ortsbewegung, nicht den Blick. Normale Idle-/World-Drehungen behalten
 ihre vollständigen 140-ms-Phasen.
 

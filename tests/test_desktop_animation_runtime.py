@@ -212,6 +212,51 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.assertEqual(result.sprite, SpriteSelection("idle", 0))
         self.assertEqual(self.settings.x, None)
 
+    def test_final_idle_displacement_admits_one_hold_after_movement_suspension(self):
+        self.runtime.ambient = AmbientDirector(
+            0, between=lambda low, _high: low, body_poses=True,
+            direction=lambda options: options[0],
+        )
+        self.runtime.ambient.next_blink_at = 10000
+        self.walk.movement.source = "idle"
+        self.walk.movement.kind = "step"
+        self.walk.movement.remaining_distance = 1
+        for n in range(8):
+            self.runtime._body_orientation.orient_for_motion(97 + n * .14, 1)
+
+        def step(_now, elapsed, **_kwargs):
+            if elapsed:
+                self.walk.movement.remaining_distance = 0
+                return WalkStep(1, 1, "step")
+            return None
+
+        self.walk.step.side_effect = step
+        before = self.state.capture_checkpoint()
+        self.runtime.advance_walk(100, .033, game_mode=False)
+        self.assertEqual(self.runtime.ambient._outing_count, 1)
+        result = self.choose(now=100)
+        self.assertEqual(self.runtime._body_orientation.phase, 7)
+        for n in range(1, 4):
+            result = self.choose(now=100 + n * .14)
+            self.assertEqual(self.runtime._body_orientation.phase, 7 - n)
+        self.assertEqual(result.sprite, SpriteSelection("body-look-right", 4))
+        self.assertEqual(self.runtime.ambient._outing_count, 1)
+        self.assertEqual(self.choose(now=102).sprite,
+                         SpriteSelection("body-look-right", 2))
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
+    def test_cursor_and_world_completions_never_create_idle_arrival_poses(self):
+        for source in ("cursor", "world"):
+            self.create_runtime_fixture()
+            self.walk.movement.source = source
+            self.walk.movement.kind = "step"
+            self.walk.movement.remaining_distance = 0
+            for n in range(8):
+                self.runtime._body_orientation.orient_for_motion(97 + n * .14, 1)
+            self.walk.step.return_value = WalkStep(1, 1, "step")
+            self.runtime.advance_walk(100, .033, game_mode=False)
+            self.assertEqual(self.runtime.ambient._outing_count, 0)
+
     def test_optional_pack_missing_preserves_frontal_gaze_after_long_attention(self):
         runtime = DesktopAnimationRuntime(
             state=self.state,

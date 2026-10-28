@@ -35,7 +35,7 @@ sind frontal frei verfügbar. `BodyOrientation` führt ausschließlich explizite
 Front-/Dreiviertel-/Profilabsichten aus; die frühere Ableitung aus einem
 Kopfsektor mit 1,2 Sekunden Verweilen ist entfernt.
 
-## Verhalten des ursprünglichen Idle-/World-Umbaus
+## Aktuelle ruhige Idle-Folgen
 
 Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
 
@@ -53,8 +53,14 @@ Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
   Kleine Idle-Ausflüge erfolgen nach 45–90 Sekunden Ruhe, normalerweise mit
   einem, gelegentlich zwei Schritten. Ein kurzer Mausblick lenkt einen laufenden
   Idle-Ausflug nicht sofort um; reale Bedienung und World-/Aktionsvorrang gelten.
-- Nach dem Idle-Schritt bleibt eine kurze Stand-/Blickpause, dann die geordnete
-  Rückkehr zur Front. Ohne Schrittpaket bleibt die Figur stehen.
+- Nach etwa jedem zweiten kleinen Idle-Ausflug dreht Aiko vom Profil bis
+  Dreiviertel zurück und bleibt dort drei bis sechs Sekunden mit passenden
+  Kopfblicken stehen. Die Zeit beginnt erst in der erreichten Standpose.
+  Dazwischen folgt nach dem Schritt eine kurze Blickpause mit Rückkehr zur
+  Front. Die tatsächliche letzte Ortsbewegung startet genau eine Standfolge;
+  das Beenden der alten Bewegung darf sie nicht im selben Frame löschen.
+  Cursor- und World-Abschlüsse starten keine eigene Idle-Ankunftsfolge.
+  Ohne Schrittpaket bleibt die Figur stehen.
 - Selbstständige Kopfblickgelegenheiten liegen bei 20–40 Sekunden und halten
   ein bis drei Sekunden. Der bestehende Blink-/Schwankrhythmus bleibt erhalten.
 - Mit vorhandenem Körperpaket richtet etwa jedes dritte eigene Umsehen auch
@@ -69,6 +75,21 @@ Für emotionales Cursorfolgen gelten die oben genannten aktuellen Regeln.
 - Schlaf, Spiel, Aktionen, Übergabe und Halten behalten Vorrang. Absichtlicher
   Mauszugang und aktive Bedienung stoppen Ortsbewegung sofort. World-Ziele
   bleiben dabei gespeichert und können anschließend weiter ausgeführt werden.
+
+Die vorhandene Zufallsauswahl der zusätzlichen Gesten `waiting`, `review` und
+`idle` im `AttentionCoordinator` ist von diesem Umbau (Punkte 1–4) ausdrücklich
+ausgenommen. Ihre genaue Bedeutung und Auswahl wird separat mit dem Nutzer
+besprochen. Es werden weder neue Bilder benötigt noch Charakter-Assets geändert.
+
+Prüfstand 28.10.2026 für Punkte 1–4: 137 gezielte Prüfungen und die vollständige
+lokale Suite mit 2.395 Tests sind grün, ebenso Ruff, striktes Mypy und Pyright.
+Isolierte tatsächliche Tk-Timer prüfen einen und zwei Idle-Schritte in beiden
+Richtungen bei 1X/2X, genau einen Ankunftsabschluss, gehaltene Standpose und
+Rückkehr ohne zusätzliche Ortsbewegung. Lange Cursortrajektorien prüfen die
+sichtbaren Kopfsektoren auch in Dreiviertel und an den vertikalen Grenzen.
+Assets, zusätzliche Gestenauswahl und parallele UI-Dateien bleiben unverändert.
+Praktische Sichtung durch den Nutzer und Remote-CI für diese lokalen Commits
+stehen aus; es wurde weder gepusht noch gemergt.
 
 Die Dreiviertelschritte sind ausschließlich Ausrichtungs-/Drehschritte. Sie
 ändern weder Fensterposition noch `PetState` noch den Bewegungsauftrag. Die

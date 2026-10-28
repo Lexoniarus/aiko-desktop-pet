@@ -13,6 +13,14 @@ def angle_distance(a: float, b: float) -> float:
     return abs((a - b + 180) % 360 - 180)
 
 
+def sector_for_angle(angle: float, previous: int | None = None) -> int:
+    """Quantize a direction with the same hysteresis for gaze and body sight."""
+    if previous is not None and 0 <= previous < SECTORS:
+        if angle_distance(angle, previous * SECTOR_ANGLE) <= SECTOR_ANGLE / 2 + 3:
+            return previous
+    return int(angle / SECTOR_ANGLE + 0.5) % SECTORS
+
+
 def gaze_sector(
     eyes_x: float,
     eyes_y: float,
@@ -33,8 +41,4 @@ def gaze_sector(
     if math.hypot(dx, dy) < 17 * max(1, scale):
         return None  # Face the viewer instead of retaining a sideways glance.
     angle = math.degrees(math.atan2(dx, -dy)) % 360
-    if previous is not None and 0 <= previous < SECTORS:
-        # Hold the old sector until the pointer clears the boundary by 3 degrees.
-        if angle_distance(angle, previous * SECTOR_ANGLE) <= SECTOR_ANGLE / 2 + 3:
-            return previous
-    return int(angle / SECTOR_ANGLE + 0.5) % SECTORS
+    return sector_for_angle(angle, previous)

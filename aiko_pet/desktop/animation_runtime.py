@@ -124,7 +124,11 @@ class DesktopAnimationRuntime:
         )
         if step is None:
             return None
-        if (source == "idle" and step.pixels
+        # A moving frame consumes the old ambient episode first. Its final
+        # displacement can then admit one fresh arrival pose, never cancel it
+        # again during selection of that same frame.
+        self.ambient.suspend(now)
+        if (source == "idle" and elapsed > 0 and step.pixels
                 and self._walk.movement.remaining_distance == 0):
             self.ambient.finish_outing(now, step.direction)
         return self._motion_clip(step, now)
@@ -249,15 +253,12 @@ class DesktopAnimationRuntime:
                 else:
                     pose = self._body_orientation.orient_for_motion(now, direction)
                 if not self._body_orientation.motion_ready:
-                    self.ambient.suspend(now)
                     return RenderDecision(
                         pose, clear_action=True,
-                        refresh_after_ms=self._body_orientation.next_delay_ms(now)
-                        if self._visual.cursor_intent.feeling is not None else None,
+                        refresh_after_ms=self._body_orientation.next_delay_ms(now),
                     )
             else:
                 self._body_orientation.reset()
-            self.ambient.suspend(now)
             clip = self._assets.body_clips.get(walking)
             rate = (self._walk.speed_pixels_per_second * clip.duration_seconds
                     / (clip.stride * self._walk.settings.scale)
@@ -307,9 +308,8 @@ class DesktopAnimationRuntime:
             else:
                 selection = self._body_orientation.select(
                     now, selection,
-                    intent=("profile" if self.ambient.outing_side else
-                            ambient.body if ambient.side else intent.body),
-                    side=self.ambient.outing_side or ambient.side or intent.side,
+                    intent=ambient.body if ambient.side else intent.body,
+                    side=ambient.side or intent.side,
                 )
             if (ambient.side and self._body_orientation.phase == 4
                     and self._body_orientation.side == ambient.side):

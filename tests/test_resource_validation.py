@@ -34,6 +34,7 @@ class ResourceValidationTests(unittest.TestCase):
     def test_ambient_body_episodes_require_finite_positive_cadence_and_hold(self):
         original = load_json(DATA / "balance.json")
         for key, value in (("body_glance_every", 0),
+                           ("body_outing_every", 0),
                            ("body_hold_minimum_seconds", 0),
                            ("body_hold_minimum_seconds", 7)):
             with self.subTest(key=key, value=value):

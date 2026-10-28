@@ -10,6 +10,7 @@ import math
 
 from ..mind.cursor_behaviour import BodyIntent
 from .animation import SpriteSelection
+from .gaze import sector_for_angle
 
 TURN_STEP_SECONDS = 0.14
 REACTIVE_TURN_STEP_SECONDS = 0.07
@@ -57,7 +58,11 @@ class BodyOrientation:
         """Read actual pose compatibility, also used by subjective World sight."""
         if self.phase == 0:
             return direction
-        if self.phase == 4 and direction[0] * self.side >= 0:
+        sector = sector_for_angle(
+            math.degrees(math.atan2(direction[0], direction[1])) % 360,
+            self._look_direction,
+        )
+        if self.phase == 4 and self.supports_gaze(sector):
             return direction
         if self.phase == 4 or self._gaze_motion:
             angle = self._look_direction * math.pi / 8

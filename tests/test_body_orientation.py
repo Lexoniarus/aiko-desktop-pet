@@ -143,6 +143,14 @@ class MotionOrientationTests(unittest.TestCase):
             ), choice)
             self.assertEqual(body.phase, 0)
 
+    def test_vertical_head_sectors_remain_available_on_both_sides_of_center(self):
+        for side, head in ((1, 2), (-1, 14)):
+            body = BodyOrientation()
+            body.select_gaze_stance(0, SpriteSelection("look", head),
+                                    intent="three_quarter", side=side)
+            for direction in ((-.05, 1), (.05, 1), (-.05, -1), (.05, -1)):
+                self.assertEqual(body.constrain_direction(direction), direction)
+
     def test_profile_ready_only_after_all_turn_poses_and_return_is_ordered(self):
         body = BodyOrientation()
         phases = []

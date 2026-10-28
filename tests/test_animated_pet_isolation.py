@@ -6,6 +6,7 @@ import time
 import tkinter as tk
 import unittest
 from dataclasses import replace
+from itertools import product
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
@@ -42,6 +43,64 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         StandaloneAnimatedPetTests.setUpClass()
+
+    def test_idle_steps_arrive_once_and_hold_without_extra_desktop_displacement(self):
+        for scale, side, count in product((1, 2), (-1, 1), (1, 2)):
+            with self.subTest(scale=scale, side=side, count=count):
+                with ControlledTkTime() as clock:
+                    fixture = StandaloneAnimatedPetTests()
+                    fixture.setUp()
+                    try:
+                        fixture.settings.scale = scale
+                        fixture.settings.x = 200
+                        fixture.settings.follow_cursor = False
+                        fixture.settings.observe_computer = False
+                        fixture.anim.reload_sprites()
+                        fixture.walk.ports = replace(
+                            fixture.walk.ports, idle_steps=lambda: True,
+                        )
+                        planner = fixture.walk.movement.random_walk
+                        planner.next_walk_at = clock.monotonic()
+                        ambient = fixture.animation.ambient
+                        ambient._between = lambda low, _high: low
+                        ambient.next_blink_at = ambient.next_glance_at = 10000
+                        before = fixture.state.capture_checkpoint()
+                        with (
+                            patch("aiko_pet.pet.movement.random_walk.random.choice",
+                                  return_value=side),
+                            patch("aiko_pet.pet.movement.random_walk.random.random",
+                                  return_value=.1 if count == 2 else .8),
+                        ):
+                            fixture.anim.render(clock.monotonic(), (0, 0))
+                        for _ in range(120):
+                            clock.advance(.033)
+                            if ambient._outing_count:
+                                break
+                        self.assertEqual(ambient._outing_count, 1)
+                        self.assertEqual(fixture.settings.x,
+                                         200 + side * 16 * scale * count)
+                        self.assertFalse(fixture.animation.walk_active())
+                        clock.advance(.6)
+                        self.assertEqual(fixture.animation._body_orientation.phase,
+                                         4)
+                        self.assertTrue(fixture.anim._display_clip.startswith(
+                            "body-look-",
+                        ))
+                        at_rest = fixture.settings.x
+                        clock.advance(1.6)
+                        fixture.anim.render(clock.monotonic(), (0, 0))
+                        self.assertEqual(fixture.settings.x, at_rest)
+                        self.assertEqual(ambient._outing_count, 1)
+                        clock.advance(max(0, ambient._glance_until
+                                          - clock.monotonic()) + .02)
+                        fixture.anim.render(clock.monotonic(), (0, 0))
+                        clock.advance(.6)
+                        self.assertEqual(fixture.animation._body_orientation.phase,
+                                         0)
+                        self.assertEqual(fixture.settings.x, at_rest)
+                        self.assertEqual(fixture.state.capture_checkpoint(), before)
+                    finally:
+                        fixture.doCleanups()
 
     def test_opposite_head_returns_front_in_same_render_without_waiting_for_turn(self):
         for scale in (1, 2):

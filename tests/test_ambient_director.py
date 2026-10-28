@@ -174,12 +174,10 @@ class AmbientDirectorTests(unittest.TestCase):
     def test_outing_finishes_with_short_stand_then_yields_front_and_new_attention(self):
         self.policy.finish_outing(100, -1)
         self.assertEqual(self.policy.choose(100.5), SpriteSelection("look", 12))
-        self.assertEqual(self.policy.outing_side, -1)
-        self.policy.choose(101.1)
-        self.assertEqual(self.policy.outing_side, 0)
+        self.assertEqual(self.policy.choose(101.1), SpriteSelection("idle", 0))
         self.policy.finish_outing(102, 1)
         self.policy.suspend(102.2, keep_pose_motion=True)
-        self.assertEqual(self.policy.outing_side, 0)
+        self.assertEqual(self.policy.choose(102.3).animation, "idle")
 
 
 class AmbientBodyIntentTests(unittest.TestCase):
@@ -233,6 +231,23 @@ class AmbientBodyIntentTests(unittest.TestCase):
         policy = self.policy(body_poses=False)
         self.assertEqual(self.sample(policy, 10).body, "front")
         self.assertEqual(self.sample(policy, 13).sprite, SpriteSelection("idle", 0))
+
+    def test_alternate_outings_hold_quarter_then_yield_to_front_and_new_attention(self):
+        policy = self.policy(side=-1)
+        policy.finish_outing(10, -1)
+        first = self.sample(policy, 10.1)
+        self.assertEqual((first.body, first.side), ("three_quarter", -1))
+        policy.note_body_settled(11, -1)
+        self.assertEqual(self.sample(policy, 13.9).side, -1)
+        self.assertEqual(self.sample(policy, 14.1).body, "front")
+        policy.finish_outing(20, 1)
+        self.assertEqual(self.sample(policy, 20.1).body, "front")
+        self.assertEqual(self.sample(policy, 22.1).sprite, SpriteSelection("idle", 0))
+        policy.finish_outing(30, -1)
+        self.assertEqual(self.sample(policy, 30.1).side, -1)
+        self.assertEqual(self.sample(policy, 30.2, gaze=4).body, "front")
+        policy.next_blink_at = 10000
+        self.assertEqual(self.sample(policy, 31).sprite, SpriteSelection("idle", 0))
 
 
 if __name__ == "__main__":

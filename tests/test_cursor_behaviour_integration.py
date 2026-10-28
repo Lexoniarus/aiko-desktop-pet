@@ -21,6 +21,7 @@ from aiko_pet.desktop.visual_observation import (
 )
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.pet.animation.body_orientation import body_look_index
 from aiko_pet.pet.animation.gaze import gaze_sector
 from aiko_pet.pet.cursor_experiences import cursor_impression
 from aiko_pet.pet.interaction_events import CursorWarning, CursorWarningReceipt
@@ -334,6 +335,11 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                             self.assertIn(axis, (4, 12))
                         elif clip_name == "look":
                             self.assertEqual(choice.sprite.fixed_frame, axis)
+                        elif clip_name.startswith("body-look-"):
+                            assert axis is not None
+                            side = 1 if clip_name.endswith("right") else -1
+                            self.assertEqual(choice.sprite.fixed_frame,
+                                             body_look_index(side, axis))
                     current_x = scene.settings.x
                     assert current_x is not None
                     delta = current_x - previous_x
