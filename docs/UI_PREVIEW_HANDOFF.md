@@ -13,6 +13,22 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved RPS identity and animation follow-up
+
+On 2026-10-28 the owner approved the Fingerduell revision at
+`../design-previews/rps-animation-2026-10-28/preview.html`, relative to the checkout
+root. Read the [latest RPS direction](UI_VN_DESIGN.md#approved-rockpaperscissors-identity-and-animation--2026-10-28)
+and its README/`approval-record.json`. The original RPS bundle below is preserved.
+
+An illustrated stitched rose mat, cream/blue hand area and blue/peach/lavender
+hand tiles give RPS its own quiet identity. Three unchanged Attack cycles now
+accompany Schere–Stein–Papier, 900 ms each by default; the third forward moment
+reveals Aiko's sign and the result. V3 gaze/body reactions and existing emotes
+follow. Her sign remains visible while the comment slot switches text/emoji.
+Direct selection, input gating and interruption retain the accepted game flow.
+Native integration is not authorized. The prior animation-only draft, source
+provenance, SVGs, validation and screenshots remain local companion files.
+
 ### Approved game-specific follow-up: Quiz
 
 On 2026-10-28 the owner accepted the revised Quiz design at

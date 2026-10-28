@@ -1,5 +1,49 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Rock–Paper–Scissors identity and animation — 2026-10-28
+
+The owner approved the Fingerduell revision at
+`../design-previews/rps-animation-2026-10-28/preview.html`, relative to the checkout
+root. Its README and `approval-record.json` retain the acceptance and file hashes.
+This is the latest RPS visual/animation concept authority, extending the accepted
+2026-10-27 direct-selection flow below; the older bundle remains unchanged.
+
+- Keep the VN white title and rose shell. A small illustrated rose playmat has
+  stitched edging, fabric patches, quiet stars and a cream round hand area with
+  powder-blue trim. The unchanged hand illustrations determine the rounded,
+  outlined visual language. Blue, peach and lavender hand tiles provide clear
+  pressure depth; name and hint sit legibly below the mat. A fanned trio of
+  existing signs forms the title emblem. Reveal adds one restrained glint.
+- Choosing a sign still immediately starts a round and shows the player's hand.
+  Aiko performs **three complete existing Attack cycles**, with **900 ms per
+  movement** as the accepted calmer preview default. Words Schere, Stein and
+  Papier coincide with frame 04, the forward moment, of their respective cycle.
+  Her independently chosen sign and the result appear at that moment of cycle
+  three: 2250 ms in the default preview; the final movement ends at 2700 ms.
+  No 1–2–3 text, extra start or next-round action is introduced.
+- Inputs lock until reveal and then enable. A new choice cancels the remaining
+  arm movement or result reaction immediately, preserving exactly-once scoring.
+  The character finishes the third move before her normal result response when
+  not interrupted. Both revealed signs stay until the next choice.
+- Existing V3 idle/gaze and compatible body poses support quiet selection waits
+  and a short post-round board glance. Existing emotes and selected happy jumps
+  express cheeky satisfaction, her own embarrassment or surprise at a draw.
+  **Aiko's sign stays visible in the lower bubble area while only the reserved
+  comment area above alternates text and emoji.** No extra taskbar object.
+- All character/hand assets are unchanged copies. New mat/glint SVGs and CSS
+  hand tiles are code-native preview artwork. A display-only four-source-pixel
+  offset aligns the Attack floor with idle; jump movement remains intact.
+  Closing, reset and scene changes cancel all pending presentation. Reduced
+  motion keeps the same word/reveal schedule with still poses.
+
+The selectable 750/850 ms alternatives, fixed outcome examples, controlled-clock
+checks and mobile stacking are review affordances. The earlier animation-only
+draft remains under `history/animation-only/` for comparison. Final native
+animation/speech coordination, relationship variants and Windows input/placement
+verification remain separate implementation work. No application changes,
+production installation, game-rule changes or saves are authorized by approval.
+The external HTML and source copies remain outside Git.
+
 ## Approved Quiz follow-up — 2026-10-28
 
 The owner accepted the revised Quiz design and moderation concept at
@@ -230,10 +274,11 @@ retain the established stationary/free-drag contract; Aiko's bubble follows her.
 The owner approved the separate clickable follow-up at
 `../design-previews/rps-2026-10-27/preview.html` relative to the checkout root.
 Its README and `approval-record.json` retain the explicit approval and file hashes.
-This is the newer visual/interaction authority for Rock–Paper–Scissors; the
-2026-10-20 bundle remains the reference for surfaces without a newer approved
-follow-up. No application
-code, production artwork or dialogue catalogue is changed by this approval.
+This is the base visual/interaction approval for Rock–Paper–Scissors; the
+2026-10-28 Fingerduell follow-up above extends its identity and character timing.
+The 2026-10-20 bundle remains the reference for surfaces without a newer approved
+follow-up. No application code, production artwork or dialogue catalogue is
+changed by this approval.
 
 - Aiko is a spontaneous, slightly cheeky fellow player. Her revealed hand sign
   appears in her speech bubble with a short reaction. No extra taskbar item.
