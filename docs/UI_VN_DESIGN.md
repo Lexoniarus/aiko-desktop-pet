@@ -1,5 +1,42 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Mastermind V3 staging — 2026-10-28
+
+The owner approved the expression follow-up at
+`../design-previews/mastermind-v3-2026-10-28/preview.html`, relative to the checkout
+root. Its README and `approval-record.json` retain acceptance and reviewed hashes.
+This supplements the 2026-10-27 console/safe/snack design below; its original
+bundle and complete safe-opening artwork/animation remain unchanged.
+
+- Aiko remains the curious, exaggeratedly conscientious guardian of her own
+  donut. Installed V3 gaze/body poses briefly attend to her safe, the submitted
+  row's public feedback and the player. Compatible turns follow real geometry;
+  her floor anchor and the safe's position to her right remain fixed.
+- The presenter receives only public feedback-row geometry and the safe/console.
+  It receives no secret colors or per-position correctness. Draft color/slot
+  editing gives no confirmation signal and immediately dismisses an active
+  emoji. Existing comments still use only the ordinary aggregate feedback.
+- After readable feedback comments, existing emotes may briefly replace and
+  restore text while editing remains available. After evaluation, a 900 ms
+  star at success or embarrassed drops before the spare-key line precedes the
+  existing reveal/opening. This is the approved preview expression concept;
+  final native pacing remains separate work.
+- During opening she watches the actual safe, then turns frontal during the
+  existing post-opening pause. From eating onset the original eight-frame food
+  sequence exclusively owns the sprite. Eating frames, timings, hand/food
+  anchors and safe animation are preserved. Both outcomes still end with her
+  donut, without satiety, needs, wishes, Moodlets, rewards or World effects.
+- Inputs lock during checking and the ending; manual **Nächste Runde** enables
+  after the snack. New comments, editing, close/reset/scene changes cancel stale
+  cues. Reduced motion uses appropriate still poses while retaining input rules.
+
+The external bundle retains unchanged source copies, model/input checks, both
+snack endings and the added presentation checks. No character generation or
+private head-study import was performed. Native speech/animation priorities and
+Windows input/DPI/placement validation remain later work. This design approval
+authorizes no application changes, production installation, game-rule,
+dialogue-catalogue or save changes. The HTML examples remain outside Git.
+
 ## Approved Connect Four V3 staging — 2026-10-28
 
 The owner accepted the expression follow-up at
@@ -218,6 +255,8 @@ The owner approved the final clickable Mastermind revision at
 root, including the corrected safe opening and both snack endings. Its README
 and `approval-record.json` retain the explicit approval and reviewed file hashes.
 The earlier distorted/mirrored door projection remains rejected local history.
+The 2026-10-28 follow-up above supplements V3 expression while preserving this
+safe opening and snack sequence.
 
 - Shared white title, near-white rose body, passive blue phase surface and rose
   actions surround a lavender/silver console with restrained gold star details.

@@ -13,6 +13,22 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved Mastermind V3 expression follow-up
+
+On 2026-10-28 the owner approved
+`../design-previews/mastermind-v3-2026-10-28/preview.html`, relative to the checkout
+root. Read the [V3 staging direction](UI_VN_DESIGN.md#approved-mastermind-v3-staging--2026-10-28)
+and its README/`approval-record.json`. The earlier console, safe opening and
+both donut endings remain the preserved visual/interaction foundation.
+
+Installed V3 poses target public aggregate feedback or her actual safe, with no
+secret-position hints. Editable rows stay usable during comments/emojis. Success
+or spare-key embarrassment gains a short interlude; she watches the opening and
+returns frontal before the unchanged eating sequence takes over. Original safe
+and food sources, rules and anchors are unchanged. Checks and screenshots remain
+with the local reference bundle. Native timing/priorities and Windows validation
+remain separate work; no application or production integration is authorized.
+
 ### Approved Connect Four V3 expression follow-up
 
 On 2026-10-28 the owner accepted
