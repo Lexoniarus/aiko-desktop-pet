@@ -8,6 +8,7 @@ from dataclasses import dataclass, replace
 from typing import Any
 from urllib.parse import urlsplit
 
+from ..pet.animation.expression import Expression
 from ..pet.balance import BALANCE
 from ..pet.content import GERMAN_TEXT
 from ..pet.mind.catalog import Reaction
@@ -256,6 +257,7 @@ def prepare_social_content(
         raise ValueError("Social story exceeds five text bubbles")
     # React after the complete provider content, never before a punchline.
     # No extra text bubble displaces content from the existing five-text budget.
+    expression_at = 1 if category == SocialCategory.FACT else len(beats)
     if int(fingerprint[2:4], 16) % 3 == 0:
         emote = "idea" if category == SocialCategory.FACT else "faceHappy"
         beats.append(Cue("emote", emote, 900))
@@ -266,7 +268,9 @@ def prepare_social_content(
         source,
         source_url,
         permalink,
-        Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),
+        Reaction(identity, tuple(beats), "idle", "talk", presentation="story",
+                 expression=(Expression.QUESTIONING if category == SocialCategory.FACT
+                             else Expression.POSITIVE), expression_at=expression_at),
         provider,
         author,
         author_url,

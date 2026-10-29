@@ -6,6 +6,8 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
     "emotions": {
         "subdued_below_mood": "number",
         "satisfied_at_mood": "number",
+        "long_term_modifier_cap": "number",
+        "noticeable_modifier_intensity": "number",
     },
     "wishes": {
         "maximum_active": "integer",

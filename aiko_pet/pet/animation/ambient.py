@@ -109,10 +109,10 @@ class AmbientDirector:
     def blinking(self) -> bool:
         return self._blink_active
 
-    def suspend(self, now: float, *, keep_pose_motion: bool = False) -> None:
+    def suspend(self, now: float) -> None:
         """Yield to attention without repeatedly postponing a pending glance."""
-        if not keep_pose_motion:
-            self._motion_started_at = now
+        # One continuous presentation phase survives blinks, speech, gaze and
+        # body actions. Ineligible clips simply do not render that movement.
         self._blink_active = False
         # An interrupted glance is consumed, not resumed as a stale held pose.
         # A merely pending glance keeps its due time and waits for free Idle.
@@ -183,6 +183,12 @@ class AmbientDirector:
             self._start_glance(now, index, side, duration)
             return SpriteSelection("look", fixed_frame=index)
 
+        return self.choose_rest(now)
+
+    def choose_rest(self, now: float) -> SpriteSelection:
+        """Frontal rest/blink without spontaneous gaze, also usable in games."""
+        if self._blink_active:
+            return SpriteSelection("idle")
         if now >= self.next_blink_at:
             self._blink_active = True
             return SpriteSelection("idle")
@@ -222,13 +228,7 @@ class AmbientDirector:
                 self.choose(now),
                 "three_quarter" if self._glance_side else "front", self._glance_side,
             )
-        self.suspend(
-            now,
-            keep_pose_motion=(
-                forward_gaze
-                or choice.animation == "look" and choice.fixed_frame is not None
-            ),
-        )
+        self.suspend(now)
         return AmbientIntent(choice)
 
     def finish_blink(self, now: float) -> None:

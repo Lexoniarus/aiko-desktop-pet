@@ -20,6 +20,7 @@ class BlackjackSequence:
         hand: Callable[[HandView, bool], None], say: Callable[[str, int], None],
         animate: Callable[[str], None], dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         game: Blackjack | None = None,
     ) -> None:
         self.game = game if game is not None else Blackjack()
@@ -30,6 +31,7 @@ class BlackjackSequence:
         self._closed = False
         self._session_id = uuid4().hex
         self._round_event = round_event
+        self._express_event = express_event
         self._revealing = False
         self.pending_timer: str | None = None
 
@@ -39,7 +41,9 @@ class BlackjackSequence:
         self._round_event(GameRoundEvent(
             GameId.BLACKJACK, self._session_id, self.game.score.games + 1,
         ))
-        self._say(self._dialogue("game_blackjack_greeting"), 2800)
+        text = self._dialogue("game_blackjack_greeting")
+        self._express_event("game_blackjack_greeting")
+        self._say(text, 2800)
         self._publish()
         self._continue()
 
@@ -103,9 +107,11 @@ class BlackjackSequence:
                 GameId.BLACKJACK, self._session_id, self.game.score.games, result,
                 self.game.result_details,
             ))
-            clip = {"win": "failed", "loss": "jumping", "draw": "waving"}[result]
-            self._animate(clip)
-            self._say(self._dialogue(event[result]), self.RESULT_PAUSE_MS)
+            if result == "loss":
+                self._animate("jumping")
+            text = self._dialogue(event[result])
+            self._express_event(event[result])
+            self._say(text, self.RESULT_PAUSE_MS)
             self.pending_timer = self._schedule(self.RESULT_PAUSE_MS, self.advance)
         else:
             self._publish()

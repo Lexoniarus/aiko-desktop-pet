@@ -215,7 +215,7 @@ class DesktopPet:
             on_text=lambda event: self._contact.note_text(event),
             on_wish_text=self._attention.note_wish_text,
             social_completed=lambda result: self._care_runtime.complete_social(result),
-            start_action=self._start_action,
+            start_action=self._start_action, express=self._animation.request_expression,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
         )
@@ -286,9 +286,9 @@ class DesktopPet:
                     event, self.state, self.context, time.monotonic()),
                 game_speech=GameSpeech(
                     self._reaction_player, self._speech,
-                    self._mark_reaction_spoken,
-                    self._set_game_mode,
+                    self._mark_reaction_spoken, self._set_game_mode,
                     lambda name: self._start_action(name, 0),
+                    self._animation.request_expression,
                 ),
             ), skin=self._window.skin,
         )
@@ -355,8 +355,7 @@ class DesktopPet:
         self._attention_runtime = DesktopAttentionRuntime(
             self._attention, self._attention_view,
             AttentionRuntimePorts(
-                context=lambda: self.context,
-                game_open=lambda: self._hover.game_open,
+                context=lambda: self.context, game_open=lambda: self._hover.game_open,
                 menu_engaged=lambda: self._hover.menu_engaged,
                 settings_engaged=lambda: self._hover.settings_engaged,
                 bubble_visible=lambda: self._speech.bubble is not None,
@@ -370,6 +369,7 @@ class DesktopPet:
                 refresh_toolbar=self._hover.refresh_toolbar,
                 foreground_active=self._object_feedback_active,
                 apply_idle_profile=self._animation.set_idle_profile,
+                express=self._animation.request_expression,
                 prepare_idle_gesture=self._animation.prepare_idle_gesture,
                 idle_gesture_duration=self._animation.idle_gesture_duration,
                 render_character=lambda now, pointer: self._animated.render(

@@ -379,17 +379,17 @@ pruning and never simulates offline user actions. The existing frozen checkpoint
 owns its monotonic experience counter; active episodes own their bounded causes.
 
 Wish lifecycle/fulfillment and overall emotional interpretation are delivered.
-`pet/emotions.py` derives a frozen `EmotionalComposition` from every active
-Moodlet's intensity, retaining all directions, causes and known attribution.
-It owns no state, timer, reward or refusal. Positive/negative totals select the
-dominant side only above sixty percent, with an inclusive forty/sixty mixed
-band. Caution/uncertainty can select a reserved mixed state. Qualified joy/safety,
-expectation/pride and uncertainty/pressure compounds add carefree, optimistic and
-tense labels while retaining all opposing influences. Strongest-direction ties
-use recency, individual intensity and stable order. Without Moodlets, numeric
-mood supplies
-subdued below 40, calm below 70 and satisfied from 70. Numeric caps never
-truncate emotional evidence.
+`pet/emotions.py` derives a frozen `EmotionalComposition` from the numeric base
+mood first, then bounded emotional modifiers. The base is subdued below 40,
+calm below 70 and satisfied from 70. Long-term impressions collectively have at
+most one stage of modifier weight per polarity; all original intensities,
+directions, causes and attribution remain available as topic evidence.
+Weak modifiers do not replace a neutral base, and positive history cannot
+turn a low actual mood into optimism. Compatible directions and sufficiently
+strong opposing impressions retain the seventeen differentiated labels and
+qualified compounds. The policy owns no state, timer, reward or refusal and
+does not change the numeric mood calculation. See
+[base mood and reactions](EMOTIONAL_BASE_AND_REACTIONS.md).
 
 `PetMind.emotional_state()` and the application snapshot call that same pure
 policy. `reaction_tone()` exposes the independent short irritation/warmth

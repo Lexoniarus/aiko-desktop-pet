@@ -9,6 +9,7 @@ from typing import Literal
 from ..balance import BALANCE
 from ..emotions import EmotionalState
 from ..needs import NeedCondition
+from .expression import Expression, mood_expression
 
 IdleMode = Literal["neutral", "calm", "active", "tired", "subdued", "tense"]
 
@@ -33,6 +34,7 @@ class IdleBehaviourProfile:
     maximum_steps: int = 2
     two_step_probability: float = .2
     prefer_lower_gaze: bool = False
+    expression: Expression = Expression.NEUTRAL
 
     def __post_init__(self) -> None:
         if (not all(math.isfinite(v) and v > 0 for v in (
@@ -91,4 +93,5 @@ def derive_idle_profile(context: IdleBehaviourContext) -> IdleBehaviourProfile:
         two_step_probability=number("active_two_step_probability")
         if mode == "active" else number("two_step_probability"),
         prefer_lower_gaze=mode in ("tired", "subdued"),
+        expression=mood_expression(context.feeling),
     )

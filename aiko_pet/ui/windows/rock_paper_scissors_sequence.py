@@ -34,10 +34,10 @@ RevealPlayer = Callable[[Move, Score], None]
 PlayAnimation = Callable[[str], None]
 SetBusy = Callable[[bool], None]
 
-_REACTION_ASSETS: dict[Outcome, tuple[str, str]] = {
-    Outcome.WIN: ("failed", "drops"),
+_REACTION_ASSETS: dict[Outcome, tuple[str | None, str]] = {
+    Outcome.WIN: (None, "drops"),
     Outcome.LOSS: ("jumping", "star"),
-    Outcome.DRAW: ("waving", "question"),
+    Outcome.DRAW: (None, "question"),
 }
 
 
@@ -63,11 +63,13 @@ class RockPaperScissorsSequence:
         set_busy: SetBusy,
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
     ) -> None:
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self._schedule = schedule
         self._cancel = cancel
         self._say = say
+        self._express_event = express_event
         self._show_emote = show_emote
         self._show_aiko_hand = show_aiko_hand
         self._reveal_player = reveal_player
@@ -97,6 +99,7 @@ class RockPaperScissorsSequence:
         if not self._closed:
             self._animate("waving-greeting")
             phrase = self._dialogue("game_greeting")
+            self._express_event("game_greeting")
             self._say(phrase, Cue.text(phrase).duration_ms)
 
     def choose(self, move: Move) -> None:
@@ -107,6 +110,7 @@ class RockPaperScissorsSequence:
             GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games + 1,
         ))
         self._set_busy(True)
+        self._express_event("game_countdown")
         self._phase = 1
         self._emit_text(countdown_line(1), self.COUNT_MS)
 
@@ -148,11 +152,13 @@ class RockPaperScissorsSequence:
         elif self._phase == 5 and self._result is not None:
             self._phase = 6
             clip, emote = _REACTION_ASSETS[self._result.outcome]
-            self._animate(clip)
+            if clip is not None:
+                self._animate(clip)
             self._emit_emote(emote, self.REACTION_EMOTE_MS)
         elif self._phase == 6 and self._result is not None:
             self._phase = 7
             phrase = self._dialogue(outcome_event(self._result))
+            self._express_event(outcome_event(self._result))
             self._emit_text(phrase, Cue.text(phrase).duration_ms)
         elif self._phase == 7:
             self._phase = 0

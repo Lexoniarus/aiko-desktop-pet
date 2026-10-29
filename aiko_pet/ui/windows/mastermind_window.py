@@ -38,6 +38,7 @@ class MastermindWindow:
         skin: AikoSkin,
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
     ) -> None:
         self._closed, self._busy = False, True
@@ -80,6 +81,7 @@ class MastermindWindow:
                 emote=emote,
                 dialogue=dialogue,
                 round_event=round_event,
+                express_event=express_event,
             )
             self._present(self._sequence.game.view, self._sequence.game.score, True, 4)
             # These allocations may settle after the top-level Configure event.

@@ -1,4 +1,4 @@
-"""Emotional composition uses every cause independently of care and numeric caps."""
+"""Base mood owns overall feeling; complete Moodlet evidence remains available."""
 
 import unittest
 from dataclasses import replace
@@ -33,6 +33,10 @@ class EmotionalCompositionTests(unittest.TestCase):
             )
             self.assertEqual(value.primary, EmotionalState.AMBIVALENT)
         value = derive(episode(MoodletId.PRIDE, 3), episode(MoodletId.GUARDED, 2, 2))
+        self.assertEqual(value.primary, EmotionalState.PROUD)
+        self.assertIn((DEFINITIONS[MoodletId.GUARDED].direction, 2), value.directions)
+        value = derive(episode(MoodletId.PRIDE, 3),
+                       episode(MoodletId.CURSOR_FEAR, 2, 2))
         self.assertEqual(value.primary, EmotionalState.RESERVED)
 
     def test_compounds_require_their_complete_composition_and_mood(self):
@@ -44,7 +48,7 @@ class EmotionalCompositionTests(unittest.TestCase):
         )
         self.assertEqual(
             derive(joyful, safe, episode(MoodletId.POKING, 1, 3), mood=80).primary,
-            EmotionalState.CAREFREE,
+            EmotionalState.CHEERFUL,
         )
         self.assertNotEqual(
             derive(joyful, safe, episode(MoodletId.POKING, 2, 3), mood=80).primary,
@@ -75,20 +79,12 @@ class EmotionalCompositionTests(unittest.TestCase):
         ):
             self.assertEqual(derive(mood=mood).primary, state)
 
-    def test_every_catalogue_family_has_the_documented_direction(self):
+    def test_every_family_retains_its_direction_without_owning_the_base_mood(self):
         self.assertEqual(set(DEFINITIONS), set(MoodletId))
         for key, definition in DEFINITIONS.items():
             value = derive(episode(key))
-            expected = {
-                MoodletId.TRUSTING: EmotionalState.AFFECTIONATE,
-                MoodletId.UNCERTAIN: EmotionalState.TENSE,
-                MoodletId.CURSOR_FEAR: EmotionalState.TENSE,
-                MoodletId.GUARDED: EmotionalState.RESERVED,
-            }.get(key)
-            self.assertEqual(
-                value.primary.value,
-                expected.value if expected else definition.direction.value,
-            )
+            self.assertEqual(value.primary, EmotionalState.CALM)
+            self.assertEqual(value.directions, ((definition.direction, 1),))
             self.assertEqual(value.influences[0].cause, key)
 
     def test_all_active_intensities_participate_without_numeric_caps(self):
@@ -109,7 +105,7 @@ class EmotionalCompositionTests(unittest.TestCase):
         self.assertEqual((value.positive_intensity, value.negative_intensity), (2, 2))
         self.assertEqual(len(value.directions), 2)
 
-    def test_four_positive_and_three_negative_intensities_are_mixed(self):
+    def test_low_base_mood_keeps_negative_flavour_despite_four_positive_causes(self):
         keys = (
             MoodletId.FOOD_FULFILLED,
             MoodletId.SHARED_PLAY,
@@ -121,7 +117,7 @@ class EmotionalCompositionTests(unittest.TestCase):
             episode(MoodletId.POKING, 3, 5),
             mood=10,
         )
-        self.assertEqual(value.primary, EmotionalState.AMBIVALENT)
+        self.assertEqual(value.primary, EmotionalState.IRRITATED)
         self.assertEqual(value.negative_intensity, 3)
         self.assertEqual(len(value.influences), 5)
 
@@ -149,7 +145,7 @@ class EmotionalCompositionTests(unittest.TestCase):
         )
         self.assertFalse(assess_need_conditions(NeedLevels(100, 100, 100, 100, 100)))
         self.assertEqual(
-            derive(episode(MoodletId.PRIDE), mood=20).primary, EmotionalState.PROUD
+            derive(episode(MoodletId.PRIDE), mood=20).primary, EmotionalState.SUBDUED
         )
 
     def test_known_cause_attribution_survives_and_old_saves_do_not_invent_it(self):

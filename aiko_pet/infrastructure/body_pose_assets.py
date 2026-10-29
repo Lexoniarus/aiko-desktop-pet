@@ -93,5 +93,6 @@ def load_body_pose_clips(root: Path) -> Mapping[str, AnimationClip]:
             heading=meta["heading"] if meta is not None else 0,
             head_direction=meta["gaze"] if meta is not None else None,
             stride=float(meta["stride"]) if meta is not None else 0,
+            rest_sway=name.startswith("body-look-"),
         )
     return MappingProxyType(clips)

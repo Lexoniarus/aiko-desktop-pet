@@ -34,6 +34,7 @@ class AnimationClip:
     heading: int = 0
     head_direction: int | None = None
     stride: float = 0.0
+    rest_sway: bool = False
 
     @property
     def timings(self) -> tuple[int, ...]:
@@ -58,6 +59,9 @@ class AnimationClip:
 class CharacterCatalog:
     clips: Mapping[str, AnimationClip]
     body_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+    expression_clips: Mapping[str, AnimationClip] = field(
         default_factory=lambda: MappingProxyType({}),
     )
 

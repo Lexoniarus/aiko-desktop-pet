@@ -24,6 +24,7 @@ class QuizWindow:
         emote: Callable[[str, int], None], always_on_top: bool, skin: AikoSkin,
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
         catalogue: QuizCatalogue | None = None,
     ) -> None:
@@ -74,6 +75,7 @@ class QuizWindow:
                 game, schedule=self.window.after, cancel=self.window.after_cancel,
                 present=self._present, say=speak, animate=animate, emote=emote,
                 dialogue=dialogue, round_event=round_event,
+                express_event=express_event,
             )
             self._present()
         self._panel.show(root)

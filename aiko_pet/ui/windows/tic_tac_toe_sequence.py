@@ -17,6 +17,7 @@ class TicTacToeSequence:
         say: Callable[[str, int], None], animate: Callable[[str], None],
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         game: TicTacToe | None = None,
     ) -> None:
         self.game = game if game is not None else TicTacToe()
@@ -27,12 +28,15 @@ class TicTacToeSequence:
         self._closed = False
         self._session_id = uuid4().hex
         self._round_event = round_event
+        self._express_event = express_event
 
     def greet(self) -> None:
         self._round_event(GameRoundEvent(
             GameId.TIC_TAC_TOE, self._session_id, self.game.score.games + 1,
         ))
-        self._say(self._dialogue("game_ttt_greeting"), 2800)
+        text = self._dialogue("game_ttt_greeting")
+        self._express_event("game_ttt_greeting")
+        self._say(text, 2800)
         self._present(self.game.board, self.game.score)
 
     def choose(self, cell: int) -> None:
@@ -54,8 +58,11 @@ class TicTacToeSequence:
                 "X": "game_round_player_win", "O": "game_round_aiko_win",
                 "": "game_round_draw",
             }
-            self._animate({"X": "failed", "O": "jumping", "": "waving"}[board.winner])
-            self._say(self._dialogue(event[board.winner]), 2800)
+            if board.winner == "O":
+                self._animate("jumping")
+            text = self._dialogue(event[board.winner])
+            self._express_event(event[board.winner])
+            self._say(text, 2800)
         elif board.turn == "O":
             self.pending_timer = self._schedule(650, self.advance)
         self._present(board, self.game.score)

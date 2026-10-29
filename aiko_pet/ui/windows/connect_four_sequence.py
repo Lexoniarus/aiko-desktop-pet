@@ -33,10 +33,12 @@ class ConnectFourSequence:
         emote: Callable[[str, int], None],
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         game: ConnectFourSession | None = None,
         executor: Executor | None = None,
     ) -> None:
         self.game = game if game is not None else ConnectFourSession()
+        self._express_event = express_event
         self._schedule, self._cancel, self._present = schedule, cancel, present
         self._say, self._animate, self._emote = say, animate, emote
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
@@ -90,6 +92,7 @@ class ConnectFourSequence:
         duration = conversation_timing((Cue.text(text),))[0].duration_ms
 
         def speak() -> None:
+            self._express_event(event)
             self._say(text, duration)
             self._later(duration, then)
 
@@ -108,6 +111,7 @@ class ConnectFourSequence:
             # The welcome is presentation, not an unresolved player move.
             # Keep its reading time without discarding the player's first click.
             text = self._dialogue("game_c4_greeting")
+            self._express_event("game_c4_greeting")
             self._say(text, conversation_timing((Cue.text(text),))[0].duration_ms)
             self._turn()
         else:
@@ -159,8 +163,6 @@ class ConnectFourSequence:
                 self._ready,
                 animation="jumping"
                 if winner == 2
-                else "review"
-                if winner == 1
                 else "idle",
                 emote="star" if winner == 2 else "faceSad" if winner == 1 else None,
             )
@@ -171,7 +173,6 @@ class ConnectFourSequence:
             self._react(
                 "game_c4_block" if move.player == 2 else "game_c4_blocked",
                 self._turn,
-                animation="idle" if move.player == 2 else "review",
                 emote="idea" if move.player == 2 else "question",
             )
         else:

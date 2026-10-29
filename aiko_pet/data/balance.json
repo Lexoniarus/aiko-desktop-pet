@@ -2,7 +2,9 @@
   "version": 1,
   "emotions": {
     "subdued_below_mood": 40.0,
-    "satisfied_at_mood": 70.0
+    "satisfied_at_mood": 70.0,
+    "long_term_modifier_cap": 1.0,
+    "noticeable_modifier_intensity": 2.0
   },
   "food": {
     "too_full_to_eat_threshold": 96.0,

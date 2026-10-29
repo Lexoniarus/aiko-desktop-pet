@@ -40,7 +40,7 @@ class BodyPoseCache:
 
     def __init__(self, root: tk.Tk, catalog: CharacterCatalog) -> None:
         self._root = root
-        self._clips = catalog.body_clips
+        self._clips = {**catalog.body_clips, **catalog.expression_clips}
         self._images: dict[tuple[Path, int], tk.PhotoImage] = {}
 
     def image(self, path: Path, scale: int) -> tk.PhotoImage:

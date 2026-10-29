@@ -131,7 +131,8 @@ class AnimatedPet:
             catalog=items,
             scale=self.settings.scale,
         )
-        self.show_frame("idle", time.monotonic())
+        initial = "rest-neutral" if assets.expression_clips else "idle"
+        self.show_frame(initial, time.monotonic(), fixed=0)
 
     def load_sprites(self) -> dict[str, Sequence[tk.PhotoImage]]:
         """Reuse originals and lazily zoom only requested 2x frames."""
@@ -154,6 +155,7 @@ class AnimatedPet:
     def set_game_mode(self, enabled: bool) -> None:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
+        self._ambient.suspend(time.monotonic())
         self.ports.reset_gaze()
         self.ports.interrupt_walk()
 
@@ -209,7 +211,8 @@ class AnimatedPet:
     ) -> None:
         if self._stopped:
             return
-        clip = self.assets.body_clips.get(state) or self.assets.clips[state]
+        clip = (self.assets.expression_clips.get(state)
+                or self.assets.body_clips.get(state) or self.assets.clips[state])
         self._display_clip = state
         # End a complete idle blink after frame 7, then hold neutral frame 0
         # until the ambient policy schedules another one. No frame is skipped.
@@ -266,11 +269,7 @@ class AnimatedPet:
                     )
                 )
         image = self.sprites[state][source_index]
-        if (
-            state == "idle"
-            or (state == "look" and fixed is not None)
-            or state.startswith("body-look-")
-        ):
+        if clip.rest_sway and (state != "look" or fixed is not None):
             image = self._rest_renderer.resolve(
                 image,
                 offset=self._ambient.motion_offset(now),
@@ -327,7 +326,8 @@ class AnimatedPet:
         if reselect:
             self.render(now, self._last_render_pointer)
             return
-        clip = self.assets.body_clips.get(state) or self.assets.clips[state]
+        clip = (self.assets.expression_clips.get(state)
+                or self.assets.body_clips.get(state) or self.assets.clips[state])
         if clip.movement or state in ("running-left", "running-right"):
             progress = self.frame_clock.progress_seconds(
                 now,

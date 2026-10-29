@@ -134,6 +134,11 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             ("waving-greeting", None),
         )
         game._sequence._game._random_index = lambda _size: 2
+        # A facial result does not interrupt the genuine greeting body action.
+        # Let its authored frames finish before advancing the round by hand.
+        self.timing.advance(
+            self.pet._character_assets.clips["waving-greeting"].duration_seconds + .2,
+        )
         game.choose(Move.ROCK)
         self.assertEqual(bubble_text(self.pet), "Eins!")
         self.assertEqual(game.score.games, 0)
@@ -178,11 +183,15 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         )
         self.assertIsNone(bubble_text(self.pet))
         game._sequence.advance()
+        self.pet._animated.render(time.monotonic(), (0, 0))
         self.assertEqual(
             self.pet._animated.frame_clock.active_key,
-            ("failed", None),
+            ("rest-neutral", 0),
         )
         game._sequence.advance()
+        self.pet._animated.render(time.monotonic(), (0, 0))
+        self.assertEqual(self.pet._animated.frame_clock.active_key,
+                         ("expression-downcast", 0))
         remark = bubble_text(self.pet)
         assert remark is not None
         from aiko_pet.pet.mind.catalog import DialogueBook

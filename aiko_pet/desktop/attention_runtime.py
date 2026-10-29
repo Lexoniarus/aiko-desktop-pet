@@ -12,6 +12,7 @@ from typing import Callable, Literal
 
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
+from ..pet.animation.expression import Expression
 from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.idle_emote import choose_idle_emote
 from ..pet.animation.idle_gesture import IdleGestureChoice
@@ -46,6 +47,7 @@ class AttentionRuntimePorts:
         [bool, float], Literal["blocked", "turning", "ready"]
     ] = lambda _requested, _now: "blocked"
     idle_gesture_duration: Callable[[str], float] = lambda _clip: 0.0
+    express: Callable[[Expression | None], object] = lambda _value: None
 
 
 class DesktopAttentionRuntime:
@@ -98,6 +100,8 @@ class DesktopAttentionRuntime:
                 displayed = self._presenter.show_cursor_warning(
                     reaction.text, int(parameter("warning_duration_ms")),
                 )
+                if displayed:
+                    ports.express(reaction.expression)
         return CursorWarningReceipt(
             event.warning_id, ports.clock() if displayed else now, displayed,
         )
@@ -119,7 +123,8 @@ class DesktopAttentionRuntime:
             event_name, self.attention.state, ports.context(), ports.clock(),
         )
         if reaction is not None:
-            self._presenter.show_cursor_comment(reaction.text, 3000)
+            if self._presenter.show_cursor_comment(reaction.text, 3000):
+                ports.express(reaction.expression)
         else:
             self._presenter.show_cursor_emote(emote, 1500)
 

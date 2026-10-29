@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Callable
 
+from ...pet.animation.expression import Expression
 from ...pet.interaction_events import SocialCompletion
 from ...pet.mind.catalog import Reaction
 from ...pet.mind.reaction_sequence import Cue
@@ -30,8 +31,12 @@ class ReactionPlayer:
         on_text: Callable[[str], None] = lambda _event: None,
         on_wish_text: Callable[[int], None] = lambda _instance: None,
         social_completed: Callable[[SocialCompletion], None] = lambda _kind: None,
+        express: Callable[[Expression | None], object] = lambda _value: None,
     ) -> None:
         self._on_text = on_text
+        self._express = express
+        self._expression: Expression | None = None
+        self._expression_at = 0
         self._social_completed = social_completed
         self._on_wish_text = on_wish_text
         self._wish_instance_id: int | None = None
@@ -104,6 +109,8 @@ class ReactionPlayer:
 
     def cancel(self) -> None:
         self._invalidate_timer()
+        self._express(None)
+        self._expression = None
         self._cues = ()
         self._story = False
         self._subject = None
@@ -143,6 +150,8 @@ class ReactionPlayer:
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
         self._cues = reaction.beats
+        self._expression = reaction.expression
+        self._expression_at = reaction.expression_at
         self._story = reaction.presentation == "story"
         self._advance(self._generation, 0)
 
@@ -171,6 +180,8 @@ class ReactionPlayer:
             return
         if generation != self._generation:
             return
+        if index == self._expression_at and self._expression is not None:
+            self._express(self._expression)
         if index >= len(self._cues):
             self._complete(generation)
             return

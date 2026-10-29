@@ -18,6 +18,8 @@ from ..pet.animation.body_orientation import (
     BodyOrientation,
 )
 from ..pet.animation.character import CharacterCatalog
+from ..pet.animation.expression import Expression
+from ..pet.animation.expression_playback import ExpressionPlayback
 from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.idle_gesture import QUESTION_REQUEST_CLIP
 from ..pet.animation.priority import RenderDecision, choose_animation_priority
@@ -85,6 +87,8 @@ class DesktopAnimationRuntime:
         self._pointer: tuple[int, int] = (0, 0)
         self._last_pointer_move = -100.0
         self._idle_gesture_front = False
+        self._expressions = ExpressionPlayback(assets)
+        self._last_base_pose = SpriteSelection("idle", 0)
 
     def advance_walk(
         self,
@@ -205,6 +209,38 @@ class DesktopAnimationRuntime:
         return "ready" if self._body_orientation.phase == 0 else "turning"
 
     def select_animation(
+        self, now: float, pointer: tuple[int, int], last_pointer_move: float,
+        game_mode: bool, active_action: str | None,
+    ) -> RenderDecision:
+        base = self._select_base_animation(
+            now, pointer, last_pointer_move, game_mode, active_action,
+        )
+        self._last_base_pose = base.sprite
+        decision, blink_finished = self._expressions.select(
+            base, now, mood=self.ambient.profile.expression,
+            blinking=self.ambient.blinking,
+        )
+        if blink_finished:
+            self.ambient.finish_blink(now)
+        return decision
+
+    def request_expression(self, expression: Expression | None) -> bool:
+        """Never interrupt gaze, locomotion, custody or an authored body action."""
+        now = time.monotonic()
+        protected = any((
+            self._state.sleeping, self.walk_active(),
+            (now < self._ports.action_until()
+             and self._ports.action_clip_id() != "idle"),
+            self._ports.holding_readable(),
+            self._ports.ready_for_handover(), self._visual.orienting,
+            self._last_base_pose.animation != "idle",
+        ))
+        admitted = self._expressions.request(None if protected else expression)
+        if admitted:
+            self.ambient.finish_blink(now)
+        return admitted
+
+    def _select_base_animation(
         self,
         now: float,
         pointer: tuple[int, int],
@@ -247,7 +283,6 @@ class DesktopAnimationRuntime:
         )
         if priority.mode != "passive":
             self._body_orientation.reset()
-            self.ambient.suspend(now)
             if priority.interrupt_walk:
                 self.interrupt_walk()
             selected = (
@@ -257,6 +292,10 @@ class DesktopAnimationRuntime:
             )
             if selected is None:
                 raise AssertionError("An active animation needs a clip")
+            if (priority.mode == "game" and selected == "waiting"
+                    and self._assets.expression_clips):
+                return RenderDecision(self.ambient.choose_rest(now), clear_action=True)
+            self.ambient.suspend(now)
             return RenderDecision(
                 SpriteSelection(selected),
                 clear_action=priority.clear_action,

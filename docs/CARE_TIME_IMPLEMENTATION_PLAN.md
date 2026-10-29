@@ -1,5 +1,10 @@
 # Care, relationship and real-time implementation plan
 
+> **Emotional model update, 2026-10-29:**
+> [Base mood, bounded modifiers and spoken reactions](EMOTIONAL_BASE_AND_REACTIONS.md)
+> supersedes the older raw-Moodlet-majority rules below. Numeric base mood is
+> evaluated first; complete Moodlet evidence remains available for topics.
+
 > **Dialogue planning update, 2026-10-25:** the owner-approved
 > [separation of spontaneous speech, immediate reactions and Plaudern](#dialogue-planning-spontaneous-speech-immediate-reactions-and-plaudern-2026-10-25)
 > below records the agreed dialogue scope. Dated planning entries remain

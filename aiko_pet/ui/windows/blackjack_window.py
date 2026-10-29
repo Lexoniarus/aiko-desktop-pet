@@ -27,6 +27,7 @@ class BlackjackWindow:
         animate: Callable[[str], None], always_on_top: bool, skin: AikoSkin,
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
     ) -> None:
         self._closed = False
@@ -89,6 +90,7 @@ class BlackjackWindow:
                 present=self._present, hand=cards.show, say=speak,
                 animate=animate, dialogue=dialogue,
                 round_event=round_event,
+                express_event=express_event,
             )
             self._present(self._sequence.game.table, self._sequence.game.score)
             self._panel.show(root)

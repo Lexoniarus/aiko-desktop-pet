@@ -69,7 +69,10 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         raise ValueError("Invalid ambient body hold balance")
     if not (0 < catalog.number("emotions", "subdued_below_mood")
             < catalog.number("emotions", "satisfied_at_mood") <= 100):
-        raise ValueError("Invalid emotional fallback thresholds")
+        raise ValueError("Invalid emotional base thresholds")
+    if not (0 < catalog.number("emotions", "long_term_modifier_cap")
+            < catalog.number("emotions", "noticeable_modifier_intensity") <= 3):
+        raise ValueError("Invalid emotional modifier balance")
     sleep = sections["sleep"]
     if (any(value <= 0 for key, value in sleep.items()
             if key not in ("default_start_minute", "default_end_minute"))

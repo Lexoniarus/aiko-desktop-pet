@@ -15,6 +15,7 @@ from string import Formatter
 from typing import Any, Literal
 
 from ...games.contracts import BlackjackDetails, GameId, RockPaperScissorsDetails
+from ..animation.expression import Expression, event_expression
 from ..balance import BALANCE
 from ..catalog_validation import enum_value, load_json, object_fields
 from ..content import GERMAN_TEXT
@@ -46,6 +47,7 @@ from .dialogue_context import (
     SituationalCondition,
 )
 from .dialogue_events import DIALOGUE_EVENTS
+from .expression_policy import speech_expression
 from .reaction_sequence import Cue, conversation_timing
 
 CATALOGUE = (
@@ -389,8 +391,15 @@ class Reaction:
     presentation: Literal["short", "story"] = "short"
     completed_social: SocialCompletion | None = None
     wish_instance_id: int | None = None
+    expression: Expression | None = None
+    expression_at: int = 0
 
     def __post_init__(self) -> None:
+        if self.expression is None:
+            object.__setattr__(self, "expression", event_expression(self.event))
+        if (type(self.expression_at) is not int
+                or not 0 <= self.expression_at <= len(self.beats)):
+            raise ValueError("Expression beat is outside the reaction")
         if self.event == "talk":
             object.__setattr__(self, "beats", conversation_timing(self.beats))
 
@@ -595,4 +604,9 @@ class DialogueBook:
                         )
             beats = tuple(Cue.text(beat.content.format(**values))
                           if beat.kind == "text" else beat for beat in beats)
-        return Reaction(line.id, beats, line.animation, event, line.presentation)
+        return Reaction(
+            line.id, beats, line.animation, event, line.presentation,
+            expression=speech_expression(event, context),
+            expression_at=next((i for i, beat in enumerate(beats)
+                                if beat.kind == "text"), 0),
+        )

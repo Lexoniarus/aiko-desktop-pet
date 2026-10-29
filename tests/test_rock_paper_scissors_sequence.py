@@ -40,6 +40,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.busy: list[bool] = []
         self.animations: list[str] = []
         self.rounds: list[GameRoundEvent] = []
+        self.expressions: list[str] = []
         self.flow = RockPaperScissorsSequence(
             schedule=self.clock.schedule,
             cancel=self.clock.cancel,
@@ -54,6 +55,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
             animate=self.animations.append,
             set_busy=self.busy.append,
             round_event=self.rounds.append,
+            express_event=self.expressions.append,
         )
 
     def step(self) -> None:
@@ -94,10 +96,12 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         )
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.step()
-        self.assertEqual(self.animations[-1], "failed")
+        self.assertEqual(self.animations, ["waving-greeting"])
+        self.assertNotIn("game_player_win", self.expressions)
         self.assertEqual(self.events[-1], ("emote", "drops"))
         self.step()
         self.assertEqual(self.events[-1][0], "text")
+        self.assertEqual(self.expressions[-1], "game_player_win")
         from aiko_pet.pet.mind.catalog import DialogueBook
 
         allowed = {
@@ -126,10 +130,10 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         )
 
     def test_all_outcomes_trigger_correct_emotes_and_animations(self) -> None:
-        for aiko_index, animation, emote in (
-            (0, "failed", "drops"),
-            (1, "waving", "question"),
-            (2, "jumping", "star"),
+        for aiko_index, animation, emote, event in (
+            (0, None, "drops", "game_player_win"),
+            (1, None, "question", "game_draw"),
+            (2, "jumping", "star", "game_aiko_win"),
         ):
             with self.subTest(aiko_index=aiko_index):
                 self.setUp()
@@ -137,8 +141,11 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
                 self.flow.choose(Move.PAPER)
                 for _ in range(5):
                     self.step()
-                self.assertEqual(self.animations[-1], animation)
+                self.assertEqual(self.animations, [animation] if animation else [])
                 self.assertEqual(self.events[-1], ("emote", emote))
+                self.assertEqual(self.expressions, ["game_countdown"])
+                self.step()
+                self.assertEqual(self.expressions[-1], event)
 
     def test_second_choice_is_blocked_until_outcome_finishes(self) -> None:
         self.flow.choose(Move.ROCK)

@@ -24,6 +24,8 @@ and test-cleanup plans.
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
 | Unterhalten, online sayings/jokes/facts and the local horoscope book | [Social content](SOCIAL_CONTENT.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
+| V3 Idle, facial reactions, mood and continuous sway | [V3 character expressions](V3_CHARACTER_EXPRESSIONS.md) |
+| Numeric base mood, bounded emotional modifiers and spoken game reactions | [Emotional base and reactions](EMOTIONAL_BASE_AND_REACTIONS.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
 | Branches, reviews and CI | [Development workflow](GITHUB_WORKFLOW.md) |
 | Existing media and its capture limitations | [Media gallery](MEDIA_GALLERY.md) |

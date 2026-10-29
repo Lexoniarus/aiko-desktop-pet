@@ -73,17 +73,17 @@ class AmbientDirectorTests(unittest.TestCase):
         self.assertEqual(offsets, [0, 0, 1, 1, 0, 0, -1, -1, 0])
         self.assertLessEqual(max(map(abs, offsets)), 1)
 
-    def test_current_gaze_keeps_motion_clock_while_actions_reset_it(self) -> None:
-        self.policy.suspend(101, keep_pose_motion=True)
+    def test_gaze_actions_and_blink_share_one_continuous_motion_clock(self) -> None:
+        self.policy.suspend(101)
         self.assertEqual(self.policy.motion_offset(101), 1)
         self.policy.suspend(101)
-        self.assertEqual(self.policy.motion_offset(101), 0)
-        self.assertEqual(self.policy.motion_offset(101 + .85), 1)
+        self.assertEqual(self.policy.motion_offset(101), 1)
+        self.assertEqual(self.policy.motion_offset(101 + .85), 0)
         self.policy.next_blink_at = 103
         self.policy.choose(105)
         self.assertTrue(self.policy.blinking)
         offset_before_completion = self.policy.motion_offset(105.2)
-        self.assertNotEqual(offset_before_completion, 0)
+        self.assertEqual(offset_before_completion, 0)
         self.policy.finish_blink(105.2)
         self.assertEqual(self.policy.motion_offset(105.2), offset_before_completion)
 
@@ -148,13 +148,13 @@ class AmbientDirectorTests(unittest.TestCase):
         self.assertEqual(self.policy.motion_offset(101.0), 1)
         self.assertFalse(self.policy.blinking)
 
-    def test_busy_computer_overrides_idle_but_resets_ambient_motion(self) -> None:
+    def test_busy_computer_overrides_idle_without_resetting_motion(self) -> None:
         selected = self.policy.select_passive_animation(
             101.0, gaze_direction=None, observing_computer=True,
             computer_busy=True, energy=80, mood=80, satiety=80,
         ).sprite
         self.assertEqual(selected, SpriteSelection("review"))
-        self.assertEqual(self.policy.motion_offset(101.0), 0)
+        self.assertEqual(self.policy.motion_offset(101.0), 1)
         self.assertFalse(self.policy.blinking)
 
     def test_passive_idle_uses_original_blink_schedule(self) -> None:
@@ -178,7 +178,7 @@ class AmbientDirectorTests(unittest.TestCase):
         self.assertEqual(self.policy.choose(100.5), SpriteSelection("look", 12))
         self.assertEqual(self.policy.choose(101.1), SpriteSelection("idle", 0))
         self.policy.finish_outing(102, 1)
-        self.policy.suspend(102.2, keep_pose_motion=True)
+        self.policy.suspend(102.2)
         self.assertEqual(self.policy.choose(102.3).animation, "idle")
 
 

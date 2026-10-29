@@ -6,7 +6,7 @@ import unittest
 from dataclasses import replace
 from types import MappingProxyType
 from typing import cast
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.animation_runtime import (
@@ -18,6 +18,7 @@ from aiko_pet.desktop.walk_runtime import WalkDriver
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
+from aiko_pet.pet.animation.expression import Expression
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement.contracts import WalkStep
@@ -26,6 +27,59 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAnimationRuntimeTests(unittest.TestCase):
+    def test_face_does_not_start_an_action_or_interrupt_walking_and_gaze(self):
+        self.choose()
+        with patch("aiko_pet.desktop.animation_runtime.time.monotonic",
+                   return_value=100):
+            self.assertTrue(self.runtime.request_expression(Expression.POSITIVE))
+        self.assertEqual(self.choose().sprite,
+                         SpriteSelection("expression-positive", 0))
+        self.walk.movement.interrupt.assert_not_called()
+        self.assertEqual(self.action_until, 0)
+        self.visual.observe.return_value = PassiveObservation(12, False)
+        self.assertEqual(self.choose(now=100.1).sprite, SpriteSelection("look", 12))
+        self.visual.observe.return_value = PassiveObservation(None, False)
+        self.assertEqual(self.choose(now=100.2).sprite,
+                         SpriteSelection("rest-neutral", 0))
+
+    def test_face_is_rejected_during_custody_sleep_and_existing_body_actions(self):
+        for blocker in ("book", "handover", "sleep", "action", "walk"):
+            with self.subTest(blocker=blocker):
+                self.create_runtime_fixture()
+                self.choose()
+                self.holding_readable = blocker == "book"
+                self.ready_for_handover = blocker == "handover"
+                set_test_pet_values(self.state, sleeping=blocker == "sleep")
+                self.action_until = 200 if blocker == "action" else 0
+                self.walk.movement.remaining_distance = 20 if blocker == "walk" else 0
+                with patch("aiko_pet.desktop.animation_runtime.time.monotonic",
+                           return_value=100):
+                    self.assertFalse(self.runtime.request_expression(Expression.FIRM))
+
+    def test_game_rest_blinks_without_turning_or_resetting_the_sway(self):
+        self.runtime.ambient = AmbientDirector(100)
+        self.runtime.ambient.next_blink_at = 101
+        self.runtime.ambient.next_glance_at = 100
+        self.choose(now=100, game_mode=True)
+        self.assertEqual(self.choose(now=101, game_mode=True).sprite,
+                         SpriteSelection("rest-neutral", 2))
+        self.assertEqual(self.choose(now=101.07, game_mode=True).sprite,
+                         SpriteSelection("rest-neutral", 3))
+        self.assertEqual(self.runtime.ambient.motion_offset(101), 1)
+
+    def test_game_uses_new_rest_but_a_real_jump_still_wins(self):
+        self.assertEqual(self.choose(game_mode=True).sprite,
+                         SpriteSelection("rest-neutral", 0))
+        with patch("aiko_pet.desktop.animation_runtime.time.monotonic",
+                   return_value=100):
+            self.assertTrue(self.runtime.request_expression(Expression.DOWNCAST))
+        self.assertEqual(self.choose(game_mode=True).sprite,
+                         SpriteSelection("expression-downcast", 0))
+        self.assertEqual(self.choose(game_mode=True, active_action="jumping").sprite,
+                         SpriteSelection("jumping"))
+        self.assertEqual(self.choose(game_mode=True).sprite,
+                         SpriteSelection("rest-neutral", 0))
+
     def test_main_tick_profile_is_shared_and_frames_do_not_replace_it(self):
         from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
 
@@ -175,7 +229,8 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.assertEqual(self.choose(now=104).sprite,
                          SpriteSelection("body-look-left", 5))
         self.visual.desired_cursor_gaze.return_value = None
-        self.assertEqual(self.choose(now=104.1).sprite, SpriteSelection("idle", 0))
+        self.assertEqual(self.choose(now=104.1).sprite,
+                         SpriteSelection("rest-neutral", 0))
         self.assertEqual(self.runtime._body_orientation.phase, 0)
 
     def test_finished_cursor_profile_settles_to_compatible_quarter_without_front(self):
@@ -219,7 +274,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         for n in range(1, 4):
             result = self.choose(now=103.5 + n * .14)
             self.assertEqual(self.runtime._body_orientation.phase, 3 - n)
-        self.assertEqual(result.sprite, SpriteSelection("idle", 0))
+        self.assertEqual(result.sprite, SpriteSelection("rest-neutral", 0))
         self.assertEqual(self.settings.x, None)
 
     def test_final_idle_displacement_admits_one_hold_after_movement_suspension(self):

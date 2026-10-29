@@ -18,10 +18,12 @@ class QuizSequence:
         emote: Callable[[str, int], None],
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
     ) -> None:
         self.game = game
         self._schedule, self._cancel, self._present = schedule, cancel, present
         self._say, self._animate, self._emote = say, animate, emote
+        self._express_event = express_event
         self._dialogue = dialogue or GameDialogue().choose
         self._event = round_event
         self._session = uuid4().hex
@@ -53,6 +55,7 @@ class QuizSequence:
 
         def speak() -> None:
             if not self._closed and generation == self._generation:
+                self._express_event(event)
                 self._say(text, duration)
                 self._timer = self._schedule(duration, ready)
 

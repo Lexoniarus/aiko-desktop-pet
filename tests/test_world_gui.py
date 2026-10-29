@@ -1585,8 +1585,12 @@ class WorldGuiTests(unittest.TestCase):
         )
         self.assertEqual(
             self.app.mind.emotional_state(self.app.state).primary,
-            EmotionalState.FRUSTRATED,
+            EmotionalState.AMBIVALENT,
         )
+        self.assertIn("withheld", {
+            influence.cause.value
+            for influence in self.app.mind.emotional_state(self.app.state).influences
+        })
         self.assertEqual(world.interaction.phase, "await_return")
         stored = self.app.store.load_session().state
         self.assertAlmostEqual(stored.friendship, initial - .5)

@@ -32,6 +32,7 @@ class RockPaperScissorsWindow:
         always_on_top: bool, skin: AikoSkin | None = None,
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
     ) -> None:
         self._on_closed = on_closed
@@ -102,6 +103,7 @@ class RockPaperScissorsWindow:
             self.close_button = self._panel.close_button
             self._sequence = RockPaperScissorsSequence(
                 dialogue=dialogue, round_event=round_event,
+                express_event=express_event,
                 schedule=self.window.after, cancel=self.window.after_cancel,
                 say=speak, show_emote=emote, show_aiko_hand=hand,
                 reveal_player=self.reveal_player, animate=animate,

@@ -24,12 +24,14 @@ class MastermindSequence:
         emote: Callable[[str, int], None],
         dialogue: Callable[[str], str] | None = None,
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        express_event: Callable[[str], None] = lambda _event: None,
         game: MastermindSession | None = None,
     ) -> None:
         self.game = game if game is not None else MastermindSession()
         self._schedule, self._cancel, self._present = schedule, cancel, present
         self._show_code, self._hide_code = show_code, hide_code
         self._say, self._animate, self._emote = say, animate, emote
+        self._express_event = express_event
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self._round_event, self._session_id = round_event, uuid4().hex
         self._closed = self._started = False
@@ -66,6 +68,7 @@ class MastermindSequence:
         duration = conversation_timing((Cue.text(text),))[0].duration_ms
 
         def speak() -> None:
+            self._express_event(event)
             self._say(text, duration)
             self._later(duration, self._ready)
 
@@ -146,7 +149,7 @@ class MastermindSequence:
             self._react(
                 "game_mm_player_win" if won else "game_mm_aiko_win",
                 emote="star" if won else "idea",
-                animation="jumping" if won else "review",
+                animation="jumping" if won else "idle",
             )
 
     def next_round(self) -> None:

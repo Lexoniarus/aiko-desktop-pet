@@ -135,7 +135,8 @@ class CursorPoseRuntimeTests(unittest.TestCase):
         self.runtime.ambient.next_glance_at = 0
         self.visual.observe.return_value = PassiveObservation(None, True, True)
         self.assertEqual(
-            self.choose(), RenderDecision(SpriteSelection("idle", 0), True)
+            self.choose(), RenderDecision(SpriteSelection("rest-neutral", 0), True,
+                                          refresh_after_ms=140)
         )
 
     def test_only_ready_offer_selects_static_last_pickup_pose(self):
@@ -145,7 +146,8 @@ class CursorPoseRuntimeTests(unittest.TestCase):
         )
         self.ready = False
         self.assertEqual(
-            self.choose(), RenderDecision(SpriteSelection("idle", 0), True)
+            self.choose(), RenderDecision(SpriteSelection("rest-neutral", 0), True,
+                                          refresh_after_ms=140)
         )
 
     def test_offer_does_not_preempt_sleep_game_active_action_or_walk(self):
@@ -153,7 +155,8 @@ class CursorPoseRuntimeTests(unittest.TestCase):
         set_test_pet_values(self.state, sleeping=True)
         self.assertEqual(self.choose().sprite, SpriteSelection("sleep"))
         set_test_pet_values(self.state, sleeping=False)
-        self.assertEqual(self.choose(game=True).sprite, SpriteSelection("waiting"))
+        self.assertEqual(self.choose(game=True).sprite,
+                         SpriteSelection("rest-neutral", 0))
         self.assertEqual(self.choose(action="eat").sprite, SpriteSelection("eat"))
         self.walk.step.return_value = WalkStep(0, -1)
         self.assertEqual(self.choose().sprite, SpriteSelection("running-left"))
@@ -303,7 +306,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
             self.assertEqual(world.world.get(token).state, ObjectState.USER_HELD)
             return app._animated.frame_clock.active_key
 
-        self.assertEqual(render_at(eyes), ("idle", 0))
+        self.assertEqual(render_at(eyes), ("rest-neutral", 0))
         self.assertFalse(world.ready_for_handover())
         clip = app._animated.assets.clips["pick_up"]
         hand_anchor = clip.frames[-1].food_anchor
@@ -315,7 +318,8 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         )
         self.assertEqual(render_at(hands), ("pick_up", 7))
         self.assertTrue(world.ready_for_handover())
-        self.assertEqual(render_at((eyes[0], eyes[1] + 12 * scale)), ("idle", 0))
+        self.assertEqual(render_at((eyes[0], eyes[1] + 12 * scale)),
+                         ("rest-neutral", 0))
         self.assertFalse(world.ready_for_handover())
         self.assertEqual(render_at((eyes[0] + 80 * scale, eyes[1])), ("look", 4))
         self.assertFalse(world.ready_for_handover())
@@ -337,7 +341,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         self.assertFalse(world.ready_for_handover())  # A live refusal hides hands.
         set_test_pet_values(app.state, energy=60)
         # Face-level release keeps the established handover rules as well.
-        self.assertEqual(render_at(eyes), ("idle", 0))
+        self.assertEqual(render_at(eyes), ("rest-neutral", 0))
         world.cursor.release()
         self.assertFalse(world.ready_for_handover())
         self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
