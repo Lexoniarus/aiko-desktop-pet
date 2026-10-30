@@ -152,6 +152,14 @@ small screens. Counts and a permanent legend supplement colors; feedback is
 unordered and never identifies exact positions. Palette keys 1–6 and Left/Right,
 Delete and Enter provide an alternative to dragging.
 
+The player window also retains Aiko's four public code slots. During play they
+show only question marks. The existing terminal reveal exposes one slot every
+180 ms with its illustrated gem, position and German color name; the solution
+stays readable while the separate desktop safe opens and Aiko eats. A new round
+conceals all four slots. Both views consume the same Sequence-owned CodeView;
+the strip has no access to the live secret or responsibility for generating it.
+The rules owner generates once per round, not once per attempt.
+
 Pointer input also supports clicking a palette color, then a destination slot.
 Draft pins can be picked up again and moved or swapped within the active row.
 The drag preview belongs to the game Toplevel, outside the grabbed source

@@ -7,6 +7,42 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## Mastermind solution visibility correction — 2026-10-30
+
+Owner playtesting found that Aiko's solution was not visibly retained after
+the round. The Sequence already revealed the correct CodeView, but the safe
+only drew four tiny color lights on its closed-door frame. Opening the door
+removed those lights. The earlier native assertions checked CodeView slots
+and the safe frame, not a readable solution surface; they missed this defect.
+
+MastermindWindow now projects the same public CodeView into a persistent
+MastermindCodeStrip, matching the approved preview's secret strip. It shows
+four question marks during play, reveals each position on the existing
+180 ms reveal boundaries, and keeps the illustrated gems plus ordered German
+color names visible throughout opening/eating and afterwards. Only an explicit
+new round conceals it again. No secret is queried by the widget; the rules
+owner still refuses any live-code reveal. Existing game art is reused, with
+32px gems normally and a 24px compact variant. The body budget preserves the
+large-screen ten-row layout; small windows keep their scrolling and input.
+
+The secret itself was already constant: MastermindSession creates it once,
+uses it for every submitted guess and generates another only in next_round.
+An added regression checks ten different guesses, including repeated colors,
+against independently stated feedback and verifies exactly one factory call
+until the explicit next round. Native tests also count factory calls over all
+ten attempts, inspect actual visible gem/caption items, progressive reveal,
+both outcomes, persistence after the safe opens, reset and narrow-window input.
+
+All 39 focused Mastermind checks pass. An isolated native run with white,
+purple, blue and yellow also verifies readable ordering and persistence after
+the snack. Captures and validation evidence remain outside Git under
+`../lokale-daten/mastermind-code-reveal-2026-10-30/`.
+
+The frozen full native suite passes **2,513 tests** in 407.082 seconds with no
+Python/JSON source changes during the run. Ruff, strict Mypy (385 files) and
+Pyright pass. The constant-secret regression is committed as `d49914d`; the
+readable reveal and its native regressions are committed as `ab9e1a1`.
+
 ## Cross-game transition audit — 2026-10-30
 
 Owner feedback prompted a native timing audit of the five games other than
