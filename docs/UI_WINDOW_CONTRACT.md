@@ -343,3 +343,9 @@ its old timers and clears its visible text/emoji through GameSpeech. The
 Connect Four Sequence owns landing gaze and its delayed return, so window
 movement and interruption use the same current target. Quiz reading and
 waiting callbacks must validate ownership before clearing the current timer.
+
+Quiz narration uses its own readable pacing (1.4–5 seconds per bubble segment),
+including catalogue content, hosting lines and reminders. The bubble lifetime
+and Sequence continuation share the same deadline; input releases only after
+all four options and the release cue finish. This exception does not change
+the brisk pacing of the other games or the 450 ms game emoji interludes.

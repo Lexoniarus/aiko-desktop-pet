@@ -7,6 +7,38 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## Quiz moderation reading-time correction — 2026-10-30
+
+Owner playtesting found that the shared brisk game timing was too short for
+Aiko's central quiz-host narration. QuizSequence now uses the dedicated
+GamePacing.quiz_text_ms policy for every spoken text: greeting, question,
+individual options, release, acknowledgement, outcome, catalogue explanation,
+meta-comment and waiting reminder/repeated question.
+
+Quiz text gets 500 ms plus 35 ms per character, bounded to 1.4–5 seconds per
+bubble segment (previously 180 ms plus 25 ms, bounded to 0.75–3.2 seconds).
+Long content still splits into complete segments and the visible bubble and
+its continuation use the same deadline. Emoji interludes remain 450 ms and
+the other five games retain their brisk pacing. No catalogue, speech copy,
+quiz rule, save, visual asset or layout was changed.
+
+The established moderation gates are preserved: question → A/B/C/D one at a
+time → complete release cue → player choice. Explanation and host aside still
+finish before Next Question. Waiting remains untimed and selection interrupts
+its pose/reminder immediately. Close invalidates queued reading parts.
+
+All 26 focused Quiz/pacing/cancellation checks pass. Three native host scenarios
+also pass with timestamped traces, including actual question and short-answer
+bubble identity beyond the old deadlines, hidden future options, blocked early
+selection and automatic waiting without hover. A sampled short catalogue question
+reached choice after approximately 14.5 seconds including welcome and release.
+Ruff, strict Mypy (385 files) and Pyright pass. Evidence is local-only under
+`../lokale-daten/quiz-reading-time-2026-10-30/`.
+
+The frozen native regression suite passes **2,516 tests** in 434.171 seconds,
+with no Python/JSON source changes during the run. The pacing change and its
+regressions are committed as `791bc3f`.
+
 ## Mastermind solution visibility correction — 2026-10-30
 
 Owner playtesting found that Aiko's solution was not visibly retained after
