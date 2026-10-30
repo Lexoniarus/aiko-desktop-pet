@@ -109,6 +109,10 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.assertTrue(flow.busy)
         self.assertEqual(len(self.rounds), 3)
         self.assertIsNone(self.rounds[-1].outcome)
+        self.assertEqual(self.lines.count('game_bj_welcome'), 1)
+        self.assertEqual(self.delays[-1], 900)  # Shuffle, no second welcome cue.
+        flow.greet()
+        self.assertEqual(self.lines.count('game_bj_welcome'), 1)
 
     def test_close_cancels_every_logical_phase_and_stale_callback(self):
         for stop in range(14):

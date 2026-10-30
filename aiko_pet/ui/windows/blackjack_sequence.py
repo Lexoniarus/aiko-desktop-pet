@@ -92,9 +92,9 @@ class BlackjackSequence:
         if self._closed or self._started:
             return
         self._started = True
-        self._begin()
+        self._begin(welcome=True)
 
-    def _begin(self) -> None:
+    def _begin(self, *, welcome: bool = False) -> None:
         self.busy = True
         self._player_count = self._dealer_count = 0
         self._dealer_revealed = False
@@ -102,9 +102,13 @@ class BlackjackSequence:
             GameId.BLACKJACK, self._session_id, self.game.score.games + 1,
         ))
         self._publish()
-        self._line('game_bj_welcome', lambda: self._move(
-            'shuffle', None, 0, lambda: self._deal(0),
-        ))
+        if welcome:
+            self._line('game_bj_welcome', self._shuffle)
+        else:
+            self._shuffle()
+
+    def _shuffle(self) -> None:
+        self._move('shuffle', None, 0, lambda: self._deal(0))
 
     def _publish(self, flip: bool = False) -> None:
         source = self.game.table

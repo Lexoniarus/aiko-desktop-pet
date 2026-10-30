@@ -139,7 +139,10 @@ class BlackjackGuiTests(unittest.TestCase):
         self.ready(game)
         game.stand()
         self.wait_for(lambda: game._sequence.game.score.games == 1)
+        self.wait_for(lambda: game._sequence.game.table.result is None)
+        started = self.timing.monotonic()
         self.wait_for(lambda: not game._sequence.busy)
+        self.assertLessEqual(self.timing.monotonic() - started, 2.3)
         self.assertEqual(game._sequence.game.score.games, 1)
         self.assertIsNone(self.pet._game_visuals.hand._hand.cards[1])
 
