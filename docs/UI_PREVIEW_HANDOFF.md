@@ -13,6 +13,24 @@ the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
 ## Durable local reference bundle
 
+### Approved Blackjack V3 staging follow-up
+
+On 2026-10-30 the owner accepted
+`../design-previews/blackjack-v3-2026-10-29/preview.html`, relative to the checkout
+root. Read the [V3 staging direction](UI_VN_DESIGN.md#approved-blackjack-v3-staging--2026-10-30)
+and its README/`approval-record.json`. The 2026-10-27 casino concept remains the
+unchanged card, layout and motion foundation.
+
+Public target gaze, installed frontal expressions and exclusive text/emoji
+bubbles support the dealer role. Automatic waiting requires no hover and is
+immediately interruptible by input. Stand/reveal announcements remain readable;
+results finish their formal line, personal aside and emoji before the existing
+2.8-second countdown leads into collection and the next live hand. Bank policy,
+all card sources/scale, deck/bank placement and card-motion code are unchanged.
+Browser/rule checks and source hashes remain in the external bundle. Native
+speech completion, animation priorities, relationship dialogue and practical
+Windows validation remain later work. No application integration is authorized.
+
 ### Approved Mastermind V3 expression follow-up
 
 On 2026-10-28 the owner approved

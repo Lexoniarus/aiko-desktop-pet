@@ -1,5 +1,47 @@
 # Aiko VN interface direction — 2026-10-20
 
+## Approved Blackjack V3 staging — 2026-10-30
+
+The owner approved the follow-up at
+`../design-previews/blackjack-v3-2026-10-29/preview.html`, relative to the checkout
+root, with “ok passt”. Its README and `approval-record.json` preserve acceptance
+and reviewed hashes. This extends the 2026-10-27 casino concept below; the earlier
+bundle remains unchanged.
+
+- Aiko remains the theatrical Las Vegas dealer for her single VIP guest. The
+  emerald/cream/gold table, original card artwork at a common 128×128 display
+  area, bank hand on her left and shared deck on her right are preserved.
+- Existing V3 gaze/body poses follow actual deck and hand geometry. Short looks
+  do not immediately turn her body; sustained attention permits the existing
+  turn sequence. Installed, separately approved frontal expressions supplement
+  comments. Gaze and the original Attack shuffle gesture take priority; no new
+  character images were generated. Older directional/action drawings remain
+  visibly distinct from the newer frontal expression artwork.
+- Player waiting starts automatically on phase entry, without hover. Sparse
+  looks and occasional dealer asides leave controls available. Text and existing
+  emoji alternate in one stable bubble. Input dismisses old speech/emote/gaze
+  cues immediately; close/reset/example changes cancel outstanding sequences.
+- The stand acknowledgement is readable before the reveal announcement. That
+  announcement precedes the card flip; the hidden card stays concealed until
+  the normal reveal. Bank comments accompany the unchanged fixed dealer policy.
+- Results run through formal announcement, personal aside and a 950 ms emoji,
+  then restore the aside. Only afterwards does the existing 2.8-second retention
+  countdown begin before collecting, shuffling and dealing the next live hand.
+  Review examples remain still after their ending. Preview reading times are
+  text-length estimates; native speech completion must own actual pacing.
+- The game model, original card-motion module and card sources remain byte
+  identical to the concept reference. This approval accepts the demonstrated
+  staging; it does not claim newly refined flight curves. The independent
+  draggable player window, landing-based totals, reduced motion and card scale
+  remain intact.
+
+The external bundle retains source provenance, hash checks, rule and browser
+validation, including a separate real-time wait check without hover. Full
+relationship-sensitive dialogue, native speech/animation priorities and practical
+Windows/DPI/input acceptance remain later implementation work. Design approval
+authorizes no application edits, production installation or save changes. HTML
+examples and their assets remain outside Git.
+
 ## Approved Mastermind V3 staging — 2026-10-28
 
 The owner approved the expression follow-up at
@@ -209,6 +251,10 @@ production-asset installation, catalogue, game-rule, World or save changes are
 authorized by this approval.
 
 ## Approved Blackjack concept — 2026-10-27
+
+The approved 2026-10-30 V3 staging follow-up above extends this concept with
+readable speech/reveal/result sequencing, expression and automatic wait cues.
+The original bundle below remains the preserved card/layout/motion reference.
 
 The owner accepted the visual direction and basic flow of the separate Blackjack
 preview at `../design-previews/blackjack-2026-10-27/preview.html`, relative to the
