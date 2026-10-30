@@ -571,7 +571,12 @@ class HoverUi:
 
     def dismiss_outside(self, x: int, y: int) -> None:
         """Outside clicks dismiss only transient controls, never settings."""
-        self._dismiss_controls(x, y, "explicit")
+        settings = self.settings_window
+        reason: SelectorCloseReason = (
+            "navigation" if settings is not None and settings.contains_pointer(x, y)
+            else "explicit"
+        )
+        self._dismiss_controls(x, y, reason)
 
     def dismiss_passively(self, x: int, y: int) -> None:
         """Focus loss can hide transient controls without cancelling a request."""

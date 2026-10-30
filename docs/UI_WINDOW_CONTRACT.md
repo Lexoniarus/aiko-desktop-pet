@@ -79,6 +79,10 @@ different selection view preserve the requested content. Zurück/Escape/outside
 dismissal explicitly cancels pending content, not an already accepted story.
 Focus loss uses a separate passive input port and automatic selector closure:
 it can hide the view but never cancels the request or a queued answer start.
+Clicks inside settings are internal navigation for both Tk input and global
+mouse polling. They may dismiss the selector without cancelling its requested
+content. Settings remain outside the toolbar's hover/keep-open geometry.
+Explicitly disabling online content still cancels through the settings owner.
 The existing UI callback chain carries a `SelectorCloseReason`; view cleanup
 itself does not imply cancellation. Accepted replacement commands, opt-out and
 shutdown retain their existing runtime cancellation. Provider, source and API-entry

@@ -229,6 +229,79 @@ class SocialGuiTests(unittest.TestCase):
     def test_delayed_focus_loss_preserves_running_conversation(self):
         self._focus_loss_preserves_request("playing")
 
+    def _settings_click_preserves_request(self, phase: str, source: str) -> None:
+        self._request_at_phase(phase)
+        self.pet._hover.open_settings(20, 20)
+        settings = self.pet._hover.settings_window
+        assert settings is not None
+        settings.select_section("credits")
+        self.pet.root.update_idletasks()
+        point = (settings.window.winfo_rootx() + 15,
+                 settings.window.winfo_rooty() + 80)
+        self.assertTrue(settings.contains_pointer(*point))
+        self.assertFalse(self.pet._hover.pointer_inside(*point))
+        event = tk.Event()
+        event.x_root, event.y_root = point
+        with (
+            patch.object(self.pet.root, "winfo_pointerx", return_value=point[0]),
+            patch.object(self.pet.root, "winfo_pointery", return_value=point[1]),
+            patch.object(self.pet._input.mouse, "clicked", return_value=True),
+            patch.object(self.pet._social_runtime, "cancel",
+                         wraps=self.pet._social_runtime.cancel) as cancel,
+        ):
+            if source == "tk":
+                self.pet._input.on_tk_press(event)
+            else:
+                self.pet._input.poll_global_click()
+            # A native press may reach both adapters, followed by focus loss.
+            self.pet._input.on_tk_press(event)
+            self.pet._input.poll_global_click()
+            self.pet._input.dismiss_after_focus_loss()
+        cancel.assert_not_called()
+        self.assertIs(self.pet._hover.settings_window, settings)
+        self.assertTrue(settings.window.winfo_ismapped())
+        bar = self.pet._hover.toolbar
+        assert bar is not None
+        self.assertFalse(bar.visible)
+        self.pet._hover.close_settings()
+        self._assert_requested_reply_once(phase)
+
+    def test_settings_tk_click_preserves_fetching_request(self):
+        self._settings_click_preserves_request("fetching", "tk")
+
+    def test_settings_global_click_preserves_fetching_request(self):
+        self._settings_click_preserves_request("fetching", "global")
+
+    def test_settings_tk_click_preserves_queued_answer_start(self):
+        self._settings_click_preserves_request("admitting", "tk")
+
+    def test_settings_global_click_preserves_queued_answer_start(self):
+        self._settings_click_preserves_request("admitting", "global")
+
+    def test_settings_click_preserves_running_conversation(self):
+        self._settings_click_preserves_request("playing", "tk")
+
+    def test_real_outside_click_cancels_once_despite_duplicate_input(self):
+        self._request_at_phase("fetching")
+        event = tk.Event()
+        event.x_root, event.y_root = -999, -999
+        with (
+            patch.object(self.pet.root, "winfo_pointerx", return_value=-999),
+            patch.object(self.pet.root, "winfo_pointery", return_value=-999),
+            patch.object(self.pet._input.mouse, "clicked", return_value=True),
+            patch.object(self.pet._social_runtime, "cancel",
+                         wraps=self.pet._social_runtime.cancel) as cancel,
+        ):
+            self.pet._input.poll_global_click()
+            self.pet._input.on_tk_press(event)
+            self.pet._input.dismiss_after_focus_loss()
+        cancel.assert_called_once_with()
+        self.worker.complete(1)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertNotEqual(self.pet._reaction_player.event, "talk")
+        self.assertEqual(self.pet.state.social, 10)
+
     def test_empty_selection_waits_without_care_then_delivers_once(self) -> None:
         self.enable()
         menu = self.menu()

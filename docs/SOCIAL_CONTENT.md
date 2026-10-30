@@ -180,6 +180,9 @@ Automatically hiding the menu or browsing another selection view preserves the
 requested content. Explicitly leaving the social selection with Zurück, Escape
 or an outside click cancels pending playback. Focus loss only hides the view
 and preserves pending content, including an already queued answer start.
+Clicks inside settings are internal navigation, including a press also seen by
+global mouse polling. Reading Credits and closing settings preserve the request;
+settings do not become part of the toolbar's hover/keep-open area.
 Accepted replacement actions, disabling sources and shutdown also invalidate
 it. Stale worker results never
 trigger a conversation, and cancelling a pending request does not stop an
