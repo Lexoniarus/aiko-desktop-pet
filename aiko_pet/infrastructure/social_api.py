@@ -13,14 +13,25 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from ..application.social_candidates import (
+    JOKE_METADATA_SECONDS,
+    MAX_JOKE_ID,
+    JokeCatalog,
+    RejectionReason,
+)
 from ..application.social_content import (
     PreparedSocialContent,
     SocialCategory,
+    SocialContentRejectionError,
     SocialProvider,
     default_provider,
     prepare_social_content,
 )
-from ..application.social_fetch import FetchFailure, SocialFetchResult
+from ..application.social_fetch import (
+    FetchFailure,
+    SocialFetchRequest,
+    SocialFetchResult,
+)
 
 MAX_RESPONSE_BYTES = 16_384
 REQUEST_TIMEOUT_SECONDS = 8
@@ -38,10 +49,15 @@ urlopen = build_opener(_NoRedirects()).open
 
 
 class SocialFetchError(ValueError):
-    def __init__(self, failure: FetchFailure, retry_at: float | None = None) -> None:
+    def __init__(
+        self, failure: FetchFailure, retry_at: float | None = None, *,
+        rejected_id: int | None = None, reason: RejectionReason | None = None,
+    ) -> None:
         super().__init__("Social provider temporarily unavailable")
         self.failure: FetchFailure = failure
         self.retry_at: float | None = retry_at
+        self.rejected_id = rejected_id
+        self.reason: RejectionReason | None = reason
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,6 +69,7 @@ class SocialHttpResponse:
 def social_endpoint(
     category: SocialCategory,
     provider: SocialProvider | None = None,
+    *, request: SocialFetchRequest | None = None,
 ) -> str:
     if (
         not isinstance(category, SocialCategory)
@@ -61,6 +78,19 @@ def social_endpoint(
     ):
         raise ValueError("Unknown social endpoint")
     provider = provider or default_provider(category)
+    if request is not None and (request.metadata or request.id_range is not None):
+        if (provider != SocialProvider.JOKEAPI
+                or category not in (SocialCategory.SINGLE, SocialCategory.TWO_PARTS)):
+            raise ValueError("Only JokeAPI supports candidate requests")
+        if request.metadata:
+            if request.id_range is not None:
+                raise ValueError("Metadata request cannot select content")
+            return "https://v2.jokeapi.dev/info"
+        assert request.id_range is not None
+        lower, upper = request.id_range
+        if (type(lower) is not int or type(upper) is not int
+                or not 0 <= lower <= upper <= MAX_JOKE_ID):
+            raise ValueError("Invalid JokeAPI ID range")
     if category == SocialCategory.HOROSCOPE:
         raise ValueError("No horoscope HTTP endpoint exists")
     if provider == SocialProvider.QUOTATIONS and category == SocialCategory.SINGLE:
@@ -69,11 +99,15 @@ def social_endpoint(
         raise ValueError("Unreviewed social provider/category")
     if category == SocialCategory.FACT:
         return "https://uselessfacts.jsph.pl/api/v2/facts/random?language=de"
-    return (
+    endpoint = (
         "https://v2.jokeapi.dev/joke/Any?lang=de&safe-mode"
         "&blacklistFlags=nsfw,religious,political,racist,sexist,explicit"
         f"&type={category.value}"
     )
+    if request is not None and request.id_range is not None:
+        lower, upper = request.id_range
+        endpoint += f"&idRange={lower}-{upper}"
+    return endpoint
 
 
 def _date(value: str | None) -> float | None:
@@ -120,9 +154,12 @@ def _retry_at(
 def fetch_social_response(
     category: SocialCategory,
     provider: SocialProvider | None = None,
+    *, request: SocialFetchRequest | None = None,
 ) -> SocialHttpResponse:
-    request = Request(
-        social_endpoint(category, provider),
+    if request is not None and request.metadata:
+        raise ValueError("Metadata is not social content")
+    http_request = Request(
+        social_endpoint(category, provider, request=request),
         headers={
             "Accept": "application/json",
             "User-Agent": "AikoDesktopPet/1.0",
@@ -130,7 +167,7 @@ def fetch_social_response(
     )
     retry_at = None
     try:
-        with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+        with urlopen(http_request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
             retry_at = _retry_at(
                 getattr(response, "headers", None), time.time(), success=True
             )
@@ -138,11 +175,41 @@ def fetch_social_response(
         if len(body) > MAX_RESPONSE_BYTES:
             raise ValueError("Social response exceeds size limit")
         payload = json.loads(body.decode("utf-8"))
-        content = prepare_social_content(category, payload, provider=provider)
+        if request is not None and request.id_range is not None:
+            identifier = payload.get("id") if isinstance(payload, dict) else None
+            if (type(identifier) is not int
+                    or not request.id_range[0] <= identifier <= request.id_range[1]):
+                raise ValueError("Provider returned an unrequested joke identity")
+        try:
+            content = prepare_social_content(category, payload, provider=provider)
+        except SocialContentRejectionError as error:
+            identifier = payload.get("id") if isinstance(payload, dict) else None
+            if ((provider or default_provider(category)) == SocialProvider.JOKEAPI
+                    and type(identifier) is int and 0 <= identifier <= MAX_JOKE_ID):
+                raise SocialFetchError(
+                    "rejected", retry_at, rejected_id=identifier, reason=error.reason
+                ) from None
+            raise
         return SocialHttpResponse(content, retry_at)
     except HTTPError as error:
         try:
             now = time.time()
+            if (error.code == 400
+                    and (provider or default_provider(category))
+                    == SocialProvider.JOKEAPI
+                    and request is not None and request.id_range is not None):
+                try:
+                    raw = error.read(MAX_RESPONSE_BYTES + 1)
+                    data = json.loads(raw) if len(raw) <= MAX_RESPONSE_BYTES else None
+                except (ValueError, UnicodeError, OSError):
+                    data = None
+                if (isinstance(data, dict) and data.get("error") is True
+                        and data.get("internalError") is False
+                        and type(data.get("code")) is int and data["code"] == 106):
+                    raise SocialFetchError(
+                        "empty", _retry_at(error.headers, now, success=True),
+                        reason="no_match",
+                    ) from None
             if error.code == 429:
                 raise SocialFetchError(
                     "rate", _retry_at(error.headers, now, limited=True)
@@ -157,7 +224,52 @@ def fetch_social_response(
             error.close()
     except (URLError, TimeoutError, OSError):
         raise SocialFetchError("temporary", time.time() + 60) from None
+    except SocialFetchError:
+        raise
     except (ValueError, UnicodeError):
+        raise SocialFetchError("invalid", retry_at) from None
+
+
+def fetch_joke_catalog() -> tuple[JokeCatalog, float | None]:
+    """One bounded metadata call; the scheduler reserves its provider budget."""
+    request = Request(
+        "https://v2.jokeapi.dev/info",
+        headers={"Accept": "application/json", "User-Agent": "AikoDesktopPet/1.0"},
+    )
+    retry_at = None
+    try:
+        with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            retry_at = _retry_at(response.headers, time.time(), success=True)
+            raw = response.read(MAX_RESPONSE_BYTES + 1)
+        if len(raw) > MAX_RESPONSE_BYTES:
+            raise ValueError("Oversized metadata")
+        data = json.loads(raw)
+        if not isinstance(data, dict):
+            raise ValueError("Metadata must be an object")
+        bounds = data["jokes"]["idRange"]["de"]
+        if (data.get("error") is not False or not isinstance(bounds, list)
+                or len(bounds) != 2 or any(type(v) is not int for v in bounds)
+                or not 0 <= bounds[0] <= bounds[1] <= MAX_JOKE_ID):
+            raise ValueError("Invalid German joke bounds")
+        return JokeCatalog(
+            bounds[0], bounds[1], time.time() + JOKE_METADATA_SECONDS
+        ), retry_at
+    except HTTPError as error:
+        try:
+            now = time.time()
+            if error.code == 429:
+                raise SocialFetchError(
+                    "rate", _retry_at(error.headers, now, limited=True)
+                ) from None
+            access = error.code in (401, 403, 404, 410) or 300 <= error.code < 400
+            raise SocialFetchError(
+                "access" if access else "temporary", now + (86400 if access else 60)
+            ) from None
+        finally:
+            error.close()
+    except (URLError, TimeoutError, OSError):
+        raise SocialFetchError("temporary", time.time() + 60) from None
+    except (ValueError, TypeError, KeyError, UnicodeError):
         raise SocialFetchError("invalid", retry_at) from None
 
 
@@ -181,20 +293,32 @@ class HttpSocialContentWorker:
         category: SocialCategory,
         token: object,
         provider: SocialProvider | None = None,
+        *, request: SocialFetchRequest | None = None,
     ) -> None:
         if self._closed or self._active:
             raise RuntimeError("Social worker is closed or already fetching")
+        if request is not None:
+            social_endpoint(category, provider, request=request)
         self._active = True
 
         def fetch() -> None:
             try:
-                response = fetch_social_response(category, provider)
-                result = SocialFetchResult(
-                    token, category, response.content, retry_at=response.retry_at
-                )
+                if request is not None and request.metadata:
+                    catalog, retry_at = fetch_joke_catalog()
+                    result = SocialFetchResult(
+                        token, category, catalog=catalog, retry_at=retry_at
+                    )
+                else:
+                    response = (fetch_social_response(category, provider)
+                                if request is None else fetch_social_response(
+                                    category, provider, request=request))
+                    result = SocialFetchResult(
+                        token, category, response.content, retry_at=response.retry_at
+                    )
             except SocialFetchError as error:
                 result = SocialFetchResult(
-                    token, category, failure=error.failure, retry_at=error.retry_at
+                    token, category, failure=error.failure, retry_at=error.retry_at,
+                    rejected_id=error.rejected_id, reason=error.reason,
                 )
             except Exception:
                 # Never expose provider bodies or exception text to the UI.

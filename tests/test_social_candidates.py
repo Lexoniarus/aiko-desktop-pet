@@ -1,14 +1,28 @@
 """Candidate exclusion transfer and schema compatibility."""
 
+import io
+import json
 import sqlite3
 import tempfile
 import unittest
 from contextlib import closing
+from email.message import Message
 from pathlib import Path
+from unittest.mock import patch
+from urllib.error import HTTPError
+
+from test_social_content import joke_payload
 
 from aiko_pet.application.social_candidates import JokeExclusion
-from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_content import SocialCategory, SocialProvider
+from aiko_pet.application.social_fetch import SocialFetchRequest
 from aiko_pet.application.social_history import SocialContentHistory
+from aiko_pet.infrastructure.social_api import (
+    HttpSocialContentWorker,
+    SocialFetchError,
+    fetch_joke_catalog,
+    fetch_social_response,
+)
 from aiko_pet.infrastructure.social_candidate_codec import decode_joke_exclusions
 from aiko_pet.infrastructure.social_history_codec import (
     decode_social_history,
@@ -22,6 +36,10 @@ from aiko_pet.infrastructure.sqlite.social_rows import (
 )
 
 TWO = SocialCategory.TWO_PARTS
+
+
+class HeaderResponse(io.BytesIO):
+    headers: dict[str, str] = {}
 
 
 class CandidateTests(unittest.TestCase):
@@ -82,3 +100,93 @@ class CandidateTests(unittest.TestCase):
             with open_database(path) as connection:
                 connection.execute("BEGIN")
                 self.assertEqual(read_social_core(connection), history)
+
+
+class CandidateHttpTests(unittest.TestCase):
+    def test_exact_range_and_existing_safety_filters_reach_http(self):
+        payload = joke_payload(TWO, 3)
+        with patch("aiko_pet.infrastructure.social_api.urlopen",
+                   return_value=io.BytesIO(json.dumps(payload).encode())) as opened:
+            fetch_social_response(TWO, request=SocialFetchRequest(id_range=(3, 4)))
+        url = opened.call_args.args[0].full_url
+        self.assertIn("idRange=3-4", url)
+        self.assertIn("safe-mode", url)
+        self.assertIn("type=twopart", url)
+        self.assertEqual(opened.call_args.kwargs["timeout"], 8)
+
+    def test_filtered_empty_response_is_not_technical_backoff(self):
+        body = json.dumps(dict(error=True, internalError=False, code=106)).encode()
+        error = HTTPError("https://v2.jokeapi.dev/joke/Any", 400, "empty", Message(),
+                          io.BytesIO(body))
+        with patch("aiko_pet.infrastructure.social_api.urlopen", side_effect=error):
+            with self.assertRaises(SocialFetchError) as raised:
+                fetch_social_response(TWO, request=SocialFetchRequest(id_range=(3, 4)))
+        self.assertEqual(raised.exception.failure, "empty")
+        self.assertIsNone(raised.exception.retry_at)
+        self.assertTrue(error.closed)
+
+    def test_unrequested_identity_is_not_played_or_recorded_as_rejected(self):
+        body = json.dumps(joke_payload(TWO, 8)).encode()
+        with patch("aiko_pet.infrastructure.social_api.urlopen",
+                   return_value=io.BytesIO(body)):
+            with self.assertRaises(SocialFetchError) as raised:
+                fetch_social_response(TWO, request=SocialFetchRequest(id_range=(3, 4)))
+        self.assertEqual(raised.exception.failure, "invalid")
+        self.assertIsNone(raised.exception.rejected_id)
+
+    def test_empty_range_can_still_carry_an_actual_exhausted_http_budget(self):
+        headers = Message()
+        headers["RateLimit-Remaining"] = "0"
+        headers["Retry-After"] = "45"
+        body = json.dumps(dict(error=True, internalError=False, code=106)).encode()
+        error = HTTPError("https://v2.jokeapi.dev/joke/Any", 400, "empty", headers,
+                          io.BytesIO(body))
+        with (
+            patch("aiko_pet.infrastructure.social_api.urlopen", side_effect=error),
+            patch("aiko_pet.infrastructure.social_api.time.time", return_value=1000),
+        ):
+            with self.assertRaises(SocialFetchError) as raised:
+                fetch_social_response(TWO, request=SocialFetchRequest(id_range=(3, 4)))
+        self.assertEqual(raised.exception.failure, "empty")
+        self.assertEqual(raised.exception.retry_at, 1045)
+
+    def test_wrong_provider_or_category_cannot_dispatch_catalog_requests(self):
+        worker = HttpSocialContentWorker()
+        with patch("aiko_pet.infrastructure.social_api.urlopen") as opened:
+            for category, provider in ((SocialCategory.FACT, SocialProvider.JOKEAPI),
+                                       (TWO, SocialProvider.FACTS)):
+                with self.subTest(category=category), self.assertRaises(ValueError):
+                    worker.start(category, object(), provider,
+                                 request=SocialFetchRequest(metadata=True))
+            opened.assert_not_called()
+        worker.close()
+
+    def test_recognized_long_single_retains_its_id_and_rejection_reason(self):
+        payload = joke_payload(SocialCategory.SINGLE, 3)
+        payload["joke"] = "a" * 126
+        with patch("aiko_pet.infrastructure.social_api.urlopen",
+                   return_value=io.BytesIO(json.dumps(payload).encode())):
+            with self.assertRaises(SocialFetchError) as raised:
+                fetch_social_response(SocialCategory.SINGLE,
+                                      request=SocialFetchRequest(id_range=(3, 4)))
+        self.assertEqual(raised.exception.failure, "rejected")
+        self.assertEqual(raised.exception.rejected_id, 3)
+        self.assertEqual(raised.exception.reason, "length")
+
+    def test_catalog_bounds_are_validated_without_hardcoded_provider_count(self):
+        for bounds, valid in (([0, 35], True), ([0, True], False),
+                              ([2, 1], False), ([0, 100001], False)):
+            response = HeaderResponse(json.dumps(dict(
+                error=False, jokes=dict(idRange=dict(de=bounds)),
+            )).encode())
+            with self.subTest(bounds=bounds), patch(
+                "aiko_pet.infrastructure.social_api.urlopen", return_value=response,
+            ) as opened:
+                if valid:
+                    catalog, _ = fetch_joke_catalog()
+                    self.assertEqual((catalog.lower, catalog.upper), (0, 35))
+                    self.assertEqual(opened.call_args.args[0].full_url,
+                                     "https://v2.jokeapi.dev/info")
+                else:
+                    with self.assertRaises(SocialFetchError):
+                        fetch_joke_catalog()

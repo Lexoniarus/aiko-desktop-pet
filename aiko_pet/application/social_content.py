@@ -16,6 +16,7 @@ from ..pet.mind.reaction_sequence import Cue
 from ..pet.social_content_evidence import SocialCategory as SocialCategory
 from ..pet.social_content_evidence import SocialContentEvidence
 from ..pet.social_content_evidence import SocialProvider as SocialProvider
+from .social_candidates import RejectionReason
 
 BUFFERED_CATEGORIES = (
     SocialCategory.SINGLE,
@@ -23,6 +24,14 @@ BUFFERED_CATEGORIES = (
     SocialCategory.FACT,
 )
 SOCIAL_INTRO_VARIANTS = 3
+
+
+class SocialContentRejectionError(ValueError):
+    """Recognized content that cannot fit the reviewed presentation rules."""
+
+    def __init__(self, reason: RejectionReason, message: str) -> None:
+        super().__init__(message)
+        self.reason: RejectionReason = reason
 
 
 def default_provider(category: SocialCategory) -> SocialProvider:
@@ -89,9 +98,11 @@ def _text(value: object) -> str:
         raise ValueError("Control character in social text")
     text = " ".join(value.split())
     if any(marker in text for marker in ("(...)", "(…)", "[...]", "[…]")):
-        raise ValueError("Provider truncated the content")
+        raise SocialContentRejectionError(
+            "incomplete", "Provider truncated the content"
+        )
     if text.endswith(("...", "…")):
-        raise ValueError("Incomplete social text")
+        raise SocialContentRejectionError("incomplete", "Incomplete social text")
     return text
 
 
@@ -112,11 +123,19 @@ def _short_content(value: object, *, joke: bool) -> str:
     dialogue = re.findall(r'\b[\w-]+:(?:\s+|(?=["„»]))', value)
     stages = re.findall(r"\b(?:Frage|Antwort|Pointe|Setup|Delivery)\s*:",
                         value, re.IGNORECASE)
-    if (len(text) > 125 or re.search(r"\n\s*\n", value)
+    if len(text) > 125:
+        raise SocialContentRejectionError(
+            "length", "Saying must be one complete short content bubble"
+        )
+    if (re.search(r"\n\s*\n", value)
             or len(dialogue) >= 2 or len(stages) >= 2):
-        raise ValueError("Saying must be one complete short content bubble")
+        raise SocialContentRejectionError(
+            "format", "Saying must be one complete short content bubble"
+        )
     if joke and ("\n" in value.strip() or "\r" in value.strip()):
-        raise ValueError("Multi-line joke setup/dialogue is not a one-liner")
+        raise SocialContentRejectionError(
+            "format", "Multi-line joke setup/dialogue is not a one-liner"
+        )
     return text
 
 
@@ -254,7 +273,9 @@ def prepare_social_content(
     if author:
         beats.append(Cue.text(GERMAN_TEXT.format("social.quote_author", author=author)))
     if sum(beat.kind == "text" for beat in beats) > 5:
-        raise ValueError("Social story exceeds five text bubbles")
+        raise SocialContentRejectionError(
+            "length", "Social story exceeds five text bubbles"
+        )
     # React after the complete provider content, never before a punchline.
     # No extra text bubble displaces content from the existing five-text budget.
     expression_at = 1 if category == SocialCategory.FACT else len(beats)

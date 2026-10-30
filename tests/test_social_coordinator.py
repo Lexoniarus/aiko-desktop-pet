@@ -14,7 +14,7 @@ from aiko_pet.application.social_content import (
     prepare_social_content,
 )
 from aiko_pet.application.social_coordinator import SocialContentCoordinator
-from aiko_pet.application.social_fetch import SocialFetchResult
+from aiko_pet.application.social_fetch import SocialFetchRequest, SocialFetchResult
 
 
 class SocialTestClock:
@@ -32,9 +32,12 @@ class ManualSocialWorker:
         self.clock = clock or SocialTestClock()
         self.result: SocialFetchResult | None = None
         self.closed = False
+        self.plans: list[SocialFetchRequest | None] = []
 
     def start(self, category: SocialCategory, token: object,
-              provider: SocialProvider | None = None) -> None:
+              provider: SocialProvider | None = None, *,
+              request: SocialFetchRequest | None = None) -> None:
+        self.plans.append(request)
         self.requests.append((category, token))
         self.providers.append(provider or default_provider(category))
 
