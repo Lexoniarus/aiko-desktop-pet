@@ -7,6 +7,42 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## Runtime pacing correction — 2026-10-30
+
+Subsequent owner feedback supersedes the earlier preview reading-time and
+Blackjack restart timings. All six games now share `ui/common/game_pacing.py`;
+game cues no longer inherit the 4–10 second social-conversation estimates.
+The displayed bubble and its phase deadline use the same duration.
+
+| Cue | Current duration |
+| --- | --- |
+| Game text | 0.75–3.2 seconds, proportional to text length |
+| Emoji interlude | 0.45 seconds |
+| Blackjack single-card flight | 0.32 seconds (previously 0.62) |
+| Blackjack shuffle / gather | 0.9 / 0.45 seconds |
+| Blackjack revealed-hole-card flip / bank gap | 0.2 / 0.1 seconds |
+| Blackjack restart countdown after the restored aside | 0.9 seconds |
+
+Game bubbles use the approved VN panel artwork through PanelSurface, including
+a speech tail and the persistent RPS hand region. The Windows color-key export
+preserves every source RGB value and only prepares binary alpha. The original
+asset and ordinary social-conversation timing remain unchanged.
+
+GameEffects configures and raises each native overlay only at creation, and
+updates images/positions/captions only when changed. Deck input is bound once.
+Flying-card flips retain the centre of their 128px card plane; hidden cards stay
+backs throughout. Existing phase order, moderation, rules and completion receipts
+are preserved. Controlled native measurements reached the first player decision
+at 4.82 seconds for a sampled Blackjack hand and 8.9 seconds for a sampled quiz
+question; quiz duration still depends on question/answer length.
+
+Complete native suite: **2,502 tests pass** in 429.061 seconds, with no Python/JSON
+source changes during the frozen run. Ruff and strict Mypy (384 files) pass;
+Pyright reports zero errors/warnings. Native captures and pacing checks pass.
+Timing/flight changes are committed as `215c406`; the prepared bubble and cached
+window rendering are the accompanying visual fix. Evidence is local-only under
+`../lokale-daten/game-pacing-2026-10-30/` relative to the checkout.
+
 ## Delivery and validation — 2026-10-30
 
 All six approved game frontends are integrated with the existing domain owners.

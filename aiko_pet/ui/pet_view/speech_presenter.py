@@ -13,6 +13,7 @@ from ...games.rock_paper_scissors import Move
 from ...pet.content import GERMAN_TEXT
 from ...pet.mind.reaction_sequence import EMOTES
 from ..common.icon_images import IconImages
+from ..common.panel_surface import PanelSurface
 from ..common.rounded_panel import RoundedPanel
 
 
@@ -171,11 +172,14 @@ class SpeechPresenter:
         self._dismiss_window()
         bubble = self._new_window()
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
-        surface = RoundedPanel(
-            bubble, fill="#FFFCFD", border="#B8CDDF", background=transparent,
+        if self._ui_images is None:
+            self._ui_images = IconImages(self._root)
+        surface = PanelSurface(
+            bubble, self._ui_images, background=transparent,
+            surface="panel_surface.game_bubble",
         )
         surface.frame.pack()
-        comment = tk.Frame(surface.body, width=250, height=90, bg="#FFFCFD")
+        comment = tk.Frame(surface.body, width=250, height=90, bg="#FCF7F9")
         comment.pack()
         comment.pack_propagate(False)
         if emote is not None:
@@ -184,12 +188,12 @@ class SpeechPresenter:
                 self.emote_images[emote] = tk.PhotoImage(
                     master=self._root, file=str(path),
                 ).zoom(3)
-            tk.Label(comment, image=self.emote_images[emote], bg="#FFFCFD").pack(
+            tk.Label(comment, image=self.emote_images[emote], bg="#FCF7F9").pack(
                 expand=True,
             )
         else:
             tk.Label(
-                comment, text=text, wraplength=230, justify="center", bg="#FFFCFD",
+                comment, text=text, wraplength=230, justify="center", bg="#FCF7F9",
                 fg="#3E4C61", font=(self._font_name, 10),
             ).pack(expand=True)
         if self._game_hand is not None:
@@ -201,12 +205,17 @@ class SpeechPresenter:
                     f"play_rps_{move.value}", 96,
                 )
             tk.Label(
-                surface.body, image=self.game_hand_images[move], bg="#FFFCFD",
+                surface.body, image=self.game_hand_images[move], bg="#FCF7F9",
             ).pack()
             tk.Label(
                 surface.body, text=GERMAN_TEXT.format(f"rps.move.{move.value}"),
-                font=(self._font_name, 9), bg="#FFFCFD", fg="#65758A",
+                font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A",
             ).pack()
+        tail = tk.Canvas(bubble, width=20, height=11, bg=transparent,
+                         bd=0, highlightthickness=0)
+        tail.pack()
+        tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
+                            outline="#B8CDDF", width=1)
         self._present(bubble, duration_ms)
 
     def show_emote(self, emote: str, duration_ms: int = 900) -> None:

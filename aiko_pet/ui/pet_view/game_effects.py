@@ -18,6 +18,10 @@ class GameEffects:
         self.owner, self._topmost, self._configure = owner, topmost, configure
         self._windows: dict[str, tuple[tk.Toplevel, tk.Label]] = {}
         self._images: dict[tuple[Path, int], tk.PhotoImage] = {}
+        self._frames: dict[str, tuple[tk.PhotoImage, str]] = {}
+        self._visible: set[str] = set()
+        self._controls: set[str] = set()
+        self._captions: dict[str, str] = {}
         self._timers: list[str] = []
         self._generation = 0
         self._closed = False
@@ -35,7 +39,8 @@ class GameEffects:
     def show(self, name: str, image: tk.PhotoImage, x: float, y: float) -> None:
         if self._closed:
             return
-        if name not in self._windows:
+        created = name not in self._windows
+        if created:
             window = tk.Toplevel(self.owner)
             window.withdraw()
             window.overrideredirect(True)
@@ -49,12 +54,23 @@ class GameEffects:
             label.pack()
             self._windows[name] = window, label
         window, label = self._windows[name]
-        label.configure(image=image)
-        window.geometry(f'{image.width()}x{image.height()}+{round(x)}+{round(y)}')
-        self._configure(window)
-        window.deiconify()
+        geometry = f'{image.width()}x{image.height()}+{round(x)}+{round(y)}'
+        previous = self._frames.get(name)
+        if previous is None or previous[0] is not image:
+            label.configure(image=image)
+        if previous is None or previous[1] != geometry:
+            window.geometry(geometry)
+        self._frames[name] = image, geometry
+        if created:
+            self._configure(window)
+        if name not in self._visible:
+            window.deiconify()
+            self._visible.add(name)
 
     def caption(self, name: str, text: str) -> None:
+        if self._captions.get(name) == text:
+            return
+        self._captions[name] = text
         self._windows[name][1].configure(
             text=text, compound="center", fg="#776093", font=("Segoe UI", 10, "bold"),
         )
@@ -63,14 +79,17 @@ class GameEffects:
         self, name: str, configure: Callable[[tk.Toplevel], None],
         action: Callable[[], None],
     ) -> None:
-        window, label = self._windows[name]
-        configure(window)
-        label.configure(cursor="hand2")
-        label.bind("<ButtonPress-1>", lambda _: action())
+        if name not in self._controls:
+            window, label = self._windows[name]
+            configure(window)
+            label.configure(cursor="hand2")
+            label.bind("<ButtonPress-1>", lambda _: action())
+            self._controls.add(name)
 
     def hide(self, name: str) -> None:
         if name in self._windows:
             self._windows[name][0].withdraw()
+            self._visible.discard(name)
 
     def later(self, ms: int, action: Callable[[], None]) -> None:
         generation = self._generation
@@ -105,6 +124,7 @@ class GameEffects:
         self._timers.clear()
         for window, _label in self._windows.values():
             window.withdraw()
+        self._visible.clear()
 
     def set_topmost(self, enabled: bool) -> None:
         self._topmost = enabled
@@ -118,3 +138,6 @@ class GameEffects:
             window.destroy()
         self._windows.clear()
         self._images.clear()
+        self._frames.clear()
+        self._controls.clear()
+        self._captions.clear()

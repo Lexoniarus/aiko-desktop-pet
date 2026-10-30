@@ -273,6 +273,13 @@ answer-podium states are exports of their approved SVG/CSS references. Their
 provenance manifests identify the source and runtime files. These exports do not
 include the external HTML previews or private character masters.
 
+Game speech now renders the existing VN panel through
+`aiko_pet/assets/ui/game_bubble_panel.png`. This is a binary-alpha export of
+`panel_surface_panel.png`, with every RGB value retained for Windows color-key
+transparency. `tools/prepare_game_bubble_art.py` reproduces the export and
+`game_frontends/game-bubble-provenance.json` records both hashes. No new artwork
+or character generation was used.
+
 ## 7. Language
 
 Documentation is maintained in **English**. UI strings, dialog entries, and runtime labels deliberately remain in **German** for the current game release.

@@ -36,13 +36,15 @@ class IconImages:
     def surface(self, key: str) -> tk.PhotoImage:
         return self._load(self._catalog["surfaces"][key])
 
-    def panel_art(self, width: int, height: int) -> tk.PhotoImage:
+    def panel_art(
+        self, width: int, height: int, *, surface: str = "panel_surface.panel",
+    ) -> tk.PhotoImage:
         """Keep rounded source corners; tile quiet center strips with native Tk.
 
         The view owns this size-specific image, avoiding an unbounded resize cache.
         No runtime Pillow dependency or changes to the source artwork are needed.
         """
-        source = self.surface("panel_surface.panel")
+        source = self.surface(surface)
         width, height = max(1, width), max(1, height)
         cap = min(12, width // 2, height // 2)
         sw, sh = source.width(), source.height()

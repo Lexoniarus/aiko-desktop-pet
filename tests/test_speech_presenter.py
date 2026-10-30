@@ -45,6 +45,17 @@ class SpeechPresenterTests(unittest.TestCase):
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.presenter.hide)
 
+    def test_game_comments_use_the_prepared_asset_and_keep_the_speech_tail(self):
+        self.presenter.begin_game()
+        self.presenter.show_text("Dein Zug!", 900)
+        self.root.update()
+        images = self.presenter._ui_images
+        assert images is not None
+        self.assertIn("game_bubble_panel.png", images._images)
+        bubble = self.presenter.bubble
+        assert bubble is not None
+        self.assertIsInstance(bubble.winfo_children()[-1], tk.Canvas)
+
     def test_queued_old_expiry_cannot_remove_a_new_game_comment(self):
         self.presenter.begin_game()
         self.presenter.show_text("Die erste Ansage.", 1800)
