@@ -35,9 +35,10 @@ class GameWaiting:
         generation = self._generation
 
         def run() -> None:
-            self._timer = None
-            if not self.active or generation != self._generation:
+            if (not self.active or generation != self._generation
+                    or self._timer != token):
                 return
+            self._timer = None
             presentation = self._presentation
             if presentation is not None:
                 if self._step % 3 == 0:
@@ -51,4 +52,5 @@ class GameWaiting:
                     self._comment()
             self._step += 1
             self._later()
-        self._timer = self._schedule(11000, run)
+        token = self._schedule(11000, run)
+        self._timer = token

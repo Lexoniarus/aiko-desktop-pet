@@ -37,13 +37,20 @@ class QuizSequence:
         self._generation = self._wait_count = 0
 
     def _later(self, ms: int, action: Callable[[], None]) -> None:
+        self._generation += 1
+        if self._timer is not None:
+            self._cancel(self._timer)
         generation = self._generation
+        token = ""
 
         def run() -> None:
+            if (self._closed or generation != self._generation
+                    or self._timer != token):
+                return
             self._timer = None
-            if not self._closed and generation == self._generation:
-                action()
-        self._timer = self._schedule(ms, run)
+            action()
+        token = self._schedule(ms, run)
+        self._timer = token
 
     def _read(self, text: str, done: Callable[[], None]) -> None:
         chunks = textwrap.wrap(text, width=120, break_long_words=False,
