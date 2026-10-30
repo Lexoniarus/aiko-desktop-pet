@@ -39,7 +39,7 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         self.hand._motion(event)
         self.assertEqual(self.hand._hover, 1)
         image = self.hand.canvas.itemcget("card_1", "image")
-        self.assertEqual(image, str(self.images.get(None)))
+        self.assertEqual(image, str(self.images.get(None, 2)))
         self.hand.canvas.event_generate("<ButtonPress-1>", x=70, y=25)
         self.assertEqual(self.hand.canvas.itemcget("card_1", "image"), image)
         self.assertEqual(len(self.configured), 1)
@@ -49,13 +49,13 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         self.hand.show(HandView((self.visible, self.secret)), flip=True)
         assert self.hand.canvas is not None
         self.assertEqual(
-            self.hand.canvas.itemcget("card_1", "image"), str(self.images.get(None)),
+            self.hand.canvas.itemcget("card_1", "image"), str(self.images.get(None, 2)),
         )
         for _ in range(4):
             self.hand.advance_flip()
         self.assertEqual(
             self.hand.canvas.itemcget("card_1", "image"),
-            str(self.images.get(self.secret, compression=8)),
+            str(self.images.get(self.secret, 2, compression=8)),
         )
         self.assertIsNotNone(self.hand.pending_timer)
         self.hand.hide()
@@ -76,3 +76,4 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         with patch.object(window, "wm_attributes", wraps=window.wm_attributes) as attrs:
             self.hand.set_topmost(True)
         attrs.assert_called_once_with("-topmost", True)
+

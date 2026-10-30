@@ -54,6 +54,15 @@ class GameEffects:
         self._configure(window)
         window.deiconify()
 
+    def control(
+        self, name: str, configure: Callable[[tk.Toplevel], None],
+        action: Callable[[], None],
+    ) -> None:
+        window, label = self._windows[name]
+        configure(window)
+        label.configure(cursor="hand2")
+        label.bind("<ButtonPress-1>", lambda _: action())
+
     def hide(self, name: str) -> None:
         if name in self._windows:
             self._windows[name][0].withdraw()

@@ -17,6 +17,7 @@ class GameCardPorts:
     show: Callable[[HandView, bool], None]
     clear: Callable[[], None]
     set_topmost: Callable[[bool], None]
+    point: Callable[[int, int], tuple[float, float]] = lambda _i, _n: (0, 0)
 
 
 @dataclass(frozen=True, slots=True)

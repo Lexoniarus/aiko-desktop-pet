@@ -38,16 +38,16 @@ class HandLayout:
 
 
 def place_hand(count: int, anchor: HandAnchor) -> HandLayout:
-    card = 64 * anchor.scale
-    step = min(38 * anchor.scale, max(
+    card = 128
+    step = min(48, max(
         1, (anchor.right - anchor.left - card) // max(1, count - 1),
     ))
     width = card + max(0, count - 1) * step
-    height = card + 8 * anchor.scale
+    height = card + 38
     x = max(anchor.left, min(
-        anchor.x + (anchor.width - width) // 2, anchor.right - width,
+        anchor.x - width - 12, anchor.right - width,
     ))
     y = max(anchor.top, min(
-        anchor.y + anchor.height * 3 // 5, anchor.bottom - height,
+        anchor.y + 38 * anchor.scale, anchor.bottom - height,
     ))
     return HandLayout(x, y, width, height, step)

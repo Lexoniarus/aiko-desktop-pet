@@ -6,6 +6,7 @@ import sys
 import tkinter as tk
 from collections.abc import Callable
 
+from ...games.blackjack import hand_total
 from ..common.playing_card_images import PlayingCardImages
 from ..view_models.game_models import HandAnchor, HandView, place_hand
 
@@ -95,10 +96,18 @@ class BlackjackHandPresenter:
                 compression = (1, 2, 4, 8, 8, 4, 2, 1)[self._frame]
                 if self._frame < 4:
                     face = None
-            image = self._images.get(face, anchor.scale, compression)
-            x = i * layout.step + 32 * anchor.scale
-            y = (4 if i == self._hover else 8) * anchor.scale
+            image = self._images.get(face, 2, compression)
+            x = i * layout.step + 64
+            y = (8 if i == self._hover else 16)
             canvas.create_image(x, y, anchor="n", image=image, tags=(f"card_{i}",))
+
+        public = tuple(card for card in self._hand.cards if card is not None)
+        caption = "BANK · AIKO"
+        if self._flip_index < 0:
+            caption += (" · verdeckt" if len(public) != len(self._hand.cards)
+                        else f" · {hand_total(public)}")
+        canvas.create_text(layout.width // 2, 153, text=caption,
+                           fill="#624668", font=("Segoe UI", 9, "bold"))
 
     def advance_flip(self) -> None:
         self._cancel_timer()
@@ -119,8 +128,8 @@ class BlackjackHandPresenter:
         hit = -1
         for i in reversed(range(len(self._hand.cards))):
             x = event.x - i * layout.step
-            y = event.y - (4 if i == self._hover else 8) * anchor.scale
-            image = self._images.get(self._hand.cards[i], anchor.scale)
+            y = event.y - (8 if i == self._hover else 16)
+            image = self._images.get(self._hand.cards[i], 2)
             if (0 <= x < image.width() and 0 <= y < image.height()
                     and not image.transparency_get(x, y)):
                 hit = i
@@ -132,6 +141,10 @@ class BlackjackHandPresenter:
     def _leave(self, _event: tk.Event) -> None:
         self._hover = -1
         self._render()
+
+    def point(self, index: int, count: int) -> tuple[float, float]:
+        layout = place_hand(count, self._anchor())
+        return layout.x + index * layout.step, layout.y + 16
 
     def set_topmost(self, enabled: bool) -> None:
         if self.window is not None:

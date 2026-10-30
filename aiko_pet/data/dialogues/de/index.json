@@ -1620,6 +1620,12 @@
     "game_mm_spare_key-frontend-1",
     "game_mm_spare_key-frontend-2",
     "game_mm_snack_done-frontend-1",
-    "game_mm_snack_done-frontend-2"
+    "game_mm_snack_done-frontend-2",
+    "game_bj_welcome-frontend-1",
+    "game_bj_reveal-frontend-1",
+    "game_bj_win-frontend-1",
+    "game_bj_loss-frontend-1",
+    "game_bj_draw-frontend-1",
+    "game_bj_aside-frontend-1"
   ]
 }

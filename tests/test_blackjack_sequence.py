@@ -4,7 +4,6 @@ import unittest
 
 from test_blackjack import arranged_game, card
 
-from aiko_pet.games.blackjack import Phase
 from aiko_pet.games.contracts import BlackjackDecisionReason, BlackjackDetails
 from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence
 
@@ -34,112 +33,109 @@ class BlackjackSequenceTests(unittest.TestCase):
         flow.greet()
         return flow
 
-    def test_natural_reveals_then_settles_and_closing_after_result_keeps_unit(self):
-        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+    def until(self, flow, predicate):
+        for _ in range(80):
+            if predicate():
+                return
+            flow.advance()
+        self.fail("Logical sequence did not reach its boundary")
+
+    def ready(self, flow):
+        self.until(flow, lambda: not flow.busy)
+
+    def settle(self, flow):
+        self.until(flow, lambda: flow.game.score.games == 1)
+
+    def test_initial_deal_is_alternating_masked_and_landing_based(self):
+        flow = self.make_flow(arranged_game(
+            card('10'), card('9'), card('8'), card('7')))
+        self.assertEqual(self.views[-1][0].player, ())
+        flow.hit()
+        self.assertEqual(len(flow.game.table.player), 2)
+        flow.advance()  # greeting
+        flow.advance()  # shuffle
+        flow.advance()  # player one lands
+        self.assertEqual(len(self.views[-1][0].player), 1)
+        self.assertEqual(self.views[-1][0].dealer, ())
+        flow.advance()
+        self.assertEqual(len(self.hands[-1][0].cards), 1)
+        flow.advance()
+        flow.advance()
+        self.assertFalse(flow.busy)
         self.assertIsNone(self.hands[-1][0].cards[1])
-        self.assertEqual(flow.game.score.games, 0)
-        self.assertIsNone(self.rounds[0].details)
-        self.assertIsNone(flow.game.result_details)
-        flow.advance()
-        self.assertTrue(self.hands[-1][1])
-        self.assertEqual(flow.game.score.games, 0)
-        flow.advance()
-        self.assertEqual(self.views[-1][0].result, 'win')
+        self.assertEqual(self.views[-1][0].player_total, 18)
+
+    def test_natural_reveals_before_exactly_once_completion(self):
+        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+        self.settle(flow)
+        self.assertTrue(any(flip for _, flip in self.hands))
         self.assertEqual([e.outcome for e in self.rounds], [None, 'win'])
         self.assertEqual(self.rounds[1].details, BlackjackDetails(
-            21, 17, BlackjackDecisionReason.PLAYER_BLACKJACK,
-        ))
+            21, 17, BlackjackDecisionReason.PLAYER_BLACKJACK))
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.assertEqual(flow.close().wins, 1)
         self.assertEqual(flow.close().games, 1)
         self.assertEqual(self.hands[-1][0].cards, ())
 
-    def test_close_during_flip_never_counts_or_revives_hand(self):
-        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
-        flow.advance()
-        stale = self.tasks['turn']
-        self.assertEqual(flow.close().games, 0)
-        stale()
-        self.assertEqual(self.tasks, {})
-        self.assertEqual(self.hands[-1][0].cards, ())
-
-        self.assertEqual([event.details for event in self.rounds], [None])
-        self.assertIsNone(flow.game.result_details)
-
-    def test_player_bust_reveals_but_dealer_does_not_draw(self):
+    def test_bust_card_and_sum_wait_for_landing_and_bank_does_not_draw(self):
         flow = self.make_flow(arranged_game(
-            card('10'), card('2'), card('8'), card('3'), card('9'),
-        ))
+            card('10'), card('2'), card('8'), card('3'), card('9')))
+        self.ready(flow)
         flow.hit()
         flow.hit()
+        self.assertEqual(len(self.views[-1][0].player), 2)
+        self.assertEqual(self.views[-1][0].player_total, 18)
         flow.advance()
-        flow.advance()
+        self.assertEqual(self.views[-1][0].player_total, 27)
+        self.settle(flow)
         self.assertEqual(len(self.hands[-1][0].cards), 2)
-        self.assertEqual(flow.game.score.losses, 1)
         self.assertEqual(self.rounds[-1].details, BlackjackDetails(
-            27, 5, BlackjackDecisionReason.PLAYER_BUST,
-        ))
-        self.assertIsNotNone(flow.pending_timer)
-        self.tasks['turn']()
-        self.assertIsNone(self.hands[-1][0].cards[1])
+            27, 5, BlackjackDecisionReason.PLAYER_BUST))
 
-    def test_result_pause_then_auto_restart_preserves_score_and_blocks_input(self):
-        flow = self.make_flow(arranged_game(
-            card('10'), card('9'), card('8'), card('7'), card('K'),
-        ))
-        flow.stand()
-        flow.advance()
-        flow.advance()
-        result = flow.game.table
-        self.assertEqual(result.result, 'win')
-        self.assertEqual(self.delays[-1], 2800)
+    def test_result_speech_aside_emote_restore_precede_restart_countdown(self):
+        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+        self.settle(flow)
         flow.hit()
-        flow.stand()
-        self.assertEqual(flow.game.table, result)
-        self.tasks['turn']()
-        self.assertEqual(flow.game.table.phase, Phase.PLAYER)
-        self.assertIsNone(flow.game.table.result)
-        self.assertIsNone(self.hands[-1][0].cards[1])
-        self.assertEqual(flow.game.score.wins, 1)
-        self.assertEqual(self.tasks, {})
-
-    def test_close_during_result_pause_cancels_restart_without_losing_unit(self):
-        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+        self.assertEqual(self.lines[-1], 'game_bj_win')
         flow.advance()
+        self.assertEqual(self.lines[-1], 'game_bj_aside')
         flow.advance()
-        restart = self.tasks['turn']
-        self.assertEqual(flow.close().games, 1)
-        restart()
-        self.assertEqual(self.tasks, {})
-        self.assertEqual(flow.game.score.games, 1)
-        self.assertEqual(self.hands[-1][0].cards, ())
-
-    def test_consecutive_naturals_each_reveal_before_their_result_pause(self):
-        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+        self.assertEqual(self.delays[-1], 950)
         flow.advance()
-        flow.advance()
-        self.tasks['turn']()
-        self.assertEqual(flow.game.score.games, 1)
-        self.assertIsNone(flow.game.table.result)
-        self.assertIsNone(self.hands[-1][0].cards[1])
-        self.assertEqual(self.delays[-1], 500)
-        flow.advance()
-        self.assertTrue(self.hands[-1][1])
-        flow.advance()
-        self.assertEqual(flow.game.score.games, 2)
         self.assertEqual(self.delays[-1], 2800)
+        flow.advance()  # gather
+        self.assertEqual(flow.game.score.games, 1)
+        flow.advance()  # restart, remains locked through new deal
+        self.assertTrue(flow.busy)
+        self.assertEqual(len(self.rounds), 3)
+        self.assertIsNone(self.rounds[-1].outcome)
 
-    def test_dealer_draws_are_separately_presented_and_input_stays_blocked(self):
+    def test_close_cancels_every_logical_phase_and_stale_callback(self):
+        for stop in range(14):
+            with self.subTest(stop=stop):
+                flow = self.make_flow(arranged_game(
+                    card('A'), card('8'), card('K'), card('9')))
+                for _ in range(stop):
+                    flow.advance()
+                stale = self.tasks.get('turn')
+                score = flow.close()
+                if stale:
+                    stale()
+                self.assertEqual(flow.close(), score)
+                self.assertEqual(self.hands[-1][0].cards, ())
+                self.assertIsNone(flow.pending_timer)
+
+    def test_dealer_draws_land_one_at_a_time(self):
         flow = self.make_flow(arranged_game(
             card('10'), card('2'), card('8'), card('3'),
-            card('10', 'hearts'), card('K'),
-        ))
+            card('10', 'hearts'), card('K')))
+        self.ready(flow)
         flow.stand()
-        flow.hit()
-        flow.advance()
+        flow.advance()  # announcement
+        flow.advance()  # bank mutates, third card not yet visible
+        self.assertEqual(len(self.hands[-1][0].cards), 2)
         flow.advance()
         self.assertEqual(len(self.hands[-1][0].cards), 3)
-        self.assertIsNone(self.views[-1][0].result)
-        flow.advance()
+        self.settle(flow)
         self.assertEqual(len(self.hands[-1][0].cards), 4)
         self.assertEqual(flow.game.score.wins, 1)

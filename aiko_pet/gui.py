@@ -299,6 +299,9 @@ class DesktopPet:
                         lambda: (self.settings.x or 0, self.settings.y or 0,
                                  self.settings.scale),
                         configure_object_window,
+                        lambda window: configure_object_window(
+                            window, interactive=True,
+                        ),
                     ),
                 ),
             ), skin=self._window.skin,

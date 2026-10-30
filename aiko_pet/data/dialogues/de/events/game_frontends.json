@@ -465,6 +465,102 @@
           "content": "Der Donut war übrigens der Hauptgewinn. Für mich. Hihi, danke fürs Mitknobeln!"
         }
       ]
+    },
+    {
+      "id": "game_bj_welcome-frontend-1",
+      "event": "game_bj_welcome",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Willkommen an meinem VIP-Tisch! Die Karten mische ich höchstpersönlich. Aus sicherer Entfernung."
+        }
+      ]
+    },
+    {
+      "id": "game_bj_reveal-frontend-1",
+      "event": "game_bj_reveal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keine weiteren Karten? Dann bitte einen dramatischen Blick zur Bank. Ich decke auf!"
+        }
+      ]
+    },
+    {
+      "id": "game_bj_win-frontend-1",
+      "event": "game_bj_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Runde geht an unseren VIP-Gast! Sehr elegant. Fast so elegant wie meine Ansage."
+        }
+      ]
+    },
+    {
+      "id": "game_bj_loss-frontend-1",
+      "event": "game_bj_loss",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese Runde gewinnt die Bank! Ich nehme den Applaus stellvertretend entgegen."
+        }
+      ]
+    },
+    {
+      "id": "game_bj_draw-frontend-1",
+      "event": "game_bj_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleichstand am VIP-Tisch! Beide bleiben würdevoll sitzen. Also ich zumindest."
+        }
+      ]
+    },
+    {
+      "id": "game_bj_aside-frontend-1",
+      "event": "game_bj_aside",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Psst. Das Casino besteht gerade aus uns beiden. Aber die große Show kriegen wir trotzdem hin."
+        }
+      ]
     }
   ]
 }

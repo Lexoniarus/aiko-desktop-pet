@@ -314,6 +314,8 @@ class HoverUi:
                     self.root,
                     on_closed=self._game_closed,
                     cards=self._ports.cards,
+                    presentation=self._ports.game_speech.presentation,
+                    emote=self._ports.game_speech.emote,
                     dialogue=self._ports.game_dialogue,
                     round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,

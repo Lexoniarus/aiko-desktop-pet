@@ -60,6 +60,7 @@ class GameVisuals:
     def ports(self) -> GameCardPorts:
         return GameCardPorts(
             self.images, self.hand.show, self.clear_cards, self.hand.set_topmost,
+            self.hand.point,
         )
 
     @property

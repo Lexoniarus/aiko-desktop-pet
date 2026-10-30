@@ -20,3 +20,4 @@ class GamePresentation:
     look: Callable[[tuple[float, float] | None], None]
     origin: Callable[[], tuple[float, float, int]] = lambda: (0, 0, 1)
     configure: Callable[[tk.Toplevel], None] = lambda _: None
+    configure_control: Callable[[tk.Toplevel], None] = lambda _: None
