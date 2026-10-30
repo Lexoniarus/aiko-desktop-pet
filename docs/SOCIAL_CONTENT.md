@@ -153,10 +153,28 @@ cancellation do not. One hundred newer admissions in its category release an old
 receipt, unless another category/buffer/offer still excludes it. Both Sprüche
 providers share the same 100-content history. Every rejected, duplicate or failed
 attempt consumes the provider budget. A refill cycle stops after three rejected
-or duplicate attempts per source and pauses that provider for at least ten
-minutes. Transient HTTP/network failures pause it for at least one minute;
-access changes stop it for a day. Failed cycles require a new deliberate selection
-to retry, within the retained provider pause. No authored fallback is used.
+or duplicate attempts per category/source, without imposing a provider pause.
+Another deliberate selection can continue searching; repeated clicks while the
+same selection is waiting do not reset that cycle. Transient HTTP/network failures
+pause the provider for at least one minute; access changes stop it for a day.
+No authored fallback is used.
+
+Before JokeAPI content requests, one separately budgeted `/info` request supplies
+the German ID bounds, cached for an hour in the session. The scheduler subtracts
+all admitted IDs, buffered/offered IDs and active category-specific exclusions,
+then chooses an allowed contiguous range for `idRange`. Counts are not hardcoded
+and no bulk joke download is used. Preparation still checks fingerprints, safety,
+language and presentation limits. A recognized unsuitable item's ID and reason,
+or a range returning HTTP 400/code 106 (no matching joke), is saved as a bounded
+exclusion for 24 hours with a filter revision. Malformed responses without a
+trusted identity do not blacklist arbitrary IDs. Metadata and content share one
+worker, pacing, quotas and reservation-before-dispatch persistence.
+
+An exhausted candidate pool reports that no matching new jokes remain; the
+100-content history is never automatically cleared or relaxed. Reaching the
+three-attempt search bound reports a separate retry-selection message. Empty
+ranges and unsuitable content never block another JokeAPI category. Facts and
+quotations retain their existing random endpoints and final repetition checks.
 
 Closing the menu, choosing another care action, disabling sources and shutdown
 invalidate pending playback. Stale worker results never trigger a conversation.
@@ -284,9 +302,13 @@ is added. See [storage and import](DATA_AND_SAVES.md).
   qualifying evidence; infrastructure serializes it in the existing cause rows.
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
+- `application/social_fetch.py` owns data-only requests/results and that worker
+  port. `application/social_candidates.py` owns pure ID-range subtraction and
+  bounded, category-specific exclusion records.
 - `application/social_history.py` supplies immutable bounded admission receipts;
-  `infrastructure/social_history_codec.py` validates the compatible version-five
-  section, independently of pet experiences.
+  `infrastructure/social_history_codec.py` validates the compatible version-six
+  section, with strict exclusion validation in `social_candidate_codec.py`,
+  independently of pet experiences.
 - `application/horoscope_coordinator.py` independently freezes the local daily
   book entry, sign and Aiko cues, owns resumable progress and one-time admission,
   and preserves the original replay deadline. `application/horoscope.py` assembles

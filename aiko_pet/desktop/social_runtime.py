@@ -109,6 +109,10 @@ class SocialConversationRuntime:
                 if selection.status == "disabled"
                 else "social.limited"
                 if selection.status == "limited"
+                else "social.exhausted"
+                if selection.status == "exhausted"
+                else "social.search_paused"
+                if selection.status == "search_paused"
                 else "social.error"
             )
             return

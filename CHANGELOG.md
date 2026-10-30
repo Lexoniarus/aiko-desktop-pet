@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Exclude remembered JokeAPI IDs before fetching through allowed ID ranges.
+  Persist bounded unsuitable-content and empty-range exclusions across restarts;
+  distinguish an exhausted joke pool and a bounded unsuccessful search from
+  provider failures and request quotas. Migrate SQLite v3 to v4 without clearing
+  existing content history or provider pauses.
+
 - Retain 100 admitted API contents per buffered category across restarts and
   rotate the three introductions independently of content hashes. Persist the
   actual framing variant with the existing receipts; upgrade SQLite v1 to v2

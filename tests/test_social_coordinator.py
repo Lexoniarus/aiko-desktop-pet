@@ -6,6 +6,7 @@ import unittest
 
 from test_social_content import fact_payload, joke_payload
 
+from aiko_pet.application.social_candidates import JokeCatalog
 from aiko_pet.application.social_content import (
     BUFFERED_CATEGORIES,
     SocialCategory,
@@ -13,8 +14,12 @@ from aiko_pet.application.social_content import (
     default_provider,
     prepare_social_content,
 )
-from aiko_pet.application.social_coordinator import SocialContentCoordinator
+from aiko_pet.application.social_coordinator import (
+    SocialContentCoordinator,
+)
 from aiko_pet.application.social_fetch import SocialFetchRequest, SocialFetchResult
+
+TEST_JOKE_CATALOG = JokeCatalog(0, 100000, 253402300799.0)
 
 
 class SocialTestClock:
@@ -74,7 +79,11 @@ class ManualSocialWorker:
 class SocialCoordinatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.worker = ManualSocialWorker()
-        self.social = SocialContentCoordinator(self.worker, wall_time=self.worker.clock)
+        self.social = SocialContentCoordinator(
+            self.worker,
+            joke_catalog=TEST_JOKE_CATALOG,
+            wall_time=self.worker.clock,
+        )
 
     def test_opt_in_individually_fills_two_slots_for_each_category(self) -> None:
         self.assertFalse(self.worker.requests)
@@ -206,7 +215,7 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.worker.complete(1)
         update = self.social.poll()
         assert update is not None
-        self.assertEqual(update.status, "error")
+        self.assertEqual(update.status, "search_paused")
         self.assertFalse(self.social.waiting)
         self.assertNotEqual(self.worker.requests[-1][0], SocialCategory.SINGLE)
 
@@ -233,8 +242,12 @@ class SocialCoordinatorTests(unittest.TestCase):
         history = self.social.history
         self.assertEqual(len(history.entries), 100)
         worker = ManualSocialWorker()
-        restored = SocialContentCoordinator(worker, history=history,
-                                            wall_time=worker.clock)
+        restored = SocialContentCoordinator(
+            worker,
+            joke_catalog=TEST_JOKE_CATALOG,
+            history=history,
+            wall_time=worker.clock,
+        )
         for entry in history.entries:
             # Same namespaced provider ID, different words and category.
             payload = joke_payload(SocialCategory.TWO_PARTS,

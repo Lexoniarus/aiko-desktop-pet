@@ -7,10 +7,15 @@ from dataclasses import replace
 from typing import Callable
 from unittest.mock import Mock
 
-from test_social_coordinator import ManualSocialWorker
+from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 
+from aiko_pet.application.social_candidates import JokeCatalog
 from aiko_pet.application.social_content import PreparedSocialContent, SocialCategory
 from aiko_pet.application.social_coordinator import SocialContentCoordinator
+from aiko_pet.application.social_history import (
+    SocialContentHistory,
+    SocialContentReceipt,
+)
 from aiko_pet.desktop.social_runtime import (
     SocialConversationRuntime,
     SocialRuntimePorts,
@@ -22,7 +27,7 @@ class SocialRuntimeTests(unittest.TestCase):
     def setUp(self) -> None:
         self.worker = ManualSocialWorker()
         self.content = SocialContentCoordinator(
-            self.worker, wall_time=self.worker.clock,
+            self.worker, joke_catalog=TEST_JOKE_CATALOG, wall_time=self.worker.clock,
         )
         self.started: list[PreparedSocialContent] = []
         self.holding: list[Reaction] = []
@@ -38,6 +43,47 @@ class SocialRuntimeTests(unittest.TestCase):
     def start(self, item: PreparedSocialContent) -> bool:
         self.started.append(item)
         return True
+
+    def test_bounded_content_search_ends_holding_without_claiming_api_failure(self):
+        self.runtime.select(SocialCategory.SINGLE)
+        self.deferred.pop()()
+        for _ in range(6):
+            self.worker.complete(1)
+            assert self.worker.result is not None
+            self.worker.result = replace(
+                self.worker.result, content=None, failure="invalid",
+            )
+            self.runtime.poll()
+        self.assertFalse(self.runtime.waiting)
+        self.assertFalse(self.holding)
+        self.assertFalse(self.started)
+        self.assertIn("Weitersuchen", self.runtime.snapshot()[0])
+        self.assertEqual(self.content.history.entries, ())
+        self.assertEqual(self.content.history.requests.blocks, ())
+
+    def test_exhausted_small_pool_has_distinct_status_without_starting_playback(self):
+        self.runtime.close()
+        worker = ManualSocialWorker()
+        content = SocialContentCoordinator(
+            worker, wall_time=worker.clock,
+            joke_catalog=JokeCatalog(0, 0, worker.clock() + 3600),
+            history=SocialContentHistory((SocialContentReceipt(
+                SocialCategory.TWO_PARTS, "jokeapi:0", "a" * 64,
+            ),)),
+        )
+        runtime = SocialConversationRuntime(content, SocialRuntimePorts(
+            can_start=lambda: True, defer=self.deferred.append,
+            start=self.start, show_wait=self.holding.append,
+            clear_wait=self.holding.clear,
+        ))
+        self.addCleanup(runtime.close)
+        runtime.set_enabled(True)
+        runtime.select(SocialCategory.TWO_PARTS)
+        self.assertIn("keine passenden neuen Witze", runtime.snapshot()[0])
+        self.assertFalse(runtime.waiting)
+        self.assertFalse(self.holding)
+        self.assertFalse(self.started)
+        self.assertEqual(len(content.history.entries), 1)
 
     def test_wish_readiness_only_observes_existing_prepared_categories(self):
         self.assertEqual(self.runtime.prepared_categories, frozenset())
@@ -106,7 +152,7 @@ class SocialRuntimeTests(unittest.TestCase):
         self.assertIn("erneuten", self.runtime.snapshot()[0])
         self.runtime.select(SocialCategory.SINGLE)
         self.assertFalse(self.runtime.waiting)
-        self.assertIn("Pause", self.runtime.snapshot()[0])
+        self.assertIn("begrenzt", self.runtime.snapshot()[0])
         self.worker.clock.now += 60
         self.runtime.select(SocialCategory.SINGLE)
         self.assertTrue(self.runtime.waiting)

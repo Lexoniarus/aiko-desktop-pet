@@ -7,7 +7,7 @@ from dataclasses import replace
 from typing import Any
 
 from test_social_content import joke_payload
-from test_social_coordinator import ManualSocialWorker
+from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.social_content import (
     SocialCategory,
@@ -189,7 +189,7 @@ class MixedSayingTests(unittest.TestCase):
     def setUp(self):
         self.worker = ManualSocialWorker()
         self.content = SocialContentCoordinator(
-            self.worker, wall_time=self.worker.clock
+            self.worker, joke_catalog=TEST_JOKE_CATALOG, wall_time=self.worker.clock
         )
         self.content.set_enabled(True)
 

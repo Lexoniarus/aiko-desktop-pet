@@ -119,6 +119,8 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.quote_collection_credit": frozenset(),
     "social.author_entry": frozenset(),
     "social.limited": frozenset(),
+    "social.exhausted": frozenset(),
+    "social.search_paused": frozenset(),
     "blackjack.hit": frozenset([]),
     "blackjack.stand": frozenset([]),
     "blackjack.total": frozenset(["total"]),

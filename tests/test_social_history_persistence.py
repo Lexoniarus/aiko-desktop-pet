@@ -4,10 +4,11 @@ import hashlib
 import tempfile
 import tkinter as tk
 import unittest
+from functools import partial
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
-from test_social_coordinator import ManualSocialWorker
+from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.controller import CareController
@@ -34,6 +35,12 @@ from tools.reaction_test_support import FakeScheduler
 
 class SocialHistoryPersistenceTests(unittest.TestCase):
     def setUp(self):
+        coordinator_patch = patch(
+            "aiko_pet.desktop.care_runtime.SocialContentCoordinator",
+            partial(SocialContentCoordinator, joke_catalog=TEST_JOKE_CATALOG),
+        )
+        coordinator_patch.start()
+        self.addCleanup(coordinator_patch.stop)
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.store = StateStore(Path(folder.name) / "state.json")
@@ -72,8 +79,12 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         restored = PetSessionRestorer(self.store, wall_time=lambda: self.wall).restore()
         self.assertEqual(restored.social_history, history)
         worker = ManualSocialWorker()
-        content = SocialContentCoordinator(worker, history=restored.social_history,
-                                           wall_time=worker.clock)
+        content = SocialContentCoordinator(
+            worker,
+            joke_catalog=TEST_JOKE_CATALOG,
+            history=restored.social_history,
+            wall_time=worker.clock,
+        )
         content.set_enabled(True)
         content.select(SocialCategory.SINGLE)
         for _ in range(2):
@@ -105,7 +116,8 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
             worker = ManualSocialWorker()
             worker.clock.now += session * 3600
             content = SocialContentCoordinator(
-                worker, history=restored.social_history, wall_time=worker.clock,
+                worker, joke_catalog=TEST_JOKE_CATALOG,
+                history=restored.social_history, wall_time=worker.clock,
             )
             content.set_enabled(True)
             persistence = DesktopPersistence(

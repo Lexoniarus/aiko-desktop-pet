@@ -7,7 +7,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_social_coordinator import ManualSocialWorker
+from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import SocialCategory, SocialProvider
@@ -98,7 +98,7 @@ class RequestAdmissionTests(unittest.TestCase):
     def setUp(self):
         self.worker = ManualSocialWorker()
         self.content = SocialContentCoordinator(
-            self.worker, wall_time=self.worker.clock
+            self.worker, joke_catalog=TEST_JOKE_CATALOG, wall_time=self.worker.clock
         )
 
     def invalid(self):
@@ -109,7 +109,7 @@ class RequestAdmissionTests(unittest.TestCase):
         )
         return self.content.poll()
 
-    def test_six_rejections_stop_both_saying_sources_and_toggle_does_not_reset(self):
+    def test_six_rejections_stop_refill_without_blocking_provider(self):
         self.content.set_enabled(True)
         self.content.select(SocialCategory.SINGLE)
         for _ in range(5):
@@ -118,14 +118,19 @@ class RequestAdmissionTests(unittest.TestCase):
             self.content.select(SocialCategory.SINGLE)
         result = self.invalid()
         assert result is not None
-        self.assertEqual(result.status, "limited")
+        self.assertEqual(result.status, "search_paused")
         for provider in (SocialProvider.JOKEAPI, SocialProvider.QUOTATIONS):
-            self.assertEqual(self.worker.providers.count(provider), 3)
+            self.assertEqual(sum(
+                p == provider and category == SocialCategory.SINGLE
+                for (category, _token), p
+                in zip(self.worker.requests, self.worker.providers)
+            ), 3)
+        self.assertEqual(self.content.history.requests.blocks, ())
         history = self.content.history
         self.content.set_enabled(False)
         self.content.set_enabled(True)
         self.assertEqual(self.content.history, history)
-        self.assertEqual(self.content.select(SocialCategory.SINGLE).status, "limited")
+        self.assertEqual(self.content.select(SocialCategory.SINGLE).status, "waiting")
 
     def test_reservation_is_saved_before_dispatch_and_survives_restart(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -140,7 +145,7 @@ class RequestAdmissionTests(unittest.TestCase):
                 return None
 
             self.content = SocialContentCoordinator(
-                self.worker,
+                self.worker, joke_catalog=TEST_JOKE_CATALOG,
                 wall_time=self.worker.clock,
                 persist_requests=persist,
             )
@@ -152,14 +157,16 @@ class RequestAdmissionTests(unittest.TestCase):
             )
             other = ManualSocialWorker(clock=self.worker.clock)
             restarted = SocialContentCoordinator(
-                other, history=loaded.social_history, wall_time=other.clock
+                other,
+                joke_catalog=TEST_JOKE_CATALOG,
+                history=loaded.social_history, wall_time=other.clock,
             )
             restarted.set_enabled(True)
             self.assertEqual(other.providers, [SocialProvider.QUOTATIONS])
 
     def test_failed_save_forbids_http_and_reports_unavailable(self):
         self.content = SocialContentCoordinator(
-            self.worker,
+            self.worker, joke_catalog=TEST_JOKE_CATALOG,
             wall_time=self.worker.clock,
             persist_requests=lambda: StorageError(
                 StorageFailureKind.IO, Path("fixture.sqlite3"), "test save failure"),
@@ -199,7 +206,7 @@ class RequestAdmissionTests(unittest.TestCase):
             )
         )
         self.content = SocialContentCoordinator(
-            self.worker,
+            self.worker, joke_catalog=TEST_JOKE_CATALOG,
             wall_time=self.worker.clock,
             history=SocialContentHistory(requests=exhausted),
         )

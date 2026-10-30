@@ -6,14 +6,16 @@ import tempfile
 import time
 import tkinter as tk
 import unittest
+from functools import partial
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from test_social_coordinator import ManualSocialWorker
+from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 from test_social_sayings import quotation, quote_payload
 
 from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_coordinator import SocialContentCoordinator
 from aiko_pet.application.social_fetch import SocialFetchResult
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.content import GERMAN_TEXT
@@ -32,6 +34,12 @@ class SocialGuiTests(unittest.TestCase):
         root.destroy()
 
     def setUp(self) -> None:
+        coordinator_patch = patch(
+            "aiko_pet.desktop.care_runtime.SocialContentCoordinator",
+            partial(SocialContentCoordinator, joke_catalog=TEST_JOKE_CATALOG),
+        )
+        coordinator_patch.start()
+        self.addCleanup(coordinator_patch.stop)
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.worker = ManualSocialWorker()
