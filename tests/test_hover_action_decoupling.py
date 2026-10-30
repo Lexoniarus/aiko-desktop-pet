@@ -39,6 +39,39 @@ class HoverActionDecouplingTests(unittest.TestCase):
         self.pet._place_x(200)
         self.pet.root.update_idletasks()
 
+    def test_world_motion_continues_under_sprite_toolbar_and_bridge(self):
+        for scale in (1, 2):
+            if self.pet.settings.scale != scale:
+                self.pet.toggle_scale()
+            for region in ("sprite", "toolbar", "bridge", "outside"):
+                with self.subTest(scale=scale, region=region):
+                    self.pet._hover.show_toolbar()
+                    self.pet.root.update_idletasks()
+                    bar = self.pet._hover.toolbar
+                    assert bar is not None
+                    x = self.pet.settings.x or 0
+                    self.pet._walk.set_world_goal(x + 30)
+                    request = self.pet._walk.movement.request("world")
+                    with (
+                        patch.object(self.pet.root, "winfo_pointerx",
+                                     return_value=x + 96 * scale),
+                        patch.object(self.pet.root, "winfo_pointery", return_value=100),
+                        patch.object(self.pet.root, "winfo_containing",
+                                     return_value=self.pet.canvas if region == "sprite"
+                                     else None),
+                        patch.object(bar, "contains_pointer",
+                                     return_value=region == "toolbar"),
+                        patch.object(bar, "contains_bridge",
+                                     return_value=region == "bridge"),
+                    ):
+                        step = self.pet._walk.step(
+                            time.monotonic(), .1,
+                            game_mode=False, attention_active=False,
+                        )
+                    self.assertIsNotNone(step)
+                    self.assertGreater(self.pet.settings.x or 0, x)
+                    self.assertIs(self.pet._walk.movement.request("world"), request)
+
     def test_opening_pinning_and_browsing_preserve_contact_and_departure_clock(self):
         before = self.pet.state.capture_checkpoint()
         contact_at = self.pet.mind.last_contact

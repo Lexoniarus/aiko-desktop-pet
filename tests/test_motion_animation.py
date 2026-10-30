@@ -248,7 +248,6 @@ class WalkControllerTests(unittest.TestCase):
             auto_walk=True,
             sleeping=False,
             attention_active=False,
-            menu_engaged=False,
             observing_computer=False,
             computer_busy=False,
             quiet_period=False,
@@ -294,9 +293,8 @@ class WalkControllerTests(unittest.TestCase):
             self.assertIsNone(self.walker.plan_step(self.conditions(now=100)))
         self.assertEqual(self.walker.next_walk_at, 190)
 
-    def test_hover_and_manual_disabled_walk_cancel_distance(self) -> None:
+    def test_real_activity_and_disabled_walk_cancel_distance(self) -> None:
         for settings in (
-            {"menu_engaged": True},
             {"auto_walk": False},
             {"attention_active": True},
             {"sleeping": True},

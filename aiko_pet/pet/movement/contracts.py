@@ -57,7 +57,6 @@ class WalkConditions:
     auto_walk: bool
     sleeping: bool
     attention_active: bool
-    menu_engaged: bool
     observing_computer: bool
     computer_busy: bool
     quiet_period: bool

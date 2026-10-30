@@ -56,17 +56,14 @@ def assemble_pointer(
             on_experience=attention.cursor_experience,
             on_warning=attention.cursor_warning,
             scale=lambda: settings.scale,
-            menu_engaged=lambda: hover.menu_engaged,
             foreground_active=lambda: not contact.can_interact("pet"),
             world_protected=world.cursor_protected,
-            pointer_inside=hover.pointer_inside,
             sprite_origin=lambda: (inputs.root.winfo_x(), inputs.root.winfo_y()),
         ),
         behaviour=behaviour,
         walk=walk,
     )
     hover.configure_cursor_access(pointer.access_contains)
-    walk.ports = replace(walk.ports, hard_access=pointer.control_active)
     return pointer
 
 
@@ -75,7 +72,6 @@ class AnimationAssemblyPorts:
     """Host callbacks needed to connect the owners, not a GUI shell."""
 
     track: Callable[[], HorizontalTrack]
-    menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
     gaze_origin: Callable[[], tuple[float, float]]
     game_mode: Callable[[], bool]
@@ -123,7 +119,6 @@ def assemble_animation(
         walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
         ports=WalkDriverPorts(
             track=ports.track,
-            menu_engaged=ports.menu_engaged,
             place_x=ports.place_x,
             committed_goal=ports.world.focused,
             cursor_allowed=ports.cursor_allowed,

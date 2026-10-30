@@ -103,14 +103,12 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
                 toolbar = self.pet._hover.toolbar
                 assert toolbar is not None
                 self.assertTrue(toolbar.visible)
-                self.assertFalse(self.pet._hover.menu_engaged)
-                self.assertFalse(self.pet._pointer_runtime.control_active())
                 self.assertTrue(self.pet._cursor_behaviour.watching)
                 self.assertEqual(self.pet._cursor_behaviour.intent.attention, 100)
                 self.assertFalse(self.pet._cursor_behaviour._policy._access)
                 self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
-    def test_tracking_toolbar_holds_world_motion_then_releases_without_reset(self):
+    def test_tracking_toolbar_does_not_hold_world_motion(self):
         native = self._watch_moving_cursor()
         self.pet._hover.show_toolbar()
         toolbar = self.pet._hover.toolbar
@@ -118,26 +116,23 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet.root.update_idletasks()
         native[:] = (toolbar.window.winfo_rootx() + 20,
                      toolbar.window.winfo_rooty() + 20)
-        self.assertTrue(self.pet._hover.menu_engaged)
         now = time.monotonic()
         self.pet._pointer_runtime.observe(now)
         self.pet._pointer_runtime.begin_behaviour(now)
         self.assertTrue(self.pet._cursor_behaviour.watching)
-        self.assertEqual(self.pet._cursor_behaviour.intent.attention, 100)
+        self.assertGreater(self.pet._cursor_behaviour.intent.attention, 0)
         self.assertFalse(self.pet._cursor_behaviour._policy._access)
         x = self.pet.settings.x or 0
         track = self.pet._window.track
         goal = x + 40 if x + self.pet._window.width + 40 < track.right else x - 40
         self.pet._walk.set_world_goal(goal)
-        self.assertIsNone(self.pet._walk.step(
+        self.assertIsNotNone(self.pet._walk.step(
             now, .1, game_mode=False, attention_active=False,
         ))
-        self.assertEqual(self.pet.settings.x, x)
+        self.assertGreater(abs((self.pet.settings.x or 0) - x), 0)
         self.assertEqual(self.pet._walk.movement.goal_x, goal)
         native[:] = (0, 0)
         self.assertTrue(toolbar.visible)
-        self.assertFalse(self.pet._hover.menu_engaged)
-        self.assertFalse(self.pet._pointer_runtime.control_active())
         self.assertIsNotNone(self.pet._walk.step(
             now + .1, .1, game_mode=False, attention_active=False,
         ))

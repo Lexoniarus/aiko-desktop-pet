@@ -87,13 +87,11 @@ class WalkDriverPorts:
     """Host capabilities granted to the pet's walking adapter."""
 
     track: Callable[[], HorizontalTrack]
-    menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
     idle_steps: Callable[[], bool] = lambda: False
-    hard_access: Callable[[], bool] = lambda: False
     idle_heading: Callable[[], int] = lambda: 0
 
 
@@ -269,12 +267,6 @@ class WalkDriver:
         """Plan motion and apply only actual bounded desktop displacement."""
         if game_mode:
             return None
-        if self.ports.hard_access() or self.ports.menu_engaged():
-            self.clear_cursor_request(now)
-            self.movement.random_walk.pause(now, quiet_period=False)
-            if self.movement.goal_x is None and self.movement.source == "idle":
-                self.movement.interrupt()
-            return None
         if not self.ports.cursor_allowed():
             self.clear_cursor_request(now)
         observed = self.adaptive.current
@@ -298,7 +290,6 @@ class WalkDriver:
                 auto_walk=self.settings.auto_walk,
                 sleeping=self.state.sleeping,
                 attention_active=attention_active and not committed,
-                menu_engaged=self.ports.menu_engaged() and not committed,
                 observing_computer=self.settings.observe_computer,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),

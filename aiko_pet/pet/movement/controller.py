@@ -135,7 +135,7 @@ class WalkController:
         self._blocked = True
 
     def plan_step(self, conditions: WalkConditions) -> WalkStep | None:
-        """Prepare one step, respecting work, hover, sleep and energy."""
+        """Prepare one step, respecting work, sleep and energy."""
         now = conditions.now
         request = next(
             (
@@ -163,7 +163,6 @@ class WalkController:
             and self.remaining_distance == 0
             and (conditions.auto_walk or has_goal)
             and not conditions.sleeping
-            and not conditions.menu_engaged
             and not (conditions.observing_computer and conditions.computer_busy)
         ):
             # Brief cursor attention postpones departure, not the entire rest.
@@ -173,7 +172,6 @@ class WalkController:
             or (not conditions.auto_walk and self.goal_x is None)
             or conditions.sleeping
             or attending
-            or conditions.menu_engaged
             or self.source == "idle" and not conditions.idle_profile.allow_steps
         ):
             self.interrupt()

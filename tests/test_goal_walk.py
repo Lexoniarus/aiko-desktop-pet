@@ -14,7 +14,7 @@ class GoalWalkTests(unittest.TestCase):
             now=0, elapsed_seconds=1, speed_pixels_per_second=20,
             stride_pixels=68, x=100, track=TaskbarTrack(0, 800, 600),
             sprite_width=192, energy=75, auto_walk=False, sleeping=False,
-            attention_active=False, menu_engaged=False, observing_computer=False,
+            attention_active=False, observing_computer=False,
             computer_busy=False, quiet_period=False,
         )
 
@@ -31,10 +31,9 @@ class GoalWalkTests(unittest.TestCase):
         controller.record_displacement(20, now=2)
         self.assertIsNone(controller.plan_step(replace(self.conditions(), x=140)))
 
-    def test_sleep_controls_and_work_still_block_goals(self):
+    def test_sleep_and_work_still_block_goals(self):
         for conditions in (
             replace(self.conditions(), sleeping=True),
-            replace(self.conditions(), menu_engaged=True),
             replace(self.conditions(), observing_computer=True, computer_busy=True),
             replace(self.conditions(), energy=10),
         ):

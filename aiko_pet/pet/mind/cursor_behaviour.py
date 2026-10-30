@@ -116,41 +116,6 @@ class CursorBehaviourPolicy:
         self.note_motion_finished(self.current.token, now)
         self.current = CursorIntent(reason="direct-access")
 
-    def pause_for_menu(
-        self, perception: CursorPerception, now: float,
-        *, feeling: CursorFeeling | None = None,
-    ) -> None:
-        """Hold interest and gaze during real control use, without new feelings."""
-        fresh = perception.valid and 0 <= now - perception.sampled_at <= 0.5
-        paused = perception.sampled_at - self._last_sample if fresh else 0.0
-        if 0 < paused <= 1.5:
-            if self._positive_since is not None:
-                self._positive_since += paused
-            if self._last_play_at > -100:
-                self._last_play_at += paused
-        elif not fresh or paused > 1.5:
-            self._positive_since = None
-        self._last_sample = perception.sampled_at if fresh else -100.0
-        if feeling != self._known_feeling:
-            self._positive_since = None
-        self._known_feeling = feeling
-        if feeling != "curiosity":
-            self._curiosity_level = 0
-            self._play_seconds = 0.0
-            self._last_play_at = -100.0
-        self._side_samples.clear()
-        self._opposite_seconds = self._far_seconds = 0.0
-        self._pending_warning = None
-        self._warned_at = None
-        self._threat_active = False
-        self.current = replace(
-            self.current, reaction="observe" if self.stage else "ignore",
-            target=perception.pointer if fresh else self.current.target,
-            body="three_quarter" if self._body_side else "front", side=self._body_side,
-            attention=self.attention, stage=self.stage, experience=None, warning=None,
-            reason="menu-use", feeling=feeling,
-        )
-
     def note_motion_finished(self, token: int, now: float) -> None:
         if self.current.token != token or not self.current.moving:
             return

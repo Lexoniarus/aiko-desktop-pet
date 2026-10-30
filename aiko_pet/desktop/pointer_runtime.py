@@ -33,11 +33,9 @@ class PointerRuntimePorts:
         lambda event, now: CursorWarningReceipt(event.warning_id, now, False)
     )
     scale: Callable[[], int] = lambda: 1
-    menu_engaged: Callable[[], bool] = lambda: False
     foreground_active: Callable[[], bool] = lambda: False
     world_protected: Callable[[], bool] = lambda: False
     sprite_origin: Callable[[], tuple[int, int] | None] = lambda: None
-    pointer_inside: Callable[[int, int], bool] = lambda _x, _y: False
 
 
 class PointerRuntime:
@@ -53,7 +51,6 @@ class PointerRuntime:
         self._observer = observer
         self._ports = ports
         self._behaviour, self._walk = behaviour, walk
-        self._access_claimed = False
 
     def access_contains(self, x: int, y: int) -> bool:
         origin = self._ports.sprite_origin()
@@ -61,31 +58,15 @@ class PointerRuntime:
             (x, y), origin, self._ports.scale(),
         ))
 
-    def claim_access(self, point: tuple[int, int] | None = None) -> None:
+    def claim_access(self) -> None:
         """Explicit clicks take control immediately; hover never claims access."""
-        self._access_claimed = True
         now = time.monotonic()
         if self._behaviour is not None:
             self._behaviour.claim_access(now)
         if self._walk is not None:
             self._walk.clear_cursor_request(now)
 
-    def control_active(self) -> bool:
-        """Pure current admission read; no policy evaluation or contact side effects."""
-        if self._ports.menu_engaged():
-            return True
-        x, y, _width = self._ports.sample()
-        inside = self.access_contains(x, y) or self._ports.pointer_inside(x, y)
-        watching = self._behaviour is not None and self._behaviour.watching
-        return inside and (
-            self._access_claimed or not watching and self.allow_hover()
-        )
-
     def begin_behaviour(self, now: float) -> None:
-        x, y, _width = self._ports.sample()
-        inside = self.access_contains(x, y) or self._ports.pointer_inside(x, y)
-        if not inside and not self._ports.menu_engaged():
-            self._access_claimed = False
         if self._behaviour is not None:
             self._behaviour.begin_frame(now, self.activity())
             event = self._behaviour.feedback
@@ -114,10 +95,8 @@ class PointerRuntime:
     def activity(self) -> CursorActivityContext:
         return CursorActivityContext(
             game_open=self._ports.game_mode(),
-            menu_engaged=self._ports.menu_engaged(),
             foreground_active=self._ports.foreground_active(),
             world_protected=self._ports.world_protected(),
-            direct_contact=self._access_claimed and self.control_active(),
         )
 
     def allow_hover(self) -> bool:
@@ -130,7 +109,6 @@ class PointerRuntime:
         )
 
     def reset(self) -> None:
-        self._access_claimed = False
         self._observer.reset()
         if self._behaviour is not None:
             self._behaviour.reset()

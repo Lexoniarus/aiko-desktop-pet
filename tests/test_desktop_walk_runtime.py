@@ -52,7 +52,6 @@ class WalkDriverTests(unittest.TestCase):
             walk_cycle_seconds=1.28,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 800, 800),
-                menu_engaged=lambda: False,
                 place_x=place,
             ),
         )
@@ -105,21 +104,20 @@ class WalkDriverTests(unittest.TestCase):
         self.assertEqual(self.settings.x, 100)
         self.assertEqual(self.driver.movement.remaining_distance, -40)
 
-    def test_menu_use_preserves_committed_object_approach(self) -> None:
+    def test_committed_approach_advances_despite_incidental_attention(self) -> None:
         self.driver.ports = replace(
             self.driver.ports,
-            menu_engaged=lambda: True,
             committed_goal=lambda: True,
         )
         self.driver.movement.set_goal(112)
-        self.assertIsNone(
+        self.assertIsNotNone(
             self.driver.step(100, 0.5, game_mode=False, attention_active=True),
         )
-        self.assertEqual(self.settings.x, 100)
+        self.assertGreater(self.settings.x or 0, 100)
         self.assertEqual(self.driver.movement.goal_x, 112)
 
-    def test_menu_use_still_holds_incidental_wandering(self) -> None:
-        self.driver.ports = replace(self.driver.ports, menu_engaged=lambda: True)
+    def test_sleep_still_holds_incidental_wandering(self) -> None:
+        self.driver.state = WalkNeeds(sleeping=True)
         self.driver.movement.remaining_distance = 12
         self.assertIsNone(
             self.driver.step(100, 0.5, game_mode=False, attention_active=False),

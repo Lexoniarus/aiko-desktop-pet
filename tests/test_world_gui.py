@@ -1470,11 +1470,12 @@ class WorldGuiTests(unittest.TestCase):
         before = self.app.settings.x or 0
         self.app.mind.cursor_attention.attention_until = time.monotonic() + 100
         self.app._animation.advance_walk(time.monotonic(), .2, game_mode=False)
-        self.assertEqual(self.app.settings.x, before)
+        self.assertGreater(self.app.settings.x or 0, before)
         self.assertEqual(world.interaction.memory_id, record)
+        after_hover = self.app.settings.x or 0
         self.leave_controls()
         self.app._animation.advance_walk(time.monotonic(), .2, game_mode=False)
-        self.assertNotEqual(self.app.settings.x, before)
+        self.assertGreater(self.app.settings.x or 0, after_hover)
 
     def test_taken_target_is_followed_through_hops_and_resumes_at_both_scales(self):
         world = self.app._world

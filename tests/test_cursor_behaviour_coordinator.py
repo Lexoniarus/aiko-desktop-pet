@@ -36,16 +36,16 @@ class CursorCoordinatorTests(unittest.TestCase):
             observer.current = replace(observer.current, sampled_at=3.6 + n / 10)
             self.coordinator.begin_frame(3.6 + n / 10, CursorActivityContext())
 
-    def test_short_menu_preserves_interest_and_releases_without_a_restart_delay(self):
+    def test_real_activity_preserves_existing_moodlet_while_time_advances(self):
         co = self.coordinator
         before = co._state.moodlets.active[0]
         score = co.intent.attention
         for n in range(101, 121):
             co._state.advance(co._state.updated_at + .1, elapsed_seconds=.1)
             co._observer.current = replace(co._observer.current, sampled_at=n / 10)
-            co.begin_frame(n / 10, CursorActivityContext(menu_engaged=True))
+            co.begin_frame(n / 10, CursorActivityContext(foreground_active=True))
             self.assertFalse(co.intent.moving)
-            self.assertTrue(co.watching)
+            self.assertFalse(co.watching)
             self.assertIsNone(co.feedback)
         after = co._state.moodlets.active[0]
         self.assertEqual((after.instance_id, after.level),
@@ -54,11 +54,11 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.assertEqual(co.intent.attention, score)
         co._observer.current = replace(co._observer.current, sampled_at=12.1)
         co.begin_frame(12.1, CursorActivityContext())
-        self.assertTrue(co.intent.moving)
+        self.assertIsNone(co.feedback)
         self.assertEqual(co.intent.feeling, "curiosity")
         self.assertEqual(co._state.moodlets.active[0].instance_id, before.instance_id)
 
-    def test_menu_immediately_after_first_moodlet_does_not_revive_it_after_expiry(self):
+    def test_real_activity_does_not_revive_an_expired_moodlet(self):
         observer = CursorObservation(CursorAttention())
         co = CursorBehaviourCoordinator(
             PetState(), self.settings, observer, CursorBehaviourPolicy(),
@@ -78,7 +78,7 @@ class CursorCoordinatorTests(unittest.TestCase):
         for n in range(1, 411):
             co._state.advance(co._state.updated_at + .1, elapsed_seconds=.1)
             observer.current = replace(observer.current, sampled_at=at + n / 10)
-            co.begin_frame(at + n / 10, CursorActivityContext(menu_engaged=True))
+            co.begin_frame(at + n / 10, CursorActivityContext(foreground_active=True))
             self.assertIsNone(co.feedback)
             self.assertFalse(co.intent.moving)
         self.assertFalse(co._state.moodlets.active)
@@ -104,10 +104,8 @@ class CursorCoordinatorTests(unittest.TestCase):
     def test_every_current_guard_and_stale_data_blocks(self):
         for key in [
             "game_open",
-            "menu_engaged",
             "foreground_active",
             "world_protected",
-            "direct_contact",
         ]:
             self.assertIsNone(
                 self.coordinator.admit_motion(

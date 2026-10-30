@@ -33,7 +33,7 @@ class PetMovementBoundaryTests(unittest.TestCase):
             now=10, elapsed_seconds=.1, speed_pixels_per_second=50,
             stride_pixels=68, x=0, track=TaskbarTrack(0, 800, 800),
             sprite_width=128, energy=85, auto_walk=True, sleeping=False,
-            attention_active=False, menu_engaged=False,
+            attention_active=False,
             observing_computer=False, computer_busy=False, quiet_period=False,
             small_idle_steps=True,
         )

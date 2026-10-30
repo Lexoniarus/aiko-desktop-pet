@@ -4,8 +4,6 @@ import unittest
 from dataclasses import replace
 from unittest.mock import Mock
 
-import test_desktop_walk_runtime as walk_fixtures
-
 from aiko_pet.application.cursor_behaviour import CursorBehaviourCoordinator
 from aiko_pet.application.cursor_observation import CursorObservation
 from aiko_pet.application.settings import PetSettings
@@ -14,7 +12,6 @@ from aiko_pet.desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from aiko_pet.pet.interaction_events import CursorExperience, CursorWarningReceipt
 from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 from aiko_pet.pet.mind.cursor_behaviour import CursorBehaviourPolicy
-from aiko_pet.pet.movement.contracts import MotionRequest
 from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
 
@@ -22,7 +19,6 @@ from tools.pet_test_support import set_test_pet_values
 class CursorMenuAccessTests(unittest.TestCase):
     def setUp(self):
         self.point: tuple[int, int] = (110, 140)
-        self.menu = False
         self.observer = CursorObservation(CursorAttention())
         self.observer.attention.observe(self.point, 10)
         self.pet = PetState()
@@ -42,7 +38,6 @@ class CursorMenuAccessTests(unittest.TestCase):
                 eyes=lambda: (196, 182),
                 on_motion=Mock(),
                 sprite_origin=lambda: (100, 100),
-                menu_engaged=lambda: self.menu,
             ),
             self.coordinator,
             self.walk,
@@ -63,9 +58,8 @@ class CursorMenuAccessTests(unittest.TestCase):
 
     def test_fast_native_contact_before_sensor_tick_claims_and_releases_now(self):
         self.point = (200, 180)
-        self.assertTrue(self.runtime.control_active())
         self.walk.clear_cursor_request.assert_not_called()  # permission reads are pure
-        self.runtime.claim_access(self.point)
+        self.runtime.claim_access()
         self.walk.clear_cursor_request.assert_called_once()
         self.assertFalse(self.coordinator.intent.moving)
 
@@ -80,7 +74,7 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.runtime.begin_behaviour(11.1)
         self.assertTrue(self.runtime.allow_hover())
         self.walk.clear_cursor_request.assert_not_called()
-        self.runtime.claim_access(self.point)
+        self.runtime.claim_access()
         self.walk.clear_cursor_request.assert_called_once()
 
     def attend(self):
@@ -100,7 +94,6 @@ class CursorMenuAccessTests(unittest.TestCase):
             self.observer.current, sampled_at=16.1, pointer=self.point,
         )
         self.runtime.begin_behaviour(16.1)
-        self.assertFalse(self.runtime.control_active())
         self.assertTrue(self.coordinator.watching)
         self.assertEqual(self.coordinator.intent.attention, 100)
         self.assertEqual(self.coordinator.intent.body, "profile")
@@ -115,21 +108,17 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.assertEqual(self.coordinator.intent.body, "profile")
         self.assertFalse(self.coordinator._policy._access)
 
-    def test_menu_pauses_motion_without_resetting_attention_or_latching_access(self):
+    def test_sampling_is_not_a_contact_claim(self):
         self.attend()
-        self.menu = True
-        self.observer.current = replace(self.observer.current, sampled_at=16.1)
-        self.runtime.begin_behaviour(16.1)
-        self.assertTrue(self.runtime.control_active())
+        self.point = (200, 180)
+        for n in range(3):
+            at = 16.1 + n / 10
+            self.observer.current = replace(self.observer.current, sampled_at=at,
+                                            pointer=self.point)
+            self.runtime.begin_behaviour(at)
         self.assertTrue(self.coordinator.watching)
-        self.assertEqual(self.coordinator.intent.attention, 100)
         self.assertFalse(self.coordinator._policy._access)
-        self.assertFalse(self.runtime.motion_allowed())
-        self.menu = False
-        self.observer.current = replace(self.observer.current, sampled_at=16.2)
-        self.runtime.begin_behaviour(16.2)
-        self.assertTrue(self.coordinator.watching)
-        self.assertEqual(self.coordinator.intent.body, "profile")
+        self.walk.clear_cursor_request.assert_not_called()
 
     def test_flyover_does_not_cancel_a_still_valid_catching_attempt(self):
         self.attend()
@@ -153,7 +142,7 @@ class CursorMenuAccessTests(unittest.TestCase):
         )
         self.walk.clear_cursor_request.assert_not_called()
 
-    def test_control_use_cannot_turn_an_old_warning_into_new_fear(self):
+    def test_only_explicit_contact_invalidates_the_current_warning(self):
         self.attend()
         set_test_pet_values(self.pet, mood=20)
         self.runtime._ports = replace(
@@ -167,54 +156,24 @@ class CursorMenuAccessTests(unittest.TestCase):
         self.runtime.begin_behaviour(16.1)
         self.assertEqual(self.coordinator._policy._warned_at, 16.1)
         before = self.pet.capture_checkpoint()
-        self.menu = True
-        for at, closing in ((16.2, -2), (16.3, 2)):
-            self.observer.current = replace(
-                self.observer.current, sampled_at=at, closing_speed=closing,
-            )
-            self.runtime.begin_behaviour(at)
-        self.assertTrue(self.coordinator.watching)
-        self.assertEqual(self.coordinator.intent.attention, 100)
+        self.runtime.claim_access()
         self.assertIsNone(self.coordinator._policy._warned_at)
-        self.assertEqual(self.pet.capture_checkpoint(), before)
-        self.menu = False
-        self.observer.current = replace(self.observer.current, sampled_at=16.4)
-        self.runtime.begin_behaviour(16.4)
         self.assertEqual(self.pet.capture_checkpoint(), before)
 
     def test_lingering_fear_does_not_override_contact_or_restart_escape(self):
         self.pet.experience_cursor(CursorExperience("earlier", "fear", 3))
         self.point = (200, 180)
-        self.runtime.claim_access(self.point)
+        self.runtime.claim_access()
         self.runtime.begin_behaviour(12)
         self.assertFalse(self.coordinator.intent.moving)
         self.assertEqual(len(self.pet.moodlets.active), 1)
-        self.menu = True
         self.point = (800, 800)
-        self.assertTrue(self.runtime.control_active())
-        self.menu = False
-        self.assertFalse(self.runtime.control_active())
 
-    def test_hard_access_pauses_committed_world_request_then_resumes(self):
-        fixture = walk_fixtures.WalkDriverTests()
-        fixture.setUp()
-        driver = fixture.driver
-        active = [True]
-        driver.ports = replace(
-            driver.ports, committed_goal=lambda: True, hard_access=lambda: active[0]
-        )
-        driver.set_world_goal(150)
-        request = driver.movement.request("world")
-        driver.submit_cursor_intent(MotionRequest("cursor", 7, 116, "step", 100))
-        self.assertIsNone(driver.step(10, 0.5, game_mode=False, attention_active=False))
-        self.assertEqual(fixture.settings.x or 0, 100)
-        self.assertIs(driver.movement.request("world"), request)
-        self.assertIsNone(driver.movement.request("cursor"))
-        active[0] = False
-        self.assertIsNotNone(
-            driver.step(11, 0.5, game_mode=False, attention_active=False)
-        )
-        self.assertGreater(fixture.settings.x or 0, 100)
+    def test_click_claim_is_not_repeated_by_later_sensor_frames(self):
+        self.runtime.claim_access()
+        for at in (10, 10.1, 10.2):
+            self.runtime.begin_behaviour(at)
+        self.walk.clear_cursor_request.assert_called_once()
 
     def test_access_clears_attention_and_warning_but_preserves_moodlet(self):
         policy = self.coordinator._policy
@@ -233,7 +192,7 @@ class CursorMenuAccessTests(unittest.TestCase):
         assert warning is not None
         self.pet.experience_cursor(CursorExperience("retained", "curiosity", 2))
         before = self.pet.capture_checkpoint()
-        self.runtime.claim_access((200, 180))
+        self.runtime.claim_access()
         policy.note_warning(CursorWarningReceipt(warning.warning_id, 14.1, True))
         self.assertEqual((policy.attention, policy.stage), (0, 0))
         self.assertIsNone(policy._warned_at)

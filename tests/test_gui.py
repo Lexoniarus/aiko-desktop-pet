@@ -392,7 +392,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         )
         self.assertEqual(self.app.settings.y, y)
 
-    def test_walk_is_horizontal_and_stops_on_hover(self):
+    def test_walk_stays_horizontal_and_continues_on_hover(self):
         self.app.center()
         original_y = self.app.settings.y
         original_x = self.app.settings.x
@@ -404,9 +404,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         assert self.app.settings.x is not None
         self.assertGreater(self.app.settings.x, original_x)
         self.assertEqual(self.app.settings.y, original_y)
+        before_hover = self.app.settings.x
         self.app._on_enter()
-        self.assertIsNone(self._step_walk(time.monotonic(), 0.15))
-        self.assertEqual(self.app._walk.movement.remaining_distance, 0)
+        self.assertEqual(self._step_walk(time.monotonic(), 0.15), "running-right")
+        self.assertGreater(self.app.settings.x or 0, before_hover)
+        self.assertGreater(self.app._walk.movement.remaining_distance, 0)
+        self.assertEqual(self.app.settings.y, original_y)
 
     def test_toolbar_auto_hides_only_when_pointer_has_left(self):
         self.app._on_enter()

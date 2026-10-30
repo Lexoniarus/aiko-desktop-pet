@@ -61,7 +61,6 @@ class IdleStepTests(unittest.TestCase):
             False,
             False,
             False,
-            False,
             small_idle_steps=True,
         )
 
@@ -78,11 +77,10 @@ class IdleStepTests(unittest.TestCase):
         self.assertGreaterEqual(self.walk.next_walk_at, 56)
         self.assertLessEqual(self.walk.next_walk_at, 101)
 
-    def test_attention_sleep_and_controls_take_priority(self):
+    def test_attention_and_sleep_take_priority(self):
         for flags in [
             {"attention_active": True},
             {"sleeping": True},
-            {"menu_engaged": True},
         ]:
             self.assertIsNone(self.walk.plan_step(replace(self.conditions, **flags)))
 

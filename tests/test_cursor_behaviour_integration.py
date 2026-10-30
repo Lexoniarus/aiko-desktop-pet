@@ -62,7 +62,6 @@ class CursorIntegrationTests(unittest.TestCase):
             walk_cycle_seconds=1.28,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 1200, 600),
-                menu_engaged=lambda: False,
                 place_x=place,
                 cursor_allowed=lambda: coordinator.admit_motion(activity[0], clock[0])
                 is not None,
@@ -165,7 +164,6 @@ class CursorTrajectory:
             walk_cycle_seconds=1.28,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 4000, 800),
-                menu_engaged=lambda: self.activity.menu_engaged,
                 place_x=place,
                 cursor_allowed=lambda: self.coordinator.admit_motion(
                     self.activity, self.now
@@ -173,7 +171,6 @@ class CursorTrajectory:
                 is not None,
                 cursor_finished=completed,
                 idle_steps=lambda: True,
-                hard_access=lambda: self.activity.direct_contact,
             ),
         )
         self.walk.movement.random_walk.next_walk_at = 999
@@ -366,7 +363,7 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                 self.assertIsNone(cursor_impression(scene.state.moodlets))
                 self.assertEqual(len(scene.feedback), 3)
 
-    def test_foreground_suspends_evidence_and_contact_immediately_pauses(self):
+    def test_contact_cancels_cursor_attempt_without_holding_a_later_world_goal(self):
         scene = CursorTrajectory()
         scene.activity = CursorActivityContext(foreground_active=True)
         for _ in range(40):
@@ -379,12 +376,13 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
         feedback_before_contact = list(scene.feedback)
         scene.coordinator.claim_access(scene.now)
         scene.walk.clear_cursor_request(scene.now)
-        scene.activity = CursorActivityContext(direct_contact=True)
+        scene.activity = CursorActivityContext(foreground_active=True)
         stopped_at = scene.settings.x
         scene.walk.set_world_goal(900)
         for _ in range(40):
             scene.tick((820, 194))
-        self.assertEqual(scene.settings.x, stopped_at)
+        self.assertGreater(scene.settings.x or 0, stopped_at or 0)
+        self.assertIsNone(scene.walk.movement.request("cursor"))
         self.assertEqual(scene.walk.movement.goal_x, 900)
         self.assertEqual(scene.feedback, feedback_before_contact)
 

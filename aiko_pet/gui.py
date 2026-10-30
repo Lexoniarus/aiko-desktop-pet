@@ -162,7 +162,6 @@ class DesktopPet:
             monitor=self.activity_monitor, assets=self._character_assets,
             ports=AnimationAssemblyPorts(
                 track=lambda: self._window.track,
-                menu_engaged=lambda: self._hover.menu_engaged,
                 place_x=self._place_x,
                 gaze_origin=self._window.gaze_origin,
                 game_mode=lambda: self._animated.game_mode,

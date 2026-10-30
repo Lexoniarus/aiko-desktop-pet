@@ -51,22 +51,22 @@ class CursorBehaviourPolicyTests(unittest.TestCase):
             assert first is not None
             self.assertAlmostEqual(first, expected)
 
-    def test_menu_preserves_observed_progress_but_never_counts_menu_time(self):
+    def test_real_activity_preserves_score_but_resets_partial_cursor_evidence(self):
         self.decide(0, speed=2, distance=1.5)
         for n in range(1, 18):
             self.decide(n / 10, speed=2, distance=1.5)
         score = self.policy.attention
         for n in range(18, 69):
-            point = CursorPerception(sampled_at=n / 10, pointer=(400, 194),
-                                     distance=1.5, speed=4, side=1, valid=True)
-            self.policy.pause_for_menu(point, n / 10)
+            self.policy.suspend(n / 10)
             self.assertIsNone(self.policy.current.experience)
             self.assertFalse(self.policy.current.moving)
         self.assertEqual(self.policy.attention, score)
-        for n in range(69, 73):
-            self.assertIsNone(self.decide(n / 10, speed=2, distance=1.5).experience)
-        result = self.decide(7.3, speed=2, distance=1.5)
-        self.assertIsNotNone(result.experience)
+        self.assertIsNone(self.decide(6.9, speed=2, distance=1.5).experience)
+        events = [self.decide(n / 10, speed=2, distance=1.5).experience
+                  for n in range(70, 101)]
+        first_level = [event for event in events
+                       if event is not None and event.level == 1]
+        self.assertEqual(len(first_level), 1)
 
     def test_attention_precedes_selected_gaze_and_tracks_one_encounter(self):
         intent = self.decide()

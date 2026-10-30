@@ -97,7 +97,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.run_for(.3)
         return record
 
-    def test_stationary_hover_pauses_travel_and_preserves_search_and_candidate(self):
+    def test_stationary_hover_allows_travel_and_preserves_search_and_candidate(self):
         record = self.begin_native_search()
         app, world = self.app, self.app._world
         app.root.update_idletasks()
@@ -119,7 +119,6 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             self.assertTrue(app._hover.pointer_inside(*pointer))
             trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
             self.assertEqual(world.interaction.phase, "approach", trace)
-            self.assertTrue(app._hover.menu_engaged)
             self.assertIsNotNone(app._hover.toolbar)
             toolbar = app._hover.toolbar
             assert toolbar is not None
@@ -148,7 +147,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             world.cursor.cancel()
             before = app.settings.x
             self.run_for(.2)
-            self.assertEqual(app.settings.x, before)
+            self.assertNotEqual(app.settings.x, before)
         app._hover.close_toolbar()
         before = app.settings.x
         self.run_for(.35)
@@ -186,7 +185,6 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 self.assertTrue(world.interaction.contact_feedback_active)
                 self.assertEqual(self.feedback[-1][1], "object_busy_search")
                 self.assertTrue(self.bubble_text())
-                self.assertTrue(app._hover.menu_engaged)
                 toolbar = app._hover.toolbar
                 assert toolbar is not None
                 self.assertTrue(all(button.cget("state") == "disabled"
@@ -198,9 +196,9 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 progress = world.interaction.search_progress
                 self.run_for(.35)
                 self.assertIsNotNone(app._speech.bubble)
-                self.assertEqual(app.settings.x, before)
+                self.assertNotEqual(app.settings.x, before)
                 self.assertTrue(world.interaction.search_ready)
-                self.assertEqual(world.interaction.search_progress, progress)
+                self.assertGreaterEqual(world.interaction.search_progress, progress)
                 self.assertEqual(world.interaction.memory_id, record)
                 self.assertFalse(world.cursor.carrying)
                 self.assertEqual(app.state.friendship_history.last_contact,

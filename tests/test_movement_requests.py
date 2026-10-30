@@ -23,7 +23,6 @@ class MovementRequestTests(unittest.TestCase):
             auto_walk=True,
             sleeping=False,
             attention_active=True,
-            menu_engaged=False,
             observing_computer=False,
             computer_busy=False,
             quiet_period=False,
@@ -132,9 +131,6 @@ class MovementRequestTests(unittest.TestCase):
         self.assertEqual(self.walk.goal_x, 50)
         self.assertEqual(self.walk._progress["cursor"][2], 4)
 
-    def test_attention_does_not_bypass_menu_or_sleep(self):
+    def test_cursor_attention_does_not_bypass_sleep(self):
         self.walk.replace_request("cursor", MotionRequest("cursor", 1, 116, "step", 20))
-        self.assertIsNone(
-            self.walk.plan_step(replace(self.conditions, menu_engaged=True))
-        )
         self.assertIsNone(self.walk.plan_step(replace(self.conditions, sleeping=True)))

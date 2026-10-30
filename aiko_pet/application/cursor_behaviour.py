@@ -24,19 +24,15 @@ from .settings import PetSettings
 @dataclass(frozen=True, slots=True)
 class CursorActivityContext:
     game_open: bool = False
-    menu_engaged: bool = False
     foreground_active: bool = False
     world_protected: bool = False
-    direct_contact: bool = False
 
     @property
     def blocked(self) -> bool:
         return (
             self.game_open
-            or self.menu_engaged
             or self.foreground_active
             or self.world_protected
-            or self.direct_contact
         )
 
 
@@ -88,18 +84,8 @@ class CursorBehaviourCoordinator:
             self.reset()
             return
         self._disabled = False
-        if context.direct_contact:
-            self.claim_access(now)
-            return
         if context.foreground_active or context.world_protected:
             self._policy.suspend(now)
-            self.intent = self._policy.current
-            return
-        if context.menu_engaged:
-            self._policy.pause_for_menu(
-                self._observer.current, now,
-                feeling=active_cursor_feeling(self._state.moodlets),
-            )
             self.intent = self._policy.current
             return
         state = self._state
