@@ -1,4 +1,4 @@
-"""Ten prepared player rows; Aiko's concealed code stays on the desktop."""
+"""Ten player rows and a public code strip beside the animated desktop safe."""
 
 from __future__ import annotations
 
@@ -13,9 +13,11 @@ from ..common.image_button import update_button_state
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
+from ..view_models.mastermind_models import CodeView
 from .game_contracts import GameCodePorts
 from .game_panel import GamePanel
 from .game_presentation import GamePresentation
+from .mastermind_code_strip import MastermindCodeStrip
 from .mastermind_drag import MastermindDrag
 from .mastermind_finale import MastermindFinale
 from .mastermind_sequence import MastermindSequence
@@ -66,7 +68,7 @@ class MastermindWindow:
             always_on_top=always_on_top,
             game_id=GameId.MASTERMIND,
             bounds_at=bounds_at,
-            body_height=780,
+            body_height=860,
             reserve_right=120,
         )
         self.window = self._panel.window
@@ -85,7 +87,7 @@ class MastermindWindow:
                 schedule=self.window.after,
                 cancel=self.window.after_cancel,
                 present=self._present,
-                show_code=codes.show,
+                show_code=self._show_code,
                 hide_code=codes.clear,
                 say=say,
                 animate=animate,
@@ -137,6 +139,12 @@ class MastermindWindow:
     def _build(self, root: tk.Tk, bounds_at: BoundsAt | None) -> None:
         self._label(GERMAN_TEXT.format('game.frontend.mm'), 11)
         self._label(GERMAN_TEXT.format("mastermind.rules"))
+        self._code_strip = MastermindCodeStrip(
+            self._panel.body, self._codes.images, self.skin, self._panel.content_width,
+        )
+        self._code_strip.frame.pack(
+            fill='x', pady=0 if self._panel.content_width < 360 else 3,
+        )
         compact = self._panel.content_width < 394
         self._palette_columns = 6
         self._palette_step = 40 if compact else 64
@@ -240,6 +248,10 @@ class MastermindWindow:
             source.bind("<B1-Motion>", self._drag.motion)
             source.bind("<ButtonRelease-1>", self._drag.release)
         self.board_horizontal.adopt()
+
+    def _show_code(self, view: CodeView) -> None:
+        self._code_strip.show(view)
+        self._codes.show(view)
 
     def greet(self) -> None:
         if self._sequence is not None:

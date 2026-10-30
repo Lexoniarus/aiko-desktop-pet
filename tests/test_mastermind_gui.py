@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from aiko_pet.asset_paths import MASTERMIND_DIR
 from aiko_pet.games.contracts import GameId
@@ -37,10 +37,31 @@ class MastermindGuiTests(unittest.TestCase):
         self.clock.advance(17)
         self.assertEqual(self.code._frame, 32)
         self.assertFalse(self.code._snack)
+        self.assert_code_strip(SECRET)
         self.assertEqual(button.cget('state'), 'normal')
+        self.game.next_round()
+        self.assert_code_strip((None,) * 4)
+        self.assertEqual(self.secret_factory.call_count, 2)
         self.assertLessEqual(self.pet.state.satiety, before)
         assert self.game._sequence is not None
         self.assertEqual(self.game._sequence.game.score.wins, 1)
+
+    def assert_code_strip(self, slots):
+        canvas = self.game._code_strip.canvas
+        self.assertTrue(canvas.winfo_ismapped())
+        self.assertEqual(len(canvas.find_withtag('solution')),
+                         sum(color is not None for color in slots))
+        self.assertEqual(len(canvas.find_withtag('cover')), slots.count(None))
+        captions = [canvas.itemcget(item, 'text')
+                    for item in canvas.find_withtag('caption')]
+        names = dict(red='Rot', blue='Blau', green='Grün')
+        self.assertEqual(captions, [str(i + 1) if color is None else
+                                   f'{i + 1}: {names[color]}'
+                                   for i, color in enumerate(slots)])
+        self.assertGreaterEqual(canvas.winfo_height(), 64)
+        for item in canvas.find_withtag('solution'):
+            image = canvas.itemcget(item, 'image')
+            self.assertEqual(int(canvas.tk.call('image', 'width', image)), 32)
 
     def test_closing_during_opening_invalidates_the_safe_completion(self):
         completed = []
@@ -62,10 +83,11 @@ class MastermindGuiTests(unittest.TestCase):
         )
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
+        self.secret_factory = Mock(return_value=SECRET)
         self.enterContext(
             patch(
                 "aiko_pet.ui.windows.mastermind_sequence.MastermindSession",
-                side_effect=lambda: MastermindSession(lambda: SECRET),
+                side_effect=lambda: MastermindSession(self.secret_factory),
             )
         )
         self.pet._hover.open_game(GameId.MASTERMIND)
@@ -113,6 +135,7 @@ class MastermindGuiTests(unittest.TestCase):
 
     def test_hidden_strip_rejects_reveal_by_hover_or_click(self):
         self.assertEqual(self.code._view.slots, (None,) * 4)
+        self.assert_code_strip((None,) * 4)
         canvas = self.code.canvas
         assert canvas is not None
         self.assertEqual(len(canvas.find_withtag("cover")), 4)
@@ -144,8 +167,10 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(flow.game.score.wins, 1)
         self.clock.advance(0.19)
         self.assertEqual(self.code._view.slots, ("red", None, None, None))
+        self.assert_code_strip(('red', None, None, None))
         self.clock.advance(25)
         self.assertEqual(self.code._view.slots, SECRET)
+        self.assert_code_strip(SECRET)
         button = self.game._panel.next_button
         assert button is not None
         self.assertEqual(button.cget("state"), "normal")
@@ -194,9 +219,13 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertFalse(self.pet._animated.game_mode)
 
     def test_ten_rows_remain_scrollable_and_scale_topmost_updates_strip(self):
-        for _ in range(10):
+        for attempt in range(10):
             self.submit(("white",) * 4)
             self.clock.advance(12)
+            self.secret_factory.assert_called_once_with()
+            if attempt < 9:
+                self.assert_code_strip((None,) * 4)
+        self.assert_code_strip(SECRET)
         assert self.game._sequence is not None
         self.assertEqual(self.game._sequence.game.score.losses, 1)
         self.assertEqual(len(self.game.board.find_withtag("guess")), 40)
@@ -298,6 +327,13 @@ class MastermindGuiTests(unittest.TestCase):
             self.clock.advance(12)
             assert game._sequence is not None
             self.assertEqual(game._sequence.game.score.losses, 1)
+            strip = game._code_strip.canvas
+            self.assertEqual(len(strip.find_withtag('solution')), 4)
+            for item in strip.find_withtag('caption'):
+                box = strip.bbox(item)
+                assert box is not None
+                self.assertGreaterEqual(box[0], 0)
+                self.assertLessEqual(box[2], strip.winfo_width())
         finally:
             self.game = original
 
