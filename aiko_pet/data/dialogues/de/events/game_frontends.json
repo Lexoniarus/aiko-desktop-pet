@@ -1,0 +1,374 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "game_ttt_block-frontend-1",
+      "event": "game_ttt_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Warte, warte! Da fehlt dir nur noch ein X! Da muss mein O hin."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_block-frontend-2",
+      "event": "game_ttt_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine offene Reihe! Mein O muss dazwischen. Aiko hat alles im Blick. Fast."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_player_threat-frontend-1",
+      "event": "game_ttt_player_threat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh! Dir fehlt nur noch ein X. Wenn du die Lücke siehst, hast du mich ..."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_player_threat-frontend-2",
+      "event": "game_ttt_player_threat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du könntest die Reihe jetzt vollmachen. Ich gucke mal ganz unauffällig weg."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_finish-frontend-1",
+      "event": "game_ttt_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da fehlt mir nur noch ein O ... hihi. Gleich hab ich dich!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_finish-frontend-2",
+      "event": "game_ttt_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein O noch. Mein hochkomplizierter Plan besteht gerade aus genau einem Feld."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_fork-frontend-1",
+      "event": "game_ttt_fork",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zwei Reihen! Du kannst nur eine zumachen. Hihi, diesmal hab ich dich!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_fork-frontend-2",
+      "event": "game_ttt_fork",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zwei offene Gewinnwege für mich. Bitte nicht nachzählen. Obwohl ... doch, stimmt!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_threat-frontend-1",
+      "event": "game_ttt_threat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da fehlt mir nur noch ein O. Siehst du die Lücke? Musst du natürlich nicht!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_threat-frontend-2",
+      "event": "game_ttt_threat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Reihe ist fast voll. Ich sitze hier völlig unverdächtig. Hihi."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_balanced-frontend-1",
+      "event": "game_ttt_balanced",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn wir beide aufpassen, gewinnt keiner. Hmpf. Ich versuch es trotzdem!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_balanced-frontend-2",
+      "event": "game_ttt_balanced",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Rechnerkopf meldet: Bei gutem Spiel ein Remis. Ich suche trotzdem eine Falle."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_mistake-frontend-1",
+      "event": "game_ttt_mistake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Das O sollte da wohl nicht hin ... Jetzt hast du einen besseren Gewinnweg. Du hast nichts gesehen, ja?"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_mistake-frontend-2",
+      "event": "game_ttt_mistake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hab mich verrechnet. Hmpf. Mein kleiner Strateginnen-Ruf!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_player_win-frontend-1",
+      "event": "game_ttt_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meine Rechnung durchkreuzt! Gut gespielt. Nächste Runde passe ich besser auf."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_player_win-frontend-2",
+      "event": "game_ttt_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Reihe ist voll. Hmpf. Ich beantrage eine neue Berechnung. Und eine Revanche!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_aiko_win-frontend-1",
+      "event": "game_ttt_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Reihe ist voll! Hihi, diesmal hab ich richtig gerechnet. Noch eine?"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_aiko_win-frontend-2",
+      "event": "game_ttt_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Drei O! Das war selbstverständlich höchste Strategie. Ein bisschen Glück zählt auch."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_draw-frontend-1",
+      "event": "game_ttt_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keine Reihe frei. Mein Rechnerkopf findet das völlig okay. Ich will trotzdem noch eine Runde!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_draw-frontend-2",
+      "event": "game_ttt_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Remis. Mathematisch sehr ordentlich. Für meinen großen Sieg leider etwas unpraktisch."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_mistake_draw-frontend-1",
+      "event": "game_ttt_mistake_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mit dem anderen Zug hätte ich gewinnen können. Jetzt ist wieder ein Remis drin ... verrechnet!"
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_forced_aiko-frontend-1",
+      "event": "game_ttt_forced_aiko",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe noch einen Gewinnweg! Jetzt bloß nicht selbst das falsche Feld erwischen ..."
+        }
+      ]
+    },
+    {
+      "id": "game_ttt_forced_player-frontend-1",
+      "event": "game_ttt_forced_player",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast einen Gewinnweg. Wenn du richtig weiterspielst, kann ich dich nicht mehr stoppen. Du musst ihn aber finden!"
+        }
+      ]
+    }
+  ]
+}

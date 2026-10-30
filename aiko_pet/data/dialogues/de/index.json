@@ -17,7 +17,8 @@
     "events/games.json",
     "events/contact.json",
     "events/work.json",
-    "events/horoscope.json"
+    "events/horoscope.json",
+    "events/game_frontends.json"
   ],
   "line_order": [
     "feed-variety-request",
@@ -1590,6 +1591,29 @@
     "cursor-play-more-01",
     "cursor-play-peak-01",
     "cursor-fear-response-01",
-    "cursor-notice-playful-01"
+    "cursor-notice-playful-01",
+    "game_ttt_block-frontend-1",
+    "game_ttt_block-frontend-2",
+    "game_ttt_player_threat-frontend-1",
+    "game_ttt_player_threat-frontend-2",
+    "game_ttt_finish-frontend-1",
+    "game_ttt_finish-frontend-2",
+    "game_ttt_fork-frontend-1",
+    "game_ttt_fork-frontend-2",
+    "game_ttt_threat-frontend-1",
+    "game_ttt_threat-frontend-2",
+    "game_ttt_balanced-frontend-1",
+    "game_ttt_balanced-frontend-2",
+    "game_ttt_mistake-frontend-1",
+    "game_ttt_mistake-frontend-2",
+    "game_ttt_player_win-frontend-1",
+    "game_ttt_player_win-frontend-2",
+    "game_ttt_aiko_win-frontend-1",
+    "game_ttt_aiko_win-frontend-2",
+    "game_ttt_draw-frontend-1",
+    "game_ttt_draw-frontend-2",
+    "game_ttt_mistake_draw-frontend-1",
+    "game_ttt_forced_aiko-frontend-1",
+    "game_ttt_forced_player-frontend-1"
   ]
 }

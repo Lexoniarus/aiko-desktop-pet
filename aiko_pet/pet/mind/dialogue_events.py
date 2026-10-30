@@ -5,6 +5,21 @@ from typing import get_args
 from .object_events import ObjectEvent
 
 DIALOGUE_EVENTS = frozenset({
+    "game_ttt_mistake_draw",
+    "game_ttt_forced_aiko",
+    "game_ttt_forced_player",
+
+    "game_ttt_block",
+    "game_ttt_player_threat",
+    "game_ttt_finish",
+    "game_ttt_fork",
+    "game_ttt_threat",
+    "game_ttt_balanced",
+    "game_ttt_mistake",
+    "game_ttt_player_win",
+    "game_ttt_aiko_win",
+    "game_ttt_draw",
+
     "horoscope_opening",
     "horoscope_comment",
     "horoscope_closing",

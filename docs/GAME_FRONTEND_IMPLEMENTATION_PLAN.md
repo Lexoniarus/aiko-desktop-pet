@@ -22,6 +22,13 @@ Keine neue Bildgenerierung, kein Push oder Merge.
   choice during recovery. Native clock/GUI, input, surface-layout and expression
   checks pass; the actual Windows panel was captured and inspected outside Git.
   Shared G0 commit: `a23bba5`. G2–G6 remain pending.
+- G2 Denkbrett: accepted frame, warm cells, 1400 ms thinking, live board target
+  gaze and interruption-safe comment/emote cues installed. Public-board analysis
+  classifies threats, forks and genuine mistakes without changing the opponent.
+  All reachable open boards from either starter were checked for truthful draw
+  statements; 13 TTT tests and the existing input/layout/runtime checks pass.
+  New game-role lines are isolated in `events/game_frontends.json`; original
+  dialogue definitions are preserved. Native panel inspected. G3–G6 pending.
 
 ## Ziel und Referenzen
 

@@ -46,7 +46,7 @@ class TicTacToeSequenceTests(unittest.TestCase):
         self.flow.choose(7)
         self.assertEqual(self.flow.game.score.wins, 1)
         self.assertEqual([e.outcome for e in self.rounds], [None, "win"])
-        self.assertEqual(self.lines[-1], "game_round_player_win")
+        self.assertEqual(self.lines[-1], "game_ttt_player_win")
         self.flow.next_round()
         self.assertEqual(self.rounds[-1].number, 2)
         self.assertIsNone(self.rounds[-1].outcome)

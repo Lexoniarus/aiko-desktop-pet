@@ -354,6 +354,8 @@ class HoverUi:
                     dialogue=self._ports.game_dialogue,
                     round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,
+                    emote=self._ports.game_speech.emote,
+                    presentation=self._ports.game_speech.presentation,
                     express_event=self._ports.game_speech.react,
                     animate=self._ports.game_speech.animate,
                     always_on_top=self._ports.always_on_top(),

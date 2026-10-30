@@ -470,6 +470,12 @@
     "moodlet.cursor_fear.description": "Der Mauszeiger ist schnell auf mich zugekommen. Ich brauche kurz Ruhe.",
     "vn.seconds": "{seconds} Sek.",
     "vn.cause.cursor": "Eindruck vom Mauszeiger",
-    "vn.cursor_target": "Mauszeiger"
+    "vn.cursor_target": "Mauszeiger",
+    "game.frontend.rps": "Unser kleines Fingerduell",
+    "game.frontend.ttt": "Aikos kleines Denkbrett",
+    "game.frontend.c4": "Vier in einer Reihe. Und eine kleine Falle.",
+    "game.frontend.mm": "Aikos kleine Snackmission",
+    "game.frontend.blackjack": "Ein Platz am VIP-Tisch",
+    "game.frontend.quiz": "Aikos kleine Quizshow"
   }
 }

@@ -91,6 +91,8 @@ class DesktopAnimationRuntime:
         self._expressions = ExpressionPlayback(assets)
         self._last_base_pose = SpriteSelection("idle", 0)
         self._was_game = False
+        self._game_target_side = 0
+        self._game_side_since = 0.0
 
     def advance_walk(
         self,
@@ -254,6 +256,7 @@ class DesktopAnimationRuntime:
         if game_mode != self._was_game:
             self._body_orientation.reset()
             self._was_game = game_mode
+            self._game_target_side = 0
         self._pointer, self._last_pointer_move = pointer, last_pointer_move
         if (active_action == QUESTION_REQUEST_CLIP and any((
             game_mode, self._state.sleeping, self._visual.cursor_watching,
@@ -289,14 +292,25 @@ class DesktopAnimationRuntime:
         if priority.mode == "game" and priority.animation == "waiting":
             point = self._ports.game_gaze()
             direction = self._visual.game_direction(point) if point else None
+            side = (1 if direction in range(1, 8) else
+                    -1 if direction in range(9, 16) else 0)
+            if side != self._game_target_side:
+                self._game_target_side, self._game_side_since = side, now
+            held = side != 0 and now - self._game_side_since >= 1.2
             selection = (SpriteSelection("look", direction)
                          if direction is not None else SpriteSelection("idle"))
             if self._assets.body_clips:
-                selection = self._body_orientation.select(now, selection)
+                selection = self._body_orientation.select(
+                    now, selection, intent="three_quarter" if held else "front",
+                    side=side,
+                )
+            refresh = self._body_orientation.next_delay_ms(now)
+            if side and not held:
+                refresh = max(1, round((1.2 - now + self._game_side_since) * 1000))
             return RenderDecision(
                 selection if selection.animation != "idle" else
                 self.ambient.choose_rest(now), clear_action=True,
-                refresh_after_ms=self._body_orientation.next_delay_ms(now),
+                refresh_after_ms=refresh,
             )
         if priority.mode != "passive":
             self._body_orientation.reset()

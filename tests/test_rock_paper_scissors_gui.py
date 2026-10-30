@@ -62,3 +62,15 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(self.game.score.games, 0)
         self.assertLessEqual(self.pet.state.fun, before)
         self.assertIsNone(self.pet._hover.game_window)
+
+    def test_completed_then_aborted_hand_is_credited_once_on_close(self):
+        before = self.pet.state.fun
+        self.game.choose(Move.ROCK)
+        self.clock.advance(2.251)
+        self.game.choose(Move.PAPER)
+        self.assertEqual(self.game.score.games, 1)
+        self.game.close()
+        self.assertGreater(self.pet.state.fun, before)
+        after = self.pet.state.fun
+        self.game.close()
+        self.assertEqual(self.pet.state.fun, after)

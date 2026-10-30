@@ -44,6 +44,19 @@ def mood_expression(feeling: EmotionalState) -> Expression:
 def event_expression(event: str) -> Expression | None:
     """Only explicitly authored semantic events, never sentiment from words."""
     return {
+        "game_ttt_block": Expression.WORRIED,
+        "game_ttt_player_threat": Expression.WORRIED,
+        "game_ttt_finish": Expression.POSITIVE,
+        "game_ttt_fork": Expression.POSITIVE,
+        "game_ttt_threat": Expression.POSITIVE,
+        "game_ttt_balanced": Expression.QUESTIONING,
+        "game_ttt_mistake": Expression.WORRIED,
+        "game_ttt_mistake_draw": Expression.WORRIED,
+        "game_ttt_forced_player": Expression.WORRIED,
+        "game_ttt_forced_aiko": Expression.POSITIVE,
+        "game_ttt_player_win": Expression.DOWNCAST,
+        "game_ttt_aiko_win": Expression.POSITIVE,
+        "game_ttt_draw": Expression.QUESTIONING,
         "cursor_notice_playful": Expression.QUESTIONING,
         "cursor_play_start": Expression.QUESTIONING,
         "cursor_play_more": Expression.POSITIVE,

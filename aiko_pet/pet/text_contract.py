@@ -7,6 +7,12 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "game.frontend.rps": frozenset(),
+    "game.frontend.ttt": frozenset(),
+    "game.frontend.c4": frozenset(),
+    "game.frontend.mm": frozenset(),
+    "game.frontend.blackjack": frozenset(),
+    "game.frontend.quiz": frozenset(),
     "ui.horoscope_book": frozenset(),
     "wish.quiz.label": frozenset(),
     "wish.quiz.description": frozenset(),
