@@ -39,7 +39,8 @@ class GameDialogue:
 def countdown_line(number: int) -> str:
     if number not in (1, 2, 3):
         raise KeyError(number)
-    return GERMAN_TEXT.format(f"rps.countdown.{number}")
+    key = {1: "scissors", 2: "rock", 3: "paper"}[number]
+    return GERMAN_TEXT.format(f"rps.move.{key}") + "!"
 
 
 def outcome_event(result: Round) -> str:

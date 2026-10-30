@@ -386,6 +386,8 @@ class HoverUi:
             express_event=self._ports.game_speech.react,
             emote=self._ports.game_speech.emote,
             hand=self._ports.game_speech.hand,
+            presentation=self._ports.game_speech.presentation,
+            clear_hand=self._ports.game_speech.clear_hand,
             animate=self._ports.game_speech.animate,
             always_on_top=self._ports.always_on_top(),
             skin=self._skin,

@@ -117,7 +117,8 @@ class OtherGameInputTests(unittest.TestCase):
         self.assertTrue(all(b.cget("state") == "disabled"
                             for b in game.buttons.values()))
         game.buttons[Move.PAPER].invoke()
-        self.assertEqual(game._sequence._phase, 1)
+        self.assertTrue(game._sequence.busy)
+        self.assertEqual(game.score.games, 0)
         for _ in range(7):
             game._sequence.advance()
         self.assertEqual(game.score.games, 1)

@@ -56,6 +56,9 @@ class GameSpeech:
         self._mark_spoken()
         self._speech.show_game_hand(aiko, duration_ms)
 
+    def clear_hand(self) -> None:
+        self._speech.clear_game_hand()
+
     def animate(self, name: str) -> None:
         expression = next((value for value, clip in EXPRESSION_CLIPS.items()
                            if clip == name), None)

@@ -1,9 +1,4 @@
-"""Schedule Aiko's character-led Rock–Paper–Scissors reaction beats.
-
-The player hand and transient counters belong to the input panel. Aiko's own
-hand, emotes and outcome reaction belong to the established character bubble.
-No Tk dependency lives here, and every pending cue is cancellable.
-"""
+"""Fingerduell: actual arm markers own countdown and exactly-once reveal."""
 
 from __future__ import annotations
 
@@ -11,77 +6,43 @@ from collections.abc import Callable
 from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent
-from ...games.rock_paper_scissors import (
-    Move,
-    Outcome,
-    RockPaperScissors,
-    Round,
-    Score,
-)
+from ...games.rock_paper_scissors import Move, Outcome, RockPaperScissors, Round, Score
 from ...pet.mind.reaction_sequence import Cue
-from .rock_paper_scissors_dialogue import (
-    GameDialogue,
-    countdown_line,
-    outcome_event,
-)
-
-ScheduleTimer = Callable[[int, Callable[[], None]], str]
-CancelTimer = Callable[[str], None]
-DisplayText = Callable[[str, int], None]
-DisplayEmote = Callable[[str, int], None]
-DisplayAikoHand = Callable[[Move, int], None]
-RevealPlayer = Callable[[Move, Score], None]
-PlayAnimation = Callable[[str], None]
-SetBusy = Callable[[bool], None]
-
-_REACTION_ASSETS: dict[Outcome, tuple[str | None, str]] = {
-    Outcome.WIN: (None, "drops"),
-    Outcome.LOSS: ("jumping", "star"),
-    Outcome.DRAW: (None, "question"),
-}
+from .game_presentation import GamePresentation
+from .rock_paper_scissors_dialogue import GameDialogue, countdown_line, outcome_event
 
 
 class RockPaperScissorsSequence:
-    """Own the 1→2→3→reveal→emote→result timeline and its cancellation."""
-
-    COUNT_MS = 800
-    EXCITEMENT_MS = 700
-    HAND_MS = 2300
+    CYCLE_MS = 900
     REACTION_EMOTE_MS = 850
-    REACTION_MS = 2800
 
     def __init__(
-        self,
-        *,
-        schedule: ScheduleTimer,
-        cancel: CancelTimer,
-        say: DisplayText,
-        show_emote: DisplayEmote,
-        show_aiko_hand: DisplayAikoHand,
-        reveal_player: RevealPlayer,
-        animate: PlayAnimation,
-        set_busy: SetBusy,
+        self, *, schedule: Callable[[int, Callable[[], None]], str],
+        cancel: Callable[[str], None], say: Callable[[str, int], None],
+        show_emote: Callable[[str, int], None],
+        show_aiko_hand: Callable[[Move, int], None],
+        reveal_player: Callable[[Move, Score], None],
+        animate: Callable[[str], None], set_busy: Callable[[bool], None],
         dialogue: Callable[[str], str] | None = None,
-        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
-        express_event: Callable[[str], None] = lambda _event: None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _: None,
+        express_event: Callable[[str], None] = lambda _: None,
+        presentation: GamePresentation | None = None,
+        clear_hand: Callable[[], None] = lambda: None,
     ) -> None:
-        self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
-        self._schedule = schedule
-        self._cancel = cancel
-        self._say = say
-        self._express_event = express_event
-        self._show_emote = show_emote
-        self._show_aiko_hand = show_aiko_hand
-        self._reveal_player = reveal_player
-        self._animate = animate
-        self._set_busy = set_busy
+        self._schedule, self._cancel = schedule, cancel
+        self._say, self._show_emote = say, show_emote
+        self._show_aiko_hand, self._reveal_player = show_aiko_hand, reveal_player
+        self._animate, self._set_busy = animate, set_busy
+        self._dialogue = dialogue or GameDialogue().choose
+        self._round_event, self._express_event = round_event, express_event
+        self._presentation, self._clear_hand = presentation, clear_hand
         self._game = RockPaperScissors()
-        self._timer: str | None = None
-        self._phase = 0
-        self._result: Round | None = None
-        self._closed = False
         self._session_id = uuid4().hex
-        self._round_event = round_event
+        self._timer: str | None = None
+        self._next: Callable[[], None] | None = None
+        self._generation = 0
+        self._closed = False
+        self._result: Round | None = None
 
     @property
     def score(self) -> Score:
@@ -89,14 +50,34 @@ class RockPaperScissorsSequence:
 
     @property
     def busy(self) -> bool:
-        return self._phase != 0
+        return self._game.pending
 
     @property
     def pending_timer(self) -> str | None:
         return self._timer
 
+    def _invalidate(self) -> int:
+        self._generation += 1
+        self._next = None
+        if self._timer is not None:
+            self._cancel(self._timer)
+            self._timer = None
+        if self._presentation is not None:
+            self._presentation.cancel()
+            self._presentation.look(None)
+        return self._generation
+
+    def _later(self, ms: int, callback: Callable[[], None], generation: int) -> None:
+        def run() -> None:
+            if not self._closed and generation == self._generation:
+                self._timer = None
+                self._next = None
+                callback()
+        self._next = run
+        self._timer = self._schedule(ms, run)
+
     def greet(self) -> None:
-        if not self._closed:
+        if not self._closed and not self.busy:
             self._animate("waving-greeting")
             phrase = self._dialogue("game_greeting")
             self._express_event("game_greeting")
@@ -105,73 +86,77 @@ class RockPaperScissorsSequence:
     def choose(self, move: Move) -> None:
         if self._closed or self.busy:
             return
+        generation = self._invalidate()
+        self._clear_hand()
+        self._result = None
         self._game.begin(move)
         self._round_event(GameRoundEvent(
             GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games + 1,
         ))
         self._set_busy(True)
-        self._express_event("game_countdown")
-        self._phase = 1
-        self._emit_text(countdown_line(1), self.COUNT_MS)
+        self._cycle(1, generation)
 
-    def _emit_text(self, phrase: str, duration_ms: int) -> None:
-        self._say(phrase, duration_ms)
-        self._timer = self._schedule(duration_ms, self.advance)
+    def _cycle(self, number: int, generation: int) -> None:
+        def marker(index: int) -> None:
+            if self._closed or generation != self._generation or index != 4:
+                return
+            self._say(countdown_line(number), self.CYCLE_MS)
+            if number == 3 and self._game.pending:
+                result = self._game.reveal()
+                self._result = result
+                self._round_event(GameRoundEvent(
+                    GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games,
+                    result.outcome.value, result.details,
+                ))
+                self._reveal_player(result.player, self.score)
+                self._show_aiko_hand(result.aiko, 0)
+                self._set_busy(False)
 
-    def _emit_emote(self, name: str, duration_ms: int) -> None:
-        self._show_emote(name, duration_ms)
-        self._timer = self._schedule(duration_ms, self.advance)
+        def done() -> None:
+            if self._closed or generation != self._generation:
+                return
+            if number < 3:
+                self._cycle(number + 1, generation)
+            else:
+                self._react(generation)
+
+        if self._presentation is not None:
+            self._presentation.action("attack", self.CYCLE_MS, marker, done)
+        else:
+            # Standalone view/test adapter has no character, only phase deadlines.
+            def forward() -> None:
+                marker(4)
+                self._later(450, done, generation)
+            self._later(450, forward, generation)
+
+    def _react(self, generation: int) -> None:
+        result = self._result
+        if result is None:
+            return
+        if result.outcome is Outcome.LOSS:
+            self._animate("jumping")
+        emote = {Outcome.WIN: "drops", Outcome.LOSS: "star",
+                 Outcome.DRAW: "question"}[result.outcome]
+        self._show_emote(emote, self.REACTION_EMOTE_MS)
+
+        def speak() -> None:
+            phrase = self._dialogue(outcome_event(result))
+            self._express_event(outcome_event(result))
+            self._say(phrase, Cue.text(phrase).duration_ms)
+
+        self._later(self.REACTION_EMOTE_MS, speak, generation)
 
     def advance(self) -> None:
-        if self._timer is not None:
-            self._cancel(self._timer)
-            self._timer = None
-        if self._closed:
-            return
-        if self._phase == 1:
-            self._phase = 2
-            self._emit_text(countdown_line(2), self.COUNT_MS)
-        elif self._phase == 2:
-            self._phase = 3
-            self._emit_text(countdown_line(3), self.COUNT_MS)
-        elif self._phase == 3:
-            self._phase = 4
-            self._emit_emote("exclamation", self.EXCITEMENT_MS)
-        elif self._phase == 4:
-            result = self._game.reveal()
-            self._result = result
-            self._round_event(GameRoundEvent(
-                GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games,
-                result.outcome.value, result.details,
-            ))
-            self._phase = 5
-            # Both views reveal at the same instant, in their own owners.
-            self._reveal_player(result.player, self._game.score)
-            self._show_aiko_hand(result.aiko, self.HAND_MS)
-            self._timer = self._schedule(self.HAND_MS, self.advance)
-        elif self._phase == 5 and self._result is not None:
-            self._phase = 6
-            clip, emote = _REACTION_ASSETS[self._result.outcome]
-            if clip is not None:
-                self._animate(clip)
-            self._emit_emote(emote, self.REACTION_EMOTE_MS)
-        elif self._phase == 6 and self._result is not None:
-            self._phase = 7
-            phrase = self._dialogue(outcome_event(self._result))
-            self._express_event(outcome_event(self._result))
-            self._emit_text(phrase, Cue.text(phrase).duration_ms)
-        elif self._phase == 7:
-            self._phase = 0
-            self._result = None
-            self._set_busy(False)
+        """Advance only the optional character-free adapter's current callback."""
+        callback = self._next
+        if callback is not None:
+            if self._timer is not None:
+                self._cancel(self._timer)
+            callback()
 
     def close(self) -> None:
-        if self._closed:
-            return
-        self._closed = True
-        if self._timer is not None:
-            self._cancel(self._timer)
-            self._timer = None
-        self._game.cancel()
-        self._phase = 0
-        self._result = None
+        if not self._closed:
+            self._closed = True
+            self._invalidate()
+            self._game.cancel()
+            self._clear_hand()

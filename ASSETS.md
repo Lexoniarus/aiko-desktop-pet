@@ -252,4 +252,15 @@ repository. The older source spritesheet was not shipped with the earlier
 
 ## 6. Language
 
+### Approved game frontend artwork (2026-10-30)
+
+`aiko_pet/assets/game_frontends/` contains selected project UI artwork from the
+owner-approved local game references. `provenance.json` records source/export
+hashes, sizes and the rasterization method. The retained SVGs are the editable
+sources of the Fingerduell mat and Denkbrett frame. RPS hand icons in `assets/ui/`
+are size exports of the approved illustrated hand signs, including the closed
+fist; character originals and the external HTML preview bundles are not imported.
+These project illustrations are separate from the Kenney card pack. All existing
+Blackjack card faces, backs and their license are preserved.
+
 Documentation is maintained in **English**. UI strings, dialog entries, and runtime labels deliberately remain in **German** for the current game release.

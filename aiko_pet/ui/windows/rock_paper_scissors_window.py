@@ -6,6 +6,7 @@ import tkinter as tk
 from collections.abc import Callable
 from functools import partial
 
+from ...asset_paths import GAME_ART_DIR
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
@@ -14,6 +15,7 @@ from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
+from .game_presentation import GamePresentation
 from .rock_paper_scissors_sequence import RockPaperScissorsSequence
 
 _MOVES: tuple[tuple[Move, str], ...] = (
@@ -34,6 +36,8 @@ class RockPaperScissorsWindow:
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
         express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
+        presentation: GamePresentation | None = None,
+        clear_hand: Callable[[], None] = lambda: None,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
@@ -43,6 +47,7 @@ class RockPaperScissorsWindow:
             close=self.close, next_round=None, skin=self.skin,
             always_on_top=always_on_top, game_id=GameId.ROCK_PAPER_SCISSORS,
             bounds_at=bounds_at,
+            body_height=540,
         )
         self.window = self._panel.window
         try:
@@ -73,7 +78,7 @@ class RockPaperScissorsWindow:
                 button.pack(side='left', padx=2)
                 self.buttons[move] = button
             self._choices_scroll.adopt()
-            self._hand_panel = self._panel.passive(self._panel.body)
+            self._hand_panel = self._panel.passive(self._panel.body, padding=0)
             self.result_panel = self._hand_panel.frame
             self.result_panel.pack(fill='x', pady=(12, 0))
             body = self._hand_panel.body
@@ -82,18 +87,28 @@ class RockPaperScissorsWindow:
                 fg=self.skin.muted, font=(self.skin.font, 9),
             )
             self.result_title.pack()
+            self._mat_scroll = ScrollRegion(
+                body, self.skin, width=min(440, self._panel.content_width),
+                height=300, horizontal=True, autohide=True,
+            )
+            self._mat_scroll.frame.pack(fill='x')
             self.player_hand = tk.Canvas(
-                body, width=120, height=96, bg=self.skin.panel,
+                self._mat_scroll.body, width=440, height=300, bg=self.skin.background,
                 bd=0, highlightthickness=0,
             )
             self.player_hand.pack()
+            self._mat_image = tk.PhotoImage(
+                master=root, file=str(GAME_ART_DIR / 'rps-mat.png'),
+            )
+            self.player_hand.create_image(220, 150, image=self._mat_image)
             self._hand_image_item = self.player_hand.create_image(
-                60, 48, anchor='center', state='hidden',
+                220, 150, anchor='center', state='hidden',
             )
             self._hand_question_item = self.player_hand.create_text(
-                60, 48, text='?', fill=self.skin.muted,
+                220, 150, text='?', fill=self.skin.muted,
                 font=(self.skin.font, 22),
             )
+            self._mat_scroll.adopt()
             self.player_result_label = tk.Label(
                 body, text=GERMAN_TEXT.format('rps.no_rounds'), bg=self.skin.panel,
                 fg=self.skin.muted, font=(self.skin.font, 9),
@@ -108,6 +123,7 @@ class RockPaperScissorsWindow:
                 say=speak, show_emote=emote, show_aiko_hand=hand,
                 reveal_player=self.reveal_player, animate=animate,
                 set_busy=self._set_busy,
+                presentation=presentation, clear_hand=clear_hand,
             )
             self._panel.update(
                 SessionSummary(GameId.ROCK_PAPER_SCISSORS),
@@ -167,7 +183,13 @@ class RockPaperScissorsWindow:
 
     def choose(self, move: Move) -> None:
         if not self._closed and not self._sequence.busy:
-            self._clear_player_result()
+            self.player_hand.itemconfigure(
+                self._hand_image_item, image=self.hand_images[move], state='normal',
+            )
+            self.player_hand.itemconfigure(self._hand_question_item, state='hidden')
+            self.player_result_label.configure(text=GERMAN_TEXT.format(
+                'rps.player_hand', hand=_MOVE_NAMES[move],
+            ))
             self._sequence.choose(move)
 
     def focus(self) -> None:

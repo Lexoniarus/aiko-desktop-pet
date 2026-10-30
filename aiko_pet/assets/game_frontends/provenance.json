@@ -1,0 +1,240 @@
+{
+  "date": "2026-10-30",
+  "method": "Chromium image/SVG rasterization at explicit display size, transparent background; original artwork unchanged",
+  "references": [
+    "rps-animation-2026-10-28",
+    "ttt-v3-2026-10-28"
+  ],
+  "exports": [
+    {
+      "source": "E:\\aiko-desktop-pet\\aiko-desktop-pet\\aiko_pet\\assets/game_frontends/rps-mat.svg",
+      "target": "aiko_pet/assets/game_frontends/rps-mat.png",
+      "size": [
+        440,
+        300
+      ],
+      "source_sha256": "f4ba1025e9e9d36c4b329cc910105e94490863cf467c1236ccd5131fce4f4292",
+      "sha256": "915161b8a8a43456e189062622e9d3b2c199984281aa7db659d3dfafa2389db4"
+    },
+    {
+      "source": "E:\\aiko-desktop-pet\\aiko-desktop-pet\\aiko_pet\\assets/game_frontends/ttt-frame.svg",
+      "target": "aiko_pet/assets/game_frontends/ttt-frame.png",
+      "size": [
+        350,
+        350
+      ],
+      "source_sha256": "9d87e2c892daa26d0b9fe45b70a27ba6e7664a809005c05bfcfe8209d51c047b",
+      "sha256": "0ee4b3a14d3c0aad763c6df15a64f89a33dd93a0325bf93e7f3881644eb066a9"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_24.png",
+      "size": [
+        24,
+        24
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "120a9a32424ef8faf3e59fdbcffb5d975f15ed55764007d38ac4c961c4d58d01"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_32.png",
+      "size": [
+        32,
+        32
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "e08af708c35acbd7a8515f4111eb65bc54118ed5fcca42cfa963e0e860ce6870"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_40.png",
+      "size": [
+        40,
+        40
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "2a4497283a532320d22019872b04d148235cceaeac1093f9a227879863c402c5"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_48.png",
+      "size": [
+        48,
+        48
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "799f47b2fb08ceab31ffa588195629647d7cd65a9ec88e0b03b987d89c766dfc"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_64.png",
+      "size": [
+        64,
+        64
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "9257985a8451e9107ce15387d3a47df8262768d1389191eb38fe5b4c8d7693cb"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_96.png",
+      "size": [
+        96,
+        96
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "d177533c209b967d61ae00d94fb20c2279d744fdfbbcd33c759bbe161a9c040a"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/rock.png",
+      "target": "aiko_pet/assets/ui/play_rps_rock_128.png",
+      "size": [
+        128,
+        128
+      ],
+      "source_sha256": "a94741eb096cbc57a844203202b60c04998a106eb31966befe04ad111393a0a4",
+      "sha256": "468b5c1b8858d10198aa72bb91fcf191407530d7f7edcd42574b0ad8b34d061b"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_24.png",
+      "size": [
+        24,
+        24
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "cc8a4c661b644a21111a5e8930430383119ec622e6bbb9c7fd373941ba49659a"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_32.png",
+      "size": [
+        32,
+        32
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "60457406515952349aee905055368c694ddb49144520ec668ecea08a4788a7ad"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_40.png",
+      "size": [
+        40,
+        40
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "9304a01df0f319b5c8b1a19a1d189d3af39b4d0c0bc2e2bc890fca1bd5f0e5d5"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_48.png",
+      "size": [
+        48,
+        48
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "27884d8129e66a38c8aed76e74374f2a2d2030bca19208fa4f2b6bf171084986"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_64.png",
+      "size": [
+        64,
+        64
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "61ee9217cb07f7dac478bfe12164463ea5dfd27e7c2ac5e83c1269a0131d0f1d"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_96.png",
+      "size": [
+        96,
+        96
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "d41028a63fa49ff3a0bc6df86935e7d30ba8dbb36188a91d9d5ba792a0a34e01"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/paper.png",
+      "target": "aiko_pet/assets/ui/play_rps_paper_128.png",
+      "size": [
+        128,
+        128
+      ],
+      "source_sha256": "151696b0808d5e9e80d9afc27ef8acc2a19c6724e4ba1e3f9035e92ff11d7f0d",
+      "sha256": "ddf369a51489ccf18bd5a9ec42e012dcae8debf212679ac2f99cad1e8519e7d2"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_24.png",
+      "size": [
+        24,
+        24
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "9f067bed9e42bb9a2b6bb8ecbd4efa8e013c5b388c9121a97dafd144aafba1c3"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_32.png",
+      "size": [
+        32,
+        32
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "b63399d09b7df07ffc8191e0a5790b8803398259757a63e3c8c8de6aa9fe2c94"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_40.png",
+      "size": [
+        40,
+        40
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "eb1042dbb91a801ee2985699b89da7928984e1bf42b30c2ecdb832b525d92465"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_48.png",
+      "size": [
+        48,
+        48
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "deb4b795ac5c0cf772fecb506cebb3b4a724016703e076d6641cff5a79fe1ada"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_64.png",
+      "size": [
+        64,
+        64
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "451d48ef341c4eb63ddddefc0f353643177643189ad39101669a579e6506380a"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_96.png",
+      "size": [
+        96,
+        96
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "5e42059cc1c4f1f5b8f2fe1c9a79a200ab8cf3e60b582c97ecf579abb906d0ea"
+    },
+    {
+      "source": "../design-previews/rps-animation-2026-10-28/assets/scissors.png",
+      "target": "aiko_pet/assets/ui/play_rps_scissors_128.png",
+      "size": [
+        128,
+        128
+      ],
+      "source_sha256": "99e42fd0576ee62fcf531b1054872c4c1a790aa687a9aa5515e67499346692a9",
+      "sha256": "e435c84b1275d1d358684948960c6343b69b0032d40e1e207bea69b403f2c3ab"
+    }
+  ]
+}

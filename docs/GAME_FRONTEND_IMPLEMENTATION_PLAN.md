@@ -16,6 +16,12 @@ Keine neue Bildgenerierung, kein Push oder Merge.
   Validation: 3 new playback checks, 7 speech checks, 20 animation-runtime
   checks and 29 existing native sprite checks pass. Remaining G0 integrations
   are exercised with each game below; G1–G6 are not yet delivered.
+- G1 Fingerduell: approved mat and transparent hand exports installed. Selection
+  immediately shows the player hand; three complete 900 ms Attack cycles emit
+  words on their real frame-04 markers, reveal on cycle three and permit a new
+  choice during recovery. Native clock/GUI, input, surface-layout and expression
+  checks pass; the actual Windows panel was captured and inspected outside Git.
+  Shared G0 commit: `a23bba5`. G2–G6 remain pending.
 
 ## Ziel und Referenzen
 
