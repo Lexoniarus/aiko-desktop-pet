@@ -12,6 +12,7 @@ from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
+from ..common.rounded_panel import RoundedPanel
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from ..pet_view.game_effects import GameEffects
@@ -71,7 +72,10 @@ class QuizWindow:
         self._marquee.create_text(width // 2 - 22, 82, text="mit Aiko",
                                   font=(skin.font, 10, "italic"), fill="#efd6df")
         self._marquee.create_image(width // 2 + 110, 53, image=self._emblem)
-        self._question_card = self._panel.passive(self._stage, padding=12)
+        self._question_card = RoundedPanel(
+            self._stage, fill="#fffaee", border="#e0c48d",
+            background="#7871a5", padding=12,
+        )
         self._question_card.frame.pack(fill="x", pady=(0, 12))
         self._question = tk.Label(
             self._question_card.body, text="", bg="#fffaee", fg="#4c416b",
