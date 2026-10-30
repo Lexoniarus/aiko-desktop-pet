@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 
+from .social_candidates import MAX_JOKE_EXCLUSIONS, JokeExclusion
 from .social_content import SocialCategory
 from .social_requests import SocialRequestHistory
 
@@ -24,6 +25,13 @@ class SocialContentHistory:
 
     entries: tuple[SocialContentReceipt, ...] = ()
     requests: SocialRequestHistory = SocialRequestHistory()
+    exclusions: tuple[JokeExclusion, ...] = ()
+
+    def excluded(self, entry: JokeExclusion, now: float) -> SocialContentHistory:
+        retained = tuple(e for e in self.exclusions if e.until > now
+                         and (e.category, e.lower, e.upper)
+                         != (entry.category, entry.lower, entry.upper))
+        return replace(self, exclusions=(*retained[-(MAX_JOKE_EXCLUSIONS - 1):], entry))
 
     def admitted(self, receipt: SocialContentReceipt) -> SocialContentHistory:
         others = tuple(e for e in self.entries if e.category != receipt.category)

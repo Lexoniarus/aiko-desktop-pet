@@ -84,6 +84,7 @@ class SocialHistoryCodecTests(unittest.TestCase):
         for version in (1, 2, 3):
             legacy = deepcopy(raw)
             legacy["version"] = version
+            del legacy["exclusions"]
             del legacy["entries"][0]["intro_variant"]
             if version == 3:
                 legacy["horoscope"] = None

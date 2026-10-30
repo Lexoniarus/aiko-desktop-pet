@@ -28,7 +28,7 @@ from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -115,6 +115,22 @@ MIGRATIONS = (
             "INSERT INTO object_memory_sources SELECT * FROM saved_book_sources",
             "DROP TABLE saved_book_sources",
         ),
+    ),
+    SchemaMigration(
+        4,
+        "joke_candidate_exclusions",
+        ("""CREATE TABLE joke_exclusions (
+            position_index INTEGER PRIMARY KEY CHECK(position_index >= 0),
+            state_id INTEGER NOT NULL REFERENCES save_state(id) ON DELETE CASCADE
+                CHECK(state_id = 1),
+            category TEXT NOT NULL CHECK(category IN ('single', 'twopart')),
+            lower INTEGER NOT NULL CHECK(lower >= 0),
+            upper INTEGER NOT NULL CHECK(upper >= lower AND upper <= 100000),
+            reason TEXT NOT NULL,
+            until REAL NOT NULL CHECK(until >= 0),
+            revision INTEGER NOT NULL CHECK(revision > 0),
+            UNIQUE(category, lower, upper)
+        )""",),
     ),
 )
 

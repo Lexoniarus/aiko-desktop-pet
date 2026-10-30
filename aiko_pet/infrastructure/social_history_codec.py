@@ -14,6 +14,7 @@ from ..application.social_history import (
 )
 from ..pet.catalog_validation import enum_value, object_fields
 from .horoscope_codec import decode_horoscope
+from .social_candidate_codec import decode_joke_exclusions, encode_joke_exclusions
 from .social_request_codec import decode_social_requests, encode_social_requests
 
 
@@ -21,11 +22,13 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
     if not isinstance(raw, dict) or type(raw.get("version")) is not int:
         raise ValueError("Unsupported social history version")
     version = raw["version"]
-    if version not in (1, 2, 3, 4, 5):
+    if version not in (1, 2, 3, 4, 5, 6):
         raise ValueError("Unsupported social history version")
     row = object_fields(
         raw,
-        ("version", "entries", "requests", "horoscope")
+        ("version", "entries", "requests", "exclusions")
+        if version >= 6
+        else ("version", "entries", "requests", "horoscope")
         if 3 <= version <= 4
         else ("version", "entries", "requests")
         if version >= 2
@@ -106,13 +109,14 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
         return SocialContentHistory(
             tuple(result),
             decode_social_requests(row["requests"]),
+            decode_joke_exclusions(row["exclusions"]) if version >= 6 else (),
         )
     return SocialContentHistory(tuple(result))
 
 
 def encode_social_history(history: SocialContentHistory) -> dict[str, Any]:
     return dict(
-        version=5,
+        version=6,
         entries=[
             dict(
                 category=e.category.value,
@@ -123,6 +127,7 @@ def encode_social_history(history: SocialContentHistory) -> dict[str, Any]:
             for e in history.entries
         ],
         requests=encode_social_requests(history.requests),
+        exclusions=encode_joke_exclusions(history.exclusions),
     )
 
 

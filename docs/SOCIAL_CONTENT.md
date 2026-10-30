@@ -247,15 +247,19 @@ fields. See [PL-6C delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6c-delivery-gro
 
 `settings.online_social` is an optional Boolean within the existing version-one
 legacy JSON save. Ready sayings/joke/fact buffers and pending tokens are never
-saved. The `social_history` transfer section now uses version five: up to 100
+saved. The `social_history` transfer section now uses version six: up to 100
 admission receipts per category (300 total), plus bounded expiring request timestamps
-and provider pauses. Local horoscope days and frozen cues are stored separately
+and provider pauses, and up to 512 expiring joke exclusions. SQLite schema version
+four adds their table through the existing backed-up migration path. Existing
+provider pauses retain their expiry because older records contain no cause.
+Local horoscope days and frozen cues are stored separately
 from online request history in the same atomic session checkpoint.
 Receipt fields are category, namespaced provider identity, SHA-256 fingerprint
 of normalized provider words and nullable `intro_variant` (0, 1 or 2). Quote identities use
 `zitat-service:<entry-id>` in the existing `single` category. These three
 receipt categories do not store source words, URLs, buffers or pending tokens.
-Versions one through four remain readable. Migration preserves old horoscope
+Versions one through five remain readable with empty candidate exclusions.
+Migration preserves old horoscope
 admission/completion markers while discarding provider prose, counters and retired
 provider request metadata. No history means empty defaults. Opt-out clears online
 buffers and retains admission/request bookkeeping; the local book stays available.

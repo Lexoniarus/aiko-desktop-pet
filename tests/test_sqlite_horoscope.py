@@ -14,7 +14,11 @@ from aiko_pet.infrastructure.sqlite.horoscope_rows import (
     read_horoscope,
     write_horoscope,
 )
-from aiko_pet.infrastructure.sqlite.schema import APPLICATION_ID, MIGRATIONS
+from aiko_pet.infrastructure.sqlite.schema import (
+    APPLICATION_ID,
+    MIGRATIONS,
+    SCHEMA_VERSION,
+)
 
 
 def admitted_day():
@@ -80,5 +84,6 @@ class SqliteHoroscopeTests(unittest.TestCase):
                 self.assertTrue(history.days[0].admitted)
                 self.assertIsNone(history.days[0].reading)
                 self.assertEqual(
-                    connection.execute("PRAGMA user_version").fetchone(), (3,)
+                    connection.execute("PRAGMA user_version").fetchone(),
+                    (SCHEMA_VERSION,),
                 )

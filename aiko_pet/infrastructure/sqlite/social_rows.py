@@ -14,8 +14,15 @@ def write_social_core(
     singleton(connection, "save_state")
     raw = encode_social_history(history)
     decode_social_history(raw)
-    for table in ("social_receipts", "social_requests", "provider_pauses"):
+    for table in ("social_receipts", "social_requests", "provider_pauses",
+                  "joke_exclusions"):
         connection.execute(f"DELETE FROM {table}")
+    connection.executemany(
+        "INSERT INTO joke_exclusions VALUES (?, 1, ?, ?, ?, ?, ?, ?)",
+        [(index, row["category"], row["lower"], row["upper"], row["reason"],
+          row["until"], row["revision"])
+         for index, row in enumerate(raw["exclusions"])],
+    )
     connection.executemany(
         "INSERT INTO social_receipts VALUES (?, 1, ?, ?, ?, ?)",
         [
@@ -61,7 +68,8 @@ def read_social_core(
     singleton(connection, "save_state")
     history = decode_social_history(
         dict(
-            version=5,
+            version=6,
+            exclusions=_ordered(connection, "joke_exclusions"),
             entries=_ordered(connection, "social_receipts"),
             requests=dict(
                 attempts=[

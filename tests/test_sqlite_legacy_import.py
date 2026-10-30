@@ -145,6 +145,7 @@ class SqliteLegacyImportTests(unittest.TestCase):
             del episode["causes"], episode["attribution"]
         raw["social_history"]["version"] = 1
         del raw["social_history"]["requests"]
+        del raw["social_history"]["exclusions"]
         for receipt in raw["social_history"]["entries"]:
             del receipt["intro_variant"]
         raw["object_memory"]["version"] = 2
