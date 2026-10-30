@@ -59,6 +59,8 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertIsNone(hand._hand.cards[1])
         assert hand.canvas is not None
         for item in hand.canvas.find_all():
+            if hand.canvas.type(item) != 'image':
+                continue
             image = hand.canvas.itemcget(item, 'image')
             self.assertEqual(self.pet.root.tk.call('image', 'width', image), 128)
         assert game._motion is not None

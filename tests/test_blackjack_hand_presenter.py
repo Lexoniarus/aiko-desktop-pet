@@ -76,4 +76,3 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         with patch.object(window, "wm_attributes", wraps=window.wm_attributes) as attrs:
             self.hand.set_topmost(True)
         attrs.assert_called_once_with("-topmost", True)
-
