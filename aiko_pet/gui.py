@@ -53,6 +53,7 @@ from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.view_models.food_models import food_choices
 from .ui.view_models.read_models import DesktopPresentation
+from .ui.windows.game_presentation import GamePresentation
 from .ui.windows.game_speech import GameSpeech
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
@@ -167,6 +168,7 @@ class DesktopPet:
                 place_x=self._place_x,
                 gaze_origin=self._window.gaze_origin,
                 game_mode=lambda: self._animated.game_mode,
+                game_gaze=lambda: self._animated.game_gaze,
                 action_until=lambda: self._action_playback.until,
                 action_clip_id=lambda: self._action_playback.clip_id,
                 cancel_action=self._action_playback.cancel_at,
@@ -289,6 +291,11 @@ class DesktopPet:
                     self._mark_reaction_spoken, self._set_game_mode,
                     lambda name: self._start_action(name, 0),
                     self._animation.request_expression,
+                    GamePresentation(
+                        self._animated.play_game_action,
+                        self._animated.cancel_game_action,
+                        self._animated.look_game,
+                    ),
                 ),
             ), skin=self._window.skin,
         )

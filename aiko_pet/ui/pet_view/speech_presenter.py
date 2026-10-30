@@ -58,6 +58,8 @@ class SpeechPresenter:
         self.emote_images: dict[str, tk.PhotoImage] = {}
         self.game_hand_images: dict[Move, tk.PhotoImage] = {}
         self.attribution = ""
+        self._game_mode = False
+        self._game_hand: Move | None = None
         root.bind("<Destroy>", lambda event: (
             self.release_images() if event.widget is root else None
         ), add="+")
@@ -130,12 +132,78 @@ class SpeechPresenter:
         self.move()
         window.deiconify()
         self._restore_stack()
-        self.pending_timer = self._root.after(duration_ms, self.hide)
+        if duration_ms > 0:
+            self.pending_timer = self._root.after(duration_ms, self._expire)
+
+    def _expire(self) -> None:
+        self.pending_timer = None
+        if self._game_mode and self._game_hand is not None:
+            self._show_game_content("", None, 0)
+        elif self._game_mode:
+            self._dismiss_window()
+        else:
+            self.hide()
+
+    def begin_game(self) -> None:
+        self.hide()
+        self._game_mode = True
+
+    def clear_game_hand(self) -> None:
+        self._game_hand = None
+        self._dismiss_window()
+
+    def _show_game_content(
+        self, text: str, emote: str | None, duration_ms: int,
+    ) -> None:
+        """One stable surface: exclusive comment above a persistent own hand."""
+        self._dismiss_window()
+        bubble = self._new_window()
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
+        surface = RoundedPanel(
+            bubble, fill="#FFFCFD", border="#B8CDDF", background=transparent,
+        )
+        surface.frame.pack()
+        comment = tk.Frame(surface.body, width=250, height=90, bg="#FFFCFD")
+        comment.pack()
+        comment.pack_propagate(False)
+        if emote is not None:
+            if emote not in self.emote_images:
+                path = self._emote_assets / f"emote_{emote}.png"
+                self.emote_images[emote] = tk.PhotoImage(
+                    master=self._root, file=str(path),
+                ).zoom(3)
+            tk.Label(comment, image=self.emote_images[emote], bg="#FFFCFD").pack(
+                expand=True,
+            )
+        else:
+            tk.Label(
+                comment, text=text, wraplength=230, justify="center", bg="#FFFCFD",
+                fg="#3E4C61", font=(self._font_name, 10),
+            ).pack(expand=True)
+        if self._game_hand is not None:
+            move = self._game_hand
+            if move not in self.game_hand_images:
+                if self._ui_images is None:
+                    self._ui_images = IconImages(self._root)
+                self.game_hand_images[move] = self._ui_images.icon(
+                    f"play_rps_{move.value}", 96,
+                )
+            tk.Label(
+                surface.body, image=self.game_hand_images[move], bg="#FFFCFD",
+            ).pack()
+            tk.Label(
+                surface.body, text=GERMAN_TEXT.format(f"rps.move.{move.value}"),
+                font=(self._font_name, 9), bg="#FFFCFD", fg="#65758A",
+            ).pack()
+        self._present(bubble, duration_ms)
 
     def show_emote(self, emote: str, duration_ms: int = 900) -> None:
         """Display one hand-authored icon in the same position as speech."""
         if emote not in EMOTES:
             raise ValueError(f"Unsupported emote: {emote}")
+        if self._game_mode:
+            self._show_game_content("", emote, duration_ms)
+            return
         self.hide()
         bubble = self._new_window()
         if emote not in self.emote_images:
@@ -157,6 +225,9 @@ class SpeechPresenter:
 
     def show_text(self, phrase: str, duration_ms: int = 1800) -> None:
         """Show plain text, never HTML or executable message contents."""
+        if self._game_mode:
+            self._show_game_content(phrase, None, duration_ms)
+            return
         self.hide()
         bubble = self._new_window()
         frame = tk.Frame(bubble, bg="#53687e", bd=0)
@@ -209,6 +280,10 @@ class SpeechPresenter:
         """Show only Aiko's own hand in the existing character bubble."""
         if not isinstance(aiko, Move):
             raise ValueError("Unknown game hand")
+        if self._game_mode:
+            self._game_hand = aiko
+            self._show_game_content("", None, duration_ms)
+            return
         if aiko not in self.game_hand_images:
             if self._ui_images is None:
                 self._ui_images = IconImages(self._root)
@@ -273,6 +348,11 @@ class SpeechPresenter:
 
     def hide(self) -> None:
         """Cancel the old timeout so a previous bubble cannot hide a new one."""
+        self._game_mode = False
+        self._game_hand = None
+        self._dismiss_window()
+
+    def _dismiss_window(self) -> None:
         self._nonblocking = False
         if self.pending_timer is not None:
             self._root.after_cancel(self.pending_timer)

@@ -84,6 +84,10 @@ class DesktopVisualObservation:
     def sector(self) -> int | None:
         return self._sector
 
+    def game_direction(self, point: tuple[float, float]) -> int | None:
+        """Project a public game target without updating cursor attention."""
+        return gaze_sector(*self._eyes(), *point, scale=self._settings.scale)
+
     @property
     def orienting(self) -> bool:
         return self._attention.orientation_side() is not None

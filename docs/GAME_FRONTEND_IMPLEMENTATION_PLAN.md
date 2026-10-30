@@ -1,11 +1,21 @@
 # Spieloberflächen und Aikos Auftritte — Umsetzungsplan
 
-Stand: 30.10.2026. **Geplant, noch nicht umgesetzt.**
+Stand: 30.10.2026. **Einbau beauftragt; schrittweise Umsetzung läuft.**
 
 Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 [UI_VN_DESIGN.md](UI_VN_DESIGN.md) in die bestehende Python/Tk-Anwendung.
-Der aktuelle Auftrag ist die Planung. Er startet keinen Anwendungseinbau,
-keine neue Bildgenerierung und keinen Push oder Merge.
+Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
+Keine neue Bildgenerierung, kein Push oder Merge.
+
+## Implementation log
+
+- G0 foundation: the existing sprite clock now admits cancellable finite game
+  actions with actual frame markers and exact requested duration. Game gaze
+  uses the existing body-orientation policy; a persistent RPS hand can share
+  the existing bubble with text/emote. No second sprite or speech clock.
+  Validation: 3 new playback checks, 7 speech checks, 20 animation-runtime
+  checks and 29 existing native sprite checks pass. Remaining G0 integrations
+  are exercised with each game below; G1–G6 are not yet delivered.
 
 ## Ziel und Referenzen
 

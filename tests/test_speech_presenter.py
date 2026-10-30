@@ -10,6 +10,20 @@ from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 
 
 class SpeechPresenterTests(unittest.TestCase):
+    def test_game_hand_survives_comment_and_emoji_expiry_but_not_game_close(self):
+        self.presenter.begin_game()
+        self.presenter.show_game_hand(Move.ROCK, 0)
+        self.presenter.show_text("Schere, Stein, Papier!", 1800)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter.show_emote("star", 900)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter._expire()
+        self.assertIsNotNone(self.presenter.bubble)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter.hide()
+        self.assertIsNone(self.presenter.bubble)
+        self.assertIsNone(self.presenter._game_hand)
+
     @classmethod
     def setUpClass(cls) -> None:
         try:

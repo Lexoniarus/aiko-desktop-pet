@@ -57,6 +57,7 @@ class AnimationRuntimePorts:
     holding_readable: Callable[[], bool] = lambda: False
     cursor_gaze_point: Callable[[], tuple[float, float] | None] = lambda: None
     cancel_action: Callable[[float], None] = lambda _now: None
+    game_gaze: Callable[[], tuple[float, float] | None] = lambda: None
 
 
 class DesktopAnimationRuntime:
@@ -89,6 +90,7 @@ class DesktopAnimationRuntime:
         self._idle_gesture_front = False
         self._expressions = ExpressionPlayback(assets)
         self._last_base_pose = SpriteSelection("idle", 0)
+        self._was_game = False
 
     def advance_walk(
         self,
@@ -249,6 +251,9 @@ class DesktopAnimationRuntime:
         active_action: str | None,
     ) -> RenderDecision:
         """Preserve game/sleep/action/walk/gaze/idle priority without Tk."""
+        if game_mode != self._was_game:
+            self._body_orientation.reset()
+            self._was_game = game_mode
         self._pointer, self._last_pointer_move = pointer, last_pointer_move
         if (active_action == QUESTION_REQUEST_CLIP and any((
             game_mode, self._state.sleeping, self._visual.cursor_watching,
@@ -281,6 +286,18 @@ class DesktopAnimationRuntime:
             ),
             timed_action_active=now < self._ports.action_until(),
         )
+        if priority.mode == "game" and priority.animation == "waiting":
+            point = self._ports.game_gaze()
+            direction = self._visual.game_direction(point) if point else None
+            selection = (SpriteSelection("look", direction)
+                         if direction is not None else SpriteSelection("idle"))
+            if self._assets.body_clips:
+                selection = self._body_orientation.select(now, selection)
+            return RenderDecision(
+                selection if selection.animation != "idle" else
+                self.ambient.choose_rest(now), clear_action=True,
+                refresh_after_ms=self._body_orientation.next_delay_ms(now),
+            )
         if priority.mode != "passive":
             self._body_orientation.reset()
             if priority.interrupt_walk:

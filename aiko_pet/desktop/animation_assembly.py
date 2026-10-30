@@ -89,6 +89,7 @@ class AnimationAssemblyPorts:
     cursor_allowed: Callable[[], bool] = lambda: False
     cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
     cancel_action: Callable[[float], None] = lambda _now: None
+    game_gaze: Callable[[], tuple[float, float] | None] = lambda: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,6 +160,7 @@ def assemble_animation(
             ready_for_handover=ports.world.ready_for_handover,
             holding_readable=ports.world.holding_readable,
             cursor_gaze_point=ports.world.cursor_gaze_point,
+            game_gaze=ports.game_gaze,
         ),
     )
     items = load_item_catalog()

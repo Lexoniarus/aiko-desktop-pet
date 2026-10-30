@@ -112,6 +112,13 @@ class AnimatedPet:
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self._ambient = ambient
         self._game_mode = False
+        self.game_gaze: tuple[float, float] | None = None
+        self._game_clip: str | None = None
+        self._game_timings: tuple[int, ...] = ()
+        self._game_marker: Callable[[int], None] = lambda _frame: None
+        self._game_done: Callable[[], None] = lambda: None
+        self._game_last_frame = -1
+        self._game_generation = 0
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
         self._last_render_pointer: tuple[int, int] = (0, 0)
         self._display_clip = "idle"
@@ -155,9 +162,52 @@ class AnimatedPet:
     def set_game_mode(self, enabled: bool) -> None:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
+        self.cancel_game_action()
+        self.game_gaze = None
         self._ambient.suspend(time.monotonic())
         self.ports.reset_gaze()
         self.ports.interrupt_walk()
+
+    def play_game_action(
+        self, clip_id: str, duration_ms: int,
+        marker: Callable[[int], None], completed: Callable[[], None],
+    ) -> None:
+        """Use the one sprite clock, reporting actually displayed source poses."""
+        clip = self.assets.clips[clip_id]
+        if clip.loop or duration_ms <= 0:
+            raise ValueError("Game actions require a finite clip and positive duration")
+        self.cancel_game_action()
+        total = sum(clip.timings)
+        elapsed = 0
+        deadlines = [0]
+        for duration in clip.timings:
+            elapsed += duration
+            deadlines.append(round(elapsed * duration_ms / total))
+        self._game_timings = tuple(
+            max(1, end - start) for start, end in zip(deadlines, deadlines[1:])
+        )
+        self._game_clip = clip_id
+        self._game_marker, self._game_done = marker, completed
+        self._active_action = None
+        self.frame_clock.reset()
+        self._ambient.suspend(time.monotonic())
+        self.show_frame(clip_id, time.monotonic())
+
+    def cancel_game_action(self) -> None:
+        self._game_generation += 1
+        self._game_clip = None
+        self._game_last_frame = -1
+        self._game_marker = lambda _frame: None
+        self._game_done = lambda: None
+        self._frame_generation += 1
+        if self._frame_timer is not None:
+            self.root.after_cancel(self._frame_timer)
+            self._frame_timer = None
+
+    def look_game(self, point: tuple[float, float] | None) -> None:
+        self.game_gaze = point
+        if self._game_mode and self._game_clip is None:
+            self.render(time.monotonic(), self._last_render_pointer)
 
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""
@@ -231,7 +281,8 @@ class AnimatedPet:
         clock_key = clip.family or state
         if playback_rate != 1 or reverse:
             clock_key += f":{playback_rate:.6f}:{reverse}"
-        timings = tuple(max(1, round(t / playback_rate)) for t in clip.timings)
+        timings = (self._game_timings if state == self._game_clip else
+                   tuple(max(1, round(t / playback_rate)) for t in clip.timings))
         if walking and self.frame_clock.active_key != (clock_key, fixed):
             self._last_motion_at = now
             self._walk_progress = 0.0
@@ -281,6 +332,18 @@ class AnimatedPet:
             clip.frames[source_index],
             scale=self.settings.scale,
         )
+        if state == self._game_clip:
+            game_generation = self._game_generation
+            if source_index != self._game_last_frame:
+                self._game_last_frame = source_index
+                self._game_marker(source_index)
+            if game_generation != self._game_generation:
+                return
+            if self.frame_clock.finished:
+                done = self._game_done
+                self.cancel_game_action()
+                done()
+                return
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
@@ -347,6 +410,7 @@ class AnimatedPet:
     def stop(self) -> None:
         """Cancel animation callbacks before the desktop destroys Tk."""
         self._stopped = True
+        self.cancel_game_action()
         self._frame_generation += 1
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
@@ -372,6 +436,9 @@ class AnimatedPet:
     ) -> None:
         """Render an immutable cursor snapshot without mutating PetMind."""
         self._last_render_pointer = pointer
+        if self._game_mode and self._game_clip is not None:
+            self.show_frame(self._game_clip, now)
+            return
         if attention is not None:
             self._cursor_snapshot = attention
         decision = self.ports.choose_animation(
