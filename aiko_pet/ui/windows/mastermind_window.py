@@ -15,7 +15,9 @@ from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_contracts import GameCodePorts
 from .game_panel import GamePanel
+from .game_presentation import GamePresentation
 from .mastermind_drag import MastermindDrag
+from .mastermind_finale import MastermindFinale
 from .mastermind_sequence import MastermindSequence
 
 ROW_HEIGHT = 48
@@ -40,6 +42,8 @@ class MastermindWindow:
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
         express_event: Callable[[str], None] = lambda _event: None,
         bounds_at: BoundsAt | None = None,
+        presentation: GamePresentation | None = None,
+        interrupt: Callable[[], None] = lambda: None,
     ) -> None:
         self._closed, self._busy = False, True
         self._on_closed, self._codes, self.skin = on_closed, codes, skin
@@ -48,6 +52,8 @@ class MastermindWindow:
         self._active, self._feedback_visible = 0, 4
         self._view = RoundView()
         self._sequence: MastermindSequence | None = None
+        self._finale: MastermindFinale | None = None
+        self._presentation = presentation
         self._layout_timer: str | None = None
         self._palette_images: dict[str, tk.PhotoImage] = {}
         self._drag = MastermindDrag(codes.images, self._drop, self._click_piece)
@@ -60,11 +66,16 @@ class MastermindWindow:
             always_on_top=always_on_top,
             game_id=GameId.MASTERMIND,
             bounds_at=bounds_at,
-            body_height=740,
+            body_height=780,
+            reserve_right=120,
         )
         self.window = self._panel.window
         try:
             self._build(root, bounds_at)
+            if presentation is not None:
+                self._finale = MastermindFinale(
+                    self.window, codes, presentation, topmost=always_on_top,
+                )
 
             def say(text: str, milliseconds: int) -> None:
                 speak(text, milliseconds)
@@ -82,6 +93,8 @@ class MastermindWindow:
                 dialogue=dialogue,
                 round_event=round_event,
                 express_event=express_event,
+                finale=self._finale.play if self._finale else None,
+                interrupt=interrupt, look=self._look_feedback,
             )
             self._present(self._sequence.game.view, self._sequence.game.score, True, 4)
             # These allocations may settle after the top-level Configure event.
@@ -99,6 +112,8 @@ class MastermindWindow:
             self.window.bind("<Configure>", self._configured, add="+")
         except Exception:
             self._closed = True
+            if self._finale:
+                self._finale.close()
             self._drag.cancel()
             self._cancel_layout()
             if self._sequence is not None:
@@ -120,6 +135,7 @@ class MastermindWindow:
         ).pack(fill="x")
 
     def _build(self, root: tk.Tk, bounds_at: BoundsAt | None) -> None:
+        self._label(GERMAN_TEXT.format('game.frontend.mm'), 11)
         self._label(GERMAN_TEXT.format("mastermind.rules"))
         compact = self._panel.content_width < 394
         self._palette_columns = 6
@@ -215,7 +231,7 @@ class MastermindWindow:
             self.board_horizontal.body,
             width=460,
             height=BOARD_HEIGHT,
-            bg=self.skin.panel,
+            bg='#E6E1F2',
             highlightthickness=0,
         )
         self.board.pack()
@@ -246,7 +262,9 @@ class MastermindWindow:
             return
         # winfo_y already includes the top padding; reserve only the bottom.
         available = height - self.board_scroll.frame.winfo_y() - BOARD_PADDING
-        self.board_scroll.canvas.configure(height=max(96, min(BOARD_HEIGHT, available)))
+        self.board_scroll.canvas.configure(
+            height=max(1, min(BOARD_HEIGHT, available - 2)),
+        )
         self._panel.scroll.canvas.yview_moveto(0)
 
     def _configured(self, event: tk.Event[tk.Misc]) -> None:
@@ -326,7 +344,8 @@ class MastermindWindow:
                 y - 23,
                 458,
                 y + 23,
-                outline=self.skin.accent if active else self.skin.border,
+                outline='#C0A477' if active else '#AEA1C6',
+                fill='#FFFAEF' if active else '#F3EDF7',
                 width=2 if active else 1,
                 tags="row",
             )
@@ -454,6 +473,7 @@ class MastermindWindow:
 
     def _refresh(self) -> None:
         assert self._sequence is not None
+        self._sequence.interrupt_comment()
         self._present(
             self._view, self._sequence.game.score, self._busy, self._feedback_visible
         )
@@ -461,6 +481,8 @@ class MastermindWindow:
     def _click_piece(self, color: str, source: int | None) -> None:
         if not self._editable():
             return
+        if self._sequence is not None:
+            self._sequence.interrupt_comment()
         if source is not None:
             if self._selected_color is not None:
                 self._draft[source] = self._selected_color
@@ -524,12 +546,23 @@ class MastermindWindow:
     def set_topmost(self, enabled: bool) -> None:
         self.window.wm_attributes("-topmost", enabled)
         self._codes.set_topmost(enabled)
+        if self._finale:
+            self._finale.effects.set_topmost(enabled)
+
+    def _look_feedback(self, row: int | None) -> None:
+        if self._presentation is not None:
+            self._presentation.look((
+                self.board.winfo_rootx() + 312,
+                self.board.winfo_rooty() + HEADER_HEIGHT + (row + .5) * ROW_HEIGHT,
+            ) if row is not None else None)
 
     def close(self) -> None:
         if not self._closed and self._sequence is not None:
             self._closed = True
             self._drag.cancel()
             self._cancel_layout()
+            if self._finale:
+                self._finale.close()
             score = self._sequence.close()
             try:
                 self._panel.destroy()

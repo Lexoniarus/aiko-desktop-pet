@@ -2,7 +2,7 @@
 
 import tkinter as tk
 
-from ...asset_paths import CONNECT_FOUR_DIR, MASTERMIND_DIR
+from ...asset_paths import GAME_ART_DIR, MASTERMIND_DIR
 
 
 class MastermindImages:
@@ -17,11 +17,10 @@ class MastermindImages:
             raise ValueError("Unsupported scale")
         key = color, scale
         if key not in self._images:
-            directory = (
-                CONNECT_FOUR_DIR if color in ("red", "yellow") else MASTERMIND_DIR
-            )
+            path = (GAME_ART_DIR / f'mm-{color}.png' if color is not None else
+                    MASTERMIND_DIR / 'black.png')
             source = tk.PhotoImage(
-                master=self._root, file=str(directory / f"{color or 'black'}.png")
+                master=self._root, file=str(path)
             )
             self._images[key] = source if scale == 1 else source.zoom(scale)
         return self._images[key]

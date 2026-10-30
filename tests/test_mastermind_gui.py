@@ -27,6 +27,30 @@ SECRET = ("red", "red", "blue", "green")
 
 
 class MastermindGuiTests(unittest.TestCase):
+    def test_safe_opening_and_snack_are_cosmetic_and_next_waits_for_completion(self):
+        before = self.pet.state.satiety
+        self.submit(SECRET)
+        self.clock.advance(8)
+        button = self.game._panel.next_button
+        self.assertEqual(button.cget('state'), 'disabled')
+        self.clock.advance(17)
+        self.assertEqual(self.code._frame, 32)
+        self.assertFalse(self.code._snack)
+        self.assertEqual(button.cget('state'), 'normal')
+        self.assertLessEqual(self.pet.state.satiety, before)
+        self.assertEqual(self.game._sequence.game.score.wins, 1)
+
+    def test_closing_during_opening_invalidates_the_safe_completion(self):
+        completed = []
+        self.code.open(lambda: completed.append(True))
+        self.clock.advance(.5)
+        self.assertGreater(self.code._frame, 0)
+        self.game.close()
+        self.clock.advance(4)
+        self.assertEqual(completed, [])
+        self.assertFalse(self.code.windows)
+        self.assertIsNone(self.code._timer)
+
     def setUp(self):
         self.clock = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
@@ -118,7 +142,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(flow.game.score.wins, 1)
         self.clock.advance(0.19)
         self.assertEqual(self.code._view.slots, ("red", None, None, None))
-        self.clock.advance(12)
+        self.clock.advance(25)
         self.assertEqual(self.code._view.slots, SECRET)
         button = self.game._panel.next_button
         assert button is not None
@@ -190,7 +214,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.pet.settings.scale = 2
         self.pet._game_visuals.move()
         self.pet.root.update()
-        self.assertEqual(self.code.canvas.winfo_width(), 414)
+        self.assertEqual(self.code.canvas.winfo_width(), 296)
         self.assertIn(self.code.window, self.pet._overlay_windows())
 
     def test_first_mapping_shows_all_ten_rows_when_body_has_room_without_input(self):

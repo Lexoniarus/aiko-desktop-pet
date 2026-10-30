@@ -263,4 +263,11 @@ fist; character originals and the external HTML preview bundles are not imported
 These project illustrations are separate from the Kenney card pack. All existing
 Blackjack card faces, backs and their license are preserved.
 
+The Connect Four frame/chips and Mastermind symbol gems/safe follow their
+separate approved references. The safe's 33 prepared door phases are rasterized
+from the accepted continuous source transform, not newly generated artwork.
+For floating Windows color-keyed props only, `tools/prepare_game_prop_alpha.py`
+prepares binary alpha while asserting unchanged RGB; `native-prop-alpha.json`
+records pre/post hashes. Opaque board/control artwork retains antialiased alpha.
+
 Documentation is maintained in **English**. UI strings, dialog entries, and runtime labels deliberately remain in **German** for the current game release.

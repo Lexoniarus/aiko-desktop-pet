@@ -246,6 +246,7 @@ class MastermindInputTests(unittest.TestCase):
     def test_body_is_prepared_before_the_first_mapping_and_only_once(self):
         panel = GamePanel.__new__(GamePanel)
         panel._placed, panel.width = False, 548
+        panel._reserve_right = 0
         panel.window, panel.scroll = cast(Any, Mock()), cast(Any, Mock())
         panel.window.winfo_reqheight.return_value = 1000
         panel.scroll.canvas.winfo_reqheight.return_value = 740
@@ -300,7 +301,7 @@ class MastermindInputTests(unittest.TestCase):
         game._configured(cast(Any, Mock(widget=game._panel.scroll.canvas)))
         callbacks.pop()()
         self.assertEqual(board.configure.call_args.kwargs,
-                         {"height": 224})
+                         {"height": 222})
 
     def test_explicit_preparation_replaces_pending_idle_and_close_cancels_layout(self):
         game = self.layout_window()

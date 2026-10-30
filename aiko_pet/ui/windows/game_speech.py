@@ -6,6 +6,7 @@ The minigame never owns a second speech bubble or presentation stack.
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import replace
 
 from ...games.rock_paper_scissors import Move
 from ...pet.animation.expression import EXPRESSION_CLIPS, Expression, event_expression
@@ -31,7 +32,24 @@ class GameSpeech:
         self._set_game_mode = set_game_mode
         self._animate_character = animate_character
         self._express = express
-        self.presentation = presentation
+        self._character = presentation
+        self.presentation = replace(
+            presentation, action=self._game_action, look=self._game_look,
+        ) if presentation is not None else None
+
+    def _game_action(
+        self, clip: str, duration: int | tuple[int, ...],
+        marker: Callable[[int], None], done: Callable[[], None],
+    ) -> None:
+        self._express(None)
+        if self._character is not None:
+            self._character.action(clip, duration, marker, done)
+
+    def _game_look(self, point: tuple[float, float] | None) -> None:
+        if point is not None:
+            self._express(None)
+        if self._character is not None:
+            self._character.look(point)
 
     def start(self) -> None:
         self._reactions.cancel()
@@ -57,9 +75,11 @@ class GameSpeech:
         self._speech.show_game_hand(aiko, duration_ms)
 
     def clear_hand(self) -> None:
+        self._express(None)
         self._speech.clear_game_hand()
 
     def silence(self) -> None:
+        self._express(None)
         self._speech.clear_game_comment()
 
     def animate(self, name: str) -> None:

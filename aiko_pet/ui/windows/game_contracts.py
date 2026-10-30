@@ -26,6 +26,9 @@ class GameCodePorts:
     clear: Callable[[], None]
     set_topmost: Callable[[bool], None]
     move: Callable[[], None] = lambda: None
+    open: Callable[[Callable[[], None]], None] = lambda done: done()
+    snack: Callable[[bool], None] = lambda _: None
+    point: Callable[[], tuple[float, float]] = lambda: (0, 0)
 
 
 class GameWindow(Protocol):

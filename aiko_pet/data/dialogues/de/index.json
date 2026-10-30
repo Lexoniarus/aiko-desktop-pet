@@ -1614,6 +1614,12 @@
     "game_ttt_draw-frontend-2",
     "game_ttt_mistake_draw-frontend-1",
     "game_ttt_forced_aiko-frontend-1",
-    "game_ttt_forced_player-frontend-1"
+    "game_ttt_forced_player-frontend-1",
+    "game_mm_snack_win-frontend-1",
+    "game_mm_snack_win-frontend-2",
+    "game_mm_spare_key-frontend-1",
+    "game_mm_spare_key-frontend-2",
+    "game_mm_snack_done-frontend-1",
+    "game_mm_snack_done-frontend-2"
   ]
 }

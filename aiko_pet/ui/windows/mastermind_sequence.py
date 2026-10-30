@@ -7,6 +7,7 @@ from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import Code, MastermindSession, RoundView
 from ...pet.mind.reaction_sequence import Cue, conversation_timing
 from ..view_models.mastermind_models import CodeView
+from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 
 
@@ -26,6 +27,9 @@ class MastermindSequence:
         round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
         express_event: Callable[[str], None] = lambda _event: None,
         game: MastermindSession | None = None,
+        finale: Callable[[bool, Callable[[], None]], None] | None = None,
+        interrupt: Callable[[], None] = lambda: None,
+        look: Callable[[int | None], None] = lambda _: None,
     ) -> None:
         self.game = game if game is not None else MastermindSession()
         self._schedule, self._cancel, self._present = schedule, cancel, present
@@ -39,6 +43,12 @@ class MastermindSequence:
         self._feedback_visible = 4
         self._generation = 0
         self.pending_timer: str | None = None
+        self._finale = finale
+        self._interrupt, self._look = interrupt, look
+        self._comments = GameCommentary(
+            schedule=schedule, cancel=cancel, say=say, emote=emote,
+            dialogue=self._dialogue, express=express_event,
+        )
 
     def _show(self) -> None:
         self._present(
@@ -59,8 +69,13 @@ class MastermindSequence:
         self.pending_timer = self._schedule(delay, run)
 
     def _react(
-        self, event: str, *, emote: str | None = None, animation: str = "idle"
+        self, event: str, *, emote: str | None = None, animation: str = "idle",
+        then: Callable[[], None] | None = None,
     ) -> None:
+        if event in ('game_mm_last', 'game_mm_progress'):
+            self._comments.event(event, emote)
+            self._ready()
+            return
         self.busy = True
         self._show()
         self._animate(animation)
@@ -70,7 +85,7 @@ class MastermindSequence:
         def speak() -> None:
             self._express_event(event)
             self._say(text, duration)
-            self._later(duration, self._ready)
+            self._later(duration, then or self._ready)
 
         if emote is None:
             speak()
@@ -96,10 +111,12 @@ class MastermindSequence:
         self.busy = False
         self._animate("idle")
         self._show()
+        self._comments.later(1800, lambda: self._look(None))
 
     def submit(self, code: Code) -> bool:
         if self._closed or self.busy or self.game.view.result is not None:
             return False
+        self.interrupt_comment()
         try:
             self.game.submit(code)
         except ValueError:
@@ -119,6 +136,7 @@ class MastermindSequence:
             self._after_feedback()
 
     def _after_feedback(self) -> None:
+        self._look(len(self.game.view.guesses) - 1)
         if self.game.view.result is not None:
             # A fully evaluated guess counts even if code reveal is interrupted.
             self.game.settle()
@@ -146,6 +164,14 @@ class MastermindSequence:
             self._later(180, lambda: self._reveal(count + 1))
         else:
             won = self.game.view.result == "win"
+            if self._finale is not None:
+                def begin() -> None:
+                    if not self._closed and self._finale is not None:
+                        self._finale(won, lambda: self._react('game_mm_snack_done')
+                                     if not self._closed else None)
+                self._react('game_mm_snack_win' if won else 'game_mm_spare_key',
+                            emote='star' if won else 'drops', then=begin)
+                return
             self._react(
                 "game_mm_player_win" if won else "game_mm_aiko_win",
                 emote="star" if won else "idea",
@@ -156,6 +182,7 @@ class MastermindSequence:
         if self._closed or self.busy or self.game.view.result is None:
             return
         self.game.next_round()
+        self._comments.cancel()
         self.busy = True
         self._begin()
         self._react("game_mm_greeting")
@@ -163,6 +190,8 @@ class MastermindSequence:
     def close(self) -> SessionSummary:
         if not self._closed:
             self._closed = True
+            self._comments.cancel()
+            self._look(None)
             self._generation += 1
             if self.pending_timer is not None:
                 self._cancel(self.pending_timer)
@@ -170,3 +199,10 @@ class MastermindSequence:
             self.game.cancel()
             self._hide_code()
         return self.game.score
+
+    def interrupt_comment(self) -> None:
+        active = self._comments.active
+        self._comments.cancel()
+        if active:
+            self._interrupt()
+        self._look(None)

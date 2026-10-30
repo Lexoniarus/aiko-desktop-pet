@@ -36,6 +36,15 @@ Keine neue Bildgenerierung, kein Push oder Merge.
   Player-phase comments no longer lock legal columns. Validation: 6 sequence,
   6 native GUI, 2 ballistic geometry and 3 sprite-clock checks pass; native panel
   inspected, including a moved-window throw and close/cleanup. G4–G6 pending.
+- G4 Mastermind: canonical safe presenter replaces the desktop code strip;
+  33 registered door phases play over 1560 ms. Symbol gems and the lavender/gold
+  console are installed. Win and spare-key endings use the same cosmetic donut
+  and original eating anchors/timings; no care action is invoked. Draft editing
+  cancels incidental comments without hinting at secret positions. Validation:
+  5 sequence, 13 input, 13 native GUI and 6 expression-event checks pass, including
+  snack completion, preserved care values, pending-result boundaries and close
+  during opening. Native floating props use binary alpha with unchanged RGB.
+  G5–G6 and final full-suite/static/Windows acceptance remain pending.
 
 ## Ziel und Referenzen
 

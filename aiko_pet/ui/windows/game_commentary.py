@@ -17,8 +17,10 @@ class GameCommentary:
         self._dialogue, self._express = dialogue, express
         self._generation = 0
         self._timers: list[str] = []
+        self.active = False
 
     def cancel(self) -> None:
+        self.active = False
         self._generation += 1
         for timer in self._timers:
             self._cancel(timer)
@@ -34,6 +36,7 @@ class GameCommentary:
 
     def event(self, event: str, emote: str | None = None) -> int:
         self.cancel()
+        self.active = True
         text = self._dialogue(event)
         duration = Cue.text(text).duration_ms
         self._express(event)

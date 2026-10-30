@@ -22,7 +22,11 @@
         46
       ],
       "source_sha256": "c4947f19e4372e30fe1461031169564e9bcaafd1158de8d715c53867baae9299",
-      "sha256": "322e7ee34f5a0eee6e1be739f27fe500aca7698b993eba88d6eff5c2e9286c39"
+      "sha256": "32e0d0e39f3dce68e0ea1d05e3d1bc407d05958180402870c43f78267d580ec9",
+      "raster_sha256": "322e7ee34f5a0eee6e1be739f27fe500aca7698b993eba88d6eff5c2e9286c39",
+      "rgb_unchanged": true,
+      "alpha": "0 or255; threshold128"
     }
-  ]
+  ],
+  "native_alpha": "native-prop-alpha.json; all RGB preserved"
 }

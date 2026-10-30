@@ -109,7 +109,7 @@ class GameExpressionEventsTests(unittest.TestCase):
             animate=lambda _: None, emote=lambda *_: None, dialogue=lambda event: event,
             express_event=trace.append,
         )
-        flow._react("game_mm_last", emote="question")
+        flow._react("game_mm_spare_key", emote="question")
         self.assertEqual(trace, [])
         assert flow.pending_timer is not None
         stale = clock.callbacks[flow.pending_timer][1]

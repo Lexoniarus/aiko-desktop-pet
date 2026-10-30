@@ -369,6 +369,102 @@
           "content": "Du hast einen Gewinnweg. Wenn du richtig weiterspielst, kann ich dich nicht mehr stoppen. Du musst ihn aber finden!"
         }
       ]
+    },
+    {
+      "id": "game_mm_snack_win-frontend-1",
+      "event": "game_mm_snack_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geschafft! Du hast meinen Pausensnack befreit. Hihi, genau dafür brauchte ich dich!"
+        }
+      ]
+    },
+    {
+      "id": "game_mm_snack_win-frontend-2",
+      "event": "game_mm_snack_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Code geknackt, Donut gerettet! Höchst wichtige gemeinsame Mission."
+        }
+      ]
+    },
+    {
+      "id": "game_mm_spare_key-frontend-1",
+      "event": "game_mm_spare_key",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Psst ... ich habe einen Ersatzschlüssel. Mein Donut muss ja nicht auf meine Geheimniskrämerei warten!"
+        }
+      ]
+    },
+    {
+      "id": "game_mm_spare_key-frontend-2",
+      "event": "game_mm_spare_key",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Versuche sind aufgebraucht. Zum Glück kennt die Snackbesitzerin den Ersatzschlüssel. Ähem."
+        }
+      ]
+    },
+    {
+      "id": "game_mm_snack_done-frontend-1",
+      "event": "game_mm_snack_done",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mmmh. Code knacken macht hungrig. Also mich. Noch eine kleine Snackmission?"
+        }
+      ]
+    },
+    {
+      "id": "game_mm_snack_done-frontend-2",
+      "event": "game_mm_snack_done",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Donut war übrigens der Hauptgewinn. Für mich. Hihi, danke fürs Mitknobeln!"
+        }
+      ]
     }
   ]
 }

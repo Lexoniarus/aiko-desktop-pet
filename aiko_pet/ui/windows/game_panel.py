@@ -22,8 +22,10 @@ class GamePanel:
         self, root: tk.Tk, title: str, *, close: Callable[[], None],
         next_round: Callable[[], None] | None, skin: AikoSkin, always_on_top: bool,
         game_id: GameId, bounds_at: BoundsAt | None = None, body_height: int = 340,
+        reserve_right: int = 0,
     ) -> None:
         self.skin = skin
+        self._reserve_right = reserve_right
         self._bounds_at = bounds_at or (lambda _x, _y: WindowBounds(
             0, 0, root.winfo_screenwidth(), root.winfo_screenheight(),
         ))
@@ -171,7 +173,8 @@ class GamePanel:
                 ))
             x, y = beside_character(
                 root.winfo_rootx(), root.winfo_rooty(),
-                root.winfo_width(), root.winfo_height(), self.width, height, bounds,
+                root.winfo_width() + self._reserve_right, root.winfo_height(),
+                self.width, height, bounds,
             )
             self.window.geometry(f'{self.width}x{height}+{x}+{y}')
             self._placed = True
