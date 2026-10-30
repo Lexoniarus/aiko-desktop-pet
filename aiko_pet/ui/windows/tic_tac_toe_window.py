@@ -29,6 +29,7 @@ class TicTacToeWindow:
         bounds_at: BoundsAt | None = None,
         emote: Callable[[str, int], None] = lambda *_: None,
         presentation: GamePresentation | None = None,
+        interrupt: Callable[[], None] = lambda: None,
     ) -> None:
         self._closed = False
         self._on_closed = on_closed
@@ -98,7 +99,7 @@ class TicTacToeWindow:
                 present=self._present, say=speak, animate=animate, dialogue=dialogue,
                 round_event=round_event,
                 express_event=express_event,
-                emote=emote, look=self._look_at,
+                emote=emote, look=self._look_at, interrupt=interrupt,
             )
             self._present(self._sequence.game.board, self._sequence.game.score)
             self._panel.show(root)

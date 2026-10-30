@@ -101,10 +101,6 @@ class ConnectFourThrow:
                 def landed() -> None:
                     self._canvas.delete('throwing')
                     self._resting = True
-                    self._presentation.look((self.target(cell).x,
-                                             self._canvas.winfo_rooty() + PREVIEW
-                                             + (cell // 7 + .5) * CELL))
-                    self.effects.later(1800, lambda: self._presentation.look(None))
                     done()
 
                 self.effects.tween(max(1, round(ms)), drop, landed)

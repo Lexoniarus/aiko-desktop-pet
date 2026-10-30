@@ -50,6 +50,47 @@ class TicTacToeGuiTests(unittest.TestCase):
         self.assertEqual(self.pet.state.fun, after)
         self.assertIsNone(self.pet._hover.game_window)
 
+    def test_same_board_assessment_keeps_reading_deadline_and_input_stays_free(self):
+        flow = self.game._sequence
+        spoken = []
+        original = flow._commentary._say
+        flow._commentary._dialogue = lambda event: event + ': ' + 'A' * 95
+
+        def say(text, duration):
+            spoken.append((text, duration))
+            original(text, duration)
+        flow._commentary._say = say
+        self.game.buttons[0].invoke()
+        bubble = self.pet._speech.bubble
+        self.timing.advance(1.401)
+        self.assertEqual(len(spoken), 1)
+        self.assertIs(self.pet._speech.bubble, bubble)
+        self.assertEqual(self.game.buttons[8].cget('state'), 'normal')
+        self.game.buttons[8].invoke()
+        self.assertIsNot(self.pet._speech.bubble, bubble)
+        self.game.close()
+        self.timing.advance(10)
+        self.assertIsNone(self.pet._speech.bubble)
+
+    def test_next_player_start_clears_last_result_text_and_emoji(self):
+        flow = self.game._sequence
+        for _round in range(2):
+            for _turn in range(10):
+                if flow.pending_timer is not None:
+                    flow.advance()
+                if flow.game.board.winner is not None:
+                    break
+                cell = next(i for i, mark in enumerate(flow.game.board.cells)
+                            if not mark)
+                self.game.buttons[cell].invoke()
+            self.assertIsNotNone(flow.game.board.winner)
+            self.assertIsNotNone(self.pet._speech.bubble)
+            self.game.next_round()
+        self.assertEqual(flow.game.board.turn, 'X')
+        self.assertIsNone(self.pet._speech.bubble)
+        self.timing.advance(5)
+        self.assertIsNone(self.pet._speech.bubble)
+
     def test_pending_turn_does_not_reward_and_callbacks_are_cancelled(self):
         before = self.pet.state.fun
         self.game.buttons[0].invoke()

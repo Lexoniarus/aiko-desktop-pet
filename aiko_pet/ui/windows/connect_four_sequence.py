@@ -161,6 +161,8 @@ class ConnectFourSequence:
             self._later(30, lambda: self._drop(move, frame + 1))
             return
         self._show()
+        if move.player == 2:
+            self._look(move.cell)
         if self.game.board.winner is not None:
             self.game.settle()
             winner = self.game.board.winner
@@ -198,6 +200,7 @@ class ConnectFourSequence:
         self._busy = False
         self._animate("idle")
         self._show()
+        self._comments.later(1800, lambda: self._look(None))
 
     def _turn(self) -> None:
         if self._closed:
@@ -235,6 +238,9 @@ class ConnectFourSequence:
     def next_round(self) -> None:
         if self._closed or self._busy or self.game.board.winner is None:
             return
+        self._comments.cancel()
+        self._interrupt()
+        self._look(None)
         self.game.next_round()
         self._last_comment = -6
         self._begin_round()

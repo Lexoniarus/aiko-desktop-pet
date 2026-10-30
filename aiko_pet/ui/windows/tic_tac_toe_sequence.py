@@ -24,6 +24,7 @@ class TicTacToeSequence:
         game: TicTacToe | None = None,
         emote: Callable[[str, int], None] = lambda *_: None,
         look: Callable[[int | None], None] = lambda _: None,
+        interrupt: Callable[[], None] = lambda: None,
     ) -> None:
         self.game = game if game is not None else TicTacToe()
         self._schedule, self._cancel = schedule, cancel
@@ -34,7 +35,7 @@ class TicTacToeSequence:
         self._session_id = uuid4().hex
         self._round_event = round_event
         self._express_event = express_event
-        self._look = look
+        self._look, self._interrupt = look, interrupt
         self._commentary = GameCommentary(
             schedule=schedule, cancel=cancel, say=say, emote=emote,
             dialogue=self._dialogue, express=express_event,
@@ -53,6 +54,7 @@ class TicTacToeSequence:
         if self._closed or self.pending_timer is not None:
             return
         self._commentary.cancel()
+        self._interrupt()
         self.game.play(cell)
         self._after_move()
 
@@ -100,6 +102,8 @@ class TicTacToeSequence:
     def next_round(self) -> None:
         if not self._closed:
             self._commentary.cancel()
+            self._interrupt()
+            self._look(None)
             self.game.next_round()
             self._round_event(GameRoundEvent(
                 GameId.TIC_TAC_TOE, self._session_id, self.game.score.games + 1,

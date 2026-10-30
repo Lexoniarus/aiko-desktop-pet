@@ -14,6 +14,7 @@ class ConnectFourSequenceTests(unittest.TestCase):
         self.tasks = {}
         self.serial = 0
         self.views, self.lines, self.events, self.emotes = [], [], [], []
+        self.look = Mock()
         self.futures = []
         self.executor = Mock(spec=Executor)
         self.executor.submit.side_effect = self.submit
@@ -38,7 +39,7 @@ class ConnectFourSequenceTests(unittest.TestCase):
             say=lambda text, ms: self.lines.append((text, ms)),
             animate=lambda _clip: None, emote=lambda *item: self.emotes.append(item),
             dialogue=lambda event: event, round_event=self.events.append,
-            executor=cast(Executor, self.executor), game=game,
+            executor=cast(Executor, self.executor), game=game, look=self.look,
         )
 
     def advance_callback(self):
@@ -151,3 +152,20 @@ class ConnectFourSequenceTests(unittest.TestCase):
         # The next move cancels the old comment/emote restoration.
         self.finish_drop()
         self.assertEqual(self.flow.game.board.turn, 2)
+
+    def test_landing_focus_follows_actual_cell_and_old_return_is_cancelled(self):
+        self.flow.greet()
+        self.flow.choose(3)
+        self.finish_drop()
+        self.futures[0].set_result(0)
+        self.advance_callback()
+        self.finish_drop()
+        self.look.assert_called_with(35)
+        stale = [fn for _, fn in self.tasks.values()]
+        self.flow.choose(4)
+        self.finish_drop()
+        self.look.assert_called_with(24)
+        before = self.look.call_count
+        for fn in stale:
+            fn()
+        self.assertEqual(self.look.call_count, before)

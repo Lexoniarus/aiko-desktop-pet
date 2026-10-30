@@ -38,6 +38,25 @@ class ConnectFourGuiTests(unittest.TestCase):
         self.assertEqual(effect.effects._windows, {})
         self.assertEqual(effect.effects._timers, [])
 
+    def test_landed_cell_remains_gaze_target_when_window_is_moved(self):
+        assert self.flow is not None
+        self.game.choose(3)
+        for _ in range(100):
+            self.timing.advance(.05)
+            if not self.flow.busy:
+                break
+        self.assertFalse(self.flow.busy)
+        self.assertEqual(self.game._focus_cell, 35)
+        self.game.window.geometry('+280+90')
+        self.pet.root.update()
+        self.assertEqual(self.game._focus_cell, 35)
+        self.game.choose(4)
+        self.timing.advance(.2)
+        self.assertEqual(self.game._focus_cell, 24)
+        self.timing.advance(1.7)
+        self.assertTrue(self.flow.busy)
+        self.assertEqual(self.game._focus_cell, 24)
+
     def setUp(self):
         self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
