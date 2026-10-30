@@ -78,7 +78,6 @@ class MenuAdmissionTests(unittest.TestCase):
             ui.open_game(GameId.ROCK_PAPER_SCISSORS)
             ui._ports.care.assert_not_called()
             ui._ports.defer_game.assert_not_called()
-            ui._ports.record_contact.assert_not_called()
 
     def test_game_admission_runs_after_pending_release_while_care_stays_protected(self):
         world = DesktopWorldRuntime.__new__(DesktopWorldRuntime)

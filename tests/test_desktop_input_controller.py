@@ -73,21 +73,29 @@ class DesktopInputTests(unittest.TestCase):
         self.input.on_enter()
         self.assertEqual(self.events, ["left", "enter"])
 
-    def test_native_click_claims_before_dispatch_without_hover(self):
+    def test_native_click_dispatches_without_preclaiming_contact(self):
         self.input.actions = replace(
             self.input.actions, allow_hover=lambda: False,
-            claim_access=lambda _point: self.events.append("claim"),
         )
         self.input.on_left_click()
         self.input.on_right_click()
-        self.assertEqual(self.events, ["claim", "left", "claim", "right"])
+        self.assertEqual(self.events, ["left", "right"])
 
     def test_native_enter_opens_hover_without_claiming_input(self):
         self.input.actions = replace(
-            self.input.actions, claim_access=lambda _point: self.events.append("claim"),
+            self.input.actions,
         )
         self.input.on_enter()
         self.assertEqual(self.events, ["enter"])
+
+    def test_settings_open_does_not_claim_character_input(self):
+        self.input.actions = replace(
+            self.input.actions,
+        )
+        event = tk.Event()
+        event.x_root, event.y_root = 25, 39
+        self.input.on_menu(event)
+        self.assertEqual(self.events, ["menu:25:39"])
 
     def test_initial_bindings_preserve_sprite_events(self) -> None:
         self.input.initialize()

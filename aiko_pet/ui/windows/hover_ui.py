@@ -47,7 +47,6 @@ class HoverUiPorts:
     anchor: Callable[[], HoverAnchor]
     care: Callable[[str], None]
     open_sprite_hover: Callable[[], None]
-    record_contact: Callable[[float], None]
     save_position: Callable[[int | None, int | None], None]
     set_option: Callable[[SettingKey, bool], None]
     toggle_scale: Callable[[], None]
@@ -640,7 +639,6 @@ class HoverUi:
                 toolbar is None or not toolbar.visible
             ):
                 self._ports.open_sprite_hover()
-            self._ports.record_contact(now)
         elif (
             toolbar is not None
             and toolbar.visible

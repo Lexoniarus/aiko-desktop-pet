@@ -196,16 +196,17 @@ class PersistentWindowTests(unittest.TestCase):
         self.assertEqual(replacement.position, (80, 60))
         self.assertIsNot(replacement, window)
 
-    def test_open_idle_windows_do_not_block_attention(self) -> None:
-        self.pet._hover.open_status()
-        self.settings()
-        with self.outside():
-            self.assertFalse(self.pet._hover.menu_engaged)
-            self.assertFalse(self.pet._hover.settings_engaged)
-        bar = self.toolbar()
-        with self.outside():
+    def test_opening_and_pinning_windows_do_not_register_contact(self) -> None:
+        before = self.pet.state.capture_checkpoint()
+        contact_at = self.pet.mind.last_contact
+        with patch.object(self.pet._world, "interrupt") as interrupt:
+            self.pet._hover.open_status()
+            self.settings()
+            bar = self.toolbar()
             bar.pin_button.invoke()
-            self.assertTrue(self.pet._hover.menu_engaged)
+        interrupt.assert_not_called()
+        self.assertEqual(self.pet.mind.last_contact, contact_at)
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
     def test_notification_is_delivered_with_idle_pinned_windows(self) -> None:
         self.pet._hover.open_status()

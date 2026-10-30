@@ -271,7 +271,6 @@ class DesktopPet:
                 open_sprite_hover=self._on_enter,
                 allow_sprite_hover=lambda: self._pointer_runtime.allow_hover(),
                 cursor_watching=lambda: self._cursor_behaviour.watching,
-                record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
                 toggle_scale=self.toggle_scale,
@@ -297,8 +296,6 @@ class DesktopPet:
             ports=ContactPorts(
                 advance_time=lambda: self._care_runtime.advance_time(),
                 context=lambda: self.context,
-                toolbar_hidden=lambda: (
-                    self._hover.toolbar is None or not self._hover.toolbar.visible),
                 mark_hover=self._hover.note_sprite_hover,
                 interrupt_walk=lambda: self._world.interrupt(
                     self._walk.movement.interrupt),
@@ -322,14 +319,13 @@ class DesktopPet:
                                       and self._reaction_player.event
                                       in (None, "social_wait")),
                 wake_from_clicks=lambda: self._care_runtime.wake_from_clicks(),
-                cursor_watching=lambda: self._cursor_behaviour.watching,
+                claim_cursor_access=lambda: self._pointer_runtime.claim_access(),
             ),
         )
         self._input = DesktopInput(
             self.root, self.canvas,
             DesktopInputActions(
                 enter=self._on_enter,
-                claim_access=lambda point: self._pointer_runtime.claim_access(point),
                 allow_hover=lambda: self._pointer_runtime.allow_hover(),
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,

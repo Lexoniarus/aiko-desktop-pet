@@ -1,4 +1,4 @@
-"""Coordinate intentional pet hover, click, and greeting interactions.
+"""Coordinate passive hover, intentional clicks, and greeting interactions.
 
 The mind decides which response fits the contact. Application coordination
 uses only effect ports and never imports Tk widgets or speech presenters.
@@ -25,7 +25,6 @@ class ContactPorts:
     """The desktop effects an intentional contact is allowed to request."""
 
     context: Callable[[], TimeContext]
-    toolbar_hidden: Callable[[], bool]
     mark_hover: Callable[[float], None]
     interrupt_walk: Callable[[], None]
     show_toolbar: Callable[[], None]
@@ -43,7 +42,7 @@ class ContactPorts:
     care_holding: Callable[[], bool] = lambda: False
     advance_time: Callable[[], None] = lambda: None
     wake_from_clicks: Callable[[], None] = lambda: None
-    cursor_watching: Callable[[], bool] = lambda: False
+    claim_cursor_access: Callable[[], None] = lambda: None
 
 
 class ContactCoordinator:
@@ -76,40 +75,13 @@ class ContactCoordinator:
     def note_text(self, event: str) -> None:
         acknowledge_interaction_text(self._state, event)
 
-    def record_contact(self, now: float) -> None:
-        self._mind.last_contact = now
-
-    def enter(self, *, preserve_cursor: bool = True) -> None:
-        """Open controls immediately; an observed flyover is not a new action."""
-        now = time.monotonic()
-        if (preserve_cursor and self._ports.cursor_watching()
-                or self._ports.care_holding() or not self.can_interact("pet")):
-            self._ports.mark_hover(now)
-            self._ports.show_toolbar()
-            return
-        reaction = (
-            self._mind.return_to_pet(
-                self._state,
-                self._ports.context(),
-                now,
-            )
-            if self._ports.toolbar_hidden() and not self._ports.story_active()
-            else None
-        )
-        if self._state.moodlets.interactions.food.request_pending:
-            reaction = self._mind.select_reaction(
-                "feed_variety_request", self._state, self._ports.context(), now,
-            )
-        self._ports.mark_hover(now)
-        self._ports.interrupt_walk()
+    def enter(self) -> None:
+        """Show controls without requesting contact or changing an activity."""
+        self._ports.mark_hover(time.monotonic())
         self._ports.show_toolbar()
-        if not self._ports.story_active():
-            self._ports.react(
-                reaction, BALANCE.integer("dialogue", "contact_reaction_ms")
-            )
 
     def click(self, button: ClickButton) -> None:
-        """Deliver an intentional click only after initiating hover."""
+        """Deliver admitted contact independently of the passive hover surface."""
         if button not in ("left", "right"):
             raise ValueError("Unknown click button")
         if button == "left" and self._ports.advance_story():
@@ -133,7 +105,10 @@ class ContactCoordinator:
         ):
             return
         self._ports.advance_time()
-        self.enter(preserve_cursor=False)
+        self.enter()
+        self._ports.claim_cursor_access()
+        if not self._state.sleeping:
+            self._ports.interrupt_walk()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
         reaction = self._mind.click(

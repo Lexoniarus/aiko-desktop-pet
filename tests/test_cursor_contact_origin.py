@@ -43,4 +43,4 @@ class CursorContactOriginTests(unittest.TestCase):
         hover._ports.allow_sprite_hover = lambda: True
         hover.refresh_hover(20.1)
         opened.assert_called_once()
-        recorded.assert_called_once_with(20.1)
+        recorded.assert_not_called()

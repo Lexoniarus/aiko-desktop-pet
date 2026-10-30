@@ -31,6 +31,7 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.cancel = Mock()
         self.hide = Mock()
         self.wake = Mock()
+        self.claim = Mock()
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
         self.incidental = False
@@ -44,7 +45,6 @@ class ContactCoordinatorTests(unittest.TestCase):
             adaptive=self.adaptive,
             ports=ContactPorts(
                 context=lambda: self.context,
-                toolbar_hidden=lambda: True,
                 mark_hover=self.hover,
                 interrupt_walk=self.interrupt,
                 show_toolbar=self.show,
@@ -61,6 +61,7 @@ class ContactCoordinatorTests(unittest.TestCase):
                 reaction_event=lambda: self.event,
                 interruptible_playback=lambda: self.incidental,
                 wake_from_clicks=self.wake,
+                claim_cursor_access=self.claim,
             ),
         )
 
@@ -86,7 +87,7 @@ class ContactCoordinatorTests(unittest.TestCase):
             on_text=self.contact.note_text,
         )
         self.contact._ports = replace(
-            self.contact._ports, toolbar_hidden=lambda: False,
+            self.contact._ports,
             cancel_followup=player.cancel,
             playback_active=lambda: player.active,
             interruptible_playback=lambda: player.interruptible,
@@ -106,18 +107,21 @@ class ContactCoordinatorTests(unittest.TestCase):
         episode = self.state.moodlets.active[0]
         self.assertEqual((episode.definition_id, episode.level), (MoodletId.POKING, 1))
 
-    def test_hover_opens_toolbar_and_interrupts_walk(self) -> None:
-        with patch.object(self.mind, "return_to_pet", return_value=None):
-            self.contact.enter()
-        self.hover.assert_called_once()
-        self.interrupt.assert_called_once()
-        self.show.assert_called_once()
-        self.assertEqual(self.reactions, [(None, 2800)])
+    def test_repeated_hover_only_opens_toolbar_without_contact_or_reaction(self):
+        before = self.state.capture_checkpoint()
+        contact_at = self.mind.last_contact
+        with patch.object(self.mind, "return_to_pet") as greeting:
+            for _ in range(3):
+                self.contact.enter()
+        self.assertEqual(self.hover.call_count, 3)
+        self.assertEqual(self.show.call_count, 3)
+        self.interrupt.assert_not_called()
+        greeting.assert_not_called()
+        self.assertEqual(self.reactions, [])
+        self.assertEqual(self.mind.last_contact, contact_at)
+        self.assertEqual(self.state.capture_checkpoint(), before)
 
     def test_tracking_hover_opens_toolbar_without_interrupting_or_new_reaction(self):
-        self.contact._ports = replace(
-            self.contact._ports, cursor_watching=lambda: True,
-        )
         with patch.object(self.mind, "return_to_pet") as greeting:
             self.contact.enter()
         self.show.assert_called_once()
@@ -127,11 +131,9 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.assertFalse(self.reactions)
 
     def test_explicit_click_still_interrupts_while_tracking(self):
-        self.contact._ports = replace(
-            self.contact._ports, cursor_watching=lambda: True,
-        )
         self.contact.click("left")
         self.interrupt.assert_called_once()
+        self.claim.assert_called_once()
 
     def test_petting_refusal_is_semantic_and_playback_blocks_only_until_finished(self):
         set_test_pet_values(self.state, affection=100)
@@ -151,7 +153,6 @@ class ContactCoordinatorTests(unittest.TestCase):
         history = self.state.friendship_history
         self.contact.enter()
         self.contact.greet()
-        self.contact.record_contact(1000)
         self.contact.click("left")
         self.assertEqual(self.state.friendship_history, history)
 

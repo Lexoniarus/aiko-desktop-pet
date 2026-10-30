@@ -118,7 +118,6 @@ class StoryPlaybackTests(unittest.TestCase):
             adaptive=adaptive,
             ports=ContactPorts(
                 context=lambda: context_at(0),
-                toolbar_hidden=lambda: True,
                 mark_hover=Mock(),
                 interrupt_walk=Mock(),
                 show_toolbar=Mock(),

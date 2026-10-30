@@ -26,7 +26,6 @@ class DesktopInputActions:
     quit: Callable[[], None]
     closed: Callable[[], bool]
     allow_hover: Callable[[], bool] = lambda: True
-    claim_access: Callable[[tuple[int, int] | None], None] = lambda _point: None
 
 
 class DesktopInput:
@@ -67,7 +66,6 @@ class DesktopInput:
 
     def on_menu(self, event: tk.Event) -> None:
         if not self._stopped:
-            self.actions.claim_access((event.x_root, event.y_root))
             self.actions.show_menu(event.x_root, event.y_root)
 
     def on_enter(self, event: tk.Event | None = None) -> None:
@@ -76,12 +74,10 @@ class DesktopInput:
 
     def on_left_click(self, event: tk.Event | None = None) -> None:
         if not self._stopped:
-            self.actions.claim_access((event.x_root, event.y_root) if event else None)
             self.actions.left_click(event)
 
     def on_right_click(self, event: tk.Event | None = None) -> None:
         if not self._stopped:
-            self.actions.claim_access((event.x_root, event.y_root) if event else None)
             self.actions.right_click(event)
 
     def on_tk_press(self, event: tk.Event) -> None:
