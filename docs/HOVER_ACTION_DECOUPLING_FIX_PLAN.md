@@ -6,12 +6,13 @@ Auch das Betrachten, Offenhalten, Verschieben und Durchblättern des Formulars
 ist kein neuer Auftrag an Aiko. Erst eine konkrete Interaktion darf die
 bestehende Aktionssteuerung um eine zulässige Unterbrechung bitten.
 
-Status am 30. Oktober 2026: **Alle fünf Etappen umgesetzt und lokal geprüft.**
-Die nachfolgenden ursprünglichen Prüfprotokolle gehören zum damaligen
-uncommittierten Stand. Die anschließende kritische Nachprüfung fand zwei weitere
-Abbruchpfade über Fokusverlust und Klicks in die Einstellungen. Diese werden
-in getrennten Folgecommits mit eigenen Regressionstests geschlossen; die
-abschließende Prüfung der gesamten Commitfolge wird separat protokolliert.
+Status am 30. Oktober 2026: **Alle fünf Etappen und beide Nachbesserungen
+umgesetzt, in zehn fachlichen Commits getrennt und abschließend geprüft.**
+Die ursprünglichen Prüfprotokolle unten gehören zum damaligen uncommittierten
+Stand. Die anschließende kritische Nachprüfung fand zwei weitere Abbruchpfade
+über Fokusverlust und Klicks in die Einstellungen. Beide sind mit eigenen
+Regressionstests geschlossen. Die aktuellen Ergebnisse stehen unter
+[Commitfolge und Abschlussprüfung](#commitfolge-und-abschlussprüfung).
 Prüfgrundlage ist der lokale Arbeitsstand auf `feature/social-optimization`,
 `HEAD 3acabeebc358e4642341eb864254074ef3b0a3a6`, einschließlich der vorhandenen
 uncommitteten Social-Änderungen. Die aktuelle Spielpräsentation aus dem
@@ -387,3 +388,81 @@ Social-Fetch-Verdrahtung und die parallelen Provider-/History-/Schemaänderungen
 sind erhalten. Die Sicherung des Ausgangsstands und die Testprotokolle befinden
 sich außerhalb von Git unter temporären `aiko-hover-baseline-*` beziehungsweise
 `aiko-hover-validation-*`-Verzeichnissen.
+
+## Commitfolge und Abschlussprüfung
+
+Auf ausdrücklichen Folgeauftrag wurde der gesamte bestehende Arbeitsbestand
+erhalten und in kleine, voneinander prüfbare Commits aufgeteilt. Vorher standen
+80 geänderte und sechs neue Dateien bei leerem Index aus. Eine zusätzliche
+Sicherung aller 2.230 vorhandenen Repository-Dateien, des Index und des Diffs
+liegt außerhalb von Git unter `aiko-clean-commits-*`.
+
+Gemeinsam bearbeitete Dateien wie `gui.py`, `test_social_gui.py` und die
+Kandidatentests wurden nach Änderungsblöcken aufgeteilt. Jeder Zwischenstand
+wurde als isolierter Abzug des tatsächlichen Index mit seinen gezielten Tests
+und Ruff über die betroffenen Python-Dateien geprüft. Spätere Änderungen im
+Arbeitsbaum konnten dadurch keine fehlende Abhängigkeit verdecken. Die
+Gesamtsuite wurde erst nach der vollständigen Integration gestartet.
+
+| Commit | Abgeschlossene Etappe | Gezielte Tests bestanden |
+| --- | --- | --- |
+| `1fdd319` | Fetch-Verträge und reine Kandidatenregeln | 27 |
+| `cb645de` | Ausschluss-Historie, Transfer und SQLite-Migration | 30 |
+| `0bcc16e` | JokeAPI-Metadaten, ID-Bereiche und Ablehnungsgründe | 36 |
+| `e9e02dc` | Kandidatensteuerung, Suchgrenzen und Social-Status | 80 |
+| `a10283e` | Passiver Hover und ausdrücklicher Kontakt | 60 |
+| `6f0bbac` | Cursor- und World-Bewegung ohne Formularsperren | 105 + 21 |
+| `2f436a4` | Aufmerksamkeit anhand wirklicher Aktionsbesitzer | 59 |
+| `a49f245` | Anforderung unabhängig von der Auswahlansicht | 52 |
+| `6a4e77f` | Passiver Fokusverlust ohne Social-Stornierung | 35 |
+| `8df0733` | Einstellungsnavigation ohne Social-Stornierung | 45 |
+
+Die beiden Folgekorrekturen wurden zunächst gegen den jeweils noch fehlerhaften
+Stand abgesichert: Drei Fokus-Regressionen schlugen wegen unerwünschtem
+`cancel()` fehl; zwei Einstellungs-Regressionen reproduzierten denselben Fehler
+über Tk-Eingabe und globales Polling. Der echte Außenklick blieb dabei wirksam.
+Nach den Korrekturen bestehen die Fälle für `fetching`, `admitting` und bereits
+laufende Unterhaltung. Doppelte Klick-/Fokusmeldungen stornieren nicht doppelt;
+beibehaltene Antworten starten und vergüten genau einmal. Zusätzlich prüfen
+vier reine Kandidatentests überlappende Intervalle, Ablauf/Filterrevision,
+Kategoriegrenzen und unveränderten Wiederholungsschutz bei erschöpftem Pool.
+
+Die Fokusprüfung hat einen eigenen passiven Desktop-Port. Nur die UI übersetzt
+ihn in automatisches Schließen; der Eingabeadapter importiert dafür keine
+UI-Schließgründe. Klicks im vorhandenen Einstellungsfenster gelten für beide
+Klickpfade als Navigation. Die Einstellungen werden nicht in die allgemeine
+Hover-/Offenhaltegeometrie aufgenommen. Online-Opt-out, Shutdown und zugelassene
+Ersatzaufträge behalten ihren zuständigen Abbruchpfad. Die Social-Runtime und
+die gemeinsame Bewegungssteuerung bleiben die bisherigen Besitzer.
+
+| Abschließende Prüfung des integrierten Codes auf `8df0733` | Ergebnis |
+| --- | --- |
+| Gesamte native Windows-/Tk-Suite, Python 3.11 | **2.499 Tests in 471,750 Sekunden; null Fehlschläge, Fehler oder Skips; Exitcode 0.** |
+| Ruff über `aiko_pet`, `tests`, `main.py`, `tools` | Bestanden. |
+| Striktes Mypy mit `--follow-imports=silent`, vier CI-Kernmodule | Bestanden. |
+| Striktes frisches Mypy über Anwendung und Tools | 382 Quelldateien ohne Befund. |
+| Pyright einschließlich Tests | Null Fehler, Warnungen oder Hinweise. |
+| Erhalt des vorhandenen Bestands | 2.221 von 2.230 Dateien bytegleich; nur neun Dateien für die beiden Nachbesserungen, ihre Regressionen und Doku ergänzt. Keine vorhandene Datei verworfen. |
+
+Die gesamte Suite verwendete einen temporären Standard-Save; die Social-Proben
+kontrollierte Worker ohne Live-API. Der normale Nutzersave wurde nicht benutzt.
+Die bekannte Tk-`ThemeChanged`-Teardown-Diagnostik trat auf, ohne einen Testfehler
+oder Skip zu verursachen. Remote CI und die Python-3.13-Matrix wurden nicht
+gestartet, weil kein Push erfolgte.
+
+Die zusätzliche native 1X-Fokusprobe mit Computer Use bestand: Alt-Tab löste
+passive Schließung aus, die Anfrage blieb in `fetching`, und die anschließend
+gelieferte Antwort startete als `talk` mit genau einer Sozialgutschrift von
+10 auf 36, ohne Stornierung oder Tk-Callbackfehler. Diese Testinstanz verwendete
+einen eigenen Save, einen kontrollierten Worker, native Fensterrahmen zur
+Adressierbarkeit sowie das echte Fokus-/Eingaberouting bei gestopptem regulärem
+Tick. Sie ist eine gezielte Funktionsprobe, keine vollständige visuelle Abnahme.
+Die anschließende native 2X-Einstellungsprobe wurde vor ihrer Bedienung durch
+die physische Escape-Taste gestoppt. Es wurden keine weiteren UI-Eingaben
+gesendet; alle isolierten Testinstanzen wurden beendet. Diese manuelle
+2X-Bedienprobe bleibt unvollständig. Die automatisierten Einstellungs- und
+1X/2X-Bewegungsprüfungen sind davon getrennt und bestanden.
+
+Nach den zehn fachlichen Commits war der Tree bereits sauber. Dieses Protokoll
+ist die einzige anschließende Dokuänderung; der geprüfte Code bleibt unverändert.
+Push und Merge wurden nicht ausgeführt.
