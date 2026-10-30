@@ -2,6 +2,7 @@
 
 import unittest
 from itertools import product
+from unittest.mock import Mock
 
 from aiko_pet.games.mastermind import Feedback, MastermindSession, evaluate
 
@@ -49,6 +50,35 @@ class MastermindRulesTests(unittest.TestCase):
             self.assertEqual(game.submit(MISS).feedback, Feedback(0, 0))
             self.assertEqual(game.code_view(), (None,) * 4)
         self.assertNotIn("green", repr(game.view))
+
+    def test_all_ten_feedbacks_use_one_secret_and_only_next_round_generates_again(self):
+        following = ('purple',) * 4
+        factory = Mock(side_effect=[SECRET, following])
+        game = MastermindSession(factory)
+        guesses = [
+            (('white',) * 4, Feedback(0, 0)),
+            (('red',) * 4, Feedback(2, 0)),
+            (('blue',) * 4, Feedback(1, 0)),
+            (('green',) * 4, Feedback(1, 0)),
+            (('yellow',) * 4, Feedback(0, 0)),
+            (('purple',) * 4, Feedback(0, 0)),
+            (('red', 'blue', 'red', 'green'), Feedback(2, 2)),
+            (('green', 'blue', 'red', 'red'), Feedback(0, 4)),
+            (('red', 'green', 'blue', 'red'), Feedback(2, 2)),
+            (('green', 'red', 'red', 'blue'), Feedback(1, 3)),
+        ]
+        for index, (guess, expected) in enumerate(guesses):
+            self.assertEqual(game.submit(guess).feedback, expected)
+            factory.assert_called_once_with()
+            if index < 9:
+                with self.assertRaises(ValueError):
+                    game.code_view(4)
+        self.assertEqual(game.code_view(4), SECRET)
+        game.settle()
+        game.next_round()
+        self.assertEqual(factory.call_count, 2)
+        self.assertEqual(game.code_view(), (None,) * 4)
+        self.assertEqual(game.submit(following).feedback, Feedback(4, 0))
 
     def test_tenth_correct_guess_wins_before_exhaustion(self):
         game = MastermindSession(lambda: SECRET)
