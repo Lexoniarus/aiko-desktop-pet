@@ -37,6 +37,7 @@ and test-cleanup plans.
 
 | Topic | Status and document |
 | --- | --- |
+| Six approved game frontends and Aiko's staged roles | [Game frontend implementation plan](GAME_FRONTEND_IMPLEMENTATION_PLAN.md): planned transfer of approved references to existing Tk owners, one game at a time; no application implementation started by the planning request. |
 | State-dependent Idle sequences, V3 reuse and grounded gestures | Implemented in six local commits; [Idle V3 behaviour plan](IDLE_V3_BEHAVIOUR_PLAN.md) records module owners, transitional assets, focused tests and 2,417 passing tests plus all local static gates. Assets unchanged; practical review pending. No push or merge. |
 
 ## Validation and acceptance

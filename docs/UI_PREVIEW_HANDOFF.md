@@ -11,6 +11,12 @@ Design/asset preparations completed and all three reference groups approved by
 the owner on 2026-10-20. This is the entry point for other local chats continuing
 the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
+The six approved game references now have a separate
+[native implementation plan](GAME_FRONTEND_IMPLEMENTATION_PLAN.md), dated
+2026-10-30. It maps existing owners, bounded shared presentation work and
+game-by-game delivery/acceptance. This is planning only, not an implementation
+authorization or claim that the references are already installed.
+
 ## Durable local reference bundle
 
 ### Approved Blackjack V3 staging follow-up
