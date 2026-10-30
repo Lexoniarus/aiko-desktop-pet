@@ -18,6 +18,25 @@ from tools.tk_test_time import ControlledTkTime
 
 
 class ConnectFourGuiTests(unittest.TestCase):
+    def test_real_pickup_and_flight_track_a_moved_window_and_cancel_cleanly(self):
+        self.game.choose(3)
+        self.timing.advance(1.6)
+        effect = self.game._throw
+        assert effect is not None
+        self.assertIn('flying', effect.effects._windows)
+        self.assertTrue(effect.effects._windows['flying'][0].winfo_ismapped())
+        self.assertEqual(len(self.game.canvas.find_withtag('piece')), 1)
+        before = (self.pet.settings.x, self.pet.settings.y)
+        self.game.window.geometry('+300+80')
+        self.timing.advance(3)
+        self.assertEqual(len(self.game.canvas.find_withtag('piece')), 2)
+        self.assertEqual((self.pet.settings.x, self.pet.settings.y), before)
+        self.assertFalse(self.flow.busy)
+        self.game.close()
+        self.timing.advance(5)
+        self.assertEqual(effect.effects._windows, {})
+        self.assertEqual(effect.effects._timers, [])
+
     def setUp(self):
         self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
@@ -63,7 +82,7 @@ class ConnectFourGuiTests(unittest.TestCase):
             self.assertIs(flow.game.board, board)
             self.assertEqual(len(game.canvas.find_withtag("falling")), 1)
             self.assertFalse(game.canvas.find_withtag("preview"))
-            self.timing.advance(2 if turn < 3 else 12)
+            self.timing.advance(5 if turn < 3 else 12)
         self.assertEqual(flow.game.score.wins, 1)
         self.assertEqual(len(game.canvas.find_withtag("winning")), 4)
         self.assertEqual(game._panel.score_labels["wins"].cget("text"), "1")

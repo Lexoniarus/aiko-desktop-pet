@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-30",
+  "reference": "connect-four-v3-2026-10-28",
+  "geometry": "Full1254 source /480 display; inner263,292,728 with7x6 centers50+100*n and39 radius, nativeCELL40",
+  "method": "Rasterized approved source artwork with the reference alpha-hole registration and existing pile scaleY; no generated art",
+  "exports": [
+    {
+      "source": "c4-board.svg",
+      "target": "c4-board.png",
+      "size": [
+        480,
+        480
+      ],
+      "source_sha256": "9b249d76df4ec3226ad2f1defdc0ae079101d86bfe7595a16377f3609d2fcacb",
+      "sha256": "f28182dc319fa5fbede0c7448e9fed1e1985b1dc6942f75b3c32ed68310bfbf5"
+    },
+    {
+      "source": "c4-red.png",
+      "target": "c4-pile.png",
+      "size": [
+        96,
+        46
+      ],
+      "source_sha256": "c4947f19e4372e30fe1461031169564e9bcaafd1158de8d715c53867baae9299",
+      "sha256": "322e7ee34f5a0eee6e1be739f27fe500aca7698b993eba88d6eff5c2e9286c39"
+    }
+  ]
+}

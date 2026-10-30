@@ -169,23 +169,29 @@ class AnimatedPet:
         self.ports.interrupt_walk()
 
     def play_game_action(
-        self, clip_id: str, duration_ms: int,
+        self, clip_id: str, duration_ms: int | tuple[int, ...],
         marker: Callable[[int], None], completed: Callable[[], None],
     ) -> None:
         """Use the one sprite clock, reporting actually displayed source poses."""
         clip = self.assets.clips[clip_id]
-        if clip.loop or duration_ms <= 0:
+        if clip.loop or (isinstance(duration_ms, int) and duration_ms <= 0):
             raise ValueError("Game actions require a finite clip and positive duration")
         self.cancel_game_action()
-        total = sum(clip.timings)
-        elapsed = 0
-        deadlines = [0]
-        for duration in clip.timings:
-            elapsed += duration
-            deadlines.append(round(elapsed * duration_ms / total))
-        self._game_timings = tuple(
-            max(1, end - start) for start, end in zip(deadlines, deadlines[1:])
-        )
+        if isinstance(duration_ms, tuple):
+            if len(duration_ms) != len(clip.timings) or min(duration_ms) <= 0:
+                raise ValueError("Game timing must match all authored frames")
+            timings = duration_ms
+        else:
+            total = sum(clip.timings)
+            elapsed = 0
+            deadlines = [0]
+            for duration in clip.timings:
+                elapsed += duration
+                deadlines.append(round(elapsed * duration_ms / total))
+            timings = tuple(
+                max(1, end - start) for start, end in zip(deadlines, deadlines[1:])
+            )
+        self._game_timings = timings
         self._game_clip = clip_id
         self._game_marker, self._game_done = marker, completed
         self._active_action = None

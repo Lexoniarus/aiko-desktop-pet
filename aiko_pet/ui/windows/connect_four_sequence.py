@@ -11,6 +11,7 @@ from uuid import uuid4
 from ...games.connect_four import Board, ConnectFourSession, Move, choose_column
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...pet.mind.reaction_sequence import Cue, conversation_timing
+from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 
 
@@ -36,6 +37,9 @@ class ConnectFourSequence:
         express_event: Callable[[str], None] = lambda _event: None,
         game: ConnectFourSession | None = None,
         executor: Executor | None = None,
+        throw: Callable[[Move, Callable[[], None]], None] | None = None,
+        interrupt: Callable[[], None] = lambda: None,
+        look: Callable[[int | None], None] = lambda _: None,
     ) -> None:
         self.game = game if game is not None else ConnectFourSession()
         self._express_event = express_event
@@ -56,6 +60,12 @@ class ConnectFourSequence:
         self._busy = True
         self._last_comment = -6
         self.pending_timer: str | None = None
+        self._throw = throw
+        self._interrupt, self._look = interrupt, look
+        self._comments = GameCommentary(
+            schedule=schedule, cancel=cancel, say=say, emote=emote,
+            dialogue=self._dialogue, express=express_event,
+        )
 
     @property
     def busy(self) -> bool:
@@ -85,6 +95,10 @@ class ConnectFourSequence:
         animation: str = "idle",
         emote: str | None = None,
     ) -> None:
+        if self.game.board.turn == 1 and self.game.board.winner is None:
+            self._comments.event(event, emote)
+            self._ready()
+            return
         self._busy = True
         self._show()
         self._animate(animation)
@@ -136,6 +150,8 @@ class ConnectFourSequence:
             or self.game.board.winner is not None
         ):
             return
+        self._comments.cancel()
+        self._interrupt()
         self._drop(self.game.play(column))
 
     def _drop(self, move: Move, frame: int = 0) -> None:
@@ -190,6 +206,7 @@ class ConnectFourSequence:
             self._ready()
         else:
             self._busy = True
+            self._look(24)
             self._show()
             self._future = self._executor.submit(
                 choose_column,
@@ -208,7 +225,12 @@ class ConnectFourSequence:
             return
         self._future = None
         column = future.result()
-        self._drop(self.game.play(column, 2))
+        move = self.game.play(column, 2)
+        if self._throw is None:
+            self._drop(move)
+        else:
+            self._show(Drop(move.cell, move.player, -1))
+            self._throw(move, lambda: self._drop(move, 6) if not self._closed else None)
 
     def next_round(self) -> None:
         if self._closed or self._busy or self.game.board.winner is None:
@@ -221,6 +243,8 @@ class ConnectFourSequence:
     def close(self) -> SessionSummary:
         if not self._closed:
             self._closed = True
+            self._comments.cancel()
+            self._look(None)
             self._generation += 1
             self._cancelled.set()
             if self.pending_timer is not None:

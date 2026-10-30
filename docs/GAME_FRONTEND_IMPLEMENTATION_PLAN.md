@@ -29,6 +29,13 @@ Keine neue Bildgenerierung, kein Push oder Merge.
   statements; 13 TTT tests and the existing input/layout/runtime checks pass.
   New game-role lines are isolated in `events/game_frontends.json`; original
   dialogue definitions are preserved. Native panel inspected. G3–G6 pending.
+- G3 Vier gewinnt: full illustrated frame with registered alpha holes, custom
+  chips and red desktop stack installed. Actual pickup markers drive hand masks,
+  release, a single board-clearing parabola and velocity-continuous fall behind
+  the board face. The player window can move during flight without moving Aiko.
+  Player-phase comments no longer lock legal columns. Validation: 6 sequence,
+  6 native GUI, 2 ballistic geometry and 3 sprite-clock checks pass; native panel
+  inspected, including a moved-window throw and close/cleanup. G4–G6 pending.
 
 ## Ziel und Referenzen
 

@@ -127,6 +127,8 @@ class HoverUi:
         windows = [self.toolbar.window] if self.toolbar and self.toolbar.visible else []
         if self.game_window is not None:
             windows.append(self.game_window.window)
+            windows.extend(child for child in self.game_window.window.winfo_children()
+                           if isinstance(child, tk.Toplevel))
         return tuple(windows)
 
     @property
@@ -344,6 +346,8 @@ class HoverUi:
                     express_event=self._ports.game_speech.react,
                     animate=self._ports.game_speech.animate,
                     emote=self._ports.game_speech.emote,
+                    presentation=self._ports.game_speech.presentation,
+                    interrupt=self._ports.game_speech.silence,
                     always_on_top=self._ports.always_on_top(), skin=self._skin,
                     bounds_at=self._ports.game_bounds_at,
                 )

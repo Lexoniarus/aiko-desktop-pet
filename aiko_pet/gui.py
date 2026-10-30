@@ -26,6 +26,7 @@ from .desktop.global_input import idle_seconds_windows, mouse_buttons_down_windo
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.maintenance import DesktopMaintenance
+from .desktop.object_windows import configure_object_window
 from .desktop.persistence import DesktopPersistence
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
@@ -295,6 +296,9 @@ class DesktopPet:
                         self._animated.play_game_action,
                         self._animated.cancel_game_action,
                         self._animated.look_game,
+                        lambda: (self.settings.x or 0, self.settings.y or 0,
+                                 self.settings.scale),
+                        configure_object_window,
                     ),
                 ),
             ), skin=self._window.skin,

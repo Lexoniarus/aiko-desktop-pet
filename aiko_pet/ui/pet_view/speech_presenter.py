@@ -152,6 +152,12 @@ class SpeechPresenter:
         self._game_hand = None
         self._dismiss_window()
 
+    def clear_game_comment(self) -> None:
+        if self._game_mode and self._game_hand is not None:
+            self._show_game_content("", None, 0)
+        else:
+            self._dismiss_window()
+
     def _show_game_content(
         self, text: str, emote: str | None, duration_ms: int,
     ) -> None:

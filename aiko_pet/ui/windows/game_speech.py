@@ -59,6 +59,9 @@ class GameSpeech:
     def clear_hand(self) -> None:
         self._speech.clear_game_hand()
 
+    def silence(self) -> None:
+        self._speech.clear_game_comment()
+
     def animate(self, name: str) -> None:
         expression = next((value for value, clip in EXPRESSION_CLIPS.items()
                            if clip == name), None)
