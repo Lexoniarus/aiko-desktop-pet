@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.quiz import QuizSession
-from ...pet.mind.reaction_sequence import Cue, conversation_timing
+from ..common.game_pacing import GAME_PACING
 from .rock_paper_scissors_dialogue import GameDialogue
 
 
@@ -54,9 +54,9 @@ class QuizSequence:
             if index == len(chunks):
                 done()
                 return
-            cue = conversation_timing((Cue.text(chunks[index]),))[0]
-            self._say(cue.content, cue.duration_ms)
-            self._later(cue.duration_ms, lambda: part(index + 1))
+            duration = GAME_PACING.text_ms(chunks[index])
+            self._say(chunks[index], duration)
+            self._later(duration, lambda: part(index + 1))
         part(0)
 
     def _line(self, event: str, done: Callable[[], None]) -> None:
@@ -116,7 +116,7 @@ class QuizSequence:
         self.busy = True
         self._look(None)
         self._present()  # Selection only; correctness and score remain concealed.
-        self._line('game_quiz_lock', lambda: self._later(650, self._resolve))
+        self._line('game_quiz_lock', lambda: self._later(250, self._resolve))
         return True
 
     def _resolve(self) -> None:
@@ -133,8 +133,8 @@ class QuizSequence:
         event = 'game_quiz_correct' if right else 'game_quiz_incorrect'
         if self.game.error_streak >= 2:
             event = 'game_quiz_encourage'
-        self._emote('star' if right else 'cloud', 900)
-        self._later(900, lambda: self._line(event, self._explain))
+        self._emote('star' if right else 'cloud', GAME_PACING.emote_ms)
+        self._later(GAME_PACING.emote_ms, lambda: self._line(event, self._explain))
 
     def _explain(self) -> None:
         def aside() -> None:
@@ -148,7 +148,8 @@ class QuizSequence:
             # One short hint-free reminder; a decision interrupts it in the same owner.
             self._wait_count += 1
             if self._wait_count % 2:
-                self._say(self._dialogue('game_quiz_wait'), 3500)
+                text = self._dialogue('game_quiz_wait')
+                self._say(text, GAME_PACING.text_ms(text))
             else:
                 self._read(self.game.current.text, lambda: None)
 

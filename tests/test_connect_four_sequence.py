@@ -52,7 +52,7 @@ class ConnectFourSequenceTests(unittest.TestCase):
 
     def test_first_choice_during_greeting_counts_and_drop_blocks_double_input(self):
         self.flow.greet()
-        self.assertGreaterEqual(self.lines[0][1], 4000)
+        self.assertLessEqual(self.lines[0][1], 3200)
         self.assertFalse(self.flow.busy)
         self.assertIsNone(self.flow.pending_timer)
         self.assertFalse(any(self.flow.game.board.cells))
@@ -107,7 +107,7 @@ class ConnectFourSequenceTests(unittest.TestCase):
         self.finish_drop()
         self.assertEqual(game.score.wins, 1)
         self.assertEqual([event.outcome for event in self.events], [None, "win"])
-        self.assertEqual(self.emotes[-1], ("faceSad", 800))
+        self.assertEqual(self.emotes[-1], ("faceSad", 450))
         self.flow.next_round()
         self.assertEqual(game.board.winner, 1)
         self.advance_callback()  # Emote before the outcome text.
@@ -145,7 +145,7 @@ class ConnectFourSequenceTests(unittest.TestCase):
         self.assertEqual(self.lines[-1][0], "game_c4_block")
         self.assertFalse(self.flow.busy)
         self.advance_callback()
-        self.assertEqual(self.emotes[-1], ("idea", 900))
+        self.assertEqual(self.emotes[-1], ("idea", 450))
         self.flow.choose(4)
         self.assertTrue(self.flow.busy)
         # The next move cancels the old comment/emote restoration.

@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from ...games.connect_four import Board, ConnectFourSession, Move, choose_column
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
-from ...pet.mind.reaction_sequence import Cue, conversation_timing
+from ..common.game_pacing import GAME_PACING
 from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 
@@ -103,7 +103,7 @@ class ConnectFourSequence:
         self._show()
         self._animate(animation)
         text = self._dialogue(event)
-        duration = conversation_timing((Cue.text(text),))[0].duration_ms
+        duration = GAME_PACING.text_ms(text)
 
         def speak() -> None:
             self._express_event(event)
@@ -111,8 +111,8 @@ class ConnectFourSequence:
             self._later(duration, then)
 
         if emote is not None:
-            self._emote(emote, 800)
-            self._later(800, speak)
+            self._emote(emote, GAME_PACING.emote_ms)
+            self._later(GAME_PACING.emote_ms, speak)
         else:
             speak()
 
@@ -126,7 +126,7 @@ class ConnectFourSequence:
             # Keep its reading time without discarding the player's first click.
             text = self._dialogue("game_c4_greeting")
             self._express_event("game_c4_greeting")
-            self._say(text, conversation_timing((Cue.text(text),))[0].duration_ms)
+            self._say(text, GAME_PACING.text_ms(text))
             self._turn()
         else:
             self._react("game_c4_greeting", self._turn)

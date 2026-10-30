@@ -49,12 +49,14 @@ class BlackjackGuiTests(unittest.TestCase):
         self.wait_for(lambda: not game._sequence.busy)
 
     def test_real_deal_uses_one_deck_and_equal_card_sizes_without_early_totals(self):
+        started = self.timing.monotonic()
         game = self.open_game(arranged_game(
             card('10'), card('9'), card('8'), card('7'), card('K')))
         self.assertEqual(game._visible.player, ())
         game.hit()
         self.assertEqual(len(game._sequence.game.table.player), 2)
         self.ready(game)
+        self.assertLessEqual(self.timing.monotonic() - started, 5.5)
         hand = self.pet._game_visuals.hand
         self.assertIsNone(hand._hand.cards[1])
         assert hand.canvas is not None

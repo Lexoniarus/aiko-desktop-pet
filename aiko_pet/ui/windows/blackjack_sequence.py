@@ -8,7 +8,7 @@ from uuid import uuid4
 from ...games.blackjack import Blackjack, Phase, Table, hand_total
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.playing_cards import Card
-from ...pet.mind.reaction_sequence import Cue
+from ..common.game_pacing import GAME_PACING
 from ..view_models.game_models import HandView
 from .rock_paper_scissors_dialogue import GameDialogue
 
@@ -16,7 +16,7 @@ Motion = Callable[[str, Card | None, int, Callable[[], None]], None]
 
 
 class BlackjackSequence:
-    RESULT_PAUSE_MS = 2800
+    RESULT_PAUSE_MS = GAME_PACING.next_hand_ms
 
     def __init__(
         self, *, schedule: Callable[[int, Callable[[], None]], str],
@@ -74,11 +74,14 @@ class BlackjackSequence:
         if self._motion is not None:
             self._motion(kind, card, index, landed)
         else:
-            self._later(620 if kind in ('player', 'dealer') else 1600, landed)
+            duration = (GAME_PACING.card_flight_ms if kind in ('player', 'dealer')
+                        else GAME_PACING.card_gather_ms if kind == 'gather'
+                        else GAME_PACING.card_shuffle_ms)
+            self._later(duration, landed)
 
     def _line(self, event: str, done: Callable[[], None]) -> None:
         text = self._dialogue(event)
-        duration = Cue.text(text).duration_ms
+        duration = GAME_PACING.text_ms(text)
         self._express_event(event)
         self._say(text, duration)
         if event == "game_bj_aside":
@@ -168,7 +171,7 @@ class BlackjackSequence:
         self.game.reveal_dealer()
         self._dealer_revealed = True
         self._publish(flip=True)
-        self._later(550, self._bank)
+        self._later(GAME_PACING.bank_reveal_ms, self._bank)
 
     def _bank(self) -> None:
         if self.game.table.phase is Phase.DEALER:
@@ -178,7 +181,7 @@ class BlackjackSequence:
                 def landed() -> None:
                     self._dealer_count += 1
                     self._publish()
-                    self._later(600, self._bank)
+                    self._later(GAME_PACING.bank_pause_ms, self._bank)
                 self._move('dealer', self.game.table.dealer[-1], before, landed)
                 return
         if self.game.table.phase is Phase.RESULT:
@@ -194,10 +197,10 @@ class BlackjackSequence:
                 'game_bj_aside', self._result_emote,
             ))
         else:
-            self._later(600, self._bank)
+            self._later(GAME_PACING.bank_pause_ms, self._bank)
 
     def _result_emote(self) -> None:
-        self._emote('star', 950)
+        self._emote('star', GAME_PACING.emote_ms)
 
         def restored() -> None:
             text = self._aside
@@ -205,7 +208,7 @@ class BlackjackSequence:
             self._later(self.RESULT_PAUSE_MS, lambda: self._move(
                 'gather', None, 0, self._restart,
             ))
-        self._later(950, restored)
+        self._later(GAME_PACING.emote_ms, restored)
 
     def _restart(self) -> None:
         self.game.next_round()
@@ -215,7 +218,7 @@ class BlackjackSequence:
         if not self._closed and not self.busy:
             text = self._dialogue('game_bj_wait')
             self._express_event('game_bj_wait')
-            self._say(text, Cue.text(text).duration_ms)
+            self._say(text, GAME_PACING.text_ms(text))
 
     def close(self) -> SessionSummary:
         if not self._closed:

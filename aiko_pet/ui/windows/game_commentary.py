@@ -2,7 +2,7 @@
 
 from collections.abc import Callable
 
-from ...pet.mind.reaction_sequence import Cue
+from ..common.game_pacing import GAME_PACING
 
 
 class GameCommentary:
@@ -38,12 +38,12 @@ class GameCommentary:
         self.cancel()
         self.active = True
         text = self._dialogue(event)
-        duration = Cue.text(text).duration_ms
+        duration = GAME_PACING.text_ms(text)
         self._express(event)
         self._say(text, duration)
         if emote:
             def show() -> None:
-                self._emote(emote, 900)
-                self.later(900, lambda: self._say(text, duration))
+                self._emote(emote, GAME_PACING.emote_ms)
+                self.later(GAME_PACING.emote_ms, lambda: self._say(text, duration))
             self.later(duration, show)
         return duration

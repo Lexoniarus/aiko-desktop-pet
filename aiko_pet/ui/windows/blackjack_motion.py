@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 from ...games.blackjack import Table
 from ...games.playing_cards import Card
+from ..common.game_pacing import GAME_PACING
 from ..pet_view.game_effects import GameEffects
 from ..view_models.game_models import HandView
 from .game_contracts import GameCardPorts
@@ -44,7 +45,9 @@ class BlackjackMotion:
     ) -> None:
         if kind == 'shuffle':
             self.presentation.look(self.deck())
-            self.presentation.action('attack', 1600, lambda _: None, lambda: None)
+            self.presentation.action(
+                'attack', GAME_PACING.card_shuffle_ms, lambda _: None, lambda: None,
+            )
 
             def draw(t: float) -> None:
                 x, y = self.deck()
@@ -58,7 +61,7 @@ class BlackjackMotion:
                     self.effects.hide(f'shuffle{i}')
                 self.presentation.look(None)
                 done()
-            self.effects.tween(1600, draw, end)
+            self.effects.tween(GAME_PACING.card_shuffle_ms, draw, end)
         elif kind == 'gather':
             table = self.visible()
             points = [self.player(i, len(table.player))
@@ -78,7 +81,7 @@ class BlackjackMotion:
                 for i in range(len(points)):
                     self.effects.hide(f'gather{i}')
                 done()
-            self.effects.tween(820, gather, end_gather)
+            self.effects.tween(GAME_PACING.card_gather_ms, gather, end_gather)
         else:
             start = self.deck()
             count = index + 1
@@ -90,10 +93,12 @@ class BlackjackMotion:
                 ease = t * t * (3 - 2 * t)
                 # Hole cards remain backs throughout; no hidden face is requested.
                 face = card if t >= .5 else None
-                compression = 8 if .45 < t < .55 else 1
+                flip = min(7, max(0, int((t - .2) / .6 * 8)))
+                compression = (1, 2, 4, 8, 8, 4, 2, 1)[flip] if card else 1
                 image = self.cards.images.get(face, 2, compression)
                 self.effects.show('flight', image,
-                                  start[0] + (x - start[0]) * ease,
+                                  start[0] + (x - start[0]) * ease
+                                  + (128 - image.width()) / 2,
                                   start[1] + (y - start[1]) * ease
                                   - 28 * math.sin(math.pi * t))
 
@@ -101,7 +106,7 @@ class BlackjackMotion:
                 self.effects.hide('flight')
                 self.presentation.look(None)
                 done()
-            self.effects.tween(620, fly, landed)
+            self.effects.tween(GAME_PACING.card_flight_ms, fly, landed)
 
     def close(self) -> None:
         self._closed = True

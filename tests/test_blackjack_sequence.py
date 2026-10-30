@@ -100,9 +100,9 @@ class BlackjackSequenceTests(unittest.TestCase):
         flow.advance()
         self.assertEqual(self.lines[-1], 'game_bj_aside')
         flow.advance()
-        self.assertEqual(self.delays[-1], 950)
+        self.assertEqual(self.delays[-1], 450)
         flow.advance()
-        self.assertEqual(self.delays[-1], 2800)
+        self.assertEqual(self.delays[-1], 900)
         flow.advance()  # gather
         self.assertEqual(flow.game.score.games, 1)
         flow.advance()  # restart, remains locked through new deal

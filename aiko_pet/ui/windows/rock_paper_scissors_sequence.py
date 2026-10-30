@@ -7,14 +7,14 @@ from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.rock_paper_scissors import Move, Outcome, RockPaperScissors, Round, Score
-from ...pet.mind.reaction_sequence import Cue
+from ..common.game_pacing import GAME_PACING
 from .game_presentation import GamePresentation
 from .rock_paper_scissors_dialogue import GameDialogue, countdown_line, outcome_event
 
 
 class RockPaperScissorsSequence:
     CYCLE_MS = 900
-    REACTION_EMOTE_MS = 850
+    REACTION_EMOTE_MS = GAME_PACING.emote_ms
 
     def __init__(
         self, *, schedule: Callable[[int, Callable[[], None]], str],
@@ -81,7 +81,7 @@ class RockPaperScissorsSequence:
             self._animate("waving-greeting")
             phrase = self._dialogue("game_greeting")
             self._express_event("game_greeting")
-            self._say(phrase, Cue.text(phrase).duration_ms)
+            self._say(phrase, GAME_PACING.text_ms(phrase))
 
     def choose(self, move: Move) -> None:
         if self._closed or self.busy:
@@ -142,7 +142,7 @@ class RockPaperScissorsSequence:
         def speak() -> None:
             phrase = self._dialogue(outcome_event(result))
             self._express_event(outcome_event(result))
-            self._say(phrase, Cue.text(phrase).duration_ms)
+            self._say(phrase, GAME_PACING.text_ms(phrase))
 
         self._later(self.REACTION_EMOTE_MS, speak, generation)
 

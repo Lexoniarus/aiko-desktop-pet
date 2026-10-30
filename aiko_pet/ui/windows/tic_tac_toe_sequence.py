@@ -8,6 +8,7 @@ from uuid import uuid4
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.tic_tac_toe import Board, TicTacToe
 from ...games.tic_tac_toe_analysis import read_board
+from ..common.game_pacing import GAME_PACING
 from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 
@@ -45,7 +46,7 @@ class TicTacToeSequence:
         ))
         text = self._dialogue("game_ttt_greeting")
         self._express_event("game_ttt_greeting")
-        self._say(text, 2800)
+        self._say(text, GAME_PACING.text_ms(text))
         self._present(self.game.board, self.game.score)
 
     def choose(self, cell: int) -> None:

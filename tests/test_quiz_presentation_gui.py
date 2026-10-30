@@ -34,7 +34,9 @@ class QuizPresentationGuiTests(unittest.TestCase):
         sequence = self.game._sequence
         assert sequence is not None
         self.assertTrue(all(not b.winfo_manager() for b in self.game.answers))
+        started = self.clock.monotonic()
         self.until(lambda: not sequence.busy)
+        self.assertLessEqual(self.clock.monotonic() - started, 28)
         self.assertEqual(sequence.visible_answers, 4)
         self.clock.advance(22.1)
         self.assertEqual(self.pet._animated._game_clip, 'idle-question-request')

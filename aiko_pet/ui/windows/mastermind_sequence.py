@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import Code, MastermindSession, RoundView
-from ...pet.mind.reaction_sequence import Cue, conversation_timing
+from ..common.game_pacing import GAME_PACING
 from ..view_models.mastermind_models import CodeView
 from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
@@ -80,7 +80,7 @@ class MastermindSequence:
         self._show()
         self._animate(animation)
         text = self._dialogue(event)
-        duration = conversation_timing((Cue.text(text),))[0].duration_ms
+        duration = GAME_PACING.text_ms(text)
 
         def speak() -> None:
             self._express_event(event)
@@ -90,8 +90,8 @@ class MastermindSequence:
         if emote is None:
             speak()
         else:
-            self._emote(emote, 800)
-            self._later(800, speak)
+            self._emote(emote, GAME_PACING.emote_ms)
+            self._later(GAME_PACING.emote_ms, speak)
 
     def _begin(self) -> None:
         self._show_code(CodeView())

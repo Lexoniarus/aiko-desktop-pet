@@ -7,6 +7,7 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...games.blackjack import hand_total
+from ..common.game_pacing import GAME_PACING
 from ..common.playing_card_images import PlayingCardImages
 from ..view_models.game_models import HandAnchor, HandView, place_hand
 
@@ -113,7 +114,8 @@ class BlackjackHandPresenter:
     def _queue_flip(self) -> None:
         generation = self._generation
         self.pending_timer = self._root.after(
-            45, lambda: self._flip_if_current(generation),
+            GAME_PACING.card_flip_frame_ms,
+            lambda: self._flip_if_current(generation),
         )
 
     def _flip_if_current(self, generation: int) -> None:

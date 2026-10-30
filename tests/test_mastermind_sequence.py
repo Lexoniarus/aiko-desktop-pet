@@ -50,7 +50,7 @@ class MastermindSequenceTests(unittest.TestCase):
     def test_greeting_blocks_input_then_reveals_only_after_terminal_guess(self):
         self.flow.greet()
         self.assertFalse(self.flow.submit(SECRET))
-        self.assertGreaterEqual(self.lines[-1][1], 4000)
+        self.assertLessEqual(self.lines[-1][1], 3200)
         self.assertEqual(self.codes[0].slots, (None,) * 4)
         self.advance_callback()
         self.assertTrue(self.flow.submit(SECRET))
@@ -65,7 +65,7 @@ class MastermindSequenceTests(unittest.TestCase):
             self.assertEqual(
                 self.codes[-1].slots, SECRET[:count] + (None,) * (4 - count)
             )
-        self.assertEqual(self.emotes[-1], ("star", 800))
+        self.assertEqual(self.emotes[-1], ("star", 450))
         self.flow.next_round()
         self.assertEqual(self.flow.game.score.games, 1)
         self.drain()
