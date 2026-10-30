@@ -1,21 +1,49 @@
 """Compose game graphics and native effects without owning game state."""
 
+from __future__ import annotations
+
 import tkinter as tk
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from ..application.settings import PetSettings
+from ..pet.animation.expression import Expression
 from ..ui.common.mastermind_images import MastermindImages
 from ..ui.common.playing_card_images import PlayingCardImages
 from ..ui.common.window_geometry import WindowBounds
 from ..ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter
 from ..ui.pet_view.desktop_window import DesktopWindow
 from ..ui.pet_view.mastermind_safe_presenter import MastermindSafePresenter
+from ..ui.pet_view.reaction_player import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.view_models.game_models import HandAnchor
 from ..ui.windows.game_contracts import GameCardPorts, GameCodePorts
+from ..ui.windows.game_presentation import GamePresentation
+from ..ui.windows.game_speech import GameSpeech
 from ..ui.windows.hover_ui import HoverUi
 from .object_windows import configure_object_window
+
+if TYPE_CHECKING:
+    from ..ui.pet_view.animated_pet import AnimatedPet
+
+
+def assemble_speech(
+    reactions: ReactionPlayer, speech: SpeechPresenter,
+    mark_spoken: Callable[[], None], game_mode: Callable[[bool], None],
+    animate: Callable[[str], None], express: Callable[[Expression | None], object],
+    animated: AnimatedPet, settings: PetSettings,
+) -> GameSpeech:
+    return GameSpeech(
+        reactions, speech, mark_spoken, game_mode, animate, express,
+        GamePresentation(
+            animated.play_game_action, animated.cancel_game_action,
+            animated.look_game,
+            lambda: (settings.x or 0, settings.y or 0, settings.scale),
+            configure_object_window,
+            lambda window: configure_object_window(window, interactive=True),
+        ),
+    )
 
 
 def occupied_bounds(

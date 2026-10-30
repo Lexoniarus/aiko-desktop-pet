@@ -69,6 +69,8 @@ def event_expression(event: str) -> Expression | None:
         "game_ttt_greeting": Expression.QUESTIONING,
         "game_blackjack_greeting": Expression.QUESTIONING,
         "game_c4_greeting": Expression.QUESTIONING,
+        "game_bj_stand": Expression.QUESTIONING,
+        "game_bj_wait": Expression.QUESTIONING,
         "game_bj_welcome": Expression.POSITIVE,
         "game_bj_reveal": Expression.QUESTIONING,
         "game_bj_win": Expression.POSITIVE,

@@ -35,6 +35,14 @@ class GameAnimationPlaybackTests(unittest.TestCase):
         self.addCleanup(self.anim.close)
         self.anim.set_game_mode(True)
 
+    def test_game_entry_clears_a_previous_care_graphic_without_changing_care(self):
+        food_id = next(iter(self.anim.food_overlay._foods))
+        self.anim.set_food_overlay(food_id)
+        before = self.state.capture_checkpoint()
+        self.anim.set_game_mode(True)
+        self.assertIsNone(self.anim.food_overlay.current_food_id)
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
     def test_all_poses_and_midpoint_are_reported_from_the_actual_clock(self):
         before = self.state.capture_checkpoint()
         frames, done, world = [], [], []

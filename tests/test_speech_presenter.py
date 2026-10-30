@@ -45,6 +45,18 @@ class SpeechPresenterTests(unittest.TestCase):
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.presenter.hide)
 
+    def test_queued_old_expiry_cannot_remove_a_new_game_comment(self):
+        self.presenter.begin_game()
+        self.presenter.show_text("Die erste Ansage.", 1800)
+        old = self.presenter.bubble
+        assert old is not None
+        self.presenter.show_emote("star", 900)
+        current = self.presenter.bubble
+        timer = self.presenter.pending_timer
+        self.presenter._expire_current(old)
+        self.assertIs(self.presenter.bubble, current)
+        self.assertEqual(self.presenter.pending_timer, timer)
+
     def test_cursor_cue_is_nonblocking_and_cannot_replace_existing_speech(self):
         self.presenter.show_cursor_emote("question", 1500)
         self.assertIsNotNone(self.presenter.bubble)

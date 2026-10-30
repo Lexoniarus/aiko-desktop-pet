@@ -88,6 +88,8 @@ class BlackjackGuiTests(unittest.TestCase):
                 self.assertEqual(self.pet._game_visuals.hand.windows, ())
                 self.assertFalse(game.window.winfo_exists())
                 self.assertIsNone(game._sequence.pending_timer)
+                assert game._motion is not None
+                assert game._motion is not None
                 self.assertEqual(game._motion.effects._windows, {})
                 self.assertFalse(self.pet._animated.game_mode)
 
@@ -151,6 +153,7 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertEqual(game.hit_button.cget('state'), 'normal')
         self.pet.quit()
         self.assertEqual(self.pet._game_visuals.hand._hand, HandView())
+        assert game._motion is not None
         self.assertEqual(game._motion.effects._windows, {})
 
     def test_new_panel_uses_left_side_at_right_edge(self):

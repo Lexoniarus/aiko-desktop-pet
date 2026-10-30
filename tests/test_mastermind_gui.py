@@ -32,12 +32,14 @@ class MastermindGuiTests(unittest.TestCase):
         self.submit(SECRET)
         self.clock.advance(8)
         button = self.game._panel.next_button
+        assert button is not None
         self.assertEqual(button.cget('state'), 'disabled')
         self.clock.advance(17)
         self.assertEqual(self.code._frame, 32)
         self.assertFalse(self.code._snack)
         self.assertEqual(button.cget('state'), 'normal')
         self.assertLessEqual(self.pet.state.satiety, before)
+        assert self.game._sequence is not None
         self.assertEqual(self.game._sequence.game.score.wins, 1)
 
     def test_closing_during_opening_invalidates_the_safe_completion(self):

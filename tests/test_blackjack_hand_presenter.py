@@ -63,6 +63,16 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         self.assertEqual(self.hand.windows, ())
         self.assertIsNone(self.hand.pending_timer)
 
+    def test_queued_old_flip_cannot_advance_a_new_hand(self):
+        self.hand.show(HandView((self.visible, None)))
+        self.hand.show(HandView((self.visible, self.secret)), flip=True)
+        generation = self.hand._generation
+        self.hand.show(HandView((self.visible, None)))
+        self.hand._flip_if_current(generation)
+        self.assertEqual(self.hand._frame, 0)
+        self.assertEqual(self.hand._hand.cards[1], None)
+        self.assertIsNone(self.hand.pending_timer)
+
     def test_move_scale_and_topmost_update_the_same_overlay(self):
         self.hand.show(HandView((self.visible, None)))
         window = self.hand.window

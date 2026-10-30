@@ -162,6 +162,8 @@ class AnimatedPet:
     def set_game_mode(self, enabled: bool) -> None:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
+        if enabled:
+            self.food_overlay.select(None)
         self.cancel_game_action()
         self.game_gaze = None
         self._ambient.suspend(time.monotonic())

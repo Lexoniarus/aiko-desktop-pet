@@ -22,6 +22,8 @@ class GameWidget(Widget):
     def delete(self, *_args):
         pass
 
+    tag_raise = delete
+
     def after(self, _milliseconds, _callback):
         return "pending-game-step"
 
@@ -72,6 +74,8 @@ class OtherGameInputTests(unittest.TestCase):
                 game = BlackjackWindow(self.root, cards=ports, **self.effects)
                 self.addCleanup(game.close)
                 game.greet()
+                for _ in range(6):  # greeting, shuffle, four landing boundaries
+                    game._sequence.advance()
                 button = game.hit_button if action == "hit" else game.stand_button
                 self.check_pointer_focus(game._panel.scroll, button)
                 self.assertEqual(button.cget("state"), "normal")
@@ -79,6 +83,7 @@ class OtherGameInputTests(unittest.TestCase):
                 table = game._sequence.game.table
                 if action == "hit":
                     self.assertEqual(len(table.player), 3)
+                    game._sequence.advance()  # hit lands before the next decision
                     game.stand_button.invoke()
                 else:
                     self.assertEqual(table.phase, Phase.DEALER)

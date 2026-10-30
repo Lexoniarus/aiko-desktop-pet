@@ -26,7 +26,6 @@ from .desktop.global_input import idle_seconds_windows, mouse_buttons_down_windo
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.maintenance import DesktopMaintenance
-from .desktop.object_windows import configure_object_window
 from .desktop.persistence import DesktopPersistence
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
@@ -54,8 +53,6 @@ from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.view_models.food_models import food_choices
 from .ui.view_models.read_models import DesktopPresentation
-from .ui.windows.game_presentation import GamePresentation
-from .ui.windows.game_speech import GameSpeech
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 
@@ -287,22 +284,11 @@ class DesktopPet:
                 always_on_top=lambda: self.settings.always_on_top,
                 game_dialogue=lambda event: self.mind.contact_text(
                     event, self.state, self.context, time.monotonic()),
-                game_speech=GameSpeech(
+                game_speech=game_assembly.assemble_speech(
                     self._reaction_player, self._speech,
                     self._mark_reaction_spoken, self._set_game_mode,
                     lambda name: self._start_action(name, 0),
-                    self._animation.request_expression,
-                    GamePresentation(
-                        self._animated.play_game_action,
-                        self._animated.cancel_game_action,
-                        self._animated.look_game,
-                        lambda: (self.settings.x or 0, self.settings.y or 0,
-                                 self.settings.scale),
-                        configure_object_window,
-                        lambda window: configure_object_window(
-                            window, interactive=True,
-                        ),
-                    ),
+                    self._animation.request_expression, self._animated, self.settings,
                 ),
             ), skin=self._window.skin,
         )

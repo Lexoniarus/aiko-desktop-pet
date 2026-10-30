@@ -56,6 +56,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
                     self.step()
                 self.assertEqual(self.flow.score.games, 1)
                 token = self.flow.pending_timer
+                assert token is not None
                 stale = self.clock.callbacks[token][1]
                 self.flow.choose(Move.PAPER)
                 self.assertTrue(self.flow.busy)
@@ -69,6 +70,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
     def test_duplicate_choice_before_reveal_and_close_do_not_score(self):
         self.flow.choose(Move.ROCK)
         token = self.flow.pending_timer
+        assert token is not None
         stale = self.clock.callbacks[token][1]
         self.flow.choose(Move.PAPER)
         self.assertEqual(self.busy, [True])

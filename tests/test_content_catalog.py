@@ -101,9 +101,9 @@ class TextCatalogTests(unittest.TestCase):
         book = DialogueBook.from_file()
         for event in ("game_greeting", "game_aiko_win", "game_player_win", "game_draw"):
             self.assertGreaterEqual(sum(line.event == event for line in book.lines), 12)
-        for number in (1, 2, 3):
+        for number, move in enumerate(("scissors", "rock", "paper"), 1):
             self.assertEqual(
-                countdown_line(number), messages[f"rps.countdown.{number}"]
+                countdown_line(number), messages[f"rps.move.{move}"] + "!"
             )
         greetings = {line.text for line in book.lines if line.event == "game_greeting"}
         dialogue = GameDialogue()

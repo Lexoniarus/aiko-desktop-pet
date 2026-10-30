@@ -625,6 +625,38 @@
           "content": "Was wird es? A, B, C oder D? Keine Eile. Ich übe nur schon mal meinen bedeutungsvollen Blick."
         }
       ]
+    },
+    {
+      "id": "game_bj_stand-frontend-1",
+      "event": "game_bj_stand",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bleibst! Notiert, mein VIP-Gast. Dann ist jetzt die Bank am Zug."
+        }
+      ]
+    },
+    {
+      "id": "game_bj_wait-frontend-1",
+      "event": "game_bj_wait",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch eine Karte? Oder bleiben? Ich kann hier auch sehr feierlich warten."
+        }
+      ]
     }
   ]
 }

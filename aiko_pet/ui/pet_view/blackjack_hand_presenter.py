@@ -30,6 +30,7 @@ class BlackjackHandPresenter:
         self._flip_index = -1
         self._frame = 0
         self.pending_timer: str | None = None
+        self._generation = 0
 
     @property
     def windows(self) -> tuple[tk.Toplevel, ...]:
@@ -70,7 +71,7 @@ class BlackjackHandPresenter:
         self.window.deiconify()
         self._restore_stack()
         if self._flip_index >= 0:
-            self.pending_timer = self._root.after(45, self.advance_flip)
+            self._queue_flip()
 
     def move(self) -> None:
         if self.window is None or self.canvas is None:
@@ -109,6 +110,16 @@ class BlackjackHandPresenter:
         canvas.create_text(layout.width // 2, 153, text=caption,
                            fill="#624668", font=("Segoe UI", 9, "bold"))
 
+    def _queue_flip(self) -> None:
+        generation = self._generation
+        self.pending_timer = self._root.after(
+            45, lambda: self._flip_if_current(generation),
+        )
+
+    def _flip_if_current(self, generation: int) -> None:
+        if generation == self._generation:
+            self.advance_flip()
+
     def advance_flip(self) -> None:
         self._cancel_timer()
         if self.window is None or self._flip_index < 0:
@@ -118,7 +129,7 @@ class BlackjackHandPresenter:
             self._flip_index = -1
         self._render()
         if self._flip_index >= 0:
-            self.pending_timer = self._root.after(45, self.advance_flip)
+            self._queue_flip()
 
     def _motion(self, event: tk.Event) -> None:
         if self._flip_index >= 0:
@@ -151,6 +162,7 @@ class BlackjackHandPresenter:
             self.window.wm_attributes("-topmost", enabled)
 
     def _cancel_timer(self) -> None:
+        self._generation += 1
         if self.pending_timer is not None:
             self._root.after_cancel(self.pending_timer)
             self.pending_timer = None

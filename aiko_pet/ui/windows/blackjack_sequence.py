@@ -27,6 +27,7 @@ class BlackjackSequence:
         express_event: Callable[[str], None] = lambda _: None,
         game: Blackjack | None = None, motion: Motion | None = None,
         emote: Callable[[str, int], None] = lambda _name, _ms: None,
+        silence: Callable[[], None] = lambda: None,
     ) -> None:
         self.game = game if game is not None else Blackjack()
         self._schedule, self._cancel = schedule, cancel
@@ -34,7 +35,7 @@ class BlackjackSequence:
         self._say, self._animate, self._emote = say, animate, emote
         self._dialogue = dialogue or GameDialogue().choose
         self._round_event, self._express_event = round_event, express_event
-        self._motion = motion
+        self._motion, self._silence = motion, silence
         self._session_id = uuid4().hex
         self._closed = self._started = False
         self._generation = 0
@@ -134,6 +135,7 @@ class BlackjackSequence:
     def hit(self) -> None:
         if self._closed or self.busy or self.game.table.phase is not Phase.PLAYER:
             return
+        self._silence()
         self.busy = True
         self.game.hit()
         self._publish()
@@ -147,9 +149,11 @@ class BlackjackSequence:
     def stand(self) -> None:
         if self._closed or self.busy or self.game.table.phase is not Phase.PLAYER:
             return
+        self._silence()
         self.busy = True
         self.game.stand()
-        self._continue()
+        self._publish()
+        self._line('game_bj_stand', self._continue)
 
     def _continue(self) -> None:
         if self.game.table.phase is Phase.PLAYER:
@@ -206,6 +210,12 @@ class BlackjackSequence:
     def _restart(self) -> None:
         self.game.next_round()
         self._begin()
+
+    def wait_comment(self) -> None:
+        if not self._closed and not self.busy:
+            text = self._dialogue('game_bj_wait')
+            self._express_event('game_bj_wait')
+            self._say(text, Cue.text(text).duration_ms)
 
     def close(self) -> SessionSummary:
         if not self._closed:

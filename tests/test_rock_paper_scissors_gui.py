@@ -1,5 +1,6 @@
 """Native isolated-save checks for the accepted Fingerduell flow."""
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -20,8 +21,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
         self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
-        self.game = self.pet._hover.game_window
-        self.assertIsInstance(self.game, RockPaperScissorsWindow)
+        game = self.pet._hover.game_window
+        assert isinstance(game, RockPaperScissorsWindow)
+        self.game = game
         self.game._sequence._game._random_index = lambda _: 2
 
     def test_immediate_player_hand_then_actual_third_forward_reveal(self):
@@ -74,3 +76,34 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         after = self.pet.state.fun
         self.game.close()
         self.assertEqual(self.pet.state.fun, after)
+
+    def test_all_hand_choices_keep_the_mat_and_player_window_fixed(self):
+        self.pet.root.update()
+        geometry = self.game.window.winfo_geometry()
+        for move in Move:
+            self.game.choose(move)
+            self.clock.advance(2.251)
+            self.pet.root.update()
+            self.assertEqual(self.game.window.winfo_geometry(), geometry)
+            bounds = self.game.player_hand.bbox(self.game._hand_image_item)
+            assert bounds is not None
+            left, top, right, bottom = bounds
+            self.assertGreaterEqual(left, 0)
+            self.assertGreaterEqual(top, 0)
+            self.assertLessEqual(right, self.game.player_hand.winfo_width())
+            self.assertLessEqual(bottom, self.game.player_hand.winfo_height())
+
+    def test_game_gaze_never_enables_cursor_chasing_or_walk(self):
+        visual = self.pet._animated
+        self.assertIsNone(self.pet._visual.gaze_direction(
+            (99999, 99999), game_mode=visual.game_mode,
+        ))
+        self.assertIsNone(self.pet._walk.step(
+            time.monotonic(), .5, game_mode=visual.game_mode, attention_active=False,
+        ))
+        before = (self.pet.settings.x, self.pet.settings.y)
+        self.game.choose(Move.ROCK)
+        self.clock.advance(3)
+        self.assertEqual((self.pet.settings.x, self.pet.settings.y), before)
+        self.game.close()
+        self.assertFalse(visual.game_mode)

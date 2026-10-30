@@ -35,6 +35,7 @@ class BlackjackWindow:
         bounds_at: BoundsAt | None = None,
         presentation: GamePresentation | None = None,
         emote: Callable[[str, int], None] = lambda _name, _ms: None,
+        silence: Callable[[], None] = lambda: None,
     ) -> None:
         self._closed = False
         self._on_closed, self._cards = on_closed, cards
@@ -51,8 +52,7 @@ class BlackjackWindow:
         self._waiting = GameWaiting(
             self.window.after, self.window.after_cancel, presentation,
             lambda: self._player_point(0, 1),
-            lambda: speak("Noch eine Karte, VIP-Gast? "
-                          "Ich kann auch sehr feierlich warten.", 3500),
+            lambda: self._sequence.wait_comment(),
         )
         try:
             heading = tk.Frame(self._panel.body, bg=skin.background)
@@ -115,6 +115,7 @@ class BlackjackWindow:
                 round_event=round_event,
                 express_event=express_event,
                 motion=self._motion.play if self._motion else None, emote=emote,
+                silence=silence,
             )
             self._present(self._sequence.game.table, self._sequence.game.score)
             self._panel.show(root)

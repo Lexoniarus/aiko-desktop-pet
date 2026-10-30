@@ -133,7 +133,13 @@ class SpeechPresenter:
         window.deiconify()
         self._restore_stack()
         if duration_ms > 0:
-            self.pending_timer = self._root.after(duration_ms, self._expire)
+            self.pending_timer = self._root.after(
+                duration_ms, lambda: self._expire_current(window),
+            )
+
+    def _expire_current(self, window: tk.Toplevel) -> None:
+        if self.bubble is window:
+            self._expire()
 
     def _expire(self) -> None:
         self.pending_timer = None

@@ -318,6 +318,7 @@ class HoverUi:
                     cards=self._ports.cards,
                     presentation=self._ports.game_speech.presentation,
                     emote=self._ports.game_speech.emote,
+                    silence=self._ports.game_speech.silence,
                     dialogue=self._ports.game_dialogue,
                     round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,

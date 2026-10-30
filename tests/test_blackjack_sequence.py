@@ -131,7 +131,8 @@ class BlackjackSequenceTests(unittest.TestCase):
             card('10', 'hearts'), card('K')))
         self.ready(flow)
         flow.stand()
-        flow.advance()  # announcement
+        flow.advance()  # stand acknowledgement
+        flow.advance()  # reveal announcement
         flow.advance()  # bank mutates, third card not yet visible
         self.assertEqual(len(self.hands[-1][0].cards), 2)
         flow.advance()

@@ -1630,6 +1630,8 @@
     "game_quiz_release-frontend-1",
     "game_quiz_lock-frontend-1",
     "game_quiz_meta-frontend-1",
-    "game_quiz_wait-frontend-1"
+    "game_quiz_wait-frontend-1",
+    "game_bj_stand-frontend-1",
+    "game_bj_wait-frontend-1"
   ]
 }

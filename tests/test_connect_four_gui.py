@@ -31,6 +31,7 @@ class ConnectFourGuiTests(unittest.TestCase):
         self.timing.advance(3)
         self.assertEqual(len(self.game.canvas.find_withtag('piece')), 2)
         self.assertEqual((self.pet.settings.x, self.pet.settings.y), before)
+        assert self.flow is not None
         self.assertFalse(self.flow.busy)
         self.game.close()
         self.timing.advance(5)

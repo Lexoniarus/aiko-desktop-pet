@@ -203,7 +203,8 @@ class QuizWindow:
             text=str(game.index + int(answered)),
         )
         self._panel.status.configure(text=GERMAN_TEXT.format(
-            "quiz.finished" if game.finished and answered else "quiz.think",
+            "quiz.finished" if game.finished and answered else
+            "game.aiko_turn" if sequence.busy else "quiz.think",
             correct=str(sequence.visible_correct),
         ))
         if self._panel.next_button is not None:
