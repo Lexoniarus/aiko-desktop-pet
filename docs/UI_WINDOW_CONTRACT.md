@@ -327,3 +327,11 @@ Blackjack's bank caption uses an opaque, wrapping native label and measured
 footer height, never glyphs painted into the color-keyed card canvas. Placement
 and incoming-card targets reserve that same measured height. Its welcome is
 session entry speech; repeat hands proceed directly to shuffle and deal.
+
+Incidental game commentary has one reading phase, an optional emoji interlude
+and an idle boundary; it never restarts the same currently spoken assessment
+or replays the sentence after the emoji. A new accepted move or round cancels
+its old timers and clears its visible text/emoji through GameSpeech. The
+Connect Four Sequence owns landing gaze and its delayed return, so window
+movement and interruption use the same current target. Quiz reading and
+waiting callbacks must validate ownership before clearing the current timer.

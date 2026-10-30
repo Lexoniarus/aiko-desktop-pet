@@ -7,6 +7,41 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## Cross-game transition audit — 2026-10-30
+
+Owner feedback prompted a native timing audit of the five games other than
+Blackjack. Text, emoji, actual sprite completion, input release, new decisions,
+round changes and close were checked with isolated saves and ControlledTkTime.
+The existing game rules, opponent policies, art and physical action durations
+remain unchanged.
+
+| Game | Finding and resulting behavior |
+| --- | --- |
+| Fingerduell | Revealing Aiko's persistent hand rebuilt the bubble and immediately erased “Papier!”. The hand is now installed before the word. The third word stays visible from 2.25 to 2.70 seconds, followed by the 0.45-second emoji and result text at 3.15 seconds. Choosing again at reveal still interrupts the old recovery immediately. |
+| Tic-Tac-Toe | The same assessment could restart when Aiko moved after 1.4 seconds. An assessment already being read now keeps its original deadline; its optional emoji follows once. Accepted input and a new round clear the old visible comment, including a new round started by the player. |
+| Vier gewinnt | An effect-owned delayed gaze reset could run during the next turn. Landing focus and its cancellable return now belong to the Sequence/window path. Moving the window retargets the landed cell rather than an earlier search cell. Pickup, throw, flight and drop timing are preserved. |
+| Mastermind | Code feedback, emoji, announcement, safe opening, eating and final comment already follow their actual completion boundaries. Win and loss both reach the cosmetic snack ending; no satiety is added. Progress comments share the corrected single-pass commentary lifecycle. |
+| Quiz | Question and A/B/C/D reveals, release, selection, resolution and explanation retain their order. Superseded reading/wait callbacks now validate their generation and token before touching the active timer. Selection still cancels waiting gaze/pose immediately, without hover. |
+
+Incidental GameCommentary is text once → optional emoji → idle. It no longer
+replays the entire old sentence after the emoji or remains active after expiry.
+These comments never lock input. Cancellation removes completed timer ownership
+and rejects callbacks from an older move. Blackjack's explicitly authored
+result/aside sequence remains owned by its own Sequence.
+
+The audit's eleven native scenarios pass, including actual “Papier!” widget
+content, preserved Tic-Tac-Toe reading time with free input, both start orders,
+Connect Four window movement, both Mastermind snack outcomes, close during
+opening/moderation and the autonomous Quiz wait interrupted by selection.
+Timestamped speech/action traces and validation logs remain local-only under
+`../lokale-daten/game-transition-audit-2026-10-30/`.
+
+The frozen native regression suite passes **2,512 tests** in 412.029 seconds,
+with no Python/JSON source changes during the run. Ruff and strict Mypy
+(384 files) pass; Pyright reports zero errors/warnings. Code changes are split
+into `ee4d896` (RPS reveal), `ac531eb` (commentary and landing gaze) and `5472ec6`
+(Quiz reading/wait cancellation). The final run validates that combined state.
+
 ## Runtime presentation and repeat-round correction — 2026-10-30
 
 Blackjack now plays its welcome only when the game window starts. Subsequent
