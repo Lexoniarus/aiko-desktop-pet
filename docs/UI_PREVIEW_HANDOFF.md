@@ -11,11 +11,13 @@ Design/asset preparations completed and all three reference groups approved by
 the owner on 2026-10-20. This is the entry point for other local chats continuing
 the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.
 
-The six approved game references now have a separate
-[native implementation plan](GAME_FRONTEND_IMPLEMENTATION_PLAN.md), dated
-2026-10-30. It maps existing owners, bounded shared presentation work and
-game-by-game delivery/acceptance. This is planning only, not an implementation
-authorization or claim that the references are already installed.
+**Game implementation update (2026-10-30):** after the planning pass, the owner
+explicitly commissioned native implementation in small commits. All six game
+frontends now have native Tk implementations using the approved references.
+See the [implementation log and validation](GAME_FRONTEND_IMPLEMENTATION_PLAN.md)
+for delivered owners, asset exports and the remaining practical acceptance scope.
+The preview-only statements in the dated approvals below remain historical
+records; they do not describe the later implementation authorization.
 
 ## Durable local reference bundle
 

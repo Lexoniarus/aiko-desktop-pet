@@ -250,9 +250,7 @@ selected source export. Unused archive material is excluded from the public
 repository. The older source spritesheet was not shipped with the earlier
 73-frame release.
 
-## 6. Language
-
-### Approved game frontend artwork (2026-10-30)
+## 6. Approved game frontend artwork (2026-10-30)
 
 `aiko_pet/assets/game_frontends/` contains selected project UI artwork from the
 owner-approved local game references. `provenance.json` records source/export
@@ -269,5 +267,12 @@ from the accepted continuous source transform, not newly generated artwork.
 For floating Windows color-keyed props only, `tools/prepare_game_prop_alpha.py`
 prepares binary alpha while asserting unchanged RGB; `native-prop-alpha.json`
 records pre/post hashes. Opaque board/control artwork retains antialiased alpha.
+
+Blackjack's felt table and Quizshow's stage, emblem, cue cards and five native
+answer-podium states are exports of their approved SVG/CSS references. Their
+provenance manifests identify the source and runtime files. These exports do not
+include the external HTML previews or private character masters.
+
+## 7. Language
 
 Documentation is maintained in **English**. UI strings, dialog entries, and runtime labels deliberately remain in **German** for the current game release.

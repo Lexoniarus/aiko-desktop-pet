@@ -279,3 +279,24 @@ Windows/DPI/input checks below or validate subsequent parallel UI refinements.
   using an isolated save. Verify settings remain independently movable.
 - Check image cleanup on shutdown and multiple reopenings. These native tests
   remain distinct from the green headless owner/command and pixel-export checks.
+
+
+### Native game presentation owners (2026-10-30)
+
+Player game windows are placed once, stay stationary when Aiko moves, and remain
+freely draggable. Finite sprite actions run through the existing AnimatedPet
+frame clock. GamePresentation grants action, read-only gaze/origin and native
+window configuration; it never grants pet movement or care-state mutation.
+GameSpeech retains the sole speech surface, including persistent RPS hand plus
+exclusive text/emoji content. Callback generations/window identities invalidate
+old cues on interruption and close.
+
+GameEffects owns only temporary game graphics: Connect Four stack/throw,
+Blackjack shared deck/shuffle/flights and Quizshow cue cards. The canonical
+MastermindSafePresenter owns the safe and its registered opening frames.
+These are presentation artifacts, not World inventory objects. The Mastermind
+snack is cosmetic. Existing game/domain owners and GameExperienceCoordinator
+remain responsible for legal decisions, results and rewards.
+
+See [the implementation log](GAME_FRONTEND_IMPLEMENTATION_PLAN.md) for reference
+mapping, checks and the bounds of practical Windows acceptance.

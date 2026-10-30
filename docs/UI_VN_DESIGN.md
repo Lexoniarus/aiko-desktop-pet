@@ -1,5 +1,11 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Native implementation (2026-10-30):** the owner subsequently authorized the
+six-game rebuild in small commits. The native implementations and their checks
+are recorded in [GAME_FRONTEND_IMPLEMENTATION_PLAN.md](GAME_FRONTEND_IMPLEMENTATION_PLAN.md).
+The approval entries below preserve the scope of their original design reviews.
+
+
 ## Approved Blackjack V3 staging — 2026-10-30
 
 The owner approved the follow-up at
