@@ -49,6 +49,10 @@ class ImageButton(ttk.Button):
             preserve_selection=self._preserve_selection,
         )
 
+    def set_wraplength(self, width: int) -> None:
+        self._wraplength = width
+        super().configure(style=self._style(self._text))
+
     def set_selected(self, selected: bool) -> None:
         """Native selected state survives hover, presses and disabled state."""
         cast(Callable[[list[str]], object], self.state)(

@@ -1,0 +1,46 @@
+{
+  "reference": "quiz-2026-10-27/preview.html and preview.css",
+  "date": "2026-10-30",
+  "method": "Existing SVG stage/emblem and native-state answer podium CSS rasterization, no generated artwork",
+  "exports": [
+    {
+      "filename": "button_normal_quiz_answer.png",
+      "sha256": "5aff71d749a65c85991a2e178482bc8ebd9230495584f8391431e4dd9c4197fa"
+    },
+    {
+      "filename": "button_hover_quiz_answer.png",
+      "sha256": "d01c97662187f0705f36b3abc2c60082f970b6bf8ffe92018a3d02583bd12e10"
+    },
+    {
+      "filename": "button_pressed_quiz_answer.png",
+      "sha256": "a5be3a63828837d607af814535951e198bbc825d57e5713d95a2edbc881e92d2"
+    },
+    {
+      "filename": "button_disabled_quiz_answer.png",
+      "sha256": "3bdefc044d8fa93e509f33dceb4b254ed3a032920334275f3e202733effc2bac"
+    },
+    {
+      "filename": "button_active_quiz_answer.png",
+      "sha256": "6d7c7fccc3c7653623732d65827c7daa6f17c17e1508e3aaad943536c2f982dc"
+    },
+    {
+      "source": "show-stage.svg",
+      "filename": "quiz-stage.png",
+      "sha256": "bf72b86f53f9c2f2eda2b0063d65bea77973684ad94bbb2bfad3e04cff325b7b"
+    },
+    {
+      "source": "show-emblem.svg",
+      "filename": "quiz-emblem.png",
+      "sha256": "828865b07996cce68ddbd0ac9e20e9471324a535fa55903a92007c398ff1ec85"
+    },
+    {
+      "source": "quiz-2026-10-27/preview.html .cue-cards",
+      "filename": "quiz-cues.png",
+      "raster_sha256": "ae982e9396164d66787511602baf09413385b132329d2df36ba50af6ccaf820e",
+      "sha256": "d444c1c494cc54c8fdb6b59a1b91e3b692cc051cdefcfa43183c812f536bbf2f",
+      "rgb_unchanged": true,
+      "alpha": "0 or255; threshold128"
+    }
+  ],
+  "native_alpha": "native-prop-alpha.json; all RGB preserved"
+}

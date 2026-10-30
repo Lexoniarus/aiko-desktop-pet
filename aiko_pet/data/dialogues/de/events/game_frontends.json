@@ -561,6 +561,70 @@
           "content": "Psst. Das Casino besteht gerade aus uns beiden. Aber die große Show kriegen wir trotzdem hin."
         }
       ]
+    },
+    {
+      "id": "game_quiz_release-frontend-1",
+      "event": "game_quiz_release",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "A, B, C oder D? Das Pult gehört jetzt dir! Ich warte hier ausgesprochen moderatorenhaft."
+        }
+      ]
+    },
+    {
+      "id": "game_quiz_lock-frontend-1",
+      "event": "game_quiz_lock",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Antwort ist eingeloggt! Jetzt kommt die große Auflösung. Kurze dramatische Pause …"
+        }
+      ]
+    },
+    {
+      "id": "game_quiz_meta-frontend-1",
+      "event": "game_quiz_meta",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war meine professionelle Ansage. Innerlich habe ich gerade ein winziges bisschen mitgefiebert."
+        }
+      ]
+    },
+    {
+      "id": "game_quiz_wait-frontend-1",
+      "event": "game_quiz_wait",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Was wird es? A, B, C oder D? Keine Eile. Ich übe nur schon mal meinen bedeutungsvollen Blick."
+        }
+      ]
     }
   ]
 }

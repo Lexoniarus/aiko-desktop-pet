@@ -21,7 +21,8 @@ def prepare() -> None:
     targets = [*sorted((ROOT / 'mm-safe').glob('*.png')),
                *sorted((ROOT / 'c4-hands').glob('*.png')),
                *(ROOT / name for name in ('c4-red.png', 'c4-yellow.png',
-                                         'c4-pile.png', 'mm-donut.png'))]
+                                         'c4-pile.png', 'mm-donut.png',
+                                         'quiz-cues.png'))]
     for path in targets:
         if not path.exists():
             continue
@@ -33,7 +34,7 @@ def prepare() -> None:
             image = original.convert('RGBA')
             rgb = image.convert('RGB').tobytes()
             image.putalpha(image.getchannel('A').point(
-                lambda a: 255 if a >= 128 else 0,
+                [0] * 128 + [255] * 128,
             ))
             assert image.convert('RGB').tobytes() == rgb
             image.save(path, optimize=True)
@@ -43,13 +44,14 @@ def prepare() -> None:
         )
     manifest.write_text(json.dumps(records, indent=2) + '\n', encoding='utf-8')
     for name, field in (('mm-provenance.json', 'frames'),
-                        ('c4-provenance.json', 'exports')):
+                        ('c4-provenance.json', 'exports'),
+                        ('quiz-provenance.json', 'exports')):
         path = ROOT / name
         if not path.exists():
             continue
         data = json.loads(path.read_text('utf-8'))
         for entry in data[field]:
-            relative = entry.get('file', entry.get('target'))
+            relative = entry.get('file', entry.get('target', entry.get('filename')))
             if relative in records:
                 entry.update(records[relative])
         data['native_alpha'] = 'native-prop-alpha.json; all RGB preserved'

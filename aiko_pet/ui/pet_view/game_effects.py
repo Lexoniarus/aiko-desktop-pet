@@ -54,6 +54,11 @@ class GameEffects:
         self._configure(window)
         window.deiconify()
 
+    def caption(self, name: str, text: str) -> None:
+        self._windows[name][1].configure(
+            text=text, compound="center", fg="#776093", font=("Segoe UI", 10, "bold"),
+        )
+
     def control(
         self, name: str, configure: Callable[[tk.Toplevel], None],
         action: Callable[[], None],

@@ -106,15 +106,19 @@ class QuizTests(unittest.TestCase):
             round_event=lambda e: calls.append(('event', e)),
         )
         sequence.greet()
-        scheduled.pop()()
+        while scheduled:
+            scheduled.pop()()
         for index in range(10):
             wrong = next(a.id for a in game.current.answers
                          if a.id != game.current.correct_answer_id)
             self.assertTrue(sequence.answer(wrong))
             self.assertFalse(sequence.answer(wrong))
-            if index < 9:
+            while scheduled:
                 scheduled.pop()()
+            if index < 9:
                 sequence.advance()
+                while scheduled:
+                    scheduled.pop()()
         event_index = next(i for i, c in enumerate(calls)
                            if c[0] == 'event' and c[1].outcome == 'completed')
         self.assertEqual(calls[event_index - 1], ('view', True))

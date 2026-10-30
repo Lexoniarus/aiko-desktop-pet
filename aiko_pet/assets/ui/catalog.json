@@ -558,7 +558,12 @@
     "status_frame_overlay.176": "status_frame_overlay_176.png",
     "status_frame_overlay.280": "status_frame_overlay_280.png",
     "status_track.176": "status_track_176.png",
-    "status_track.280": "status_track_280.png"
+    "status_track.280": "status_track_280.png",
+    "button_normal.quiz_answer": "button_normal_quiz_answer.png",
+    "button_hover.quiz_answer": "button_hover_quiz_answer.png",
+    "button_pressed.quiz_answer": "button_pressed_quiz_answer.png",
+    "button_disabled.quiz_answer": "button_disabled_quiz_answer.png",
+    "button_active.quiz_answer": "button_active_quiz_answer.png"
   },
   "source_sha256": {
     "assets/ui-vn/v1/icons/action_pet.png": "ddba7d76299d27d0f14c4a39e3f67a04bff4daedf5d9733b82dbde6587785de3",

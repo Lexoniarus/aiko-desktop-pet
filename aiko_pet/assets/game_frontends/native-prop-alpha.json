@@ -268,5 +268,11 @@
     "sha256": "a238426af50968d9a3c6e5607c44353719c73a786f0dce4ab092ca76a856624e",
     "rgb_unchanged": true,
     "alpha": "0 or255; threshold128"
+  },
+  "quiz-cues.png": {
+    "raster_sha256": "ae982e9396164d66787511602baf09413385b132329d2df36ba50af6ccaf820e",
+    "sha256": "d444c1c494cc54c8fdb6b59a1b91e3b692cc051cdefcfa43183c812f536bbf2f",
+    "rgb_unchanged": true,
+    "alpha": "0 or255; threshold128"
   }
 }

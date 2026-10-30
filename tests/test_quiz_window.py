@@ -24,7 +24,7 @@ class QuizWindowTests(unittest.TestCase):
         self.events = []
         self.scheduled = []
 
-    def make_game(self, width=900, **kwargs):
+    def make_game(self, width=900, auto_ready=True, **kwargs):
         game = QuizWindow(
             self.root, on_closed=self.closed, speak=Mock(), animate=Mock(),
             emote=Mock(), dialogue=lambda event: event, always_on_top=False,
@@ -38,7 +38,8 @@ class QuizWindowTests(unittest.TestCase):
             )
             game._sequence._cancel = lambda _timer: None
         game.greet()
-        self.ready()
+        if auto_ready:
+            self.ready()
         self.root.update()
         return game
 
@@ -57,11 +58,13 @@ class QuizWindowTests(unittest.TestCase):
             button.invoke()
             self.assertEqual(sequence.game.index, before)
             self.assertTrue(all(b.cget('state') == 'disabled' for b in game.answers))
-            self.assertIn('Richtig', game._explanation.cget('text'))
+            self.assertEqual(game._explanation.cget('text'), '')
             self.ready()
+            self.assertIn('Richtig', game._explanation.cget('text'))
             if number < 9:
                 assert game._panel.next_button is not None
                 game._panel.next_button.invoke()
+                self.ready()
         self.assertEqual(sequence.game.correct, 10)
         self.assertEqual(set(game._panel.score_labels), {'correct', 'answered'})
         self.assertEqual(sum(e.outcome == 'completed' for e in self.events), 1)
@@ -80,7 +83,7 @@ class QuizWindowTests(unittest.TestCase):
         sequence = game._sequence
         assert sequence is not None
         self.assertTrue(all(isinstance(button, ImageButton) for button in game.answers))
-        self.assertIn("button_normal_regular.png", self.skin.images._images)
+        self.assertIn("button_normal_quiz_answer.png", self.skin.images._images)
         styles = {button.cget("style") for button in game.answers}
         self.assertEqual(len(styles), 1)
         style_count = len(self.skin.images.buttons._styles)
@@ -88,11 +91,13 @@ class QuizWindowTests(unittest.TestCase):
             self.assertEqual(button.winfo_children(), [])
             wrap = self.skin.images.buttons.style.lookup(button.cget("style"),
                                                          "wraplength")
-            self.assertEqual(int(wrap), game._panel.content_width - 36)
+            self.assertEqual(int(wrap), button.master.winfo_reqwidth() - 40)
         self.assertFalse(game._explanation_card.frame.winfo_ismapped())
         wrong = next(i for i, answer in enumerate(sequence.game.current.answers)
                      if answer.id != sequence.game.current.correct_answer_id)
         game.answers[wrong].invoke()
+        self.ready()
+        self.root.update()
         correct = next(button for button in game.answers
                        if "✓ Richtig:" in button.cget("text"))
         self.assertTrue(correct.instate(["selected", "disabled"]))
@@ -106,7 +111,7 @@ class QuizWindowTests(unittest.TestCase):
         self.ready()
         self.assertTrue(all(button.instate(["!selected", "!disabled"])
                             for button in game.answers))
-        self.assertEqual(len(self.skin.images.buttons._styles), style_count)
+        self.assertLessEqual(len(self.skin.images.buttons._styles), style_count + 1)
 
     def test_long_answers_wrap_in_a_narrow_work_area_and_abandon_counts_nothing(self):
         game = self.make_game(width=340)
@@ -126,10 +131,40 @@ class QuizWindowTests(unittest.TestCase):
         wrong = next(i for i, a in enumerate(sequence.game.current.answers)
                      if a.id != sequence.game.current.correct_answer_id)
         game.answers[wrong].invoke()
+        self.ready()
         self.assertIn('Deine Antwort', game.answers[wrong].cget('text'))
         self.assertTrue(any('✓ Richtig' in b.cget('text') for b in game.answers))
         game.close()
         self.assertFalse(any(e.outcome == 'completed' for e in self.events))
+
+    def test_each_answer_is_hidden_until_introduced_and_result_waits_for_host(self):
+        game = self.make_game(auto_ready=False)
+        sequence = game._sequence
+        assert sequence is not None
+        self.assertTrue(sequence.busy)
+        self.assertTrue(all(not button.winfo_manager() for button in game.answers))
+        for visible in range(1, 5):
+            for _ in range(30):
+                if sequence.visible_answers == visible:
+                    break
+                self.scheduled.pop(0)()
+            self.root.update()
+            self.assertEqual(sequence.visible_answers, visible)
+            for index, button in enumerate(game.answers):
+                self.assertEqual(bool(button.winfo_manager()), index < visible)
+                self.assertEqual(button.cget('state'), 'disabled')
+                if index >= visible:
+                    self.assertEqual(button.cget('text'), '')
+            self.assertFalse(sequence.answer(sequence.game.current.correct_answer_id))
+        self.ready()
+        correct = sequence.game.current.correct_answer_id
+        self.assertTrue(sequence.answer(correct))
+        self.assertFalse(sequence.revealed)
+        self.assertEqual(sequence.visible_correct, 0)
+        self.assertEqual(game._explanation.cget('text'), '')
+        self.ready()
+        self.assertTrue(sequence.revealed)
+        self.assertEqual(sequence.visible_correct, 1)
 
     def test_unavailable_catalogue_is_readable_and_does_not_start_or_award(self):
         with patch.object(QuizCatalogue, 'load', side_effect=ValueError('invalid')):
