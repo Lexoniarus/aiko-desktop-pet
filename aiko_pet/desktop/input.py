@@ -22,6 +22,7 @@ class DesktopInputActions:
     right_click: Callable[[tk.Event | None], None]
     show_menu: Callable[[int, int], None]
     dismiss_outside: Callable[[int, int], None]
+    dismiss_passively: Callable[[int, int], None]
     open_status: Callable[[], None]
     quit: Callable[[], None]
     closed: Callable[[], bool]
@@ -103,7 +104,7 @@ class DesktopInput:
         """Fall back to mouse location if a foreign window gained focus."""
         if self._stopped or self.actions.closed():
             return
-        self.actions.dismiss_outside(
+        self.actions.dismiss_passively(
             self.root.winfo_pointerx(), self.root.winfo_pointery(),
         )
 

@@ -169,6 +169,66 @@ class SocialGuiTests(unittest.TestCase):
         self.assertNotEqual(self.pet._reaction_player.event, "talk")
         self.assertEqual(self.pet.state.social, 10)
 
+    def _request_at_phase(self, phase: str) -> None:
+        self.enable()
+        menu = self.menu()
+        bar = self.pet._hover.toolbar
+        assert bar is not None
+        with (
+            patch.object(self.pet.root, "winfo_pointerx",
+                         return_value=bar.window.winfo_rootx() + 20),
+            patch.object(self.pet.root, "winfo_pointery",
+                         return_value=bar.window.winfo_rooty() + 20),
+        ):
+            menu.choose(SocialCategory.SINGLE)
+            self.pet.root.update()
+            if phase != "fetching":
+                self.worker.complete(1)
+                self.pet._social_runtime.poll()
+            if phase == "playing":
+                self.pet.root.update()
+        self.assertEqual(self.pet._social_runtime._phase,
+                         "idle" if phase == "playing" else phase)
+
+    def _assert_requested_reply_once(self, phase: str) -> None:
+        if phase == "fetching":
+            self.worker.complete(1)
+            self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertEqual(self.pet._reaction_player.event, "talk")
+        self.assertEqual(self.pet.state.social, 36)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertEqual(self.pet.state.social, 36)
+
+    def _focus_loss_preserves_request(self, phase: str) -> None:
+        self._request_at_phase(phase)
+        with patch.object(self.pet.root, "after",
+                          return_value="focus-regression") as schedule:
+            self.pet._input.on_focus_out(tk.Event())
+        self.assertEqual(schedule.call_args.args[0], 100)
+        callback = schedule.call_args.args[1]
+        with (
+            patch.object(self.pet.root, "winfo_pointerx", return_value=-999),
+            patch.object(self.pet.root, "winfo_pointery", return_value=-999),
+            patch.object(self.pet._social_runtime, "cancel",
+                         wraps=self.pet._social_runtime.cancel) as cancel,
+        ):
+            callback()
+        self.assertNotIn("focus-regression", self.pet._input._focus_timers)
+        cancel.assert_not_called()
+        self.assertIsNone(self.pet._hover.social_menu)
+        self._assert_requested_reply_once(phase)
+
+    def test_delayed_focus_loss_preserves_fetching_request(self):
+        self._focus_loss_preserves_request("fetching")
+
+    def test_delayed_focus_loss_preserves_queued_answer_start(self):
+        self._focus_loss_preserves_request("admitting")
+
+    def test_delayed_focus_loss_preserves_running_conversation(self):
+        self._focus_loss_preserves_request("playing")
+
     def test_empty_selection_waits_without_care_then_delivers_once(self) -> None:
         self.enable()
         menu = self.menu()

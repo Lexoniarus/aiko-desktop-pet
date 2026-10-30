@@ -48,6 +48,9 @@ class DesktopInputTests(unittest.TestCase):
                 dismiss_outside=lambda x, y: self.events.append(
                     f"dismiss:{x}:{y}",
                 ),
+                dismiss_passively=lambda x, y: self.events.append(
+                    f"passive:{x}:{y}",
+                ),
                 open_status=lambda: self.events.append("status"),
                 quit=lambda: self.events.append("quit"),
                 closed=lambda: self.closed,
@@ -146,6 +149,19 @@ class DesktopInputTests(unittest.TestCase):
         self.closed = True
         self.input.dismiss_after_focus_loss()
         self.assertEqual(self.events, [])
+
+    def test_focus_loss_is_passive_but_tk_and_global_clicks_are_explicit(self):
+        event = tk.Event()
+        event.x_root, event.y_root = 5, 7
+        with (
+            patch.object(self.root, "winfo_pointerx", return_value=5),
+            patch.object(self.root, "winfo_pointery", return_value=7),
+        ):
+            self.input.dismiss_after_focus_loss()
+            self.input.on_tk_press(event)
+            self.mouse.pressed = True
+            self.input.poll_global_click()
+        self.assertEqual(self.events, ["passive:5:7", "dismiss:5:7", "dismiss:5:7"])
 
 
 if __name__ == "__main__":

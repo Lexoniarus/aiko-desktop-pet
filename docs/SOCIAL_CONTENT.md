@@ -178,8 +178,10 @@ quotations retain their existing random endpoints and final repetition checks.
 
 Automatically hiding the menu or browsing another selection view preserves the
 requested content. Explicitly leaving the social selection with Zurück, Escape
-or an outside click cancels pending playback. Accepted replacement actions,
-disabling sources and shutdown also invalidate it. Stale worker results never
+or an outside click cancels pending playback. Focus loss only hides the view
+and preserves pending content, including an already queued answer start.
+Accepted replacement actions, disabling sources and shutdown also invalidate
+it. Stale worker results never
 trigger a conversation, and cancelling a pending request does not stop an
 already admitted story.
 Ordinary selection cancellation may leave background warming enabled. Opt-out

@@ -329,6 +329,7 @@ class DesktopPet:
                 right_click=self._on_click_right,
                 show_menu=self._hover.open_settings,
                 dismiss_outside=self._hover.dismiss_outside,
+                dismiss_passively=self._hover.dismiss_passively,
                 open_status=self._hover.open_status,
                 quit=self.quit,
                 closed=lambda: self._closed,
