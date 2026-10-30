@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from aiko_pet.application.session import SavedPetStore
-from aiko_pet.application.social_coordinator import SocialContentWorker
+from aiko_pet.application.social_fetch import SocialContentWorker
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
 from aiko_pet.telemetry import ComputerSnapshot

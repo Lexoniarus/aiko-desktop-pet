@@ -14,7 +14,7 @@ from test_social_coordinator import ManualSocialWorker
 from test_social_sayings import quotation, quote_payload
 
 from aiko_pet.application.social_content import SocialCategory
-from aiko_pet.application.social_coordinator import SocialFetchResult
+from aiko_pet.application.social_fetch import SocialFetchResult
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.ui.windows.social_menu import SocialMenu

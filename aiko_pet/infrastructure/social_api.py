@@ -20,7 +20,7 @@ from ..application.social_content import (
     default_provider,
     prepare_social_content,
 )
-from ..application.social_coordinator import FetchFailure, SocialFetchResult
+from ..application.social_fetch import FetchFailure, SocialFetchResult
 
 MAX_RESPONSE_BYTES = 16_384
 REQUEST_TIMEOUT_SECONDS = 8

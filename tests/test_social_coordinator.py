@@ -13,10 +13,8 @@ from aiko_pet.application.social_content import (
     default_provider,
     prepare_social_content,
 )
-from aiko_pet.application.social_coordinator import (
-    SocialContentCoordinator,
-    SocialFetchResult,
-)
+from aiko_pet.application.social_coordinator import SocialContentCoordinator
+from aiko_pet.application.social_fetch import SocialFetchResult
 
 
 class SocialTestClock:

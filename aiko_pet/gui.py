@@ -15,7 +15,7 @@ from .application.contact import ContactCoordinator, ContactPorts
 from .application.session import PetSessionRestorer, SavedPetStore
 from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
-from .application.social_coordinator import SocialContentWorker
+from .application.social_fetch import SocialContentWorker
 from .config import load_env_file
 from .desktop import animation_assembly, game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation

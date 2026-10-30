@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from collections import deque
 from dataclasses import dataclass, replace
-from typing import Callable, Literal, Protocol
+from typing import Callable, Literal
 
 from .social_content import (
     BUFFERED_CATEGORIES,
@@ -16,10 +16,10 @@ from .social_content import (
     default_provider,
     with_intro_variant,
 )
+from .social_fetch import SocialContentWorker
 from .social_history import SocialContentHistory, SocialContentReceipt
 from .storage_contracts import StorageError
 
-FetchFailure = Literal["invalid", "temporary", "rate", "access"]
 Job = tuple[SocialCategory, SocialProvider]
 
 
@@ -29,28 +29,6 @@ def providers_for(category: SocialCategory) -> tuple[SocialProvider, ...]:
         if category == SocialCategory.SINGLE
         else (default_provider(category),)
     )
-
-
-@dataclass(frozen=True, slots=True)
-class SocialFetchResult:
-    token: object
-    category: SocialCategory
-    content: PreparedSocialContent | None = None
-    failure: FetchFailure | None = None
-    retry_at: float | None = None
-
-
-class SocialContentWorker(Protocol):
-    def start(
-        self,
-        category: SocialCategory,
-        token: object,
-        provider: SocialProvider | None = None,
-    ) -> None: ...
-
-    def poll(self) -> SocialFetchResult | None: ...
-
-    def close(self) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)

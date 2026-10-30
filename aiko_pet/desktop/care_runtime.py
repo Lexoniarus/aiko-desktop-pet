@@ -15,10 +15,8 @@ from ..application.horoscope_coordinator import HoroscopeCoordinator
 from ..application.horoscope_models import HoroscopeDay, HoroscopeHistory
 from ..application.router import ApplicationRouter
 from ..application.social_content import PreparedSocialContent, SocialCategory
-from ..application.social_coordinator import (
-    SocialContentCoordinator,
-    SocialContentWorker,
-)
+from ..application.social_coordinator import SocialContentCoordinator
+from ..application.social_fetch import SocialContentWorker
 from ..application.social_history import SocialContentHistory
 from ..application.storage_contracts import StorageError
 from ..games.contracts import GameRoundEvent, SessionSummary
