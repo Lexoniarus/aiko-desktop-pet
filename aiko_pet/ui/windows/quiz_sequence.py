@@ -61,7 +61,7 @@ class QuizSequence:
             if index == len(chunks):
                 done()
                 return
-            duration = GAME_PACING.text_ms(chunks[index])
+            duration = GAME_PACING.quiz_text_ms(chunks[index])
             self._say(chunks[index], duration)
             self._later(duration, lambda: part(index + 1))
         part(0)
@@ -156,7 +156,7 @@ class QuizSequence:
             self._wait_count += 1
             if self._wait_count % 2:
                 text = self._dialogue('game_quiz_wait')
-                self._say(text, GAME_PACING.text_ms(text))
+                self._say(text, GAME_PACING.quiz_text_ms(text))
             else:
                 self._read(self.game.current.text, lambda: None)
 

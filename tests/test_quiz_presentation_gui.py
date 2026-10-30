@@ -1,10 +1,12 @@
 """Real game host: guided reveals and autonomous waits require no pointer event."""
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.ui.common.game_pacing import GAME_PACING
 from aiko_pet.ui.windows.quiz_window import QuizWindow
 from tools.desktop_test_support import create_test_desktop
 from tools.tk_test_time import ControlledTkTime
@@ -55,6 +57,35 @@ class QuizPresentationGuiTests(unittest.TestCase):
         self.game.next_question()
         self.assertEqual(sequence.visible_answers, 0)
         self.assertTrue(all(not b.winfo_manager() for b in self.game.answers))
+
+    def test_question_and_short_answer_remain_visible_past_brisk_game_deadlines(self):
+        sequence = self.game._sequence
+        assert sequence is not None
+        question = replace(
+            sequence.game.current,
+            text=('Welcher Planet wird wegen seiner Farbe '
+                  'oft als Roter Planet bezeichnet?'),
+            answers=tuple(replace(a, text=f'Option {i + 1}')
+                          for i, a in enumerate(sequence.game.current.answers)),
+        )
+        sequence.game.questions = (question, *sequence.game.questions[1:])
+        self.until(lambda: sequence.question_visible)
+        bubble = self.pet._speech.bubble
+        assert bubble is not None
+        self.clock.advance(GAME_PACING.text_ms(question.text) / 1000)
+        self.assertIs(self.pet._speech.bubble, bubble)
+        self.assertEqual(sequence.visible_answers, 0)
+        self.assertTrue(sequence.busy)
+        self.until(lambda: sequence.visible_answers == 1)
+        bubble = self.pet._speech.bubble
+        assert bubble is not None
+        self.clock.advance(.8)
+        self.assertIs(self.pet._speech.bubble, bubble)
+        self.assertEqual(sequence.visible_answers, 1)
+        self.assertFalse(sequence.answer(question.correct_answer_id))
+        self.until(lambda: not sequence.busy)
+        self.assertEqual(sequence.visible_answers, 4)
+        self.assertTrue(sequence.answer(question.correct_answer_id))
 
     def test_close_mid_moderation_cancels_speech_props_and_unfinished_receipt(self):
         self.clock.advance(7)
