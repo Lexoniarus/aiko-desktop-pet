@@ -16,7 +16,7 @@ from ..common.status_readout import StatusReadout
 from ..common.window_drag import WindowDrag
 from ..view_models.contracts import HoverAnchor, HoverSnapshot, StatusSnapshot
 from ..view_models.food_models import FoodChoice
-from .hover_contracts import HoverActions
+from .hover_contracts import HoverActions, SelectorCloseReason
 from .hover_geometry import HoverGeometry, Rect
 from .moodlet_strip import MoodletStrip
 from .toolbar_details import ToolbarDetails
@@ -233,7 +233,7 @@ class ActionToolbar:
         self._details_open = False
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
-        self._selector_closed: Callable[[], None] | None = None
+        self._selector_closed: Callable[[SelectorCloseReason], None] | None = None
         self.window.bind("<Configure>", self._configured, add="+")
         self.window.bind("<Escape>", lambda _e: self.close_selector())
         body.adopt()
@@ -304,17 +304,19 @@ class ActionToolbar:
             self.window.winfo_rooty(),
         )
 
-    def selector_parent(self, closed: Callable[[], None]) -> tk.Frame:
-        self.close_selector()
+    def selector_parent(
+        self, closed: Callable[[SelectorCloseReason], None],
+    ) -> tk.Frame:
+        self.close_selector("navigation")
         self.tips.hide()
         self.actions_frame.pack_forget()
         self._selector_closed = closed
         return self.interaction_column
 
-    def close_selector(self) -> None:
+    def close_selector(self, reason: SelectorCloseReason = "explicit") -> None:
         callback, self._selector_closed = self._selector_closed, None
         if callback is not None:
-            callback()
+            callback(reason)
         self.actions_frame.pack(fill="both", expand=True)
 
     def refresh(self) -> None:
@@ -443,13 +445,13 @@ class ActionToolbar:
             return
         self.visible = False
         self.tips.hide()
-        self.close_selector()
+        self.close_selector("automatic")
         self.window.withdraw()
         self._last_placement = None
         self._actions.move_speech()
 
     def close(self) -> None:
         self.tips.hide()
-        self.close_selector()
+        self.close_selector("shutdown")
         self._drag.close()
         self.window.destroy()

@@ -11,6 +11,7 @@ from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from .embedded_selector import EmbeddedSelector
+from .hover_contracts import SelectorCloseReason
 
 
 class SocialMenu(EmbeddedSelector):
@@ -19,7 +20,7 @@ class SocialMenu(EmbeddedSelector):
         parent: tk.Frame,
         *,
         selected: Callable[[SocialCategory | None], None],
-        closed: Callable[[], None],
+        closed: Callable[[SelectorCloseReason], None],
         enabled: Callable[[], bool],
         can_interact: Callable[[], bool],
         snapshot: Callable[[], tuple[str, PreparedSocialContent | None]],

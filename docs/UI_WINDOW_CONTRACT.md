@@ -43,7 +43,7 @@ migration is needed.
 
 | Component | Responsibility |
 | --- | --- |
-| `ui/windows/hover_ui.py` | One owner of the toolbar pin, automatic visibility, settings/game instances and live interaction detection |
+| `ui/windows/hover_ui.py` | One owner of the toolbar pin, automatic visibility, settings/game instances and passive pointer geometry |
 | `ui/windows/action_toolbar.py` | One cohesive toolbar view and pin-button rendering, including expandable local details |
 | `ui/windows/toolbar_details.py` | Detached status display inside the toolbar; no duplicate care actions |
 | `ui/windows/settings_window.py` | Window geometry and controls, reading snapshots and invoking callbacks |
@@ -52,7 +52,7 @@ migration is needed.
 | `desktop/preferences.py` | Effects of preference actions; no new settings owner |
 | `ui/view_models/read_models.py` | Detached snapshots for hover, settings and status details |
 | `desktop/lifecycle.py` | Ordered cleanup of the existing window owners |
-| `application/contact.py` | Preserve intentional hover and click priority without owning widgets |
+| `application/contact.py` | Display passive hover and admit explicit contact without owning widgets |
 | `ui/pet_view/care_presenter.py` | Present care results without owning nutrition or friendship |
 | `ui/pet_view/attention_presenter.py` | Render approved spontaneous speech and notification cues |
 
@@ -61,13 +61,25 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+Hover and window state never own Aiko's behavior. Opening controls, reading
+status, pinning, dragging, scrolling and keyboard navigation do not interrupt
+walks or World actions, reset cursor attempts, register contact or suppress
+spontaneous attention. Actual accepted clicks and care/game commands use their
+existing action owners. The toolbar still follows Aiko unless its position has
+been saved; visibility pinning does not pin its position. See the
+[hover fix record](HOVER_ACTION_DECOUPLING_FIX_PLAN.md).
+
 ### Conversations
 
 `Unterhalten` replaces the right interaction column with an embedded selector
 for Plaudern, API Single, API Two Parts and facts. `HoverUi` still owns its
 lifetime and admission. Loading/error/opt-out text uses the existing social
-snapshot, without another request queue. Zurück/Escape/outside dismissal cancels
-pending content, not an already accepted story. Provider, source and API-entry
+snapshot, without another request queue. Automatic hiding and navigation to a
+different selection view preserve the requested content. Zurück/Escape/outside
+dismissal explicitly cancels pending content, not an already accepted story.
+The existing UI callback chain carries a `SelectorCloseReason`; view cleanup
+itself does not imply cancellation. Accepted replacement commands, opt-out and
+shutdown retain their existing runtime cancellation. Provider, source and API-entry
 links now live in the independently movable settings window's Credits page.
 `project_credits()` detaches only the latest accepted metadata; there is no
 second source history or content request.

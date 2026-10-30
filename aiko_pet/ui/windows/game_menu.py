@@ -12,6 +12,7 @@ from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.emotional_text import GAME_FILES, GAME_ICONS
 from .embedded_selector import EmbeddedSelector
+from .hover_contracts import SelectorCloseReason
 
 
 class GameMenu(EmbeddedSelector):
@@ -21,7 +22,7 @@ class GameMenu(EmbeddedSelector):
         *,
         choices: tuple[GameId, ...],
         selected: Callable[[GameId], None],
-        closed: Callable[[], None],
+        closed: Callable[[SelectorCloseReason], None],
         skin: AikoSkin,
         can_select: Callable[[], bool],
     ) -> None:

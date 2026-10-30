@@ -8,6 +8,7 @@ from typing import Callable
 from ...pet.content import GERMAN_TEXT
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
+from .hover_contracts import SelectorCloseReason
 
 
 class EmbeddedSelector:
@@ -17,7 +18,7 @@ class EmbeddedSelector:
         skin: AikoSkin,
         *,
         title: str,
-        closed: Callable[[], None],
+        closed: Callable[[SelectorCloseReason], None],
     ) -> None:
         self._closed = False
         self._on_closed = closed
@@ -57,8 +58,8 @@ class EmbeddedSelector:
         if not self._closed:
             self.back.focus_set()
 
-    def close(self) -> None:
+    def close(self, reason: SelectorCloseReason = "explicit") -> None:
         if not self._closed:
             self._closed = True
             self.frame.destroy()
-            self._on_closed()
+            self._on_closed(reason)

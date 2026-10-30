@@ -558,11 +558,17 @@ No user-facing window owns PetState transitions. Actions are sent to the
 application boundary through named callbacks. The pet sprite and the utility
 windows are distinct UI owners even though both use Tkinter.
 
-Menu engagement (`HoverUi.menu_engaged`) only suppresses incidental chatter
-and uncommitted wandering. It is not character-action ownership and does not
-block World discovery or committed object movement. `BehaviorFacts` receives
-`character_action_busy` from actual non-offer reaction playback/online waiting,
-with sleep, games and animation playback retaining their separate rules.
+Hover, toolbar visibility, pinning, selection browsing and settings focus are
+passive presentation facts. They neither claim character contact nor block
+movement, cursor policy, spontaneous expression or a free notification slot.
+Explicit admitted contact calls the existing cursor-access method once; no
+pointer-inside latch or menu flag is part of a behavioral contract.
+`BehaviorFacts` receives `character_action_busy` from actual non-offer reaction
+playback/online waiting, with sleep, games and animation retaining their own
+rules. Automatic selector hiding preserves a requested social selection;
+explicit cancellation and accepted replacement commands invalidate it through
+its existing runtime owner. See the
+[implementation and validation record](HOVER_ACTION_DECOUPLING_FIX_PLAN.md).
 
 Snacks use the `place_item` command and `can_place_item` capability, independently
 of direct-care `can_interact`. `DesktopWorldRuntime.begin_carry` prepares finite
@@ -703,7 +709,7 @@ The care/storage follow-up also changes these Python call contracts:
 | `pet.need_decay`, `NeedProgress`, `calculate_need_decay()` | `pet.progression`, `PetProgress`, `calculate_pet_progression()`; five `NeedLevels` fields live in `pet.needs` |
 | `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets use the shared progression owner |
 | Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |
-| `HoverUi.interaction_active`, walk/assembly `toolbar_visible`, attention-runtime `toolbar_active` | `menu_engaged`; actual visibility remains distinct in session UI refresh |
+| `HoverUi.interaction_active`, `menu_engaged`, `settings_engaged`, pointer `control_active`/`hard_access`, behavioral `toolbar_visible`/`popup_visible` | Removed from behavior contracts; explicit contact is an event, actual visibility remains only in session UI refresh |
 | World `controls_active` | `character_action_busy`, sampled from actual character playback/waiting without menu hover |
 | `PetState.interact()` returning German text | Returns `pet.care_result.CareResult`; UI uses `format_care_response` |
 | `PetState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_pet_state` / `encode_pet_state` |

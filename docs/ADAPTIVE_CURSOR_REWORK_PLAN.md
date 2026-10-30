@@ -1,5 +1,11 @@
 # Idle, Mausinteresse und erreichbare Bedienung: Konzept und Umbauplan
 
+> **Formularentkopplung, 30.10.2026:** Der
+> [Hover-Fix](HOVER_ACTION_DECOUPLING_FIX_PLAN.md) ersetzt frühere Regeln,
+> die Menübedienung als Kontakt, Cursorpause oder Bewegungssperre behandelten.
+> Reine Formularbedienung besitzt keine Handlung; ausdrückliche akzeptierte
+> Interaktionen behalten ihre bestehenden Schutz- und Abschlussregeln.
+
 > **Nachfolgende Konzeptkorrektur, 27.10.2026:** Der
 > [Stufen- und Vorwarnplan](CURSOR_ATTENTION_STAGES_PLAN.md) ist umgesetzt und hat
 > Vorrang. Er trennt aufbauende/abklingende Aufmerksamkeit von Gefühlen,

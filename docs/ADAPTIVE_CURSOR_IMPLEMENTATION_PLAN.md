@@ -1,5 +1,11 @@
 # Adaptive Mauswahrnehmung: Module, OOP-Verträge und Commitfolge
 
+> **Formularentkopplung, 30.10.2026:** Der
+> [Hover-Fix](HOVER_ACTION_DECOUPLING_FIX_PLAN.md) ersetzt frühere Regeln,
+> die Menübedienung als Kontakt, Cursorpause oder Bewegungssperre behandelten.
+> Reine Formularbedienung besitzt keine Handlung; ausdrückliche akzeptierte
+> Interaktionen behalten ihre bestehenden Schutz- und Abschlussregeln.
+
 > **Aktuell umgesetzte Abstufung:**
 > [Aufmerksamkeitsstufen und Vorwarnung](CURSOR_ATTENTION_STAGES_PLAN.md)
 > ersetzen widersprechende Zielregeln der bisherigen Fassungen. Die neun

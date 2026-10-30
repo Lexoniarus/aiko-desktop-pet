@@ -27,7 +27,7 @@ from .food_menu import FoodMenu
 from .game_contracts import GameCardPorts, GameCodePorts, GameWindow
 from .game_menu import GameMenu
 from .game_speech import GameSpeech
-from .hover_contracts import HoverActions
+from .hover_contracts import HoverActions, SelectorCloseReason
 from .mastermind_window import MastermindWindow
 from .quiz_window import QuizWindow
 from .rock_paper_scissors_window import RockPaperScissorsWindow
@@ -143,10 +143,10 @@ class HoverUi:
         elif not self.game_open and self._ports.can_interact(action):
             self._ports.care(action)
 
-    def _food_menu_closed(self) -> None:
+    def _food_menu_closed(self, reason: SelectorCloseReason) -> None:
         self.food_menu = None
         if self.toolbar is not None:
-            self.toolbar.close_selector()
+            self.toolbar.close_selector(reason)
 
     def _food_selected(self, food_id: FoodChoiceId) -> None:
         if self._ports.place_item is not None and self._ports.can_place_item():
@@ -174,9 +174,11 @@ class HoverUi:
         self.food_menu.focus()
         self._ports.restore_stack()
 
-    def close_food_menu(self) -> None:
+    def close_food_menu(
+        self, reason: SelectorCloseReason = "navigation",
+    ) -> None:
         if self.food_menu is not None:
-            self.food_menu.close()
+            self.food_menu.close(reason)
 
     def _game_closed(self, completed: SessionSummary) -> None:
         """Pass real rounds to the application, then clear the transient UI."""
@@ -194,14 +196,16 @@ class HoverUi:
                 self.toolbar.refresh()
             self.refresh_status()
 
-    def close_game_menu(self) -> None:
+    def close_game_menu(
+        self, reason: SelectorCloseReason = "navigation",
+    ) -> None:
         if self.game_menu is not None:
-            self.game_menu.close()
+            self.game_menu.close(reason)
 
-    def _game_menu_closed(self) -> None:
+    def _game_menu_closed(self, reason: SelectorCloseReason) -> None:
         self.game_menu = None
         if self.toolbar is not None:
-            self.toolbar.close_selector()
+            self.toolbar.close_selector(reason)
 
     def open_game_menu(self) -> None:
         if self.game_open:
@@ -231,9 +235,10 @@ class HoverUi:
     def open_game(self, game_id: GameId) -> None:
         if self.game_open or not self._ports.can_interact("play"):
             return
-        self.close_social_menu()
         if not isinstance(game_id, GameId):
             raise ValueError("Game is not available")
+        self._ports.social_cancel()
+        self.close_social_menu()
         self.close_game_menu()
         token = object()
         self._pending_game = token
@@ -418,15 +423,18 @@ class HoverUi:
         elif self._ports.social_selected is not None:
             self._ports.social_selected(category)
 
-    def _social_menu_closed(self) -> None:
+    def _social_menu_closed(self, reason: SelectorCloseReason) -> None:
         self.social_menu = None
         if self.toolbar is not None:
-            self.toolbar.close_selector()
-        self._ports.social_cancel()
+            self.toolbar.close_selector(reason)
+        if reason == "explicit":
+            self._ports.social_cancel()
 
-    def close_social_menu(self) -> None:
+    def close_social_menu(
+        self, reason: SelectorCloseReason = "navigation",
+    ) -> None:
         if self.social_menu is not None:
-            self.social_menu.close()
+            self.social_menu.close(reason)
 
     def show_toolbar(self) -> None:
         if self.toolbar is None:
@@ -568,7 +576,7 @@ class HoverUi:
             return
         menu = self.food_menu
         if self.social_menu is not None and not self.social_menu.contains_pointer(x, y):
-            self.close_social_menu()
+            self.close_social_menu("explicit")
         if self.game_menu is not None and not self.game_menu.contains_pointer(x, y):
             self.close_game_menu()
         if menu is not None and not menu.contains_pointer(x, y):
@@ -610,7 +618,7 @@ class HoverUi:
             self._auto_hide_toolbar()
 
     def close_toolbar(self) -> None:
-        self.close_social_menu()
+        self.close_social_menu("shutdown")
         self.close_food_menu()
         self.close_game_menu()
         if self.toolbar is not None:

@@ -176,8 +176,12 @@ three-attempt search bound reports a separate retry-selection message. Empty
 ranges and unsuitable content never block another JokeAPI category. Facts and
 quotations retain their existing random endpoints and final repetition checks.
 
-Closing the menu, choosing another care action, disabling sources and shutdown
-invalidate pending playback. Stale worker results never trigger a conversation.
+Automatically hiding the menu or browsing another selection view preserves the
+requested content. Explicitly leaving the social selection with Zurück, Escape
+or an outside click cancels pending playback. Accepted replacement actions,
+disabling sources and shutdown also invalidate it. Stale worker results never
+trigger a conversation, and cancelling a pending request does not stop an
+already admitted story.
 Ordinary selection cancellation may leave background warming enabled. Opt-out
 clears the online buffers; shutdown closes the worker without waiting on a
 network call or allowing it to touch destroyed Tk widgets.

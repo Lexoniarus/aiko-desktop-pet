@@ -17,6 +17,7 @@ from test_social_sayings import quotation, quote_payload
 from aiko_pet.application.social_content import SocialCategory
 from aiko_pet.application.social_coordinator import SocialContentCoordinator
 from aiko_pet.application.social_fetch import SocialFetchResult
+from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.ui.windows.social_menu import SocialMenu
@@ -92,6 +93,81 @@ class SocialGuiTests(unittest.TestCase):
         menu.choose(None)
         self.assertIsNone(self.pet._hover.social_menu)
         self.assertEqual(self.pet.state.social, 36)
+
+    def _hide_requested_content(self, *, reply_ready: bool) -> None:
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        self.assertTrue(self.pet._social_runtime.waiting)
+        if reply_ready:
+            self.worker.complete(1)
+        self.pet._hover._auto_hide_toolbar()
+        self.assertIsNone(self.pet._hover.social_menu)
+        self.assertTrue(self.pet._social_runtime.waiting)
+        if not reply_ready:
+            self.worker.complete(1)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertEqual(self.pet._reaction_player.event, "talk")
+        self.assertEqual(self.pet.state.social, 36)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertEqual(self.pet.state.social, 36)
+
+    def test_automatic_hide_keeps_requested_content_until_reply(self):
+        self._hide_requested_content(reply_ready=False)
+
+    def test_reply_ready_in_hide_tick_still_starts_once(self):
+        self._hide_requested_content(reply_ready=True)
+
+    def test_browsing_game_choices_keeps_pending_social_request(self):
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        self.pet._hover.open_game_menu()
+        self.assertTrue(self.pet._social_runtime.waiting)
+        self.assertIsNotNone(self.pet._hover.game_menu)
+
+    def test_rejected_care_or_game_does_not_cancel_pending_social(self):
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        with patch.object(self.pet._contact, "can_interact", return_value=False):
+            self.pet._hover._interact("pet")
+            self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
+        self.assertTrue(self.pet._social_runtime.waiting)
+        self.assertFalse(self.pet._hover.game_open)
+
+    def test_accepted_game_replaces_pending_social_request(self):
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
+        self.assertFalse(self.pet._social_runtime.waiting)
+        self.assertTrue(self.pet._hover.game_open)
+        self.worker.complete(1)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertNotEqual(self.pet._reaction_player.event, "talk")
+        self.assertEqual(self.pet.state.social, 10)
+
+    def test_explicit_selector_close_cancels_once_and_ignores_late_reply(self):
+        self.enable()
+        menu = self.menu()
+        menu.choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        bar = self.pet._hover.toolbar
+        assert bar is not None
+        with patch.object(self.pet._social_runtime, "cancel",
+                          wraps=self.pet._social_runtime.cancel) as cancel:
+            bar.close_selector()
+            menu.close()
+        cancel.assert_called_once_with()
+        self.worker.complete(1)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertNotEqual(self.pet._reaction_player.event, "talk")
+        self.assertEqual(self.pet.state.social, 10)
 
     def test_empty_selection_waits_without_care_then_delivers_once(self) -> None:
         self.enable()

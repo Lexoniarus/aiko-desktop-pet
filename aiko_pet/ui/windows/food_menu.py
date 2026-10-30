@@ -11,6 +11,7 @@ from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .embedded_selector import EmbeddedSelector
+from .hover_contracts import SelectorCloseReason
 
 
 class FoodMenu(EmbeddedSelector):
@@ -20,7 +21,7 @@ class FoodMenu(EmbeddedSelector):
         *,
         choices: tuple[FoodChoice, ...],
         selected: Callable[[FoodChoiceId], None],
-        closed: Callable[[], None],
+        closed: Callable[[SelectorCloseReason], None],
         skin: AikoSkin,
         can_select: Callable[[], bool],
     ) -> None:

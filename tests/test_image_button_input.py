@@ -96,7 +96,7 @@ class ImageButtonInputTests(unittest.TestCase):
         def open_menu():
             menu = FoodMenu(
                 host, choices=choices, selected=lambda _key: None,
-                closed=lambda: None, skin=self.skin, can_select=lambda: True,
+                closed=lambda _reason: None, skin=self.skin, can_select=lambda: True,
             )
             self.addCleanup(menu.close)
             self.root.update()

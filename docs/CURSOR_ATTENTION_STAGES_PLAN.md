@@ -1,5 +1,11 @@
 # Mausaufmerksamkeit: Stufen, Vorwarnung und Gefühlsreaktionen
 
+> **Formularentkopplung, 30.10.2026:** Der
+> [Hover-Fix](HOVER_ACTION_DECOUPLING_FIX_PLAN.md) ersetzt frühere Regeln,
+> die Menübedienung als Kontakt, Cursorpause oder Bewegungssperre behandelten.
+> Reine Formularbedienung besitzt keine Handlung; ausdrückliche akzeptierte
+> Interaktionen behalten ihre bestehenden Schutz- und Abschlussregeln.
+
 Stand: 27.10.2026. Ausgangsbasis: `9a233d7` auf
 `feature/social-optimization`. **Der dokumentierte Umbau ist in den neun
 geplanten Schritten umgesetzt.** Die praktische Verhaltensabnahme durch den

@@ -108,7 +108,7 @@ class MainMenuLayoutTests(unittest.TestCase):
     def test_selector_retains_geometry_and_uses_panel_art(self) -> None:
         before = self.toolbar.window.winfo_geometry()
         menu = GameMenu(
-            self.toolbar.selector_parent(lambda: None), choices=tuple(GameId),
+            self.toolbar.selector_parent(lambda _reason: None), choices=tuple(GameId),
             selected=Mock(), closed=Mock(), skin=self.skin, can_select=lambda: True,
         )
         self.addCleanup(menu.close)

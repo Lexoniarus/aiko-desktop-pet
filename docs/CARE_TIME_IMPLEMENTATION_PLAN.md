@@ -1,5 +1,11 @@
 # Care, relationship and real-time implementation plan
 
+> **Hover decoupling, 2026-10-30:** The
+> [implemented hover fix](HOVER_ACTION_DECOUPLING_FIX_PLAN.md) supersedes older
+> passages assigning incidental-speech or movement suppression to `menu_engaged`.
+> Window presence and browsing are passive; actual action ownership and explicit
+> cancellation remain authoritative. Dated earlier findings below are historical.
+
 > **Emotional model update, 2026-10-29:**
 > [Base mood, bounded modifiers and spoken reactions](EMOTIONAL_BASE_AND_REACTIONS.md)
 > supersedes the older raw-Moodlet-majority rules below. Numeric base mood is
