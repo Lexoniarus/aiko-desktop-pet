@@ -37,13 +37,15 @@ class HandLayout:
     step: int
 
 
-def place_hand(count: int, anchor: HandAnchor) -> HandLayout:
+def place_hand(
+    count: int, anchor: HandAnchor, *, caption_height: int = 22,
+) -> HandLayout:
     card = 128
     step = min(48, max(
         1, (anchor.right - anchor.left - card) // max(1, count - 1),
     ))
     width = card + max(0, count - 1) * step
-    height = card + 38
+    height = card + 16 + caption_height
     x = max(anchor.left, min(
         anchor.x - width - 12, anchor.right - width,
     ))

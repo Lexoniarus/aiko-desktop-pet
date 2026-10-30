@@ -7,6 +7,34 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## Runtime presentation and repeat-round correction — 2026-10-30
+
+Blackjack now plays its welcome only when the game window starts. Subsequent
+hands keep their start/completion receipts and go directly to shuffle/deal.
+A native timing check bounds that repeat-round shuffle/deal to 2.3 seconds.
+
+The bank caption no longer paints text at a fixed coordinate on the transparent
+card canvas. A separate opaque, wrapping native label reserves its measured
+height, including large fonts, before placement and flight-target calculation.
+The reserve uses the masked caption so flipping/revealing does not change the
+footer height. Cards remain 128px; masked totals remain concealed during flip.
+
+Kenney emote PNGs already contain a speech bubble and tail. During game emoji
+interludes they now render on transparency without a second VN panel or drawn
+tail. Text still uses the VN panel. The text/emoji viewport remains stable and
+the persistent RPS hand stays visible in its own readout region.
+
+Focused tests cover actual native caption bounds at Tk font scaling 1.0, 1.67
+and 2.67, emoji-only and emoji-plus-hand transitions, repeat-round moderation,
+masked totals and cancellation. Native captures and final validation evidence
+remain local under `../lokale-daten/game-presentation-fixes-2026-10-30/`.
+Complete frozen native suite: **2,504 tests pass** in 408.797 seconds, with no
+Python/JSON source changes during the run. Ruff and strict Mypy (384 files) pass;
+Pyright reports zero errors/warnings. An additional fresh-process large-font
+capture measured a 32px font line height and a fully fitting 74px caption area.
+The one-time Blackjack greeting is committed as `2c19967`; the shared emoji and
+caption rendering fixes accompany this validation.
+
 ## Runtime pacing correction — 2026-10-30
 
 Subsequent owner feedback supersedes the earlier preview reading-time and
@@ -23,7 +51,7 @@ The displayed bubble and its phase deadline use the same duration.
 | Blackjack revealed-hole-card flip / bank gap | 0.2 / 0.1 seconds |
 | Blackjack restart countdown after the restored aside | 0.9 seconds |
 
-Game bubbles use the approved VN panel artwork through PanelSurface, including
+Game text bubbles use the approved VN panel artwork through PanelSurface, including
 a speech tail and the persistent RPS hand region. The Windows color-key export
 preserves every source RGB value and only prepares binary alpha. The original
 asset and ordinary social-conversation timing remain unchanged.

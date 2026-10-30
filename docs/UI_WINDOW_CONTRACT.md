@@ -318,3 +318,12 @@ remain responsible for legal decisions, results and rewards.
 
 See [the implementation log](GAME_FRONTEND_IMPLEMENTATION_PLAN.md) for reference
 mapping, checks and the bounds of practical Windows acceptance.
+
+
+Game emote images already include a complete speech bubble. Emoji interludes
+use those sprites directly on transparency; the VN panel and drawn speech tail
+belong to text phases. The persistent RPS hand is retained independently below.
+Blackjack's bank caption uses an opaque, wrapping native label and measured
+footer height, never glyphs painted into the color-keyed card canvas. Placement
+and incoming-card targets reserve that same measured height. Its welcome is
+session entry speech; repeat hands proceed directly to shuffle and deal.

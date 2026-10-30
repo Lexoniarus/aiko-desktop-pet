@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 import tkinter as tk
 import unittest
 
@@ -55,6 +56,36 @@ class SpeechPresenterTests(unittest.TestCase):
         bubble = self.presenter.bubble
         assert bubble is not None
         self.assertIsInstance(bubble.winfo_children()[-1], tk.Canvas)
+
+    def test_game_emote_has_no_outer_frame_or_second_tail_and_keeps_hand(self):
+        self.presenter.begin_game()
+        for hand in (False, True):
+            if hand:
+                self.presenter.show_game_hand(Move.ROCK, 0)
+            self.presenter.show_text("Dein Zug!", 0)
+            self.root.update()
+            text_window = self.presenter.bubble
+            assert text_window is not None
+            geometry = (text_window.winfo_width(), text_window.winfo_height())
+            self.presenter.show_emote("star", 900)
+            self.root.update()
+            window = self.presenter.bubble
+            assert window is not None
+            self.assertEqual((window.winfo_width(), window.winfo_height()), geometry)
+            frame = window.winfo_children()[0]
+            region = frame.winfo_children()[0]
+            self.assertEqual(region.cget("background"),
+                             "#ff00ff" if sys.platform == "win32" else "#202733")
+            self.assertEqual(len(region.winfo_children()), 1)
+            icon = region.winfo_children()[0]
+            self.assertEqual(icon.cget("image"),
+                             str(self.presenter.emote_images['star']))
+            self.assertEqual(window.winfo_children(), [frame])
+            self.assertFalse(any(isinstance(child, tk.Canvas)
+                                 for child in frame.winfo_children()))
+            if hand:
+                self.assertEqual(self.presenter._game_hand, Move.ROCK)
+                self.assertIn(Move.ROCK, self.presenter.game_hand_images)
 
     def test_queued_old_expiry_cannot_remove_a_new_game_comment(self):
         self.presenter.begin_game()

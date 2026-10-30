@@ -86,3 +86,35 @@ class BlackjackHandPresenterTests(unittest.TestCase):
         with patch.object(window, "wm_attributes", wraps=window.wm_attributes) as attrs:
             self.hand.set_topmost(True)
         attrs.assert_called_once_with("-topmost", True)
+
+    def test_caption_fits_without_canvas_text_fragments_at_large_fonts(self):
+        original = self.root.tk.call("tk", "scaling")
+        self.addCleanup(self.root.tk.call, "tk", "scaling", original)
+        for scaling in (1.0, 1.67, 2.67):
+            with self.subTest(scaling=scaling):
+                self.hand.hide()
+                self.root.tk.call("tk", "scaling", scaling)
+                self.hand._caption_measure.configure(font=("Segoe UI", 9, "bold"))
+                self.anchor = replace(self.anchor, y=980)
+                for cards in ((self.visible,), (self.visible, None),
+                              (self.visible, self.secret)):
+                    self.hand.show(HandView(cards))
+                    self.root.update()
+                    caption = self.hand.caption
+                    canvas = self.hand.canvas
+                    window = self.hand.window
+                    assert caption is not None and canvas is not None
+                    assert window is not None
+                    self.assertTrue(caption.winfo_ismapped())
+                    self.assertGreaterEqual(caption.winfo_height(),
+                                            caption.winfo_reqheight())
+                    self.assertLessEqual(caption.winfo_y() + caption.winfo_height(),
+                                         window.winfo_height())
+                    self.assertLessEqual(window.winfo_y() + window.winfo_height(),
+                                         self.anchor.bottom)
+                    self.assertTrue(all(canvas.type(item) == 'image'
+                                        for item in canvas.find_all()))
+                    if cards[-1] is None:
+                        self.assertIn('verdeckt', caption.cget('text'))
+                    else:
+                        self.assertNotIn('verdeckt', caption.cget('text'))

@@ -9,7 +9,7 @@ from collections.abc import Callable
 from ...games.blackjack import hand_total
 from ..common.game_pacing import GAME_PACING
 from ..common.playing_card_images import PlayingCardImages
-from ..view_models.game_models import HandAnchor, HandView, place_hand
+from ..view_models.game_models import HandAnchor, HandLayout, HandView, place_hand
 
 
 class BlackjackHandPresenter:
@@ -25,6 +25,11 @@ class BlackjackHandPresenter:
         self._background = "#ff00ff" if sys.platform == "win32" else "#202733"
         self.window: tk.Toplevel | None = None
         self.canvas: tk.Canvas | None = None
+        self.caption: tk.Label | None = None
+        # Unmapped measurement keeps targets accurate before the first card lands.
+        self._caption_measure = self._make_caption(root)
+        self._caption_measure.configure(text="BANK · AIKO · verdeckt")
+        self._caption_width = 0
         self._hand = HandView()
         self._previous = HandView()
         self._hover = -1
@@ -62,6 +67,10 @@ class BlackjackHandPresenter:
                 self.window, bg=self._background, bd=0, highlightthickness=0,
             )
             self.canvas.pack()
+            self.caption = self._make_caption(self.window)
+            self.caption.pack(fill="x")
+            self.caption.bind("<ButtonPress-1>", lambda _event: "break")
+            self.caption.bind("<ButtonPress-3>", lambda _event: "break")
             self.canvas.bind("<Motion>", self._motion)
             self.canvas.bind("<Leave>", self._leave)
             self.canvas.bind("<ButtonPress-1>", lambda _event: "break")
@@ -77,12 +86,11 @@ class BlackjackHandPresenter:
     def move(self) -> None:
         if self.window is None or self.canvas is None:
             return
-        anchor = self._anchor()
-        layout = place_hand(len(self._hand.cards), anchor)
+        layout = self._layout(len(self._hand.cards))
         self.window.geometry(
             f"{layout.width}x{layout.height}+{layout.x}+{layout.y}",
         )
-        self.canvas.configure(width=layout.width, height=layout.height)
+        self.canvas.configure(width=layout.width, height=144)
         self._render()
 
     def _render(self) -> None:
@@ -108,8 +116,24 @@ class BlackjackHandPresenter:
         if self._flip_index < 0:
             caption += (" · verdeckt" if len(public) != len(self._hand.cards)
                         else f" · {hand_total(public)}")
-        canvas.create_text(layout.width // 2, 153, text=caption,
-                           fill="#624668", font=("Segoe UI", 9, "bold"))
+        if self.caption is not None:
+            self.caption.configure(text=caption, wraplength=max(1, layout.width - 14))
+
+    @staticmethod
+    def _make_caption(parent: tk.Misc) -> tk.Label:
+        return tk.Label(parent, font=("Segoe UI", 9, "bold"), padx=6, pady=4,
+                        bd=0, highlightthickness=1, highlightbackground="#B8CDDF",
+                        highlightcolor="#B8CDDF",
+                        bg="#FCF7F9", fg="#624668")
+
+    def _layout(self, count: int) -> HandLayout:
+        anchor = self._anchor()
+        width = place_hand(count, anchor).width
+        if width != self._caption_width:
+            self._caption_measure.configure(wraplength=max(1, width - 14))
+            self._caption_width = width
+        return place_hand(count, anchor,
+                          caption_height=self._caption_measure.winfo_reqheight())
 
     def _queue_flip(self) -> None:
         generation = self._generation
@@ -156,7 +180,7 @@ class BlackjackHandPresenter:
         self._render()
 
     def point(self, index: int, count: int) -> tuple[float, float]:
-        layout = place_hand(count, self._anchor())
+        layout = self._layout(count)
         return layout.x + index * layout.step, layout.y + 16
 
     def set_topmost(self, enabled: bool) -> None:
@@ -175,6 +199,7 @@ class BlackjackHandPresenter:
             self.window.destroy()
         self.window = None
         self.canvas = None
+        self.caption = None
         self._hand = HandView()
         self._previous = HandView()
         self._flip_index = -1
