@@ -36,7 +36,9 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
                 self.step()
         self.assertFalse(self.flow.busy)
         self.assertEqual(self.busy, [True, False])
-        self.assertEqual(self.events[-1], ('hand', Move.SCISSORS))
+        self.assertEqual(self.events[-2:], [
+            ('hand', Move.SCISSORS), ('text', 'Papier!'),
+        ])
         self.assertEqual(self.reveals[0][1].wins, 1)
         self.assertEqual([e.outcome for e in self.rounds], [None, 'win'])
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)

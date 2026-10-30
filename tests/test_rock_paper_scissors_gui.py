@@ -37,7 +37,19 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(self.game.score.wins, 1)
         self.assertEqual(self.pet._speech._game_hand, Move.SCISSORS)
         self.assertEqual(self.game.buttons[Move.ROCK].cget('state'), 'normal')
-        self.clock.advance(1.4)
+        bubble = self.pet._speech.bubble
+        assert bubble is not None
+
+        def visible_text(widget):
+            text = [str(widget.cget('text'))] if 'text' in widget.keys() else []
+            return text + [value for child in widget.winfo_children()
+                           for value in visible_text(child)]
+        self.assertIn('Papier!', visible_text(bubble))
+        self.clock.advance(.448)
+        self.assertIn('Papier!', visible_text(bubble))
+        self.clock.advance(.002)
+        self.assertIsNot(self.pet._speech.bubble, bubble)
+        self.clock.advance(.95)
         self.assertEqual(self.pet._speech._game_hand, Move.SCISSORS)
         self.assertIsNotNone(self.pet._speech.bubble)
 

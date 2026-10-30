@@ -100,7 +100,6 @@ class RockPaperScissorsSequence:
         def marker(index: int) -> None:
             if self._closed or generation != self._generation or index != 4:
                 return
-            self._say(countdown_line(number), self.CYCLE_MS)
             if number == 3 and self._game.pending:
                 result = self._game.reveal()
                 self._result = result
@@ -108,9 +107,15 @@ class RockPaperScissorsSequence:
                     GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games,
                     result.outcome.value, result.details,
                 ))
+                if self._closed or generation != self._generation:
+                    return
                 self._reveal_player(result.player, self.score)
                 self._show_aiko_hand(result.aiko, 0)
+                # Adding the persistent hand rebuilds speech; admit the word afterwards.
+                self._say(countdown_line(number), self.CYCLE_MS // 2)
                 self._set_busy(False)
+            else:
+                self._say(countdown_line(number), self.CYCLE_MS)
 
         def done() -> None:
             if self._closed or generation != self._generation:
