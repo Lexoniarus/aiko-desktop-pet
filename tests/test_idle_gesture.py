@@ -35,11 +35,11 @@ class IdleGestureTests(unittest.TestCase):
     def test_real_request_is_read_only_and_uses_existing_cooldown(self):
         before = self.state.capture_checkpoint()
         choice = self.attention.select_idle_animation(
-            100, action_until=0, walking=False, toolbar_visible=False,
+            100, action_until=0, walking=False,
         )
         self.assertEqual(choice, IdleGestureChoice(1))
         self.assertIsNone(self.attention.select_idle_animation(
-            100.1, action_until=0, walking=False, toolbar_visible=False,
+            100.1, action_until=0, walking=False,
         ))
         self.assertEqual(self.state.capture_checkpoint(), before)
         self.assertIsNone(self.state.wishes.active[0].expressed_at)
@@ -140,13 +140,13 @@ class IdleGestureTests(unittest.TestCase):
         fixture.attention.note_wish_text.assert_not_called()
         self.assertIsNone(fixture.runtime._idle_gesture)
 
-    def test_wish_lost_or_menu_engaged_during_turn_drops_without_replay(self):
-        for guard in ("menu", "expired", "cooldown"):
+    def test_wish_lost_or_real_action_during_turn_drops_without_replay(self):
+        for guard in ("action", "expired", "cooldown"):
             fixture = self.runtime_fixture()
             fixture.runtime.maybe_show_idle_emote(100)
-            if guard == "menu":
+            if guard == "action":
                 fixture.runtime._ports = replace(
-                    fixture.runtime._ports, menu_engaged=lambda: True,
+                    fixture.runtime._ports, foreground_active=lambda: True,
                 )
             elif guard == "expired":
                 fixture.attention.idle_gesture_choice.return_value = None

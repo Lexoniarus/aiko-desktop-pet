@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import sys
-import time
 import tkinter as tk
 from functools import partial
 from tkinter import ttk
@@ -48,7 +47,6 @@ class SettingsWindow:
     ) -> None:
         self._snapshot, self._actions = snapshot, actions
         self._closed = False
-        self._last_key = float("-inf")
         self.position = position
         self.skin = skin if skin is not None else AikoSkin(root)
         self.window = tk.Toplevel(root)
@@ -62,7 +60,6 @@ class SettingsWindow:
         self.window.protocol("WM_DELETE_WINDOW", self.close)
         self.window.bind("<Escape>", lambda _e: self.close())
         self.window.bind("<Control-q>", lambda _e: actions.quit())
-        self.window.bind("<KeyPress>", self._key_pressed, add="+")
         outer = self.skin.frame(self.window)
         outer.pack(fill="both", expand=True, padx=1, pady=1)
         self.header = self.skin.header(outer, GERMAN_TEXT.format("settings.header"))
@@ -297,9 +294,6 @@ class SettingsWindow:
     def _remember_position(self, x: int, y: int) -> None:
         self.position = (x, y)
 
-    def _key_pressed(self, _event: tk.Event) -> None:
-        self._last_key = time.monotonic()
-
     @property
     def dragging(self) -> bool:
         return self._drag.dragging
@@ -311,11 +305,6 @@ class SettingsWindow:
         return (
             x <= px < x + self.window.winfo_width()
             and y <= py < y + self.window.winfo_height()
-        )
-
-    def interacting(self, px: int, py: int, now: float) -> bool:
-        return not self._closed and (
-            self.dragging or self.contains_pointer(px, py) or now - self._last_key < 2.0
         )
 
     def focus(self) -> None:

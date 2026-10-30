@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import sys
-import time
 import tkinter as tk
 from functools import partial
 from typing import Callable
@@ -235,9 +234,7 @@ class ActionToolbar:
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
         self._selector_closed: Callable[[], None] | None = None
-        self._last_key = float("-inf")
         self.window.bind("<Configure>", self._configured, add="+")
-        self.window.bind("<KeyPress>", self._key_pressed, add="+")
         self.window.bind("<Escape>", lambda _e: self.close_selector())
         body.adopt()
 
@@ -262,13 +259,6 @@ class ActionToolbar:
     @property
     def dragging(self) -> bool:
         return self._drag.dragging
-
-    def _key_pressed(self, _event: tk.Event) -> None:
-        self._last_key = time.monotonic()
-
-    @property
-    def keyboard_engaged(self) -> bool:
-        return self.visible and time.monotonic() - self._last_key < 2
 
     def set_pinned(self, enabled: bool) -> None:
         self._pinned = enabled

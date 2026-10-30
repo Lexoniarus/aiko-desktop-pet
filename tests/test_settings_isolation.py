@@ -119,10 +119,10 @@ class StandaloneSettingsTests(unittest.TestCase):
         self.assertEqual(self.window.window.winfo_rooty(), 90)
         self.assertEqual(self.events, [])
 
-    def test_idle_open_window_is_not_an_interaction(self) -> None:
-        self.assertFalse(self.window.interacting(-999, -999, 1000))
+    def test_pointer_bounds_are_read_without_emitting_actions(self) -> None:
+        self.assertFalse(self.window.contains_pointer(-999, -999))
         x, y = self.window.window.winfo_rootx(), self.window.window.winfo_rooty()
-        self.assertTrue(self.window.interacting(x + 5, y + 5, 1000))
+        self.assertTrue(self.window.contains_pointer(x + 5, y + 5))
 
     def test_close_during_drag_cleans_up_once(self) -> None:
         event = tk.Event()

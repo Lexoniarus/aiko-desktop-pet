@@ -32,8 +32,6 @@ class AttentionRuntimePorts:
 
     context: Callable[[], TimeContext]
     game_open: Callable[[], bool]
-    menu_engaged: Callable[[], bool]
-    settings_engaged: Callable[[], bool]
     bubble_visible: Callable[[], bool]
     reaction_pending: Callable[[], bool]
     walking: Callable[[], bool]
@@ -89,8 +87,7 @@ class DesktopAttentionRuntime:
         displayed = False
         if (0 <= now - event.created_at <= parameter("warning_candidate_seconds")
                 and not any((ports.game_open(), ports.foreground_active(),
-                             ports.reaction_pending(), ports.bubble_visible(),
-                             ports.menu_engaged(), ports.settings_engaged()))):
+                             ports.reaction_pending(), ports.bubble_visible()))):
             reaction = self.attention.mind.select_reaction(
                 ("cursor_notice_playful" if event.tone == "playful"
                  else "cursor_warning_near_fast"),
@@ -110,8 +107,7 @@ class DesktopAttentionRuntime:
         """Brief feeling cue in a free speech slot; drop rather than queue."""
         ports = self._ports
         if (ports.game_open() or ports.foreground_active() or ports.reaction_pending()
-                or ports.bubble_visible() or ports.menu_engaged()
-                or ports.settings_engaged()):
+                or ports.bubble_visible()):
             return
         emote = ("idea" if event.level >= 2 else "question"
                  ) if event.feeling == "curiosity" else (
@@ -145,7 +141,7 @@ class DesktopAttentionRuntime:
     def maybe_show_idle_emote(self, now: float) -> None:
         ports = self._ports
         if any((ports.game_open(), ports.foreground_active(), ports.reaction_pending(),
-                ports.menu_engaged(), ports.settings_engaged(), ports.bubble_visible(),
+                ports.bubble_visible(),
                 ports.walking(), now < ports.action_until())):
             self._idle_gesture = None
             ports.prepare_idle_gesture(False, now)
@@ -159,7 +155,6 @@ class DesktopAttentionRuntime:
         else:
             self._idle_gesture = self.attention.select_idle_animation(
                 now, action_until=ports.action_until(), walking=False,
-                toolbar_visible=False,
             )
         if self._idle_gesture is None:
             ports.prepare_idle_gesture(False, now)
@@ -182,10 +177,8 @@ class DesktopAttentionRuntime:
         choice = self.attention.spontaneous(
             now,
             ports.context(),
-            toolbar_visible=ports.menu_engaged(),
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
-            popup_visible=ports.settings_engaged(),
         )
         if choice.due:
             self._presenter.show_reaction(choice.reaction, 3600)
@@ -198,8 +191,6 @@ class DesktopAttentionRuntime:
             now,
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
-            popup_visible=ports.settings_engaged(),
-            toolbar_visible=ports.menu_engaged(),
         )
         if note is None:
             return

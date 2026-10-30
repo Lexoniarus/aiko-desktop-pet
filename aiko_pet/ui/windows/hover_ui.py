@@ -71,7 +71,6 @@ class HoverUiPorts:
     game_ready: Callable[[], bool] = lambda: True
     allow_sprite_hover: Callable[[], bool] = lambda: True
     sprite_access: Callable[[int, int], bool] = lambda _x, _y: False
-    cursor_watching: Callable[[], bool] = lambda: False
     cards: GameCardPorts | None = None
     codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
@@ -130,45 +129,6 @@ class HoverUi:
                 if isinstance(child, tk.Toplevel):
                     windows.append(child)
         return tuple(windows)
-
-    @property
-    def settings_engaged(self) -> bool:
-        window = self.settings_window
-        return window is not None and window.interacting(
-            self.root.winfo_pointerx(),
-            self.root.winfo_pointery(),
-            time.monotonic(),
-        )
-
-    @property
-    def menu_engaged(self) -> bool:
-        """Menu use suppresses incidental chatter/wandering, not object actions."""
-        toolbar = self.toolbar
-        using_toolbar = (
-            toolbar is not None
-            and toolbar.visible
-            and (
-                toolbar.dragging
-                or self.controls_inside(
-                    self.root.winfo_pointerx(),
-                    self.root.winfo_pointery(),
-                )
-                or not self._ports.cursor_watching() and (
-                    not self._keep_open or self.pointer_inside(
-                        self.root.winfo_pointerx(), self.root.winfo_pointery(),
-                    )
-                )
-            )
-        )
-        return bool(
-            using_toolbar
-            or self.settings_engaged
-            or any(menu is not None for menu in (
-                self.food_menu, self.game_menu, self.social_menu,
-            ))
-            or toolbar is not None
-            and toolbar.keyboard_engaged
-        )
 
     def _interact(self, action: str) -> None:
         if action == "place_item":

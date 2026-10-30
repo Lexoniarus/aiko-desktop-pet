@@ -7,6 +7,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from aiko_pet.application.commands import NotificationCommand
+from aiko_pet.application.events import IncomingNotification
 from aiko_pet.infrastructure.persistence import StateStore
 from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
@@ -102,3 +104,28 @@ class HoverActionDecouplingTests(unittest.TestCase):
         claim.assert_called_once_with()
         self.assertIsNone(self.pet._walk.movement.goal_x)
         self.assertEqual(len(self.pet.mind.clicks), 1)
+
+    def test_visible_controls_do_not_defer_a_free_notification_slot(self):
+        for view in ("toolbar", "settings"):
+            with self.subTest(view=view):
+                self.pet._speech.hide()
+                self.pet._attention.last_spoken = -1000
+                self.pet._hover.show_toolbar()
+                if view == "settings":
+                    self.pet._hover.open_settings(100, 100)
+                    window = self.pet._hover.settings_window
+                else:
+                    window = self.pet._hover.toolbar
+                assert window is not None
+                self.pet.root.update_idletasks()
+                self.pet.application.dispatch(NotificationCommand(IncomingNotification(
+                    event_id=view, source="test.hover", title="Termin", message=view,
+                )))
+                with (
+                    patch.object(self.pet.root, "winfo_pointerx",
+                                 return_value=window.window.winfo_rootx() + 20),
+                    patch.object(self.pet.root, "winfo_pointery",
+                                 return_value=window.window.winfo_rooty() + 20),
+                ):
+                    self.pet._attention_runtime.present_notification(time.monotonic())
+                self.assertIsNotNone(self.pet._speech.bubble)

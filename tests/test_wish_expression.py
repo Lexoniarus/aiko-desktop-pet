@@ -69,7 +69,7 @@ class WishExpressionTests(unittest.TestCase):
 
     def select(self, **kwargs):
         return self.attention.spontaneous(
-            1000, context_at(1800000000), toolbar_visible=False, **kwargs
+            1000, context_at(1800000000), **kwargs
         )
 
     def test_pinned_wish_can_be_spoken_after_original_deadline_and_saved_once(self):
@@ -149,7 +149,6 @@ class WishExpressionTests(unittest.TestCase):
     def test_disclosure_respects_busy_settings_thresholds_and_urgent_care(self):
         for kwargs in (
             dict(bubble_visible=True),
-            dict(popup_visible=True),
             dict(action_until=1001),
         ):
             self.assertFalse(self.select(**kwargs).due)

@@ -140,8 +140,6 @@ class AttentionCoordinator:
         distance: float,
         screen_width: int,
         now: float,
-        *,
-        toolbar_visible: bool,
     ) -> str | None:
         """Choose a rare cursor remark from an observed movement."""
         if (
@@ -150,7 +148,6 @@ class AttentionCoordinator:
             or now < self.next_cursor_line
             or now - self.last_spoken <= 100
             or self.state.sleeping
-            or toolbar_visible
         ):
             return None
         if random.random() >= BALANCE.number("attention", "cursor_comment_probability"):
@@ -182,15 +179,12 @@ class AttentionCoordinator:
         screen_width: int,
         now: float,
         context: TimeContext,
-        *,
-        toolbar_visible: bool,
     ) -> Reaction | None:
         """Interpret existing cursor event keys before entering the UI."""
         event = self.select_cursor_comment_event(
             distance,
             screen_width,
             now,
-            toolbar_visible=toolbar_visible,
         )
         if event is None:
             return None
@@ -223,7 +217,6 @@ class AttentionCoordinator:
         *,
         action_until: float,
         walking: bool,
-        toolbar_visible: bool,
     ) -> IdleGestureChoice | None:
         """Use the existing expression clock for an actual request, or silence."""
         if now < self.next_idle_emote:
@@ -232,7 +225,7 @@ class AttentionCoordinator:
             BALANCE.number("attention", "idle_repeat_minimum_seconds"),
             BALANCE.number("attention", "idle_repeat_maximum_seconds"),
         )
-        if self.state.sleeping or now < action_until or walking or toolbar_visible:
+        if self.state.sleeping or now < action_until or walking:
             return None
         return self.idle_gesture_choice()
 
@@ -256,18 +249,14 @@ class AttentionCoordinator:
         now: float,
         context: TimeContext,
         *,
-        toolbar_visible: bool,
         action_until: float = 0.0,
         bubble_visible: bool = False,
-        popup_visible: bool = False,
     ) -> SpontaneousChoice:
         """Select measured-effort or personal dialogue when allowed."""
         if (
             not self.settings.spontaneous_talk
             or self.state.sleeping
-            or toolbar_visible
             or bubble_visible
-            or popup_visible
             or now < action_until
             or now - self.last_spoken
             < BALANCE.integer("attention", "comment_minimum_quiet_seconds")
@@ -318,8 +307,6 @@ class AttentionCoordinator:
         *,
         action_until: float,
         bubble_visible: bool,
-        popup_visible: bool,
-        toolbar_visible: bool,
     ) -> IncomingNotification | None:
         """Consume at most one event without interrupting any visible UI."""
         if (
@@ -328,8 +315,6 @@ class AttentionCoordinator:
             or now - self.last_spoken
             < BALANCE.integer("attention", "notification_quiet_seconds")
             or bubble_visible
-            or popup_visible
-            or toolbar_visible
         ):
             return None
         return self.router.next_notification()

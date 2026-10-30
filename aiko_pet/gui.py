@@ -269,7 +269,6 @@ class DesktopPet:
                 game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
                 allow_sprite_hover=lambda: self._pointer_runtime.allow_hover(),
-                cursor_watching=lambda: self._cursor_behaviour.watching,
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
                 toggle_scale=self.toggle_scale,
@@ -351,8 +350,6 @@ class DesktopPet:
             self._attention, self._attention_view,
             AttentionRuntimePorts(
                 context=lambda: self.context, game_open=lambda: self._hover.game_open,
-                menu_engaged=lambda: self._hover.menu_engaged,
-                settings_engaged=lambda: self._hover.settings_engaged,
                 bubble_visible=lambda: self._speech.bubble is not None,
                 reaction_pending=lambda: (
                     self._reaction_player.pending_timer is not None

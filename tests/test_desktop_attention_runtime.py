@@ -52,8 +52,6 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
             AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: False,
-                menu_engaged=lambda: False,
-                settings_engaged=lambda: False,
                 bubble_visible=lambda: False,
                 reaction_pending=lambda: False,
                 walking=lambda: False,
@@ -142,7 +140,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
     def test_warning_drops_in_protected_or_occupied_slot_and_when_stale(self):
         original = self.runtime._ports
         for guard in ("game_open", "foreground_active", "reaction_pending",
-                      "bubble_visible", "menu_engaged", "settings_engaged"):
+                      "bubble_visible"):
             self.runtime._ports = replace(original, **{guard: lambda: True})
             self.assertFalse(
                 self.runtime.cursor_warning(CursorWarning(guard, 10), 10).presented
@@ -174,7 +172,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
     def test_occupied_slots_drop_cue_without_replay(self):
         original = self.runtime._ports
         for guard in ("game_open", "foreground_active", "reaction_pending",
-                      "bubble_visible", "menu_engaged", "settings_engaged"):
+                      "bubble_visible"):
             with self.subTest(guard=guard):
                 self.runtime._ports = replace(original, **{guard: lambda: True})
                 self.runtime.cursor_experience(CursorExperience(guard, "fear", 3))

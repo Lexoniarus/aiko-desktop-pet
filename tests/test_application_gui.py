@@ -236,17 +236,15 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet._tick()
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
-    def test_hovered_controls_defer_notification_until_pointer_leaves(self) -> None:
+    def test_hovered_controls_allow_notification_immediately(self) -> None:
         self.pet.application.dispatch(NotificationCommand(self._notice("hover")))
         with patch.object(self.pet.root, "winfo_containing",
                           return_value=self.pet.canvas):
             self.pet._tick()
-            self.assertTrue(self.pet._hover.menu_engaged)
-            self.assertIsNone(self._bubble_text())
+            self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
         self.pet._hover.last_hover = time.monotonic() - 10
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
-        self.assertFalse(self.pet._hover.menu_engaged)
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
 

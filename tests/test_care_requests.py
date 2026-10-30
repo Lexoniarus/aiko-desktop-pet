@@ -66,39 +66,39 @@ class CareRequestTests(unittest.TestCase):
 
     def test_request_is_authored_and_throttled_for_thirty_minutes(self) -> None:
         set_test_pet_values(self.state, satiety=70)
-        first = self.attention.spontaneous(1000, self.context, toolbar_visible=False)
+        first = self.attention.spontaneous(1000, self.context)
         self.assertTrue(first.due)
         self.assertIsNotNone(first.reaction)
         self.assertFalse(self.attention.spontaneous(
-            2799, self.context, toolbar_visible=False,
+            2799, self.context,
         ).due)
         self.assertTrue(self.attention.spontaneous(
-            2800, self.context, toolbar_visible=False,
+            2800, self.context,
         ).due)
 
     def test_accepted_care_has_three_minute_grace(self) -> None:
         set_test_pet_values(self.state, satiety=60)
         self.mind.record_accepted_care('pet', 1000)
         self.assertFalse(self.attention.spontaneous(
-            1179, self.context, toolbar_visible=False,
+            1179, self.context,
         ).due)
         self.assertTrue(self.attention.spontaneous(
-            1180, self.context, toolbar_visible=False,
+            1180, self.context,
         ).due)
 
     def test_visible_ui_and_running_reactions_are_not_interrupted(self) -> None:
         set_test_pet_values(self.state, satiety=60)
-        for flag in ('toolbar_visible', 'bubble_visible', 'popup_visible'):
+        for flag in ('bubble_visible',):
             with self.subTest(flag=flag):
                 arguments = {flag: True}
                 self.assertFalse(self.attention.spontaneous(
-                    1000, self.context, **{'toolbar_visible': False, **arguments},
+                    1000, self.context, **arguments,
                 ).due)
         self.assertFalse(self.attention.spontaneous(
-            1000, self.context, toolbar_visible=False, action_until=1001,
+            1000, self.context, action_until=1001,
         ).due)
         self.settings.spontaneous_talk = False
         self.assertFalse(self.attention.spontaneous(
-            1000, self.context, toolbar_visible=False,
+            1000, self.context,
         ).due)
         self.assertEqual(self.attention.next_care_request, 0)
