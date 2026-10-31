@@ -11,10 +11,10 @@ ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 
 class PetMindCatalogueTests(unittest.TestCase):
-    def test_dialogue_catalogue_path_still_points_to_original_data(self) -> None:
+    def test_dialogue_catalogue_path_points_to_packaged_index(self) -> None:
         self.assertEqual(
             catalog.CATALOGUE,
-            ROOT / "data" / "dialogues.de.json",
+            ROOT / "data" / "dialogues" / "de" / "index.json",
         )
         self.assertTrue(catalog.CATALOGUE.is_file())
         book = catalog.DialogueBook.from_file()

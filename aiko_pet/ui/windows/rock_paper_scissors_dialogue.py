@@ -6,6 +6,7 @@ import time
 
 from ...games.rock_paper_scissors import Outcome, Round
 from ...pet.content import GERMAN_TEXT
+from ...pet.emotions import EmotionalComposition, EmotionalState
 from ...pet.mind.catalog import DialogueBook
 from ...pet.mind.dialogue_context import DialogueContext, FriendshipStage
 from ...pet.routine import context_at
@@ -19,11 +20,16 @@ class GameDialogue:
 
     def choose(self, event: str, dialogue: DialogueContext | None = None) -> str:
         snapshot = dialogue or DialogueContext(
-            FriendshipStage.ACQUAINTANCE, "calm", context_at(time.time()),
+            FriendshipStage.ACQUAINTANCE,
+            60,
+            EmotionalComposition(EmotionalState.CALM),
+            context_at(time.time()),
         )
         reaction = self._book.choose(
-            event, snapshot.mood, snapshot.time, time.monotonic(),
-            dialogue=snapshot, presentation="short",
+            event,
+            snapshot,
+            time.monotonic(),
+            presentation="short",
         )
         if reaction is None:
             raise ValueError(f"Missing game dialogue: {event}")
@@ -33,7 +39,8 @@ class GameDialogue:
 def countdown_line(number: int) -> str:
     if number not in (1, 2, 3):
         raise KeyError(number)
-    return GERMAN_TEXT.format(f"rps.countdown.{number}")
+    key = {1: "scissors", 2: "rock", 3: "paper"}[number]
+    return GERMAN_TEXT.format(f"rps.move.{key}") + "!"
 
 
 def outcome_event(result: Round) -> str:

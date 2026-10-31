@@ -17,5 +17,5 @@ class PetMindBoundaryTests(unittest.TestCase):
 
     def test_catalogue_stays_in_shared_data_directory(self) -> None:
         root = Path(__file__).resolve().parents[1] / "aiko_pet"
-        self.assertEqual(CATALOGUE, root / "data" / "dialogues.de.json")
+        self.assertEqual(CATALOGUE, root / "data" / "dialogues" / "de" / "index.json")
         self.assertTrue(CATALOGUE.is_file())

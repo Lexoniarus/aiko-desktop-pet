@@ -5,7 +5,9 @@ from __future__ import annotations
 from threading import get_ident
 from typing import overload
 
+from ..games.contracts import GameRoundEvent
 from ..pet.fun import GameExperience
+from ..pet.interaction_events import SocialCompletion
 from .active_time import SessionInputs
 from .commands import (
     ApplicationCommand,
@@ -64,6 +66,40 @@ class ApplicationRouter:
                 raise ValueError("Care actions require trusted care inputs")
             return self._care.execute(command, inputs)
         raise TypeError("Unknown application command")
+
+    def advance_time(self, inputs: SessionInputs) -> None:
+        """Advance admitted contact through the same session clock as care."""
+        self._require_owner_thread()
+        self._care.advance_time(inputs)
+
+    def set_wish_pinned(
+        self, instance_id: int, pinned: bool, *, inputs: SessionInputs,
+    ) -> None:
+        """UI preference, not personal contact or a care reward."""
+        self._require_owner_thread()
+        self._care.set_wish_pinned(instance_id, pinned, inputs)
+
+    def dismiss_wish(self, instance_id: int, *, inputs: SessionInputs) -> None:
+        self._require_owner_thread()
+        self._care.dismiss_wish(instance_id, inputs)
+
+    def complete_social(
+        self, completion: SocialCompletion, *, inputs: SessionInputs,
+        arrangement_ready: bool,
+    ) -> None:
+        """Receive a finished accepted sequence on the existing owner thread."""
+        self._require_owner_thread()
+        self._care.complete_social(
+            completion, inputs, arrangement_ready=arrangement_ready,
+        )
+
+    def observe_game_round(
+        self, event: GameRoundEvent, *, inputs: SessionInputs,
+    ) -> None:
+        self._require_owner_thread()
+        if self._game_experience is None:
+            raise RuntimeError("No game experience coordinator is installed")
+        self._game_experience.observe_round(event, inputs)
 
     def complete_game(
         self, experience: GameExperience, *, inputs: SessionInputs,

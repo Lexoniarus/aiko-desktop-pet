@@ -29,11 +29,11 @@ class AttentionDecisionTests(unittest.TestCase):
             patch.object(self.mind, "select_reaction", return_value=reaction) as say,
         ):
             actual = self.attention.cursor_reaction(
-                200.0, 1920, 100.0, self.context, toolbar_visible=False,
+                200.0, 1920, 100.0, self.context,
             )
         self.assertIs(actual, reaction)
         detect.assert_called_once_with(
-            200.0, 1920, 100.0, toolbar_visible=False,
+            200.0, 1920, 100.0,
         )
         say.assert_called_once_with(
             "cursor_follow", self.state, self.context, 100.0,
@@ -48,7 +48,7 @@ class AttentionDecisionTests(unittest.TestCase):
             patch.object(self.mind, "select_reaction") as say,
         ):
             actual = self.attention.cursor_reaction(
-                200.0, 1920, 100.0, self.context, toolbar_visible=True,
+                200.0, 1920, 100.0, self.context,
             )
         self.assertIsNone(actual)
         say.assert_not_called()

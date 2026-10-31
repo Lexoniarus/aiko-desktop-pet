@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import fields, replace
-from typing import Any
+from typing import Any, TypeVar
 
 from aiko_pet.pet.mind.object_attention import AttentionMode, ObjectAttention
 from aiko_pet.pet.state import PetState
@@ -27,9 +27,25 @@ def set_test_pet_values(state: PetState, **changes: Any) -> None:
 
 
 def object_test_attention(
-    x: float, *, width: float, height: float = 0, attentive: bool = True,
-    direction: tuple[float, float] = (1, 0), mode: AttentionMode = "survey",
+    x: float,
+    *,
+    width: float,
+    height: float = 0,
+    attentive: bool = True,
+    direction: tuple[float, float] = (1, 0),
+    mode: AttentionMode = "survey",
 ) -> ObjectAttention:
     """An explicit right-facing sensor fixture; callers can select another look."""
-    return ObjectAttention(mode if attentive else "unavailable", direction,
-                           origin=(x, height), width=width)
+    return ObjectAttention(
+        mode if attentive else "unavailable", direction, origin=(x, height), width=width
+    )
+
+
+_T = TypeVar("_T")
+
+
+def require_test_value(value: _T | None) -> _T:
+    """Check a fixture's required fact before inspecting its typed contents."""
+    if value is None:
+        raise AssertionError("Expected fixture fact is missing")
+    return value

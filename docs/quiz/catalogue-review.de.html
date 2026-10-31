@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aiko · 200 Quizfragen · Redaktioneller Entwurf</title>
+<style>
+:root{color-scheme:light;font:16px/1.55 system-ui,sans-serif;color:#292632;background:#f8f5f7}
+*{box-sizing:border-box}body{margin:0 auto;padding:2rem 1rem 4rem;max-width:1050px}h1,h2,h3{line-height:1.25}
+header{padding:1rem 0 1.5rem;border-bottom:3px solid #bd7c99}h1{font-size:2.2rem;margin:.5rem 0}
+.eyebrow,.meta{color:#61586a;font-size:.88rem}.notice{padding:1rem 1.2rem;border-left:4px solid #986880;background:#fff}
+a{color:#6c3b70;text-underline-offset:3px}nav{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.4rem 0}nav a{background:#eee5ed;padding:.4rem .7rem;border-radius:5px}
+table{border-collapse:collapse;width:100%;margin:1.3rem 0}th,td{padding:.5rem .6rem;border-bottom:1px solid #d6cbd7;text-align:left}td:not(:first-child),th:not(:first-child){text-align:right}
+section{margin:3rem 0}article{background:white;padding:1.3rem;margin:1.1rem 0;border:1px solid #dfd5df;border-radius:8px;break-inside:avoid}
+article h3{font-size:1.16rem;margin:.5rem 0 1rem}article p{margin:.75rem 0}.choices{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;list-style:none;padding:0;margin:1rem 0}
+.choices li{padding:.6rem .7rem;border:1px solid #d5cfda;border-radius:5px}.choices .correct{border:2px solid #4a7464;background:#eef7f1}
+.answer-label{display:inline-block;min-width:1.5rem;font-weight:700}.correct-note{font-size:.8rem;color:#365c4d;margin-left:.35rem}
+.source{font-size:.86rem;color:#61586a;overflow-wrap:anywhere}.explanation{padding-top:.4rem}.scope{font-size:.9rem;color:#61586a}
+footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #d6cbd7}@media(max-width:600px){.choices{grid-template-columns:1fr}h1{font-size:1.7rem}th,td{padding:.35rem .25rem;font-size:.85rem}}
+@media print{body{background:white;padding:0;max-width:none;font-size:11pt}nav{display:none}article{box-shadow:none}a{color:inherit}section{break-before:page}header{break-after:avoid}}
+</style><body><header><div class="eyebrow">Aiko Desktop Pet · Inhaltsreview · 25. Oktober 2026</div>
+<h1>200 Fragen für Aikos Quiz</h1><p>Vier Antworten, eine Lösung, eine kurze Erklärung. 120 Fragen aus Nerdthemen und 80 aus dem Allgemeinwissen.</p>
+<p class="notice"><strong>Startversion, Katalogrevision 2.</strong> Der überarbeitete Katalog ist mit dem Implementierungsauftrag für die Startversion freigegeben. Diese Seite zeigt die Lösungen zur gemeinsamen Prüfung; sie ist die redaktionelle Ansicht; Aiko lädt die separate lokale Laufzeitdatei.</p>
+<p><a href="catalogue.de.json">Vollständige Inhaltsdatei mit Metadaten und Quellen</a> · <a href="../MINIGAME_IMPLEMENTATION_PLAN.md#quiz-concept-planning-only">Vereinbarter Plan</a></p></header>
+<p class="notice"><strong>Inhaltsreview überarbeitet:</strong> 19 Fragen haben Revision 2 erhalten. Formulierungen und falsche Antworten wurden verbessert; Themen und Schwierigkeitsgrade sind unverändert.</p>
+<nav aria-label="Themen">
+<a href="#gaming">Gaming · 40</a>
+<a href="#anime_manga">Anime und Manga · 30</a>
+<a href="#science_fiction">Science-Fiction · 30</a>
+<a href="#fantasy">Fantasy · 20</a>
+<a href="#film_television">Film und Fernsehen · 20</a>
+<a href="#nature_science">Natur und Wissenschaft · 20</a>
+<a href="#world_history_culture">Welt, Geschichte und Kultur · 20</a>
+<a href="#computers_digital">Computer und digitale Kultur · 20</a>
+</nav><h2>Verteilung</h2><table><thead><tr><th>Thema</th><th>Leicht</th><th>Mittel</th><th>Knifflig</th><th>Gesamt</th></tr></thead><tbody>
+<tr><td>Gaming</td><td>20</td><td>14</td><td>6</td><td>40</td></tr>
+<tr><td>Anime und Manga</td><td>15</td><td>11</td><td>4</td><td>30</td></tr>
+<tr><td>Science-Fiction</td><td>15</td><td>10</td><td>5</td><td>30</td></tr>
+<tr><td>Fantasy</td><td>10</td><td>7</td><td>3</td><td>20</td></tr>
+<tr><td>Film und Fernsehen</td><td>10</td><td>7</td><td>3</td><td>20</td></tr>
+<tr><td>Natur und Wissenschaft</td><td>10</td><td>7</td><td>3</td><td>20</td></tr>
+<tr><td>Welt, Geschichte und Kultur</td><td>10</td><td>7</td><td>3</td><td>20</td></tr>
+<tr><td>Computer und digitale Kultur</td><td>10</td><td>7</td><td>3</td><td>20</td></tr>
+<tr><th>Gesamt</th><th>100</th><th>70</th><th>30</th><th>200</th></tr></tbody></table>
+<p>Die Schwierigkeiten sind erste redaktionelle Einschätzungen. Die Quellen sind Faktenbelege; Fragen und Antworten wurden neu formuliert. Es werden keine fremden Fragekataloge, Texte oder Bilder importiert. Quellenabruf: 25.10.2026; „Suchauszug“ kennzeichnet eingeschränkten Zugriff.</p>
+<p>Jede Frage zählt in genau einem Thema. Allgemeine Familienanimation wird Film/Fernsehen zugeordnet. Bei der späteren Rundenauswahl müssen verwandte Fragen und wiederkehrende Werke gestreut werden.</p>
+<section id="gaming"><h2>Gaming <span class="meta">40 Fragen</span></h2>
+<article id="aiko-quiz-gam-001"><div class="meta">aiko-quiz-gam-001 · Leicht · Figuren · Super Mario · Revision 1 · Startversion</div><h3>Welche Figur ist Marios Bruder?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Luigi<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Wario</li>
+<li><span class="answer-label">C</span>Toad</li>
+<li><span class="answer-label">D</span>Bowser</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Luigi gehört wie Mario zu den Helden des Pilz-Königreichs. Du erkennst ihn meist an seiner grünen Kleidung.</p>
+<p class="source">Faktenbeleg: <a href="https://mario.nintendo.com/characters/" rel="noreferrer">The official home of Super Mario™ – Characters</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-002"><div class="meta">aiko-quiz-gam-002 · Leicht · Figuren · The Legend of Zelda · Revision 1 · Startversion</div><h3>Wie heißt der Held, den du in vielen klassischen Zelda-Abenteuern steuerst?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Tingle</li>
+<li class="correct"><span class="answer-label">B</span>Link<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Zelda</li>
+<li><span class="answer-label">D</span>Impa</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Link ist der Held vieler Zelda-Spiele. Zelda ist der Name der Prinzessin.</p>
+<p class="source">Faktenbeleg: <a href="https://zelda.nintendo.com/online-guide/" rel="noreferrer">Online Guide - The Legend of Zelda: The official home of the Nintendo game series</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-003"><div class="meta">aiko-quiz-gam-003 · Leicht · Pokémon-Typen · Pokémon · Revision 1 · Startversion</div><h3>Welchem Typ gehört Pikachu an?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Wasser</li>
+<li><span class="answer-label">B</span>Pflanze</li>
+<li class="correct"><span class="answer-label">C</span>Elektro<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Feuer</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Pikachu ist ein Elektro-Pokémon. Seine elektrischen Attacken gehören zu seinen bekanntesten Merkmalen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.pokemon.com/us/animation/seasons/11/episode-21-our-cup-runneth-over" rel="noreferrer">Our Cup Runneth Over | Pokemon.com</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-004"><div class="meta">aiko-quiz-gam-004 · Leicht · Figuren · Sonic the Hedgehog · Revision 1 · Startversion</div><h3>Welches Tier stellt Sonic dar?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Einen Fuchs</li>
+<li><span class="answer-label">B</span>Einen Waschbären</li>
+<li><span class="answer-label">C</span>Einen Hasen</li>
+<li class="correct"><span class="answer-label">D</span>Einen Igel<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Sonic ist ein blauer Igel. Sein englischer Serienname nennt die Tierart bereits: hedgehog.</p>
+<p class="source">Faktenbeleg: <a href="https://sonic.sega.jp/SonicChannel/character/sonic.html" rel="noreferrer">Sonic Channel: Sonic</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-005"><div class="meta">aiko-quiz-gam-005 · Leicht · Gegner · Minecraft · Revision 1 · Startversion</div><h3>Welcher grüne Minecraft-Gegner zischt kurz vor seiner Explosion?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Creeper<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Zombie</li>
+<li><span class="answer-label">C</span>Skelett</li>
+<li><span class="answer-label">D</span>Enderman</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Creeper nähert sich und beginnt vor seiner Explosion zu zischen. Das Geräusch ist ein wichtiges Warnsignal.</p>
+<p class="source">Faktenbeleg: <a href="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/software/Minecraft-Monstrous-Compendium-revised.pdf" rel="noreferrer">Minecraft / Wizards of the Coast: Monstrous Compendium, Volume Three — Creeper</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-006"><div class="meta">aiko-quiz-gam-006 · Leicht · Spielprinzip · Tetris · Revision 2 · Startversion</div><h3>Was lässt im klassischen Tetris eine waagerechte Reihe verschwinden?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Drei gleichfarbige Quadrate liegen nebeneinander</li>
+<li class="correct"><span class="answer-label">B</span>Sie ist lückenlos gefüllt<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Vier Quadrate bilden ein Quadrat</li>
+<li><span class="answer-label">D</span>Sie enthält einen waagerechten I-Stein</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Eine vollständige Reihe wird entfernt. Dadurch entsteht wieder Platz auf dem Spielfeld.</p>
+<p class="source">Faktenbeleg: <a href="https://play.tetris.com/about" rel="noreferrer">About Tetris | Tetris</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-007"><div class="meta">aiko-quiz-gam-007 · Leicht · Spielprinzip · Pac-Man · Revision 1 · Startversion</div><h3>Was sammelt Pac-Man im klassischen Labyrinth vor allem ein?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Bananen</li>
+<li><span class="answer-label">B</span>Rubine</li>
+<li class="correct"><span class="answer-label">C</span>Punkte<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Ringe</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Pac-Man frisst die Punkte entlang der Gänge. Die größeren Kraftpillen verändern vorübergehend das Verhältnis zu den Geistern.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bandainamcoent.com/news/pac-man-to-take-flight-in-the-99th-macys-thanksgiving-day-parade" rel="noreferrer">PAC-MAN to Take Flight in The 99th Macy’s Thanksgiving Day Parade® | Bandai Namco Entertainment America Inc.</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-008"><div class="meta">aiko-quiz-gam-008 · Mittel · Inselbewohner · Animal Crossing · Revision 1 · Startversion</div><h3>Welche Aufgabe hat Eugen in Animal Crossing: New Horizons?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Er betreibt den Flughafen</li>
+<li><span class="answer-label">B</span>Er verkauft Kleidung</li>
+<li><span class="answer-label">C</span>Er organisiert das Insel-Camping</li>
+<li class="correct"><span class="answer-label">D</span>Er leitet das Museum<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Eule Eugen nimmt unter anderem Fossilien, Fische und Insekten für das Museum entgegen.</p>
+<p class="source">Faktenbeleg: <a href="https://play.nintendo.com/themes/friends/blathers/" rel="noreferrer">Blathers – Play Nintendo</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-009"><div class="meta">aiko-quiz-gam-009 · Leicht · Spielprinzip · Stardew Valley · Revision 2 · Startversion</div><h3>Welchen Ort baust du in Stardew Valley zu Beginn wieder auf?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Einen Bauernhof<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Ein Gasthaus</li>
+<li><span class="answer-label">C</span>Eine Schmiede</li>
+<li><span class="answer-label">D</span>Einen Dorfladen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Dein neues Leben beginnt auf einem verwilderten Hof. Landwirtschaft ist ein wichtiger Teil des Spiels.</p>
+<p class="source">Faktenbeleg: <a href="https://store.steampowered.com/app/413150/Stardew_Valley/" rel="noreferrer">Stardew Valley on Steam</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-010"><div class="meta">aiko-quiz-gam-010 · Leicht · Spielgenres · Die Sims · Revision 1 · Startversion</div><h3>Was steht bei Die Sims im Mittelpunkt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Das Trainieren von Fußballteams</li>
+<li class="correct"><span class="answer-label">B</span>Das Leben simulierter Menschen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Das Lenken von Rennwagen</li>
+<li><span class="answer-label">D</span>Das Erobern von Planeten</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Du gestaltest Sims, ihre Häuser und ihren Alltag. Die Reihe zählt zu den Lebenssimulationen.</p>
+<p class="source">Faktenbeleg: <a href="https://thesims-api.ea.com/game-info/overview" rel="noreferrer">The Sims - Features Overview - Official Site</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-011"><div class="meta">aiko-quiz-gam-011 · Leicht · Spielmechanik · Portal · Revision 1 · Startversion</div><h3>Was erzeugt das zentrale Werkzeug im Rätselspiel Portal?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Lokale Zeitblasen</li>
+<li><span class="answer-label">B</span>Schwebende Kraftfelder</li>
+<li class="correct"><span class="answer-label">C</span>Verbundene Durchgänge<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Unsichtbare Schutzschilde</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Mit dem Portalgerät verbindest du geeignete Flächen. Räume und Wege lassen sich dadurch auf ungewöhnliche Weise nutzen.</p>
+<p class="source">Faktenbeleg: <a href="https://store.steampowered.com/app/400/Portal/" rel="noreferrer">Valve: Portal</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-012"><div class="meta">aiko-quiz-gam-012 · Mittel · Power-ups · Super Mario · Revision 1 · Startversion</div><h3>Was kann Mario nach dem Einsammeln einer Feuerblume typischerweise verschießen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eiskristalle</li>
+<li><span class="answer-label">B</span>Wasserblasen</li>
+<li><span class="answer-label">C</span>Blitze</li>
+<li class="correct"><span class="answer-label">D</span>Feuerbälle<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Feuerblume verwandelt Mario in Feuer-Mario. Seine typische zusätzliche Fähigkeit ist das Werfen von Feuerbällen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nintendo.com/eu/media/downloads/games_8/emanuals/wii_u_6/new_super_luigi_u_1/ElectronicManual_WiiU_NewSuperLuigiU_EN.pdf" rel="noreferrer">Nintendo: New Super Luigi U electronic manual — Fire Mario</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-013"><div class="meta">aiko-quiz-gam-013 · Mittel · Symbole · The Legend of Zelda · Revision 1 · Startversion</div><h3>Aus wie vielen goldenen Dreiecken besteht das Triforce-Symbol?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Drei<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Zwei</li>
+<li><span class="answer-label">C</span>Vier</li>
+<li><span class="answer-label">D</span>Sechs</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das Triforce verbindet drei Teile. Sie stehen für Kraft, Weisheit und Mut.</p>
+<p class="source">Faktenbeleg: <a href="https://zelda.nintendo.com/online-guide/" rel="noreferrer">Online Guide - The Legend of Zelda: The official home of the Nintendo game series</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-014"><div class="meta">aiko-quiz-gam-014 · Mittel · Pokémon-Typen · Pokémon · Revision 1 · Startversion</div><h3>Welches dieser Pokémon gehört in den ersten Editionen zum Typ Wasser?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Pikachu</li>
+<li class="correct"><span class="answer-label">B</span>Schiggy<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Glumanda</li>
+<li><span class="answer-label">D</span>Bisasam</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Schiggy ist der Wasser-Starter der ersten Spielgeneration. Glumanda steht für Feuer und Bisasam für Pflanze und Gift.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Erste Pokémon-Spielgeneration</p>
+<p class="source">Faktenbeleg: <a href="https://www.pokemon.com/us/pokedex/0007" rel="noreferrer">Squirtle | Pokédex</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-015"><div class="meta">aiko-quiz-gam-015 · Mittel · Bauen und Erkunden · Minecraft · Revision 1 · Startversion</div><h3>Welches Material brauchst du für den Rahmen eines gewöhnlichen Netherportals?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Glas</li>
+<li><span class="answer-label">B</span>Kupferblöcke</li>
+<li class="correct"><span class="answer-label">C</span>Obsidian<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Sandstein</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein gewöhnliches Netherportal hat einen Obsidianrahmen. Weinender Obsidian ist dafür kein Ersatz.</p>
+<p class="source">Faktenbeleg: <a href="https://www.minecraft.net/en-us/article/ruined-portal" rel="noreferrer">Ruined Portal | Minecraft</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-016"><div class="meta">aiko-quiz-gam-016 · Leicht · Spielmechanik · Sonic the Hedgehog · Revision 1 · Startversion</div><h3>Welche glänzenden Gegenstände sammelt Sonic typischerweise?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Rubine</li>
+<li><span class="answer-label">B</span>Sterne</li>
+<li><span class="answer-label">C</span>Zahnräder</li>
+<li class="correct"><span class="answer-label">D</span>Ringe<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die goldenen Ringe gehören zu Sonics bekanntesten Spielelementen. Sie können ihn auch vor einem direkten Treffer schützen.</p>
+<p class="source">Faktenbeleg: <a href="https://manuals.sega.com/wp-content/uploads/2022/06/SM_Sonic_Origin_En_220617.pdf" rel="noreferrer">SEGA: Sonic Origins manual — Rings</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-017"><div class="meta">aiko-quiz-gam-017 · Knifflig · Puzzleformen · Tetris · Revision 1 · Startversion</div><h3>Wie viele unterschiedliche Grundformen haben die klassischen Tetris-Steine?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Sieben<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Fünf</li>
+<li><span class="answer-label">C</span>Sechs</li>
+<li><span class="answer-label">D</span>Acht</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die sieben Tetriminos bestehen jeweils aus vier Quadraten. Unterschiedliche Drehungen zählen nicht als neue Grundformen.</p>
+<p class="source">Faktenbeleg: <a href="https://play.tetris.com/about" rel="noreferrer">About Tetris | Tetris</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-018"><div class="meta">aiko-quiz-gam-018 · Knifflig · Figuren · Portal · Revision 1 · Startversion</div><h3>Wie heißt die künstliche Intelligenz, die dich im ersten Portal durch Tests begleitet?</h3><ol class="choices">
+<li><span class="answer-label">A</span>EDI</li>
+<li class="correct"><span class="answer-label">B</span>GLaDOS<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Cortana</li>
+<li><span class="answer-label">D</span>SHODAN</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> GLaDOS überwacht die Tests bei Aperture Science. Ihre Kommentare sind ein prägender Teil des Spiels.</p>
+<p class="source">Faktenbeleg: <a href="https://store.steampowered.com/app/620/Portal_2/" rel="noreferrer">Valve: Portal 2</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-019"><div class="meta">aiko-quiz-gam-019 · Leicht · Spielwelt · Animal Crossing · Revision 1 · Startversion</div><h3>Wie heißt die gewöhnliche Geldwährung in der deutschen Fassung von Animal Crossing?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Gil</li>
+<li><span class="answer-label">B</span>Septime</li>
+<li class="correct"><span class="answer-label">C</span>Sternis<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Rubine</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Mit Sternis bezahlst du unter anderem Einkäufe. Nook-Meilen sind in New Horizons ein separates Belohnungssystem.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nintendo.com/eu/media/downloads/games_8/emanuals/nintendo_ds_21/Manual_NintendoDS_AnimalCrossingWildWorld_DE.pdf" rel="noreferrer">Animal Crossing: Wild World</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-020"><div class="meta">aiko-quiz-gam-020 · Mittel · Ausgangssituation · Stardew Valley · Revision 2 · Startversion</div><h3>Von wem erbst du in Stardew Valley den alten Hof?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Von deiner Tante</li>
+<li><span class="answer-label">B</span>Von deinem Vater</li>
+<li><span class="answer-label">C</span>Von deiner Großmutter</li>
+<li class="correct"><span class="answer-label">D</span>Vom Großvater<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Hof gehörte deinem Großvater. Sein Vermächtnis ermöglicht dir den Neuanfang auf dem Land.</p>
+<p class="source">Faktenbeleg: <a href="https://store.steampowered.com/app/413150/Stardew_Valley/" rel="noreferrer">Stardew Valley on Steam</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-021"><div class="meta">aiko-quiz-gam-021 · Mittel · Spielmodi · Splatoon · Revision 1 · Startversion</div><h3>Was entscheidet den Revierkampf in Splatoon 3?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Die mit eigener Farbe bedeckte Bodenfläche<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Die Zahl der ausgeschalteten Gegner</li>
+<li><span class="answer-label">C</span>Die Zahl der Treffer auf Gegner</li>
+<li><span class="answer-label">D</span>Die zuerst erreichte Team-Punktzahl</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Im Revierkampf zählt am Ende die eingefärbte Fläche. Abschüsse allein bestimmen den Sieg nicht.</p>
+<p class="source">Faktenbeleg: <a href="https://splatoon.nintendo.com/en/news/beginner-basics-for-splatoon-3-the-ins-and-outs-of-playing-online/" rel="noreferrer">Splatoon™ 3 – Beginner Basics for Splatoon 3: The ins and outs of playing online – Official Nintendo Site</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-022"><div class="meta">aiko-quiz-gam-022 · Mittel · Figuren · Metroid · Revision 1 · Startversion</div><h3>Welcher Tätigkeit geht Samus Aran in Metroid nach?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Raumfrachterpilotin</li>
+<li class="correct"><span class="answer-label">B</span>Kopfgeldjägerin<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Raumpiratin</li>
+<li><span class="answer-label">D</span>Föderationsgeneralin</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Samus Aran ist eine Kopfgeldjägerin. Ihr gepanzerter Anzug ist ein Markenzeichen der Metroid-Reihe.</p>
+<p class="source">Faktenbeleg: <a href="https://metroid.nintendo.com/dread/" rel="noreferrer">Metroid™ Dread for the Nintendo Switch™ home gaming system</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-023"><div class="meta">aiko-quiz-gam-023 · Leicht · Figuren · Kirby · Revision 1 · Startversion</div><h3>Welche Farbe hat Kirby normalerweise?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Grün</li>
+<li><span class="answer-label">B</span>Orange</li>
+<li class="correct"><span class="answer-label">C</span>Rosa<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Blau</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Kirbys übliche Erscheinung ist rund und rosa. In seinen Spielen kann er Fähigkeiten anderer Wesen übernehmen.</p>
+<p class="source">Faktenbeleg: <a href="https://kirby.nintendo.com/about/" rel="noreferrer">The Official Home of Kirby™ - Official Game Site - About</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-024"><div class="meta">aiko-quiz-gam-024 · Leicht · Spielwelt · Donkey Kong · Revision 1 · Startversion</div><h3>Welche Früchte sind besonders eng mit Donkey Kong verbunden?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Kirschen</li>
+<li><span class="answer-label">B</span>Birnen</li>
+<li><span class="answer-label">C</span>Zitronen</li>
+<li class="correct"><span class="answer-label">D</span>Bananen<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Bananen sind ein wiederkehrender Bestandteil der Donkey-Kong-Spiele und ihrer Spielwelt.</p>
+<p class="source">Faktenbeleg: <a href="https://mario.nintendo.com/characters/" rel="noreferrer">The official home of Super Mario™ – Characters</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-025"><div class="meta">aiko-quiz-gam-025 · Leicht · Rennstrecken · Mario Kart · Revision 1 · Startversion</div><h3>Welche bekannte Mario-Kart-Strecke ist nach einem bunten Himmelsphänomen benannt?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Regenbogen-Boulevard<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Luigis Piste</li>
+<li><span class="answer-label">C</span>Marios Piste</li>
+<li><span class="answer-label">D</span>Toads Pilzpiste</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Regenbogen-Boulevard gehört in verschiedenen Fassungen zur Reihe. Sein namensgebender Regenbogen prägt die Streckengestaltung.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nintendo.com/de-de/Spiele/Super-Nintendo/Super-Mario-Kart-279580.html" rel="noreferrer">Nintendo: Super Mario Kart</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-026"><div class="meta">aiko-quiz-gam-026 · Mittel · Musik in Spielen · The Legend of Zelda · Revision 1 · Startversion</div><h3>Welches Instrument gibt Ocarina of Time seinen Namen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eine Trompete</li>
+<li class="correct"><span class="answer-label">B</span>Eine Okarina<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Eine Harfe</li>
+<li><span class="answer-label">D</span>Eine Geige</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Eine Okarina ist ein kleines Blasinstrument. Link nutzt die Okarina im Spiel für besondere Melodien.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nintendo.com/us/whatsnew/you-have-been-summoned-to-watch-the-new-legend-of-zelda-ocarina-of-time-overview-trailer/" rel="noreferrer">New trailer for The Legend of Zelda: Ocarina of Time - News - Nintendo Official Site</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-027"><div class="meta">aiko-quiz-gam-027 · Mittel · Spielwelt · Minecraft · Revision 1 · Startversion</div><h3>In welcher Minecraft-Dimension begegnet dir der Enderdrache?</h3><ol class="choices">
+<li><span class="answer-label">A</span>In der Oberwelt</li>
+<li><span class="answer-label">B</span>Im Tiefen Dunkel</li>
+<li class="correct"><span class="answer-label">C</span>Im Ende<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Im Nether</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Enderdrache lebt im Ende. Diese Dimension erreichst du über ein Endportal.</p>
+<p class="source">Faktenbeleg: <a href="https://www.minecraft.net/de-de/article/ender-dragon" rel="noreferrer">Minecraft: Ender Dragon</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-028"><div class="meta">aiko-quiz-gam-028 · Knifflig · Pokémon-Typen · Pokémon · Revision 1 · Startversion</div><h3>Welche Typenkombination hat Bisasam in den ersten Pokémon-Editionen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Pflanze und Boden</li>
+<li><span class="answer-label">B</span>Käfer und Gift</li>
+<li><span class="answer-label">C</span>Wasser und Pflanze</li>
+<li class="correct"><span class="answer-label">D</span>Pflanze und Gift<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Bisasam hat von Anfang an zwei Typen: Pflanze und Gift. Sein pflanzliches Aussehen allein verrät also nicht die ganze Kombination.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Erste Pokémon-Spielgeneration</p>
+<p class="source">Faktenbeleg: <a href="https://www.pokemon.com/us/animation/seasons/8/episode-28-hi-ho-silver-wind" rel="noreferrer">Hi Ho Silver Wind! | Pokemon.com</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-029"><div class="meta">aiko-quiz-gam-029 · Mittel · Spielwelt · Final Fantasy · Revision 1 · Startversion</div><h3>Was für ein Wesen ist ein Chocobo aus Final Fantasy?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Ein großer Vogel<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine kleine Drachenart</li>
+<li><span class="answer-label">C</span>Ein lebender Kristall</li>
+<li><span class="answer-label">D</span>Ein gepanzerter Fisch</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Chocobos sind große Vögel. In vielen Final-Fantasy-Spielen dienen sie als Reittiere.</p>
+<p class="source">Faktenbeleg: <a href="https://na.finalfantasy.com/topics/408" rel="noreferrer">FF Weekly: December 22nd Remember When... | TOPICS | FINAL FANTASY PORTAL SITE | SQUARE ENIX</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-030"><div class="meta">aiko-quiz-gam-030 · Leicht · Maskottchen · Dragon Quest · Revision 1 · Startversion</div><h3>Zu welcher Spielereihe gehört das bekannte blaue Schleimmonster namens Slime?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Dragon&#x27;s Lair</li>
+<li class="correct"><span class="answer-label">B</span>Dragon Quest<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Dragon Age</li>
+<li><span class="answer-label">D</span>Dragon&#x27;s Dogma</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der tropfenförmige Slime ist eines der bekanntesten Monster und ein Erkennungszeichen von Dragon Quest.</p>
+<p class="source">Faktenbeleg: <a href="https://www.square-enix-games.com/en_US/news/10-square-enix-series-final-fantasy-fans-will-love" rel="noreferrer">10 Square Enix series FINAL FANTASY fans will love | Square Enix Blog</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-031"><div class="meta">aiko-quiz-gam-031 · Leicht · Figuren · Tomb Raider · Revision 1 · Startversion</div><h3>Wie heißt die Hauptfigur der Tomb-Raider-Reihe?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Aloy</li>
+<li><span class="answer-label">B</span>Faith Connors</li>
+<li class="correct"><span class="answer-label">C</span>Lara Croft<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Jill Valentine</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Lara Croft ist die Archäologin und Abenteurerin hinter dem Namen Tomb Raider.</p>
+<p class="source">Faktenbeleg: <a href="https://www.tombraider.com/news/collaborations/the-30th-anniversary-of-tomb-raider-is-here" rel="noreferrer">Tomb Raider | The 30th Anniversary of Tomb Raider is Here!</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-032"><div class="meta">aiko-quiz-gam-032 · Knifflig · Figuren · Crash Bandicoot · Revision 1 · Startversion</div><h3>Welcher Tiergruppe gehört Crash Bandicoot an?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Nagetiere</li>
+<li><span class="answer-label">B</span>Raubvögel</li>
+<li><span class="answer-label">C</span>Amphibien</li>
+<li class="correct"><span class="answer-label">D</span>Beuteltiere<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Bandicoot ist ein Beuteltier. Crash ist daher trotz seiner stilisierten Gestalt kein Fuchs oder Nagetier.</p>
+<p class="source">Faktenbeleg: <a href="https://www.crashbandicoot.com/home.jsp" rel="noreferrer">Crash Bandicoot | N.Sane Trilogy</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-033"><div class="meta">aiko-quiz-gam-033 · Leicht · Figuren · The Witcher · Revision 2 · Startversion</div><h3>Wofür wird Geralt als Hexer in The Witcher 3 hauptsächlich angeheuert?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Für die Jagd auf Monster<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Für die Anfertigung von Waffen</li>
+<li><span class="answer-label">C</span>Für den Handel mit Heilkräutern</li>
+<li><span class="answer-label">D</span>Für den Dienst als Hofmagier</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Hexer wie Geralt sind auf die Jagd nach Monstern spezialisiert. Ihre Dienste bieten sie gegen Bezahlung an.</p>
+<p class="source">Faktenbeleg: <a href="https://www.thewitcher.com/us/en/witcher3" rel="noreferrer">Play the acclaimed open-world RPG: The Witcher 3: Wild Hunt</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-034"><div class="meta">aiko-quiz-gam-034 · Mittel · Spielwelten · Warcraft · Revision 1 · Startversion</div><h3>Wie heißt die Welt, in der ein großer Teil von World of Warcraft spielt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Midgar</li>
+<li class="correct"><span class="answer-label">B</span>Azeroth<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Tamriel</li>
+<li><span class="answer-label">D</span>Hyrule</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Azeroth ist die Heimat zahlreicher Völker von Warcraft. Nicht jedes Abenteuer bleibt jedoch auf dieser Welt.</p>
+<p class="source">Faktenbeleg: <a href="https://worldofwarcraft.blizzard.com/en-us/forever/" rel="noreferrer">World of Warcraft: Forever</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-035"><div class="meta">aiko-quiz-gam-035 · Mittel · Spielziele · League of Legends · Revision 1 · Startversion</div><h3>Welches Ereignis entscheidet auf der Kluft der Beschwörer den Sieg?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Zerstörung aller äußeren Türme</li>
+<li><span class="answer-label">B</span>Die Zerstörung des ersten Inhibitors</li>
+<li class="correct"><span class="answer-label">C</span>Die Zerstörung des gegnerischen Nexus<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Der erste besiegte Baron Nashor</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> In League of Legends entscheidet die Zerstörung des gegnerischen Nexus das Spiel auf dieser Karte.</p>
+<p class="source">Faktenbeleg: <a href="https://www.leagueoflegends.com/en-us/how-to-play/" rel="noreferrer">League of Legends How to Play</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-036"><div class="meta">aiko-quiz-gam-036 · Leicht · Pen-and-Paper · Dungeons &amp; Dragons · Revision 2 · Startversion</div><h3>Wie viele Seiten hat der Würfel, mit dem du in D&amp;D 5 gewöhnlich Angriffsproben ablegst?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Zwölf</li>
+<li><span class="answer-label">B</span>Acht</li>
+<li><span class="answer-label">C</span>Sechs</li>
+<li class="correct"><span class="answer-label">D</span>Zwanzig<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Für eine Angriffsprobe würfelst du gewöhnlich mit einem zwanzigseitigen Würfel und rechnest passende Modifikatoren hinzu.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Dungeons &amp; Dragons, fünfte Edition; gewöhnliche Angriffsprobe</p>
+<p class="source">Faktenbeleg: <a href="https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game" rel="noreferrer">D&amp;D Free Rules: Playing the Game</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-037"><div class="meta">aiko-quiz-gam-037 · Mittel · Brettspiele · Schach · Revision 1 · Startversion</div><h3>Welche Schachfigur darf bei ihrem normalen Zug andere Figuren überspringen?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Der Springer<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Der Läufer</li>
+<li><span class="answer-label">C</span>Der Turm</li>
+<li><span class="answer-label">D</span>Die Dame</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Springer zieht in einem L-Muster und darf dabei über andere Figuren springen.</p>
+<p class="source">Faktenbeleg: <a href="https://handbook.fide.com/chapter/e012023" rel="noreferrer">E. MISCELLANEOUS / 01. Laws of Chess / FIDE Laws of Chess taking effect from 1 January 2023 /  FIDE Handbook</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-038"><div class="meta">aiko-quiz-gam-038 · Leicht · Klassische Spiele · Schere, Stein, Papier · Revision 1 · Startversion</div><h3>Welche Handform schlägt den Stein bei Schere, Stein, Papier?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Keine der drei</li>
+<li class="correct"><span class="answer-label">B</span>Papier<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Schere</li>
+<li><span class="answer-label">D</span>Stein</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Papier schlägt Stein, Stein schlägt Schere und Schere schlägt Papier. Gleiche Handformen ergeben ein Unentschieden.</p>
+<p class="source">Faktenbeleg: <a href="https://wrpsa.com/de/regeln" rel="noreferrer">Offizielle WRPSA Schere Stein Papier Regeln v1.0</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-039"><div class="meta">aiko-quiz-gam-039 · Knifflig · Spielegeschichte · Tetris · Revision 1 · Startversion</div><h3>Wer entwickelte das ursprüngliche Tetris?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Hideo Kojima</li>
+<li><span class="answer-label">B</span>Sid Meier</li>
+<li class="correct"><span class="answer-label">C</span>Alexei Paschitnow<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Shigeru Miyamoto</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Alexei Paschitnow entwickelte Tetris 1984. Sein Name wird international häufig Alexey Pajitnov geschrieben.</p>
+<p class="source">Faktenbeleg: <a href="https://play.tetris.com/about" rel="noreferrer">About Tetris | Tetris</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-gam-040"><div class="meta">aiko-quiz-gam-040 · Knifflig · Adventure-Klassiker · Monkey Island · Revision 1 · Startversion</div><h3>Wie heißt die Hauptfigur der Monkey-Island-Abenteuer?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Gordon Freeman</li>
+<li><span class="answer-label">B</span>Nathan Drake</li>
+<li><span class="answer-label">C</span>Max Payne</li>
+<li class="correct"><span class="answer-label">D</span>Guybrush Threepwood<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Guybrush Threepwood ist der Held der Monkey-Island-Abenteuer. Piraten und humorvolle Rätsel prägen die Reihe.</p>
+<p class="source">Faktenbeleg: <a href="https://store.steampowered.com/app/2060130/Return_to_Monkey_Island/" rel="noreferrer">Return to Monkey Island on Steam</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<section id="anime_manga"><h2>Anime und Manga <span class="meta">30 Fragen</span></h2>
+<article id="aiko-quiz-ani-001"><div class="meta">aiko-quiz-ani-001 · Leicht · Hauptfiguren · Dragon Ball · Revision 1 · Startversion</div><h3>Welcher Held steht im Mittelpunkt vieler Dragon-Ball-Abenteuer?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Son Goku<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Naruto Uzumaki</li>
+<li><span class="answer-label">C</span>Monkey D. Ruffy</li>
+<li><span class="answer-label">D</span>Ichigo Kurosaki</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Son Goku begleitet die Reihe von seinen frühen Abenteuern an. Bulma begegnet ihm bereits am Anfang der Geschichte.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/dragon-ball" rel="noreferrer">VIZ | The Official Website for Dragon Ball Manga</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-002"><div class="meta">aiko-quiz-ani-002 · Leicht · Ausgangssituation · One Piece · Revision 1 · Startversion</div><h3>Welchen großen Traum verfolgt Ruffy in One Piece?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Alchemistenexamen bestehen</li>
+<li class="correct"><span class="answer-label">B</span>König der Piraten werden<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Hokage werden</li>
+<li><span class="answer-label">D</span>Pokémon-Meister werden</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Monkey D. Ruffy reist mit seiner Mannschaft auf der Suche nach dem One Piece. Sein Ziel ist der Titel König der Piraten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/one-piece" rel="noreferrer">VIZ | One Piece Manga</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-003"><div class="meta">aiko-quiz-ani-003 · Leicht · Ausgangssituation · Naruto · Revision 1 · Startversion</div><h3>Welche Art Kämpfer ist Naruto Uzumaki?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Gladiator</li>
+<li><span class="answer-label">B</span>Ein Ritter</li>
+<li class="correct"><span class="answer-label">C</span>Ein Ninja<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Ein Samurai</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Naruto gehört zu einer Welt von Shinobi, also Ninja. Seine Geschichte beginnt als junger Schüler.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/naruto" rel="noreferrer">VIZ | The Official Website for Naruto Shippuden</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-004"><div class="meta">aiko-quiz-ani-004 · Mittel · Hauptfiguren · Sailor Moon · Revision 1 · Startversion</div><h3>Wie lautet Sailor Moons japanischer Alltagsname?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Rei Ayanami</li>
+<li><span class="answer-label">B</span>Sakura Kinomoto</li>
+<li><span class="answer-label">C</span>Nami</li>
+<li class="correct"><span class="answer-label">D</span>Usagi Tsukino<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Usagi Tsukino verwandelt sich in Sailor Moon. In älteren deutschen Fassungen ist sie auch als Bunny bekannt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/sailor-moon" rel="noreferrer">VIZ | The Official Website for Pretty Guardian Sailor Moon</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-005"><div class="meta">aiko-quiz-ani-005 · Leicht · Ausgangssituation · Death Note · Revision 1 · Startversion</div><h3>Welcher Gegenstand verleiht Light Yagami in Death Note Macht über Leben und Tod?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Ein Notizbuch<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine Taschenuhr</li>
+<li><span class="answer-label">C</span>Ein Ring</li>
+<li><span class="answer-label">D</span>Eine Spielkarte</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das Death Note ist ein übernatürliches Notizbuch. Seine Regeln bestimmen, was das Eintragen eines Namens bewirken kann.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/death-note" rel="noreferrer">VIZ | The Official Website for Death Note</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-006"><div class="meta">aiko-quiz-ani-006 · Leicht · Ausgangssituation · Pokémon · Revision 2 · Startversion</div><h3>Welches Pokémon ist Ashs ständiger Begleiter in der ursprünglichen Anime-Serie?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Glumanda</li>
+<li class="correct"><span class="answer-label">B</span>Pikachu<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Bisasam</li>
+<li><span class="answer-label">D</span>Schiggy</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ash und Pikachu reisen in der ursprünglichen Anime-Serie gemeinsam durch verschiedene Regionen.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Ashs ursprüngliche Anime-Serie; keine Aussage über spätere Hauptfiguren</p>
+<p class="source">Faktenbeleg: <a href="https://www.pokemon.com/us/animation/seasons/14/episode-1-in-the-shadow-of-zekrom" rel="noreferrer">In the Shadow of Zekrom! | Pokemon.com</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-007"><div class="meta">aiko-quiz-ani-007 · Mittel · Filmschaffende · Studio Ghibli · Revision 1 · Startversion</div><h3>Wer führte bei Mein Nachbar Totoro Regie?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Mamoru Hosoda</li>
+<li><span class="answer-label">B</span>Satoshi Kon</li>
+<li class="correct"><span class="answer-label">C</span>Hayao Miyazaki<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Makoto Shinkai</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Hayao Miyazaki inszenierte den Film für Studio Ghibli. Die Geschichte folgt den Schwestern Satsuki und Mei.</p>
+<p class="source">Faktenbeleg: <a href="https://gkids.com/films/my-neighbor-totoro/" rel="noreferrer">My Neighbor Totoro - GKIDS Films</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-008"><div class="meta">aiko-quiz-ani-008 · Mittel · Schauplätze · Studio Ghibli · Revision 1 · Startversion</div><h3>An welchem magischen Ort arbeitet Chihiro bei Yubaba?</h3><ol class="choices">
+<li><span class="answer-label">A</span>In einem Uhrengeschäft</li>
+<li><span class="answer-label">B</span>In einer Bäckerei</li>
+<li><span class="answer-label">C</span>In einer Sternwarte</li>
+<li class="correct"><span class="answer-label">D</span>In einem Badehaus<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> In Chihiros Reise ins Zauberland wird Chihiro im Badehaus beschäftigt. Dort begegnen ihr zahlreiche Geisterwesen.</p>
+<p class="source">Faktenbeleg: <a href="https://gkids.com/films/spirited-away/" rel="noreferrer">Spirited Away - GKIDS Films</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-009"><div class="meta">aiko-quiz-ani-009 · Mittel · Hauptfiguren · Studio Ghibli · Revision 1 · Startversion</div><h3>Wie heißt die junge Hutmacherin aus Das wandelnde Schloss?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Sophie<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Chihiro</li>
+<li><span class="answer-label">C</span>Kiki</li>
+<li><span class="answer-label">D</span>San</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Sophie wird durch einen Fluch in eine alte Frau verwandelt. Auf der Suche nach Hilfe gelangt sie in das wandelnde Schloss.</p>
+<p class="source">Faktenbeleg: <a href="https://gkids.com/films/howls-moving-castle/" rel="noreferrer">Howl&#x27;s Moving Castle - GKIDS Films</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-010"><div class="meta">aiko-quiz-ani-010 · Mittel · Figuren · Studio Ghibli · Revision 1 · Startversion</div><h3>Von welchen Tieren wurde San in Prinzessin Mononoke aufgezogen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Bären</li>
+<li class="correct"><span class="answer-label">B</span>Wölfen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Hirschen</li>
+<li><span class="answer-label">D</span>Füchsen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> San lebt bei den Wölfen und setzt sich für den Wald ein. Ihr Konflikt mit den Menschen ist ein zentraler Teil des Films.</p>
+<p class="source">Faktenbeleg: <a href="https://gkids.com/films/princess-mononoke/" rel="noreferrer">Princess Mononoke - GKIDS Films</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-011"><div class="meta">aiko-quiz-ani-011 · Leicht · Hauptfiguren · One-Punch Man · Revision 1 · Startversion</div><h3>Wie heißt der kahlköpfige Held von One-Punch Man?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Garo</li>
+<li><span class="answer-label">B</span>Mumen Rider</li>
+<li class="correct"><span class="answer-label">C</span>Saitama<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Genos</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Saitama ist so stark geworden, dass ihm ein ebenbürtiger Gegner fehlt. Daraus entsteht ein großer Teil der Komik.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/one-punch-man" rel="noreferrer">VIZ | The Official Website for One-Punch Man</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-012"><div class="meta">aiko-quiz-ani-012 · Leicht · Figuren · Demon Slayer · Revision 1 · Startversion</div><h3>Wie heißt Tanjiros Schwester in Demon Slayer?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Sakura</li>
+<li><span class="answer-label">B</span>Nami</li>
+<li><span class="answer-label">C</span>Asuna</li>
+<li class="correct"><span class="answer-label">D</span>Nezuko<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Nezuko Kamado ist Tanjiros jüngere Schwester. Ihr Schicksal setzt seine Reise in Gang.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/demon-slayer-kimetsu-no-yaiba" rel="noreferrer">VIZ | The Official Website for Demon Slayer: Kimetsu no Yaiba</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-013"><div class="meta">aiko-quiz-ani-013 · Leicht · Ausgangssituation · Attack on Titan · Revision 2 · Startversion</div><h3>Wie heißen die menschenfressenden Riesen innerhalb der Serie Attack on Titan?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Titanen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Ghule</li>
+<li><span class="answer-label">C</span>Dämonen</li>
+<li><span class="answer-label">D</span>Drachen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die als Titanen bezeichneten Riesen bedrohen die Menschen. Zu Beginn sucht die Bevölkerung Schutz hinter gewaltigen Mauern.</p>
+<p class="source">Faktenbeleg: <a href="https://kodansha.us/series/attack-on-titan/" rel="noreferrer">Attack on Titan – Kodansha – By Hajime Isayama | Digital manga series | Kodansha</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-014"><div class="meta">aiko-quiz-ani-014 · Mittel · Begriffe · My Hero Academia · Revision 1 · Startversion</div><h3>Wie werden die besonderen Kräfte in My Hero Academia häufig genannt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Nen</li>
+<li class="correct"><span class="answer-label">B</span>Quirks<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Jutsu</li>
+<li><span class="answer-label">D</span>Stands</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Quirks ist die internationale Bezeichnung für die verbreiteten Superkräfte. In deutschen Fassungen findet sich auch der Begriff Spezialitäten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/my-hero-academia" rel="noreferrer">VIZ | The Official Website for My Hero Academia Manga</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-015"><div class="meta">aiko-quiz-ani-015 · Mittel · Figuren · Fullmetal Alchemist · Revision 1 · Startversion</div><h3>Welchen Familiennamen tragen Edward und Alphonse in Fullmetal Alchemist?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Joestar</li>
+<li><span class="answer-label">B</span>Kurosaki</li>
+<li class="correct"><span class="answer-label">C</span>Elric<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Uchiha</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Edward und Alphonse Elric sind die Brüder im Zentrum der Geschichte. Sie suchen nach einem Weg, die Folgen eines Rituals rückgängig zu machen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/fullmetal-alchemist" rel="noreferrer">VIZ | The Official Website for Fullmetal Alchemist</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-016"><div class="meta">aiko-quiz-ani-016 · Mittel · Hauptfiguren · Detektiv Conan · Revision 1 · Startversion</div><h3>Wie heißt der Oberschüler, der als Detektiv Conan in einem Kinderkörper lebt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Light Yagami</li>
+<li><span class="answer-label">B</span>Shoyo Hinata</li>
+<li><span class="answer-label">C</span>Eren Jäger</li>
+<li class="correct"><span class="answer-label">D</span>Shinichi Kudo<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Shinichi Kudo wird durch ein Gift in ein Kind verwandelt. Unter dem Namen Conan Edogawa ermittelt er weiter.</p>
+<p class="source">Faktenbeleg: <a href="https://www.egmont-manga.de/media/y55mjvxd/shinkan_h15_web.pdf" rel="noreferrer">Egmont Manga: Shinkan Herbst 2015 — Detektiv Conan</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-017"><div class="meta">aiko-quiz-ani-017 · Leicht · Sportserien · Haikyu!! · Revision 1 · Startversion</div><h3>Welche Sportart steht im Mittelpunkt von Haikyu!!?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Volleyball<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Basketball</li>
+<li><span class="answer-label">C</span>Handball</li>
+<li><span class="answer-label">D</span>Baseball</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Shoyo Hinata möchte sich im Volleyball behaupten. Seine geringe Körpergröße macht seinen Ehrgeiz besonders bemerkenswert.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/haikyu" rel="noreferrer">VIZ | The Official Website for Haikyu!! Manga</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-018"><div class="meta">aiko-quiz-ani-018 · Leicht · Sportserien · Captain Tsubasa · Revision 1 · Startversion</div><h3>Welche Sportart spielen die Hauptfiguren von Captain Tsubasa?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eishockey</li>
+<li class="correct"><span class="answer-label">B</span>Fußball<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Tennis</li>
+<li><span class="answer-label">D</span>Rugby</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Captain Tsubasa erzählt von Fußballtalenten und ihren sportlichen Rivalitäten. Im Mittelpunkt steht Tsubasa Ozora.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bandainamcoent.com/news/captain-tsubasa-2-world-fighters-brings-anime-soccer-battle-action-to-the-pitch-in-2026" rel="noreferrer">CAPTAIN TSUBASA 2: WORLD FIGHTERS Brings Anime Soccer Battle Action to the Pitch in 2026 | Bandai Namco Entertainment America Inc.</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-019"><div class="meta">aiko-quiz-ani-019 · Leicht · Spielserien · Yu-Gi-Oh! · Revision 1 · Startversion</div><h3>Welche Art Duelle prägt die Fernsehserie Yu-Gi-Oh! mit Yugi und Duel Monsters?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Autorennen</li>
+<li><span class="answer-label">B</span>Fechtkämpfe</li>
+<li class="correct"><span class="answer-label">C</span>Sammelkartenduelle<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Schachpartien</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Kartenduelle mit beschworenen Monstern sind ein Markenzeichen der Serie. Das ursprüngliche Manga behandelt daneben weitere Spiele.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Yu-Gi-Oh! Duel Monsters mit Yugi, nicht die frühere erste Anime-Adaption</p>
+<p class="source">Faktenbeleg: <a href="https://www.yugioh.com/yu-gi-oh" rel="noreferrer">Yu-Gi-Oh! Season 1 Synopsis, Characters, Cards &amp; Episodes</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-020"><div class="meta">aiko-quiz-ani-020 · Leicht · Schauplätze · Digimon · Revision 1 · Startversion</div><h3>In welche besondere Welt geraten die Kinder in Digimon Adventure?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Welt der Träume</li>
+<li><span class="answer-label">B</span>Eine versunkene Unterwasserwelt</li>
+<li><span class="answer-label">C</span>Die Welt der Geister</li>
+<li class="correct"><span class="answer-label">D</span>Die digitale Welt<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Kinder gelangen in die digitale Welt und treffen dort auf Digimon. Ihre Rückkehr nach Hause wird zum Abenteuer.</p>
+<p class="source">Faktenbeleg: <a href="https://www.toei-animation.com/catalog/digimon/" rel="noreferrer">Digimon - Toei Animation</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-021"><div class="meta">aiko-quiz-ani-021 · Mittel · Ausgangssituation · Cowboy Bebop · Revision 1 · Startversion</div><h3>Womit verdient die Crew der Bebop in Cowboy Bebop ihr Geld?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Mit Kopfgeldjagd<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Mit regulären Frachttransporten</li>
+<li><span class="answer-label">C</span>Mit Aufträgen zur Planetenvermessung</li>
+<li><span class="answer-label">D</span>Mit dem Betrieb von Raumstationen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Crew jagt gesuchte Personen im Weltraum. Die erhoffte Belohnung löst ihre Geldprobleme allerdings selten dauerhaft.</p>
+<p class="source">Faktenbeleg: <a href="https://www.crunchyroll.com/series/GYVNXMVP6/cowboy-bebop" rel="noreferrer">Watch Cowboy Bebop - Crunchyroll</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-022"><div class="meta">aiko-quiz-ani-022 · Mittel · Ausgangssituation · Neon Genesis Evangelion · Revision 1 · Startversion</div><h3>Was steuert Shinji Ikari in Neon Genesis Evangelion?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Einen Patlabor</li>
+<li class="correct"><span class="answer-label">B</span>Eine Eva-Einheit<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Einen Gundam</li>
+<li><span class="answer-label">D</span>Ein Knightmare Frame</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Shinji wird als Pilot einer Eva-Einheit eingesetzt. Die Geschichte verbindet die Kämpfe mit den Belastungen ihrer jungen Piloten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.netflix.com/title/81033445?fromWatch=true" rel="noreferrer">Watch Neon Genesis Evangelion | Netflix</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-023"><div class="meta">aiko-quiz-ani-023 · Knifflig · Manga-Geschichte · Astro Boy · Revision 1 · Startversion</div><h3>Welcher Manga-Künstler erschuf Astro Boy?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Akira Toriyama</li>
+<li><span class="answer-label">B</span>Gosho Aoyama</li>
+<li class="correct"><span class="answer-label">C</span>Osamu Tezuka<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Eiichiro Oda</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Astro Boy gehört zu den bekanntesten Werken von Osamu Tezuka. Die Figur wurde auch durch ihre Fernsehserien international bekannt.</p>
+<p class="source">Faktenbeleg: <a href="https://tezukaosamu.net/en/anime/30.html" rel="noreferrer">Astro Boy｜ANIMATION｜TEZUKA OSAMU OFFICIAL</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-024"><div class="meta">aiko-quiz-ani-024 · Knifflig · Manga-Schaffende · Akira · Revision 1 · Startversion</div><h3>Wer schuf den Manga Akira?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Naoko Takeuchi</li>
+<li><span class="answer-label">B</span>Masashi Kishimoto</li>
+<li><span class="answer-label">C</span>Hirohiko Araki</li>
+<li class="correct"><span class="answer-label">D</span>Katsuhiro Otomo<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Katsuhiro Otomo ist der Schöpfer von Akira. Der Manga spielt im dystopischen Neo-Tokio.</p>
+<p class="source">Faktenbeleg: <a href="https://kodansha.us/series/akira/" rel="noreferrer">AKIRA by Katsuhiro Otomo – Manga Series | Kodansha</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-025"><div class="meta">aiko-quiz-ani-025 · Leicht · Grundregeln · Dragon Ball · Revision 1 · Startversion</div><h3>Wie viele gewöhnliche Dragon Balls werden für Shenlongs Beschwörung auf der Erde gesammelt?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Sieben<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Drei</li>
+<li><span class="answer-label">C</span>Fünf</li>
+<li><span class="answer-label">D</span>Neun</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der klassische Satz besteht aus sieben Kugeln. Andere Kugelsätze und spätere Varianten machen die Eingrenzung auf den Erdsatz wichtig.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/dragon-ball" rel="noreferrer">VIZ | The Official Website for Dragon Ball Manga</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-026"><div class="meta">aiko-quiz-ani-026 · Leicht · Figurenmerkmale · One Piece · Revision 1 · Startversion</div><h3>Welche Kopfbedeckung ist Ruffys Markenzeichen in One Piece?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Cowboyhut</li>
+<li class="correct"><span class="answer-label">B</span>Ein Strohhut<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Eine Krone</li>
+<li><span class="answer-label">D</span>Ein Zylinder</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ruffys Strohhut ist so charakteristisch, dass auch seine Mannschaft als Strohhutbande bekannt ist.</p>
+<p class="source">Faktenbeleg: <a href="https://one-piece.com/character/luffy/index.html" rel="noreferrer">モンキー・D・ルフィ | キャラクター検索 | ONE PIECE.com（ワンピース ドットコム）</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-027"><div class="meta">aiko-quiz-ani-027 · Mittel · Schauplätze · Naruto · Revision 1 · Startversion</div><h3>Wie heißt Narutos Heimatdorf, das für sein Blatt-Symbol bekannt ist?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Kirigakure</li>
+<li><span class="answer-label">B</span>Iwagakure</li>
+<li class="correct"><span class="answer-label">C</span>Konoha<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Sunagakure</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Konoha ist die Kurzform von Konohagakure. Das Dorf wird häufig als Dorf hinter den Blättern bezeichnet.</p>
+<p class="source">Faktenbeleg: <a href="https://naruto-official.com/en/about" rel="noreferrer">ABOUT NARUTO | NARUTO OFFICIAL SITE (NARUTO &amp; BORUTO)</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-028"><div class="meta">aiko-quiz-ani-028 · Knifflig · Entstehung · One-Punch Man · Revision 1 · Startversion</div><h3>Unter welchem Künstlernamen entstand die ursprüngliche Webcomic-Fassung von One-Punch Man?</h3><ol class="choices">
+<li><span class="answer-label">A</span>CLAMP</li>
+<li><span class="answer-label">B</span>Boichi</li>
+<li><span class="answer-label">C</span>Yana Toboso</li>
+<li class="correct"><span class="answer-label">D</span>ONE<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> ONE erschuf die ursprüngliche Fassung. Die bekannte Manga-Neuzeichnung entstand mit Yusuke Murata.</p>
+<p class="source">Faktenbeleg: <a href="https://www.viz.com/one-punch-man" rel="noreferrer">VIZ | The Official Website for One-Punch Man</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-029"><div class="meta">aiko-quiz-ani-029 · Leicht · Medienwissen · Revision 2 · Startversion</div><h3>Wo beginnt die Leserichtung auf einer übersichtlich angeordneten japanischen Manga-Seite üblicherweise?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Oben rechts<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Oben links</li>
+<li><span class="answer-label">C</span>Unten rechts</li>
+<li><span class="answer-label">D</span>Unten links</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Du beginnst normalerweise oben rechts und folgst den Panels nach links und nach unten. Viele deutsche Manga-Ausgaben behalten diese Leserichtung bei.</p>
+<p class="source">Faktenbeleg: <a href="https://www.carlsen.de/manga/ebooks-emanga" rel="noreferrer">Unsere Manga als Ebook lesen: So geht&#x27;s</a> · Seite gelesen · 25.10.2026</p>
+<p class="source">Faktenbeleg: <a href="https://static.prod.ecom.mueller.de/products/9783551026545/9783551026545_leseprobe_01.pdf" rel="noreferrer">Carlsen Manga: Tokyo Revengers Leseprobe — Anleitung zur Leserichtung</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-ani-030"><div class="meta">aiko-quiz-ani-030 · Knifflig · Hauptfiguren · Ghost in the Shell · Revision 1 · Startversion</div><h3>Wie heißt die als Major bekannte Cyborg-Ermittlerin in Ghost in the Shell?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Revy</li>
+<li class="correct"><span class="answer-label">B</span>Motoko Kusanagi<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Misato Katsuragi</li>
+<li><span class="answer-label">D</span>Faye Valentine</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Major Motoko Kusanagi ermittelt in einer Welt, in der die Grenze zwischen Mensch und Maschine verschwimmt.</p>
+<p class="source">Faktenbeleg: <a href="https://kodansha.us/series/the-ghost-in-the-shell/" rel="noreferrer">The Ghost in the Shell – Kodansha – By Shirow Masamune | Digital manga series | Kodansha</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<section id="science_fiction"><h2>Science-Fiction <span class="meta">30 Fragen</span></h2>
+<article id="aiko-quiz-sci-001"><div class="meta">aiko-quiz-sci-001 · Leicht · Ausrüstung · Star Wars · Revision 1 · Startversion</div><h3>Welche Waffe ist besonders mit Jedi und Sith verbunden?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Schall-Schraubenzieher</li>
+<li><span class="answer-label">B</span>Portalgerät</li>
+<li class="correct"><span class="answer-label">C</span>Lichtschwert<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Phaser</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Lichtschwerter gehören zur Bildsprache von Star Wars. Ihre Klingen bestehen innerhalb der Geschichte aus gebündelter Energie.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/lightsaber" rel="noreferrer">Lightsaber | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-002"><div class="meta">aiko-quiz-sci-002 · Mittel · Raumschiffe · Star Wars · Revision 1 · Startversion</div><h3>Welches Raumschiff steuert Han Solo gemeinsam mit Chewbacca?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Enterprise</li>
+<li><span class="answer-label">B</span>Die Voyager</li>
+<li><span class="answer-label">C</span>Die Serenity</li>
+<li class="correct"><span class="answer-label">D</span>Den Millennium Falken<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Han Solo und Chewbacca fliegen den Millennium Falken. Der Frachter spielt in mehreren Filmen eine wichtige Rolle.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/han-solo" rel="noreferrer">Han Solo | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-003"><div class="meta">aiko-quiz-sci-003 · Leicht · Weltkonzepte · Star Wars · Revision 1 · Startversion</div><h3>Wie heißt das Energiefeld, auf das Jedi ihre besonderen Fähigkeiten zurückführen?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Die Macht<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Die Matrix</li>
+<li><span class="answer-label">C</span>Die Gewürzmelange</li>
+<li><span class="answer-label">D</span>Der Warp-Antrieb</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Macht verbindet in Star Wars das Leben in der Galaxis. Jedi und Sith gehen unterschiedlich mit ihr um.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/the-force" rel="noreferrer">The Force | Star Wars Databank | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-004"><div class="meta">aiko-quiz-sci-004 · Leicht · Figuren · Star Wars · Revision 1 · Startversion</div><h3>Welchen Namen trug Darth Vader als Jedi?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Mace Windu</li>
+<li class="correct"><span class="answer-label">B</span>Anakin Skywalker<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Obi-Wan Kenobi</li>
+<li><span class="answer-label">D</span>Qui-Gon Jinn</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Anakin Skywalker wird zu Darth Vader. Seine Vergangenheit ist ein zentraler Teil der Filmgeschichte.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/darth-vader" rel="noreferrer">Darth Vader | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-005"><div class="meta">aiko-quiz-sci-005 · Mittel · Schauplätze · Star Wars · Revision 1 · Startversion</div><h3>Wie viele Sonnen stehen am Himmel von Tatooine?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Drei</li>
+<li><span class="answer-label">B</span>Vier</li>
+<li class="correct"><span class="answer-label">C</span>Zwei<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Eine</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Tatooine umkreist zwei Sonnen. Ihr gemeinsamer Untergang gehört zu den bekannten Bildern der Reihe.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/tatooine" rel="noreferrer">Tatooine | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-006"><div class="meta">aiko-quiz-sci-006 · Knifflig · Technik der Spielwelt · Star Wars · Revision 1 · Startversion</div><h3>Zu welcher Droidenklasse gehört R2-D2?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Protokolldroiden</li>
+<li><span class="answer-label">B</span>Kampfdroiden</li>
+<li><span class="answer-label">C</span>Medizindroiden</li>
+<li class="correct"><span class="answer-label">D</span>Astromech-Droiden<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> R2-D2 ist ein Astromech-Droide und unterstützt unter anderem bei der Wartung von Raumschiffen. C-3PO ist dagegen ein Protokolldroide.</p>
+<p class="source">Faktenbeleg: <a href="https://www.starwars.com/databank/r2-d2" rel="noreferrer">R2-D2 | StarWars.com</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-007"><div class="meta">aiko-quiz-sci-007 · Leicht · Raumschiffe · Star Trek · Revision 1 · Startversion</div><h3>Welches Raumschiff ist besonders mit Captain Kirk verbunden?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Die Enterprise<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Der Millennium Falke</li>
+<li><span class="answer-label">C</span>Die Nostromo</li>
+<li><span class="answer-label">D</span>Die Galactica</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Kirk ist ein Captain der U.S.S. Enterprise. Das Schiff und seine Besatzung erkunden in Star Trek das All.</p>
+<p class="source">Faktenbeleg: <a href="https://www.startrek.com/series/star-trek-the-original-series" rel="noreferrer">Star Trek: The Original Series</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-008"><div class="meta">aiko-quiz-sci-008 · Leicht · Figuren · Star Trek · Revision 1 · Startversion</div><h3>Spock ist halb Mensch und halb Angehöriger welchen Volkes?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Borg</li>
+<li class="correct"><span class="answer-label">B</span>Vulkanier<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Klingonen</li>
+<li><span class="answer-label">D</span>Ferengi</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Spocks Mutter ist ein Mensch, sein Vater ein Vulkanier. Beide Seiten seiner Herkunft sind für die Figur wichtig.</p>
+<p class="source">Faktenbeleg: <a href="https://www.startrek.com/news/ethan-peck-cast-as-discovery-s-spock" rel="noreferrer">Ethan Peck Cast as Discovery&#x27;s Spock</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-009"><div class="meta">aiko-quiz-sci-009 · Leicht · Technik der Spielwelt · Star Trek · Revision 1 · Startversion</div><h3>Wie nennt man in Star Trek den Transport von Personen per Transporter umgangssprachlich?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Einfrieren</li>
+<li><span class="answer-label">B</span>Klonen</li>
+<li class="correct"><span class="answer-label">C</span>Beamen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Warpflug</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Beim Beamen werden Personen mit einem Transporter versetzt. Ein Warpflug bewegt dagegen ein Raumschiff.</p>
+<p class="source">Faktenbeleg: <a href="https://www.startrek.com/videos/calgary-beams-transporter" rel="noreferrer">Calgary Beams Up Transporter</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-010"><div class="meta">aiko-quiz-sci-010 · Mittel · Technik der Spielwelt · Star Trek · Revision 2 · Startversion</div><h3>Wofür ist ein Holodeck in Star Trek vor allem gedacht?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Zum Beamen von Personen</li>
+<li><span class="answer-label">B</span>Zum Beschleunigen des Schiffs auf Warpgeschwindigkeit</li>
+<li><span class="answer-label">C</span>Zum Erzeugen der Schutzschilde um das Schiff</li>
+<li class="correct"><span class="answer-label">D</span>Zum Erleben simulierter Umgebungen<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Holodeck erzeugt interaktive Simulationen. Diese können der Freizeit, dem Training oder Untersuchungen dienen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.startrek.com/news/star-trek-lower-decks-who-are-the-senior-command-crew-of-the-uss-cerritos" rel="noreferrer">Star Trek: Lower Decks | Who Are the Senior Command Crew of the U.S.S. Cerritos?</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-011"><div class="meta">aiko-quiz-sci-011 · Leicht · Zeitreisen · Doctor Who · Revision 1 · Startversion</div><h3>Welche äußere Form hat die TARDIS des Doctors normalerweise?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Eine blaue britische Polizeibox<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine rote britische Telefonzelle</li>
+<li><span class="answer-label">C</span>Ein gelber amerikanischer Schulbus</li>
+<li><span class="answer-label">D</span>Ein schwarzer Londoner Taxiwagen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die TARDIS sieht normalerweise wie eine historische blaue Polizeibox aus. Innen ist sie erheblich größer als außen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.doctorwho.tv/news-and-features/what-is-the-tardis" rel="noreferrer">What is the TARDIS? | Doctor Who</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-012"><div class="meta">aiko-quiz-sci-012 · Knifflig · Schauplätze · Doctor Who · Revision 1 · Startversion</div><h3>Von welchem Planeten stammen die Time Lords in Doctor Who?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Trantor</li>
+<li class="correct"><span class="answer-label">B</span>Gallifrey<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Vulkan</li>
+<li><span class="answer-label">D</span>Arrakis</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gallifrey ist die Heimatwelt der Time Lords. Auch die TARDIS-Technik stammt von ihnen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.doctorwho.tv/news-and-features/what-is-the-tardis" rel="noreferrer">What is the TARDIS? | Doctor Who</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-013"><div class="meta">aiko-quiz-sci-013 · Leicht · Schauplätze · Dune · Revision 1 · Startversion</div><h3>Welche Landschaft prägt den Planeten Arrakis in Dune?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eine durchgehende Eisdecke</li>
+<li><span class="answer-label">B</span>Ein weltumspannender Ozean</li>
+<li class="correct"><span class="answer-label">C</span>Wüste<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Dichter Regenwald</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Arrakis ist ein Wüstenplanet. Wasserknappheit prägt dort die Lebensbedingungen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.penguinrandomhouse.com/the-read-down/books-to-read-on-a-desert-island/" rel="noreferrer">Books to Read on a Desert Island | Penguin Random House</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-014"><div class="meta">aiko-quiz-sci-014 · Mittel · Weltkonzepte · Dune · Revision 1 · Startversion</div><h3>Wie heißt das kostbare Gewürz aus Dune?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Dilithium</li>
+<li><span class="answer-label">B</span>Vibranium</li>
+<li><span class="answer-label">C</span>Unobtainium</li>
+<li class="correct"><span class="answer-label">D</span>Melange<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Gewürzmelange ist eine zentrale Ressource des Dune-Universums. Ihre besonderen Wirkungen verleihen Arrakis große Bedeutung.</p>
+<p class="source">Faktenbeleg: <a href="https://www.penguinrandomhouse.com/the-read-down/books-to-read-on-a-desert-island/" rel="noreferrer">Books to Read on a Desert Island | Penguin Random House</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-015"><div class="meta">aiko-quiz-sci-015 · Mittel · Film-Motive · Matrix · Revision 1 · Startversion</div><h3>Welche Pille wählt Neo im ersten Matrix-Film, um die Wahrheit zu erfahren?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Die rote<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Die blaue</li>
+<li><span class="answer-label">C</span>Die grüne</li>
+<li><span class="answer-label">D</span>Die gelbe</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die rote Pille führt Neo aus seinem bisherigen Weltbild heraus. Die blaue steht für die Rückkehr zum gewohnten Leben.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Matrix (1999)</p>
+<p class="source">Faktenbeleg: <a href="https://www.bfi.org.uk/features/matrix-wachowskis-keanu-reeves" rel="noreferrer">The Matrix: how the Wachowskis changed sci-fi | BFI</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-016"><div class="meta">aiko-quiz-sci-016 · Leicht · Figuren · Matrix · Revision 1 · Startversion</div><h3>Wie heißt die von Keanu Reeves gespielte Hauptfigur von Matrix?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Agent Smith</li>
+<li class="correct"><span class="answer-label">B</span>Neo<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Morpheus</li>
+<li><span class="answer-label">D</span>Cypher</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Neo ist der Hacker im Zentrum der Geschichte. Morpheus und Trinity führen ihn an die Wahrheit über die Matrix heran.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bfi.org.uk/features/matrix-wachowskis-keanu-reeves" rel="noreferrer">The Matrix: how the Wachowskis changed sci-fi | BFI</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-017"><div class="meta">aiko-quiz-sci-017 · Mittel · Außerirdische · Alien · Revision 1 · Startversion</div><h3>Welcher Begriff bezeichnet die bekannte außerirdische Kreatur aus Alien?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Dalek</li>
+<li><span class="answer-label">B</span>Klingone</li>
+<li class="correct"><span class="answer-label">C</span>Xenomorph<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Wookiee</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Alien-Kreatur wird als Xenomorph bezeichnet. Der Begriff wird besonders mit ihrer gefährlichen, fremdartigen Gestalt verbunden.</p>
+<p class="source">Faktenbeleg: <a href="https://www.20thcenturystudios.com/movies/alien-romulus" rel="noreferrer">Alien: Romulus | 20th Century Studios</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-018"><div class="meta">aiko-quiz-sci-018 · Mittel · Filmschaffende · Alien · Revision 1 · Startversion</div><h3>Wer spielt Ellen Ripley in den ersten Alien-Filmen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Linda Hamilton</li>
+<li><span class="answer-label">B</span>Carrie Fisher</li>
+<li><span class="answer-label">C</span>Jodie Foster</li>
+<li class="correct"><span class="answer-label">D</span>Sigourney Weaver<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Sigourney Weaver verkörpert Ellen Ripley. Die Figur gehört zu den bekanntesten Heldinnen des Science-Fiction-Kinos.</p>
+<p class="source">Faktenbeleg: <a href="https://www.20thcenturystudios.com/movies/aliens" rel="noreferrer">Aliens | 20th Century Studios</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-019"><div class="meta">aiko-quiz-sci-019 · Leicht · Zeitreisen · Zurück in die Zukunft · Revision 1 · Startversion</div><h3>Welches Auto dient in Zurück in die Zukunft als Zeitmaschine?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Ein DeLorean<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Ein Ford Mustang</li>
+<li><span class="answer-label">C</span>Ein Volkswagen Käfer</li>
+<li><span class="answer-label">D</span>Ein Mini Cooper</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Doc Browns Zeitmaschine steckt in einem DeLorean. Seine Flügeltüren tragen zum unverwechselbaren Aussehen bei.</p>
+<p class="source">Faktenbeleg: <a href="https://www.backtothefuture.com/movies/backtothefuture1" rel="noreferrer">Back to the Future (1985): Official Movie Page</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-020"><div class="meta">aiko-quiz-sci-020 · Leicht · Figuren · Zurück in die Zukunft · Revision 1 · Startversion</div><h3>Wie heißt der Erfinder, der Marty McFly bei seinen Zeitreisen begleitet?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Marty McFly</li>
+<li class="correct"><span class="answer-label">B</span>Doc Brown<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>George McFly</li>
+<li><span class="answer-label">D</span>Biff Tannen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Dr. Emmett Brown wird meist Doc genannt. Er ist der Erfinder der Zeitmaschine.</p>
+<p class="source">Faktenbeleg: <a href="https://www.backtothefuture.com/movies/backtothefuture1" rel="noreferrer">Back to the Future (1985): Official Movie Page</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-021"><div class="meta">aiko-quiz-sci-021 · Mittel · Künstliche Intelligenz · Terminator · Revision 2 · Startversion</div><h3>Wie heißt das Computersystem hinter dem Maschinenkrieg im Film Terminator von 1984?</h3><ol class="choices">
+<li><span class="answer-label">A</span>GLaDOS</li>
+<li><span class="answer-label">B</span>Deep Thought</li>
+<li class="correct"><span class="answer-label">C</span>Skynet<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>HAL 9000</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Im ursprünglichen Terminator ist Skynet das gegnerische Computersystem. Seine Maschinen führen in der Zukunft Krieg gegen die Menschheit.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Terminator (1984); keine Aussage über alle späteren Zeitlinien</p>
+<p class="source">Faktenbeleg: <a href="https://www.bfi.org.uk/features/arnie-70-praise-terminator" rel="noreferrer">Arnie at 70: in praise of The Terminator | BFI</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-022"><div class="meta">aiko-quiz-sci-022 · Leicht · Filmschaffende · Terminator · Revision 1 · Startversion</div><h3>Welcher Schauspieler ist besonders als T-800 aus Terminator bekannt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Sylvester Stallone</li>
+<li><span class="answer-label">B</span>Bruce Willis</li>
+<li><span class="answer-label">C</span>Harrison Ford</li>
+<li class="correct"><span class="answer-label">D</span>Arnold Schwarzenegger<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Arnold Schwarzenegger spielt den bekannten Terminator mit dem menschlichen Erscheinungsbild des T-800.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bfi.org.uk/features/arnie-70-praise-terminator" rel="noreferrer">Arnie at 70: in praise of The Terminator | BFI</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-023"><div class="meta">aiko-quiz-sci-023 · Leicht · Literatur-Motive · Per Anhalter durch die Galaxis · Revision 1 · Startversion</div><h3>Welche Zahl gilt in Per Anhalter durch die Galaxis als Antwort auf die große Frage?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>42<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>23</li>
+<li><span class="answer-label">C</span>64</li>
+<li><span class="answer-label">D</span>101</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Computer Deep Thought berechnet die berühmte Antwort 42. Das Problem ist anschließend die passende Frage.</p>
+<p class="source">Faktenbeleg: <a href="https://www.penguinrandomhouse.com/books/187729/wish-you-were-here-by-nick-webb/" rel="noreferrer">Wish You Were Here by Nick Webb: 9780345481887 | PenguinRandomHouse.com: Books</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-024"><div class="meta">aiko-quiz-sci-024 · Knifflig · Schriftsteller · Per Anhalter durch die Galaxis · Revision 1 · Startversion</div><h3>Wer schrieb Per Anhalter durch die Galaxis?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Philip K. Dick</li>
+<li class="correct"><span class="answer-label">B</span>Douglas Adams<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Terry Pratchett</li>
+<li><span class="answer-label">D</span>Isaac Asimov</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Douglas Adams entwickelte die Geschichte zunächst fürs Radio. Daraus entstanden unter anderem die bekannten Romane.</p>
+<p class="source">Faktenbeleg: <a href="https://www.penguinrandomhouse.com/books/187729/wish-you-were-here-by-nick-webb/" rel="noreferrer">Wish You Were Here by Nick Webb: 9780345481887 | PenguinRandomHouse.com: Books</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-025"><div class="meta">aiko-quiz-sci-025 · Mittel · Reisekonzepte · Stargate · Revision 2 · Startversion</div><h3>Wie ermöglicht ein Sternentor in Stargate normalerweise Reisen zwischen entfernten Orten?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Durch einen Flug mit Überlichtgeschwindigkeit</li>
+<li><span class="answer-label">B</span>Durch das Einfrieren und spätere Auftauen der Reisenden</li>
+<li class="correct"><span class="answer-label">C</span>Durch ein Wurmloch zu einem anderen Tor<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Durch das Übertragen des Bewusstseins in einen anderen Körper</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das Sternentor ermöglicht Reisen durch ein Wurmloch. Die Verbindung führt zu einem anderen Tor.</p>
+<p class="source">Faktenbeleg: <a href="https://www.rdanderson.com/stargate/lexicon/entries/stargate.htm" rel="noreferrer">Richard Dean Anderson Website: Stargate SG-1 Lexicon — Stargate</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-026"><div class="meta">aiko-quiz-sci-026 · Mittel · Künstliches Leben · Blade Runner · Revision 1 · Startversion</div><h3>Wie heißen die künstlich erschaffenen menschenähnlichen Wesen in Blade Runner?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Jedi</li>
+<li><span class="answer-label">B</span>Zylonen</li>
+<li><span class="answer-label">C</span>Vulkanier</li>
+<li class="correct"><span class="answer-label">D</span>Replikanten<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Replikanten sind künstlich erschaffene menschenähnliche Wesen. Die Geschichte stellt Fragen nach Menschlichkeit und Identität.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bfi.org.uk/film/ec064a2a-f7a8-536a-afa2-ed076aad151f/blade-runner" rel="noreferrer">Blade Runner (1982) | BFI</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-027"><div class="meta">aiko-quiz-sci-027 · Leicht · Filmgeschichten · E.T. · Revision 1 · Startversion</div><h3>Welcher Film handelt von einem gestrandeten Außerirdischen, der Kontakt nach Hause sucht?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>E.T. – Der Außerirdische<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Jurassic Park</li>
+<li><span class="answer-label">C</span>Ghostbusters</li>
+<li><span class="answer-label">D</span>Die Goonies</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> E.T. freundet sich mit dem Jungen Elliott an. Gemeinsam versuchen sie, seine Rückkehr zu ermöglichen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.universalpicturesathome.com/movies/et-the-extra-terrestrial" rel="noreferrer">E.T. The Extra-Terrestrial | Universal Pictures At Home</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-028"><div class="meta">aiko-quiz-sci-028 · Leicht · Digitale Welten · Tron · Revision 1 · Startversion</div><h3>In welche Art Welt gerät Kevin Flynn im Film Tron?</h3><ol class="choices">
+<li><span class="answer-label">A</span>In ein Brettspiel, dessen Regeln lebendig werden</li>
+<li class="correct"><span class="answer-label">B</span>In eine digitale Computerwelt<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>In eine künstlich erzeugte Traumwelt</li>
+<li><span class="answer-label">D</span>In eine parallele Erde hinter einem Spiegel</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Tron verlegt seine Handlung in eine bildhaft dargestellte digitale Welt. Programme treten darin als Figuren auf.</p>
+<p class="source">Faktenbeleg: <a href="https://movies.disney.com/tron" rel="noreferrer">Tron | Disney Movies</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-029"><div class="meta">aiko-quiz-sci-029 · Knifflig · Schriftsteller · Foundation · Revision 1 · Startversion</div><h3>Von welchem Autor stammt die Foundation-Romanreihe?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Frank Herbert</li>
+<li><span class="answer-label">B</span>Ray Bradbury</li>
+<li class="correct"><span class="answer-label">C</span>Isaac Asimov<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Arthur C. Clarke</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Isaac Asimov schrieb die ursprünglichen Foundation-Geschichten. Ein Kernmotiv ist die Vorhersage großer gesellschaftlicher Entwicklungen.</p>
+<p class="source">Faktenbeleg: <a href="https://images.apple.com/tv-pr/originals/foundation/" rel="noreferrer">Foundation - Apple TV Press</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-sci-030"><div class="meta">aiko-quiz-sci-030 · Knifflig · Schriftsteller · Fahrenheit 451 · Revision 1 · Startversion</div><h3>Wer schrieb den Roman Fahrenheit 451?</h3><ol class="choices">
+<li><span class="answer-label">A</span>George Orwell</li>
+<li><span class="answer-label">B</span>Aldous Huxley</li>
+<li><span class="answer-label">C</span>H. G. Wells</li>
+<li class="correct"><span class="answer-label">D</span>Ray Bradbury<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ray Bradburys Roman erzählt von einer Gesellschaft, in der Bücher verboten sind und verbrannt werden.</p>
+<p class="source">Faktenbeleg: <a href="https://www.simonandschuster.com/books/Fahrenheit-451/Ray-Bradbury/9781451673319" rel="noreferrer">Fahrenheit 451 | Book by Ray Bradbury | Official Publisher Page | Simon &amp; Schuster</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<section id="fantasy"><h2>Fantasy <span class="meta">20 Fragen</span></h2>
+<article id="aiko-quiz-fan-001"><div class="meta">aiko-quiz-fan-001 · Leicht · Schauplätze · Harry Potter · Revision 1 · Startversion</div><h3>Wie heißt die Zauberschule, die Harry Potter besucht?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Hogwarts<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Beauxbatons</li>
+<li><span class="answer-label">C</span>Durmstrang</li>
+<li><span class="answer-label">D</span>Ilvermorny</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Hogwarts ist Harrys Schule in Großbritannien. Die anderen genannten Schulen gehören ebenfalls zur magischen Welt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.harrypotter.com/fact-file/locations/hogwarts" rel="noreferrer">Hogwarts | Official Harry Potter Encyclopedia</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-002"><div class="meta">aiko-quiz-fan-002 · Leicht · Magische Sportarten · Harry Potter · Revision 1 · Startversion</div><h3>Worauf fliegen die Spieler beim Quidditch in Harry Potter?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Auf Hippogreifen</li>
+<li class="correct"><span class="answer-label">B</span>Auf Besen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Auf Teppichen</li>
+<li><span class="answer-label">D</span>Auf Drachen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Spieler nutzen fliegende Besen. Mehrere Bälle und unterschiedliche Teamaufgaben prägen das Spiel.</p>
+<p class="source">Faktenbeleg: <a href="https://www.harrypotter.com/fr/fact-file/objects/broomstick" rel="noreferrer">Broomstick | Official Harry Potter Encyclopedia</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-003"><div class="meta">aiko-quiz-fan-003 · Mittel · Schriftsteller · Harry Potter · Revision 1 · Startversion</div><h3>Wer schrieb die ursprüngliche Harry-Potter-Romanreihe?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Suzanne Collins</li>
+<li><span class="answer-label">B</span>Diana Wynne Jones</li>
+<li class="correct"><span class="answer-label">C</span>J. K. Rowling<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Cornelia Funke</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> J. K. Rowling schrieb die sieben ursprünglichen Harry-Potter-Romane. Spätere Bühnen- und Filmprojekte sind davon zu unterscheiden.</p>
+<p class="source">Faktenbeleg: <a href="https://stories.jkrowling.com/faqs/" rel="noreferrer">FAQs - JKR</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-004"><div class="meta">aiko-quiz-fan-004 · Mittel · Magische Gegenstände · Harry Potter · Revision 1 · Startversion</div><h3>Welcher Gegenstand teilt neue Hogwarts-Schüler den vier Häusern zu?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Der Feuerkelch</li>
+<li><span class="answer-label">B</span>Der Spiegel Nerhegeb</li>
+<li><span class="answer-label">C</span>Die Karte des Rumtreibers</li>
+<li class="correct"><span class="answer-label">D</span>Der Sprechende Hut<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Sprechende Hut übernimmt die Einteilung. Die Zeremonie findet zu Beginn des Schuljahrs statt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.harrypotter.com/fact-file/objects/the-sorting-hat" rel="noreferrer">The Sorting Hat | Official Harry Potter Encyclopedia</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-005"><div class="meta">aiko-quiz-fan-005 · Leicht · Figuren · Der Herr der Ringe · Revision 1 · Startversion</div><h3>Welcher Hobbit erhält die Aufgabe, den Einen Ring zum Schicksalsberg zu bringen?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Frodo Beutlin<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Bilbo Beutlin</li>
+<li><span class="answer-label">C</span>Meriadoc Brandybock</li>
+<li><span class="answer-label">D</span>Peregrin Tuk</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Frodo übernimmt die Reise mit dem Ring. Sam begleitet ihn auf dem besonders schwierigen letzten Abschnitt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.tolkienestate.com/writing/the-lord-of-the-rings/" rel="noreferrer">The Tolkien Estate: The Lord of the Rings</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-006"><div class="meta">aiko-quiz-fan-006 · Leicht · Schauplätze · Der Herr der Ringe · Revision 1 · Startversion</div><h3>Wie heißt die Weltregion, in der Der Herr der Ringe überwiegend spielt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Erdsee</li>
+<li class="correct"><span class="answer-label">B</span>Mittelerde<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Westeros</li>
+<li><span class="answer-label">D</span>Narnia</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Mittelerde ist der zentrale Schauplatz der Handlung. Tolkien gab seinen Orten, Völkern und Sprachen eine ausführliche Geschichte.</p>
+<p class="source">Faktenbeleg: <a href="https://www.tolkienestate.com/" rel="noreferrer">Home - The Tolkien Estate</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-007"><div class="meta">aiko-quiz-fan-007 · Leicht · Figuren · Der Herr der Ringe · Revision 1 · Startversion</div><h3>Welche Rolle hat Gandalf in Der Herr der Ringe?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Elbenkönig</li>
+<li><span class="answer-label">B</span>Zwergenschmied</li>
+<li class="correct"><span class="answer-label">C</span>Zauberer<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Hobbit-Bürgermeister</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gandalf tritt als Zauberer und Weggefährte auf. Er gehört zu den als Istari bezeichneten Gestalten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.tolkienestate.com/writing/john-d-rateliff-the-hobbit/" rel="noreferrer">John D. Rateliff, ‘The Hobbit’ - The Tolkien Estate</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-008"><div class="meta">aiko-quiz-fan-008 · Knifflig · Erfundene Sprachen · Tolkiens Welt · Revision 1 · Startversion</div><h3>Welche dieser Sprachen entwickelte Tolkien als Elbensprache?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Klingonisch</li>
+<li><span class="answer-label">B</span>Dothraki</li>
+<li><span class="answer-label">C</span>Na&#x27;vi</li>
+<li class="correct"><span class="answer-label">D</span>Sindarin<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Sindarin ist eine der von Tolkien ausgearbeiteten Elbensprachen. Die anderen Optionen stammen aus anderen fiktiven Welten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.tolkienestate.com/scholarship/carl-hostetter-tolkiens-invented-languages/" rel="noreferrer">Carl Hostetter, ‘Tolkien’s Invented Languages’ - The Tolkien Estate</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-009"><div class="meta">aiko-quiz-fan-009 · Leicht · Portale · Die Chroniken von Narnia · Revision 1 · Startversion</div><h3>Durch welches Möbelstück gelangt Lucy erstmals nach Narnia?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Einen Kleiderschrank<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine Kommode</li>
+<li><span class="answer-label">C</span>Einen Schreibtisch</li>
+<li><span class="answer-label">D</span>Ein Bücherregal</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> In Der König von Narnia verbirgt sich der Zugang hinter den Kleidern eines Schranks.</p>
+<p class="source">Faktenbeleg: <a href="https://www.cslewis.com/uk/books/hardcover/the-lion-the-witch-and-the-wardrobe/9780060234812" rel="noreferrer">The Lion, the Witch and the Wardrobe by C. S. Lewis | Hardcover | CSLewis.com</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-010"><div class="meta">aiko-quiz-fan-010 · Leicht · Figuren · Die Chroniken von Narnia · Revision 1 · Startversion</div><h3>Welche Tiergestalt hat Aslan in Narnia?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Hirsch</li>
+<li class="correct"><span class="answer-label">B</span>Löwe<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Wolf</li>
+<li><span class="answer-label">D</span>Adler</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Aslan erscheint als Löwe. Er gehört zu den zentralen Figuren der Narnia-Geschichten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.cslewis.com/uk/books/hardcover/the-lion-the-witch-and-the-wardrobe/9780060234812" rel="noreferrer">The Lion, the Witch and the Wardrobe by C. S. Lewis | Hardcover | CSLewis.com</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-011"><div class="meta">aiko-quiz-fan-011 · Mittel · Schriftsteller · Scheibenwelt · Revision 1 · Startversion</div><h3>Welcher Autor erschuf die Scheibenwelt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Neil Gaiman</li>
+<li><span class="answer-label">B</span>J. R. R. Tolkien</li>
+<li class="correct"><span class="answer-label">C</span>Terry Pratchett<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Douglas Adams</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Terry Pratchetts Scheibenwelt verbindet Fantasy mit Satire. Sie ist Schauplatz zahlreicher Romane.</p>
+<p class="source">Faktenbeleg: <a href="https://www.terrypratchettbooks.com/book-series/discworld/" rel="noreferrer">Discworld - Sir Terry Pratchett</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-012"><div class="meta">aiko-quiz-fan-012 · Knifflig · Weltaufbau · Scheibenwelt · Revision 1 · Startversion</div><h3>Auf welchem riesigen Tier ruhen die vier Elefanten der Scheibenwelt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Einem Wal</li>
+<li><span class="answer-label">B</span>Einer Schlange</li>
+<li><span class="answer-label">C</span>Einem Drachen</li>
+<li class="correct"><span class="answer-label">D</span>Einer Schildkröte<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die vier Elefanten stehen auf der Weltraumschildkröte Groß-A&#x27;Tuin. Auf ihren Rücken liegt die Scheibe.</p>
+<p class="source">Faktenbeleg: <a href="https://www.terrypratchettbooks.com/book-series/discworld/" rel="noreferrer">Discworld - Sir Terry Pratchett</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-013"><div class="meta">aiko-quiz-fan-013 · Knifflig · Schriftsteller · Erdsee · Revision 1 · Startversion</div><h3>Welche Schriftstellerin erschuf die Erdsee-Romanwelt?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Ursula K. Le Guin<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Octavia E. Butler</li>
+<li><span class="answer-label">C</span>Mary Shelley</li>
+<li><span class="answer-label">D</span>Astrid Lindgren</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ursula K. Le Guin schrieb die Erdsee-Geschichten. Magie und die Bedeutung wahrer Namen gehören zu ihren Motiven.</p>
+<p class="source">Faktenbeleg: <a href="https://www.ursulakleguin.com/bibliography" rel="noreferrer">Ursula K. Le Guin — Bibliography</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-014"><div class="meta">aiko-quiz-fan-014 · Leicht · Figuren · Die unendliche Geschichte · Revision 1 · Startversion</div><h3>Was für ein Wesen ist Fuchur in Die unendliche Geschichte?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Einhorn</li>
+<li class="correct"><span class="answer-label">B</span>Ein Glücksdrache<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Ein Werwolf</li>
+<li><span class="answer-label">D</span>Ein Greif</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Fuchur ist der Glücksdrache, der Atréju unterstützt. Sein Aussehen unterscheidet sich deutlich von vielen feuerspeienden Drachen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.michaelende.de/figur/fuchur" rel="noreferrer">Fuchur | Michael Ende | Offizielle Webseite</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-015"><div class="meta">aiko-quiz-fan-015 · Mittel · Schriftsteller · Die unendliche Geschichte · Revision 1 · Startversion</div><h3>Wer schrieb Die unendliche Geschichte?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Erich Kästner</li>
+<li><span class="answer-label">B</span>Paul Maar</li>
+<li class="correct"><span class="answer-label">C</span>Michael Ende<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Otfried Preußler</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Michael Ende veröffentlichte den Roman 1979. Die Handlung verbindet Bastians Welt mit Phantásien.</p>
+<p class="source">Faktenbeleg: <a href="https://www.michaelende.de/buch/die-unendliche-geschichte" rel="noreferrer">Die unendliche Geschichte | Michael Ende | Offizielle Webseite</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-016"><div class="meta">aiko-quiz-fan-016 · Mittel · Schauplätze · Game of Thrones · Revision 1 · Startversion</div><h3>Auf welchem Kontinent liegen die Sieben Königslande aus Game of Thrones?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Essos</li>
+<li><span class="answer-label">B</span>Sothoryos</li>
+<li><span class="answer-label">C</span>Ulthos</li>
+<li class="correct"><span class="answer-label">D</span>Westeros<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Sieben Königslande liegen in Westeros. Essos ist ein anderer wichtiger Kontinent der erzählten Welt.</p>
+<p class="source">Faktenbeleg: <a href="https://georgerrmartin.com/for-fans/knights/the-knights-of-the-seven-kingdoms/" rel="noreferrer">The Knights of the Seven Kingdoms | George R.R. Martin</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-017"><div class="meta">aiko-quiz-fan-017 · Mittel · Wappen und Symbole · Game of Thrones · Revision 1 · Startversion</div><h3>Welches Tier ist das Wappentier des Hauses Stark?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Schattenwolf<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Löwe</li>
+<li><span class="answer-label">C</span>Drache</li>
+<li><span class="answer-label">D</span>Hirsch</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das Haus Stark wird durch einen Schattenwolf repräsentiert. Andere große Häuser tragen andere Tiere im Wappen.</p>
+<p class="source">Faktenbeleg: <a href="https://wbshop.com/products/game-of-thrones-winter-is-coming-trucker-cap" rel="noreferrer">Game of Thrones Winter is Coming Trucker Cap – WB Shop</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-018"><div class="meta">aiko-quiz-fan-018 · Leicht · Mythologie · Revision 1 · Startversion</div><h3>Welcher nordische Gott trägt den Hammer Mjölnir?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Heimdall</li>
+<li class="correct"><span class="answer-label">B</span>Thor<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Odin</li>
+<li><span class="answer-label">D</span>Loki</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Mjölnir ist der Hammer Thors in der nordischen Mythologie. Moderne Fantasy-Werke greifen das Motiv häufig auf.</p>
+<p class="source">Faktenbeleg: <a href="https://www.britishmuseum.org/sites/default/files/2021-05/large_print_guide_room_41.pdf" rel="noreferrer">Large Print Guide – Room 41 Sutton Hoo and Europe</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-019"><div class="meta">aiko-quiz-fan-019 · Leicht · Fabelwesen · Revision 1 · Startversion</div><h3>Welcher mythische Vogel wird besonders mit Wiedergeburt aus der Asche verbunden?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Harpie</li>
+<li><span class="answer-label">B</span>Roch</li>
+<li class="correct"><span class="answer-label">C</span>Phönix<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Greif</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Phönix steht in verbreiteten Überlieferungen für Erneuerung. Die Erzählungen unterscheiden sich in ihren Einzelheiten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.getty.edu/news/a-birdwatchers-eye-view/" rel="noreferrer">A Birdwatcher’s Eye View</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fan-020"><div class="meta">aiko-quiz-fan-020 · Mittel · Pen-and-Paper · Dungeons &amp; Dragons · Revision 2 · Startversion</div><h3>Welche Rolle übernimmt der Dungeon Master in einer gewöhnlichen D&amp;D-Runde?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Mit einer eigenen Heldenfigur gegen die Gruppe antreten</li>
+<li><span class="answer-label">B</span>Die Handlungen der Spielerfiguren selbst bestimmen</li>
+<li><span class="answer-label">C</span>Eine feste Geschichte ohne Einfluss der Spieler abspielen</li>
+<li class="correct"><span class="answer-label">D</span>Die Welt darstellen und das Spiel leiten<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Spielleitung beschreibt Situationen und übernimmt unter anderem die Rollen anderer Figuren. Die Spieler entscheiden für ihre eigenen Charaktere.</p>
+<p class="source">Faktenbeleg: <a href="https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game" rel="noreferrer">D&amp;D Free Rules: Playing the Game</a> · Seite gelesen · 25.10.2026</p>
+</article>
+</section>
+<section id="film_television"><h2>Film und Fernsehen <span class="meta">20 Fragen</span></h2>
+<article id="aiko-quiz-fil-001"><div class="meta">aiko-quiz-fil-001 · Leicht · Animationsfiguren · Toy Story · Revision 1 · Startversion</div><h3>Welches Spielzeug stellt Woody in Toy Story dar?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Einen Cowboy<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Einen Astronauten</li>
+<li><span class="answer-label">C</span>Einen Soldaten</li>
+<li><span class="answer-label">D</span>Einen Rennfahrer</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Woody ist eine Cowboy-Puppe. Buzz Lightyear verkörpert dagegen einen Space Ranger.</p>
+<p class="source">Faktenbeleg: <a href="https://www.pixar.com/toy-story" rel="noreferrer">Toy Story — Pixar Animation Studios</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-002"><div class="meta">aiko-quiz-fil-002 · Leicht · Animationsfiguren · Findet Nemo · Revision 1 · Startversion</div><h3>Welche Fischart ist Nemo aus Findet Nemo?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Hammerhai</li>
+<li class="correct"><span class="answer-label">B</span>Clownfisch<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Kugelfisch</li>
+<li><span class="answer-label">D</span>Doktorfisch</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Nemo und sein Vater Marlin sind Clownfische. Dorie gehört dagegen zu den Doktorfischen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.pixar.com/finding-nemo" rel="noreferrer">Finding Nemo — Pixar Animation Studios</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-003"><div class="meta">aiko-quiz-fil-003 · Leicht · Animationsfiguren · Shrek · Revision 1 · Startversion</div><h3>Was für ein Wesen ist Shrek?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Goblin</li>
+<li><span class="answer-label">B</span>Ein Zwerg</li>
+<li class="correct"><span class="answer-label">C</span>Ein Oger<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Ein Troll</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Shrek ist ein grüner Oger. Sein Leben im Sumpf bildet den Ausgangspunkt des ersten Films.</p>
+<p class="source">Faktenbeleg: <a href="https://preview.universalpicturesathome.com/press-release/shrek-25th-anniversary-press-release" rel="noreferrer">Shrek 25th Anniversary Press Release</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-004"><div class="meta">aiko-quiz-fil-004 · Leicht · Animationsfiguren · Der König der Löwen · Revision 1 · Startversion</div><h3>Wie heißt der junge Löwe im Mittelpunkt von Der König der Löwen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Mufasa</li>
+<li><span class="answer-label">B</span>Scar</li>
+<li><span class="answer-label">C</span>Timon</li>
+<li class="correct"><span class="answer-label">D</span>Simba<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Simba ist Mufasas Sohn. Die Geschichte begleitet ihn vom Löwenjungen bis zum Erwachsenen.</p>
+<p class="source">Faktenbeleg: <a href="https://movies.disney.com/the-lion-king" rel="noreferrer">The Lion King | Disney Movies</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-005"><div class="meta">aiko-quiz-fil-005 · Leicht · Animationsfiguren · Die Eiskönigin · Revision 1 · Startversion</div><h3>Wie heißt Elsas Schwester in Die Eiskönigin?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Anna<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Arielle</li>
+<li><span class="answer-label">C</span>Merida</li>
+<li><span class="answer-label">D</span>Belle</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Anna und Elsa sind die Schwestern im Mittelpunkt von Die Eiskönigin. Ihre Beziehung treibt die Handlung an.</p>
+<p class="source">Faktenbeleg: <a href="https://movies.disney.com/frozen" rel="noreferrer">Frozen | Official Website | Disney Movies</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-006"><div class="meta">aiko-quiz-fil-006 · Mittel · Serienschauplätze · Friends · Revision 1 · Startversion</div><h3>Wie heißt das Café, in dem sich die Freunde aus Friends oft treffen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Café Nervosa</li>
+<li class="correct"><span class="answer-label">B</span>Central Perk<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Monk&#x27;s Café</li>
+<li><span class="answer-label">D</span>Luke&#x27;s Diner</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Central Perk ist ein wichtiger Treffpunkt der sechs Freunde. Der Name spielt auf den New Yorker Central Park an.</p>
+<p class="source">Faktenbeleg: <a href="https://www.wbstudiotour.com/" rel="noreferrer">Warner Bros. Studio Tour Hollywood Warner Bros. Studio Tour Hollywood | Los Angeles, California</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-007"><div class="meta">aiko-quiz-fil-007 · Leicht · Serienschauplätze · Die Simpsons · Revision 1 · Startversion</div><h3>In welcher Stadt leben die Simpsons?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Quahog</li>
+<li><span class="answer-label">B</span>Bikini Bottom</li>
+<li class="correct"><span class="answer-label">C</span>Springfield<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>South Park</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Springfield ist der zentrale Wohnort der Simpsons. Viele wiederkehrende Schauplätze der Serie liegen dort.</p>
+<p class="source">Faktenbeleg: <a href="https://www.fox.com/detail/series/SER000852IRHK/the-simpsons" rel="noreferrer">Watch The Simpsons Full Episodes Streaming Online | FOX One</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-008"><div class="meta">aiko-quiz-fil-008 · Mittel · Literatur und Bildschirm · Sherlock Holmes · Revision 1 · Startversion</div><h3>Unter welcher Londoner Adresse wohnt Sherlock Holmes in den klassischen Geschichten?</h3><ol class="choices">
+<li><span class="answer-label">A</span>10 Downing Street</li>
+<li><span class="answer-label">B</span>4 Privet Drive</li>
+<li><span class="answer-label">C</span>17 Cherry Tree Lane</li>
+<li class="correct"><span class="answer-label">D</span>221B Baker Street<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> 221B Baker Street ist die berühmte Adresse von Holmes und Watson. Sie wird auch in zahlreichen Verfilmungen aufgegriffen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.sherlock-holmes.co.uk/plan-your-visit/" rel="noreferrer">Plan your visit - Sherlock Holmes Museum</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-009"><div class="meta">aiko-quiz-fil-009 · Leicht · Animationsfiguren · Wallace &amp; Gromit · Revision 1 · Startversion</div><h3>Welches Tier ist Gromit aus Wallace &amp; Gromit?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Ein Hund<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine Katze</li>
+<li><span class="answer-label">C</span>Ein Schaf</li>
+<li><span class="answer-label">D</span>Ein Kaninchen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gromit ist Wallaces Hund. Er spricht nicht und vermittelt viel über seine Mimik.</p>
+<p class="source">Faktenbeleg: <a href="https://wallaceandgromit.com/latest-news/2026/gromit-releasing-an-autobiography/" rel="noreferrer">Gromit Releasing an Autobiography!</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-010"><div class="meta">aiko-quiz-fil-010 · Leicht · Filmfiguren · James Bond · Revision 1 · Startversion</div><h3>Welche Agentennummer gehört zu James Bond?</h3><ol class="choices">
+<li><span class="answer-label">A</span>003</li>
+<li class="correct"><span class="answer-label">B</span>007<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>006</li>
+<li><span class="answer-label">D</span>009</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> 007 ist Bonds bekannte Kennung. Die Doppelnull gehört innerhalb der Geschichten zu einer besonderen Agentengruppe.</p>
+<p class="source">Faktenbeleg: <a href="https://www.007.com/james-bond-day" rel="noreferrer">James Bond Day | James Bond 007</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-011"><div class="meta">aiko-quiz-fil-011 · Mittel · Auszeichnungen · Revision 1 · Startversion</div><h3>Für welchen Bereich werden die Oscars vor allem vergeben?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Musikaufnahmen</li>
+<li><span class="answer-label">B</span>Bühnenmusicals</li>
+<li class="correct"><span class="answer-label">C</span>Film<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Fernsehen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Academy Awards zeichnen Leistungen im Film aus. Für Fernsehen sind unter anderem die Emmys bekannt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.oscars.org/oscars/ceremonies/2026" rel="noreferrer">The 98th Academy Awards | 2026</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-012"><div class="meta">aiko-quiz-fil-012 · Mittel · Filmschaffende · Titanic · Revision 1 · Startversion</div><h3>Wer führte bei Titanic von 1997 Regie?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Steven Spielberg</li>
+<li><span class="answer-label">B</span>Ridley Scott</li>
+<li><span class="answer-label">C</span>Peter Jackson</li>
+<li class="correct"><span class="answer-label">D</span>James Cameron<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> James Cameron inszenierte den Film mit Kate Winslet und Leonardo DiCaprio. Der Titel wurde auch für andere Verfilmungen des Schiffsunglücks verwendet.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Titanic (1997)</p>
+<p class="source">Faktenbeleg: <a href="https://www.paramountmovies.com/movies/titanic" rel="noreferrer">Watch TITANIC | Blu-ray &amp; Streaming</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-013"><div class="meta">aiko-quiz-fil-013 · Knifflig · Filmgeschichte · Parasite · Revision 1 · Startversion</div><h3>Welcher Film gewann 2020 als erster nicht englischsprachiger Film den Oscar für den besten Film?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Parasite<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Roma</li>
+<li><span class="answer-label">C</span>Amélie</li>
+<li><span class="answer-label">D</span>Das Leben der Anderen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Parasite gewann den Hauptpreis bei der Oscarverleihung 2020. Der südkoreanische Film wurde von Bong Joon-ho inszeniert.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Oscarverleihung 2020</p>
+<p class="source">Faktenbeleg: <a href="https://www.oscars.org/oscars/ceremonies/2020/L" rel="noreferrer">2020 Academy Awards | Oscars.org | Academy of Motion Picture Arts and Sciences</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-014"><div class="meta">aiko-quiz-fil-014 · Mittel · Filmschaffende · Revision 1 · Startversion</div><h3>Welcher Filmkomiker spielte den Tramp mit Melone und Spazierstock?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Stan Laurel</li>
+<li class="correct"><span class="answer-label">B</span>Charlie Chaplin<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Buster Keaton</li>
+<li><span class="answer-label">D</span>Harold Lloyd</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Chaplins Tramp ist eine der bekanntesten Figuren der Stummfilmzeit. Die Melone und der Stock gehören zu seinem typischen Erscheinungsbild.</p>
+<p class="source">Faktenbeleg: <a href="https://www.charliechaplin.com/en/infos/800-Charlie-Chaplin-The-Complete-Soundtracks" rel="noreferrer">Charlie Chaplin : Charlie Chaplin - The Complete Soundtracks</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-015"><div class="meta">aiko-quiz-fil-015 · Leicht · Puppenfiguren · Die Muppets · Revision 1 · Startversion</div><h3>Welches Tier stellt Kermit aus den Muppets dar?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eine Schildkröte</li>
+<li><span class="answer-label">B</span>Ein Krokodil</li>
+<li class="correct"><span class="answer-label">C</span>Einen Frosch<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Eine Eidechse</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Kermit ist der grüne Frosch der Muppets. Er moderiert häufig und versucht, das Durcheinander zusammenzuhalten.</p>
+<p class="source">Faktenbeleg: <a href="https://muppets.disney.com/" rel="noreferrer">The Muppets | Disney</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-016"><div class="meta">aiko-quiz-fil-016 · Mittel · Animationstechnik · Wallace &amp; Gromit · Revision 2 · Startversion</div><h3>Welche Animationstechnik prägt die klassischen Wallace-&amp;-Gromit-Filme?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Handgezeichneter 2D-Zeichentrick</li>
+<li><span class="answer-label">B</span>3D-Computeranimation</li>
+<li><span class="answer-label">C</span>Rotoskopie mit nachgezeichneten Filmaufnahmen</li>
+<li class="correct"><span class="answer-label">D</span>Stop-Motion mit realen Figuren<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Bei Stop-Motion werden Figuren zwischen einzelnen Aufnahmen bewegt. Zusammengesetzt entsteht die Bewegung auf dem Bildschirm.</p>
+<p class="source">Faktenbeleg: <a href="https://www.aardman.com/film-tv-games/wallace-gromit/" rel="noreferrer">Wallace &amp; Gromit | Aardman</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-017"><div class="meta">aiko-quiz-fil-017 · Leicht · Puppenfiguren · Sesamstraße · Revision 1 · Startversion</div><h3>Welche Leckerei isst das Krümelmonster aus der Sesamstraße besonders gern?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Kekse<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Lakritz</li>
+<li><span class="answer-label">C</span>Eiscreme</li>
+<li><span class="answer-label">D</span>Gummibärchen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das Krümelmonster ist für seine Begeisterung für Kekse bekannt. Sein englischer Name lautet Cookie Monster.</p>
+<p class="source">Faktenbeleg: <a href="https://sesameworkshop.org/our-work/shows/sesame-street/sesame-street-characters/cookie-monster/" rel="noreferrer">Cookie Monster - Sesame Workshop</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-018"><div class="meta">aiko-quiz-fil-018 · Knifflig · Filmgeschichte · Revision 1 · Startversion</div><h3>Welcher Film gewann den ersten Oscar in der Kategorie Bester Animationsfilm?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ratatouille</li>
+<li class="correct"><span class="answer-label">B</span>Shrek<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Findet Nemo</li>
+<li><span class="answer-label">D</span>Die Unglaublichen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Kategorie wurde erstmals bei der Verleihung 2002 ausgezeichnet. Shrek gewann vor den ebenfalls nominierten Filmen Monster AG und Jimmy Neutron.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Erste Verleihung dieser Kategorie: 2002 für das Filmjahr 2001</p>
+<p class="source">Faktenbeleg: <a href="https://www.oscars.org/oscars/ceremonies/embed/2002" rel="noreferrer">2002 Academy Awards | Oscars.org | Academy of Motion Picture Arts and Sciences</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-019"><div class="meta">aiko-quiz-fil-019 · Mittel · Auszeichnungen · Revision 1 · Startversion</div><h3>Für welches Medium werden die Emmys vor allem vergeben?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Musikalben</li>
+<li><span class="answer-label">B</span>Hörbücher</li>
+<li class="correct"><span class="answer-label">C</span>Fernsehen<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Kinofilm</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Emmy-Auszeichnungen würdigen Leistungen im Fernsehen. Es gibt mehrere Emmy-Wettbewerbe für unterschiedliche Bereiche.</p>
+<p class="source">Faktenbeleg: <a href="https://www.televisionacademy.com/features/news/awards-news/78th-emmy-awards-release" rel="noreferrer">78th Emmy Awards Winners Announced | Television Academy</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-fil-020"><div class="meta">aiko-quiz-fil-020 · Knifflig · Filmschaffende · Revision 1 · Startversion</div><h3>Aus welchem Land stammt der Regisseur Akira Kurosawa?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Südkorea</li>
+<li><span class="answer-label">B</span>China</li>
+<li><span class="answer-label">C</span>Taiwan</li>
+<li class="correct"><span class="answer-label">D</span>Japan<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Akira Kurosawa war ein japanischer Regisseur. Zu seinen bekannten Filmen gehören Die sieben Samurai und Rashomon.</p>
+<p class="source">Faktenbeleg: <a href="https://jfdb.jp/en/person/1372" rel="noreferrer">JFDB - KUROSAWA Akira</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<section id="nature_science"><h2>Natur und Wissenschaft <span class="meta">20 Fragen</span></h2>
+<article id="aiko-quiz-nat-001"><div class="meta">aiko-quiz-nat-001 · Leicht · Sonnensystem · Revision 1 · Startversion</div><h3>Welcher Planet umkreist die Sonne am nächsten?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Merkur<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Venus</li>
+<li><span class="answer-label">C</span>Erde</li>
+<li><span class="answer-label">D</span>Mars</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Merkur ist der innerste Planet unseres Sonnensystems. Er umläuft die Sonne auf der engsten Planetenbahn.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/mercury/facts/" rel="noreferrer">Mercury: Facts</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-002"><div class="meta">aiko-quiz-nat-002 · Mittel · Sonnensystem · Revision 1 · Startversion</div><h3>Welcher Planet hat die heißeste Oberfläche im Sonnensystem?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Jupiter</li>
+<li class="correct"><span class="answer-label">B</span>Venus<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Merkur</li>
+<li><span class="answer-label">D</span>Mars</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die dichte Atmosphäre der Venus hält Wärme besonders stark zurück. Ihre Oberfläche ist heißer als die des sonnennäheren Merkur.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/venus/venus-facts/" rel="noreferrer">Venus: Facts - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-003"><div class="meta">aiko-quiz-nat-003 · Leicht · Sonnensystem · Revision 1 · Startversion</div><h3>Welcher Planet wird oft der rote Planet genannt?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Neptun</li>
+<li><span class="answer-label">B</span>Uranus</li>
+<li class="correct"><span class="answer-label">C</span>Mars<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Venus</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Mars erscheint durch eisenhaltigen Staub rötlich. Daher stammt sein verbreiteter Beiname.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/mars/facts/" rel="noreferrer">Mars: Facts - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-004"><div class="meta">aiko-quiz-nat-004 · Leicht · Sonnensystem · Revision 1 · Startversion</div><h3>Welcher Planet ist der größte in unserem Sonnensystem?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Saturn</li>
+<li><span class="answer-label">B</span>Neptun</li>
+<li><span class="answer-label">C</span>Erde</li>
+<li class="correct"><span class="answer-label">D</span>Jupiter<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Jupiter ist der größte der acht Planeten. Er gehört zu den Gasriesen.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/solar-system/planet-sizes-and-locations-in-our-solar-system/" rel="noreferrer">Planet Sizes and Locations in Our Solar System</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-005"><div class="meta">aiko-quiz-nat-005 · Leicht · Sonnensystem · Revision 1 · Startversion</div><h3>Welcher dieser Planeten besitzt ein auffälliges Ringsystem?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Saturn<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Merkur</li>
+<li><span class="answer-label">C</span>Venus</li>
+<li><span class="answer-label">D</span>Mars</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Saturns Ringe sind besonders deutlich. Auch andere äußere Planeten besitzen Ringe, deshalb ist die Eingrenzung wichtig.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/saturn/facts/" rel="noreferrer">Saturn: Facts - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-006"><div class="meta">aiko-quiz-nat-006 · Mittel · Mond · Revision 1 · Startversion</div><h3>Warum sehen wir den Mond am Nachthimmel leuchten?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Er wird von Polarlichtern beleuchtet</li>
+<li class="correct"><span class="answer-label">B</span>Er reflektiert Sonnenlicht<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Er erzeugt Licht durch Kernfusion</li>
+<li><span class="answer-label">D</span>Seine gesamte Oberfläche glüht</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Mond ist keine eigene Lichtquelle wie ein Stern. Seine sichtbaren Phasen hängen davon ab, wie viel seiner beleuchteten Seite wir sehen.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/moon/moonlight/" rel="noreferrer">Moonlight - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-007"><div class="meta">aiko-quiz-nat-007 · Leicht · Sterne · Revision 1 · Startversion</div><h3>Was ist unsere Sonne astronomisch gesehen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Mond</li>
+<li><span class="answer-label">B</span>Ein Komet</li>
+<li class="correct"><span class="answer-label">C</span>Ein Stern<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Ein Planet</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Sonne ist der Stern unseres Planetensystems. In ihrem Inneren wird durch Kernfusion Energie frei.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/sun/facts/" rel="noreferrer">Sun: Facts - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-008"><div class="meta">aiko-quiz-nat-008 · Leicht · Sonnensystem · Revision 1 · Startversion</div><h3>Wie viele Planeten hat unser Sonnensystem nach der IAU-Einteilung von 2006?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Sieben</li>
+<li><span class="answer-label">B</span>Neun</li>
+<li><span class="answer-label">C</span>Zehn</li>
+<li class="correct"><span class="answer-label">D</span>Acht<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Seit der Neueinteilung von 2006 zählt Pluto zu den Zwergplaneten. Die Zahl der Planeten beträgt acht.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> IAU-Planetendefinition von 2006</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/solar-system/planets/" rel="noreferrer">About the Planets</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-009"><div class="meta">aiko-quiz-nat-009 · Mittel · Astronomische Einheiten · Revision 1 · Startversion</div><h3>Was misst die Einheit Lichtjahr?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Eine Entfernung<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eine Zeitdauer</li>
+<li><span class="answer-label">C</span>Eine Helligkeit</li>
+<li><span class="answer-label">D</span>Eine Temperatur</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Lichtjahr ist die Strecke, die Licht im Vakuum in einem Jahr zurücklegt. Der Name bezeichnet also keine Zeiteinheit.</p>
+<p class="source">Faktenbeleg: <a href="https://science.nasa.gov/exoplanets/what-is-a-light-year/" rel="noreferrer">What is a light-year? - NASA Science</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-010"><div class="meta">aiko-quiz-nat-010 · Knifflig · Biologie · Revision 1 · Startversion</div><h3>Wie viele verschiedene Grundbasen hat DNA?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Sechs</li>
+<li class="correct"><span class="answer-label">B</span>Vier<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Zwei</li>
+<li><span class="answer-label">D</span>Drei</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die vier Grundbasen heißen Adenin, Thymin, Guanin und Cytosin. Ihre Reihenfolge trägt genetische Information.</p>
+<p class="source">Faktenbeleg: <a href="https://www.genome.gov/genetics-glossary/Deoxyribonucleic-Acid" rel="noreferrer">Deoxyribonucleic Acid (DNA)</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-011"><div class="meta">aiko-quiz-nat-011 · Leicht · Tierkunde · Revision 1 · Startversion</div><h3>Zu welcher Tiergruppe gehören Fledermäuse?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Reptilien</li>
+<li><span class="answer-label">B</span>Insekten</li>
+<li class="correct"><span class="answer-label">C</span>Säugetiere<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Vögel</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Fledermäuse besitzen Fell und säugen ihre Jungen. Ihre Flugfähigkeit macht sie nicht zu Vögeln.</p>
+<p class="source">Faktenbeleg: <a href="https://www.si.edu/spotlight/bats/batfacts" rel="noreferrer">Bat Facts | Smithsonian Institution</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-012"><div class="meta">aiko-quiz-nat-012 · Leicht · Tierkunde · Revision 1 · Startversion</div><h3>Zu welcher Tiergruppe gehören Wale?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Fische</li>
+<li><span class="answer-label">B</span>Amphibien</li>
+<li><span class="answer-label">C</span>Weichtiere</li>
+<li class="correct"><span class="answer-label">D</span>Säugetiere<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Wale atmen Luft und säugen ihre Jungen. Ihr Leben im Wasser ändert ihre Zugehörigkeit zu den Säugetieren nicht.</p>
+<p class="source">Faktenbeleg: <a href="https://www.fisheries.noaa.gov/feature-story/11-cool-facts-about-whales-dolphins-and-porpoises" rel="noreferrer">11 Cool Facts About Whales, Dolphins, and Porpoises | NOAA Fisheries</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-013"><div class="meta">aiko-quiz-nat-013 · Mittel · Pflanzen · Revision 1 · Startversion</div><h3>Welches Gas nehmen Pflanzen bei der Photosynthese als Kohlenstoffquelle auf?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Kohlendioxid<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Sauerstoff</li>
+<li><span class="answer-label">C</span>Helium</li>
+<li><span class="answer-label">D</span>Wasserstoff</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Bei der Photosynthese wird Kohlenstoff aus Kohlendioxid eingebaut. Pflanzen betreiben daneben auch Zellatmung.</p>
+<p class="source">Faktenbeleg: <a href="https://gml.noaa.gov/obop/mlo/educationcenter/teachers/mlo%20activities/Carbon%20Dioxide%20%26%20Plants%20Demonstration/carbon%20dioxide%20and%20plants.pdf" rel="noreferrer">NOAA: Carbon Dioxide and Plants — classroom demonstration</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-014"><div class="meta">aiko-quiz-nat-014 · Mittel · Körperwissen · Revision 1 · Startversion</div><h3>Welches Organ bildet die äußere Schutzschicht deines Körpers?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Milz</li>
+<li class="correct"><span class="answer-label">B</span>Die Haut<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Die Leber</li>
+<li><span class="answer-label">D</span>Die Lunge</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Haut schützt den Körper und hilft unter anderem bei der Temperaturregelung. Sie gilt als größtes Organ.</p>
+<p class="source">Faktenbeleg: <a href="https://medlineplus.gov/skinconditions.html" rel="noreferrer">Skin Conditions | Dermatologic Disorders | MedlinePlus</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-015"><div class="meta">aiko-quiz-nat-015 · Leicht · Chemie · Revision 1 · Startversion</div><h3>Welche chemische Formel steht für Wasser?</h3><ol class="choices">
+<li><span class="answer-label">A</span>O₂</li>
+<li><span class="answer-label">B</span>NaCl</li>
+<li class="correct"><span class="answer-label">C</span>H₂O<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>CO₂</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Wassermolekül besteht aus zwei Wasserstoffatomen und einem Sauerstoffatom. Die kleinen Zahlen geben die Anzahl an.</p>
+<p class="source">Faktenbeleg: <a href="https://water.usgs.gov/edu/watercycle-kids-adv.html" rel="noreferrer">Interactive Water Cycle Diagram for Kids (Advanced)</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-016"><div class="meta">aiko-quiz-nat-016 · Mittel · Chemie · Revision 1 · Startversion</div><h3>Für welches chemische Element steht das Symbol Au?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Silber</li>
+<li><span class="answer-label">B</span>Kupfer</li>
+<li><span class="answer-label">C</span>Platin</li>
+<li class="correct"><span class="answer-label">D</span>Gold<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Au ist das Elementsymbol für Gold. Es leitet sich vom lateinischen Wort aurum ab.</p>
+<p class="source">Faktenbeleg: <a href="https://periodic-table.rsc.org/element/79/gold" rel="noreferrer">Gold - Element information, properties and uses | Periodic Table</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-017"><div class="meta">aiko-quiz-nat-017 · Knifflig · Tierkunde · Revision 1 · Startversion</div><h3>Wie viele Herzen hat ein Oktopus normalerweise?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Drei<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Eins</li>
+<li><span class="answer-label">C</span>Zwei</li>
+<li><span class="answer-label">D</span>Vier</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Zwei Herzen versorgen die Kiemen, ein weiteres den übrigen Körper. Der ungewöhnliche Kreislauf passt zur Lebensweise dieser Tiere.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html" rel="noreferrer">Octopuses keep surprising us - here are eight examples how | Natural History Museum</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-018"><div class="meta">aiko-quiz-nat-018 · Leicht · Tierkunde · Revision 1 · Startversion</div><h3>Wie viele Beine hat ein erwachsenes Insekt normalerweise?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Zehn</li>
+<li class="correct"><span class="answer-label">B</span>Sechs<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Vier</li>
+<li><span class="answer-label">D</span>Acht</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Insekten haben drei Beinpaare. Spinnen gehören zu einer anderen Tiergruppe und besitzen normalerweise vier Paare.</p>
+<p class="source">Faktenbeleg: <a href="https://naturalhistory.si.edu/education/teaching-resources/life-science/what-insect" rel="noreferrer">What Is an Insect? | Smithsonian National Museum of Natural History</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-019"><div class="meta">aiko-quiz-nat-019 · Knifflig · Physik · Revision 1 · Startversion</div><h3>Wie schnell ist Licht im Vakuum ungefähr?</h3><ol class="choices">
+<li><span class="answer-label">A</span>3.000 Kilometer pro Sekunde</li>
+<li><span class="answer-label">B</span>30.000 Kilometer pro Sekunde</li>
+<li class="correct"><span class="answer-label">C</span>300.000 Kilometer pro Sekunde<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>300 Kilometer pro Sekunde</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der genaue Wert beträgt 299.792.458 Meter pro Sekunde. Die richtige Auswahl ist die dazu passende Rundung.</p>
+<p class="source">Faktenbeleg: <a href="https://physics.nist.gov/cuu/Constants/Value/c.html" rel="noreferrer">CODATA Value: speed of light in vacuum</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-nat-020"><div class="meta">aiko-quiz-nat-020 · Mittel · Physik · Revision 2 · Startversion</div><h3>Welche Voraussetzung braucht Schall zur Ausbreitung?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein elektrisches Feld</li>
+<li><span class="answer-label">B</span>Eine Lichtquelle</li>
+<li><span class="answer-label">C</span>Ein Gravitationsfeld</li>
+<li class="correct"><span class="answer-label">D</span>Ein schwingungsfähiges Medium<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Schall ist eine mechanische Schwingung und benötigt ein Medium wie Luft oder Wasser. Deshalb kann er sich in einem idealen Vakuum nicht ausbreiten.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nasa.gov/sites/default/files/atoms/files/speed_of_sound_9-12.pdf" rel="noreferrer">NASA: Speed of Sound — classroom activity</a> · Seite gelesen · 25.10.2026</p>
+</article>
+</section>
+<section id="world_history_culture"><h2>Welt, Geschichte und Kultur <span class="meta">20 Fragen</span></h2>
+<article id="aiko-quiz-wel-001"><div class="meta">aiko-quiz-wel-001 · Leicht · Hauptstädte · Revision 1 · Startversion</div><h3>Wie heißt die Hauptstadt Frankreichs?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Paris<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Lyon</li>
+<li><span class="answer-label">C</span>Marseille</li>
+<li><span class="answer-label">D</span>Bordeaux</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Paris ist die Hauptstadt Frankreichs. Die anderen genannten Städte liegen ebenfalls in Frankreich.</p>
+<p class="source">Faktenbeleg: <a href="https://www.france.fr/fr/destination/paris/" rel="noreferrer">Visiter Paris</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-002"><div class="meta">aiko-quiz-wel-002 · Mittel · Hauptstädte · Revision 1 · Startversion</div><h3>Welche Stadt ist die Hauptstadt Australiens?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Brisbane</li>
+<li class="correct"><span class="answer-label">B</span>Canberra<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Sydney</li>
+<li><span class="answer-label">D</span>Melbourne</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Canberra wurde als Regierungssitz entwickelt. Die größere Bekanntheit von Sydney oder Melbourne macht sie nicht zur Hauptstadt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.nca.gov.au/education/canberras-history/canberra-seat-government" rel="noreferrer">Canberra, the Seat of Government | National Capital Authority</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-003"><div class="meta">aiko-quiz-wel-003 · Leicht · Hauptstädte · Revision 1 · Startversion</div><h3>Wie heißt die Hauptstadt Japans?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Osaka</li>
+<li><span class="answer-label">B</span>Hiroshima</li>
+<li class="correct"><span class="answer-label">C</span>Tokio<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Kyōto</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Tokio ist Japans heutige Hauptstadt. Kyōto war über viele Jahrhunderte ein kaiserliches Zentrum.</p>
+<p class="source">Faktenbeleg: <a href="https://www.gotokyo.org/en/plan/tokyo-outline/index.html" rel="noreferrer">TOKYO OUTLINE | The Official Tokyo Travel Guide, GO TOKYO</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-004"><div class="meta">aiko-quiz-wel-004 · Leicht · Weltkulturerbe · Revision 1 · Startversion</div><h3>Auf welchem Kontinent liegen die Pyramiden von Gizeh?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Asien</li>
+<li><span class="answer-label">B</span>Europa</li>
+<li><span class="answer-label">C</span>Südamerika</li>
+<li class="correct"><span class="answer-label">D</span>Afrika<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gizeh liegt in Ägypten westlich des Nils. Die Pyramiden gehören zum afrikanischen Teil des Landes.</p>
+<p class="source">Faktenbeleg: <a href="https://whc.unesco.org/en/list/86/" rel="noreferrer">Memphis and its Necropolis – the Pyramid Fields from Giza to Dahshur - UNESCO World Heritage Centre</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-005"><div class="meta">aiko-quiz-wel-005 · Mittel · Geographie · Revision 1 · Startversion</div><h3>Welche ist flächenmäßig die größte Wüste der Erde, wenn Polarwüsten mitzählen?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Die Antarktis<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Die Sahara</li>
+<li><span class="answer-label">C</span>Die Gobi</li>
+<li><span class="answer-label">D</span>Die Arabische Wüste</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Wüsten werden durch geringe Niederschläge bestimmt. Deshalb kann auch eine eisbedeckte Region eine Wüste sein.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bas.ac.uk/blogpost/isolation-stories-from-antarctica/" rel="noreferrer">Isolation Stories from Antarctica - British Antarctic Survey</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-006"><div class="meta">aiko-quiz-wel-006 · Mittel · Weltkulturerbe · Revision 1 · Startversion</div><h3>Welche Kultur errichtete Machu Picchu?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Olmeken</li>
+<li class="correct"><span class="answer-label">B</span>Die Inka<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Die Maya</li>
+<li><span class="answer-label">D</span>Die Azteken</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Machu Picchu entstand im 15. Jahrhundert unter den Inka im heutigen Peru. Es liegt hoch in den Anden.</p>
+<p class="source">Faktenbeleg: <a href="https://whc.unesco.org/en/list/274/" rel="noreferrer">Historic Sanctuary of Machu Picchu - UNESCO World Heritage Centre</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-007"><div class="meta">aiko-quiz-wel-007 · Leicht · Zeitgeschichte · Revision 1 · Startversion</div><h3>In welchem Jahr fiel die Berliner Mauer?</h3><ol class="choices">
+<li><span class="answer-label">A</span>1990</li>
+<li><span class="answer-label">B</span>1991</li>
+<li class="correct"><span class="answer-label">C</span>1989<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>1961</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Grenzübergänge öffneten sich am 9. November 1989. Die deutsche Wiedervereinigung folgte 1990.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Maueröffnung am 9. November 1989</p>
+<p class="source">Faktenbeleg: <a href="https://www.stiftung-berliner-mauer.de/en/35jahremauerfall" rel="noreferrer">35th anniversary of the fall of the Berlin Wall | Berlin Wall Foundation</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-008"><div class="meta">aiko-quiz-wel-008 · Mittel · Erfindungen · Revision 1 · Startversion</div><h3>Womit ist Johannes Gutenberg in der europäischen Geschichte besonders verbunden?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die erste Dampfmaschine</li>
+<li><span class="answer-label">B</span>Der erste Motorflug</li>
+<li><span class="answer-label">C</span>Die Erfindung des Telefons</li>
+<li class="correct"><span class="answer-label">D</span>Buchdruck mit beweglichen Metalllettern<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gutenbergs Druckverfahren mit beweglichen Metalllettern erleichterte die Vervielfältigung von Texten in Europa. Ältere Drucktraditionen existierten bereits in Asien.</p>
+<p class="source">Faktenbeleg: <a href="https://www.mainz.de/angebote-entdecken/kultur/literatur/buechermesse/mainzer-buechermesse" rel="noreferrer">Mainzer Büchermesse | Landeshauptstadt Mainz</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-009"><div class="meta">aiko-quiz-wel-009 · Leicht · Kunst · Revision 1 · Startversion</div><h3>Wer malte die Mona Lisa?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Leonardo da Vinci<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Michelangelo</li>
+<li><span class="answer-label">C</span>Raffael</li>
+<li><span class="answer-label">D</span>Sandro Botticelli</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Leonardo da Vinci malte das Porträt. Heute gehört es zu den bekanntesten Werken im Louvre.</p>
+<p class="source">Faktenbeleg: <a href="https://collections.louvre.fr/ark%3A/53355/cl010062370" rel="noreferrer">Portrait de Lisa Gherardini, épouse de Francesco del Giocondo, dit La Joconde ou Monna Lisa - Louvre site des collections</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-010"><div class="meta">aiko-quiz-wel-010 · Leicht · Musik · Revision 1 · Startversion</div><h3>Wessen fünfte Sinfonie beginnt berühmt mit drei kurzen Tönen und einem langen Ton?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Frédéric Chopin</li>
+<li class="correct"><span class="answer-label">B</span>Ludwig van Beethoven<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Wolfgang Amadeus Mozart</li>
+<li><span class="answer-label">D</span>Johann Sebastian Bach</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Beethovens fünfte Sinfonie beginnt mit einem besonders bekannten viertönigen Motiv. Es prägt den ersten Satz.</p>
+<p class="source">Faktenbeleg: <a href="https://internet.beethoven.de/de/ausstellung/die-farbe-der-klaenge/" rel="noreferrer">Die Farbe der Klänge – Beethoven-Haus Bonn</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-011"><div class="meta">aiko-quiz-wel-011 · Mittel · Literatur · Revision 1 · Startversion</div><h3>Wer schrieb das Drama Faust?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Heinrich Heine</li>
+<li><span class="answer-label">B</span>Georg Büchner</li>
+<li class="correct"><span class="answer-label">C</span>Johann Wolfgang von Goethe<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Friedrich Schiller</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Goethes Faust erschien in zwei Teilen. Die Figur und der Stoff sind allerdings älter als Goethes Bearbeitung.</p>
+<p class="source">Faktenbeleg: <a href="https://www.klassik-stiftung.de/forschung/forschungsaktivitaeten/historisch-kritische-edition-von-goethes-faust/" rel="noreferrer">Historisch-kritische Edition von Goethes „Faust“ - Forschungsaktivitäten, Sammlungen und Bestände</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-012"><div class="meta">aiko-quiz-wel-012 · Leicht · Schrift und Zahlen · Revision 1 · Startversion</div><h3>Welche Zahl bezeichnet das römische Zahlzeichen X?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Fünf</li>
+<li><span class="answer-label">B</span>Fünfzig</li>
+<li><span class="answer-label">C</span>Hundert</li>
+<li class="correct"><span class="answer-label">D</span>Zehn<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> X steht für zehn. V steht für fünf, L für fünfzig und C für hundert.</p>
+<p class="source">Faktenbeleg: <a href="https://www.mathsisfun.com/roman-numerals.html" rel="noreferrer">Roman Numerals</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-013"><div class="meta">aiko-quiz-wel-013 · Leicht · Symbole · Revision 1 · Startversion</div><h3>Wie viele Sterne zeigt die Flagge der Europäischen Union?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Zwölf<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Zehn</li>
+<li><span class="answer-label">C</span>Fünfzehn</li>
+<li><span class="answer-label">D</span>Siebenundzwanzig</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Zahl zwölf ist ein Symbol und entspricht nicht der jeweiligen Zahl der Mitgliedstaaten.</p>
+<p class="source">Faktenbeleg: <a href="https://european-union.europa.eu/principles-countries-history/symbols/european-flag_en" rel="noreferrer">EU flag | European Union</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-014"><div class="meta">aiko-quiz-wel-014 · Leicht · Symbole · Revision 1 · Startversion</div><h3>Wie viele Ringe hat das olympische Symbol?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Sechs</li>
+<li class="correct"><span class="answer-label">B</span>Fünf<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Drei</li>
+<li><span class="answer-label">D</span>Vier</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Fünf ineinander verschlungene Ringe bilden das olympische Symbol. Die Farben werden nicht offiziell jeweils einem einzelnen Kontinent zugeordnet.</p>
+<p class="source">Faktenbeleg: <a href="https://library.olympics.com/default/digitalCollection/DigitalCollectionAttachmentDownloadHandler.ashx?documentId=162035&amp;parentDocumentId=37555&amp;skipCopyright=true&amp;skipWatermark=true" rel="noreferrer">SPORT ADMINISTRATION MANUAL</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-015"><div class="meta">aiko-quiz-wel-015 · Mittel · Literaturformen · Revision 1 · Startversion</div><h3>Aus welchem Land stammt die Gedichtform Haiku?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Griechenland</li>
+<li><span class="answer-label">B</span>Indien</li>
+<li class="correct"><span class="answer-label">C</span>Japan<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Italien</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Haiku ist eine japanische Gedichtform. Die traditionelle japanische Form wird über Lauteinheiten beschrieben, nicht einfach über deutsche Silben.</p>
+<p class="source">Faktenbeleg: <a href="https://poets.org/glossary" rel="noreferrer">Glossary of Poetic Terms | Academy of American Poets</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-016"><div class="meta">aiko-quiz-wel-016 · Mittel · Internationale Organisationen · Revision 1 · Startversion</div><h3>In welcher Stadt liegt der Hauptsitz der Vereinten Nationen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Genf</li>
+<li><span class="answer-label">B</span>Den Haag</li>
+<li><span class="answer-label">C</span>Brüssel</li>
+<li class="correct"><span class="answer-label">D</span>New York<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Hauptsitz liegt in New York. Die UN haben daneben wichtige Standorte etwa in Genf und Wien.</p>
+<p class="source">Faktenbeleg: <a href="https://ask.un.org/faq/14362" rel="noreferrer">What is the address of the United Nations Headquarters? - Ask DAG!</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-017"><div class="meta">aiko-quiz-wel-017 · Knifflig · Schriftgeschichte · Revision 1 · Startversion</div><h3>Wie viele unterschiedliche Schriften stehen auf dem Stein von Rosette?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Drei<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Zwei</li>
+<li><span class="answer-label">C</span>Vier</li>
+<li><span class="answer-label">D</span>Fünf</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Der Stein zeigt Hieroglyphen, Demotisch und Griechisch. Es handelt sich dabei um drei Schriften, aber nur zwei Sprachen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.britishmuseum.org/sites/default/files/2023-11/Room-4-Touch-Tour-Guide.pdf" rel="noreferrer">Room 4 Touch Tour Guide</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-018"><div class="meta">aiko-quiz-wel-018 · Knifflig · Schriftsysteme · Revision 1 · Startversion</div><h3>Aus wie vielen Punktpositionen besteht eine klassische Braille-Zelle?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Zehn</li>
+<li class="correct"><span class="answer-label">B</span>Sechs<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Vier</li>
+<li><span class="answer-label">D</span>Acht</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die klassische Braille-Zelle hat sechs Positionen in zwei Spalten. Es gibt daneben auch achtpunktige Systeme, etwa im Computerbereich.</p>
+<p class="source">Faktenbeleg: <a href="https://www.brailleauthority.org/signage/index.html" rel="noreferrer">Braille signage file</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-019"><div class="meta">aiko-quiz-wel-019 · Knifflig · Entdeckungsreisen · Revision 1 · Startversion</div><h3>Wer führte die erste Weltumsegelung nach Magellans Tod zu Ende?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Vasco da Gama</li>
+<li><span class="answer-label">B</span>James Cook</li>
+<li class="correct"><span class="answer-label">C</span>Juan Sebastián Elcano<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Christoph Kolumbus</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Magellan begann die Expedition, starb aber unterwegs. Elcano brachte die Victoria 1522 nach Spanien zurück.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Magellan-Elcano-Expedition, Rückkehr 1522</p>
+<p class="source">Faktenbeleg: <a href="https://armada.defensa.gob.es/archivo/ohycn/ServicioEducativoyCultural/MagallanesyElcano.pdf" rel="noreferrer">Regreso de Juan Sebastián de Elcano a Sevilla (8 de septiembre de 1522), después de la primera circunnavegación del mundo. Óleo pintado en 1919 por Elías Salaverría. MNM-Inv. 527</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-wel-020"><div class="meta">aiko-quiz-wel-020 · Leicht · Sprachwissen · Revision 1 · Startversion</div><h3>Wie nennt man ein Wort, das vorwärts und rückwärts gleich gelesen werden kann?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Synonym</li>
+<li><span class="answer-label">B</span>Akronym</li>
+<li><span class="answer-label">C</span>Anagramm</li>
+<li class="correct"><span class="answer-label">D</span>Palindrom<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Palindrom bleibt beim Rückwärtslesen gleich. Ein Anagramm entsteht dagegen durch das Umordnen von Buchstaben.</p>
+<p class="source">Faktenbeleg: <a href="https://www.duden.de/sprachwissen/sprachratgeber/Palindrom" rel="noreferrer">Duden | Palindrom</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<section id="computers_digital"><h2>Computer und digitale Kultur <span class="meta">20 Fragen</span></h2>
+<article id="aiko-quiz-dig-001"><div class="meta">aiko-quiz-dig-001 · Leicht · Internet-Grundlagen · Revision 1 · Startversion</div><h3>Wofür steht die Abkürzung WWW?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>World Wide Web<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>World Wireless Window</li>
+<li><span class="answer-label">C</span>Wide World Wire</li>
+<li><span class="answer-label">D</span>Web Working World</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das World Wide Web ist ein Dienst im Internet. Internet und Web sind deshalb keine vollständig austauschbaren Begriffe.</p>
+<p class="source">Faktenbeleg: <a href="https://home.cern/science/computing/the-birth-of-the-web/where-web-was-born/" rel="noreferrer">Where the web was born – Home | CERN</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-002"><div class="meta">aiko-quiz-dig-002 · Leicht · Internet-Grundlagen · Revision 1 · Startversion</div><h3>Wofür nutzt du eine URL beim Surfen?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Zum Komprimieren einer Datei</li>
+<li class="correct"><span class="answer-label">B</span>Zum Adressieren einer Ressource<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Zum Verschlüsseln eines Passworts</li>
+<li><span class="answer-label">D</span>Zum Messen der Verbindungsgeschwindigkeit</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Eine URL beschreibt, wie eine Ressource erreichbar ist. Die Adresse einer Webseite ist ein bekanntes Beispiel.</p>
+<p class="source">Faktenbeleg: <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_URL" rel="noreferrer">What is a URL? - Learn web development | MDN</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-003"><div class="meta">aiko-quiz-dig-003 · Mittel · Hardware · Revision 1 · Startversion</div><h3>Was passiert mit gewöhnlichem RAM-Inhalt normalerweise nach dem Ausschalten?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Er wird automatisch vollständig auf die SSD kopiert</li>
+<li><span class="answer-label">B</span>Er wird dauerhaft im Prozessor gespeichert</li>
+<li class="correct"><span class="answer-label">C</span>Er geht verloren<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Er bleibt wie eine gespeicherte Datei erhalten</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Gewöhnlicher Arbeitsspeicher ist flüchtig und benötigt Strom. Dauerhaft gespeicherte Dateien liegen auf anderen Speichermedien.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Gewöhnliches flüchtiges RAM; keine NVRAM-Spezialformen</p>
+<p class="source">Faktenbeleg: <a href="https://www.kingston.com/en/memory/kingston-glossary" rel="noreferrer">Kingston Glossary - Kingston Technology</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-004"><div class="meta">aiko-quiz-dig-004 · Leicht · Hardware · Revision 1 · Startversion</div><h3>Welche Komponente ist der zentrale Universalprozessor eines PCs?</h3><ol class="choices">
+<li><span class="answer-label">A</span>RAM</li>
+<li><span class="answer-label">B</span>SSD</li>
+<li><span class="answer-label">C</span>GPU</li>
+<li class="correct"><span class="answer-label">D</span>CPU<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die CPU ist der zentrale Prozessor. Weitere Komponenten können spezielle Aufgaben übernehmen, etwa eine GPU für Grafikberechnungen.</p>
+<p class="source">Faktenbeleg: <a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2024-08/01-india-component-manufacturing-whitepaper-09-8-2024-2-.pdf" rel="noreferrer">Intel: India component manufacturing white paper — computer components (2024)</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-005"><div class="meta">aiko-quiz-dig-005 · Mittel · Speicher · Revision 2 · Startversion</div><h3>Wie speichert eine übliche SSD Daten im Unterschied zu einer klassischen HDD?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>In Halbleiterspeichern ohne bewegliche Teile<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Magnetisch auf rotierenden Scheiben</li>
+<li><span class="answer-label">C</span>Optisch auf einer rotierenden Scheibe</li>
+<li><span class="answer-label">D</span>Magnetisch auf einem aufgewickelten Band</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Eine SSD nutzt Halbleiterspeicher statt rotierender Magnetscheiben. Dadurch entfallen die beweglichen Leseköpfe einer HDD.</p>
+<p class="source">Faktenbeleg: <a href="https://www.kingston.com/en/ssd/a400-solid-state-drive" rel="noreferrer">A400 Solid State Drive - 240GB-960GB - Kingston Technology</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-006"><div class="meta">aiko-quiz-dig-006 · Leicht · Anschlüsse · Revision 2 · Startversion</div><h3>Wofür steht USB bei den Anschlüssen USB-A und USB-C?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Universal System Bus</li>
+<li class="correct"><span class="answer-label">B</span>Universal Serial Bus<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Unified Serial Bridge</li>
+<li><span class="answer-label">D</span>Universal Storage Bus</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> USB steht für Universal Serial Bus. A und C bezeichnen unterschiedliche Anschlussformen.</p>
+<p class="source">Faktenbeleg: <a href="https://usb.org/euconformity" rel="noreferrer">EU Conformity to USB-IF Specifications (IEC 62680) | USB-IF</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-007"><div class="meta">aiko-quiz-dig-007 · Leicht · Digitale Alltagskultur · Revision 1 · Startversion</div><h3>Welche Form hat das typische Muster eines QR-Codes?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Eine einzelne Folge farbiger Ringe</li>
+<li><span class="answer-label">B</span>Eine spiralförmig angeordnete Zeichenfolge</li>
+<li class="correct"><span class="answer-label">C</span>Ein zweidimensionales Quadratfeld<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Eine Folge paralleler Striche</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> QR-Codes speichern Daten in einem zweidimensionalen Muster. Damit unterscheiden sie sich von klassischen eindimensionalen Strichcodes.</p>
+<p class="source">Faktenbeleg: <a href="https://www.qrcode.com/en/about/" rel="noreferrer">DENSO WAVE: What is a QR Code?</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-008"><div class="meta">aiko-quiz-dig-008 · Leicht · Web-Sicherheit · Revision 2 · Startversion</div><h3>Was kennzeichnet HTTPS gegenüber einer unverschlüsselten HTTP-Verbindung?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Verschlüsselung der auf dem Server gespeicherten Dateien</li>
+<li><span class="answer-label">B</span>Die Prüfung der Webseiteninhalte auf Schadsoftware</li>
+<li><span class="answer-label">C</span>Die Anonymisierung deiner IP-Adresse gegenüber dem Server</li>
+<li class="correct"><span class="answer-label">D</span>Die Verschlüsselung der Daten während der Übertragung<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> HTTPS schützt die Übertragung durch Verschlüsselung. Es garantiert nicht, dass der Betreiber einer Webseite vertrauenswürdig ist.</p>
+<p class="source">Faktenbeleg: <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/TLS" rel="noreferrer">Transport Layer Security (TLS) configuration - Security | MDN</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-009"><div class="meta">aiko-quiz-dig-009 · Leicht · Alltagssoftware · Revision 1 · Startversion</div><h3>Wozu dient ein Webbrowser hauptsächlich?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Zum Anzeigen und Nutzen von Webseiten<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Zum Kompilieren von Programmquelltext</li>
+<li><span class="answer-label">C</span>Zum Verwalten der Festplattenpartitionen</li>
+<li><span class="answer-label">D</span>Zum Erstellen bootfähiger Systemabbilder</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Browser wie Firefox stellen Webinhalte dar und ermöglichen ihre Nutzung. Eine Suchmaschine ist dagegen ein Dienst, den du im Browser aufrufen kannst.</p>
+<p class="source">Faktenbeleg: <a href="https://www.mozilla.org/en-US/firefox/browsers/what-is-a-browser/" rel="noreferrer">What is a web browser?</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-010"><div class="meta">aiko-quiz-dig-010 · Mittel · Digitale Sicherheit · Revision 1 · Startversion</div><h3>Was bezeichnet Phishing im Bereich der IT-Sicherheit?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Das heimliche Schürfen von Kryptowährung auf fremden Rechnern</li>
+<li class="correct"><span class="answer-label">B</span>Das Erschleichen sensibler Daten durch vorgetäuschte Identität<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Das Verschlüsseln fremder Dateien gegen Lösegeld</li>
+<li><span class="answer-label">D</span>Das Überlasten eines Dienstes mit massenhaften Anfragen</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Phishing täuscht einen vertrauten Absender oder Dienst vor. Dadurch sollen Menschen etwa Passwörter oder andere sensible Daten preisgeben.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bsi.bund.de/DE/Themen/Verbraucherinnen-und-Verbraucher/Informationen-und-Empfehlungen/Cyber-Sicherheitsempfehlungen/Sicherheitsirrtuemer/irrtuemer-e-mail-sicherheit.html?nn=1147620" rel="noreferrer">BSI - Newsletter Einfach • Cybersicher vom 04.06.2025 - E-Mail-Sicherheit: Mythen im Faktencheck</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-011"><div class="meta">aiko-quiz-dig-011 · Leicht · Datensicherung · Revision 1 · Startversion</div><h3>Was ist der Hauptzweck eines Backups?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Das Betriebssystem auf eine neue Version bringen</li>
+<li><span class="answer-label">B</span>Schädliche Dateien beim Herunterladen erkennen</li>
+<li class="correct"><span class="answer-label">C</span>Daten nach einem Verlust wiederherstellen können<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Dateien nur für den Versand verkleinern</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein Backup ist eine Sicherungskopie. Eine sinnvoll getrennte Sicherung hilft auch dann, wenn das ursprüngliche Speichermedium ausfällt.</p>
+<p class="source">Faktenbeleg: <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/Broschueren/Wegweiser_Checklisten_Flyer/SfS-Anleitung_Datensicherung.pdf?__blob=publicationFile&amp;v=5" rel="noreferrer">BSI: Schritt für Schritt zur Datensicherung</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-012"><div class="meta">aiko-quiz-dig-012 · Mittel · Softwarekultur · Revision 2 · Startversion</div><h3>Welche Rechte muss eine Open-Source-Lizenz am Quellcode erlauben?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Einsehen und ausführen, aber keine Änderungen weitergeben</li>
+<li><span class="answer-label">B</span>Verändern für private Zwecke, aber keine Weitergabe erlauben</li>
+<li><span class="answer-label">C</span>Nutzen in der Ausbildung, aber nicht für kommerzielle Zwecke</li>
+<li class="correct"><span class="answer-label">D</span>Einsehen, verändern und gemäß Lizenz weitergeben<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Open Source erlaubt Nutzung, Änderungen und Weitergabe unter den jeweiligen Lizenzbedingungen. Auch kommerzielle Nutzung ist zulässig.</p>
+<p class="source">Faktenbeleg: <a href="https://opensource.org/osd" rel="noreferrer">The Open Source Definition – Open Source Initiative</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-013"><div class="meta">aiko-quiz-dig-013 · Leicht · Dateiformate · Revision 1 · Startversion</div><h3>Welche Endung kennzeichnet typischerweise ein ZIP-Archiv?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>.zip<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>.png</li>
+<li><span class="answer-label">C</span>.mp3</li>
+<li><span class="answer-label">D</span>.txt</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Ein ZIP-Archiv kann mehrere Dateien zusammenfassen und komprimieren. Es ist kein Verschlüsselungsversprechen.</p>
+<p class="source">Faktenbeleg: <a href="https://docs.python.org/3/library/zipfile.html" rel="noreferrer">Python documentation: ZIP archives</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-014"><div class="meta">aiko-quiz-dig-014 · Mittel · Computergeschichte · Revision 1 · Startversion</div><h3>Wer begann die Entwicklung des Linux-Kernels?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Bill Gates</li>
+<li class="correct"><span class="answer-label">B</span>Linus Torvalds<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Tim Berners-Lee</li>
+<li><span class="answer-label">D</span>Steve Wozniak</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Linus Torvalds begann Linux 1991. Heute tragen viele Menschen und Organisationen zur Entwicklung des Kernels bei.</p>
+<p class="source">Faktenbeleg: <a href="https://www.kernel.org/doc/mirror/ols2011.pdf" rel="noreferrer">Linux Symposium 2011: State of the kernel — Linux announcement history</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-015"><div class="meta">aiko-quiz-dig-015 · Leicht · Digitale Grundlagen · Revision 1 · Startversion</div><h3>Welche beiden Ziffern verwendet das binäre Zahlensystem?</h3><ol class="choices">
+<li><span class="answer-label">A</span>0 und 9</li>
+<li><span class="answer-label">B</span>2 und 8</li>
+<li class="correct"><span class="answer-label">C</span>0 und 1<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>1 und 2</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Das binäre Zahlensystem hat die Basis zwei. Seine beiden Ziffern sind 0 und 1.</p>
+<p class="source">Faktenbeleg: <a href="https://bitsavers.computerhistory.org/pdf/ibm/1130/functional_characteristics/A26-5881-2_1130_Functional_Characteristics_1966.pdf" rel="noreferrer">IBM: 1130 Computing System — Functional Characteristics (1966)</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-016"><div class="meta">aiko-quiz-dig-016 · Mittel · Netzwerke · Revision 2 · Startversion</div><h3>Was beschreibt eine WLAN-Verbindung zunächst?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Verbindung des Routers zum Internetanbieter</li>
+<li><span class="answer-label">B</span>Die Erreichbarkeit eines bestimmten Webservers</li>
+<li><span class="answer-label">C</span>Die Verbindung eines Mobilfunkmodems zum Funkmast</li>
+<li class="correct"><span class="answer-label">D</span>Die lokale Funkverbindung zum Netzwerk<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> WLAN verbindet Geräte mit einem lokalen Funknetz. Ob darüber auch das Internet erreichbar ist, hängt von der weiteren Netzverbindung ab.</p>
+<p class="source">Faktenbeleg: <a href="https://support.microsoft.com/en-us/windows/fix-wi-fi-connection-issues-in-windows-9424a1f7-6a3b-65a6-4d78-7f07eee84d2c" rel="noreferrer">Microsoft Support: Fix Wi-Fi connection issues in Windows</a> · Seite gelesen · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-017"><div class="meta">aiko-quiz-dig-017 · Mittel · Web-Grundlagen · Revision 1 · Startversion</div><h3>Was sind Cookies im Zusammenhang mit Webseiten?</h3><ol class="choices">
+<li class="correct"><span class="answer-label">A</span>Kleine vom Browser gespeicherte Daten<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">B</span>Digitale Zertifikate zur Bestätigung eines Servernamens</li>
+<li><span class="answer-label">C</span>Ausführbare Programme zur Darstellung von Webseiten</li>
+<li><span class="answer-label">D</span>Passwortgeschützte Archive mit Webseitenkopien</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Webseiten können mit Cookies beispielsweise eine Sitzung wiedererkennen. Nicht jeder Cookie hat denselben Zweck.</p>
+<p class="source">Faktenbeleg: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies" rel="noreferrer">Using HTTP cookies - HTTP | MDN</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-018"><div class="meta">aiko-quiz-dig-018 · Knifflig · Computergeschichte · Revision 1 · Startversion</div><h3>Welchen Gegenstand zeigte die berühmte frühe Webcam der Universität Cambridge?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Ein Aquarium</li>
+<li class="correct"><span class="answer-label">B</span>Eine Kaffeekanne<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">C</span>Eine Sonnenuhr</li>
+<li><span class="answer-label">D</span>Eine Glühbirne</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Die Kamera zeigte den Füllstand der Kaffeekanne im Trojan Room. So konnten Forschende unnötige Wege vermeiden.</p>
+<p class="scope"><strong>Geltungsbereich:</strong> Trojan Room Coffee Pot, Cambridge, 1991; Web-Anbindung 1993</p>
+<p class="source">Faktenbeleg: <a href="https://www.cl.cam.ac.uk/coffee/" rel="noreferrer">Trojan Room Coffee Machine</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-019"><div class="meta">aiko-quiz-dig-019 · Knifflig · Computerpioniere · Revision 1 · Startversion</div><h3>Für welche Maschine entwarf Ada Lovelace ihren bekannten Algorithmus?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Die Z3</li>
+<li><span class="answer-label">B</span>Den ENIAC</li>
+<li class="correct"><span class="answer-label">C</span>Die Analytical Engine<span class="correct-note">✓ richtig</span></li>
+<li><span class="answer-label">D</span>Die Enigma</li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Lovelaces Notizen behandelten Charles Babbages Analytical Engine. Die Maschine wurde zu ihren Lebzeiten nicht vollständig gebaut.</p>
+<p class="source">Faktenbeleg: <a href="https://blog.sciencemuseum.org.uk/ada-lovelace-visionary-of-the-computer-age/" rel="noreferrer">Ada Lovelace: visionary of the computer age - Science Museum Blog</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+<article id="aiko-quiz-dig-020"><div class="meta">aiko-quiz-dig-020 · Knifflig · Technikgeschichte · Revision 1 · Startversion</div><h3>Womit steuerte ein Jacquard-Webstuhl sein gewebtes Muster?</h3><ol class="choices">
+<li><span class="answer-label">A</span>Magnetbänder</li>
+<li><span class="answer-label">B</span>CD-ROMs</li>
+<li><span class="answer-label">C</span>Touchscreens</li>
+<li class="correct"><span class="answer-label">D</span>Lochkarten<span class="correct-note">✓ richtig</span></li>
+</ol><p class="explanation"><strong>Erklärung:</strong> Lochkarten legten fest, welche Fäden angehoben wurden. Diese Form der Steuerung gehört zur Vorgeschichte programmierbarer Maschinen.</p>
+<p class="source">Faktenbeleg: <a href="https://blog.sciencemuseum.org.uk/coventry-city-of-culture-2021-unravelling-a-history/" rel="noreferrer">Coventry City of Culture 2021: Unravelling a history - Science Museum Blog</a> · Suchauszug geprüft · 25.10.2026</p>
+</article>
+</section>
+<footer><p>Neu formulierte Katalogtexte: <a href="../../LICENSE">MIT-Projektlizenz</a>. Referenzseiten, Werk- und Markennamen behalten ihre jeweiligen Rechte. Die Quellenlinks lizenzieren keine fremden Bilder oder Texte.</p><p>Diese Review-Seite enthält keine Skripte, externen Schriftarten, Bilder, Tracker oder Netzabrufe. Quellen werden nur über ihre Links geöffnet.</p></footer></body></html>

@@ -4,6 +4,13 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+Optional [social API content](SOCIAL_CONTENT.md) uses an explicit opt-in. The
+application owns source-aware preparation and three two-item buffers through a
+worker port; `infrastructure/social_api.py` owns the single HTTP worker. Desktop
+coordination admits prepared content through the existing `talk` transition and
+reaction player. It creates no additional pet aggregate, settings owner or
+persistent content cache.
+
 Current behavior is defined in the [World contract](WORLD_OBJECT_CONTRACTS.md).
 The [documentation index](README.md) separates maintained guides, validation and
 accepted desktop behavior from [completed delivery history](history/README.md).
@@ -29,7 +36,7 @@ flowchart TB
     Sprite["ui/pet_view/ — sprite, overlays and reaction playback"]
     Windows["ui/windows/ and ui/common/ — controls and reusable Tk helpers"]
     Desktop["desktop/ — timer, pointer/input and native Windows adapters"]
-    Infra["infrastructure/ — hardware, item/animation loaders and JSON save"]
+    Infra["infrastructure/ — hardware, item/animation loaders and SQLite save"]
     Ports["application/ports.py and telemetry.py — read contracts"]
 
     Shell --> App
@@ -62,7 +69,7 @@ all runtime coupling between composed services.
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
 
-Stages 6-7 complete PetState encapsulation. NeedValues, CareValues,
+Stages 6-7 complete PetState encapsulation. ProgressionValues, CareValues,
 RoutineValues and FriendshipRecord expose read-only properties and
 Sequence/Mapping policy inputs. PetState retains one frozen
 `pet/state_values.py::PetValues` value, replacing it only within owned
@@ -86,21 +93,39 @@ satiety or energy thresholds. `application/active_time.py` owns the immutable
 `SessionInputs` record used by ticks, care and completed games. Its
 `advance_session_time()` function consumes the shared clock interval exactly
 once and forwards the same schedule, workload and nutrition context. The mind
-captures pre-care tone and conversation context before mutation, then
+captures pre-care conversation context before mutation, then
 interprets the committed effect.
 German fallback wording is selected only by `ui/view_models/care_text.py`.
 
-- `care_actions.py`: `CareTransition` for care actions and their rewards.
-- `need_decay.py`: `NeedLevels` for time and measured effort.
-- `friendship.py`: relationship gains, cooldowns and daily limits.
-- `lifecycle.py` and `routine.py`: bounded catch-up, sleep and daily schedule.
+- `care_actions.py`: `CareTransition` for care effects and accepted-contact evidence.
+- `needs.py`: frozen `NeedLevels` contains exactly satiety, energy, fun, social
+  and affection. Mood and friendship are separate values, not care needs.
+- `progression.py`: frozen `PetProgress` for all numeric time progression,
+  with separate need, mood, food and relationship results. Integrates targets with the
+  existing pure food/fun/mood policies; `PetState` applies one result. It reads
+  no clocks, owns no mutable store and offers no alternate precomputed path.
+- `friendship.py`: accepted contact, policy activation and direct penalty caps.
+- `friendship_decay.py`: simultaneous mood/Moodlet flow and progressive passive loss
+  during the existing need steps;
+  `friendship_history.py`: immutable elapsed-axis evidence inside PetValues.
+- `lifecycle.py` and `routine.py`: streaming full-time advancement and local schedule.
+- `sleep.py`: immutable sleep episode/context and pure priority policy;
+  `PetState` owns episode/protection/break transitions in its full checkpoint.
+- `mind/quiet_rhythm.py`: bounded coarse quiet phases and window recurrence,
+  inside the existing adaptive memory, independent of workload classification.
 
 Food and localized UI content now have distinct, validated JSON owners:
 `data/balance.json` holds the initial values and named gameplay parameters;
 `data/food_catalog.json` holds nutrition/menu records;
 `data/texts.de.json` holds care, mood, emotion, workload, status and
 game-message copy; `data/routine.de.json` holds day schedules;
-`data/dialogues.de.json` holds authored situational lines.
+`data/dialogues/de/index.json` holds authored situational lines.
+`data/object_grammar.de.json` holds grammatical metadata only, validated and
+loaded by the existing `pet/content.py` owner. Immutable contracts and the
+finite placeholder set live in `pet/object_text_contract.py`; the pure
+`ui/view_models/german_object_phrases.py` inflects articles and pronouns for
+object reactions and care fallbacks. It makes no recognition, custody or
+search decisions and does not duplicate canonical food/menu names.
 `assets/items/items.json` holds only item paths, dimensions, pivots and
 weapon labels, not duplicate food names or menu icon conventions.
 `desktop/animation_assembly.py` loads one immutable `ItemCatalog` and
@@ -112,18 +137,282 @@ non-finite numbers. Typed catalogues reject missing/unknown fields, invalid
 references, text placeholders and inconsistent balance ranges before use.
 See [resource ownership and local saves](DATA_AND_SAVES.md).
 
-**`pet/mind/mind.py — PetMind`** selects reactions and maintains short-term conversational context. It does not own Tk windows or play sounds. `WorkloadEventDetector` in `pet/mind/workload_events.py` converts observed load changes into event keys. Authored Aiko dialogue remains in `aiko_pet/data/dialogues.de.json`; it is not regenerated by this refactor.
+**`pet/mind/mind.py — PetMind`** selects reactions without owning Tk windows or
+sound. `WorkloadEventDetector` converts observed load changes into event keys.
+Requested Plaudern uses the pure `pet/mind/conversation_topics.py` policy over
+existing retained Moodlet causes and original wish facts. Episodes receive
+intensity weight once; one actual event is not counted as several memories.
+The existing `DialogueContext`/`DialogueConditions` and single `DialogueBook`
+render complete authored stories from indexed topic JSON. Unknown events are
+not reconstructed. Grounded state or already disclosed wishes supply a present-
+tense alternative when no fitting story is available. No discussed flag,
+conversation archive, new clock or separate mutable conversational owner exists.
+See the [PL-5 delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-5-delivery-evidence-based-requested-plaudern).
+
+**`application/session_time.py`** coordinates existing Pet/World/object-memory
+owners between the shared planner's intervals. `ObjectConsumption.apply_portion`
+commits historical or animated intake with the same rollback contract. The
+session restorer reconstructs the paired owners before progressing closed time;
+the existing World access port supplies that same coordination explicitly to
+application use cases. The clock only measures elapsed time. One plan is
+applied through PetState's shared step operation, without nested replanning;
+first-save history is initialized once for the complete interval. Live movement,
+perception and intake remain with their existing World interaction owners.
+No extra need integrator, clock, search, movement writer or pet store is added.
 
 **`pet/mind/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
 
-`PetState.mood_hint()` now returns a typed `MoodHint` key from
+`PetState.status_hint()` returns a typed `StatusHint` key from
 `pet/status_hints.py`. The exact same pure policy works on the immutable
-`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German mood
+`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German status
 wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
 whether to display a meal name or "Snack". Historical localized helpers
 `TimeContext.label`, `TimeContext.schedule_line` and
 `TimeContext.greeting()` have been removed; localized weekday/status display
 belongs to `ui/view_models/text_de.py`.
+
+`pet/moodlet_types.py` owns immutable Moodlet identity/outcome vocabulary;
+`pet/moodlet_models.py` owns frozen definitions, episodes, causes and state.
+`pet/wish_types.py` owns immutable wish identity, area, goal and target meaning.
+These leaf owners keep even annotation dependencies acyclic. `pet/moodlets.py`
+contains actual contribution, reinforcement and relief policies; timing imports
+models directly. Established public type imports remain bound to those same
+single definitions rather than parallel classes or forwarding behaviors.
+
+`pet/moodlet_catalog.py` strictly loads twenty-six families from
+`data/moodlets.json`, including six longer-term patterns. `pet/wish_catalog.py`
+loads seventeen forms from `data/wishes.json`. Shared numeric parameters stay
+in the existing balance catalogue; labels/descriptions stay in `texts.de.json`.
+Both catalogues detach data into frozen dataclasses and read-only mappings.
+`WishGoal`/`WishObjective` preserve original saved meanings independently of
+newer catalogue definitions. Food avoidance requires real monotony evidence;
+full needs reduce area weights instead of excluding desires. Area-first and
+then form/target weights belong to `pet/wish_selection.py`.
+
+`PetState` commits wish retirement and bounded concrete Moodlet causes together.
+Causes retain the original wish/target, semantic receipt, actor and actual outcome;
+game causes distinguish objective outcome from final-round result/counts. At most
+three actual causes live with each active Moodlet, further bounded by current
+intensity, without a completed-wish archive. Wish, everyday positive, negative
+interaction, poor-care and longer-term producers retain concrete typed facts.
+Old generic evidence remains unknown.
+Duplicate receipts cannot reinforce or refresh the same impression.
+
+`ObjectConsumption` confirms actual personal custody and delegates original
+food-wish snapshots to `pet/food_wishes.py`. Recognition of the desired gift or a
+matching alternative fulfills its original wish, even at full satiety; explicit
+excluded food creates the negative food-wish outcome even if put down. Merely
+seeing the cursor release, preview, ground placement and autonomous pickup cannot
+substitute for personal handover. Unknown food waits for acquired identification.
+Nutrition remains a distinct actual-intake transaction. Existing World/Pet/Memory
+checkpoints preserve rollback and prevent double consumption or emotional credit.
+
+Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
+they never import game implementations, sessions or scores. The package boundary
+gate checks resolved import targets, including this narrow shared-contract rule,
+rather than treating relative-import depth as a domain boundary.
+
+`MoodletState`/`MoodletEpisode` and `WishState`/`ActiveWish`/`GameWishProgress`
+are frozen values owned by `PetValues` and exposed read-only by `PetState`.
+Focused `infrastructure/moodlet_codec.py` and `wish_codec.py` extend the existing
+`pet_codec.py` entry point and outer version-one atomic save. Checkpoint/restore
+includes both collections in the existing Pet/World/memory transaction.
+Elapsed timestamps refer to `lived_seconds`; loading never advances them or
+creates emotional evidence. Wish IDs, creation evidence and refill deadlines survive
+removed wishes;
+round receipts are bounded independently of cumulative attempt counts and never
+become a second game session/score owner. `MoodletCause`/`MoodletWishCause` preserve
+at most three real, language-neutral trigger snapshots within the active episode.
+Their wish keys are validated by codecs, avoiding a domain import cycle. Old
+episodes have explicit unknown evidence; expiry removes causes with their episode.
+Immutable application reads expose original goals, pins and causes, without
+owning history or changing the UI. Relationship contact, neglect and direct losses
+retain their existing history owner. Its optional `continuous_since` boundary
+activates the new flow at the first accounted-for endpoint after migration.
+Old saved points/contact/critical history and historical credit metadata survive
+without refunds, replay or fabricated contact. Current care/wish effects no longer
+create credits or consume two-hour/daily pots. Those bounded old fields and their
+validation limits are legacy save metadata only; unused gain/bonus tuning is removed.
+
+`pet/wishes.py` owns immutable active-wish values, expiry, neutral pin/dismiss
+commands and disclosure eligibility. `pet/wish_selection.py` owns awake/live
+replenishment on the shared six-hundred-second rotation. Attention supplies its
+existing Mind RNG and immutable current capabilities; closed time never generates
+fictional wishes. Three slots may contain multiple distinct game/social goals.
+Full needs do not retire wishes; current explicit petting refusal remains a
+separate restriction. All unpinned desires rotate together at the next deadline,
+and empty slots refill then. Pinned original identity, goal and progress persist
+through sleep and closure until fulfilled or unpinned. Unpinning preserves the
+wish until the next regular refresh; first right-click unpins and a later
+right-click dismisses, while left-click pins. UI commands never own another timer
+or grant care/contact/reward. Existing saved legacy game goals retain their
+original deadline and meaning until retired.
+
+`WishContext` is a frozen current capability/acceptance input, not another
+state/history owner. Attention reads pure existing petting admission, game
+energy rules, Moodlet context and online opt-in. The existing social runtime
+exposes prepared categories without fetching or reserving a buffer item.
+Temporary restrictions retain each wish's identity, slot and original deadline;
+their typed reason feeds the existing status projection.
+
+At a free speech opportunity, care urgency precedes wishes and ordinary
+commentary. PetMind renders the concrete wish from `texts.de.json` and attaches
+its instance ID to the existing immutable `Reaction`. The existing
+`ReactionPlayer` acknowledges that ID only after the text display succeeds;
+the aggregate ignores duplicate, absent and expired IDs. There is no second
+player or wish queue, and disclosure grants no contact, care or emotional
+reward. Fulfillment is described below; 5C supplies the existing combined status UI.
+
+`pet/wish_matching.py` selects one original goal before the outcome;
+`pet/wish_fulfillment.py` provides pure activity/game resolution results. `PetState._apply_wish_resolution()` commits retirement,
+the catalogue's one positive Moodlet family/strength together. There is no instant
+wish bonus. Creation anchors and allocation survive retirement. The existing
+Moodlet reinforcement/progression owners retain stacking, refresh, decay and
+numeric caps; fulfillment does not jump numeric mood or erase negative episodes.
+
+Accepted food intake and welcome petting resolve through the existing care
+transition after accepted-contact accounting. Autonomous intake uses the same food match
+inside the existing World/Pet/Memory transaction, including finite known stock
+reconstructed before the deadline, without personal reward/contact.
+
+The five existing game sequences emit immutable player-perspective
+`games.contracts.GameRoundEvent` start/settled-result facts through typed window
+ports, the router and `GameExperienceCoordinator.observe_round()`. That existing
+coordinator holds one transient pending attempt (identity, elapsed start and
+pre-existing wish ID), translates the result once, and retires the attempt after
+a successful commit. No score, board, deck or unplayed round is reconstructed.
+Only bounded objective progress persists. Normal session care still occurs once
+at window close; immediate wish resolution occurs at the qualifying round, not
+at a convenient later close. Neither boundary grants an instantaneous point bonus.
+
+The existing numeric progression supplies mood before/after, actual active tiers
+and elapsed boundaries to `advance_friendship()`. Its baseline needs accepted
+contact within four hours for positive mood, while negative mood and all active
+Moodlet families contribute independently. The uncapped emotional sum and the
+stronger of absence/qualified neglect feed one progressive balance solver.
+Positive and negative factors are evaluated together across point anchors rather
+than applying gain and loss as independent ordered passes. Existing Moodlet tier,
+expiry and recovery boundaries prevent endpoint-only charging; no second clock,
+event archive or pet state exists.
+
+`ActivityCoordinator.advance_lifecycle()` samples ordinary numeric status through
+the same `ActiveSessionClock` at 30-second intervals. Subthreshold reads retain
+the clock's existing anchors; forced actions and saves consume the complete
+pending interval immediately, without a second timer or replay. Input/rhythm
+sampling and character rendering keep their existing cadence. The passive status
+readout displays up to two decimal places, three for friendship, with a German
+decimal comma and compact whole values. Stored gameplay floats remain unrounded.
+
+`SocialCompletion` now carries the admitted category and optional existing wish
+identity through the same `Reaction`/`ReactionPlayer` lifecycle. The existing
+controller applies helpful relief and category-specific fulfillment only after
+the whole sequence completes. Cancellation, an unrelated/expired/replaced wish,
+preparation and a wish first created during playback cannot grant the outcome.
+Desktop coordination saves completed social/round outcomes using existing storage.
+
+`pet/moodlets.py` now owns pure tier ageing, bounded reinforcement, resolution
+and per-level relief. Definitions are supplied by the canonical catalogue;
+shared coefficients remain in balance JSON. `pet/mood.py` composes the capped
+contributions with need-based mood, and `pet/progression.py` splits its existing
+numeric steps at emotional/recovery boundaries. Its frozen result includes
+Moodlet state, committed once by PetState with the existing elapsed progress.
+Reconstructed time is explicitly unobserved on both restoration paths, so it
+ages after-effects without inventing continued user provocation. No additional
+clock, replay loop, mutable manager or numeric mood writer is introduced.
+
+`pet/interaction_events.py` defines immutable perceived facts and bounded
+interaction evidence. Pure `interaction_rules.py` qualifies negative experiences
+and helpful-action matching; it delegates stacking/ageing/relief to `moodlets.py`.
+`plan_care_action()` owns petting admission and returns the same immutable
+consequences that PetState commits. Two tolerated extra strokes receive distinct
+accepted-care effects and feedback; the third refuses, and only subsequent
+disregard of displayed refusal produces crowded and direct loss. A bounded count
+and last-additional-attempt timestamp live in `InteractionMemory` and save v1,
+alongside the communicated boundary and independent refusal deadline. Warning
+reset, refusal renewal and Moodlet decay share the existing elapsed axis.
+`CareResult.affection_accepted`/`affection_refused` keep controller, Mind, wish
+resolution and animation consistent. `petting_is_welcome()` separately exposes
+real willingness for wish eligibility without executing/spending an extra stroke.
+Level-ten trust permits full-affection contact while active refusal still binds.
+Direct friendship losses use the existing
+relationship ledger, independently of the continuing impression. No event bus
+or additional mutable owner is introduced. The application translates visible
+text receipts into boundary facts. Explicit metadata on accepted social
+reactions yields completion only after the entire existing playback sequence.
+Object owners qualify wanted-object withholding separately from confirmed
+learned-place loss. Only absence admitted to the existing missing-object search
+creates the disrupted-arrangement Moodlet. `ObjectAwareness` uses physical custody
+only to exclude held/unsettled learned portions and withdraw their queued,
+unadmitted absence and dwell. It preserves coordinates, identity and observed
+time, and does not undo admitted searches or emotional consequences. The existing
+memory owner can retract the pending missing flag without a fabricated sighting.
+Behavior supplies the full World custody snapshot independently of filtered
+sensory candidates, including off-screen cursor items. New absence needs a fresh
+covered check after actual settlement; there is no parallel relocation tracker.
+Continuously observed transport and
+placement update subjective knowledge without that Moodlet or relocation loss;
+there is no second relocation-origin tracker or competing trigger. Missing-place
+evidence alone never proves user blame. Closed-time intake
+can create food monotony but never human culpability. Short-lived custody and
+observed-time trigger anchors stay in the existing object episode/perception;
+refusal/request/intake evidence belongs to the aggregate and its existing save.
+
+`pet/need_exposure.py` reads the existing bounded relationship/care history.
+`pet/poor_care.py` qualifies the five lasting poor-care impressions, using frozen
+processing markers in MoodletState rather than another history or simulation.
+The same progression loop advances original exposure, emotional recovery and
+numeric mood; it splits at actual zero/25/40 and new burden thresholds. A
+qualified emotional recovery closes handled thresholds while preserving fresh
+residual exposure. Inadequate care or a brief improvement does not reset that
+cycle. Old history before the processing baseline is not retroactively emotional.
+The existing Moodlet lifetime owner retains pause/resume and relief allowances;
+PetState remains the single mutation owner. Pure numeric calls without supplied
+relationship evidence do not invent an absent history or qualify poor-care events.
+
+`pet/care_experiences.py` and `pet/interaction_experiences.py` record qualified
+actual receipts in the existing bounded `CareEvidenceState`. One escalating
+incident does not become multiple long-term incidents. `pet/long_term_moodlets.py`
+evaluates the six authored care patterns once per completed twenty-four-hour
+period on `progression.py`'s existing elapsed boundaries. It reads canonical
+relationship need exposure, accounts awake gaps through sleep, evaluates before
+pruning and never simulates offline user actions. The existing frozen checkpoint
+owns its monotonic experience counter; active episodes own their bounded causes.
+
+Wish lifecycle/fulfillment and overall emotional interpretation are delivered.
+`pet/emotions.py` derives a frozen `EmotionalComposition` from the numeric base
+mood first, then bounded emotional modifiers. The base is subdued below 40,
+calm below 70 and satisfied from 70. Long-term impressions collectively have at
+most one stage of modifier weight per polarity; all original intensities,
+directions, causes and attribution remain available as topic evidence.
+Weak modifiers do not replace a neutral base, and positive history cannot
+turn a low actual mood into optimism. Compatible directions and sufficiently
+strong opposing impressions retain the seventeen differentiated labels and
+qualified compounds. The policy owns no state, timer, reward or refusal and
+does not change the numeric mood calculation. See
+[base mood and reactions](EMOTIONAL_BASE_AND_REACTIONS.md).
+
+`PetMind.emotional_state()` and the application snapshot call that same pure
+policy. `reaction_tone()` exposes the independent short irritation/warmth
+reaction; `record_accepted_care()` records accepted timing and starts the
+existing brief care response. Sleep never clears lasting Moodlets.
+`DialogueContext` separates numeric mood, emotional composition, typed need
+conditions, situational fatigue/playfulness, sleep, presence and relationship.
+
+`application/read_snapshot.py` exposes frozen `MoodletRead`, `WishRead` and
+bounded `GameWishRead` values on the aggregate's existing elapsed axis. Hover
+and status projections share one `EmotionalSnapshot`, with German labels,
+concrete targets, remaining stage/deadline work, paused recovery, expression
+flags, objective counters and current temporary restrictions. The status label
+is derived from that snapshot, rather than stored independently.
+`DesktopPresentation` receives the existing attention owner's `wish_context`
+read port; it needs neither a Mind object nor a clock. Reading cannot consume
+API buffers, advance time, acknowledge speech or apply rewards. Stage 5C renders these values in the existing status window through
+`MoodletStrip`, `WishPanel` and shared VN controls. Embedded selector frames
+replace only the interaction column; HoverUi remains the sole transient-menu
+and visibility owner. Settings keeps its independent window, with four page
+views and central `CreditsPanel`; the latter receives detached metadata via
+`project_credits()` from the existing social snapshot. No new native submenu,
+window manager, state store, API queue or preference store is introduced.
 
 ## Application layer
 
@@ -132,7 +421,7 @@ belongs to `ui/view_models/text_de.py`.
 - `ApplicationRouter` accepts owner-thread care commands and validated, bounded incoming notifications. An external HTTP or IPC server is **not implemented**.
 - `ActivityCoordinator` consumes hardware samples and coordinates adaptive observations and elapsed-time pet state.
 - `AttentionCoordinator` controls spontaneous lines, non-interrupting notifications and idle gestures.
-- `PetSessionRestorer` restores saved data through a narrow reader port, then simulates bounded closed time with unknown workload and optional routine self-care before anchoring the live clock.
+- `PetSessionRestorer` restores pet, World and acquired knowledge through a narrow reader port before coordinating full closed time, expected sleep and finite known-stock intake. It never generates meals or user observations.
 - `PetReadSnapshot` is an immutable, language-neutral copy for presentation and potential future read-only adapters.
 - `application/ports.py` describes capabilities such as `ComputerReadings`, not concrete OS drivers.
 - `application/assembly.py` builds the single care/game/activity/cursor
@@ -143,13 +432,88 @@ The application never imports Tkinter or native system monitor implementations.
 
 ## Pet animation, UI views and Tk widgets
 
+The implemented [staged attention and warning contract](CURSOR_ATTENTION_STAGES_PLAN.md)
+assigns the transient 0–100 attention value to the existing
+`CursorBehaviourPolicy` and preserves `CursorAttention` as sensor history.
+An actually displayed nonblocking warning must precede new fear evidence;
+its receipt never reevaluates policy or advances PetState. Body-compatible
+attention is shared with World. Bounded catch retargeting preserves movement
+progress in the sole `WalkController`. No new production manager/module or
+second position/emotion owner was introduced.
+The historical `9a233d7` baseline is superseded by the staged contract above;
+existing sensor, contact, feeling and movement boundaries remain canonical.
+
+The [cursor/Idle rework plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) records the
+2026-10-27 product revision, existing owners to change, short cursor Moodlets,
+reliable menu access and the implemented targeted-test/commit sequence.
+Practical behavioral acceptance is still pending. Passing CI
+on `2ecca2f` does not constitute user acceptance of its visual behavior.
+
 Pet-owned pure behaviour lives in `pet/animation/` and `pet/movement/`:
 `gaze.py` computes sixteen directional sectors, `ambient.py` schedules
 subtle idle motion, `animation.py` owns frame-selection and timing policies,
 `timing.py` validates already-decoded animation profiles, and the
 `RandomWalkPlanner` selects departures separately from the `WalkController`'s
 movement execution. `pet/mind/cursor_attention.py` retains only short-lived
-pointer-attention timestamps, not operating-system access.
+pointer samples, filtered velocity and attention timestamps, not operating-system access.
+`application/cursor_observation.py` derives normalized body distance, approach
+speed and contact origin from that one history. The new pure
+`pet/mind/cursor_behaviour.py` owns transient curiosity/threat/recovery; the new
+`application/cursor_behaviour.py` coordinates its one decision with current
+activity facts. Qualified immutable `CursorExperience` values are applied once
+through `PetState.experience_cursor` and the pure `pet/cursor_experiences.py`;
+only the two short Moodlet families change, never care/wish/friendship history.
+The policy never writes position. `BodyOrientation` executes explicit body
+intent instead of deriving turns from head sectors. Visual observation and World
+share the selected gaze; native grab events retain their actual event coordinates.
+
+The existing `WalkController` arbitrates source-specific World, cursor and Idle
+requests in that order and alone owns remaining distance, subpixel progress and
+actual translation budgets. Cursor escape consumes at most one second of real
+movement; turning/pauses do not consume it. Native access and active controls
+pause even committed World travel while preserving its request. One shared
+tolerant sprite-access geometry and contact-origin classification prevent
+self-motion from opening the toolbar.
+Native sprite entry and hover polling open controls without claiming click
+ownership. During cursor tracking, `ContactCoordinator` preserves the encounter
+instead of starting a greeting or interrupting the walk. `HoverUi` distinguishes
+toolbar visibility from access to its controls/bridge; real menu use holds
+translation and lets the existing cursor policy retain attention and gaze
+without qualifying new feelings. Explicit clicks retain their immediate priority.
+Cursor curiosity and fear are mutually exclusive at the PetState experience
+endpoint. JSON/SQLite decoding keeps the latest legacy impression, preferring
+fear on equal timestamps, while preserving its exact identity, stage budgets
+and causes. The coordinator projects the actually active feeling into the
+immutable cursor context and intent; elapsed Moodlets cannot leave a stale
+reactive turning mode. Appraisal distinguishes playful and defensive approach
+cues before text selection; only an actually displayed defensive warning can
+arm fear. Level-one curiosity needs one second of safe observation after the
+noticed threshold. Menu pauses retain observed progress without counting menu
+time or renewing Moodlets. Sustained safe samples qualify level-one curiosity,
+then weighted play time raises it at 6/12 seconds. Fresh movement may refresh
+its finite duration every 8 seconds; the coordinator suppresses speech feedback
+for same-level maintenance. Authored onset/escalation/fear comments use the
+existing nonblocking text port and never own a foreground action.
+`BodyOrientation` restores frontal gaze immediately when a pose blocks the
+pointer, then uses compatible existing quarter/profile head banks for cursor
+motion. Ordinary Idle/World turns retain every authored phase. The read-only
+unconstrained gaze projection chooses a pose without granting World sight ahead
+of the actually rendered pose. `RenderDecision.refresh_after_ms` feeds the
+sprite's existing timer without sampling input, advancing PetState or evaluating
+policy. Distance-based pace selection lives in WalkDriver, with 0.65/0.35
+sprite-width hysteresis. Existing unmodified running clips play at authored speed
+for compatible horizontal side gaze; other head axes use the modular bank at
+walking speed. Reverse playback keeps retreat facing the pointer. Translation
+remains solely in WalkController. Catch attempts are bounded by 5 seconds and
+total travel, retarget/repace without renewing budgets, and pause for 0.35 seconds.
+Menu use ends translation without imposing a new catch cooldown.
+Retarget reversal clears only signed subpixel residue. Crossing a retreat still
+ends its existing allowance safely, rather than renewing a flight.
+`WalkDriver` applies actual bounded displacement through the existing placement
+port. `BodyOrientation` owns turning before a small step; whole-body exported
+images and family-based frame timing allow compatible head changes without
+resetting the step. Small Idle departures reuse `RandomWalkPlanner`; no new
+movement timer or per-leg runtime rig is introduced.
 
 `ui/pet_view/` owns the concrete renderer and overlays:
 
@@ -185,7 +549,7 @@ from the pet aggregate and its needs. `CarePresenter` uses the result's action
 and consumed item directly instead of accepting a second copy of that action.
 
 `ui/windows/` owns `HoverUi`, the pinnable `ActionToolbar`, `FoodMenu`,
-`SettingsWindow`, and the rock-paper-scissors window. Controls are
+`SettingsWindow`, the game selector and three game windows. Controls are
 independently movable where applicable. `ui/common/` owns reusable skin and
 window-dragging helpers; `ui/view_models/` owns `DesktopPresentation`,
 immutable status/hover/settings contracts, projections and localized UI copy.
@@ -193,6 +557,65 @@ immutable status/hover/settings contracts, projections and localized UI copy.
 No user-facing window owns PetState transitions. Actions are sent to the
 application boundary through named callbacks. The pet sprite and the utility
 windows are distinct UI owners even though both use Tkinter.
+
+Hover, toolbar visibility, pinning, selection browsing and settings focus are
+passive presentation facts. They neither claim character contact nor block
+movement, cursor policy, spontaneous expression or a free notification slot.
+Explicit admitted contact calls the existing cursor-access method once; no
+pointer-inside latch or menu flag is part of a behavioral contract.
+`BehaviorFacts` receives `character_action_busy` from actual non-offer reaction
+playback/online waiting, with sleep, games and animation retaining their own
+rules. Automatic selector hiding preserves a requested social selection;
+explicit cancellation and accepted replacement commands invalidate it through
+its existing runtime owner. See the
+[implementation and validation record](HOVER_ACTION_DECOUPLING_FIX_PLAN.md).
+
+Snacks use the `place_item` command and `can_place_item` capability, independently
+of direct-care `can_interact`. `DesktopWorldRuntime.begin_carry` prepares finite
+World stock without interrupting Aiko. `CursorItemGesture` admits one capture,
+preserves an existing held portion and refuses a foreign Tk grab. Normal release
+still attempts authorized handover before dropping the item. Offer previews
+retain their existing handover eligibility; `ObjectFeedbackPresenter` only
+cancels its own offer/refusal speech when a cursor gesture is cancelled.
+
+### Minigame owners
+
+`games/` owns each transient session's rules and score, with frozen card/board
+reads and a common `SessionSummary`. `HoverUi` owns the sole active `GameWindow`
+and a cancellable pending selection while World finishes interruption. Its
+submenu has no game/care effect. Per-game sequences under `ui/windows/` own
+turn/reveal pacing through injected timers; the game owns result settlement.
+The application summary adapter uses the existing game-experience coordinator.
+
+`ui/pet_view/BlackjackHandPresenter` (in `blackjack_hand_presenter.py`) owns the
+separate floating-card window and visual hover/flip timers. It receives a
+masked `HandView`, not a hidden hand or World state. `GamePanel` supplies small
+window chrome for the player panels; it owns no rules. The root-local
+`PlayingCardImages` cache is shared by both Blackjack views.
+`desktop/game_assembly.py` composes these existing boundaries and native effects;
+`WindowStack` remains the z-order owner. Placement and preference changes update
+the same card presenter. Speech, pet movement, World custody and saved pet state
+retain their owners. See the [delivery record](MINIGAME_IMPLEMENTATION_PLAN.md).
+
+`games/connect_four.py` owns Connect Four's board, gravity, outcome and transient
+score. Its bounded Alpha-Beta policy reads an immutable board copy and checks
+cancellation. `ConnectFourSequence` submits only that pure search to one worker;
+Tk polls its result and owns all drop/reaction callbacks. Closing signals the
+worker and invalidates callbacks before destroying widgets. `ConnectFourWindow`
+renders snapshots with packaged Kenney pieces and forwards column selections.
+No worker touches Tk, PetState or World, and no board/search state is persisted.
+
+`games/mastermind.py` owns the fixed secret, multiplicity-aware feedback and
+transient score. `MastermindSequence` serializes feedback, staged reveal and
+reactions with one cancellable timer. `MastermindWindow` owns ten prepared rows
+and the editable draft; `MastermindDrag` owns only the local grab/drag image.
+`MastermindCodePresenter` receives masked/revealed `CodeView` values, never the
+secret/session. It owns a separate side-anchored desktop overlay; pure
+`place_code` considers screen bounds and occupied window rectangles supplied by
+`desktop/game_assembly.py`. `MastermindImages` shares packaged red/yellow assets
+and caches the additional colors by Tk root and integer scale. The host clears
+both game overlays/caches on close, failure and shutdown. No game state or pin
+becomes a World object or save field.
 
 `presentation/`, `personality/` and the former root-level `ui/*.py` widget
 forwarders have been **removed**. Runtime and tests import directly from the
@@ -208,7 +631,8 @@ visual observer, animation runtime and sprite as one bounded assembly.
 `desktop/session_runtime.py` coordinates lifecycle advancement, window
 refresh and the advance-before-persist sequence through narrow effect ports.
 
-- `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
+- `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs. Pointer sampling precedes cursor-policy evaluation; World observes that shared gaze next, then cursor movement is admitted against the resulting World/activity state. Frame callbacks recheck hard admission before displacement. Native item grabs use the current event position between sensor ticks without evaluating the cursor policy again.
+- `PointerRuntime` supplies the same observed pointer to World and cursor behavior. Native Enter and hover polling share contact-origin admission; walking under a stationary pointer does not count as intentional user contact. Settings/scale/game changes reset transient cursor state and release its request without clearing World goals.
 - `DesktopAnimationRuntime` chooses sprite intent without importing Tk.
   `WalkDriver` executes bounded host displacement, while
   `DesktopVisualObservation` resolves cursor and measured workload inputs.
@@ -227,18 +651,43 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 
 ## Persistence, configuration and privacy
 
-`infrastructure/persistence.py — StateStore` is the only implementation of the version-one atomic local JSON repository. The default Windows file is `%LOCALAPPDATA%\AikoDesktopPet\state.json`. The sole optional environment override, `AIKO_SAVE_PATH`, selects another **file path**. No `.env` is required.
+`infrastructure/persistence.py:StateStore` resolves one `SavePaths` selection and
+loads through the strict legacy importer, inheriting the complete
+`sqlite/store.py:SqliteStateStore` writer. SQLite is the only live backend.
+The Windows destination is `%LOCALAPPDATA%/AikoDesktopPet/state.sqlite3`;
+`AIKO_SAVE_PATH` selects one file, with compatible `.json` import aliases.
+No database ships in Git. See [paths/import/errors](DATA_AND_SAVES.md).
 
-`infrastructure/pet_codec.py` owns pet/nutrition JSON translation: field names,
-legacy defaults, malformed-value handling and four-decimal save rounding.
-`PetState` and `FoodState` contain gameplay values and transitions, with no
-`from_dict`/`to_dict` methods. Existing saves retain their version-one shape.
+The application exposes `SavedPetReader`, `SavedPetWriter` and their combined
+`SavedPetStore` protocol. A load returns every owner and its `SaveRevision` in
+one snapshot. The desktop holds the expected revision; the writer compares it
+inside the same transaction and returns the next value only after commit.
+`DesktopPersistence` keeps the last successful checkpoint/revision on failure
+and paces failed attempts separately. It never reloads another writer's revision
+to force an overwrite. Startup storage errors stop before native desktop widgets;
+`desktop/startup.py` owns reporting/exit, not domain state or repair.
 
-- Storage decodes/writes data but does not simulate elapsed pet time.
-  - The application simulates bounded closed time after decoding. A shared
-    `ActiveSessionClock` consumes each interval once across ticks, care, settings
-    and saving. Windows uses unbiased interrupt time; Linux uses CLOCK_MONOTONIC.
-    Live standby is excluded. On reopening, closed wall time is reconstructed up to the configured limit, including routine sleep and offline-only meals.
+Strict supported JSON import retains the existing pet/history/World/memory/
+adaptive/social codecs. The forgiving pet codec supplies only already-validated
+older-field defaults; unchecked legacy loading is not a runtime path. SQLite
+mappers preserve fields and coherent relationships, without domain rules or a
+second mutable pet. Authored JSON remains independent of personal storage.
+`PetSessionRestorer` alone reconstructs closed time after loading, with the
+existing `ActiveSessionClock` consuming live/standby intervals exactly once.
+No schema/import/save operation advances needs or interprets observed activity.
+
+The elapsed plan owns one immutable interval on `lived_seconds`.
+`plan_pet_time(..., elapsed_start=...)` partitions relative duration offsets;
+UTC only selects calendar-grid/observation boundaries. `SimulationStep` carries
+`elapsed_start`, `elapsed_end`, `wall_start` and `wall_end`; `seconds`/`hours` are
+derived views. Pet and World coordination consume those endpoints directly.
+`calculate_pet_progression(record, end_elapsed, ...)` returns `PetProgress.elapsed`
+on that same axis. Relationship, Moodlet/poor-care/long-term records, sleep
+seconds and wish expiry share the represented subintervals. `PetState` checks
+step admission and the final endpoint; finalization never independently resets
+only the aggregate's lifetime. See the [runtime correction](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report).
+
+
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 
@@ -250,12 +699,28 @@ The care/storage follow-up also changes these Python call contracts:
 
 | Previous call | Current owner/contract |
 | --- | --- |
+| `PetMind.emotion()`, dialogue `mood`/merged `states` | `PetMind.emotional_state()` and typed `DialogueContext.emotions`, `mood_value`, `need_conditions`, `reaction_tone`, `situational_conditions` |
+| `PetMind.after_care()`, `irritated_until`, `warm_until` | `record_accepted_care()`, `irritation_reaction_until`, `warm_reaction_until`; lasting impressions remain separate |
+| `DialogueBook.choose(event, emotion, time, now, dialogue=...)` | `choose(event, context, now, presentation=...)` with a single immutable `DialogueContext` |
+| `MoodHint`, `MoodHintState`, `choose_mood_hint()`, `PetState.mood_hint()` | `StatusHint`, `StatusHintValues`, `choose_status_hint()`, `PetState.status_hint()` |
+| `format_mood_hint()`, `mood_hint_text()`, text keys `mood.*` | `format_status_hint()`, `status_hint_text()`, `status_hint.*`; German wording unchanged |
+| Seven-entry `PetReadSnapshot.needs` | Five-field immutable `NeedLevels`; numeric mood and friendship remain separate snapshot fields |
+| UI `needs`/`need_value()`, toolbar `NEEDS`/`needs` | Presentation `status_values`/`status_value()`, toolbar `READOUTS`/`readouts`; seven displayed bars remain unchanged |
+| `pet.need_decay`, `NeedProgress`, `calculate_need_decay()` | `pet.progression`, `PetProgress`, `calculate_pet_progression()`; five `NeedLevels` fields live in `pet.needs` |
+| `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets use the shared progression owner |
+| Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |
+| `HoverUi.interaction_active`, `menu_engaged`, `settings_engaged`, pointer `control_active`/`hard_access`, behavioral `toolbar_visible`/`popup_visible` | Removed from behavior contracts; explicit contact is an event, actual visibility remains only in session UI refresh |
+| World `controls_active` | `character_action_busy`, sampled from actual character playback/waiting without menu hover |
 | `PetState.interact()` returning German text | Returns `pet.care_result.CareResult`; UI uses `format_care_response` |
 | `PetState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_pet_state` / `encode_pet_state` |
 | `FoodState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_food_state` / `encode_food_state` |
 | `CareRuntime`, router `runtime=` | `SessionInputs`, router `inputs=` |
 | `application.controller.CareInputs`, `ActivityCoordinator.care_inputs()` | `application.active_time.SessionInputs`, `ActivityCoordinator.session_inputs()` |
-| `StateStore.load()` / `load_memory()` | One `load_session()` snapshot: `.state`, `.settings`, `.adaptive_memory` |
+| `StateStore.load()` / `load_memory()` | One `load_session()` snapshot including all owners and `.revision` |
+| Legacy `StateStore.save()` without revision | SQLite `save(..., expected_revision=..., adaptive=..., social_history=...) -> SaveRevision`; desktop owns its last successful revision |
+| `StateStore.path` / `default_save_path()` returning JSON | Active SQLite destination; `.paths.legacy_json` identifies only the designated import source |
+| `calculate_pet_progression(record, hours, ...)` / private `_advance_progression(hours, ...)` | Supply the absolute `end_elapsed` on the pet's elapsed-seconds axis; `PetProgress.elapsed` is the reached endpoint |
+| `SimulationStep(hours, ...)` / `advance_time_step(..., now=...)` | Plan-owned elapsed/wall endpoints; `advance_time_step` reads the step's wall endpoint and checks its elapsed start |
 | `asset_paths.ASSETS`, `EMOTE_ASSETS`, `SCI_FI_UI` | `SPRITE_FRAME_DIR`, `EMOTE_IMAGE_DIR`, `KENNEY_UI_DIR` |
 | `pet.value_rules.bounded` | `pet.value_rules.clamp_need_value` |
 | `ActionPlayback.state`, animation port `action_state` | `clip_id`, `action_clip_id` |
@@ -263,7 +728,8 @@ The care/storage follow-up also changes these Python call contracts:
 | `ActivityCoordinator.interrupt_nap()` | `should_interrupt_nap()`; a condition query without mutation |
 | `pet.mind.mind.AikoMind` | `pet.mind.PetMind` |
 
-The desktop entrypoints and on-disk save format remain compatible. Repository
+Desktop entrypoints remain stable; supported JSON saves import through the
+SQLite migration described above. Repository
 callers use these canonical owners directly; no reverse domain-to-storage import
 or compatibility registry is needed.
 
@@ -277,14 +743,14 @@ behavior tests now exercise their canonical owners directly.
 
 The source launchers (`main.py`, `Aiko_Pet.pyw`, `python -m aiko_pet` and both
 Windows batch files) use `aiko_pet.gui.main` and require no import migration.
-Version-one JSON saves, save-path configuration, sprites and authored dialogue
-are unchanged. The repository review cannot establish whether unknown external
+Sprites and authored dialogue are unchanged. Personal storage now uses SQLite
+with strict supported JSON import and compatible save-path aliases. The repository review cannot establish whether unknown external
 Python code imports the removed paths; such callers need the mappings below.
 
 | Removed path under `aiko_pet` | Canonical owner |
 | --- | --- |
 | `domain` | `pet.state.PetState`; care/friendship/time constants and functions in their respective `pet` policy modules |
-| `care_actions`, `friendship`, `need_decay`, `routine`, `value_rules` | Modules of the same name under `pet` |
+| `care_actions`, `friendship`, `routine`, `value_rules` | Modules of the same name under `pet` |
 | `pet_lifecycle` | `pet.lifecycle` |
 | `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `pet.mind` |
 | `dialogue` | `pet.mind.mind.PetMind` and `pet.mind.catalog` types |
@@ -302,8 +768,8 @@ Python code imports the removed paths; such callers need the mappings below.
 | `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
 
 Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`
-instead of a mutable `PetState`. The status projector accepts the selected
-emotion string rather than a `PetMind` object and timestamp. `DesktopPresentation`
+instead of a mutable `PetState`. The status projector reads the composition
+from that snapshot, without a second emotion argument. `DesktopPresentation`
 provides desktop views without exposing the old public component handles.
 
 Legacy desktop accesses such as `pet.toolbar`, `pet._bubble`, `pet.say()` and
@@ -345,12 +811,19 @@ behavior. Missing sensors stay unknown; uptime never acts as an exhaustion
 multiplier. Learned summaries use a local weekday/hour profile, not process
 names, typed text or browser content. Observation and learning can be disabled
 independently, and learned rhythm can be cleared without resetting pet progress.
-Live progression uses active-session time; reopening additionally simulates bounded closed wall time. See [data and saves](DATA_AND_SAVES.md).
+Life time includes standby and reconstructed closed wall time; observed activity
+does not extend across those unknown gaps. See [data and saves](DATA_AND_SAVES.md).
 
 `pet/mind/catalog.py` validates and selects authored German lines from
-`data/dialogues.de.json`. `infrastructure/character_mind.py` supplies Aiko's
+`data/dialogues/de/index.json`. `infrastructure/character_mind.py` supplies Aiko's
 catalog at composition time. Event, mood and context filters, weighted choice
 and cooldowns belong to the mind policies; the UI only presents their decisions.
+
+PL-1B splits that source into explicitly indexed topic files without changing
+any of the 1,153 sequence definitions or their global order. One `DialogueBook`
+parses and rotates the complete set; the index creates no additional state or
+selection owner. Explicit single-source loading remains supported for standalone
+consumers. See [character-copy source format](DATA_AND_SAVES.md#character-copy).
 Aiko is reserved, observant, curious and quietly sarcastic. She can express
 warmth directly without retracting it. Friendship changes the familiarity of
 her wording; current needs, irritation and measured work still matter. Avoid
@@ -364,14 +837,24 @@ its effects, including before a friendship level boundary is crossed.
 Relationship filters never relax during rotation or fallback. Specific need
 and mood variants take priority over suitable general wording.
 
-Catalogue version 2 owns ordered text, emote and pause beats. `Reaction` carries
+Catalogue version 3 retains ordered text, emote and pause beats. Its explicit
+`conditions` are alternative AND clauses: typed emotional states/directions,
+need conditions, short reaction tones, situation and sleep remain separate.
+The old `moods`/`needs` filters and mixed `EMOTIONS` vocabulary are retired. `Reaction` carries
 that immutable sequence and a short/story presentation mode. The UI only plays
-it: one speech surface, length-based reading time (58 ms/character, 1.8–8 s),
-800 ms default emotes and 600 ms deliberate pauses. There are 48 authored talk
-stories, twelve per relationship stage, covering calm, playful, tired,
-withdrawn/irritated, hungry, lonely, affection-seeking and warm moments.
-Stories exhaust their matching rotation pool before repeating. Warm moments
-also admit suitable calm stories, keeping repeated contact varied after care.
+it on one speech surface. `Reaction` prepares `talk` text with 1,500 ms
+orientation plus 65 ms/character, clamped to 4–10 s; the final text gets an
+extra second within the same cap, even before a trailing emote. Other text
+feedback retains 58 ms/character clamped to 2.8–8 s. Emotes default to 800 ms
+and deliberate pauses to 600 ms; two-part API jokes use an explicit 800 ms
+punchline pause after the full setup reading time. The `conversation_*`
+parameters live in `data/balance.json`; display and advancement consume the
+same prepared cue durations. Requested Plaudern chooses concrete retained
+Moodlet causes or already disclosed wishes through immutable conversation
+topics, with a truthful current-state response when no fitting episode is
+available. Complete stories use relationship and emotional filters without
+inventing an experience from a general mood. Stories exhaust their matching
+rotation pool before repeating; no separate conversation journal is introduced.
 
 An intentional talk normally runs three to five text bubbles. Left-clicking
 Aiko during a story advances to the next text, skipping intermediate emotes
@@ -379,10 +862,15 @@ and pauses. Clicking the last text ends it. These reading clicks do not enter
 the teasing counter or apply care rewards; normal clicks start a fresh burst.
 Other deliberate interactions can interrupt. Automatic speech, gaze remarks,
 idle effects and object-goal acquisition respect active playback, including
-blank pauses. Spontaneous stories require observed presence, a 20% draw among
-eligible quiet moments and at least ten minutes since the previous one. Those
-values come from `dialogue.spontaneous_story_probability` and
-`dialogue.spontaneous_story_quiet_seconds` in the validated balance catalogue.
+blank pauses. Spontaneous speech selects only short comments about actual needs,
+emotion or observed work/rest, independently of requested Plaudern. Calendar
+facts alone do not cause speech. The eight preserved morning/night fatigue
+variants belong to the `tired` event and keep their fatigue, period and
+relationship guards. A throttled social/affection reminder permits other real
+topics, or silence when none fits. The old idle/calendar picker, story-promotion
+state and its two balance controls are removed. Existing attention scheduling,
+wish disclosure, cursor/walk comments and silent animation/emotes retain their
+owners and settings.
 
 Playback completion and cancellation are reported once; stale timers cannot
 advance or complete a newer sequence. Object-phase feedback retains its
@@ -631,11 +1119,15 @@ Ambient feedback cannot replace action speech.
 
 `pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
 The interaction owns the episode and only evaluates currently observed user-held
-custody. `application/object_relationship.py` deduplicates social effects and owns
-the cross-episode loss cooldown. `PetMind` owns temporary irritation; `PetState`
-commits friendship changes through the pure friendship policy. Loss preserves
-care reward history/daily caps, is saved normally, and creates no return bonus.
-Episode/request/cursor state is session-local; no save-schema change is required.
+custody. `application/object_relationship.py` deduplicates social effects;
+`PetState` applies shared durable rolling penalty caps through the pure
+friendship policy. `PetMind` owns temporary irritation and the warning within
+its existing click burst; the contact coordinator admits later annoyance
+without counting story-reading or blocked input. Loss preserves compatibility
+credit metadata and creates no return bonus. Episode/request/cursor state stays session-local;
+`pet.relationship` v1 saves contact, credit, neglect and penalty histories on
+`lived_seconds`, inside the existing outer save v1. See the
+[current friendship rules](FRIENDSHIP_SYSTEM.md).
 `application/object_custody.py` commits confirmed acquisition and placement in
 World and memory together, restoring both owners on failure. The interaction
 coordinator retains animation deduplication, cue receipts and phase ordering.
@@ -646,8 +1138,9 @@ then prepares the canonical pet effect through PetState-owned immutable checkpoi
 It commits World, PetState and ObjectMemory together on the owner thread,
 restoring the same pet object on failure and recording human contact only
 after a successful commit. Completed requests remain deduplicated. World `consume()`
-alone still cannot feed Aiko. Human-only care rewards are excluded for ground
-consumption, while canonical nutrition, repetition and food mood effects remain.
+alone still cannot feed Aiko. Ground consumption grants no personal contact
+or instant friendship bonus; canonical nutrition, repetition, wish matching and
+Moodlet effects remain within their existing owners.
 
 `application/object_behavior.py` coordinates object attention, checked-absence
 priority, shared missing-subject search, waiting for return and approach
@@ -700,8 +1193,10 @@ Alternatively, Aiko may accept a still-unknown portion on release in the
 valid handover area and actually identify it in her hands before deciding.
 A known approved handover takes the shorter confirmation route. Unknown ground
 finds retain inspection/decision. Resting-item press acquires the same portion
-through the same gesture. Escape/capture loss or off-monitor release removes new
-chooser portions and returns existing portions to their safe source place.
+through the same gesture. Its `existing_taken` callback withdraws pending absence
+after successful custody transfer and before the first gesture save, including
+take-and-cancel between sensor updates. Escape/capture loss or off-monitor release
+removes new chooser portions and returns existing portions to their safe source place.
 Delayed gesture requests recheck the button after animated interruption.
 Existing native toolbar/game rules remain in their owners.
 All three item presentations use manifest-referenced binary-alpha display copies
@@ -744,3 +1239,57 @@ For local commands, source changes and review expectations see
 records current local evidence and acceptance; [CHANGELOG](../CHANGELOG.md)
 summarizes unreleased changes and verified milestones. Prior refactor plans and
 review ledgers are [historical records](history/README.md), not active blockers.
+
+
+## VN presentation delivery (5C)
+
+`ui/common/icon_images.py` is the one root-local image owner. The development-only
+`tools/export_vn_ui.py` normalizes the 46 approved masters and exports shared
+nine-slice button/control sizes from eight source surfaces into `assets/ui`.
+Their runtime catalogue records source hashes. Tk alone loads/composes the
+exports; runtime remains standard-library-only. `image_button.py` preserves
+native invocation and adds disabled/hover/press/active artwork, independent
+keyboard focus and explicit destruction cleanup. `scroll_region.py` owns local
+scroll bindings and focus reveal; `description_tip.py` renders in-window passive
+details. These are UI behaviors, not new domain or input-capture authorities.
+
+Numeric target mood, current value, relationship stage, actual sleep reason and
+known contact age flow through `PetReadSnapshot` and existing pure projections.
+No clock or elapsed progression runs on a read. The same emotional composition
+now colors click/dialogue/idle expression. Normal positive stories/idle stars
+are reachable from good care at mood 70; the longer playful click sequence
+retains 82 and its previous escalation policy. Negative/ambivalent compositions
+do not produce contradictory positive expression. Observed work may still
+select work dialogue; hardware strain alone no longer claims sleepy clicks.
+All authored German dialogue sequences remain unchanged.
+
+Numeric toolbar refreshes do not arbitrate character interaction. HoverUi and
+ActionToolbar separate selector navigation from actual action admission;
+ContactCoordinator reads real foreground/game/sleep owners and ReactionPlayer's
+sequence-owned incidental provenance. Stories remain exclusive. World interrupt
+ordering releases the pending marker before deferred game admission while
+retaining protected care ordering; no second busy flag is introduced.
+
+Wish pin/dismiss callbacks pass through DesktopCareRuntime and the existing
+router/controller to PetState, including shared elapsed-time accounting and
+saving. WishPanel only projects saved state. Moodlet cause text lives in the pure
+UI projection module, using original goal snapshots and actual retained results;
+it does not infer causes from tiers or archive ended episodes. Object diagnostics
+combine detached World stock, learned bindings and current tracker associations.
+Unknown sightings, identified knowledge and actual undiscovered/uncertain stock
+are separate read dimensions, with no discovery or memory mutation on a read.
+
+The API repeat window is one immutable application value,
+`social_history.SocialContentHistory`, owned by SocialContentCoordinator.
+The existing session read contracts carry it through StateStore and
+PetSessionRestorer; the codec validates receipt-only data, at most 100 entries
+per category, including the actual introduction variant. DesktopPersistence
+reads that same value in its one atomic save. The coordinator rotates framing
+when offering content, using the last admitted variant, without advancing the
+rotation on warming or cancellation. SQLite schema v2 adds only the nullable
+variant column through the existing backed-up transactional migration path.
+SocialConversationRuntime persists only after the offered content is accepted
+for playback, combining the care commit and receipt without two admission
+writes. Whole-sequence social wish completion remains a separate event.
+Preparation, buffers, full provider text and other presentation metadata remain
+transient; these receipts are not another pet experience archive.

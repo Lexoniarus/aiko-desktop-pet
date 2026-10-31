@@ -1,6 +1,7 @@
 """The attention presenter only renders preselected effects."""
 
 import unittest
+from dataclasses import replace
 from unittest.mock import Mock
 
 from aiko_pet.ui.pet_view.attention_presenter import (
@@ -34,3 +35,21 @@ class AttentionPresenterTests(unittest.TestCase):
     def test_notification_text_is_not_interpreted(self) -> None:
         self.presenter.show_notification("Kalender: Termin gleich.")
         self.text.assert_called_once_with("Kalender: Termin gleich.", 3500)
+
+    def test_cursor_cue_only_uses_unlocked_emote_output(self):
+        self.presenter.show_cursor_emote("question", 1500)
+        self.emote.assert_called_once_with("question", 1500)
+        self.react.assert_not_called()
+        self.animate.assert_not_called()
+        self.text.assert_not_called()
+
+    def test_cursor_comment_uses_vacant_nonblocking_text_without_actions(self):
+        display = Mock(return_value=True)
+        self.presenter._ports = replace(self.presenter._ports,
+                                        show_nonblocking_text=display)
+        self.assertTrue(self.presenter.show_cursor_comment("Na warte!", 2200))
+        display.assert_called_once_with("Na warte!", 2200)
+        self.react.assert_not_called()
+        self.animate.assert_not_called()
+        self.emote.assert_not_called()
+        self.text.assert_not_called()

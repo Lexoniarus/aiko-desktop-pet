@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.friendship.begin.a",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute entsteht leicht Verbundenheit über eine gemeinsame Vorliebe. Ein beiläufiger Austausch kann dafür genügen."
+        },
+        {
+          "id": "p2",
+          "text": "Du musst eine neue Bekanntschaft nicht sofort vertiefen. Ein freundlicher Anfang lässt Raum, sich ungezwungen zu begegnen."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst Interesse zeigen, ohne Nähe zu erzwingen. Gemeinsamkeit wächst oft aus unscheinbaren ersten Momenten.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.begin.b",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kann ein vertrauter Kontakt neuen Schwung bekommen. Eine gemeinsame Vorliebe bietet einen ungezwungenen Anlass."
+        },
+        {
+          "id": "p2",
+          "text": "Ein kleines Zeichen von Interesse erreicht mehr als eine große Erwartung. Lass der Begegnung ihre Leichtigkeit."
+        },
+        {
+          "id": "p3",
+          "text": "Eine kleine Gemeinsamkeit macht heute Freude, ohne schon ein großes Versprechen zu sein. Lass den Kontakt leicht beginnen.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.develop.a",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bekommt eine gemeinsame Idee neuen Schwung. Verschiedene Beiträge ergeben mehr als einen einzelnen Plan."
+        },
+        {
+          "id": "p2",
+          "text": "Achte darauf, dass auch ein zurückhaltender Einfall Platz findet. Die lauteste Stimme muss nicht die Richtung vorgeben."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst etwas beitragen, ohne alles bestimmen zu müssen. Gemeinsamkeit lässt auch anderen ihren eigenen Anteil.",
+          "comment_key": "horoscope.different_contributions"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.develop.b",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wird in einer Gruppe sichtbar, wer welchen Beitrag leisten kann. Verschiedene Stärken bringen eine Idee voran."
+        },
+        {
+          "id": "p2",
+          "text": "Nimm nicht automatisch den größten Anteil auf dich. Es kann angenehm sein, etwas gemeinsam wachsen zu lassen."
+        },
+        {
+          "id": "p3",
+          "text": "Dein Beitrag gewinnt durch seinen eigenen Platz. Heute gelingt Gemeinsamkeit besser, wenn nicht einer alles übernehmen muss.",
+          "comment_key": "horoscope.different_contributions"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.reflect.a",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute zeigt sich der Wert einer Freundschaft eher in einer kleinen Geste als in großen Worten. Achte auf das Unaufdringliche."
+        },
+        {
+          "id": "p2",
+          "text": "Bei einer gemeinsamen Idee kann eine andere Meinung stören. Vielleicht zeigt sie gerade, worauf es euch allen ankommt."
+        },
+        {
+          "id": "p3",
+          "text": "Du erkennst leichter, was verschiedene Menschen zu einem Miteinander beitragen. Nicht jeder Beitrag muss gleich laut sein."
+        },
+        {
+          "id": "p4",
+          "text": "Gemeinsam zu sein verlangt nicht, gleich zu denken. Ein guter Einwand gehört dazu, auch wenn er dir nicht sofort gefällt.",
+          "comment_key": "horoscope.different_contributions"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.reflect.b",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bemerkst du eher, wie sich Geben und Nehmen in einer Freundschaft anfühlen. Eine kleine Geste kann dabei viel sagen."
+        },
+        {
+          "id": "p2",
+          "text": "Achte auf das Freiwillige, statt jede Aufmerksamkeit abzuzählen. Zuneigung zeigt sich nicht immer in derselben Form."
+        },
+        {
+          "id": "p3",
+          "text": "Eine kleine Aufmerksamkeit kann heute lange nachwirken. Unscheinbar zu sein, macht sie nicht weniger wertvoll.",
+          "comment_key": "horoscope.value_small_things"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.conclude.a",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lässt sich eine gemeinsame Idee für den Moment abrunden. Nicht jede schöne Begegnung braucht sofort eine Fortsetzung."
+        },
+        {
+          "id": "p2",
+          "text": "Ein freundlicher Abschluss lässt das Gute bestehen. Ihr müsst nicht sofort das nächste Treffen oder Vorhaben festlegen."
+        },
+        {
+          "id": "p3",
+          "text": "Verbundenheit hält auch eine Pause aus. Du musst sie nicht ständig neu beweisen.",
+          "comment_key": "horoscope.space_without_withdrawal"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.friendship.conclude.b",
+      "revision": 1,
+      "theme": "friendship",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute darf eine alte Diskussion ruhig auslaufen. Nicht jede unterschiedliche Meinung muss gemeinsam aufgelöst werden."
+        },
+        {
+          "id": "p2",
+          "text": "Besinne dich auf das, was euch verbindet, ohne den Streitpunkt immer neu zu öffnen. Ein leichter Abschluss kann entlasten."
+        },
+        {
+          "id": "p3",
+          "text": "Ein offenes Thema muss die Verbindung nicht unterbrechen. Heute kann ruhiger Abstand mehr bewahren als weiteres Streiten.",
+          "comment_key": "horoscope.space_without_withdrawal"
+        }
+      ]
+    }
+  ]
+}

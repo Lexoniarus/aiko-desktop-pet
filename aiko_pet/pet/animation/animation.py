@@ -8,8 +8,6 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from ..balance import BALANCE
-
 FRAME_COUNTS: dict[str, int] = dict.fromkeys(
     (
         "idle",
@@ -37,6 +35,7 @@ class PassiveObservation:
 
     gaze_direction: int | None
     computer_busy: bool
+    forward_gaze: bool = False
 
 
 @dataclass(frozen=True)
@@ -55,20 +54,16 @@ def choose_passive_animation(
     energy: float,
     mood: float,
     satiety: float,
+    forward_gaze: bool = False,
 ) -> SpriteSelection:
     """Choose the highest-priority ambient sprite with no GUI side effects."""
     if gaze_direction is not None:
         return SpriteSelection("look", fixed_frame=gaze_direction)
+    if forward_gaze:
+        return SpriteSelection("idle", fixed_frame=0)
     if observing_computer and computer_busy:
         return SpriteSelection("review")
-    if energy < BALANCE.integer(
-        "animation_needs", "critical_energy"
-    ) or mood < BALANCE.integer("animation_needs", "critical_mood"):
-        return SpriteSelection("failed")
-    if satiety < BALANCE.integer(
-        "animation_needs", "low_satiety"
-    ) or energy < BALANCE.integer("animation_needs", "low_energy"):
-        return SpriteSelection("waiting")
+    # Needs shape the idle profile. They do not invent a request or a defeat.
     return SpriteSelection("idle")
 
 

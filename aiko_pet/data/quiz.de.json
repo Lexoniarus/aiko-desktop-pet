@@ -1,0 +1,5808 @@
+{
+  "version": 1,
+  "catalogue_revision": 2,
+  "approval": "Owner requested implementation with the reviewed catalogue on 2026-10-25.",
+  "origin": "Newly authored MIT project content; factual references retained in docs/quiz/catalogue.de.json.",
+  "questions": [
+    {
+      "id": "aiko-quiz-gam-001",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche Figur ist Marios Bruder?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-001-answer-1",
+          "text": "Luigi"
+        },
+        {
+          "id": "aiko-quiz-gam-001-answer-2",
+          "text": "Wario"
+        },
+        {
+          "id": "aiko-quiz-gam-001-answer-3",
+          "text": "Toad"
+        },
+        {
+          "id": "aiko-quiz-gam-001-answer-4",
+          "text": "Bowser"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-001-answer-1",
+      "explanation": "Luigi gehört wie Mario zu den Helden des Pilz-Königreichs. Du erkennst ihn meist an seiner grünen Kleidung.",
+      "variety_group": "Super Mario",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-002",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Wie heißt der Held, den du in vielen klassischen Zelda-Abenteuern steuerst?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-002-answer-1",
+          "text": "Tingle"
+        },
+        {
+          "id": "aiko-quiz-gam-002-answer-2",
+          "text": "Link"
+        },
+        {
+          "id": "aiko-quiz-gam-002-answer-3",
+          "text": "Zelda"
+        },
+        {
+          "id": "aiko-quiz-gam-002-answer-4",
+          "text": "Impa"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-002-answer-2",
+      "explanation": "Link ist der Held vieler Zelda-Spiele. Zelda ist der Name der Prinzessin.",
+      "variety_group": "The Legend of Zelda",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-003",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welchem Typ gehört Pikachu an?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-003-answer-1",
+          "text": "Wasser"
+        },
+        {
+          "id": "aiko-quiz-gam-003-answer-2",
+          "text": "Pflanze"
+        },
+        {
+          "id": "aiko-quiz-gam-003-answer-3",
+          "text": "Elektro"
+        },
+        {
+          "id": "aiko-quiz-gam-003-answer-4",
+          "text": "Feuer"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-003-answer-3",
+      "explanation": "Pikachu ist ein Elektro-Pokémon. Seine elektrischen Attacken gehören zu seinen bekanntesten Merkmalen.",
+      "variety_group": "Pokémon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-004",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welches Tier stellt Sonic dar?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-004-answer-1",
+          "text": "Einen Fuchs"
+        },
+        {
+          "id": "aiko-quiz-gam-004-answer-2",
+          "text": "Einen Waschbären"
+        },
+        {
+          "id": "aiko-quiz-gam-004-answer-3",
+          "text": "Einen Hasen"
+        },
+        {
+          "id": "aiko-quiz-gam-004-answer-4",
+          "text": "Einen Igel"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-004-answer-4",
+      "explanation": "Sonic ist ein blauer Igel. Sein englischer Serienname nennt die Tierart bereits: hedgehog.",
+      "variety_group": "Sonic the Hedgehog",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-005",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welcher grüne Minecraft-Gegner zischt kurz vor seiner Explosion?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-005-answer-1",
+          "text": "Creeper"
+        },
+        {
+          "id": "aiko-quiz-gam-005-answer-2",
+          "text": "Zombie"
+        },
+        {
+          "id": "aiko-quiz-gam-005-answer-3",
+          "text": "Skelett"
+        },
+        {
+          "id": "aiko-quiz-gam-005-answer-4",
+          "text": "Enderman"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-005-answer-1",
+      "explanation": "Ein Creeper nähert sich und beginnt vor seiner Explosion zu zischen. Das Geräusch ist ein wichtiges Warnsignal.",
+      "variety_group": "Minecraft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-006",
+      "revision": 2,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Was lässt im klassischen Tetris eine waagerechte Reihe verschwinden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-006-answer-1",
+          "text": "Drei gleichfarbige Quadrate liegen nebeneinander"
+        },
+        {
+          "id": "aiko-quiz-gam-006-answer-2",
+          "text": "Sie ist lückenlos gefüllt"
+        },
+        {
+          "id": "aiko-quiz-gam-006-answer-3",
+          "text": "Vier Quadrate bilden ein Quadrat"
+        },
+        {
+          "id": "aiko-quiz-gam-006-answer-4",
+          "text": "Sie enthält einen waagerechten I-Stein"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-006-answer-2",
+      "explanation": "Eine vollständige Reihe wird entfernt. Dadurch entsteht wieder Platz auf dem Spielfeld.",
+      "variety_group": "Tetris",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-007",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Was sammelt Pac-Man im klassischen Labyrinth vor allem ein?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-007-answer-1",
+          "text": "Bananen"
+        },
+        {
+          "id": "aiko-quiz-gam-007-answer-2",
+          "text": "Rubine"
+        },
+        {
+          "id": "aiko-quiz-gam-007-answer-3",
+          "text": "Punkte"
+        },
+        {
+          "id": "aiko-quiz-gam-007-answer-4",
+          "text": "Ringe"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-007-answer-3",
+      "explanation": "Pac-Man frisst die Punkte entlang der Gänge. Die größeren Kraftpillen verändern vorübergehend das Verhältnis zu den Geistern.",
+      "variety_group": "Pac-Man",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-008",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welche Aufgabe hat Eugen in Animal Crossing: New Horizons?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-008-answer-1",
+          "text": "Er betreibt den Flughafen"
+        },
+        {
+          "id": "aiko-quiz-gam-008-answer-2",
+          "text": "Er verkauft Kleidung"
+        },
+        {
+          "id": "aiko-quiz-gam-008-answer-3",
+          "text": "Er organisiert das Insel-Camping"
+        },
+        {
+          "id": "aiko-quiz-gam-008-answer-4",
+          "text": "Er leitet das Museum"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-008-answer-4",
+      "explanation": "Die Eule Eugen nimmt unter anderem Fossilien, Fische und Insekten für das Museum entgegen.",
+      "variety_group": "Animal Crossing",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-009",
+      "revision": 2,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welchen Ort baust du in Stardew Valley zu Beginn wieder auf?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-009-answer-1",
+          "text": "Einen Bauernhof"
+        },
+        {
+          "id": "aiko-quiz-gam-009-answer-2",
+          "text": "Ein Gasthaus"
+        },
+        {
+          "id": "aiko-quiz-gam-009-answer-3",
+          "text": "Eine Schmiede"
+        },
+        {
+          "id": "aiko-quiz-gam-009-answer-4",
+          "text": "Einen Dorfladen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-009-answer-1",
+      "explanation": "Dein neues Leben beginnt auf einem verwilderten Hof. Landwirtschaft ist ein wichtiger Teil des Spiels.",
+      "variety_group": "Stardew Valley",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-010",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Was steht bei Die Sims im Mittelpunkt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-010-answer-1",
+          "text": "Das Trainieren von Fußballteams"
+        },
+        {
+          "id": "aiko-quiz-gam-010-answer-2",
+          "text": "Das Leben simulierter Menschen"
+        },
+        {
+          "id": "aiko-quiz-gam-010-answer-3",
+          "text": "Das Lenken von Rennwagen"
+        },
+        {
+          "id": "aiko-quiz-gam-010-answer-4",
+          "text": "Das Erobern von Planeten"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-010-answer-2",
+      "explanation": "Du gestaltest Sims, ihre Häuser und ihren Alltag. Die Reihe zählt zu den Lebenssimulationen.",
+      "variety_group": "Die Sims",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-011",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Was erzeugt das zentrale Werkzeug im Rätselspiel Portal?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-011-answer-1",
+          "text": "Lokale Zeitblasen"
+        },
+        {
+          "id": "aiko-quiz-gam-011-answer-2",
+          "text": "Schwebende Kraftfelder"
+        },
+        {
+          "id": "aiko-quiz-gam-011-answer-3",
+          "text": "Verbundene Durchgänge"
+        },
+        {
+          "id": "aiko-quiz-gam-011-answer-4",
+          "text": "Unsichtbare Schutzschilde"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-011-answer-3",
+      "explanation": "Mit dem Portalgerät verbindest du geeignete Flächen. Räume und Wege lassen sich dadurch auf ungewöhnliche Weise nutzen.",
+      "variety_group": "Portal",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-012",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Was kann Mario nach dem Einsammeln einer Feuerblume typischerweise verschießen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-012-answer-1",
+          "text": "Eiskristalle"
+        },
+        {
+          "id": "aiko-quiz-gam-012-answer-2",
+          "text": "Wasserblasen"
+        },
+        {
+          "id": "aiko-quiz-gam-012-answer-3",
+          "text": "Blitze"
+        },
+        {
+          "id": "aiko-quiz-gam-012-answer-4",
+          "text": "Feuerbälle"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-012-answer-4",
+      "explanation": "Die Feuerblume verwandelt Mario in Feuer-Mario. Seine typische zusätzliche Fähigkeit ist das Werfen von Feuerbällen.",
+      "variety_group": "Super Mario",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-013",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Aus wie vielen goldenen Dreiecken besteht das Triforce-Symbol?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-013-answer-1",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-gam-013-answer-2",
+          "text": "Zwei"
+        },
+        {
+          "id": "aiko-quiz-gam-013-answer-3",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-gam-013-answer-4",
+          "text": "Sechs"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-013-answer-1",
+      "explanation": "Das Triforce verbindet drei Teile. Sie stehen für Kraft, Weisheit und Mut.",
+      "variety_group": "The Legend of Zelda",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-014",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welches dieser Pokémon gehört in den ersten Editionen zum Typ Wasser?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-014-answer-1",
+          "text": "Pikachu"
+        },
+        {
+          "id": "aiko-quiz-gam-014-answer-2",
+          "text": "Schiggy"
+        },
+        {
+          "id": "aiko-quiz-gam-014-answer-3",
+          "text": "Glumanda"
+        },
+        {
+          "id": "aiko-quiz-gam-014-answer-4",
+          "text": "Bisasam"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-014-answer-2",
+      "explanation": "Schiggy ist der Wasser-Starter der ersten Spielgeneration. Glumanda steht für Feuer und Bisasam für Pflanze und Gift.",
+      "variety_group": "Pokémon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-015",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welches Material brauchst du für den Rahmen eines gewöhnlichen Netherportals?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-015-answer-1",
+          "text": "Glas"
+        },
+        {
+          "id": "aiko-quiz-gam-015-answer-2",
+          "text": "Kupferblöcke"
+        },
+        {
+          "id": "aiko-quiz-gam-015-answer-3",
+          "text": "Obsidian"
+        },
+        {
+          "id": "aiko-quiz-gam-015-answer-4",
+          "text": "Sandstein"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-015-answer-3",
+      "explanation": "Ein gewöhnliches Netherportal hat einen Obsidianrahmen. Weinender Obsidian ist dafür kein Ersatz.",
+      "variety_group": "Minecraft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-016",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche glänzenden Gegenstände sammelt Sonic typischerweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-016-answer-1",
+          "text": "Rubine"
+        },
+        {
+          "id": "aiko-quiz-gam-016-answer-2",
+          "text": "Sterne"
+        },
+        {
+          "id": "aiko-quiz-gam-016-answer-3",
+          "text": "Zahnräder"
+        },
+        {
+          "id": "aiko-quiz-gam-016-answer-4",
+          "text": "Ringe"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-016-answer-4",
+      "explanation": "Die goldenen Ringe gehören zu Sonics bekanntesten Spielelementen. Sie können ihn auch vor einem direkten Treffer schützen.",
+      "variety_group": "Sonic the Hedgehog",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-017",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Wie viele unterschiedliche Grundformen haben die klassischen Tetris-Steine?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-017-answer-1",
+          "text": "Sieben"
+        },
+        {
+          "id": "aiko-quiz-gam-017-answer-2",
+          "text": "Fünf"
+        },
+        {
+          "id": "aiko-quiz-gam-017-answer-3",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-gam-017-answer-4",
+          "text": "Acht"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-017-answer-1",
+      "explanation": "Die sieben Tetriminos bestehen jeweils aus vier Quadraten. Unterschiedliche Drehungen zählen nicht als neue Grundformen.",
+      "variety_group": "Tetris",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-018",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Wie heißt die künstliche Intelligenz, die dich im ersten Portal durch Tests begleitet?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-018-answer-1",
+          "text": "EDI"
+        },
+        {
+          "id": "aiko-quiz-gam-018-answer-2",
+          "text": "GLaDOS"
+        },
+        {
+          "id": "aiko-quiz-gam-018-answer-3",
+          "text": "Cortana"
+        },
+        {
+          "id": "aiko-quiz-gam-018-answer-4",
+          "text": "SHODAN"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-018-answer-2",
+      "explanation": "GLaDOS überwacht die Tests bei Aperture Science. Ihre Kommentare sind ein prägender Teil des Spiels.",
+      "variety_group": "Portal",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-019",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Wie heißt die gewöhnliche Geldwährung in der deutschen Fassung von Animal Crossing?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-019-answer-1",
+          "text": "Gil"
+        },
+        {
+          "id": "aiko-quiz-gam-019-answer-2",
+          "text": "Septime"
+        },
+        {
+          "id": "aiko-quiz-gam-019-answer-3",
+          "text": "Sternis"
+        },
+        {
+          "id": "aiko-quiz-gam-019-answer-4",
+          "text": "Rubine"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-019-answer-3",
+      "explanation": "Mit Sternis bezahlst du unter anderem Einkäufe. Nook-Meilen sind in New Horizons ein separates Belohnungssystem.",
+      "variety_group": "Animal Crossing",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-020",
+      "revision": 2,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Von wem erbst du in Stardew Valley den alten Hof?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-020-answer-1",
+          "text": "Von deiner Tante"
+        },
+        {
+          "id": "aiko-quiz-gam-020-answer-2",
+          "text": "Von deinem Vater"
+        },
+        {
+          "id": "aiko-quiz-gam-020-answer-3",
+          "text": "Von deiner Großmutter"
+        },
+        {
+          "id": "aiko-quiz-gam-020-answer-4",
+          "text": "Vom Großvater"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-020-answer-4",
+      "explanation": "Der Hof gehörte deinem Großvater. Sein Vermächtnis ermöglicht dir den Neuanfang auf dem Land.",
+      "variety_group": "Stardew Valley",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-021",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Was entscheidet den Revierkampf in Splatoon 3?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-021-answer-1",
+          "text": "Die mit eigener Farbe bedeckte Bodenfläche"
+        },
+        {
+          "id": "aiko-quiz-gam-021-answer-2",
+          "text": "Die Zahl der ausgeschalteten Gegner"
+        },
+        {
+          "id": "aiko-quiz-gam-021-answer-3",
+          "text": "Die Zahl der Treffer auf Gegner"
+        },
+        {
+          "id": "aiko-quiz-gam-021-answer-4",
+          "text": "Die zuerst erreichte Team-Punktzahl"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-021-answer-1",
+      "explanation": "Im Revierkampf zählt am Ende die eingefärbte Fläche. Abschüsse allein bestimmen den Sieg nicht.",
+      "variety_group": "Splatoon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-022",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welcher Tätigkeit geht Samus Aran in Metroid nach?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-022-answer-1",
+          "text": "Raumfrachterpilotin"
+        },
+        {
+          "id": "aiko-quiz-gam-022-answer-2",
+          "text": "Kopfgeldjägerin"
+        },
+        {
+          "id": "aiko-quiz-gam-022-answer-3",
+          "text": "Raumpiratin"
+        },
+        {
+          "id": "aiko-quiz-gam-022-answer-4",
+          "text": "Föderationsgeneralin"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-022-answer-2",
+      "explanation": "Samus Aran ist eine Kopfgeldjägerin. Ihr gepanzerter Anzug ist ein Markenzeichen der Metroid-Reihe.",
+      "variety_group": "Metroid",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-023",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche Farbe hat Kirby normalerweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-023-answer-1",
+          "text": "Grün"
+        },
+        {
+          "id": "aiko-quiz-gam-023-answer-2",
+          "text": "Orange"
+        },
+        {
+          "id": "aiko-quiz-gam-023-answer-3",
+          "text": "Rosa"
+        },
+        {
+          "id": "aiko-quiz-gam-023-answer-4",
+          "text": "Blau"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-023-answer-3",
+      "explanation": "Kirbys übliche Erscheinung ist rund und rosa. In seinen Spielen kann er Fähigkeiten anderer Wesen übernehmen.",
+      "variety_group": "Kirby",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-024",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche Früchte sind besonders eng mit Donkey Kong verbunden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-024-answer-1",
+          "text": "Kirschen"
+        },
+        {
+          "id": "aiko-quiz-gam-024-answer-2",
+          "text": "Birnen"
+        },
+        {
+          "id": "aiko-quiz-gam-024-answer-3",
+          "text": "Zitronen"
+        },
+        {
+          "id": "aiko-quiz-gam-024-answer-4",
+          "text": "Bananen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-024-answer-4",
+      "explanation": "Bananen sind ein wiederkehrender Bestandteil der Donkey-Kong-Spiele und ihrer Spielwelt.",
+      "variety_group": "Donkey Kong",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-025",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche bekannte Mario-Kart-Strecke ist nach einem bunten Himmelsphänomen benannt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-025-answer-1",
+          "text": "Regenbogen-Boulevard"
+        },
+        {
+          "id": "aiko-quiz-gam-025-answer-2",
+          "text": "Luigis Piste"
+        },
+        {
+          "id": "aiko-quiz-gam-025-answer-3",
+          "text": "Marios Piste"
+        },
+        {
+          "id": "aiko-quiz-gam-025-answer-4",
+          "text": "Toads Pilzpiste"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-025-answer-1",
+      "explanation": "Der Regenbogen-Boulevard gehört in verschiedenen Fassungen zur Reihe. Sein namensgebender Regenbogen prägt die Streckengestaltung.",
+      "variety_group": "Mario Kart",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-026",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welches Instrument gibt Ocarina of Time seinen Namen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-026-answer-1",
+          "text": "Eine Trompete"
+        },
+        {
+          "id": "aiko-quiz-gam-026-answer-2",
+          "text": "Eine Okarina"
+        },
+        {
+          "id": "aiko-quiz-gam-026-answer-3",
+          "text": "Eine Harfe"
+        },
+        {
+          "id": "aiko-quiz-gam-026-answer-4",
+          "text": "Eine Geige"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-026-answer-2",
+      "explanation": "Eine Okarina ist ein kleines Blasinstrument. Link nutzt die Okarina im Spiel für besondere Melodien.",
+      "variety_group": "The Legend of Zelda",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-027",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "In welcher Minecraft-Dimension begegnet dir der Enderdrache?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-027-answer-1",
+          "text": "In der Oberwelt"
+        },
+        {
+          "id": "aiko-quiz-gam-027-answer-2",
+          "text": "Im Tiefen Dunkel"
+        },
+        {
+          "id": "aiko-quiz-gam-027-answer-3",
+          "text": "Im Ende"
+        },
+        {
+          "id": "aiko-quiz-gam-027-answer-4",
+          "text": "Im Nether"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-027-answer-3",
+      "explanation": "Der Enderdrache lebt im Ende. Diese Dimension erreichst du über ein Endportal.",
+      "variety_group": "Minecraft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-028",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Welche Typenkombination hat Bisasam in den ersten Pokémon-Editionen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-028-answer-1",
+          "text": "Pflanze und Boden"
+        },
+        {
+          "id": "aiko-quiz-gam-028-answer-2",
+          "text": "Käfer und Gift"
+        },
+        {
+          "id": "aiko-quiz-gam-028-answer-3",
+          "text": "Wasser und Pflanze"
+        },
+        {
+          "id": "aiko-quiz-gam-028-answer-4",
+          "text": "Pflanze und Gift"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-028-answer-4",
+      "explanation": "Bisasam hat von Anfang an zwei Typen: Pflanze und Gift. Sein pflanzliches Aussehen allein verrät also nicht die ganze Kombination.",
+      "variety_group": "Pokémon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-029",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Was für ein Wesen ist ein Chocobo aus Final Fantasy?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-029-answer-1",
+          "text": "Ein großer Vogel"
+        },
+        {
+          "id": "aiko-quiz-gam-029-answer-2",
+          "text": "Eine kleine Drachenart"
+        },
+        {
+          "id": "aiko-quiz-gam-029-answer-3",
+          "text": "Ein lebender Kristall"
+        },
+        {
+          "id": "aiko-quiz-gam-029-answer-4",
+          "text": "Ein gepanzerter Fisch"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-029-answer-1",
+      "explanation": "Chocobos sind große Vögel. In vielen Final-Fantasy-Spielen dienen sie als Reittiere.",
+      "variety_group": "Final Fantasy",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-030",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Zu welcher Spielereihe gehört das bekannte blaue Schleimmonster namens Slime?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-030-answer-1",
+          "text": "Dragon's Lair"
+        },
+        {
+          "id": "aiko-quiz-gam-030-answer-2",
+          "text": "Dragon Quest"
+        },
+        {
+          "id": "aiko-quiz-gam-030-answer-3",
+          "text": "Dragon Age"
+        },
+        {
+          "id": "aiko-quiz-gam-030-answer-4",
+          "text": "Dragon's Dogma"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-030-answer-2",
+      "explanation": "Der tropfenförmige Slime ist eines der bekanntesten Monster und ein Erkennungszeichen von Dragon Quest.",
+      "variety_group": "Dragon Quest",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-031",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Wie heißt die Hauptfigur der Tomb-Raider-Reihe?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-031-answer-1",
+          "text": "Aloy"
+        },
+        {
+          "id": "aiko-quiz-gam-031-answer-2",
+          "text": "Faith Connors"
+        },
+        {
+          "id": "aiko-quiz-gam-031-answer-3",
+          "text": "Lara Croft"
+        },
+        {
+          "id": "aiko-quiz-gam-031-answer-4",
+          "text": "Jill Valentine"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-031-answer-3",
+      "explanation": "Lara Croft ist die Archäologin und Abenteurerin hinter dem Namen Tomb Raider.",
+      "variety_group": "Tomb Raider",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-032",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Welcher Tiergruppe gehört Crash Bandicoot an?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-032-answer-1",
+          "text": "Nagetiere"
+        },
+        {
+          "id": "aiko-quiz-gam-032-answer-2",
+          "text": "Raubvögel"
+        },
+        {
+          "id": "aiko-quiz-gam-032-answer-3",
+          "text": "Amphibien"
+        },
+        {
+          "id": "aiko-quiz-gam-032-answer-4",
+          "text": "Beuteltiere"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-032-answer-4",
+      "explanation": "Ein Bandicoot ist ein Beuteltier. Crash ist daher trotz seiner stilisierten Gestalt kein Fuchs oder Nagetier.",
+      "variety_group": "Crash Bandicoot",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-033",
+      "revision": 2,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Wofür wird Geralt als Hexer in The Witcher 3 hauptsächlich angeheuert?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-033-answer-1",
+          "text": "Für die Jagd auf Monster"
+        },
+        {
+          "id": "aiko-quiz-gam-033-answer-2",
+          "text": "Für die Anfertigung von Waffen"
+        },
+        {
+          "id": "aiko-quiz-gam-033-answer-3",
+          "text": "Für den Handel mit Heilkräutern"
+        },
+        {
+          "id": "aiko-quiz-gam-033-answer-4",
+          "text": "Für den Dienst als Hofmagier"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-033-answer-1",
+      "explanation": "Hexer wie Geralt sind auf die Jagd nach Monstern spezialisiert. Ihre Dienste bieten sie gegen Bezahlung an.",
+      "variety_group": "The Witcher",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-034",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Wie heißt die Welt, in der ein großer Teil von World of Warcraft spielt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-034-answer-1",
+          "text": "Midgar"
+        },
+        {
+          "id": "aiko-quiz-gam-034-answer-2",
+          "text": "Azeroth"
+        },
+        {
+          "id": "aiko-quiz-gam-034-answer-3",
+          "text": "Tamriel"
+        },
+        {
+          "id": "aiko-quiz-gam-034-answer-4",
+          "text": "Hyrule"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-034-answer-2",
+      "explanation": "Azeroth ist die Heimat zahlreicher Völker von Warcraft. Nicht jedes Abenteuer bleibt jedoch auf dieser Welt.",
+      "variety_group": "Warcraft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-035",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welches Ereignis entscheidet auf der Kluft der Beschwörer den Sieg?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-035-answer-1",
+          "text": "Die Zerstörung aller äußeren Türme"
+        },
+        {
+          "id": "aiko-quiz-gam-035-answer-2",
+          "text": "Die Zerstörung des ersten Inhibitors"
+        },
+        {
+          "id": "aiko-quiz-gam-035-answer-3",
+          "text": "Die Zerstörung des gegnerischen Nexus"
+        },
+        {
+          "id": "aiko-quiz-gam-035-answer-4",
+          "text": "Der erste besiegte Baron Nashor"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-035-answer-3",
+      "explanation": "In League of Legends entscheidet die Zerstörung des gegnerischen Nexus das Spiel auf dieser Karte.",
+      "variety_group": "League of Legends",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-036",
+      "revision": 2,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Wie viele Seiten hat der Würfel, mit dem du in D&D 5 gewöhnlich Angriffsproben ablegst?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-036-answer-1",
+          "text": "Zwölf"
+        },
+        {
+          "id": "aiko-quiz-gam-036-answer-2",
+          "text": "Acht"
+        },
+        {
+          "id": "aiko-quiz-gam-036-answer-3",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-gam-036-answer-4",
+          "text": "Zwanzig"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-036-answer-4",
+      "explanation": "Für eine Angriffsprobe würfelst du gewöhnlich mit einem zwanzigseitigen Würfel und rechnest passende Modifikatoren hinzu.",
+      "variety_group": "Dungeons & Dragons",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-037",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "medium",
+      "question": "Welche Schachfigur darf bei ihrem normalen Zug andere Figuren überspringen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-037-answer-1",
+          "text": "Der Springer"
+        },
+        {
+          "id": "aiko-quiz-gam-037-answer-2",
+          "text": "Der Läufer"
+        },
+        {
+          "id": "aiko-quiz-gam-037-answer-3",
+          "text": "Der Turm"
+        },
+        {
+          "id": "aiko-quiz-gam-037-answer-4",
+          "text": "Die Dame"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-037-answer-1",
+      "explanation": "Der Springer zieht in einem L-Muster und darf dabei über andere Figuren springen.",
+      "variety_group": "Schach",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-038",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "easy",
+      "question": "Welche Handform schlägt den Stein bei Schere, Stein, Papier?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-038-answer-1",
+          "text": "Keine der drei"
+        },
+        {
+          "id": "aiko-quiz-gam-038-answer-2",
+          "text": "Papier"
+        },
+        {
+          "id": "aiko-quiz-gam-038-answer-3",
+          "text": "Schere"
+        },
+        {
+          "id": "aiko-quiz-gam-038-answer-4",
+          "text": "Stein"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-038-answer-2",
+      "explanation": "Papier schlägt Stein, Stein schlägt Schere und Schere schlägt Papier. Gleiche Handformen ergeben ein Unentschieden.",
+      "variety_group": "Schere, Stein, Papier",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-039",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Wer entwickelte das ursprüngliche Tetris?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-039-answer-1",
+          "text": "Hideo Kojima"
+        },
+        {
+          "id": "aiko-quiz-gam-039-answer-2",
+          "text": "Sid Meier"
+        },
+        {
+          "id": "aiko-quiz-gam-039-answer-3",
+          "text": "Alexei Paschitnow"
+        },
+        {
+          "id": "aiko-quiz-gam-039-answer-4",
+          "text": "Shigeru Miyamoto"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-039-answer-3",
+      "explanation": "Alexei Paschitnow entwickelte Tetris 1984. Sein Name wird international häufig Alexey Pajitnov geschrieben.",
+      "variety_group": "Tetris",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-gam-040",
+      "revision": 1,
+      "topic": "gaming",
+      "difficulty": "tricky",
+      "question": "Wie heißt die Hauptfigur der Monkey-Island-Abenteuer?",
+      "answers": [
+        {
+          "id": "aiko-quiz-gam-040-answer-1",
+          "text": "Gordon Freeman"
+        },
+        {
+          "id": "aiko-quiz-gam-040-answer-2",
+          "text": "Nathan Drake"
+        },
+        {
+          "id": "aiko-quiz-gam-040-answer-3",
+          "text": "Max Payne"
+        },
+        {
+          "id": "aiko-quiz-gam-040-answer-4",
+          "text": "Guybrush Threepwood"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-gam-040-answer-4",
+      "explanation": "Guybrush Threepwood ist der Held der Monkey-Island-Abenteuer. Piraten und humorvolle Rätsel prägen die Reihe.",
+      "variety_group": "Monkey Island",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-001",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welcher Held steht im Mittelpunkt vieler Dragon-Ball-Abenteuer?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-001-answer-1",
+          "text": "Son Goku"
+        },
+        {
+          "id": "aiko-quiz-ani-001-answer-2",
+          "text": "Naruto Uzumaki"
+        },
+        {
+          "id": "aiko-quiz-ani-001-answer-3",
+          "text": "Monkey D. Ruffy"
+        },
+        {
+          "id": "aiko-quiz-ani-001-answer-4",
+          "text": "Ichigo Kurosaki"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-001-answer-1",
+      "explanation": "Son Goku begleitet die Reihe von seinen frühen Abenteuern an. Bulma begegnet ihm bereits am Anfang der Geschichte.",
+      "variety_group": "Dragon Ball",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-002",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welchen großen Traum verfolgt Ruffy in One Piece?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-002-answer-1",
+          "text": "Ein Alchemistenexamen bestehen"
+        },
+        {
+          "id": "aiko-quiz-ani-002-answer-2",
+          "text": "König der Piraten werden"
+        },
+        {
+          "id": "aiko-quiz-ani-002-answer-3",
+          "text": "Hokage werden"
+        },
+        {
+          "id": "aiko-quiz-ani-002-answer-4",
+          "text": "Pokémon-Meister werden"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-002-answer-2",
+      "explanation": "Monkey D. Ruffy reist mit seiner Mannschaft auf der Suche nach dem One Piece. Sein Ziel ist der Titel König der Piraten.",
+      "variety_group": "One Piece",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-003",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welche Art Kämpfer ist Naruto Uzumaki?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-003-answer-1",
+          "text": "Ein Gladiator"
+        },
+        {
+          "id": "aiko-quiz-ani-003-answer-2",
+          "text": "Ein Ritter"
+        },
+        {
+          "id": "aiko-quiz-ani-003-answer-3",
+          "text": "Ein Ninja"
+        },
+        {
+          "id": "aiko-quiz-ani-003-answer-4",
+          "text": "Ein Samurai"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-003-answer-3",
+      "explanation": "Naruto gehört zu einer Welt von Shinobi, also Ninja. Seine Geschichte beginnt als junger Schüler.",
+      "variety_group": "Naruto",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-004",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wie lautet Sailor Moons japanischer Alltagsname?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-004-answer-1",
+          "text": "Rei Ayanami"
+        },
+        {
+          "id": "aiko-quiz-ani-004-answer-2",
+          "text": "Sakura Kinomoto"
+        },
+        {
+          "id": "aiko-quiz-ani-004-answer-3",
+          "text": "Nami"
+        },
+        {
+          "id": "aiko-quiz-ani-004-answer-4",
+          "text": "Usagi Tsukino"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-004-answer-4",
+      "explanation": "Usagi Tsukino verwandelt sich in Sailor Moon. In älteren deutschen Fassungen ist sie auch als Bunny bekannt.",
+      "variety_group": "Sailor Moon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-005",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welcher Gegenstand verleiht Light Yagami in Death Note Macht über Leben und Tod?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-005-answer-1",
+          "text": "Ein Notizbuch"
+        },
+        {
+          "id": "aiko-quiz-ani-005-answer-2",
+          "text": "Eine Taschenuhr"
+        },
+        {
+          "id": "aiko-quiz-ani-005-answer-3",
+          "text": "Ein Ring"
+        },
+        {
+          "id": "aiko-quiz-ani-005-answer-4",
+          "text": "Eine Spielkarte"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-005-answer-1",
+      "explanation": "Das Death Note ist ein übernatürliches Notizbuch. Seine Regeln bestimmen, was das Eintragen eines Namens bewirken kann.",
+      "variety_group": "Death Note",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-006",
+      "revision": 2,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welches Pokémon ist Ashs ständiger Begleiter in der ursprünglichen Anime-Serie?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-006-answer-1",
+          "text": "Glumanda"
+        },
+        {
+          "id": "aiko-quiz-ani-006-answer-2",
+          "text": "Pikachu"
+        },
+        {
+          "id": "aiko-quiz-ani-006-answer-3",
+          "text": "Bisasam"
+        },
+        {
+          "id": "aiko-quiz-ani-006-answer-4",
+          "text": "Schiggy"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-006-answer-2",
+      "explanation": "Ash und Pikachu reisen in der ursprünglichen Anime-Serie gemeinsam durch verschiedene Regionen.",
+      "variety_group": "Pokémon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-007",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wer führte bei Mein Nachbar Totoro Regie?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-007-answer-1",
+          "text": "Mamoru Hosoda"
+        },
+        {
+          "id": "aiko-quiz-ani-007-answer-2",
+          "text": "Satoshi Kon"
+        },
+        {
+          "id": "aiko-quiz-ani-007-answer-3",
+          "text": "Hayao Miyazaki"
+        },
+        {
+          "id": "aiko-quiz-ani-007-answer-4",
+          "text": "Makoto Shinkai"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-007-answer-3",
+      "explanation": "Hayao Miyazaki inszenierte den Film für Studio Ghibli. Die Geschichte folgt den Schwestern Satsuki und Mei.",
+      "variety_group": "Studio Ghibli",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-008",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "An welchem magischen Ort arbeitet Chihiro bei Yubaba?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-008-answer-1",
+          "text": "In einem Uhrengeschäft"
+        },
+        {
+          "id": "aiko-quiz-ani-008-answer-2",
+          "text": "In einer Bäckerei"
+        },
+        {
+          "id": "aiko-quiz-ani-008-answer-3",
+          "text": "In einer Sternwarte"
+        },
+        {
+          "id": "aiko-quiz-ani-008-answer-4",
+          "text": "In einem Badehaus"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-008-answer-4",
+      "explanation": "In Chihiros Reise ins Zauberland wird Chihiro im Badehaus beschäftigt. Dort begegnen ihr zahlreiche Geisterwesen.",
+      "variety_group": "Studio Ghibli",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-009",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wie heißt die junge Hutmacherin aus Das wandelnde Schloss?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-009-answer-1",
+          "text": "Sophie"
+        },
+        {
+          "id": "aiko-quiz-ani-009-answer-2",
+          "text": "Chihiro"
+        },
+        {
+          "id": "aiko-quiz-ani-009-answer-3",
+          "text": "Kiki"
+        },
+        {
+          "id": "aiko-quiz-ani-009-answer-4",
+          "text": "San"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-009-answer-1",
+      "explanation": "Sophie wird durch einen Fluch in eine alte Frau verwandelt. Auf der Suche nach Hilfe gelangt sie in das wandelnde Schloss.",
+      "variety_group": "Studio Ghibli",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-010",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Von welchen Tieren wurde San in Prinzessin Mononoke aufgezogen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-010-answer-1",
+          "text": "Bären"
+        },
+        {
+          "id": "aiko-quiz-ani-010-answer-2",
+          "text": "Wölfen"
+        },
+        {
+          "id": "aiko-quiz-ani-010-answer-3",
+          "text": "Hirschen"
+        },
+        {
+          "id": "aiko-quiz-ani-010-answer-4",
+          "text": "Füchsen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-010-answer-2",
+      "explanation": "San lebt bei den Wölfen und setzt sich für den Wald ein. Ihr Konflikt mit den Menschen ist ein zentraler Teil des Films.",
+      "variety_group": "Studio Ghibli",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-011",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Wie heißt der kahlköpfige Held von One-Punch Man?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-011-answer-1",
+          "text": "Garo"
+        },
+        {
+          "id": "aiko-quiz-ani-011-answer-2",
+          "text": "Mumen Rider"
+        },
+        {
+          "id": "aiko-quiz-ani-011-answer-3",
+          "text": "Saitama"
+        },
+        {
+          "id": "aiko-quiz-ani-011-answer-4",
+          "text": "Genos"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-011-answer-3",
+      "explanation": "Saitama ist so stark geworden, dass ihm ein ebenbürtiger Gegner fehlt. Daraus entsteht ein großer Teil der Komik.",
+      "variety_group": "One-Punch Man",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-012",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Wie heißt Tanjiros Schwester in Demon Slayer?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-012-answer-1",
+          "text": "Sakura"
+        },
+        {
+          "id": "aiko-quiz-ani-012-answer-2",
+          "text": "Nami"
+        },
+        {
+          "id": "aiko-quiz-ani-012-answer-3",
+          "text": "Asuna"
+        },
+        {
+          "id": "aiko-quiz-ani-012-answer-4",
+          "text": "Nezuko"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-012-answer-4",
+      "explanation": "Nezuko Kamado ist Tanjiros jüngere Schwester. Ihr Schicksal setzt seine Reise in Gang.",
+      "variety_group": "Demon Slayer",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-013",
+      "revision": 2,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Wie heißen die menschenfressenden Riesen innerhalb der Serie Attack on Titan?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-013-answer-1",
+          "text": "Titanen"
+        },
+        {
+          "id": "aiko-quiz-ani-013-answer-2",
+          "text": "Ghule"
+        },
+        {
+          "id": "aiko-quiz-ani-013-answer-3",
+          "text": "Dämonen"
+        },
+        {
+          "id": "aiko-quiz-ani-013-answer-4",
+          "text": "Drachen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-013-answer-1",
+      "explanation": "Die als Titanen bezeichneten Riesen bedrohen die Menschen. Zu Beginn sucht die Bevölkerung Schutz hinter gewaltigen Mauern.",
+      "variety_group": "Attack on Titan",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-014",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wie werden die besonderen Kräfte in My Hero Academia häufig genannt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-014-answer-1",
+          "text": "Nen"
+        },
+        {
+          "id": "aiko-quiz-ani-014-answer-2",
+          "text": "Quirks"
+        },
+        {
+          "id": "aiko-quiz-ani-014-answer-3",
+          "text": "Jutsu"
+        },
+        {
+          "id": "aiko-quiz-ani-014-answer-4",
+          "text": "Stands"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-014-answer-2",
+      "explanation": "Quirks ist die internationale Bezeichnung für die verbreiteten Superkräfte. In deutschen Fassungen findet sich auch der Begriff Spezialitäten.",
+      "variety_group": "My Hero Academia",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-015",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Welchen Familiennamen tragen Edward und Alphonse in Fullmetal Alchemist?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-015-answer-1",
+          "text": "Joestar"
+        },
+        {
+          "id": "aiko-quiz-ani-015-answer-2",
+          "text": "Kurosaki"
+        },
+        {
+          "id": "aiko-quiz-ani-015-answer-3",
+          "text": "Elric"
+        },
+        {
+          "id": "aiko-quiz-ani-015-answer-4",
+          "text": "Uchiha"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-015-answer-3",
+      "explanation": "Edward und Alphonse Elric sind die Brüder im Zentrum der Geschichte. Sie suchen nach einem Weg, die Folgen eines Rituals rückgängig zu machen.",
+      "variety_group": "Fullmetal Alchemist",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-016",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wie heißt der Oberschüler, der als Detektiv Conan in einem Kinderkörper lebt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-016-answer-1",
+          "text": "Light Yagami"
+        },
+        {
+          "id": "aiko-quiz-ani-016-answer-2",
+          "text": "Shoyo Hinata"
+        },
+        {
+          "id": "aiko-quiz-ani-016-answer-3",
+          "text": "Eren Jäger"
+        },
+        {
+          "id": "aiko-quiz-ani-016-answer-4",
+          "text": "Shinichi Kudo"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-016-answer-4",
+      "explanation": "Shinichi Kudo wird durch ein Gift in ein Kind verwandelt. Unter dem Namen Conan Edogawa ermittelt er weiter.",
+      "variety_group": "Detektiv Conan",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-017",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welche Sportart steht im Mittelpunkt von Haikyu!!?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-017-answer-1",
+          "text": "Volleyball"
+        },
+        {
+          "id": "aiko-quiz-ani-017-answer-2",
+          "text": "Basketball"
+        },
+        {
+          "id": "aiko-quiz-ani-017-answer-3",
+          "text": "Handball"
+        },
+        {
+          "id": "aiko-quiz-ani-017-answer-4",
+          "text": "Baseball"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-017-answer-1",
+      "explanation": "Shoyo Hinata möchte sich im Volleyball behaupten. Seine geringe Körpergröße macht seinen Ehrgeiz besonders bemerkenswert.",
+      "variety_group": "Haikyu!!",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-018",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welche Sportart spielen die Hauptfiguren von Captain Tsubasa?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-018-answer-1",
+          "text": "Eishockey"
+        },
+        {
+          "id": "aiko-quiz-ani-018-answer-2",
+          "text": "Fußball"
+        },
+        {
+          "id": "aiko-quiz-ani-018-answer-3",
+          "text": "Tennis"
+        },
+        {
+          "id": "aiko-quiz-ani-018-answer-4",
+          "text": "Rugby"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-018-answer-2",
+      "explanation": "Captain Tsubasa erzählt von Fußballtalenten und ihren sportlichen Rivalitäten. Im Mittelpunkt steht Tsubasa Ozora.",
+      "variety_group": "Captain Tsubasa",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-019",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welche Art Duelle prägt die Fernsehserie Yu-Gi-Oh! mit Yugi und Duel Monsters?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-019-answer-1",
+          "text": "Autorennen"
+        },
+        {
+          "id": "aiko-quiz-ani-019-answer-2",
+          "text": "Fechtkämpfe"
+        },
+        {
+          "id": "aiko-quiz-ani-019-answer-3",
+          "text": "Sammelkartenduelle"
+        },
+        {
+          "id": "aiko-quiz-ani-019-answer-4",
+          "text": "Schachpartien"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-019-answer-3",
+      "explanation": "Kartenduelle mit beschworenen Monstern sind ein Markenzeichen der Serie. Das ursprüngliche Manga behandelt daneben weitere Spiele.",
+      "variety_group": "Yu-Gi-Oh!",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-020",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "In welche besondere Welt geraten die Kinder in Digimon Adventure?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-020-answer-1",
+          "text": "Die Welt der Träume"
+        },
+        {
+          "id": "aiko-quiz-ani-020-answer-2",
+          "text": "Eine versunkene Unterwasserwelt"
+        },
+        {
+          "id": "aiko-quiz-ani-020-answer-3",
+          "text": "Die Welt der Geister"
+        },
+        {
+          "id": "aiko-quiz-ani-020-answer-4",
+          "text": "Die digitale Welt"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-020-answer-4",
+      "explanation": "Die Kinder gelangen in die digitale Welt und treffen dort auf Digimon. Ihre Rückkehr nach Hause wird zum Abenteuer.",
+      "variety_group": "Digimon",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-021",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Womit verdient die Crew der Bebop in Cowboy Bebop ihr Geld?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-021-answer-1",
+          "text": "Mit Kopfgeldjagd"
+        },
+        {
+          "id": "aiko-quiz-ani-021-answer-2",
+          "text": "Mit regulären Frachttransporten"
+        },
+        {
+          "id": "aiko-quiz-ani-021-answer-3",
+          "text": "Mit Aufträgen zur Planetenvermessung"
+        },
+        {
+          "id": "aiko-quiz-ani-021-answer-4",
+          "text": "Mit dem Betrieb von Raumstationen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-021-answer-1",
+      "explanation": "Die Crew jagt gesuchte Personen im Weltraum. Die erhoffte Belohnung löst ihre Geldprobleme allerdings selten dauerhaft.",
+      "variety_group": "Cowboy Bebop",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-022",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Was steuert Shinji Ikari in Neon Genesis Evangelion?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-022-answer-1",
+          "text": "Einen Patlabor"
+        },
+        {
+          "id": "aiko-quiz-ani-022-answer-2",
+          "text": "Eine Eva-Einheit"
+        },
+        {
+          "id": "aiko-quiz-ani-022-answer-3",
+          "text": "Einen Gundam"
+        },
+        {
+          "id": "aiko-quiz-ani-022-answer-4",
+          "text": "Ein Knightmare Frame"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-022-answer-2",
+      "explanation": "Shinji wird als Pilot einer Eva-Einheit eingesetzt. Die Geschichte verbindet die Kämpfe mit den Belastungen ihrer jungen Piloten.",
+      "variety_group": "Neon Genesis Evangelion",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-023",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "tricky",
+      "question": "Welcher Manga-Künstler erschuf Astro Boy?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-023-answer-1",
+          "text": "Akira Toriyama"
+        },
+        {
+          "id": "aiko-quiz-ani-023-answer-2",
+          "text": "Gosho Aoyama"
+        },
+        {
+          "id": "aiko-quiz-ani-023-answer-3",
+          "text": "Osamu Tezuka"
+        },
+        {
+          "id": "aiko-quiz-ani-023-answer-4",
+          "text": "Eiichiro Oda"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-023-answer-3",
+      "explanation": "Astro Boy gehört zu den bekanntesten Werken von Osamu Tezuka. Die Figur wurde auch durch ihre Fernsehserien international bekannt.",
+      "variety_group": "Astro Boy",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-024",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "tricky",
+      "question": "Wer schuf den Manga Akira?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-024-answer-1",
+          "text": "Naoko Takeuchi"
+        },
+        {
+          "id": "aiko-quiz-ani-024-answer-2",
+          "text": "Masashi Kishimoto"
+        },
+        {
+          "id": "aiko-quiz-ani-024-answer-3",
+          "text": "Hirohiko Araki"
+        },
+        {
+          "id": "aiko-quiz-ani-024-answer-4",
+          "text": "Katsuhiro Otomo"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-024-answer-4",
+      "explanation": "Katsuhiro Otomo ist der Schöpfer von Akira. Der Manga spielt im dystopischen Neo-Tokio.",
+      "variety_group": "Akira",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-025",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Wie viele gewöhnliche Dragon Balls werden für Shenlongs Beschwörung auf der Erde gesammelt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-025-answer-1",
+          "text": "Sieben"
+        },
+        {
+          "id": "aiko-quiz-ani-025-answer-2",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-ani-025-answer-3",
+          "text": "Fünf"
+        },
+        {
+          "id": "aiko-quiz-ani-025-answer-4",
+          "text": "Neun"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-025-answer-1",
+      "explanation": "Der klassische Satz besteht aus sieben Kugeln. Andere Kugelsätze und spätere Varianten machen die Eingrenzung auf den Erdsatz wichtig.",
+      "variety_group": "Dragon Ball",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-026",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Welche Kopfbedeckung ist Ruffys Markenzeichen in One Piece?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-026-answer-1",
+          "text": "Ein Cowboyhut"
+        },
+        {
+          "id": "aiko-quiz-ani-026-answer-2",
+          "text": "Ein Strohhut"
+        },
+        {
+          "id": "aiko-quiz-ani-026-answer-3",
+          "text": "Eine Krone"
+        },
+        {
+          "id": "aiko-quiz-ani-026-answer-4",
+          "text": "Ein Zylinder"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-026-answer-2",
+      "explanation": "Ruffys Strohhut ist so charakteristisch, dass auch seine Mannschaft als Strohhutbande bekannt ist.",
+      "variety_group": "One Piece",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-027",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "medium",
+      "question": "Wie heißt Narutos Heimatdorf, das für sein Blatt-Symbol bekannt ist?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-027-answer-1",
+          "text": "Kirigakure"
+        },
+        {
+          "id": "aiko-quiz-ani-027-answer-2",
+          "text": "Iwagakure"
+        },
+        {
+          "id": "aiko-quiz-ani-027-answer-3",
+          "text": "Konoha"
+        },
+        {
+          "id": "aiko-quiz-ani-027-answer-4",
+          "text": "Sunagakure"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-027-answer-3",
+      "explanation": "Konoha ist die Kurzform von Konohagakure. Das Dorf wird häufig als Dorf hinter den Blättern bezeichnet.",
+      "variety_group": "Naruto",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-028",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "tricky",
+      "question": "Unter welchem Künstlernamen entstand die ursprüngliche Webcomic-Fassung von One-Punch Man?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-028-answer-1",
+          "text": "CLAMP"
+        },
+        {
+          "id": "aiko-quiz-ani-028-answer-2",
+          "text": "Boichi"
+        },
+        {
+          "id": "aiko-quiz-ani-028-answer-3",
+          "text": "Yana Toboso"
+        },
+        {
+          "id": "aiko-quiz-ani-028-answer-4",
+          "text": "ONE"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-028-answer-4",
+      "explanation": "ONE erschuf die ursprüngliche Fassung. Die bekannte Manga-Neuzeichnung entstand mit Yusuke Murata.",
+      "variety_group": "One-Punch Man",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-029",
+      "revision": 2,
+      "topic": "anime_manga",
+      "difficulty": "easy",
+      "question": "Wo beginnt die Leserichtung auf einer übersichtlich angeordneten japanischen Manga-Seite üblicherweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-029-answer-1",
+          "text": "Oben rechts"
+        },
+        {
+          "id": "aiko-quiz-ani-029-answer-2",
+          "text": "Oben links"
+        },
+        {
+          "id": "aiko-quiz-ani-029-answer-3",
+          "text": "Unten rechts"
+        },
+        {
+          "id": "aiko-quiz-ani-029-answer-4",
+          "text": "Unten links"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-029-answer-1",
+      "explanation": "Du beginnst normalerweise oben rechts und folgst den Panels nach links und nach unten. Viele deutsche Manga-Ausgaben behalten diese Leserichtung bei.",
+      "variety_group": "anime_manga:Medienwissen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-ani-030",
+      "revision": 1,
+      "topic": "anime_manga",
+      "difficulty": "tricky",
+      "question": "Wie heißt die als Major bekannte Cyborg-Ermittlerin in Ghost in the Shell?",
+      "answers": [
+        {
+          "id": "aiko-quiz-ani-030-answer-1",
+          "text": "Revy"
+        },
+        {
+          "id": "aiko-quiz-ani-030-answer-2",
+          "text": "Motoko Kusanagi"
+        },
+        {
+          "id": "aiko-quiz-ani-030-answer-3",
+          "text": "Misato Katsuragi"
+        },
+        {
+          "id": "aiko-quiz-ani-030-answer-4",
+          "text": "Faye Valentine"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-ani-030-answer-2",
+      "explanation": "Major Motoko Kusanagi ermittelt in einer Welt, in der die Grenze zwischen Mensch und Maschine verschwimmt.",
+      "variety_group": "Ghost in the Shell",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-001",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welche Waffe ist besonders mit Jedi und Sith verbunden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-001-answer-1",
+          "text": "Schall-Schraubenzieher"
+        },
+        {
+          "id": "aiko-quiz-sci-001-answer-2",
+          "text": "Portalgerät"
+        },
+        {
+          "id": "aiko-quiz-sci-001-answer-3",
+          "text": "Lichtschwert"
+        },
+        {
+          "id": "aiko-quiz-sci-001-answer-4",
+          "text": "Phaser"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-001-answer-3",
+      "explanation": "Lichtschwerter gehören zur Bildsprache von Star Wars. Ihre Klingen bestehen innerhalb der Geschichte aus gebündelter Energie.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-002",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Welches Raumschiff steuert Han Solo gemeinsam mit Chewbacca?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-002-answer-1",
+          "text": "Die Enterprise"
+        },
+        {
+          "id": "aiko-quiz-sci-002-answer-2",
+          "text": "Die Voyager"
+        },
+        {
+          "id": "aiko-quiz-sci-002-answer-3",
+          "text": "Die Serenity"
+        },
+        {
+          "id": "aiko-quiz-sci-002-answer-4",
+          "text": "Den Millennium Falken"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-002-answer-4",
+      "explanation": "Han Solo und Chewbacca fliegen den Millennium Falken. Der Frachter spielt in mehreren Filmen eine wichtige Rolle.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-003",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Wie heißt das Energiefeld, auf das Jedi ihre besonderen Fähigkeiten zurückführen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-003-answer-1",
+          "text": "Die Macht"
+        },
+        {
+          "id": "aiko-quiz-sci-003-answer-2",
+          "text": "Die Matrix"
+        },
+        {
+          "id": "aiko-quiz-sci-003-answer-3",
+          "text": "Die Gewürzmelange"
+        },
+        {
+          "id": "aiko-quiz-sci-003-answer-4",
+          "text": "Der Warp-Antrieb"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-003-answer-1",
+      "explanation": "Die Macht verbindet in Star Wars das Leben in der Galaxis. Jedi und Sith gehen unterschiedlich mit ihr um.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-004",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welchen Namen trug Darth Vader als Jedi?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-004-answer-1",
+          "text": "Mace Windu"
+        },
+        {
+          "id": "aiko-quiz-sci-004-answer-2",
+          "text": "Anakin Skywalker"
+        },
+        {
+          "id": "aiko-quiz-sci-004-answer-3",
+          "text": "Obi-Wan Kenobi"
+        },
+        {
+          "id": "aiko-quiz-sci-004-answer-4",
+          "text": "Qui-Gon Jinn"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-004-answer-2",
+      "explanation": "Anakin Skywalker wird zu Darth Vader. Seine Vergangenheit ist ein zentraler Teil der Filmgeschichte.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-005",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wie viele Sonnen stehen am Himmel von Tatooine?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-005-answer-1",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-sci-005-answer-2",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-sci-005-answer-3",
+          "text": "Zwei"
+        },
+        {
+          "id": "aiko-quiz-sci-005-answer-4",
+          "text": "Eine"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-005-answer-3",
+      "explanation": "Tatooine umkreist zwei Sonnen. Ihr gemeinsamer Untergang gehört zu den bekannten Bildern der Reihe.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-006",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "tricky",
+      "question": "Zu welcher Droidenklasse gehört R2-D2?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-006-answer-1",
+          "text": "Protokolldroiden"
+        },
+        {
+          "id": "aiko-quiz-sci-006-answer-2",
+          "text": "Kampfdroiden"
+        },
+        {
+          "id": "aiko-quiz-sci-006-answer-3",
+          "text": "Medizindroiden"
+        },
+        {
+          "id": "aiko-quiz-sci-006-answer-4",
+          "text": "Astromech-Droiden"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-006-answer-4",
+      "explanation": "R2-D2 ist ein Astromech-Droide und unterstützt unter anderem bei der Wartung von Raumschiffen. C-3PO ist dagegen ein Protokolldroide.",
+      "variety_group": "Star Wars",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-007",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welches Raumschiff ist besonders mit Captain Kirk verbunden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-007-answer-1",
+          "text": "Die Enterprise"
+        },
+        {
+          "id": "aiko-quiz-sci-007-answer-2",
+          "text": "Der Millennium Falke"
+        },
+        {
+          "id": "aiko-quiz-sci-007-answer-3",
+          "text": "Die Nostromo"
+        },
+        {
+          "id": "aiko-quiz-sci-007-answer-4",
+          "text": "Die Galactica"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-007-answer-1",
+      "explanation": "Kirk ist ein Captain der U.S.S. Enterprise. Das Schiff und seine Besatzung erkunden in Star Trek das All.",
+      "variety_group": "Star Trek",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-008",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Spock ist halb Mensch und halb Angehöriger welchen Volkes?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-008-answer-1",
+          "text": "Borg"
+        },
+        {
+          "id": "aiko-quiz-sci-008-answer-2",
+          "text": "Vulkanier"
+        },
+        {
+          "id": "aiko-quiz-sci-008-answer-3",
+          "text": "Klingonen"
+        },
+        {
+          "id": "aiko-quiz-sci-008-answer-4",
+          "text": "Ferengi"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-008-answer-2",
+      "explanation": "Spocks Mutter ist ein Mensch, sein Vater ein Vulkanier. Beide Seiten seiner Herkunft sind für die Figur wichtig.",
+      "variety_group": "Star Trek",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-009",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Wie nennt man in Star Trek den Transport von Personen per Transporter umgangssprachlich?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-009-answer-1",
+          "text": "Einfrieren"
+        },
+        {
+          "id": "aiko-quiz-sci-009-answer-2",
+          "text": "Klonen"
+        },
+        {
+          "id": "aiko-quiz-sci-009-answer-3",
+          "text": "Beamen"
+        },
+        {
+          "id": "aiko-quiz-sci-009-answer-4",
+          "text": "Warpflug"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-009-answer-3",
+      "explanation": "Beim Beamen werden Personen mit einem Transporter versetzt. Ein Warpflug bewegt dagegen ein Raumschiff.",
+      "variety_group": "Star Trek",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-010",
+      "revision": 2,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wofür ist ein Holodeck in Star Trek vor allem gedacht?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-010-answer-1",
+          "text": "Zum Beamen von Personen"
+        },
+        {
+          "id": "aiko-quiz-sci-010-answer-2",
+          "text": "Zum Beschleunigen des Schiffs auf Warpgeschwindigkeit"
+        },
+        {
+          "id": "aiko-quiz-sci-010-answer-3",
+          "text": "Zum Erzeugen der Schutzschilde um das Schiff"
+        },
+        {
+          "id": "aiko-quiz-sci-010-answer-4",
+          "text": "Zum Erleben simulierter Umgebungen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-010-answer-4",
+      "explanation": "Ein Holodeck erzeugt interaktive Simulationen. Diese können der Freizeit, dem Training oder Untersuchungen dienen.",
+      "variety_group": "Star Trek",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-011",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welche äußere Form hat die TARDIS des Doctors normalerweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-011-answer-1",
+          "text": "Eine blaue britische Polizeibox"
+        },
+        {
+          "id": "aiko-quiz-sci-011-answer-2",
+          "text": "Eine rote britische Telefonzelle"
+        },
+        {
+          "id": "aiko-quiz-sci-011-answer-3",
+          "text": "Ein gelber amerikanischer Schulbus"
+        },
+        {
+          "id": "aiko-quiz-sci-011-answer-4",
+          "text": "Ein schwarzer Londoner Taxiwagen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-011-answer-1",
+      "explanation": "Die TARDIS sieht normalerweise wie eine historische blaue Polizeibox aus. Innen ist sie erheblich größer als außen.",
+      "variety_group": "Doctor Who",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-012",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "tricky",
+      "question": "Von welchem Planeten stammen die Time Lords in Doctor Who?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-012-answer-1",
+          "text": "Trantor"
+        },
+        {
+          "id": "aiko-quiz-sci-012-answer-2",
+          "text": "Gallifrey"
+        },
+        {
+          "id": "aiko-quiz-sci-012-answer-3",
+          "text": "Vulkan"
+        },
+        {
+          "id": "aiko-quiz-sci-012-answer-4",
+          "text": "Arrakis"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-012-answer-2",
+      "explanation": "Gallifrey ist die Heimatwelt der Time Lords. Auch die TARDIS-Technik stammt von ihnen.",
+      "variety_group": "Doctor Who",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-013",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welche Landschaft prägt den Planeten Arrakis in Dune?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-013-answer-1",
+          "text": "Eine durchgehende Eisdecke"
+        },
+        {
+          "id": "aiko-quiz-sci-013-answer-2",
+          "text": "Ein weltumspannender Ozean"
+        },
+        {
+          "id": "aiko-quiz-sci-013-answer-3",
+          "text": "Wüste"
+        },
+        {
+          "id": "aiko-quiz-sci-013-answer-4",
+          "text": "Dichter Regenwald"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-013-answer-3",
+      "explanation": "Arrakis ist ein Wüstenplanet. Wasserknappheit prägt dort die Lebensbedingungen.",
+      "variety_group": "Dune",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-014",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wie heißt das kostbare Gewürz aus Dune?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-014-answer-1",
+          "text": "Dilithium"
+        },
+        {
+          "id": "aiko-quiz-sci-014-answer-2",
+          "text": "Vibranium"
+        },
+        {
+          "id": "aiko-quiz-sci-014-answer-3",
+          "text": "Unobtainium"
+        },
+        {
+          "id": "aiko-quiz-sci-014-answer-4",
+          "text": "Melange"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-014-answer-4",
+      "explanation": "Die Gewürzmelange ist eine zentrale Ressource des Dune-Universums. Ihre besonderen Wirkungen verleihen Arrakis große Bedeutung.",
+      "variety_group": "Dune",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-015",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Welche Pille wählt Neo im ersten Matrix-Film, um die Wahrheit zu erfahren?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-015-answer-1",
+          "text": "Die rote"
+        },
+        {
+          "id": "aiko-quiz-sci-015-answer-2",
+          "text": "Die blaue"
+        },
+        {
+          "id": "aiko-quiz-sci-015-answer-3",
+          "text": "Die grüne"
+        },
+        {
+          "id": "aiko-quiz-sci-015-answer-4",
+          "text": "Die gelbe"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-015-answer-1",
+      "explanation": "Die rote Pille führt Neo aus seinem bisherigen Weltbild heraus. Die blaue steht für die Rückkehr zum gewohnten Leben.",
+      "variety_group": "Matrix",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-016",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Wie heißt die von Keanu Reeves gespielte Hauptfigur von Matrix?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-016-answer-1",
+          "text": "Agent Smith"
+        },
+        {
+          "id": "aiko-quiz-sci-016-answer-2",
+          "text": "Neo"
+        },
+        {
+          "id": "aiko-quiz-sci-016-answer-3",
+          "text": "Morpheus"
+        },
+        {
+          "id": "aiko-quiz-sci-016-answer-4",
+          "text": "Cypher"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-016-answer-2",
+      "explanation": "Neo ist der Hacker im Zentrum der Geschichte. Morpheus und Trinity führen ihn an die Wahrheit über die Matrix heran.",
+      "variety_group": "Matrix",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-017",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Welcher Begriff bezeichnet die bekannte außerirdische Kreatur aus Alien?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-017-answer-1",
+          "text": "Dalek"
+        },
+        {
+          "id": "aiko-quiz-sci-017-answer-2",
+          "text": "Klingone"
+        },
+        {
+          "id": "aiko-quiz-sci-017-answer-3",
+          "text": "Xenomorph"
+        },
+        {
+          "id": "aiko-quiz-sci-017-answer-4",
+          "text": "Wookiee"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-017-answer-3",
+      "explanation": "Die Alien-Kreatur wird als Xenomorph bezeichnet. Der Begriff wird besonders mit ihrer gefährlichen, fremdartigen Gestalt verbunden.",
+      "variety_group": "Alien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-018",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wer spielt Ellen Ripley in den ersten Alien-Filmen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-018-answer-1",
+          "text": "Linda Hamilton"
+        },
+        {
+          "id": "aiko-quiz-sci-018-answer-2",
+          "text": "Carrie Fisher"
+        },
+        {
+          "id": "aiko-quiz-sci-018-answer-3",
+          "text": "Jodie Foster"
+        },
+        {
+          "id": "aiko-quiz-sci-018-answer-4",
+          "text": "Sigourney Weaver"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-018-answer-4",
+      "explanation": "Sigourney Weaver verkörpert Ellen Ripley. Die Figur gehört zu den bekanntesten Heldinnen des Science-Fiction-Kinos.",
+      "variety_group": "Alien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-019",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welches Auto dient in Zurück in die Zukunft als Zeitmaschine?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-019-answer-1",
+          "text": "Ein DeLorean"
+        },
+        {
+          "id": "aiko-quiz-sci-019-answer-2",
+          "text": "Ein Ford Mustang"
+        },
+        {
+          "id": "aiko-quiz-sci-019-answer-3",
+          "text": "Ein Volkswagen Käfer"
+        },
+        {
+          "id": "aiko-quiz-sci-019-answer-4",
+          "text": "Ein Mini Cooper"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-019-answer-1",
+      "explanation": "Doc Browns Zeitmaschine steckt in einem DeLorean. Seine Flügeltüren tragen zum unverwechselbaren Aussehen bei.",
+      "variety_group": "Zurück in die Zukunft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-020",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Wie heißt der Erfinder, der Marty McFly bei seinen Zeitreisen begleitet?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-020-answer-1",
+          "text": "Marty McFly"
+        },
+        {
+          "id": "aiko-quiz-sci-020-answer-2",
+          "text": "Doc Brown"
+        },
+        {
+          "id": "aiko-quiz-sci-020-answer-3",
+          "text": "George McFly"
+        },
+        {
+          "id": "aiko-quiz-sci-020-answer-4",
+          "text": "Biff Tannen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-020-answer-2",
+      "explanation": "Dr. Emmett Brown wird meist Doc genannt. Er ist der Erfinder der Zeitmaschine.",
+      "variety_group": "Zurück in die Zukunft",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-021",
+      "revision": 2,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wie heißt das Computersystem hinter dem Maschinenkrieg im Film Terminator von 1984?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-021-answer-1",
+          "text": "GLaDOS"
+        },
+        {
+          "id": "aiko-quiz-sci-021-answer-2",
+          "text": "Deep Thought"
+        },
+        {
+          "id": "aiko-quiz-sci-021-answer-3",
+          "text": "Skynet"
+        },
+        {
+          "id": "aiko-quiz-sci-021-answer-4",
+          "text": "HAL 9000"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-021-answer-3",
+      "explanation": "Im ursprünglichen Terminator ist Skynet das gegnerische Computersystem. Seine Maschinen führen in der Zukunft Krieg gegen die Menschheit.",
+      "variety_group": "Terminator",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-022",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welcher Schauspieler ist besonders als T-800 aus Terminator bekannt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-022-answer-1",
+          "text": "Sylvester Stallone"
+        },
+        {
+          "id": "aiko-quiz-sci-022-answer-2",
+          "text": "Bruce Willis"
+        },
+        {
+          "id": "aiko-quiz-sci-022-answer-3",
+          "text": "Harrison Ford"
+        },
+        {
+          "id": "aiko-quiz-sci-022-answer-4",
+          "text": "Arnold Schwarzenegger"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-022-answer-4",
+      "explanation": "Arnold Schwarzenegger spielt den bekannten Terminator mit dem menschlichen Erscheinungsbild des T-800.",
+      "variety_group": "Terminator",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-023",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welche Zahl gilt in Per Anhalter durch die Galaxis als Antwort auf die große Frage?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-023-answer-1",
+          "text": "42"
+        },
+        {
+          "id": "aiko-quiz-sci-023-answer-2",
+          "text": "23"
+        },
+        {
+          "id": "aiko-quiz-sci-023-answer-3",
+          "text": "64"
+        },
+        {
+          "id": "aiko-quiz-sci-023-answer-4",
+          "text": "101"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-023-answer-1",
+      "explanation": "Der Computer Deep Thought berechnet die berühmte Antwort 42. Das Problem ist anschließend die passende Frage.",
+      "variety_group": "Per Anhalter durch die Galaxis",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-024",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "tricky",
+      "question": "Wer schrieb Per Anhalter durch die Galaxis?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-024-answer-1",
+          "text": "Philip K. Dick"
+        },
+        {
+          "id": "aiko-quiz-sci-024-answer-2",
+          "text": "Douglas Adams"
+        },
+        {
+          "id": "aiko-quiz-sci-024-answer-3",
+          "text": "Terry Pratchett"
+        },
+        {
+          "id": "aiko-quiz-sci-024-answer-4",
+          "text": "Isaac Asimov"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-024-answer-2",
+      "explanation": "Douglas Adams entwickelte die Geschichte zunächst fürs Radio. Daraus entstanden unter anderem die bekannten Romane.",
+      "variety_group": "Per Anhalter durch die Galaxis",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-025",
+      "revision": 2,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wie ermöglicht ein Sternentor in Stargate normalerweise Reisen zwischen entfernten Orten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-025-answer-1",
+          "text": "Durch einen Flug mit Überlichtgeschwindigkeit"
+        },
+        {
+          "id": "aiko-quiz-sci-025-answer-2",
+          "text": "Durch das Einfrieren und spätere Auftauen der Reisenden"
+        },
+        {
+          "id": "aiko-quiz-sci-025-answer-3",
+          "text": "Durch ein Wurmloch zu einem anderen Tor"
+        },
+        {
+          "id": "aiko-quiz-sci-025-answer-4",
+          "text": "Durch das Übertragen des Bewusstseins in einen anderen Körper"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-025-answer-3",
+      "explanation": "Das Sternentor ermöglicht Reisen durch ein Wurmloch. Die Verbindung führt zu einem anderen Tor.",
+      "variety_group": "Stargate",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-026",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "medium",
+      "question": "Wie heißen die künstlich erschaffenen menschenähnlichen Wesen in Blade Runner?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-026-answer-1",
+          "text": "Jedi"
+        },
+        {
+          "id": "aiko-quiz-sci-026-answer-2",
+          "text": "Zylonen"
+        },
+        {
+          "id": "aiko-quiz-sci-026-answer-3",
+          "text": "Vulkanier"
+        },
+        {
+          "id": "aiko-quiz-sci-026-answer-4",
+          "text": "Replikanten"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-026-answer-4",
+      "explanation": "Replikanten sind künstlich erschaffene menschenähnliche Wesen. Die Geschichte stellt Fragen nach Menschlichkeit und Identität.",
+      "variety_group": "Blade Runner",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-027",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "Welcher Film handelt von einem gestrandeten Außerirdischen, der Kontakt nach Hause sucht?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-027-answer-1",
+          "text": "E.T. – Der Außerirdische"
+        },
+        {
+          "id": "aiko-quiz-sci-027-answer-2",
+          "text": "Jurassic Park"
+        },
+        {
+          "id": "aiko-quiz-sci-027-answer-3",
+          "text": "Ghostbusters"
+        },
+        {
+          "id": "aiko-quiz-sci-027-answer-4",
+          "text": "Die Goonies"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-027-answer-1",
+      "explanation": "E.T. freundet sich mit dem Jungen Elliott an. Gemeinsam versuchen sie, seine Rückkehr zu ermöglichen.",
+      "variety_group": "E.T.",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-028",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "easy",
+      "question": "In welche Art Welt gerät Kevin Flynn im Film Tron?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-028-answer-1",
+          "text": "In ein Brettspiel, dessen Regeln lebendig werden"
+        },
+        {
+          "id": "aiko-quiz-sci-028-answer-2",
+          "text": "In eine digitale Computerwelt"
+        },
+        {
+          "id": "aiko-quiz-sci-028-answer-3",
+          "text": "In eine künstlich erzeugte Traumwelt"
+        },
+        {
+          "id": "aiko-quiz-sci-028-answer-4",
+          "text": "In eine parallele Erde hinter einem Spiegel"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-028-answer-2",
+      "explanation": "Tron verlegt seine Handlung in eine bildhaft dargestellte digitale Welt. Programme treten darin als Figuren auf.",
+      "variety_group": "Tron",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-029",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "tricky",
+      "question": "Von welchem Autor stammt die Foundation-Romanreihe?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-029-answer-1",
+          "text": "Frank Herbert"
+        },
+        {
+          "id": "aiko-quiz-sci-029-answer-2",
+          "text": "Ray Bradbury"
+        },
+        {
+          "id": "aiko-quiz-sci-029-answer-3",
+          "text": "Isaac Asimov"
+        },
+        {
+          "id": "aiko-quiz-sci-029-answer-4",
+          "text": "Arthur C. Clarke"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-029-answer-3",
+      "explanation": "Isaac Asimov schrieb die ursprünglichen Foundation-Geschichten. Ein Kernmotiv ist die Vorhersage großer gesellschaftlicher Entwicklungen.",
+      "variety_group": "Foundation",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-sci-030",
+      "revision": 1,
+      "topic": "science_fiction",
+      "difficulty": "tricky",
+      "question": "Wer schrieb den Roman Fahrenheit 451?",
+      "answers": [
+        {
+          "id": "aiko-quiz-sci-030-answer-1",
+          "text": "George Orwell"
+        },
+        {
+          "id": "aiko-quiz-sci-030-answer-2",
+          "text": "Aldous Huxley"
+        },
+        {
+          "id": "aiko-quiz-sci-030-answer-3",
+          "text": "H. G. Wells"
+        },
+        {
+          "id": "aiko-quiz-sci-030-answer-4",
+          "text": "Ray Bradbury"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-sci-030-answer-4",
+      "explanation": "Ray Bradburys Roman erzählt von einer Gesellschaft, in der Bücher verboten sind und verbrannt werden.",
+      "variety_group": "Fahrenheit 451",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-001",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Wie heißt die Zauberschule, die Harry Potter besucht?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-001-answer-1",
+          "text": "Hogwarts"
+        },
+        {
+          "id": "aiko-quiz-fan-001-answer-2",
+          "text": "Beauxbatons"
+        },
+        {
+          "id": "aiko-quiz-fan-001-answer-3",
+          "text": "Durmstrang"
+        },
+        {
+          "id": "aiko-quiz-fan-001-answer-4",
+          "text": "Ilvermorny"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-001-answer-1",
+      "explanation": "Hogwarts ist Harrys Schule in Großbritannien. Die anderen genannten Schulen gehören ebenfalls zur magischen Welt.",
+      "variety_group": "Harry Potter",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-002",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Worauf fliegen die Spieler beim Quidditch in Harry Potter?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-002-answer-1",
+          "text": "Auf Hippogreifen"
+        },
+        {
+          "id": "aiko-quiz-fan-002-answer-2",
+          "text": "Auf Besen"
+        },
+        {
+          "id": "aiko-quiz-fan-002-answer-3",
+          "text": "Auf Teppichen"
+        },
+        {
+          "id": "aiko-quiz-fan-002-answer-4",
+          "text": "Auf Drachen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-002-answer-2",
+      "explanation": "Die Spieler nutzen fliegende Besen. Mehrere Bälle und unterschiedliche Teamaufgaben prägen das Spiel.",
+      "variety_group": "Harry Potter",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-003",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Wer schrieb die ursprüngliche Harry-Potter-Romanreihe?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-003-answer-1",
+          "text": "Suzanne Collins"
+        },
+        {
+          "id": "aiko-quiz-fan-003-answer-2",
+          "text": "Diana Wynne Jones"
+        },
+        {
+          "id": "aiko-quiz-fan-003-answer-3",
+          "text": "J. K. Rowling"
+        },
+        {
+          "id": "aiko-quiz-fan-003-answer-4",
+          "text": "Cornelia Funke"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-003-answer-3",
+      "explanation": "J. K. Rowling schrieb die sieben ursprünglichen Harry-Potter-Romane. Spätere Bühnen- und Filmprojekte sind davon zu unterscheiden.",
+      "variety_group": "Harry Potter",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-004",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Welcher Gegenstand teilt neue Hogwarts-Schüler den vier Häusern zu?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-004-answer-1",
+          "text": "Der Feuerkelch"
+        },
+        {
+          "id": "aiko-quiz-fan-004-answer-2",
+          "text": "Der Spiegel Nerhegeb"
+        },
+        {
+          "id": "aiko-quiz-fan-004-answer-3",
+          "text": "Die Karte des Rumtreibers"
+        },
+        {
+          "id": "aiko-quiz-fan-004-answer-4",
+          "text": "Der Sprechende Hut"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-004-answer-4",
+      "explanation": "Der Sprechende Hut übernimmt die Einteilung. Die Zeremonie findet zu Beginn des Schuljahrs statt.",
+      "variety_group": "Harry Potter",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-005",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Welcher Hobbit erhält die Aufgabe, den Einen Ring zum Schicksalsberg zu bringen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-005-answer-1",
+          "text": "Frodo Beutlin"
+        },
+        {
+          "id": "aiko-quiz-fan-005-answer-2",
+          "text": "Bilbo Beutlin"
+        },
+        {
+          "id": "aiko-quiz-fan-005-answer-3",
+          "text": "Meriadoc Brandybock"
+        },
+        {
+          "id": "aiko-quiz-fan-005-answer-4",
+          "text": "Peregrin Tuk"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-005-answer-1",
+      "explanation": "Frodo übernimmt die Reise mit dem Ring. Sam begleitet ihn auf dem besonders schwierigen letzten Abschnitt.",
+      "variety_group": "tolkien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-006",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Wie heißt die Weltregion, in der Der Herr der Ringe überwiegend spielt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-006-answer-1",
+          "text": "Erdsee"
+        },
+        {
+          "id": "aiko-quiz-fan-006-answer-2",
+          "text": "Mittelerde"
+        },
+        {
+          "id": "aiko-quiz-fan-006-answer-3",
+          "text": "Westeros"
+        },
+        {
+          "id": "aiko-quiz-fan-006-answer-4",
+          "text": "Narnia"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-006-answer-2",
+      "explanation": "Mittelerde ist der zentrale Schauplatz der Handlung. Tolkien gab seinen Orten, Völkern und Sprachen eine ausführliche Geschichte.",
+      "variety_group": "tolkien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-007",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Welche Rolle hat Gandalf in Der Herr der Ringe?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-007-answer-1",
+          "text": "Elbenkönig"
+        },
+        {
+          "id": "aiko-quiz-fan-007-answer-2",
+          "text": "Zwergenschmied"
+        },
+        {
+          "id": "aiko-quiz-fan-007-answer-3",
+          "text": "Zauberer"
+        },
+        {
+          "id": "aiko-quiz-fan-007-answer-4",
+          "text": "Hobbit-Bürgermeister"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-007-answer-3",
+      "explanation": "Gandalf tritt als Zauberer und Weggefährte auf. Er gehört zu den als Istari bezeichneten Gestalten.",
+      "variety_group": "tolkien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-008",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "tricky",
+      "question": "Welche dieser Sprachen entwickelte Tolkien als Elbensprache?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-008-answer-1",
+          "text": "Klingonisch"
+        },
+        {
+          "id": "aiko-quiz-fan-008-answer-2",
+          "text": "Dothraki"
+        },
+        {
+          "id": "aiko-quiz-fan-008-answer-3",
+          "text": "Na'vi"
+        },
+        {
+          "id": "aiko-quiz-fan-008-answer-4",
+          "text": "Sindarin"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-008-answer-4",
+      "explanation": "Sindarin ist eine der von Tolkien ausgearbeiteten Elbensprachen. Die anderen Optionen stammen aus anderen fiktiven Welten.",
+      "variety_group": "tolkien",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-009",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Durch welches Möbelstück gelangt Lucy erstmals nach Narnia?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-009-answer-1",
+          "text": "Einen Kleiderschrank"
+        },
+        {
+          "id": "aiko-quiz-fan-009-answer-2",
+          "text": "Eine Kommode"
+        },
+        {
+          "id": "aiko-quiz-fan-009-answer-3",
+          "text": "Einen Schreibtisch"
+        },
+        {
+          "id": "aiko-quiz-fan-009-answer-4",
+          "text": "Ein Bücherregal"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-009-answer-1",
+      "explanation": "In Der König von Narnia verbirgt sich der Zugang hinter den Kleidern eines Schranks.",
+      "variety_group": "Die Chroniken von Narnia",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-010",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Welche Tiergestalt hat Aslan in Narnia?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-010-answer-1",
+          "text": "Hirsch"
+        },
+        {
+          "id": "aiko-quiz-fan-010-answer-2",
+          "text": "Löwe"
+        },
+        {
+          "id": "aiko-quiz-fan-010-answer-3",
+          "text": "Wolf"
+        },
+        {
+          "id": "aiko-quiz-fan-010-answer-4",
+          "text": "Adler"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-010-answer-2",
+      "explanation": "Aslan erscheint als Löwe. Er gehört zu den zentralen Figuren der Narnia-Geschichten.",
+      "variety_group": "Die Chroniken von Narnia",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-011",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Welcher Autor erschuf die Scheibenwelt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-011-answer-1",
+          "text": "Neil Gaiman"
+        },
+        {
+          "id": "aiko-quiz-fan-011-answer-2",
+          "text": "J. R. R. Tolkien"
+        },
+        {
+          "id": "aiko-quiz-fan-011-answer-3",
+          "text": "Terry Pratchett"
+        },
+        {
+          "id": "aiko-quiz-fan-011-answer-4",
+          "text": "Douglas Adams"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-011-answer-3",
+      "explanation": "Terry Pratchetts Scheibenwelt verbindet Fantasy mit Satire. Sie ist Schauplatz zahlreicher Romane.",
+      "variety_group": "Scheibenwelt",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-012",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "tricky",
+      "question": "Auf welchem riesigen Tier ruhen die vier Elefanten der Scheibenwelt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-012-answer-1",
+          "text": "Einem Wal"
+        },
+        {
+          "id": "aiko-quiz-fan-012-answer-2",
+          "text": "Einer Schlange"
+        },
+        {
+          "id": "aiko-quiz-fan-012-answer-3",
+          "text": "Einem Drachen"
+        },
+        {
+          "id": "aiko-quiz-fan-012-answer-4",
+          "text": "Einer Schildkröte"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-012-answer-4",
+      "explanation": "Die vier Elefanten stehen auf der Weltraumschildkröte Groß-A'Tuin. Auf ihren Rücken liegt die Scheibe.",
+      "variety_group": "Scheibenwelt",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-013",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "tricky",
+      "question": "Welche Schriftstellerin erschuf die Erdsee-Romanwelt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-013-answer-1",
+          "text": "Ursula K. Le Guin"
+        },
+        {
+          "id": "aiko-quiz-fan-013-answer-2",
+          "text": "Octavia E. Butler"
+        },
+        {
+          "id": "aiko-quiz-fan-013-answer-3",
+          "text": "Mary Shelley"
+        },
+        {
+          "id": "aiko-quiz-fan-013-answer-4",
+          "text": "Astrid Lindgren"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-013-answer-1",
+      "explanation": "Ursula K. Le Guin schrieb die Erdsee-Geschichten. Magie und die Bedeutung wahrer Namen gehören zu ihren Motiven.",
+      "variety_group": "Erdsee",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-014",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Was für ein Wesen ist Fuchur in Die unendliche Geschichte?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-014-answer-1",
+          "text": "Ein Einhorn"
+        },
+        {
+          "id": "aiko-quiz-fan-014-answer-2",
+          "text": "Ein Glücksdrache"
+        },
+        {
+          "id": "aiko-quiz-fan-014-answer-3",
+          "text": "Ein Werwolf"
+        },
+        {
+          "id": "aiko-quiz-fan-014-answer-4",
+          "text": "Ein Greif"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-014-answer-2",
+      "explanation": "Fuchur ist der Glücksdrache, der Atréju unterstützt. Sein Aussehen unterscheidet sich deutlich von vielen feuerspeienden Drachen.",
+      "variety_group": "Die unendliche Geschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-015",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Wer schrieb Die unendliche Geschichte?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-015-answer-1",
+          "text": "Erich Kästner"
+        },
+        {
+          "id": "aiko-quiz-fan-015-answer-2",
+          "text": "Paul Maar"
+        },
+        {
+          "id": "aiko-quiz-fan-015-answer-3",
+          "text": "Michael Ende"
+        },
+        {
+          "id": "aiko-quiz-fan-015-answer-4",
+          "text": "Otfried Preußler"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-015-answer-3",
+      "explanation": "Michael Ende veröffentlichte den Roman 1979. Die Handlung verbindet Bastians Welt mit Phantásien.",
+      "variety_group": "Die unendliche Geschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-016",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Auf welchem Kontinent liegen die Sieben Königslande aus Game of Thrones?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-016-answer-1",
+          "text": "Essos"
+        },
+        {
+          "id": "aiko-quiz-fan-016-answer-2",
+          "text": "Sothoryos"
+        },
+        {
+          "id": "aiko-quiz-fan-016-answer-3",
+          "text": "Ulthos"
+        },
+        {
+          "id": "aiko-quiz-fan-016-answer-4",
+          "text": "Westeros"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-016-answer-4",
+      "explanation": "Die Sieben Königslande liegen in Westeros. Essos ist ein anderer wichtiger Kontinent der erzählten Welt.",
+      "variety_group": "Game of Thrones",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-017",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Welches Tier ist das Wappentier des Hauses Stark?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-017-answer-1",
+          "text": "Schattenwolf"
+        },
+        {
+          "id": "aiko-quiz-fan-017-answer-2",
+          "text": "Löwe"
+        },
+        {
+          "id": "aiko-quiz-fan-017-answer-3",
+          "text": "Drache"
+        },
+        {
+          "id": "aiko-quiz-fan-017-answer-4",
+          "text": "Hirsch"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-017-answer-1",
+      "explanation": "Das Haus Stark wird durch einen Schattenwolf repräsentiert. Andere große Häuser tragen andere Tiere im Wappen.",
+      "variety_group": "Game of Thrones",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-018",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Welcher nordische Gott trägt den Hammer Mjölnir?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-018-answer-1",
+          "text": "Heimdall"
+        },
+        {
+          "id": "aiko-quiz-fan-018-answer-2",
+          "text": "Thor"
+        },
+        {
+          "id": "aiko-quiz-fan-018-answer-3",
+          "text": "Odin"
+        },
+        {
+          "id": "aiko-quiz-fan-018-answer-4",
+          "text": "Loki"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-018-answer-2",
+      "explanation": "Mjölnir ist der Hammer Thors in der nordischen Mythologie. Moderne Fantasy-Werke greifen das Motiv häufig auf.",
+      "variety_group": "fantasy:Mythologie",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-019",
+      "revision": 1,
+      "topic": "fantasy",
+      "difficulty": "easy",
+      "question": "Welcher mythische Vogel wird besonders mit Wiedergeburt aus der Asche verbunden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-019-answer-1",
+          "text": "Harpie"
+        },
+        {
+          "id": "aiko-quiz-fan-019-answer-2",
+          "text": "Roch"
+        },
+        {
+          "id": "aiko-quiz-fan-019-answer-3",
+          "text": "Phönix"
+        },
+        {
+          "id": "aiko-quiz-fan-019-answer-4",
+          "text": "Greif"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-019-answer-3",
+      "explanation": "Der Phönix steht in verbreiteten Überlieferungen für Erneuerung. Die Erzählungen unterscheiden sich in ihren Einzelheiten.",
+      "variety_group": "fantasy:Fabelwesen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fan-020",
+      "revision": 2,
+      "topic": "fantasy",
+      "difficulty": "medium",
+      "question": "Welche Rolle übernimmt der Dungeon Master in einer gewöhnlichen D&D-Runde?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fan-020-answer-1",
+          "text": "Mit einer eigenen Heldenfigur gegen die Gruppe antreten"
+        },
+        {
+          "id": "aiko-quiz-fan-020-answer-2",
+          "text": "Die Handlungen der Spielerfiguren selbst bestimmen"
+        },
+        {
+          "id": "aiko-quiz-fan-020-answer-3",
+          "text": "Eine feste Geschichte ohne Einfluss der Spieler abspielen"
+        },
+        {
+          "id": "aiko-quiz-fan-020-answer-4",
+          "text": "Die Welt darstellen und das Spiel leiten"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fan-020-answer-4",
+      "explanation": "Die Spielleitung beschreibt Situationen und übernimmt unter anderem die Rollen anderer Figuren. Die Spieler entscheiden für ihre eigenen Charaktere.",
+      "variety_group": "Dungeons & Dragons",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-001",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welches Spielzeug stellt Woody in Toy Story dar?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-001-answer-1",
+          "text": "Einen Cowboy"
+        },
+        {
+          "id": "aiko-quiz-fil-001-answer-2",
+          "text": "Einen Astronauten"
+        },
+        {
+          "id": "aiko-quiz-fil-001-answer-3",
+          "text": "Einen Soldaten"
+        },
+        {
+          "id": "aiko-quiz-fil-001-answer-4",
+          "text": "Einen Rennfahrer"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-001-answer-1",
+      "explanation": "Woody ist eine Cowboy-Puppe. Buzz Lightyear verkörpert dagegen einen Space Ranger.",
+      "variety_group": "Toy Story",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-002",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welche Fischart ist Nemo aus Findet Nemo?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-002-answer-1",
+          "text": "Hammerhai"
+        },
+        {
+          "id": "aiko-quiz-fil-002-answer-2",
+          "text": "Clownfisch"
+        },
+        {
+          "id": "aiko-quiz-fil-002-answer-3",
+          "text": "Kugelfisch"
+        },
+        {
+          "id": "aiko-quiz-fil-002-answer-4",
+          "text": "Doktorfisch"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-002-answer-2",
+      "explanation": "Nemo und sein Vater Marlin sind Clownfische. Dorie gehört dagegen zu den Doktorfischen.",
+      "variety_group": "Findet Nemo",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-003",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Was für ein Wesen ist Shrek?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-003-answer-1",
+          "text": "Ein Goblin"
+        },
+        {
+          "id": "aiko-quiz-fil-003-answer-2",
+          "text": "Ein Zwerg"
+        },
+        {
+          "id": "aiko-quiz-fil-003-answer-3",
+          "text": "Ein Oger"
+        },
+        {
+          "id": "aiko-quiz-fil-003-answer-4",
+          "text": "Ein Troll"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-003-answer-3",
+      "explanation": "Shrek ist ein grüner Oger. Sein Leben im Sumpf bildet den Ausgangspunkt des ersten Films.",
+      "variety_group": "Shrek",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-004",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Wie heißt der junge Löwe im Mittelpunkt von Der König der Löwen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-004-answer-1",
+          "text": "Mufasa"
+        },
+        {
+          "id": "aiko-quiz-fil-004-answer-2",
+          "text": "Scar"
+        },
+        {
+          "id": "aiko-quiz-fil-004-answer-3",
+          "text": "Timon"
+        },
+        {
+          "id": "aiko-quiz-fil-004-answer-4",
+          "text": "Simba"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-004-answer-4",
+      "explanation": "Simba ist Mufasas Sohn. Die Geschichte begleitet ihn vom Löwenjungen bis zum Erwachsenen.",
+      "variety_group": "Der König der Löwen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-005",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Wie heißt Elsas Schwester in Die Eiskönigin?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-005-answer-1",
+          "text": "Anna"
+        },
+        {
+          "id": "aiko-quiz-fil-005-answer-2",
+          "text": "Arielle"
+        },
+        {
+          "id": "aiko-quiz-fil-005-answer-3",
+          "text": "Merida"
+        },
+        {
+          "id": "aiko-quiz-fil-005-answer-4",
+          "text": "Belle"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-005-answer-1",
+      "explanation": "Anna und Elsa sind die Schwestern im Mittelpunkt von Die Eiskönigin. Ihre Beziehung treibt die Handlung an.",
+      "variety_group": "Die Eiskönigin",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-006",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Wie heißt das Café, in dem sich die Freunde aus Friends oft treffen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-006-answer-1",
+          "text": "Café Nervosa"
+        },
+        {
+          "id": "aiko-quiz-fil-006-answer-2",
+          "text": "Central Perk"
+        },
+        {
+          "id": "aiko-quiz-fil-006-answer-3",
+          "text": "Monk's Café"
+        },
+        {
+          "id": "aiko-quiz-fil-006-answer-4",
+          "text": "Luke's Diner"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-006-answer-2",
+      "explanation": "Central Perk ist ein wichtiger Treffpunkt der sechs Freunde. Der Name spielt auf den New Yorker Central Park an.",
+      "variety_group": "Friends",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-007",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "In welcher Stadt leben die Simpsons?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-007-answer-1",
+          "text": "Quahog"
+        },
+        {
+          "id": "aiko-quiz-fil-007-answer-2",
+          "text": "Bikini Bottom"
+        },
+        {
+          "id": "aiko-quiz-fil-007-answer-3",
+          "text": "Springfield"
+        },
+        {
+          "id": "aiko-quiz-fil-007-answer-4",
+          "text": "South Park"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-007-answer-3",
+      "explanation": "Springfield ist der zentrale Wohnort der Simpsons. Viele wiederkehrende Schauplätze der Serie liegen dort.",
+      "variety_group": "Die Simpsons",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-008",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Unter welcher Londoner Adresse wohnt Sherlock Holmes in den klassischen Geschichten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-008-answer-1",
+          "text": "10 Downing Street"
+        },
+        {
+          "id": "aiko-quiz-fil-008-answer-2",
+          "text": "4 Privet Drive"
+        },
+        {
+          "id": "aiko-quiz-fil-008-answer-3",
+          "text": "17 Cherry Tree Lane"
+        },
+        {
+          "id": "aiko-quiz-fil-008-answer-4",
+          "text": "221B Baker Street"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-008-answer-4",
+      "explanation": "221B Baker Street ist die berühmte Adresse von Holmes und Watson. Sie wird auch in zahlreichen Verfilmungen aufgegriffen.",
+      "variety_group": "Sherlock Holmes",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-009",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welches Tier ist Gromit aus Wallace & Gromit?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-009-answer-1",
+          "text": "Ein Hund"
+        },
+        {
+          "id": "aiko-quiz-fil-009-answer-2",
+          "text": "Eine Katze"
+        },
+        {
+          "id": "aiko-quiz-fil-009-answer-3",
+          "text": "Ein Schaf"
+        },
+        {
+          "id": "aiko-quiz-fil-009-answer-4",
+          "text": "Ein Kaninchen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-009-answer-1",
+      "explanation": "Gromit ist Wallaces Hund. Er spricht nicht und vermittelt viel über seine Mimik.",
+      "variety_group": "Wallace & Gromit",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-010",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welche Agentennummer gehört zu James Bond?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-010-answer-1",
+          "text": "003"
+        },
+        {
+          "id": "aiko-quiz-fil-010-answer-2",
+          "text": "007"
+        },
+        {
+          "id": "aiko-quiz-fil-010-answer-3",
+          "text": "006"
+        },
+        {
+          "id": "aiko-quiz-fil-010-answer-4",
+          "text": "009"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-010-answer-2",
+      "explanation": "007 ist Bonds bekannte Kennung. Die Doppelnull gehört innerhalb der Geschichten zu einer besonderen Agentengruppe.",
+      "variety_group": "James Bond",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-011",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Für welchen Bereich werden die Oscars vor allem vergeben?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-011-answer-1",
+          "text": "Musikaufnahmen"
+        },
+        {
+          "id": "aiko-quiz-fil-011-answer-2",
+          "text": "Bühnenmusicals"
+        },
+        {
+          "id": "aiko-quiz-fil-011-answer-3",
+          "text": "Film"
+        },
+        {
+          "id": "aiko-quiz-fil-011-answer-4",
+          "text": "Fernsehen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-011-answer-3",
+      "explanation": "Die Academy Awards zeichnen Leistungen im Film aus. Für Fernsehen sind unter anderem die Emmys bekannt.",
+      "variety_group": "film_television:Auszeichnungen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-012",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Wer führte bei Titanic von 1997 Regie?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-012-answer-1",
+          "text": "Steven Spielberg"
+        },
+        {
+          "id": "aiko-quiz-fil-012-answer-2",
+          "text": "Ridley Scott"
+        },
+        {
+          "id": "aiko-quiz-fil-012-answer-3",
+          "text": "Peter Jackson"
+        },
+        {
+          "id": "aiko-quiz-fil-012-answer-4",
+          "text": "James Cameron"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-012-answer-4",
+      "explanation": "James Cameron inszenierte den Film mit Kate Winslet und Leonardo DiCaprio. Der Titel wurde auch für andere Verfilmungen des Schiffsunglücks verwendet.",
+      "variety_group": "Titanic",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-013",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "tricky",
+      "question": "Welcher Film gewann 2020 als erster nicht englischsprachiger Film den Oscar für den besten Film?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-013-answer-1",
+          "text": "Parasite"
+        },
+        {
+          "id": "aiko-quiz-fil-013-answer-2",
+          "text": "Roma"
+        },
+        {
+          "id": "aiko-quiz-fil-013-answer-3",
+          "text": "Amélie"
+        },
+        {
+          "id": "aiko-quiz-fil-013-answer-4",
+          "text": "Das Leben der Anderen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-013-answer-1",
+      "explanation": "Parasite gewann den Hauptpreis bei der Oscarverleihung 2020. Der südkoreanische Film wurde von Bong Joon-ho inszeniert.",
+      "variety_group": "Parasite",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-014",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Welcher Filmkomiker spielte den Tramp mit Melone und Spazierstock?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-014-answer-1",
+          "text": "Stan Laurel"
+        },
+        {
+          "id": "aiko-quiz-fil-014-answer-2",
+          "text": "Charlie Chaplin"
+        },
+        {
+          "id": "aiko-quiz-fil-014-answer-3",
+          "text": "Buster Keaton"
+        },
+        {
+          "id": "aiko-quiz-fil-014-answer-4",
+          "text": "Harold Lloyd"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-014-answer-2",
+      "explanation": "Chaplins Tramp ist eine der bekanntesten Figuren der Stummfilmzeit. Die Melone und der Stock gehören zu seinem typischen Erscheinungsbild.",
+      "variety_group": "film_television:Filmschaffende",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-015",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welches Tier stellt Kermit aus den Muppets dar?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-015-answer-1",
+          "text": "Eine Schildkröte"
+        },
+        {
+          "id": "aiko-quiz-fil-015-answer-2",
+          "text": "Ein Krokodil"
+        },
+        {
+          "id": "aiko-quiz-fil-015-answer-3",
+          "text": "Einen Frosch"
+        },
+        {
+          "id": "aiko-quiz-fil-015-answer-4",
+          "text": "Eine Eidechse"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-015-answer-3",
+      "explanation": "Kermit ist der grüne Frosch der Muppets. Er moderiert häufig und versucht, das Durcheinander zusammenzuhalten.",
+      "variety_group": "Die Muppets",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-016",
+      "revision": 2,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Welche Animationstechnik prägt die klassischen Wallace-&-Gromit-Filme?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-016-answer-1",
+          "text": "Handgezeichneter 2D-Zeichentrick"
+        },
+        {
+          "id": "aiko-quiz-fil-016-answer-2",
+          "text": "3D-Computeranimation"
+        },
+        {
+          "id": "aiko-quiz-fil-016-answer-3",
+          "text": "Rotoskopie mit nachgezeichneten Filmaufnahmen"
+        },
+        {
+          "id": "aiko-quiz-fil-016-answer-4",
+          "text": "Stop-Motion mit realen Figuren"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-016-answer-4",
+      "explanation": "Bei Stop-Motion werden Figuren zwischen einzelnen Aufnahmen bewegt. Zusammengesetzt entsteht die Bewegung auf dem Bildschirm.",
+      "variety_group": "Wallace & Gromit",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-017",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "easy",
+      "question": "Welche Leckerei isst das Krümelmonster aus der Sesamstraße besonders gern?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-017-answer-1",
+          "text": "Kekse"
+        },
+        {
+          "id": "aiko-quiz-fil-017-answer-2",
+          "text": "Lakritz"
+        },
+        {
+          "id": "aiko-quiz-fil-017-answer-3",
+          "text": "Eiscreme"
+        },
+        {
+          "id": "aiko-quiz-fil-017-answer-4",
+          "text": "Gummibärchen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-017-answer-1",
+      "explanation": "Das Krümelmonster ist für seine Begeisterung für Kekse bekannt. Sein englischer Name lautet Cookie Monster.",
+      "variety_group": "Sesamstraße",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-018",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "tricky",
+      "question": "Welcher Film gewann den ersten Oscar in der Kategorie Bester Animationsfilm?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-018-answer-1",
+          "text": "Ratatouille"
+        },
+        {
+          "id": "aiko-quiz-fil-018-answer-2",
+          "text": "Shrek"
+        },
+        {
+          "id": "aiko-quiz-fil-018-answer-3",
+          "text": "Findet Nemo"
+        },
+        {
+          "id": "aiko-quiz-fil-018-answer-4",
+          "text": "Die Unglaublichen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-018-answer-2",
+      "explanation": "Die Kategorie wurde erstmals bei der Verleihung 2002 ausgezeichnet. Shrek gewann vor den ebenfalls nominierten Filmen Monster AG und Jimmy Neutron.",
+      "variety_group": "film_television:Filmgeschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-019",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "medium",
+      "question": "Für welches Medium werden die Emmys vor allem vergeben?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-019-answer-1",
+          "text": "Musikalben"
+        },
+        {
+          "id": "aiko-quiz-fil-019-answer-2",
+          "text": "Hörbücher"
+        },
+        {
+          "id": "aiko-quiz-fil-019-answer-3",
+          "text": "Fernsehen"
+        },
+        {
+          "id": "aiko-quiz-fil-019-answer-4",
+          "text": "Kinofilm"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-019-answer-3",
+      "explanation": "Die Emmy-Auszeichnungen würdigen Leistungen im Fernsehen. Es gibt mehrere Emmy-Wettbewerbe für unterschiedliche Bereiche.",
+      "variety_group": "film_television:Auszeichnungen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-fil-020",
+      "revision": 1,
+      "topic": "film_television",
+      "difficulty": "tricky",
+      "question": "Aus welchem Land stammt der Regisseur Akira Kurosawa?",
+      "answers": [
+        {
+          "id": "aiko-quiz-fil-020-answer-1",
+          "text": "Südkorea"
+        },
+        {
+          "id": "aiko-quiz-fil-020-answer-2",
+          "text": "China"
+        },
+        {
+          "id": "aiko-quiz-fil-020-answer-3",
+          "text": "Taiwan"
+        },
+        {
+          "id": "aiko-quiz-fil-020-answer-4",
+          "text": "Japan"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-fil-020-answer-4",
+      "explanation": "Akira Kurosawa war ein japanischer Regisseur. Zu seinen bekannten Filmen gehören Die sieben Samurai und Rashomon.",
+      "variety_group": "film_television:Filmschaffende",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-001",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Welcher Planet umkreist die Sonne am nächsten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-001-answer-1",
+          "text": "Merkur"
+        },
+        {
+          "id": "aiko-quiz-nat-001-answer-2",
+          "text": "Venus"
+        },
+        {
+          "id": "aiko-quiz-nat-001-answer-3",
+          "text": "Erde"
+        },
+        {
+          "id": "aiko-quiz-nat-001-answer-4",
+          "text": "Mars"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-001-answer-1",
+      "explanation": "Merkur ist der innerste Planet unseres Sonnensystems. Er umläuft die Sonne auf der engsten Planetenbahn.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-002",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Welcher Planet hat die heißeste Oberfläche im Sonnensystem?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-002-answer-1",
+          "text": "Jupiter"
+        },
+        {
+          "id": "aiko-quiz-nat-002-answer-2",
+          "text": "Venus"
+        },
+        {
+          "id": "aiko-quiz-nat-002-answer-3",
+          "text": "Merkur"
+        },
+        {
+          "id": "aiko-quiz-nat-002-answer-4",
+          "text": "Mars"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-002-answer-2",
+      "explanation": "Die dichte Atmosphäre der Venus hält Wärme besonders stark zurück. Ihre Oberfläche ist heißer als die des sonnennäheren Merkur.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-003",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Welcher Planet wird oft der rote Planet genannt?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-003-answer-1",
+          "text": "Neptun"
+        },
+        {
+          "id": "aiko-quiz-nat-003-answer-2",
+          "text": "Uranus"
+        },
+        {
+          "id": "aiko-quiz-nat-003-answer-3",
+          "text": "Mars"
+        },
+        {
+          "id": "aiko-quiz-nat-003-answer-4",
+          "text": "Venus"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-003-answer-3",
+      "explanation": "Der Mars erscheint durch eisenhaltigen Staub rötlich. Daher stammt sein verbreiteter Beiname.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-004",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Welcher Planet ist der größte in unserem Sonnensystem?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-004-answer-1",
+          "text": "Saturn"
+        },
+        {
+          "id": "aiko-quiz-nat-004-answer-2",
+          "text": "Neptun"
+        },
+        {
+          "id": "aiko-quiz-nat-004-answer-3",
+          "text": "Erde"
+        },
+        {
+          "id": "aiko-quiz-nat-004-answer-4",
+          "text": "Jupiter"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-004-answer-4",
+      "explanation": "Jupiter ist der größte der acht Planeten. Er gehört zu den Gasriesen.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-005",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Welcher dieser Planeten besitzt ein auffälliges Ringsystem?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-005-answer-1",
+          "text": "Saturn"
+        },
+        {
+          "id": "aiko-quiz-nat-005-answer-2",
+          "text": "Merkur"
+        },
+        {
+          "id": "aiko-quiz-nat-005-answer-3",
+          "text": "Venus"
+        },
+        {
+          "id": "aiko-quiz-nat-005-answer-4",
+          "text": "Mars"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-005-answer-1",
+      "explanation": "Saturns Ringe sind besonders deutlich. Auch andere äußere Planeten besitzen Ringe, deshalb ist die Eingrenzung wichtig.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-006",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Warum sehen wir den Mond am Nachthimmel leuchten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-006-answer-1",
+          "text": "Er wird von Polarlichtern beleuchtet"
+        },
+        {
+          "id": "aiko-quiz-nat-006-answer-2",
+          "text": "Er reflektiert Sonnenlicht"
+        },
+        {
+          "id": "aiko-quiz-nat-006-answer-3",
+          "text": "Er erzeugt Licht durch Kernfusion"
+        },
+        {
+          "id": "aiko-quiz-nat-006-answer-4",
+          "text": "Seine gesamte Oberfläche glüht"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-006-answer-2",
+      "explanation": "Der Mond ist keine eigene Lichtquelle wie ein Stern. Seine sichtbaren Phasen hängen davon ab, wie viel seiner beleuchteten Seite wir sehen.",
+      "variety_group": "nature_science:Mond",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-007",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Was ist unsere Sonne astronomisch gesehen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-007-answer-1",
+          "text": "Ein Mond"
+        },
+        {
+          "id": "aiko-quiz-nat-007-answer-2",
+          "text": "Ein Komet"
+        },
+        {
+          "id": "aiko-quiz-nat-007-answer-3",
+          "text": "Ein Stern"
+        },
+        {
+          "id": "aiko-quiz-nat-007-answer-4",
+          "text": "Ein Planet"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-007-answer-3",
+      "explanation": "Die Sonne ist der Stern unseres Planetensystems. In ihrem Inneren wird durch Kernfusion Energie frei.",
+      "variety_group": "nature_science:Sterne",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-008",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Wie viele Planeten hat unser Sonnensystem nach der IAU-Einteilung von 2006?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-008-answer-1",
+          "text": "Sieben"
+        },
+        {
+          "id": "aiko-quiz-nat-008-answer-2",
+          "text": "Neun"
+        },
+        {
+          "id": "aiko-quiz-nat-008-answer-3",
+          "text": "Zehn"
+        },
+        {
+          "id": "aiko-quiz-nat-008-answer-4",
+          "text": "Acht"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-008-answer-4",
+      "explanation": "Seit der Neueinteilung von 2006 zählt Pluto zu den Zwergplaneten. Die Zahl der Planeten beträgt acht.",
+      "variety_group": "nature_science:Sonnensystem",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-009",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Was misst die Einheit Lichtjahr?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-009-answer-1",
+          "text": "Eine Entfernung"
+        },
+        {
+          "id": "aiko-quiz-nat-009-answer-2",
+          "text": "Eine Zeitdauer"
+        },
+        {
+          "id": "aiko-quiz-nat-009-answer-3",
+          "text": "Eine Helligkeit"
+        },
+        {
+          "id": "aiko-quiz-nat-009-answer-4",
+          "text": "Eine Temperatur"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-009-answer-1",
+      "explanation": "Ein Lichtjahr ist die Strecke, die Licht im Vakuum in einem Jahr zurücklegt. Der Name bezeichnet also keine Zeiteinheit.",
+      "variety_group": "nature_science:Astronomische Einheiten",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-010",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "tricky",
+      "question": "Wie viele verschiedene Grundbasen hat DNA?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-010-answer-1",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-nat-010-answer-2",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-nat-010-answer-3",
+          "text": "Zwei"
+        },
+        {
+          "id": "aiko-quiz-nat-010-answer-4",
+          "text": "Drei"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-010-answer-2",
+      "explanation": "Die vier Grundbasen heißen Adenin, Thymin, Guanin und Cytosin. Ihre Reihenfolge trägt genetische Information.",
+      "variety_group": "nature_science:Biologie",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-011",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Zu welcher Tiergruppe gehören Fledermäuse?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-011-answer-1",
+          "text": "Reptilien"
+        },
+        {
+          "id": "aiko-quiz-nat-011-answer-2",
+          "text": "Insekten"
+        },
+        {
+          "id": "aiko-quiz-nat-011-answer-3",
+          "text": "Säugetiere"
+        },
+        {
+          "id": "aiko-quiz-nat-011-answer-4",
+          "text": "Vögel"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-011-answer-3",
+      "explanation": "Fledermäuse besitzen Fell und säugen ihre Jungen. Ihre Flugfähigkeit macht sie nicht zu Vögeln.",
+      "variety_group": "nature_science:Tierkunde",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-012",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Zu welcher Tiergruppe gehören Wale?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-012-answer-1",
+          "text": "Fische"
+        },
+        {
+          "id": "aiko-quiz-nat-012-answer-2",
+          "text": "Amphibien"
+        },
+        {
+          "id": "aiko-quiz-nat-012-answer-3",
+          "text": "Weichtiere"
+        },
+        {
+          "id": "aiko-quiz-nat-012-answer-4",
+          "text": "Säugetiere"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-012-answer-4",
+      "explanation": "Wale atmen Luft und säugen ihre Jungen. Ihr Leben im Wasser ändert ihre Zugehörigkeit zu den Säugetieren nicht.",
+      "variety_group": "nature_science:Tierkunde",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-013",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Welches Gas nehmen Pflanzen bei der Photosynthese als Kohlenstoffquelle auf?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-013-answer-1",
+          "text": "Kohlendioxid"
+        },
+        {
+          "id": "aiko-quiz-nat-013-answer-2",
+          "text": "Sauerstoff"
+        },
+        {
+          "id": "aiko-quiz-nat-013-answer-3",
+          "text": "Helium"
+        },
+        {
+          "id": "aiko-quiz-nat-013-answer-4",
+          "text": "Wasserstoff"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-013-answer-1",
+      "explanation": "Bei der Photosynthese wird Kohlenstoff aus Kohlendioxid eingebaut. Pflanzen betreiben daneben auch Zellatmung.",
+      "variety_group": "nature_science:Pflanzen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-014",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Welches Organ bildet die äußere Schutzschicht deines Körpers?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-014-answer-1",
+          "text": "Die Milz"
+        },
+        {
+          "id": "aiko-quiz-nat-014-answer-2",
+          "text": "Die Haut"
+        },
+        {
+          "id": "aiko-quiz-nat-014-answer-3",
+          "text": "Die Leber"
+        },
+        {
+          "id": "aiko-quiz-nat-014-answer-4",
+          "text": "Die Lunge"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-014-answer-2",
+      "explanation": "Die Haut schützt den Körper und hilft unter anderem bei der Temperaturregelung. Sie gilt als größtes Organ.",
+      "variety_group": "nature_science:Körperwissen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-015",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Welche chemische Formel steht für Wasser?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-015-answer-1",
+          "text": "O₂"
+        },
+        {
+          "id": "aiko-quiz-nat-015-answer-2",
+          "text": "NaCl"
+        },
+        {
+          "id": "aiko-quiz-nat-015-answer-3",
+          "text": "H₂O"
+        },
+        {
+          "id": "aiko-quiz-nat-015-answer-4",
+          "text": "CO₂"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-015-answer-3",
+      "explanation": "Ein Wassermolekül besteht aus zwei Wasserstoffatomen und einem Sauerstoffatom. Die kleinen Zahlen geben die Anzahl an.",
+      "variety_group": "nature_science:Chemie",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-016",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Für welches chemische Element steht das Symbol Au?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-016-answer-1",
+          "text": "Silber"
+        },
+        {
+          "id": "aiko-quiz-nat-016-answer-2",
+          "text": "Kupfer"
+        },
+        {
+          "id": "aiko-quiz-nat-016-answer-3",
+          "text": "Platin"
+        },
+        {
+          "id": "aiko-quiz-nat-016-answer-4",
+          "text": "Gold"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-016-answer-4",
+      "explanation": "Au ist das Elementsymbol für Gold. Es leitet sich vom lateinischen Wort aurum ab.",
+      "variety_group": "nature_science:Chemie",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-017",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "tricky",
+      "question": "Wie viele Herzen hat ein Oktopus normalerweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-017-answer-1",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-nat-017-answer-2",
+          "text": "Eins"
+        },
+        {
+          "id": "aiko-quiz-nat-017-answer-3",
+          "text": "Zwei"
+        },
+        {
+          "id": "aiko-quiz-nat-017-answer-4",
+          "text": "Vier"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-017-answer-1",
+      "explanation": "Zwei Herzen versorgen die Kiemen, ein weiteres den übrigen Körper. Der ungewöhnliche Kreislauf passt zur Lebensweise dieser Tiere.",
+      "variety_group": "nature_science:Tierkunde",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-018",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "easy",
+      "question": "Wie viele Beine hat ein erwachsenes Insekt normalerweise?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-018-answer-1",
+          "text": "Zehn"
+        },
+        {
+          "id": "aiko-quiz-nat-018-answer-2",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-nat-018-answer-3",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-nat-018-answer-4",
+          "text": "Acht"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-018-answer-2",
+      "explanation": "Insekten haben drei Beinpaare. Spinnen gehören zu einer anderen Tiergruppe und besitzen normalerweise vier Paare.",
+      "variety_group": "nature_science:Tierkunde",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-019",
+      "revision": 1,
+      "topic": "nature_science",
+      "difficulty": "tricky",
+      "question": "Wie schnell ist Licht im Vakuum ungefähr?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-019-answer-1",
+          "text": "3.000 Kilometer pro Sekunde"
+        },
+        {
+          "id": "aiko-quiz-nat-019-answer-2",
+          "text": "30.000 Kilometer pro Sekunde"
+        },
+        {
+          "id": "aiko-quiz-nat-019-answer-3",
+          "text": "300.000 Kilometer pro Sekunde"
+        },
+        {
+          "id": "aiko-quiz-nat-019-answer-4",
+          "text": "300 Kilometer pro Sekunde"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-019-answer-3",
+      "explanation": "Der genaue Wert beträgt 299.792.458 Meter pro Sekunde. Die richtige Auswahl ist die dazu passende Rundung.",
+      "variety_group": "nature_science:Physik",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-nat-020",
+      "revision": 2,
+      "topic": "nature_science",
+      "difficulty": "medium",
+      "question": "Welche Voraussetzung braucht Schall zur Ausbreitung?",
+      "answers": [
+        {
+          "id": "aiko-quiz-nat-020-answer-1",
+          "text": "Ein elektrisches Feld"
+        },
+        {
+          "id": "aiko-quiz-nat-020-answer-2",
+          "text": "Eine Lichtquelle"
+        },
+        {
+          "id": "aiko-quiz-nat-020-answer-3",
+          "text": "Ein Gravitationsfeld"
+        },
+        {
+          "id": "aiko-quiz-nat-020-answer-4",
+          "text": "Ein schwingungsfähiges Medium"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-nat-020-answer-4",
+      "explanation": "Schall ist eine mechanische Schwingung und benötigt ein Medium wie Luft oder Wasser. Deshalb kann er sich in einem idealen Vakuum nicht ausbreiten.",
+      "variety_group": "nature_science:Physik",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-001",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wie heißt die Hauptstadt Frankreichs?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-001-answer-1",
+          "text": "Paris"
+        },
+        {
+          "id": "aiko-quiz-wel-001-answer-2",
+          "text": "Lyon"
+        },
+        {
+          "id": "aiko-quiz-wel-001-answer-3",
+          "text": "Marseille"
+        },
+        {
+          "id": "aiko-quiz-wel-001-answer-4",
+          "text": "Bordeaux"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-001-answer-1",
+      "explanation": "Paris ist die Hauptstadt Frankreichs. Die anderen genannten Städte liegen ebenfalls in Frankreich.",
+      "variety_group": "world_history_culture:Hauptstädte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-002",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Welche Stadt ist die Hauptstadt Australiens?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-002-answer-1",
+          "text": "Brisbane"
+        },
+        {
+          "id": "aiko-quiz-wel-002-answer-2",
+          "text": "Canberra"
+        },
+        {
+          "id": "aiko-quiz-wel-002-answer-3",
+          "text": "Sydney"
+        },
+        {
+          "id": "aiko-quiz-wel-002-answer-4",
+          "text": "Melbourne"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-002-answer-2",
+      "explanation": "Canberra wurde als Regierungssitz entwickelt. Die größere Bekanntheit von Sydney oder Melbourne macht sie nicht zur Hauptstadt.",
+      "variety_group": "world_history_culture:Hauptstädte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-003",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wie heißt die Hauptstadt Japans?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-003-answer-1",
+          "text": "Osaka"
+        },
+        {
+          "id": "aiko-quiz-wel-003-answer-2",
+          "text": "Hiroshima"
+        },
+        {
+          "id": "aiko-quiz-wel-003-answer-3",
+          "text": "Tokio"
+        },
+        {
+          "id": "aiko-quiz-wel-003-answer-4",
+          "text": "Kyōto"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-003-answer-3",
+      "explanation": "Tokio ist Japans heutige Hauptstadt. Kyōto war über viele Jahrhunderte ein kaiserliches Zentrum.",
+      "variety_group": "world_history_culture:Hauptstädte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-004",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Auf welchem Kontinent liegen die Pyramiden von Gizeh?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-004-answer-1",
+          "text": "Asien"
+        },
+        {
+          "id": "aiko-quiz-wel-004-answer-2",
+          "text": "Europa"
+        },
+        {
+          "id": "aiko-quiz-wel-004-answer-3",
+          "text": "Südamerika"
+        },
+        {
+          "id": "aiko-quiz-wel-004-answer-4",
+          "text": "Afrika"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-004-answer-4",
+      "explanation": "Gizeh liegt in Ägypten westlich des Nils. Die Pyramiden gehören zum afrikanischen Teil des Landes.",
+      "variety_group": "world_history_culture:Weltkulturerbe",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-005",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Welche ist flächenmäßig die größte Wüste der Erde, wenn Polarwüsten mitzählen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-005-answer-1",
+          "text": "Die Antarktis"
+        },
+        {
+          "id": "aiko-quiz-wel-005-answer-2",
+          "text": "Die Sahara"
+        },
+        {
+          "id": "aiko-quiz-wel-005-answer-3",
+          "text": "Die Gobi"
+        },
+        {
+          "id": "aiko-quiz-wel-005-answer-4",
+          "text": "Die Arabische Wüste"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-005-answer-1",
+      "explanation": "Wüsten werden durch geringe Niederschläge bestimmt. Deshalb kann auch eine eisbedeckte Region eine Wüste sein.",
+      "variety_group": "world_history_culture:Geographie",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-006",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Welche Kultur errichtete Machu Picchu?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-006-answer-1",
+          "text": "Die Olmeken"
+        },
+        {
+          "id": "aiko-quiz-wel-006-answer-2",
+          "text": "Die Inka"
+        },
+        {
+          "id": "aiko-quiz-wel-006-answer-3",
+          "text": "Die Maya"
+        },
+        {
+          "id": "aiko-quiz-wel-006-answer-4",
+          "text": "Die Azteken"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-006-answer-2",
+      "explanation": "Machu Picchu entstand im 15. Jahrhundert unter den Inka im heutigen Peru. Es liegt hoch in den Anden.",
+      "variety_group": "world_history_culture:Weltkulturerbe",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-007",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "In welchem Jahr fiel die Berliner Mauer?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-007-answer-1",
+          "text": "1990"
+        },
+        {
+          "id": "aiko-quiz-wel-007-answer-2",
+          "text": "1991"
+        },
+        {
+          "id": "aiko-quiz-wel-007-answer-3",
+          "text": "1989"
+        },
+        {
+          "id": "aiko-quiz-wel-007-answer-4",
+          "text": "1961"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-007-answer-3",
+      "explanation": "Die Grenzübergänge öffneten sich am 9. November 1989. Die deutsche Wiedervereinigung folgte 1990.",
+      "variety_group": "world_history_culture:Zeitgeschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-008",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Womit ist Johannes Gutenberg in der europäischen Geschichte besonders verbunden?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-008-answer-1",
+          "text": "Die erste Dampfmaschine"
+        },
+        {
+          "id": "aiko-quiz-wel-008-answer-2",
+          "text": "Der erste Motorflug"
+        },
+        {
+          "id": "aiko-quiz-wel-008-answer-3",
+          "text": "Die Erfindung des Telefons"
+        },
+        {
+          "id": "aiko-quiz-wel-008-answer-4",
+          "text": "Buchdruck mit beweglichen Metalllettern"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-008-answer-4",
+      "explanation": "Gutenbergs Druckverfahren mit beweglichen Metalllettern erleichterte die Vervielfältigung von Texten in Europa. Ältere Drucktraditionen existierten bereits in Asien.",
+      "variety_group": "world_history_culture:Erfindungen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-009",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wer malte die Mona Lisa?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-009-answer-1",
+          "text": "Leonardo da Vinci"
+        },
+        {
+          "id": "aiko-quiz-wel-009-answer-2",
+          "text": "Michelangelo"
+        },
+        {
+          "id": "aiko-quiz-wel-009-answer-3",
+          "text": "Raffael"
+        },
+        {
+          "id": "aiko-quiz-wel-009-answer-4",
+          "text": "Sandro Botticelli"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-009-answer-1",
+      "explanation": "Leonardo da Vinci malte das Porträt. Heute gehört es zu den bekanntesten Werken im Louvre.",
+      "variety_group": "world_history_culture:Kunst",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-010",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wessen fünfte Sinfonie beginnt berühmt mit drei kurzen Tönen und einem langen Ton?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-010-answer-1",
+          "text": "Frédéric Chopin"
+        },
+        {
+          "id": "aiko-quiz-wel-010-answer-2",
+          "text": "Ludwig van Beethoven"
+        },
+        {
+          "id": "aiko-quiz-wel-010-answer-3",
+          "text": "Wolfgang Amadeus Mozart"
+        },
+        {
+          "id": "aiko-quiz-wel-010-answer-4",
+          "text": "Johann Sebastian Bach"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-010-answer-2",
+      "explanation": "Beethovens fünfte Sinfonie beginnt mit einem besonders bekannten viertönigen Motiv. Es prägt den ersten Satz.",
+      "variety_group": "world_history_culture:Musik",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-011",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Wer schrieb das Drama Faust?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-011-answer-1",
+          "text": "Heinrich Heine"
+        },
+        {
+          "id": "aiko-quiz-wel-011-answer-2",
+          "text": "Georg Büchner"
+        },
+        {
+          "id": "aiko-quiz-wel-011-answer-3",
+          "text": "Johann Wolfgang von Goethe"
+        },
+        {
+          "id": "aiko-quiz-wel-011-answer-4",
+          "text": "Friedrich Schiller"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-011-answer-3",
+      "explanation": "Goethes Faust erschien in zwei Teilen. Die Figur und der Stoff sind allerdings älter als Goethes Bearbeitung.",
+      "variety_group": "world_history_culture:Literatur",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-012",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Welche Zahl bezeichnet das römische Zahlzeichen X?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-012-answer-1",
+          "text": "Fünf"
+        },
+        {
+          "id": "aiko-quiz-wel-012-answer-2",
+          "text": "Fünfzig"
+        },
+        {
+          "id": "aiko-quiz-wel-012-answer-3",
+          "text": "Hundert"
+        },
+        {
+          "id": "aiko-quiz-wel-012-answer-4",
+          "text": "Zehn"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-012-answer-4",
+      "explanation": "X steht für zehn. V steht für fünf, L für fünfzig und C für hundert.",
+      "variety_group": "world_history_culture:Schrift und Zahlen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-013",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wie viele Sterne zeigt die Flagge der Europäischen Union?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-013-answer-1",
+          "text": "Zwölf"
+        },
+        {
+          "id": "aiko-quiz-wel-013-answer-2",
+          "text": "Zehn"
+        },
+        {
+          "id": "aiko-quiz-wel-013-answer-3",
+          "text": "Fünfzehn"
+        },
+        {
+          "id": "aiko-quiz-wel-013-answer-4",
+          "text": "Siebenundzwanzig"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-013-answer-1",
+      "explanation": "Die Zahl zwölf ist ein Symbol und entspricht nicht der jeweiligen Zahl der Mitgliedstaaten.",
+      "variety_group": "world_history_culture:Symbole",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-014",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wie viele Ringe hat das olympische Symbol?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-014-answer-1",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-wel-014-answer-2",
+          "text": "Fünf"
+        },
+        {
+          "id": "aiko-quiz-wel-014-answer-3",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-wel-014-answer-4",
+          "text": "Vier"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-014-answer-2",
+      "explanation": "Fünf ineinander verschlungene Ringe bilden das olympische Symbol. Die Farben werden nicht offiziell jeweils einem einzelnen Kontinent zugeordnet.",
+      "variety_group": "world_history_culture:Symbole",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-015",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "Aus welchem Land stammt die Gedichtform Haiku?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-015-answer-1",
+          "text": "Griechenland"
+        },
+        {
+          "id": "aiko-quiz-wel-015-answer-2",
+          "text": "Indien"
+        },
+        {
+          "id": "aiko-quiz-wel-015-answer-3",
+          "text": "Japan"
+        },
+        {
+          "id": "aiko-quiz-wel-015-answer-4",
+          "text": "Italien"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-015-answer-3",
+      "explanation": "Haiku ist eine japanische Gedichtform. Die traditionelle japanische Form wird über Lauteinheiten beschrieben, nicht einfach über deutsche Silben.",
+      "variety_group": "world_history_culture:Literaturformen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-016",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "medium",
+      "question": "In welcher Stadt liegt der Hauptsitz der Vereinten Nationen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-016-answer-1",
+          "text": "Genf"
+        },
+        {
+          "id": "aiko-quiz-wel-016-answer-2",
+          "text": "Den Haag"
+        },
+        {
+          "id": "aiko-quiz-wel-016-answer-3",
+          "text": "Brüssel"
+        },
+        {
+          "id": "aiko-quiz-wel-016-answer-4",
+          "text": "New York"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-016-answer-4",
+      "explanation": "Der Hauptsitz liegt in New York. Die UN haben daneben wichtige Standorte etwa in Genf und Wien.",
+      "variety_group": "world_history_culture:Internationale Organisationen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-017",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "tricky",
+      "question": "Wie viele unterschiedliche Schriften stehen auf dem Stein von Rosette?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-017-answer-1",
+          "text": "Drei"
+        },
+        {
+          "id": "aiko-quiz-wel-017-answer-2",
+          "text": "Zwei"
+        },
+        {
+          "id": "aiko-quiz-wel-017-answer-3",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-wel-017-answer-4",
+          "text": "Fünf"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-017-answer-1",
+      "explanation": "Der Stein zeigt Hieroglyphen, Demotisch und Griechisch. Es handelt sich dabei um drei Schriften, aber nur zwei Sprachen.",
+      "variety_group": "world_history_culture:Schriftgeschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-018",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "tricky",
+      "question": "Aus wie vielen Punktpositionen besteht eine klassische Braille-Zelle?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-018-answer-1",
+          "text": "Zehn"
+        },
+        {
+          "id": "aiko-quiz-wel-018-answer-2",
+          "text": "Sechs"
+        },
+        {
+          "id": "aiko-quiz-wel-018-answer-3",
+          "text": "Vier"
+        },
+        {
+          "id": "aiko-quiz-wel-018-answer-4",
+          "text": "Acht"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-018-answer-2",
+      "explanation": "Die klassische Braille-Zelle hat sechs Positionen in zwei Spalten. Es gibt daneben auch achtpunktige Systeme, etwa im Computerbereich.",
+      "variety_group": "world_history_culture:Schriftsysteme",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-019",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "tricky",
+      "question": "Wer führte die erste Weltumsegelung nach Magellans Tod zu Ende?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-019-answer-1",
+          "text": "Vasco da Gama"
+        },
+        {
+          "id": "aiko-quiz-wel-019-answer-2",
+          "text": "James Cook"
+        },
+        {
+          "id": "aiko-quiz-wel-019-answer-3",
+          "text": "Juan Sebastián Elcano"
+        },
+        {
+          "id": "aiko-quiz-wel-019-answer-4",
+          "text": "Christoph Kolumbus"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-019-answer-3",
+      "explanation": "Magellan begann die Expedition, starb aber unterwegs. Elcano brachte die Victoria 1522 nach Spanien zurück.",
+      "variety_group": "world_history_culture:Entdeckungsreisen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-wel-020",
+      "revision": 1,
+      "topic": "world_history_culture",
+      "difficulty": "easy",
+      "question": "Wie nennt man ein Wort, das vorwärts und rückwärts gleich gelesen werden kann?",
+      "answers": [
+        {
+          "id": "aiko-quiz-wel-020-answer-1",
+          "text": "Synonym"
+        },
+        {
+          "id": "aiko-quiz-wel-020-answer-2",
+          "text": "Akronym"
+        },
+        {
+          "id": "aiko-quiz-wel-020-answer-3",
+          "text": "Anagramm"
+        },
+        {
+          "id": "aiko-quiz-wel-020-answer-4",
+          "text": "Palindrom"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-wel-020-answer-4",
+      "explanation": "Ein Palindrom bleibt beim Rückwärtslesen gleich. Ein Anagramm entsteht dagegen durch das Umordnen von Buchstaben.",
+      "variety_group": "world_history_culture:Sprachwissen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-001",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Wofür steht die Abkürzung WWW?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-001-answer-1",
+          "text": "World Wide Web"
+        },
+        {
+          "id": "aiko-quiz-dig-001-answer-2",
+          "text": "World Wireless Window"
+        },
+        {
+          "id": "aiko-quiz-dig-001-answer-3",
+          "text": "Wide World Wire"
+        },
+        {
+          "id": "aiko-quiz-dig-001-answer-4",
+          "text": "Web Working World"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-001-answer-1",
+      "explanation": "Das World Wide Web ist ein Dienst im Internet. Internet und Web sind deshalb keine vollständig austauschbaren Begriffe.",
+      "variety_group": "computers_digital:Internet-Grundlagen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-002",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Wofür nutzt du eine URL beim Surfen?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-002-answer-1",
+          "text": "Zum Komprimieren einer Datei"
+        },
+        {
+          "id": "aiko-quiz-dig-002-answer-2",
+          "text": "Zum Adressieren einer Ressource"
+        },
+        {
+          "id": "aiko-quiz-dig-002-answer-3",
+          "text": "Zum Verschlüsseln eines Passworts"
+        },
+        {
+          "id": "aiko-quiz-dig-002-answer-4",
+          "text": "Zum Messen der Verbindungsgeschwindigkeit"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-002-answer-2",
+      "explanation": "Eine URL beschreibt, wie eine Ressource erreichbar ist. Die Adresse einer Webseite ist ein bekanntes Beispiel.",
+      "variety_group": "computers_digital:Internet-Grundlagen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-003",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Was passiert mit gewöhnlichem RAM-Inhalt normalerweise nach dem Ausschalten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-003-answer-1",
+          "text": "Er wird automatisch vollständig auf die SSD kopiert"
+        },
+        {
+          "id": "aiko-quiz-dig-003-answer-2",
+          "text": "Er wird dauerhaft im Prozessor gespeichert"
+        },
+        {
+          "id": "aiko-quiz-dig-003-answer-3",
+          "text": "Er geht verloren"
+        },
+        {
+          "id": "aiko-quiz-dig-003-answer-4",
+          "text": "Er bleibt wie eine gespeicherte Datei erhalten"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-003-answer-3",
+      "explanation": "Gewöhnlicher Arbeitsspeicher ist flüchtig und benötigt Strom. Dauerhaft gespeicherte Dateien liegen auf anderen Speichermedien.",
+      "variety_group": "computers_digital:Hardware",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-004",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Welche Komponente ist der zentrale Universalprozessor eines PCs?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-004-answer-1",
+          "text": "RAM"
+        },
+        {
+          "id": "aiko-quiz-dig-004-answer-2",
+          "text": "SSD"
+        },
+        {
+          "id": "aiko-quiz-dig-004-answer-3",
+          "text": "GPU"
+        },
+        {
+          "id": "aiko-quiz-dig-004-answer-4",
+          "text": "CPU"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-004-answer-4",
+      "explanation": "Die CPU ist der zentrale Prozessor. Weitere Komponenten können spezielle Aufgaben übernehmen, etwa eine GPU für Grafikberechnungen.",
+      "variety_group": "computers_digital:Hardware",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-005",
+      "revision": 2,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Wie speichert eine übliche SSD Daten im Unterschied zu einer klassischen HDD?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-005-answer-1",
+          "text": "In Halbleiterspeichern ohne bewegliche Teile"
+        },
+        {
+          "id": "aiko-quiz-dig-005-answer-2",
+          "text": "Magnetisch auf rotierenden Scheiben"
+        },
+        {
+          "id": "aiko-quiz-dig-005-answer-3",
+          "text": "Optisch auf einer rotierenden Scheibe"
+        },
+        {
+          "id": "aiko-quiz-dig-005-answer-4",
+          "text": "Magnetisch auf einem aufgewickelten Band"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-005-answer-1",
+      "explanation": "Eine SSD nutzt Halbleiterspeicher statt rotierender Magnetscheiben. Dadurch entfallen die beweglichen Leseköpfe einer HDD.",
+      "variety_group": "computers_digital:Speicher",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-006",
+      "revision": 2,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Wofür steht USB bei den Anschlüssen USB-A und USB-C?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-006-answer-1",
+          "text": "Universal System Bus"
+        },
+        {
+          "id": "aiko-quiz-dig-006-answer-2",
+          "text": "Universal Serial Bus"
+        },
+        {
+          "id": "aiko-quiz-dig-006-answer-3",
+          "text": "Unified Serial Bridge"
+        },
+        {
+          "id": "aiko-quiz-dig-006-answer-4",
+          "text": "Universal Storage Bus"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-006-answer-2",
+      "explanation": "USB steht für Universal Serial Bus. A und C bezeichnen unterschiedliche Anschlussformen.",
+      "variety_group": "computers_digital:Anschlüsse",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-007",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Welche Form hat das typische Muster eines QR-Codes?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-007-answer-1",
+          "text": "Eine einzelne Folge farbiger Ringe"
+        },
+        {
+          "id": "aiko-quiz-dig-007-answer-2",
+          "text": "Eine spiralförmig angeordnete Zeichenfolge"
+        },
+        {
+          "id": "aiko-quiz-dig-007-answer-3",
+          "text": "Ein zweidimensionales Quadratfeld"
+        },
+        {
+          "id": "aiko-quiz-dig-007-answer-4",
+          "text": "Eine Folge paralleler Striche"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-007-answer-3",
+      "explanation": "QR-Codes speichern Daten in einem zweidimensionalen Muster. Damit unterscheiden sie sich von klassischen eindimensionalen Strichcodes.",
+      "variety_group": "computers_digital:Digitale Alltagskultur",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-008",
+      "revision": 2,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Was kennzeichnet HTTPS gegenüber einer unverschlüsselten HTTP-Verbindung?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-008-answer-1",
+          "text": "Die Verschlüsselung der auf dem Server gespeicherten Dateien"
+        },
+        {
+          "id": "aiko-quiz-dig-008-answer-2",
+          "text": "Die Prüfung der Webseiteninhalte auf Schadsoftware"
+        },
+        {
+          "id": "aiko-quiz-dig-008-answer-3",
+          "text": "Die Anonymisierung deiner IP-Adresse gegenüber dem Server"
+        },
+        {
+          "id": "aiko-quiz-dig-008-answer-4",
+          "text": "Die Verschlüsselung der Daten während der Übertragung"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-008-answer-4",
+      "explanation": "HTTPS schützt die Übertragung durch Verschlüsselung. Es garantiert nicht, dass der Betreiber einer Webseite vertrauenswürdig ist.",
+      "variety_group": "computers_digital:Web-Sicherheit",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-009",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Wozu dient ein Webbrowser hauptsächlich?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-009-answer-1",
+          "text": "Zum Anzeigen und Nutzen von Webseiten"
+        },
+        {
+          "id": "aiko-quiz-dig-009-answer-2",
+          "text": "Zum Kompilieren von Programmquelltext"
+        },
+        {
+          "id": "aiko-quiz-dig-009-answer-3",
+          "text": "Zum Verwalten der Festplattenpartitionen"
+        },
+        {
+          "id": "aiko-quiz-dig-009-answer-4",
+          "text": "Zum Erstellen bootfähiger Systemabbilder"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-009-answer-1",
+      "explanation": "Browser wie Firefox stellen Webinhalte dar und ermöglichen ihre Nutzung. Eine Suchmaschine ist dagegen ein Dienst, den du im Browser aufrufen kannst.",
+      "variety_group": "computers_digital:Alltagssoftware",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-010",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Was bezeichnet Phishing im Bereich der IT-Sicherheit?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-010-answer-1",
+          "text": "Das heimliche Schürfen von Kryptowährung auf fremden Rechnern"
+        },
+        {
+          "id": "aiko-quiz-dig-010-answer-2",
+          "text": "Das Erschleichen sensibler Daten durch vorgetäuschte Identität"
+        },
+        {
+          "id": "aiko-quiz-dig-010-answer-3",
+          "text": "Das Verschlüsseln fremder Dateien gegen Lösegeld"
+        },
+        {
+          "id": "aiko-quiz-dig-010-answer-4",
+          "text": "Das Überlasten eines Dienstes mit massenhaften Anfragen"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-010-answer-2",
+      "explanation": "Phishing täuscht einen vertrauten Absender oder Dienst vor. Dadurch sollen Menschen etwa Passwörter oder andere sensible Daten preisgeben.",
+      "variety_group": "computers_digital:Digitale Sicherheit",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-011",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Was ist der Hauptzweck eines Backups?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-011-answer-1",
+          "text": "Das Betriebssystem auf eine neue Version bringen"
+        },
+        {
+          "id": "aiko-quiz-dig-011-answer-2",
+          "text": "Schädliche Dateien beim Herunterladen erkennen"
+        },
+        {
+          "id": "aiko-quiz-dig-011-answer-3",
+          "text": "Daten nach einem Verlust wiederherstellen können"
+        },
+        {
+          "id": "aiko-quiz-dig-011-answer-4",
+          "text": "Dateien nur für den Versand verkleinern"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-011-answer-3",
+      "explanation": "Ein Backup ist eine Sicherungskopie. Eine sinnvoll getrennte Sicherung hilft auch dann, wenn das ursprüngliche Speichermedium ausfällt.",
+      "variety_group": "computers_digital:Datensicherung",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-012",
+      "revision": 2,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Welche Rechte muss eine Open-Source-Lizenz am Quellcode erlauben?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-012-answer-1",
+          "text": "Einsehen und ausführen, aber keine Änderungen weitergeben"
+        },
+        {
+          "id": "aiko-quiz-dig-012-answer-2",
+          "text": "Verändern für private Zwecke, aber keine Weitergabe erlauben"
+        },
+        {
+          "id": "aiko-quiz-dig-012-answer-3",
+          "text": "Nutzen in der Ausbildung, aber nicht für kommerzielle Zwecke"
+        },
+        {
+          "id": "aiko-quiz-dig-012-answer-4",
+          "text": "Einsehen, verändern und gemäß Lizenz weitergeben"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-012-answer-4",
+      "explanation": "Open Source erlaubt Nutzung, Änderungen und Weitergabe unter den jeweiligen Lizenzbedingungen. Auch kommerzielle Nutzung ist zulässig.",
+      "variety_group": "computers_digital:Softwarekultur",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-013",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Welche Endung kennzeichnet typischerweise ein ZIP-Archiv?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-013-answer-1",
+          "text": ".zip"
+        },
+        {
+          "id": "aiko-quiz-dig-013-answer-2",
+          "text": ".png"
+        },
+        {
+          "id": "aiko-quiz-dig-013-answer-3",
+          "text": ".mp3"
+        },
+        {
+          "id": "aiko-quiz-dig-013-answer-4",
+          "text": ".txt"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-013-answer-1",
+      "explanation": "Ein ZIP-Archiv kann mehrere Dateien zusammenfassen und komprimieren. Es ist kein Verschlüsselungsversprechen.",
+      "variety_group": "computers_digital:Dateiformate",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-014",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Wer begann die Entwicklung des Linux-Kernels?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-014-answer-1",
+          "text": "Bill Gates"
+        },
+        {
+          "id": "aiko-quiz-dig-014-answer-2",
+          "text": "Linus Torvalds"
+        },
+        {
+          "id": "aiko-quiz-dig-014-answer-3",
+          "text": "Tim Berners-Lee"
+        },
+        {
+          "id": "aiko-quiz-dig-014-answer-4",
+          "text": "Steve Wozniak"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-014-answer-2",
+      "explanation": "Linus Torvalds begann Linux 1991. Heute tragen viele Menschen und Organisationen zur Entwicklung des Kernels bei.",
+      "variety_group": "computers_digital:Computergeschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-015",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "easy",
+      "question": "Welche beiden Ziffern verwendet das binäre Zahlensystem?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-015-answer-1",
+          "text": "0 und 9"
+        },
+        {
+          "id": "aiko-quiz-dig-015-answer-2",
+          "text": "2 und 8"
+        },
+        {
+          "id": "aiko-quiz-dig-015-answer-3",
+          "text": "0 und 1"
+        },
+        {
+          "id": "aiko-quiz-dig-015-answer-4",
+          "text": "1 und 2"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-015-answer-3",
+      "explanation": "Das binäre Zahlensystem hat die Basis zwei. Seine beiden Ziffern sind 0 und 1.",
+      "variety_group": "computers_digital:Digitale Grundlagen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-016",
+      "revision": 2,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Was beschreibt eine WLAN-Verbindung zunächst?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-016-answer-1",
+          "text": "Die Verbindung des Routers zum Internetanbieter"
+        },
+        {
+          "id": "aiko-quiz-dig-016-answer-2",
+          "text": "Die Erreichbarkeit eines bestimmten Webservers"
+        },
+        {
+          "id": "aiko-quiz-dig-016-answer-3",
+          "text": "Die Verbindung eines Mobilfunkmodems zum Funkmast"
+        },
+        {
+          "id": "aiko-quiz-dig-016-answer-4",
+          "text": "Die lokale Funkverbindung zum Netzwerk"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-016-answer-4",
+      "explanation": "WLAN verbindet Geräte mit einem lokalen Funknetz. Ob darüber auch das Internet erreichbar ist, hängt von der weiteren Netzverbindung ab.",
+      "variety_group": "computers_digital:Netzwerke",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-017",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "medium",
+      "question": "Was sind Cookies im Zusammenhang mit Webseiten?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-017-answer-1",
+          "text": "Kleine vom Browser gespeicherte Daten"
+        },
+        {
+          "id": "aiko-quiz-dig-017-answer-2",
+          "text": "Digitale Zertifikate zur Bestätigung eines Servernamens"
+        },
+        {
+          "id": "aiko-quiz-dig-017-answer-3",
+          "text": "Ausführbare Programme zur Darstellung von Webseiten"
+        },
+        {
+          "id": "aiko-quiz-dig-017-answer-4",
+          "text": "Passwortgeschützte Archive mit Webseitenkopien"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-017-answer-1",
+      "explanation": "Webseiten können mit Cookies beispielsweise eine Sitzung wiedererkennen. Nicht jeder Cookie hat denselben Zweck.",
+      "variety_group": "computers_digital:Web-Grundlagen",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-018",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "tricky",
+      "question": "Welchen Gegenstand zeigte die berühmte frühe Webcam der Universität Cambridge?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-018-answer-1",
+          "text": "Ein Aquarium"
+        },
+        {
+          "id": "aiko-quiz-dig-018-answer-2",
+          "text": "Eine Kaffeekanne"
+        },
+        {
+          "id": "aiko-quiz-dig-018-answer-3",
+          "text": "Eine Sonnenuhr"
+        },
+        {
+          "id": "aiko-quiz-dig-018-answer-4",
+          "text": "Eine Glühbirne"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-018-answer-2",
+      "explanation": "Die Kamera zeigte den Füllstand der Kaffeekanne im Trojan Room. So konnten Forschende unnötige Wege vermeiden.",
+      "variety_group": "computers_digital:Computergeschichte",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-019",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "tricky",
+      "question": "Für welche Maschine entwarf Ada Lovelace ihren bekannten Algorithmus?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-019-answer-1",
+          "text": "Die Z3"
+        },
+        {
+          "id": "aiko-quiz-dig-019-answer-2",
+          "text": "Den ENIAC"
+        },
+        {
+          "id": "aiko-quiz-dig-019-answer-3",
+          "text": "Die Analytical Engine"
+        },
+        {
+          "id": "aiko-quiz-dig-019-answer-4",
+          "text": "Die Enigma"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-019-answer-3",
+      "explanation": "Lovelaces Notizen behandelten Charles Babbages Analytical Engine. Die Maschine wurde zu ihren Lebzeiten nicht vollständig gebaut.",
+      "variety_group": "computers_digital:Computerpioniere",
+      "editorial_status": "approved"
+    },
+    {
+      "id": "aiko-quiz-dig-020",
+      "revision": 1,
+      "topic": "computers_digital",
+      "difficulty": "tricky",
+      "question": "Womit steuerte ein Jacquard-Webstuhl sein gewebtes Muster?",
+      "answers": [
+        {
+          "id": "aiko-quiz-dig-020-answer-1",
+          "text": "Magnetbänder"
+        },
+        {
+          "id": "aiko-quiz-dig-020-answer-2",
+          "text": "CD-ROMs"
+        },
+        {
+          "id": "aiko-quiz-dig-020-answer-3",
+          "text": "Touchscreens"
+        },
+        {
+          "id": "aiko-quiz-dig-020-answer-4",
+          "text": "Lochkarten"
+        }
+      ],
+      "correct_answer_id": "aiko-quiz-dig-020-answer-4",
+      "explanation": "Lochkarten legten fest, welche Fäden angehoben wurden. Diese Form der Steuerung gehört zur Vorgeschichte programmierbarer Maschinen.",
+      "variety_group": "computers_digital:Technikgeschichte",
+      "editorial_status": "approved"
+    }
+  ]
+}

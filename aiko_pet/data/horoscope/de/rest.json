@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.rest.begin.a",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wächst der Wunsch nach einem stillen Moment. Gib ihm Platz, bevor der Tag sich ganz mit Eindrücken füllt."
+        },
+        {
+          "id": "p2",
+          "text": "Ein wenig Abstand lässt Gedanken auftauchen, die im Trubel untergehen. Du musst daraus nicht sofort etwas machen."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst Ruhe suchen, ohne sie erst verdienen zu müssen. Ein kleiner stiller Anfang reicht.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.begin.b",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute taucht ein leiser Wunsch auf, sobald der äußere Trubel nachlässt. Gib ihm einen Moment, ohne ihn gleich zu prüfen."
+        },
+        {
+          "id": "p2",
+          "text": "Ein wenig ungestörte Zeit lässt dich deutlicher spüren, was gerade zu viel und was angenehm ist."
+        },
+        {
+          "id": "p3",
+          "text": "Ein stiller Moment nur für dich kann heute besonders wertvoll sein. Er verliert nichts, wenn du ihn nicht aussprichst.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.develop.a",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute tut dir ein geschützter Rhythmus gut. Kleine Pausen helfen, damit Gedanken nicht an jeder Kleinigkeit hängen bleiben."
+        },
+        {
+          "id": "p2",
+          "text": "Ein ruhiger Moment wirkt nach, wenn du ihn nicht gleich mit neuen Eindrücken füllst. Lass zwischen zwei Dingen etwas Raum."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst Stille nicht füllen, damit sie etwas wert ist. Manchmal trägt gerade das Unaufgeregte.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.develop.b",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute arbeitet ein Gedanke im Hintergrund weiter, auch ohne dein Festhalten. Etwas Abstand kann ihn klarer werden lassen."
+        },
+        {
+          "id": "p2",
+          "text": "Lass einer stillen Beschäftigung ihren Rhythmus. Du musst dabei weder besonders konzentriert noch schöpferisch sein."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst Zeit verbringen, ohne sie ständig mit einem Ergebnis zu rechtfertigen.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.reflect.a",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute hörst du einen eigenen Gedanken deutlicher, sobald es um dich herum ruhiger wird. Lass ihm Zeit, Gestalt anzunehmen."
+        },
+        {
+          "id": "p2",
+          "text": "Vielleicht verstehst du erst mit Abstand, warum dich etwas beschäftigt hat. Eine Antwort muss daraus noch nicht folgen."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst etwas empfinden, ohne es sofort erklären zu können. Nicht jeder innere Moment braucht die richtigen Worte.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.reflect.b",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute betrachtest du einen Eindruck mit mehr Abstand. Was eben noch dringend wirkte, bekommt in der Ruhe eine andere Größe."
+        },
+        {
+          "id": "p2",
+          "text": "Du musst nicht sofort herausfinden, warum dich etwas berührt. Eine ehrliche Wahrnehmung genügt für den Moment."
+        },
+        {
+          "id": "p3",
+          "text": "Heute darf eine Wahrnehmung ihren Worten voraus sein. Etwas in dir braucht vielleicht noch Zeit, bis es verständlich wird.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.conclude.a",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute braucht dein Kopf weniger neue Eindrücke. Ein Gedanke, der sich im Kreis dreht, darf eine Weile ohne Antwort bleiben."
+        },
+        {
+          "id": "p2",
+          "text": "Je weniger du eine Lösung erzwingst, desto eher kehrt Ruhe ein. Nicht alles, was offen ist, muss noch heute geklärt werden."
+        },
+        {
+          "id": "p3",
+          "text": "Ein stiller Moment lässt den Tag langsam ausklingen. Du musst ihn nicht gleich mit dem nächsten Vorhaben füllen."
+        },
+        {
+          "id": "p4",
+          "text": "Du darfst einfach eine Weile da sein. Auch ohne etwas zu lösen oder zu leisten, ist dieser Moment nicht verloren.",
+          "comment_key": "horoscope.quiet_without_performance"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.rest.conclude.b",
+      "revision": 1,
+      "theme": "rest",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt es leichter, den Tag nicht noch einmal bis ins letzte Detail durchzugehen. Eine offene Frage darf offen bleiben."
+        },
+        {
+          "id": "p2",
+          "text": "Lass das ruhen, was du gerade nicht verändern kannst. Ein stiller Übergang gibt dem Erlebten seinen Platz."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst aus diesem Moment nichts Weiteres machen. Für heute darf es einfach genug sein.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    }
+  ]
+}

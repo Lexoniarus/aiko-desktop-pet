@@ -6,7 +6,10 @@ Thanks for helping improve Aiko. The aim is a reliable, **local-first** Windows 
 
 Read [README.md](README.md) for setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for object ownership, and [docs/GITHUB_WORKFLOW.md](docs/GITHUB_WORKFLOW.md) for the branch/PR workflow.
 
-The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Running Aiko requires **no third-party Python package**. Some CI quality tools are installed only for development and tests.
+The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11.
+Install `requirements.txt` in the interpreter you use for Aiko and tests; it
+pins Astronomy Engine for the offline horoscope. CI quality tools are separate
+development dependencies. The Windows setup creates and verifies `.venv`.
 
 ## Development workflow
 
@@ -33,6 +36,36 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 
 6. Open a pull request to `main`. Describe changed behavior, tests and any Windows-specific manual checks. Do not merge with failing CI.
 
+For a local run that must create no test windows, use
+`python tools/local_test_suite.py`. It blocks native Tk creation, redirects the
+default save into a temporary directory, reports per-case durations and records
+native-only fixtures as explicit skips. `--report <temporary-json-path>` writes
+the measured results outside the repository. This run does not replace native
+visual/input acceptance; inspect its reported skips when recording evidence.
+
+Test behavior and effects without waiting through gameplay timers, reading times
+or cooldowns. Use explicit timestamps, a controlled clock or the existing
+`FakeScheduler` in [tools/reaction_test_support.py](tools/reaction_test_support.py)
+to advance time and invoke scheduled callbacks. Check deadlines, phase ordering,
+effects and cancellation directly. Keep real-time waits limited to short native
+event-loop checks that actually need them; do not replay full dialogue or
+animation durations merely to reach the next assertion.
+
+For integrated widget flows, enter
+`ControlledTkTime` from [tools/tk_test_time.py](tools/tk_test_time.py) before
+constructing the test's pet and register pet cleanup afterwards. Its `advance()`
+executes due callbacks chronologically, including nested timers and cancellation,
+while keeping wall, monotonic and active-session clocks aligned. Native widget
+events still run through Tk. Keep its patches scoped to the isolated test process
+and use a temporary save; never attach this driver to a running user instance.
+
+Construct integrated GUI fixtures with `create_test_desktop` from
+[tools/desktop_test_support.py](tools/desktop_test_support.py). It composes the
+real desktop with a threadless activity monitor; GUI cases inject the readings
+they need. Real sensor sampling and worker scheduling belong to the dedicated
+hardware tests. This avoids repeated GPU subprocesses and prevents sensor-thread
+garbage collection from disposing old Tk interpreters on the wrong thread.
+
 CI enforces PEP 8 whitespace, blank lines and 88-character lines, unused imports,
 import ordering and Python identifier conventions across application code,
 tests and tools. Ruff preview rules are enabled with its pinned version; only
@@ -50,7 +83,7 @@ documentation with superseded task checklists.
 - **One mutable pet aggregate:** `pet/state.py`. Pure domain policies calculate transitions; `PetState` applies them.
 - **Typed application ports:** do not import or manipulate Tk from `application/` or put OS sensors in the pet domain.
 - **UI ownership:** `AnimatedPet` handles character animation; `HoverUi` handles accessory windows. Coordinate through named callbacks.
-- **Save compatibility:** preserve the version-one save schema and `AIKO_SAVE_PATH` behavior unless migration is explicitly designed.
+- **Save compatibility:** preserve SQLite snapshot/revision contracts and strict supported legacy JSON import. `AIKO_SAVE_PATH` keeps its designated-source alias behavior.
 - **Canonical imports:** import classes and functions from their owning packages. Removed flat-module paths and desktop forwarding attributes are listed in [the migration guide](docs/ARCHITECTURE.md#import-migration). Keep regression coverage and document changes to callable interfaces.
 - **Language:** technical docs and code identifiers in English; authored UI text and Aiko's dialogue remain in German.
 
@@ -58,7 +91,7 @@ A real Windows smoke test is required for window focus, transparency, taskbar pl
 
 ## Protect users and contributors
 
-Never commit a personal `.env`, tokens, save files, raw activity logs, privately obtained assets, fonts or build artifacts. Check `git diff --cached` in addition to the exclusions in `.gitignore`. Tests must use isolated temporary save paths and must not overwrite `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
+Never commit a personal `.env`, tokens, save files, raw activity logs, privately obtained assets, fonts or build artifacts. Check `git diff --cached` in addition to the exclusions in `.gitignore`. Tests must use isolated temporary save paths and must not overwrite `%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3` or its legacy `state.json`.
 
 Please avoid attaching unredacted system logs, window titles or personal file paths to public issues. For sensitive vulnerabilities, follow the
 [security reporting policy](SECURITY.md) rather than posting exploit

@@ -1,0 +1,63 @@
+"""Embedded game choice; deferred application admission remains authoritative."""
+
+from __future__ import annotations
+
+import tkinter as tk
+from functools import partial
+from typing import Callable
+
+from ...games.contracts import GameId
+from ...pet.content import GERMAN_TEXT
+from ..common.image_button import ImageButton, update_button_state
+from ..common.skin import AikoSkin
+from ..view_models.emotional_text import GAME_FILES, GAME_ICONS
+from .embedded_selector import EmbeddedSelector
+from .hover_contracts import SelectorCloseReason
+
+
+class GameMenu(EmbeddedSelector):
+    def __init__(
+        self,
+        parent: tk.Frame,
+        *,
+        choices: tuple[GameId, ...],
+        selected: Callable[[GameId], None],
+        closed: Callable[[SelectorCloseReason], None],
+        skin: AikoSkin,
+        can_select: Callable[[], bool],
+    ) -> None:
+        super().__init__(
+            parent, skin, title=GERMAN_TEXT.format("game.select"), closed=closed
+        )
+        self._selected, self._can_select = selected, can_select
+        self.buttons: dict[GameId, ImageButton] = {}
+        for game in choices:
+            image = (
+                skin.images.file(GAME_FILES[game.value], 40)
+                if game.value in GAME_FILES
+                else skin.images.icon(GAME_ICONS[game.value], 40)
+            )
+            button = skin.button(
+                self.scroll.body,
+                GERMAN_TEXT.format(f"game.name.{game.value}"),
+                partial(self.choose, game),
+                size="menu_game",
+                icon=image,
+                align_left=True,
+            )
+            button.pack(fill="x", pady=4)
+            self.buttons[game] = button
+        self.scroll.adopt()
+        self.refresh()
+
+    def refresh(self) -> None:
+        if not self._closed:
+            allowed = self._can_select()
+            for button in self.buttons.values():
+                update_button_state(button, enabled=allowed)
+
+    def choose(self, game: GameId) -> None:
+        if self._closed or game not in self.buttons or not self._can_select():
+            return
+        self.close()
+        self._selected(game)

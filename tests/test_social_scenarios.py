@@ -5,18 +5,20 @@ speak follows observations, that silence is real, and that no unobserved
 program/user activity can be invented.
 """
 
-import json
 import random
 import re
 import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.adaptive_policy import ActivityMode
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -53,9 +55,6 @@ def scene(
         uptime_hours=uptime,
         prolonged_work_seconds=duration,
         rest_seconds=rest,
-        can_sleep=False,
-        should_wake=False,
-        can_nap=False,
     )
 
 
@@ -86,14 +85,16 @@ class ClickStoryTests(unittest.TestCase):
                 None,
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 30), "irritated")
+        self.assertEqual(self.mind.reaction_tone(30), ReactionTone.IRRITATED)
         self.assertEqual(
             require_reaction(
                 self.mind.click("right", self.state, self.context, 50)
             ).event,
             "click_right",
         )
-        self.assertEqual(self.mind.emotion(self.state, 50), "calm")
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_good_mood_turns_provocation_into_playful_teasing(self):
         set_test_pet_values(self.state, mood=94)
@@ -115,7 +116,12 @@ class ClickStoryTests(unittest.TestCase):
                 "click_last_word",
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 58), "playful")
+        self.assertIn(
+            SituationalCondition.PLAYFUL,
+            self.mind.dialogue_context(
+                self.state, context_at(1800000000), 58
+            ).situational_conditions,
+        )
 
     def test_low_energy_and_recent_care_change_early_clicks(self):
         set_test_pet_values(self.state, energy=19)
@@ -126,7 +132,7 @@ class ClickStoryTests(unittest.TestCase):
             "click_sleepy",
         )
         new_mind = make_aiko_mind(started_at=0.0, rng=random.Random(1))
-        new_mind.after_care("pet", 30)
+        new_mind.record_accepted_care("pet", 30)
         self.assertEqual(
             require_reaction(
                 new_mind.click("left", PetState(), self.context, 35)
@@ -173,14 +179,18 @@ class ClickStoryTests(unittest.TestCase):
             all("CPU" not in r.text and "GPU" not in r.text for r in reactions)
         )
 
-    def test_sleep_does_not_wake_and_is_not_click_spam(self):
+    def test_sleep_requests_quiet_before_requesting_a_wake_transition(self):
         set_test_pet_values(self.state, sleeping=True)
-        for i in range(12):
+        for i in range(3):
             r = self.mind.click("left", self.state, self.context, 30 + i)
             assert r is not None
             self.assertEqual(r.event, "sleep_click")
+            self.assertFalse(self.mind.click_wakes)
+        self.assertIsNone(self.mind.click("left", self.state, self.context, 33))
+        self.assertTrue(self.mind.click_wakes)
+        # The application commits waking; dialogue selection cannot mutate her.
         self.assertTrue(self.state.sleeping)
-        self.assertEqual(self.mind.irritated_until, -1)
+        self.assertEqual(self.mind.irritation_reaction_until, -1)
 
     def test_work_interruption_and_recovery_payoff(self):
         self.mind.set_situation(scene(duration=150), now=20)
@@ -249,17 +259,11 @@ class ClickStoryTests(unittest.TestCase):
             ).event,
             "after_work_thought",
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 770)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 770),
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 1500)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 1500),
         )
 
     def test_no_fake_work_recovery_after_short_spike(self):
@@ -360,23 +364,14 @@ class ClickStoryTests(unittest.TestCase):
 
     def test_unavailable_situation_does_not_invent_usage(self):
         self.mind.set_situation(None)
-        reaction = self.mind.select_spontaneous_reaction(self.state, self.context, 100)
-        assert reaction is not None
-        self.assertNotIn(
-            reaction.event,
-            (
-                "work_concentrating",
-                "work_late",
-                "work_long_thought",
-                "work_finished_long",
-                "return_working",
-            ),
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 100),
         )
 
 
 class CatalogueContractTests(unittest.TestCase):
     def test_followup_schema_and_nonexistent_animation_rejected(self):
-        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw = dialogue_source_fixture()["lines"][0]
         for key, bad in [
             ("followup_text", ""),
             ("followup_delay_ms", 200),
@@ -389,19 +384,25 @@ class CatalogueContractTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     Line.parse(data)
 
-    def test_all_sequence_text_is_short_and_no_fiction_or_hardware(self):
+    def test_sequence_copy_is_short_and_hardware_has_observation_context(self):
         for line in DialogueBook.from_file().lines:
             for beat in line.beats:
                 if beat.kind != "text":
                     continue
                 self.assertLessEqual(len(beat.content), 125)
-                for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
+                for forbidden in ("Academy", "Kobe"):
                     self.assertIsNone(
                         re.search(
                             r"\b" + re.escape(forbidden) + r"\b",
                             beat.content,
                             flags=re.IGNORECASE,
                         )
+                    )
+                if re.search(r"\b(CPU|GPU|RAM)\b", beat.content, re.IGNORECASE):
+                    self.assertTrue(
+                        line.event.startswith("computer_")
+                        or line.event in {"work_long_thought", "pet_during_work"},
+                        line.id,
                     )
 
     def test_all_new_events_have_actual_authored_lines(self):

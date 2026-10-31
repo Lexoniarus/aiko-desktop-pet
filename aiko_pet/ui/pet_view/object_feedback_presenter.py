@@ -10,8 +10,20 @@ from .reaction_player import ReactionPlayer
 
 
 class ObjectFeedbackPresenter:
+    OFFER_EVENTS = ("object_offer", "object_refuse")
+
     def __init__(self, player: ReactionPlayer, items: ItemCatalog) -> None:
         self._player, self._items = player, items
+
+    def cancel_offer(self) -> None:
+        """Ending a cursor gesture must not cancel unrelated character speech."""
+        if self._player.event in self.OFFER_EVENTS:
+            self._player.cancel()
+
+    @property
+    def non_offer_playback_active(self) -> bool:
+        """An offer's own preview does not exclude its authorized handover."""
+        return self._player.active and self._player.event not in self.OFFER_EVENTS
 
     def show(
         self, cue: ObjectFeedback, reaction: Reaction,

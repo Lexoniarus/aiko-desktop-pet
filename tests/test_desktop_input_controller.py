@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.desktop.input import DesktopInput, DesktopInputActions
@@ -47,6 +48,9 @@ class DesktopInputTests(unittest.TestCase):
                 dismiss_outside=lambda x, y: self.events.append(
                     f"dismiss:{x}:{y}",
                 ),
+                dismiss_passively=lambda x, y: self.events.append(
+                    f"passive:{x}:{y}",
+                ),
                 open_status=lambda: self.events.append("status"),
                 quit=lambda: self.events.append("quit"),
                 closed=lambda: self.closed,
@@ -61,6 +65,40 @@ class DesktopInputTests(unittest.TestCase):
             patch.object(self.root, "winfo_screenwidth", return_value=1920),
         ):
             self.assertEqual(self.input.pointer_sample(), (321, 654, 1920))
+
+    def test_entry_checks_origin_before_dispatch_but_keeps_clicks(self) -> None:
+        self.input.actions = replace(self.input.actions, allow_hover=lambda: False)
+        self.input.on_enter()
+        self.assertEqual(self.events, [])
+        self.input.actions.left_click(None)
+        self.assertEqual(self.events, ["left"])
+        self.input.actions = replace(self.input.actions, allow_hover=lambda: True)
+        self.input.on_enter()
+        self.assertEqual(self.events, ["left", "enter"])
+
+    def test_native_click_dispatches_without_preclaiming_contact(self):
+        self.input.actions = replace(
+            self.input.actions, allow_hover=lambda: False,
+        )
+        self.input.on_left_click()
+        self.input.on_right_click()
+        self.assertEqual(self.events, ["left", "right"])
+
+    def test_native_enter_opens_hover_without_claiming_input(self):
+        self.input.actions = replace(
+            self.input.actions,
+        )
+        self.input.on_enter()
+        self.assertEqual(self.events, ["enter"])
+
+    def test_settings_open_does_not_claim_character_input(self):
+        self.input.actions = replace(
+            self.input.actions,
+        )
+        event = tk.Event()
+        event.x_root, event.y_root = 25, 39
+        self.input.on_menu(event)
+        self.assertEqual(self.events, ["menu:25:39"])
 
     def test_initial_bindings_preserve_sprite_events(self) -> None:
         self.input.initialize()
@@ -111,6 +149,19 @@ class DesktopInputTests(unittest.TestCase):
         self.closed = True
         self.input.dismiss_after_focus_loss()
         self.assertEqual(self.events, [])
+
+    def test_focus_loss_is_passive_but_tk_and_global_clicks_are_explicit(self):
+        event = tk.Event()
+        event.x_root, event.y_root = 5, 7
+        with (
+            patch.object(self.root, "winfo_pointerx", return_value=5),
+            patch.object(self.root, "winfo_pointery", return_value=7),
+        ):
+            self.input.dismiss_after_focus_loss()
+            self.input.on_tk_press(event)
+            self.mouse.pressed = True
+            self.input.poll_global_click()
+        self.assertEqual(self.events, ["passive:5:7", "dismiss:5:7", "dismiss:5:7"])
 
 
 if __name__ == "__main__":

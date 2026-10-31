@@ -1,0 +1,5272 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "feed-variety-request",
+      "event": "feed_variety_request",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war jetzt öfter dasselbe. Könnte ich beim nächsten Mal etwas anderes essen?"
+        }
+      ]
+    },
+    {
+      "id": "feed-variety-reminder",
+      "event": "feed_variety_reminder",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich esse es, aber ich hatte dich doch um etwas anderes gebeten."
+        }
+      ]
+    },
+    {
+      "id": "pet-enough-gentle",
+      "event": "pet_enough",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm, danke! Das reicht mir fürs Erste."
+        }
+      ]
+    },
+    {
+      "id": "pet-enough-firm",
+      "event": "pet_enough_firm",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wirklich, genug gekrault. Lass mich jetzt bitte kurz."
+        }
+      ]
+    },
+    {
+      "id": "pet-boundary-ignored",
+      "event": "pet_boundary_ignored",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte dich gerade gebeten aufzuhören. Bitte lass mir etwas Abstand."
+        }
+      ]
+    },
+    {
+      "id": "pet-refused-boundary",
+      "event": "pet_refused",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bitte gerade nicht streicheln. Ich brauche etwas Abstand."
+        }
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0198",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, du hast an mein Essen gedacht. Danke."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0199",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Für mich ist auch etwas dabei? Das ist nett von dir."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0200",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für die Mahlzeit. Damit hatte ich gerade nicht gerechnet."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0201",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, du hast mir Essen gebracht! Darüber freue ich mich."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0202",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke! Jetzt freue ich mich richtig auf meine Essenspause."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0203",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du denkst an mich. Da schmeckt es gleich noch besser."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0204",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bist lieb. Danke fürs Essen!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0205",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Essen und ein Besuch von dir. Da habe ich gleich zweimal Grund zur Freude."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0206",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, danke! Bleibst du noch bei mir, während ich esse?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0207",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke, du! Mit dir habe ich es schon gut."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0208",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast wieder an mich gedacht. Jetzt fehlt nur noch deine Gesellschaft beim Essen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_meal-0209",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, mein Essen ist da, und du auch. So gefällt mir das."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0210",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, eine Kleinigkeit für mich? Danke."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0211",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Snack? Das ist eine nette Überraschung."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0212",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke dir. Etwas Kleines passt gerade gut."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0213",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bringst mir etwas zum Knabbern! Lieb von dir."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0214",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke! Eine kleine Überraschung zwischendurch freut mich."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0215",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, für mich mitgebracht? Da nehme ich gern einen Bissen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0216",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, Besuch mit Verpflegung. Das gefällt mir!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0217",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Snack von dir? Dann ist die nächste Pause ja gerettet."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0218",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für die Kleinigkeit! Jetzt bleib aber auch noch ein bisschen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0219",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du weißt, wie du mich zum Strahlen bringst. Danke für den Snack!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0220",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, danke, du! Beim Knabbern mag ich dich besonders gern neben mir haben."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_snack-0221",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas für meinen Magen und Aufmerksamkeit von dir. Da bin ich glücklich."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0222",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nein, danke. Ich bin schon satt."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0223",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist nett, aber ich bekomme nichts mehr herunter."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0224",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bitte heb es auf. Ich habe gerade genug gegessen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0225",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke dir, aber mein Magen ist noch voll."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0226",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das sieht gut aus. Trotzdem passt gerade nichts mehr hinein."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0227",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch eine Portion schaffe ich nicht. Später vielleicht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0228",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du meinst es gut, aber ich bin wirklich satt."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0229",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, noch mehr? Da muss mein Magen passen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0230",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heb es lieber auf. Das wäre jetzt zu viel für mich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0231",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag deine Fürsorge, aber noch mehr passt wirklich nicht hinein."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0232",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kannst mich gern weiter verwöhnen. Nur gerade bitte ohne Essen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_full-0233",
+      "event": "feed_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, du. Mein Magen hat schon genug bekommen. Bleib du lieber noch da."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0234",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das gab es schon öfter. Nächstes Mal vielleicht etwas anderes?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0235",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke. Ich hätte beim nächsten Mal gern ein bisschen Abwechslung."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0236",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wieder dasselbe? Na gut. Etwas anderes wäre auch schön."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0237",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das kenne ich inzwischen gut. Bringst du mir nächstes Mal etwas anderes?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0238",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schon wieder diese Sorte? Ich hätte auch Lust auf etwas Neues."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0239",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich esse es, aber eine andere Sorte würde mich freuen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0240",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast dich wohl auf eine Sorte eingeschossen. Ich hätte gern mal eine andere."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0241",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schon wieder das? Mein Speiseplan könnte etwas Abwechslung vertragen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0242",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke, aber nächstes Mal darfst du mich ruhig anders überraschen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0243",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich mag nicht immer dasselbe essen. Bring mir bitte mal etwas anderes."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0244",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wieder diese Sorte? Du machst es dir beim Aussuchen aber leicht."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-feed_repeat-0245",
+      "event": "feed_repeat",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich kenne den Geschmack langsam auswendig. Nächstes Mal suche ich mit aus, ja?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "v011-energy_drink-01",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Oh, das hält mich etwas länger wach. Danke."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-energy_drink-02",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Danke für das Getränk. Damit habe ich wieder mehr Schwung."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-energy_drink-03",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ein kleiner Schub tut gut. Danke dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-energy_drink-04",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ah, etwas mehr Schwung! Danke, du."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v011-energy_drink-05",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Du bringst mir etwas zum Wachbleiben. Danke für den Schub!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-energy_drink-friend-close-01",
+      "event": "energy_drink",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ha, jetzt bin ich wieder munterer. Lieb, dass du an mich denkst."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v011-energy_drink_full-02",
+      "event": "energy_drink_full",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Nein, danke. Ich bin schon wach genug."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-energy_drink_full-0053",
+      "event": "energy_drink_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Getränk brauche ich gerade nicht. Bitte heb es auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-energy_drink_full-0198",
+      "event": "energy_drink_full",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke, aber noch einen Schub brauche ich nicht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-energy_drink_full-friend-close-01",
+      "event": "energy_drink_full",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Du willst mich noch wacher machen? Ich bin schon ganz gut dabei."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-energy_drink_full-friend-close-02",
+      "event": "energy_drink_full",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Heb den Drink auf. So müde sehe ich doch gar nicht aus!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-energy_drink_full-friend-close-03",
+      "event": "energy_drink_full",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Lieb von dir, aber mein Kopf ist gerade wach genug."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v011-pet_close-01",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "He … langsam bitte. Ein bisschen Streicheln ist in Ordnung."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v011-pet_close-02",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So ist es okay. Ich muss mich an so viel Nähe noch gewöhnen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v011-pet_close-03",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein bisschen kannst du mich streicheln. Bitte ganz vorsichtig."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-pet-0105",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh … ein bisschen ist in Ordnung."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet-0106",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So ist es ganz angenehm. Du kannst noch etwas weitermachen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet-0107",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm. Langsam gewöhne ich mich daran, dass du mich streichelst."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet-0108",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … da hast du eine gute Stelle erwischt."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet-0109",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, das tut gut. Du darfst gern noch weitermachen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet-0110",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dafür bleibe ich gern bei dir stehen. Mhm …"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet-0111",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du bist wieder da mit deiner Hand. Komm, ich mache es mir bequem."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet-0112",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … wenn ich die Augen schließe, darfst du trotzdem weitermachen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet-0113",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, genau so. Von dir lasse ich mich gern verwöhnen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "v012-pet_needs_affection-02",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na gut … ein bisschen kannst du mich streicheln."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v012-pet_needs_affection-03",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Du möchtest mich streicheln? Dann lass ich dich mal."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v012-pet_needs_affection-04",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein wenig ist in Ordnung. Ich bleibe hier stehen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0129",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … das habe ich gerade vermisst."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0130",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kannst gern weitermachen. Das tut mir gut."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0131",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, ja. Ein bisschen Streicheln kommt jetzt richtig."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0132",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, endlich ein bisschen Streicheln. Bleibst du noch dabei?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0133",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau das hat mir gefehlt. Bitte noch ein bisschen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0134",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … ich habe mich schon nach deiner Hand umgesehen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0135",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da bist du ja. Jetzt möchte ich dich noch nicht wieder hergeben."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0136",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, bleib noch so. Das habe ich wirklich gebraucht."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet_needs_affection-0137",
+      "event": "pet_needs_affection",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach … kannst du noch weiterstreicheln? Ich mag gerade gar nicht weg."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0114",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein bisschen Streicheln geht. Ich muss mich dabei weiter konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0115",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ganz vorsichtig, ja? Ich bin noch am Arbeiten."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0116",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So ist es in Ordnung. Ich arbeite beim Streicheln einfach weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0117",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm, danke. Aber lass mich danach bitte weiterarbeiten."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0118",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist lieb. Ich muss nur bei meiner Arbeit bleiben."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0119",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein bisschen geht. Ich brauche meinen Kopf gerade trotzdem hier."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0120",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … das tut gut, auch wenn ich mich gerade konzentrieren muss."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0121",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Streicheln bei der Arbeit? Da habe ich nichts dagegen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0122",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, danke. Ich arbeite weiter, aber das genieße ich nebenbei."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0123",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bitte weitermachen. Arbeit hin oder her, das lasse ich mir nicht entgehen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0124",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … so arbeite ich doch gleich lieber mit dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-pet_during_work-0125",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kannst mich gern weiterstreicheln. Ich bleibe trotzdem bei der Sache."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "v011-play_close-03",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du möchtest mit mir spielen? Ja, gern."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play-0175",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine Runde zusammen? Ich wäre dabei."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play-0176",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, ein Spiel. Das probiere ich gern mit dir."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play-0177",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Spiel? Da bin ich dabei!"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play-0178",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja, lass uns spielen. Ich habe schon Lust auf eine Runde mit dir."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play-0179",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du forderst mich heraus? Na dann, los!"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play-0180",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, endlich eine Herausforderung! Ich bin bereit."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play-0181",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich übe schon mal mein Siegerlächeln. Nur für alle Fälle."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play-0182",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine Runde mit dir? Dafür lasse ich meinen Spaziergang stehen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play-0183",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na los, du! Ich habe richtig Lust, gegen dich anzutreten."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-play-0184",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt wird gespielt! Und ich gebe dir ganz bestimmt keinen Sieg geschenkt."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-play-0185",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Komm, wir spielen. Mein Siegerlächeln will schließlich auch mal raus."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0186",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin zu müde zum Spielen. Später vielleicht."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0187",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde gern, aber dafür fehlt mir gerade die Kraft."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0188",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heute schaffe ich gerade keine Runde. Ich muss mich ausruhen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0189",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, erst brauche ich etwas Schlaf. Danach spiele ich gern mit dir."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0190",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Kopf würde jetzt nur müde hinterherkommen. Lass uns später spielen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0191",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag spielen, aber gerade fallen mir die Augen zu."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0192",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ausgerechnet jetzt, wo ich so müde bin? Die Revanche muss warten."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0193",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich will dich schon schlagen können. Lass mich erst etwas ausruhen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0194",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Für eine gute Runde mit dir muss ich erst wieder munter werden."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0195",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich schlafe dir sonst mitten in der Runde ein. Spielen wir später?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0196",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte ja Lust aufs Spielen, aber mein Gähnen ist gerade stärker."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-play_tired-0197",
+      "event": "play_tired",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heb dir die Herausforderung auf. Nach etwas Schlaf bin ich wieder dabei!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0049",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Entschuldige … hättest du etwas zu essen für mich?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0050",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn es passt, würde ich gern etwas essen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0051",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Darf ich dich um eine Kleinigkeit zu essen bitten?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0052",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich hätte Appetit. Hast du etwas für mich?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0053",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde jetzt gern etwas knabbern. Bringst du mir etwas?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0054",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Magst du mir etwas zu essen geben? Das wäre schön."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0055",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Magen hätte gern Besuch von einem Snack. Hast du etwas für mich?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0056",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, versorgst du mich mit etwas Leckerem?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0057",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte Lust auf eine Essenspause mit dir. Bringst du etwas mit?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0058",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, dein kleines Desktop-Pet möchte gefüttert werden. Hast du etwas für mich?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0059",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hast du einen Snack für mich übrig? Ich würde ihn am liebsten bei dir essen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_feed-0060",
+      "event": "care_request_feed",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte gern etwas zu essen. Und dich noch ein bisschen dazu."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0073",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wäre ein bisschen Streicheln in Ordnung?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0074",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn du gerade Zeit hast … magst du mich streicheln?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0075",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde ein wenig Streicheln gerade ganz angenehm finden."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0076",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, magst du mich ein bisschen streicheln?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0077",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hast du eine Hand für mich frei? Ein bisschen Streicheln wäre schön."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0078",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte gern etwas Zuwendung. Kannst du mich streicheln?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0079",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Kommst du mich streicheln? Ich mache es mir schon mal bequem."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0080",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du könntest mir gerade eine Freude machen. Mit deiner Hand auf meinem Kopf."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0081",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Für eine Streichelpause wäre ich sofort zu haben. Du auch?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0082",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich hätte dich gerade gern ein bisschen für mich. Streichelst du mich?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0083",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich stelle mich schon mal unter deine Hand. Du weißt, was jetzt fehlt?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_pet-0084",
+      "event": "care_request_pet",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Komm, ein bisschen Kopfstreicheln. Dafür rücke ich gern näher zu dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0085",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hättest du Lust, mit mir zu spielen?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0086",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine gemeinsame Runde wäre schön. Wenn du Zeit hast."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0087",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde gern ein Spiel mit dir ausprobieren. Magst du?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0088",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, wie wäre es mit einer Runde Schere, Stein, Papier?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0089",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Spielst du mit mir? Ich könnte etwas Abwechslung gebrauchen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0090",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte Lust auf eine kleine Herausforderung. Bist du dabei?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0091",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Komm, wir spielen eine Runde! Ich möchte sehen, ob ich dich schlage."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0092",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Siegerlächeln langweilt sich. Hilfst du mit einer Spielrunde aus?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0093",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich hätte Lust auf ein Duell. Traust du dich?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0094",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fordere dich heraus! Eine Runde nur für uns beide?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0095",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Komm spielen, du. Ich will gegen meinen Lieblingsgegner antreten."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_play-0096",
+      "event": "care_request_play",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine Runde mit dir wäre jetzt schön. Gewinnen würde ich natürlich auch gern."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0061",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte etwas zu erzählen. Möchtest du zuhören?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0062",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn du Zeit hast, würde ich dir gern etwas erzählen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0063",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Darf ich dir einen Gedanken erzählen, der mir gerade gekommen ist?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0064",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich möchte dir etwas erzählen. Hast du Zeit?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0065",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir geht etwas durch den Kopf. Hörst du mir ein bisschen zu?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0066",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hast du Lust auf eine Unterhaltung? Ich hätte da etwas."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0067",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, hör mal zu. Ich möchte wissen, was du davon hältst."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0068",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe etwas im Kopf, das ich mit dir teilen möchte. Hörst du zu?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0069",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Kommst du zu mir zum Reden? Deine Meinung interessiert mich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0070",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich möchte dir etwas erzählen. Dafür hätte ich dich gern ganz bei mir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0071",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich platze gleich damit heraus. Kommst du zum Reden zu mir?"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-care_request_talk-0072",
+      "event": "care_request_talk",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hast du ein bisschen Zeit für uns? Ich möchte dir unbedingt etwas erzählen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-sleep-0138",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich lege mich jetzt etwas schlafen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-sleep-0139",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Augen werden schwer. Ich mache ein Nickerchen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-sleep-0140",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich brauche Schlaf. Bis nach meiner Pause."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-sleep-0141",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich kuschle mich hier zum Schlafen hin."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-sleep-0142",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mache jetzt die Augen zu. Danach bin ich wieder dabei."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-sleep-0143",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleines Nickerchen muss sein. Bis später, du."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-sleep-0144",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gehe schlafen. Mein Gähnen lässt mir keine Wahl mehr."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-sleep-0145",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, ich rolle mich für eine Schlafpause zusammen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-sleep-0146",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mache ein Nickerchen. Nicht weglaufen, bis ich wieder wach bin, ja?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-sleep-0147",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich kuschle mich jetzt zum Schlafen hin. Schön, dass du noch hier bist."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-sleep-0148",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, ich mache die Augen zu. Danach hätte ich gern wieder Zeit mit dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-sleep-0149",
+      "event": "sleep",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gute Schlafpause für mich. Du darfst mich dabei gern niedlich finden."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-wake-0150",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, ich bin wieder wach."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-wake-0151",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Mein Nickerchen ist vorbei."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-wake-0152",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mache die Augen wieder auf. Hallo zurück."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "voice-wake-0153",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, wieder wach! Schön, dich zu sehen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-wake-0154",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Augen habe ich schon wieder offen. Was machen wir jetzt?"
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-wake-0155",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da bin ich wieder. Meine Augen machen jetzt auch mit."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-wake-0156",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huch, schon wieder wach! Na, was machen wir zusammen?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-wake-0157",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin zurück vom Nickerchen. Hast du Zeit für mich?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-wake-0158",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, wach! Jetzt möchte ich wieder mitmischen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "voice-wake-0159",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … du bist da. Das ist ein schöner Anblick nach dem Schlafen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-wake-0160",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wach und wieder bei dir! Hach, so mag ich das."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "voice-wake-0161",
+      "event": "wake",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Nickerchen ist vorbei. Jetzt hätte ich gern etwas von deiner Zeit."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "wake-06",
+      "event": "wake",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waving",
+      "weight": 2,
+      "cooldown_seconds": 90,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin wieder wach, aber noch ziemlich schläfrig."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "wake-01",
+      "event": "wake",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 35,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Oh … ich habe die Augen wieder offen. Müdigkeit ist trotzdem noch da."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "wake-02",
+      "event": "wake",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 35,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Mhm, du bist da. Ich bin noch müde, aber ich schaue schon wieder zu dir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "wake-04",
+      "event": "wake",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 35,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Wieder wach, du. Ganz abgeschüttelt habe ich die Müdigkeit noch nicht."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "state-energy_drink-acquaintance-familiar-01",
+      "event": "energy_drink",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Oh, danke. Jetzt bekomme ich die Augen wieder besser auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "state-energy_drink-acquaintance-familiar-02",
+      "event": "energy_drink",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Das Getränk hilft mir gegen die Müdigkeit. Danke dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "state-energy_drink-friend-close-01",
+      "event": "energy_drink",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, das habe ich gebraucht. Danke fürs Wachmachen, du!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "state-energy_drink-friend-close-02",
+      "event": "energy_drink",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "jumping",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Danke! Du hast an meine schweren Augen gedacht. Jetzt bin ich wieder munterer."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "pet-09",
+      "event": "pet",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waving",
+      "weight": 2,
+      "cooldown_seconds": 50,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin müde. Ganz sanft ist das Streicheln aber schön."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "pet-10",
+      "event": "pet",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 90,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm, so kann ich mich ein bisschen ausruhen. Bitte ganz langsam."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-pet-0112",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … ein bisschen ist gut. Ich bin nur schon ziemlich müde."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-pet-0113",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So kann ich mich beim Streicheln etwas entspannen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-pet-0114",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kannst gern weitermachen. Meine müden Augen dürfen dabei zufallen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-pet-0115",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, Streicheln passt zu meinen schweren Augen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-pet-0116",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … bleib bei mir, auch wenn ich dabei gleich wegnicke."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-pet-0117",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du und deine Hand bleiben bitte noch hier. Ich mache nur die Augen zu."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-pet-0136",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gerade gereizt. Bitte streichle mich ganz vorsichtig."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-pet-0137",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleines bisschen ist okay. Ich bin gerade nur etwas knurrig."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-pet-0138",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heute bin ich etwas knurrig. So ein bisschen Streicheln geht aber."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-pet-0139",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gerade knurrig. Ganz sanft ist das Streicheln trotzdem okay."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-pet-0140",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin heute etwas gereizt. Ein kleines bisschen Streicheln ist trotzdem schön."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-pet-0141",
+      "event": "pet",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm … so geht es. Viel vertrage ich heute aber nicht."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "pet-01",
+      "event": "pet",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 45,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du darfst mich streicheln. Auch mit meiner Knurrlaune bin ich gern bei dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "pet-03",
+      "event": "pet",
+      "conditions": [
+        {
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated"
+          ]
+        },
+        {
+          "reaction_tones": [
+            "irritated"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 45,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf … ja, das tut trotzdem gut. Bitte bleib noch so bei mir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "v010-pet_during_work-01",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Ein bisschen geht schon. Ich muss mich nur weiter konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v010-pet_during_work-02",
+      "event": "pet_during_work",
+      "animation": "waiting",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Na gut … streichel mich etwas. Ich bleibe dabei bei meiner Arbeit."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "v010-pet_during_work-03",
+      "event": "pet_during_work",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Mhm, das hat mir gefehlt. Ich arbeite dabei einfach weiter."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "state-pet_during_work-familiar-01",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Danke. Etwas Streicheln bei der Arbeit kommt gerade recht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "state-pet_during_work-friend-01",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, deine Hand habe ich vermisst. Auch mitten in der Arbeit."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "state-pet_during_work-friend-02",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Das tut gut. Lass dich von meiner Arbeit nicht vom Streicheln abhalten."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "state-pet_during_work-close-01",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Endlich deine Hand bei mir. Dann arbeite ich eben eingekuschelt weiter."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "state-pet_during_work-close-02",
+      "event": "pet_during_work",
+      "animation": "review",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_affection"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Mhm … bleib so. Ich brauche meine Konzentration und gerade auch ein bisschen dich."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0109",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, danke. Ich habe Hunger und bin müde. Erst esse ich etwas."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0110",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast an mein Essen gedacht. Danke. Danach brauche ich wohl Schlaf."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0111",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für die Mahlzeit! Danach lege ich meine müden Beine still."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0133",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das kommt richtig. Ich esse erst, bevor mir die Augen zufallen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0134",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du rettest meine Essenspause! Danach muss ich mich aber ausruhen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-feed_meal-0135",
+      "event": "feed_meal",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke, du. Erst etwas in den Magen, dann etwas Schlaf für meine Augen."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "feed_meal-01",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 75,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, danke. Bleibst du beim Essen bei mir? Danach kuschle ich mich zum Schlafen hin."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "feed_meal-02",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 75,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hungrig und müde, aber du denkst an mich. Ich esse erst mal etwas."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "feed-mixed-needs-0",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Danke für den Snack. Ich habe Hunger, brauche danach aber trotzdem Schlaf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "feed-mixed-needs-1",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas Kleines passt. Danach ruhe ich meine müden Beine aus."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "feed-mixed-needs-2",
+      "event": "feed_snack",
+      "animation": "idle",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kommst mit dem Snack genau richtig. Danach fallen mir wohl die Augen zu."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "feed_snack-01",
+      "event": "feed_snack",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety",
+            "low_energy"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 70,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Danke! Ich knabbere erst etwas und kuschle mich danach zum Ausruhen hin."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "feed_meal-06",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 90,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Oh, danke! Mein Magen hat schon geknurrt."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "feed_meal-07",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 90,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Das Essen kommt genau richtig! Ich habe schon richtig Hunger."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "feed_meal-03",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 75,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, du bringst Essen! Mein Magen hätte dich gerade gern umarmt."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "feed_meal-04",
+      "event": "feed_meal",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 75,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "question"
+        },
+        {
+          "kind": "text",
+          "content": "Du hast meinen hungrigen Blick bemerkt! Danke, jetzt kann ich endlich essen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-play-0124",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine kleine Runde traue ich mir trotz der Müdigkeit noch zu."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-play-0125",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin etwas müde. Ein kurzes Spiel würde ich aber gern versuchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-play_close-01",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine Runde mit dir schaffe ich noch. Danach möchte ich mich ausruhen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v011-play_close-02",
+      "event": "play",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gähne zwar, aber für ein kleines Duell mit dir bin ich noch zu haben."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    }
+  ]
+}

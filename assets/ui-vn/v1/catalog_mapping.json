@@ -1,0 +1,240 @@
+{
+  "date": "2026-10-20",
+  "status": "artwork mapping only; design keys and labels are not runtime types or final UI wording",
+  "rule_source": "../../../docs/CARE_TIME_IMPLEMENTATION_PLAN.md",
+  "moodlets": [
+    {
+      "family": "food_wish_fulfillment",
+      "label": "Genau das Gewünschte",
+      "polarity": "positive",
+      "file": "icons/moodlet_food_fulfilled.png"
+    },
+    {
+      "family": "shared_play_enjoyment",
+      "label": "Gemeinsame Spielfreude",
+      "polarity": "positive",
+      "file": "icons/moodlet_shared_play.png"
+    },
+    {
+      "family": "social_connection",
+      "label": "Verbundenheit",
+      "polarity": "positive",
+      "file": "icons/moodlet_connection.png"
+    },
+    {
+      "family": "social_cheerfulness",
+      "label": "Heiterkeit",
+      "polarity": "positive",
+      "file": "icons/moodlet_cheerful.png"
+    },
+    {
+      "family": "social_enthusiasm",
+      "label": "Begeisterung",
+      "polarity": "positive",
+      "file": "icons/moodlet_enthusiastic.png"
+    },
+    {
+      "family": "unwelcome_closeness",
+      "label": "Zu viel Nähe",
+      "polarity": "negative",
+      "file": "icons/moodlet_crowded.png"
+    },
+    {
+      "family": "repetitive_food",
+      "label": "Immer dasselbe Essen",
+      "polarity": "negative",
+      "file": "icons/moodlet_food_monotony.png"
+    },
+    {
+      "family": "wanted_object_withheld",
+      "label": "Vorenthalten",
+      "polarity": "negative",
+      "file": "icons/moodlet_withheld.png"
+    },
+    {
+      "family": "familiar_arrangement_disrupted",
+      "label": "Vertrauter Platz verändert",
+      "polarity": "negative",
+      "file": "icons/moodlet_disrupted.png"
+    },
+    {
+      "family": "prolonged_hunger_aftereffect",
+      "label": "Vom Hunger zermürbt",
+      "polarity": "negative",
+      "file": "icons/moodlet_hunger_worn.png"
+    },
+    {
+      "family": "prolonged_exhaustion_aftereffect",
+      "label": "Von Erschöpfung gereizt",
+      "polarity": "negative",
+      "file": "icons/moodlet_exhaustion_irritated.png"
+    },
+    {
+      "family": "prolonged_lack_of_stimulation",
+      "label": "Lange unterfordert",
+      "polarity": "negative",
+      "file": "icons/moodlet_unstimulated.png"
+    },
+    {
+      "family": "prolonged_lack_of_contact",
+      "label": "Einsam",
+      "polarity": "negative",
+      "file": "icons/moodlet_lonely.png"
+    },
+    {
+      "family": "prolonged_missing_affection",
+      "label": "Nähe fehlt",
+      "polarity": "negative",
+      "file": "icons/moodlet_missing_closeness.png"
+    },
+    {
+      "family": "game_pride",
+      "label": "Stolz",
+      "polarity": "positive",
+      "file": "icons/moodlet_pride.png"
+    },
+    {
+      "family": "game_relief",
+      "label": "Erleichtert",
+      "polarity": "positive",
+      "file": "icons/moodlet_relief.png"
+    },
+    {
+      "family": "affection_security",
+      "label": "Geborgen",
+      "polarity": "positive",
+      "file": "icons/moodlet_secure.png"
+    },
+    {
+      "family": "repeated_poking",
+      "label": "Genervt vom Pieksen",
+      "polarity": "negative",
+      "file": "icons/moodlet_annoyed.png"
+    }
+  ],
+  "wishes": [
+    {
+      "form": "food_specific",
+      "label": "Ein bestimmtes Essen wünschen",
+      "target": "Eligible existing food ID and its existing picker icon",
+      "target_pattern": "../../../aiko_pet/assets/items/icons/64/{eligible_food_id}.png",
+      "files": [],
+      "scope": "specific food",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "game_shared_play",
+      "label": "Ein bestimmtes Spiel gemeinsam spielen",
+      "files": [
+        "icons/game_rps.png",
+        "icons/game_tic_tac_toe.png",
+        "../../../aiko_pet/assets/playing_cards/card_spades_A.png"
+      ],
+      "scope": "named game",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "game_win_round",
+      "label": "Eine Runde gewinnen",
+      "files": [
+        "icons/game_rps.png",
+        "icons/game_tic_tac_toe.png",
+        "../../../aiko_pet/assets/playing_cards/card_spades_A.png",
+        "icons/moodlet_pride.png"
+      ],
+      "scope": "round",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "game_nonloss_round",
+      "label": "Die nächste Runde nicht verlieren",
+      "files": [
+        "icons/game_rps.png",
+        "icons/game_tic_tac_toe.png",
+        "../../../aiko_pet/assets/playing_cards/card_spades_A.png",
+        "icons/wish_protection_shield.png"
+      ],
+      "scope": "next round",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "game_win_overall",
+      "label": "Insgesamt gewinnen",
+      "files": [
+        "icons/game_rps.png",
+        "icons/game_tic_tac_toe.png",
+        "../../../aiko_pet/assets/playing_cards/card_spades_A.png",
+        "icons/moodlet_pride.png"
+      ],
+      "scope": "UI-rendered predetermined round-block label/progress",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "game_nonloss_overall",
+      "label": "Insgesamt nicht verlieren",
+      "files": [
+        "icons/game_rps.png",
+        "icons/game_tic_tac_toe.png",
+        "../../../aiko_pet/assets/playing_cards/card_spades_A.png",
+        "icons/wish_protection_shield.png"
+      ],
+      "scope": "UI-rendered predetermined round-block label/progress",
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "social_chat",
+      "label": "Plaudern",
+      "files": [
+        "icons/status_social.png"
+      ],
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "social_single",
+      "label": "Einen Spruch erzählen",
+      "files": [
+        "icons/wish_single.png"
+      ],
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "social_twopart",
+      "label": "Einen Witz erzählen",
+      "files": [
+        "icons/wish_twopart.png"
+      ],
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "social_fact",
+      "label": "Einen interessanten Fakt teilen",
+      "files": [
+        "icons/wish_fact.png"
+      ],
+      "marker": "icons/wish_thought_bubble.png"
+    },
+    {
+      "form": "affection_pet",
+      "label": "Gestreichelt werden",
+      "files": [
+        "icons/action_pet.png"
+      ],
+      "marker": "icons/wish_thought_bubble.png"
+    }
+  ],
+  "counts": {
+    "moodlet_families": 18,
+    "positive": 8,
+    "negative": 10,
+    "wish_forms": 11,
+    "new_moodlet_sources": 14,
+    "new_wish_components": 5
+  },
+  "notes": [
+    "No domain triggers, duration, stacking, rewards or save behavior implemented.",
+    "Repeated poking reuses the previously approved generic annoyed icon.",
+    "Wish target, objective badge and round scope are separate; a wish is not a Moodlet.",
+    "Blackjack uses existing playing-card artwork; food uses eligible existing item icons.",
+    "Strength, remaining time and progress are UI text, not image variants."
+  ]
+}

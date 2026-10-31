@@ -104,13 +104,12 @@ class PackageDependencyTests(unittest.TestCase):
                             target == name or target.startswith(name + ".")
                             for name in forbidden
                         ), f"{current} imports forbidden {target}")
-                    if path.parent == SOURCES / "pet":
-                        for node in ast.walk(tree):
-                            if isinstance(node, ast.ImportFrom):
-                                self.assertLessEqual(
-                                    node.level, 1,
-                                    f"{path.name} must stay in the pet context",
-                                )
+                        if layer == "pet" and target.startswith("aiko_pet.games"):
+                            self.assertTrue(
+                                target == "aiko_pet.games.contracts"
+                                or target.startswith("aiko_pet.games.contracts."),
+                                f"{current} may only share immutable game contracts",
+                            )
 
     def test_all_package_modules_import_without_starting_the_desktop(self) -> None:
         for path in SOURCES.rglob("*.py"):

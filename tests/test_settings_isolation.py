@@ -28,14 +28,21 @@ class StandaloneSettingsTests(unittest.TestCase):
         self.view = SettingsSnapshot(
             scale=1,
             options=(
-                ("always_on_top", True), ("auto_walk", True),
-                ("auto_routine", True), ("follow_cursor", True),
-                ("spontaneous_talk", True), ("observe_computer", True),
+                ("always_on_top", True),
+                ("auto_walk", True),
+                ("auto_routine", True),
+                ("follow_cursor", True),
+                ("spontaneous_talk", True),
+                ("observe_computer", True),
                 ("learn_rhythm", False),
+                ("online_social", False),
             ),
         )
         self.window = SettingsWindow(
-            self.root, 600, 180, snapshot=lambda: self.view,
+            self.root,
+            600,
+            180,
+            snapshot=lambda: self.view,
             actions=SettingsActions(
                 toggle_scale=self.toggle_scale,
                 set_option=lambda key, value: self.events.append(
@@ -69,17 +76,20 @@ class StandaloneSettingsTests(unittest.TestCase):
 
     def test_all_non_quit_commands_keep_window_open(self) -> None:
         for button in (
-            self.window.scale_button, self.window.forget_button,
-            self.window.reset_button, self.window.center_button,
+            self.window.scale_buttons[2],
+            self.window.forget_button,
+            self.window.reset_button,
+            self.window.center_button,
         ):
             button.invoke()
             self.assertTrue(self.window.window.winfo_exists())
         self.assertEqual(self.events, ["scale", "forget", "reset", "center"])
-        self.assertIn("2×", self.window.scale_button.cget("text"))
+        self.assertIn("2×", self.window.scale_buttons[2].cget("text"))
 
     def test_external_snapshot_refresh_does_not_send_commands(self) -> None:
         self.view = replace(
-            self.view, scale=2,
+            self.view,
+            scale=2,
             options=tuple((key, not value) for key, value in self.view.options),
         )
         self.window.refresh()
@@ -87,7 +97,7 @@ class StandaloneSettingsTests(unittest.TestCase):
         self.assertEqual(self.events, [])
         for key, value in self.view.options:
             self.assertEqual(self.window.values[key].get(), value)
-        self.assertIn("2×", self.window.scale_button.cget("text"))
+        self.assertIn("2×", self.window.scale_buttons[2].cget("text"))
 
     def test_header_drag_changes_only_own_position(self) -> None:
         before = (self.root.winfo_x(), self.root.winfo_y())
@@ -109,10 +119,10 @@ class StandaloneSettingsTests(unittest.TestCase):
         self.assertEqual(self.window.window.winfo_rooty(), 90)
         self.assertEqual(self.events, [])
 
-    def test_idle_open_window_is_not_an_interaction(self) -> None:
-        self.assertFalse(self.window.interacting(-999, -999, 1000))
+    def test_pointer_bounds_are_read_without_emitting_actions(self) -> None:
+        self.assertFalse(self.window.contains_pointer(-999, -999))
         x, y = self.window.window.winfo_rootx(), self.window.window.winfo_rooty()
-        self.assertTrue(self.window.interacting(x + 5, y + 5, 1000))
+        self.assertTrue(self.window.contains_pointer(x + 5, y + 5))
 
     def test_close_during_drag_cleans_up_once(self) -> None:
         event = tk.Event()
@@ -127,9 +137,14 @@ class StandaloneSettingsTests(unittest.TestCase):
     def test_saved_session_position_is_clamped_on_reopen(self) -> None:
         self.window.close()
         other = SettingsWindow(
-            self.root, 0, 0, snapshot=lambda: self.view,
-            actions=self.window._actions, always_on_top=False,
-            skin=self.window.skin, position=(-900, -900),
+            self.root,
+            0,
+            0,
+            snapshot=lambda: self.view,
+            actions=self.window._actions,
+            always_on_top=False,
+            skin=self.window.skin,
+            position=(-900, -900),
         )
         self.addCleanup(other.close)
         self.assertEqual(other.position, (0, 0))

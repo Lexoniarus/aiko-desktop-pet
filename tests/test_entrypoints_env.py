@@ -73,11 +73,11 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             wanted = Path(folder) / "custom" / "state.json"
             with patch.dict(os.environ, {"AIKO_SAVE_PATH": str(wanted)}):
-                self.assertEqual(default_save_path(), wanted)
+                self.assertEqual(default_save_path(), wanted.with_suffix(".sqlite3"))
 
     def test_blank_override_preserves_platform_default(self) -> None:
         with patch.dict(os.environ, {"AIKO_SAVE_PATH": "  "}):
-            self.assertEqual(default_save_path().name, "state.json")
+            self.assertEqual(default_save_path().name, "state.sqlite3")
             self.assertEqual(default_save_path().parent.name, "AikoDesktopPet")
 
 

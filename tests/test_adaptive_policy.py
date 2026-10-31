@@ -7,9 +7,7 @@ from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory, Observation
 from aiko_pet.pet.mind.adaptive_policy import (
     ActivityMode,
-    SleepOptions,
     determine_activity_mode,
-    determine_sleep_options,
 )
 
 
@@ -28,27 +26,6 @@ def mode(
         last_session_seconds=last_session_seconds,
         last_work_wall=last_work_wall, rest_seconds=rest_seconds,
         present=present, wall_time=wall_time,
-    )
-
-
-def sleep(
-    *,
-    mode: ActivityMode = "present",
-    energy: float = 75.0,
-    sleeping: bool = False,
-    manual_sleep: bool = False,
-    night: bool = False,
-    effort: float | None = 0.1,
-    idle_seconds: float | None = 0.0,
-    present: bool | None = True,
-    rest_seconds: float = 0.0,
-    expected_effort: float | None = None,
-) -> SleepOptions:
-    return determine_sleep_options(
-        mode=mode, energy=energy, sleeping=sleeping,
-        manual_sleep=manual_sleep, night=night, effort=effort,
-        idle_seconds=idle_seconds, present=present,
-        rest_seconds=rest_seconds, expected_effort=expected_effort,
     )
 
 
@@ -75,55 +52,6 @@ class ActivityModeTests(unittest.TestCase):
         self.assertEqual(mode(rest_seconds=300, present=True), "resting")
         self.assertEqual(mode(rest_seconds=299, present=True), "present")
         self.assertEqual(mode(present=None, effort=None), "wandering")
-
-
-class AdaptiveSleepTests(unittest.TestCase):
-    def test_night_quiet_prefers_sleep_but_work_never_does(self) -> None:
-        self.assertTrue(
-            sleep(night=True, idle_seconds=200, present=False).can_sleep,
-        )
-        self.assertFalse(
-            sleep(mode="working", night=True, effort=0.9).can_sleep,
-        )
-
-    def test_manual_sleep_is_not_interrupted(self) -> None:
-        self.assertFalse(
-            sleep(sleeping=True, manual_sleep=True, mode="working").should_wake,
-        )
-        self.assertTrue(
-            sleep(sleeping=True, manual_sleep=False, mode="working").should_wake,
-        )
-        self.assertTrue(
-            sleep(sleeping=True, present=True, night=False).should_wake,
-        )
-
-    def test_nap_requires_observed_rest_and_low_energy(self) -> None:
-        self.assertTrue(
-            sleep(
-                energy=18, present=False, idle_seconds=1000,
-                rest_seconds=900,
-            ).can_nap,
-        )
-        self.assertFalse(
-            sleep(energy=18, present=None, rest_seconds=900).can_nap,
-        )
-        self.assertTrue(
-            sleep(
-                energy=35, present=False,
-                rest_seconds=900, expected_effort=0.31,
-            ).can_nap,
-        )
-        self.assertFalse(
-            sleep(
-                energy=35, present=False,
-                rest_seconds=900, expected_effort=0.32,
-            ).can_nap,
-        )
-
-    def test_day_and_night_thresholds_remain_independent(self) -> None:
-        self.assertTrue(sleep(energy=23, rest_seconds=1800).can_sleep)
-        self.assertFalse(sleep(energy=24, rest_seconds=1800).can_sleep)
-        self.assertFalse(sleep(energy=75, night=False).can_sleep)
 
 
 class AdaptiveRoutineBoundaryTests(unittest.TestCase):

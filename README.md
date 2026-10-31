@@ -15,22 +15,60 @@
 
 **Windows 10/11 · Python 3.11+ · local-first · no cloud account or AI API.**
 
-![The current Aiko Anime character and the current Kenney sci-fi hover panel](vorschau/Aiko_Current_Hover.png)
+![Earlier Anime Aiko and Kenney hover UI baseline](vorschau/Aiko_Current_Hover.png)
 
 *Actual Tk application capture on Linux/Xvfb (not a native Windows desktop
-screenshot). The current 112-pose Anime character, Kenney panel, and German
+screenshot). This earlier 112-pose Anime character, Kenney panel, and German
 dialogue are shown together. Documentation is in English.*
 
-## Play with Aiko (Rock–Paper–Scissors)
+
+On `feature/social-optimization`, stage 5C now implements the approved VN care
+menu with Moodlets, wishes, embedded selectors and settings/Credits. Screenshots
+retain the earlier visual baseline; no new native capture was made during
+the headless delivery. See [the current UI contract](docs/UI_WINDOW_CONTRACT.md)
+and [implementation record](docs/CARE_TIME_IMPLEMENTATION_PLAN.md).
+
+## Play with Aiko
+
+**Spielen** opens a selection of **Schere–Stein–Papier**, **Blackjack**,
+**Tic-Tac-Toe**, **Vier gewinnt** and **Mastermind** in this feature checkout. The additions are not yet
+merged into `main`. Only one game is open at a time; closing it restores Aiko's
+ordinary behavior. Merely opening the selector grants no game reward.
+
+In Blackjack, your enlarged cards and hit/stand controls belong to the player
+window. Click the card-back pile for **Karte ziehen** or choose **Bleiben**.
+Aiko's hand floats in front of her on the desktop, with one card face down until
+her turn. She flips it and draws under fixed dealer rules. Hover highlights a
+card without revealing it early. There are no stakes or extra betting actions.
+The result stays visible for 2.8 seconds before the next hand starts
+automatically, retaining the session score. Tic-Tac-Toe uses one shared board
+against a simple local opponent, alternating the starting player between
+completed rounds and offering **Nächste Runde**.
+
+Vier gewinnt uses a shared 7×6 board with yellow Kenney pieces for you and red
+pieces for Aiko. Hover previews a legal landing position; click a column or use
+keys 1–7 to drop a piece. Aiko plays with bounded local Alpha-Beta search and
+reacts through her existing animations, emotes and speech. Winning cells are
+highlighted; **Nächste Runde** alternates who starts. Her search and pending
+presentation are cancelled when the window closes.
+
+Mastermind makes Aiko the code setter: four positions, six colors, repeated
+colors allowed, ten attempts and no timer. Drag Kenney pins from the palette
+into the current row of the ten prepared rows and press **Prüfen**. Aiko places
+black/white feedback marks beside each submitted guess, with numeric counts.
+Earlier rows remain visible. Her concealed code strip floats beside her on the
+desktop, reveals at round end and resets with **Nächste Runde**.
 
 Aiko's character bubble shows **only her own choice** and her reactions.
 The independent, always-open Kenney-styled player panel shows **your selected
 hand**, the round counter, your wins, Aiko's wins and draws. The counters belong
 only to the currently opened minigame window and are never saved.
 
-Other games, libraries and external data sources have been discussed only as
-**unapproved possibilities**, with **no selected next game or implementation
-order**. See the [minigame candidate catalogue and integration research](docs/MINIGAME_CANDIDATES.md).
+All games run locally with Tk and the Python standard library. Completed hands
+or boards count as play; an unfinished round does not. The
+[delivery plan](docs/MINIGAME_IMPLEMENTATION_PLAN.md) records owners, library
+assessment and validation. Other entries in the
+[candidate catalogue](docs/MINIGAME_CANDIDATES.md) remain research ideas.
 
 ![Rock–Paper–Scissors with the separate player panel and Aiko's actual speech bubble](vorschau/Aiko_RPS_Aufgedeckt.png)
 
@@ -58,7 +96,7 @@ preview gallery.
 ## What she does
 
 - **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, intermittent blinking, spontaneous glances, jumping, waving, resting and 16-direction cursor gaze.
-- **Needs a little care.** Feed, play Rock–Paper–Scissors, talk, pet, sleep/wake or offer an energy drink. Meals and snacks provide different satiety and digestion effects. Enjoyment, social needs and affection develop separately, with occasional friendly requests.
+- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. Meals and snacks provide different satiety and digestion effects. Enjoyment, social needs and affection develop separately, with occasional friendly requests.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Authored stories vary across four friendship stages and current needs. Talk plays several bubbles with emotes and pauses; left-click Aiko to advance a story.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
@@ -69,16 +107,16 @@ This source builds on the **v0.13 feature baseline and modular OOP refactor**, w
 ## Getting started
 
 1. [Download the current `main` source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract the complete folder to a writable, permanent location on Windows 10/11. Rock–Paper–Scissors is already included in `main`.
-2. Double-click **[`Aiko_installieren.bat`](Aiko_installieren.bat)**. Setup tests Python 3.11+ and a real Tk window. If the runtime is missing or incomplete, it downloads the official Python 3.13 installer and installs Tcl/Tk for your Windows account; WinGet is unnecessary. It creates an isolated `.venv`, processes [`requirements.txt`](requirements.txt), checks character assets, and creates desktop/Start menu shortcuts. An internet connection is needed if Python or future runtime packages must be downloaded.
-3. Use the **Aiko Desktop Pet** shortcut or double-click `Aiko_starten.bat`. With an existing suitable Python installation, you can also skip setup and run:
+2. Double-click **[`Aiko_installieren.bat`](Aiko_installieren.bat)**. Setup tests Python 3.11+ and a real Tk window. If the runtime is missing or incomplete, it downloads the official Python 3.13 installer and installs Tcl/Tk for your Windows account; WinGet is unnecessary. It creates an isolated `.venv`, processes [`requirements.txt`](requirements.txt), checks character assets, and creates desktop/Start menu shortcuts. An internet connection is needed if Python or runtime packages must be downloaded.
+3. Use the **Aiko Desktop Pet** shortcut or double-click `Aiko_starten.bat`. After setup, you can also run its environment directly:
 
    ```powershell
-   py -m aiko_pet
+   .\.venv\Scripts\python.exe -m aiko_pet
    ```
 
 4. Hover over Aiko to open the care panel. If the window fails to start, use `Aiko_starten_debug.bat` to keep the error output visible.
 
-You can also run `python main.py` or `python -m aiko_pet`. **No third-party Python packages are currently required for normal use.** Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers prefer the local environment. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
+Manual Python environments must install `requirements.txt`, including Astronomy Engine for the offline horoscope. Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers require the local `.venv`; startup checks its offline astronomy calculation before opening a save. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
 
 If the optional Kenney Mini font is already installed, Aiko can use it; otherwise she falls back to Segoe UI. Font files are not redistributed.
 
@@ -87,24 +125,44 @@ If the optional Kenney Mini font is already installed, Aiko can use it; otherwis
 By default, Aiko stores progress outside the repository at:
 
 ```text
-%LOCALAPPDATA%\AikoDesktopPet\state.json
+%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3
 ```
 
 **No `.env` file is needed.** The only optional setting is `AIKO_SAVE_PATH`, which changes the save *file* location. To use it, copy [.env.example](.env.example) to a local `.env` and edit the value. An existing OS environment variable takes precedence. The template contains no secrets and should remain unmodified when no override is wanted.
+
+On first launch after this update, an existing supported `state.json` is strictly
+validated, backed up unchanged and imported into SQLite. Existing `.json` path
+overrides remain aliases for the same-stem SQLite save. An existing database
+takes precedence; invalid saves stop startup instead of resetting progress.
+Python creates the private database locally; no database is shipped in Git.
 
 ## Privacy and local data
 
 Aiko runs locally. The current application does **not** send telemetry to a server, start an HTTP service, require a subscription or call an external AI inference API.
 
+The **Unterhalten** menu keeps authored **Plaudern** and adds separate Single,
+Two Parts and fact choices. These use JokeAPI and Random Useless Facts only after
+enabling **Onlinequellen für Witze und Fakten verwenden** in settings. Requests
+send no pet state, learned rhythm or workload observations. Two items per
+category are prepared individually in memory; there is no downloaded-content
+save or authored entertainment fallback. [Social content and sources →](docs/SOCIAL_CONTENT.md)
+
 Her workload observations are drawn from local CPU/GPU utilization, memory pressure, uptime and user-idle timing. They do not inspect files, process/application names, browser content, typed text or microphone input. Optional NVIDIA sampling uses local OS tooling. Learned rhythm summaries and pet progress are stored locally in the save file.
 
-Needs progress during the running session. Reopening also reconstructs closed
-time, up to eight hours by default. With automatic routine enabled, Aiko sleeps
-and eats due main meals during this reconstruction. Live supply uses offered
-or autonomously collected World portions. Live PC suspend is excluded from the running-session clock.
+Needs progress over real elapsed time, including closed-app and PC standby
+intervals, without an eight-hour absence cap. With automatic routine enabled,
+the saved expected sleep window runs during reconstruction. Manual commands
+retain 30 minutes of protection; recurring quiet phases learn from anonymous
+actual input and known suspension, independently of hardware load. Closed-time
+care uses only identified, appraised, accessible real World portions and never
+generates meals or discovers unknown food. Live food breaks use the normal
+pickup/inspection/eating path. [Current sleep rules →](docs/SLEEP_SYSTEM.md)
 [Save format, backups, time rules and editable JSON data →](docs/DATA_AND_SAVES.md)
 The real clock still determines meals and daily routine. Friendship remains a
-separate, slowly earned bond with the existing daily limits.
+separate bond with shared rolling care limits, progressive real-time absence
+loss and sustained-neglect history. Personal care renews contact even when
+its reward is exhausted; hover, app opening and autonomous eating do not.
+[Current friendship rules →](docs/FRIENDSHIP_SYSTEM.md)
 
 Disable **Observe computer** or **Learn rhythm** individually from the settings panel if you do not want those behaviors. See [rhythm and dialogue ownership](docs/ARCHITECTURE.md#rhythm-and-dialogue) for the current implementation.
 
@@ -121,7 +179,7 @@ The source is organized by responsibility rather than by window or feature versi
 | `aiko_pet/ui/view_models/` | German display text and immutable UI projections |
 | `aiko_pet/ui/` | Tkinter character, one pinnable care toolbar, persistent settings, speech and shared window components |
 | `aiko_pet/desktop/` | Tk runtime, native Windows window/input handling and preferences |
-| `aiko_pet/infrastructure/` | Hardware providers and versioned local JSON persistence |
+| `aiko_pet/infrastructure/` | Hardware providers and transactional SQLite persistence |
 
 The bootstrap is `aiko_pet/gui.py`. Imports use the owning packages directly; obsolete flat-module paths have been removed. See the architecture guide for the import migration table. [Architecture and dependency rules →](docs/ARCHITECTURE.md)
 
@@ -151,3 +209,9 @@ Security and private vulnerability reporting are explained in
 
 Aiko Desktop Pet is an independent project, separate from ComfyReview and
 Character Chronicles.
+
+Local horoscope books use [Astronomy Engine](https://github.com/cosinekitty/astronomy)
+2.1.19 (MIT), installed from requirements.txt. Book prose and Aiko comments are
+packaged German content; no horoscope API, account, key or language model is
+used. The [book contract](docs/horoscope/MODULE_AND_CATALOGUE_CONTRACTS.md) covers
+physical placement, one daily entry and the fixed one-hour replay lifetime.

@@ -12,7 +12,7 @@ from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_perception import ItemPresentation
 from ..ui.world_view import WorldView
-from ..world.contracts import ObjectFootprint, WorldPosition
+from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.state import WorldOperationError, WorldState
 from .geometry import TaskbarTrack, item_face_offset
 from .global_input import mouse_buttons_down_windows
@@ -30,6 +30,7 @@ class CursorItemPorts:
     sync_view: Callable[[], None]
     outside: Callable[[], None]
     finished: Callable[[], None] = lambda: None
+    existing_taken: Callable[[str], object] = lambda _instance: None
 
 
 class CursorItemGesture:
@@ -54,24 +55,41 @@ class CursorItemGesture:
     def carrying(self) -> bool:
         return self.instance_id is not None
 
+    @property
+    def can_begin(self) -> bool:
+        """Admit one gesture without replacing stock or taking another grab."""
+        if self.carrying:
+            return False
+        try:
+            return not self.root.tk.call("grab", "current", str(self.root))
+        except tk.TclError:
+            return False
+
     def presentation(
-        self, eyes: tuple[float, float], width: float,
+        self,
+        eyes: tuple[float, float],
+        width: float,
     ) -> tuple[str, ItemPresentation] | None:
         if self.instance_id is None or not self.inside:
             return None
         item = self.world.get(self.instance_id)
         image = self.view.image(item.definition_id, self.settings.scale)
-        sprite = self.view.items.foods[item.definition_id].sprites[self.settings.scale]
+        sprite = self.view.sprite(item.definition_id, self.settings.scale)
         offset = item_face_offset(
             (self.root.winfo_pointerx(), self.root.winfo_pointery()),
-            pivot=sprite.pivot, size=(image.width(), image.height()),
-            eyes=eyes, width=width,
+            pivot=sprite.pivot,
+            size=(image.width(), image.height()),
+            eyes=eyes,
+            width=width,
         )
-        return (self.instance_id,
-                ItemPresentation(f"cursor_{self._offer_serial}", *offset))
+        return (
+            self.instance_id,
+            ItemPresentation(f"cursor_{self._offer_serial}", *offset),
+        )
 
     def begin(self, item_id: str) -> None:
-        self.cancel()
+        if not self.can_begin:
+            return
         self._return_x = None
         image = self.view.image(item_id, self.settings.scale)
         footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
@@ -80,7 +98,7 @@ class CursorItemGesture:
         self._start(item.instance_id)
 
     def begin_existing(self, token: str, expected_revision: int) -> bool:
-        if self.carrying:
+        if not self.can_begin:
             return False
         try:
             item = self.world.take_resting(token, expected_revision=expected_revision)
@@ -88,6 +106,7 @@ class CursorItemGesture:
             return False
         assert item.position is not None
         self._return_x = item.position.x
+        self._ports.existing_taken(token)
         self._start(token)
         return self.carrying
 
@@ -115,17 +134,21 @@ class CursorItemGesture:
             self._offer_feedback = None
             return
         decision = self._ports.assess_offer(token)
-        self.offer_ready = decision is not None and decision.consume
+        self.offer_ready = decision is not None and decision.use
         if decision is None:
             return
-        wanted = decision.consume
+        wanted = decision.use
         if self._offer_feedback == (known.token, wanted):
             return
         self._offer_feedback = known.token, wanted
         self._offer_revision += 1
         key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
-        cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",
-                             known.token, known.identity)
+        cue = ObjectFeedback(
+            key,
+            "object_offer" if wanted else "object_refuse",
+            known.token,
+            known.identity,
+        )
         # Preview completion never grants custody or willingness.
         self._ports.present_offer(cue)
 
@@ -140,18 +163,21 @@ class CursorItemGesture:
         return str(current) == str(self.root)
 
     def _pointer_pose(
-        self, item_id: str, footprint: ObjectFootprint,
+        self,
+        item_id: str,
+        footprint: ObjectFootprint,
     ) -> tuple[WorldPosition, bool]:
-        image = self.view.image(item_id, self.settings.scale)
-        sprite = self.view.items.foods[item_id].sprites[self.settings.scale]
+        sprite = self.view.sprite(item_id, self.settings.scale)
+        support = self.view.ground_pivot(item_id, self.settings.scale)
         track = self._track()
         surface = self.world.snapshot().surface
-        x = (self.root.winfo_pointerx() - track.left
-             + image.width() / 2 - sprite.pivot[0])
-        height: float = track.ground_y - self.root.winfo_pointery() - image.height()
-        height += sprite.pivot[1]
-        inside = (track.left <= self.root.winfo_pointerx() < track.right
-                  and 0 <= self.root.winfo_pointery() < self.root.winfo_screenheight())
+        x = self.root.winfo_pointerx() - track.left + support[0] - sprite.pivot[0]
+        height = (track.ground_y - self.root.winfo_pointery()
+                  - support[1] + sprite.pivot[1])
+        inside = (
+            track.left <= self.root.winfo_pointerx() < track.right
+            and 0 <= self.root.winfo_pointery() < self.root.winfo_screenheight()
+        )
         return WorldPosition(
             max(footprint.left, min(x, surface.width - footprint.right)),
             max(0, min(height, surface.height)),
@@ -195,7 +221,8 @@ class CursorItemGesture:
         self._release_capture()
         if self.instance_id is not None:
             item = self.world.get(self.instance_id)
-            self._discard_or_return(item.instance_id, item.revision)
+            if item.state not in (ObjectState.REMOVED, ObjectState.CONSUMED):
+                self._discard_or_return(item.instance_id, item.revision)
             self.instance_id = None
             self._return_x = None
             self.offer_ready = False

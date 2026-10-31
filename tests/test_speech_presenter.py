@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 import tkinter as tk
 import unittest
 
@@ -10,6 +11,20 @@ from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 
 
 class SpeechPresenterTests(unittest.TestCase):
+    def test_game_hand_survives_comment_and_emoji_expiry_but_not_game_close(self):
+        self.presenter.begin_game()
+        self.presenter.show_game_hand(Move.ROCK, 0)
+        self.presenter.show_text("Schere, Stein, Papier!", 1800)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter.show_emote("star", 900)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter._expire()
+        self.assertIsNotNone(self.presenter.bubble)
+        self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        self.presenter.hide()
+        self.assertIsNone(self.presenter.bubble)
+        self.assertIsNone(self.presenter._game_hand)
+
     @classmethod
     def setUpClass(cls) -> None:
         try:
@@ -30,6 +45,83 @@ class SpeechPresenterTests(unittest.TestCase):
         )
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.presenter.hide)
+
+    def test_game_comments_use_the_prepared_asset_and_keep_the_speech_tail(self):
+        self.presenter.begin_game()
+        self.presenter.show_text("Dein Zug!", 900)
+        self.root.update()
+        images = self.presenter._ui_images
+        assert images is not None
+        self.assertIn("game_bubble_panel.png", images._images)
+        bubble = self.presenter.bubble
+        assert bubble is not None
+        self.assertIsInstance(bubble.winfo_children()[-1], tk.Canvas)
+
+    def test_game_emote_has_no_outer_frame_or_second_tail_and_keeps_hand(self):
+        self.presenter.begin_game()
+        for hand in (False, True):
+            if hand:
+                self.presenter.show_game_hand(Move.ROCK, 0)
+            self.presenter.show_text("Dein Zug!", 0)
+            self.root.update()
+            text_window = self.presenter.bubble
+            assert text_window is not None
+            geometry = (text_window.winfo_width(), text_window.winfo_height())
+            self.presenter.show_emote("star", 900)
+            self.root.update()
+            window = self.presenter.bubble
+            assert window is not None
+            self.assertEqual((window.winfo_width(), window.winfo_height()), geometry)
+            frame = window.winfo_children()[0]
+            region = frame.winfo_children()[0]
+            self.assertEqual(region.cget("background"),
+                             "#ff00ff" if sys.platform == "win32" else "#202733")
+            self.assertEqual(len(region.winfo_children()), 1)
+            icon = region.winfo_children()[0]
+            self.assertEqual(icon.cget("image"),
+                             str(self.presenter.emote_images['star']))
+            self.assertEqual(window.winfo_children(), [frame])
+            self.assertFalse(any(isinstance(child, tk.Canvas)
+                                 for child in frame.winfo_children()))
+            if hand:
+                self.assertEqual(self.presenter._game_hand, Move.ROCK)
+                self.assertIn(Move.ROCK, self.presenter.game_hand_images)
+
+    def test_queued_old_expiry_cannot_remove_a_new_game_comment(self):
+        self.presenter.begin_game()
+        self.presenter.show_text("Die erste Ansage.", 1800)
+        old = self.presenter.bubble
+        assert old is not None
+        self.presenter.show_emote("star", 900)
+        current = self.presenter.bubble
+        timer = self.presenter.pending_timer
+        self.presenter._expire_current(old)
+        self.assertIs(self.presenter.bubble, current)
+        self.assertEqual(self.presenter.pending_timer, timer)
+
+    def test_cursor_cue_is_nonblocking_and_cannot_replace_existing_speech(self):
+        self.presenter.show_cursor_emote("question", 1500)
+        self.assertIsNotNone(self.presenter.bubble)
+        self.assertFalse(self.presenter.blocks_contact)
+        self.presenter.hide()
+        self.presenter.show_text("Geschichte", 6000)
+        before = self.presenter.bubble
+        self.presenter.show_cursor_emote("drops", 1500)
+        self.assertIs(self.presenter.bubble, before)
+        self.assertTrue(self.presenter.blocks_contact)
+        self.presenter.hide()
+        self.assertFalse(self.presenter.blocks_contact)
+
+    def test_warning_reports_actual_vacant_slot_without_contact_lock(self):
+        self.assertTrue(self.presenter.show_cursor_warning("Langsamer!", 2000))
+        before = self.presenter.bubble
+        self.assertFalse(self.presenter.blocks_contact)
+        self.assertFalse(self.presenter.show_cursor_warning("Noch einmal", 2000))
+        self.assertIs(before, self.presenter.bubble)
+        self.presenter.hide()
+        self.presenter.show_text("Geschichte", 6000)
+        self.assertFalse(self.presenter.show_cursor_warning("Langsamer!", 2000))
+        self.assertTrue(self.presenter.blocks_contact)
 
     def test_speech_renders_plain_text_with_existing_tail(self) -> None:
         self.presenter.show_text("Hallo <b>Browser</b>!", 6000)
@@ -66,9 +158,11 @@ class SpeechPresenterTests(unittest.TestCase):
         assert bubble is not None
         self.assertEqual(len(bubble.winfo_children()), 2)
         self.assertEqual(set(self.presenter.game_hand_images), {Move.ROCK})
-        self.assertEqual(self.presenter.game_hand_images[Move.ROCK].width(), 72)
+        self.assertEqual(self.presenter.game_hand_images[Move.ROCK].width(), 64)
         frame = bubble.winfo_children()[0]
-        panel = frame.winfo_children()[0]
+        panel = next(
+            child for child in frame.winfo_children() if isinstance(child, tk.Frame)
+        )
         labels = [
             str(child.cget("text")) for child in panel.winfo_children()
             if isinstance(child, tk.Label)
@@ -76,6 +170,12 @@ class SpeechPresenterTests(unittest.TestCase):
         self.assertIn("Ich nehme ...", labels)
         self.assertNotIn("Du", labels)
         self.assertIsNotNone(self.presenter.pending_timer)
+        self.root.update_idletasks()
+        position = bubble.winfo_geometry()
+        self.anchor = SpeechAnchor(460, 500, 128)
+        self.presenter.move()
+        self.root.update_idletasks()
+        self.assertNotEqual(bubble.winfo_geometry(), position)
         self.presenter.show_text("Wieder normal", 2000)
         self.assertIsNotNone(self.presenter.bubble)
 

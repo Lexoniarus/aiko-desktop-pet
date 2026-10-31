@@ -1,0 +1,3970 @@
+{
+  "version": 1,
+  "size": [
+    384,
+    416
+  ],
+  "source_archive_sha256": "50f2a755c07dce6bbd9f602c3c85daaeebcf407079fea54179eab831c8ae89b1",
+  "pickup_archive_sha256": "da581da6b4fd8f37c87be2d44244d146b6c7faa8b754f0f8a2d9cb5e81c19914",
+  "frames": [
+    {
+      "path": "attack/00.png",
+      "source": "attack/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "9e9d99dd8b654f69c0033a42d0da5a6c0c3c99e9c065d4b41a7e4f5d4b68feda",
+      "source_bbox": [
+        3,
+        3,
+        293,
+        479
+      ],
+      "reference_bbox": [
+        47,
+        37,
+        143,
+        196
+      ],
+      "aspect_rescale_ratio": 0.991,
+      "silhouette_iou": 0.9801,
+      "bytes": 99593
+    },
+    {
+      "path": "attack/01.png",
+      "source": "attack/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "cbc0df13b1384f9da030c500c0bac39dbfd11811e91245e0c16f14ea0a5754f0",
+      "source_bbox": [
+        3,
+        3,
+        295,
+        480
+      ],
+      "reference_bbox": [
+        44,
+        37,
+        140,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9863,
+      "silhouette_iou": 0.9793,
+      "bytes": 101519
+    },
+    {
+      "path": "attack/02.png",
+      "source": "attack/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "ce22c497b10c6ed3fb62ef2b34bdcc1badcf8b2429e43268cbf9e7b0f46b06fe",
+      "source_bbox": [
+        2,
+        2,
+        345,
+        482
+      ],
+      "reference_bbox": [
+        37,
+        36,
+        151,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9971,
+      "silhouette_iou": 0.9781,
+      "bytes": 107698
+    },
+    {
+      "path": "attack/03.png",
+      "source": "attack/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "61f27376369a15d7eeaeb86915b26ffc29b00f96458de524aec0eb658e8c7132",
+      "source_bbox": [
+        4,
+        3,
+        317,
+        478
+      ],
+      "reference_bbox": [
+        46,
+        37,
+        150,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9989,
+      "silhouette_iou": 0.9755,
+      "bytes": 102182
+    },
+    {
+      "path": "attack/04.png",
+      "source": "attack/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "4c6cc2e150e717258026a02b7d413a074a48630d3d7bdf3f27a3624c885ee47f",
+      "source_bbox": [
+        3,
+        3,
+        345,
+        477
+      ],
+      "reference_bbox": [
+        39,
+        38,
+        153,
+        196
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "silhouette_iou": 0.9824,
+      "bytes": 109199
+    },
+    {
+      "path": "attack/05.png",
+      "source": "attack/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "21a86ff551c8c0c46334e87b39462ab0231820f79beef18a2deac2a2a7018ca1",
+      "source_bbox": [
+        3,
+        2,
+        305,
+        485
+      ],
+      "reference_bbox": [
+        40,
+        35,
+        140,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9934,
+      "silhouette_iou": 0.981,
+      "bytes": 106143
+    },
+    {
+      "path": "attack/06.png",
+      "source": "attack/frames-native/07.png",
+      "status": "original_hd",
+      "sha256": "72a68ef4a4a5f19b269dea75f01b621388c69f39793750e3d0d1a2ddfd0f0a1d",
+      "source_bbox": [
+        2,
+        2,
+        310,
+        485
+      ],
+      "reference_bbox": [
+        42,
+        35,
+        144,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9935,
+      "silhouette_iou": 0.9796,
+      "bytes": 105725
+    },
+    {
+      "path": "attack/07.png",
+      "source": "attack/frames-native/08.png",
+      "status": "original_hd",
+      "sha256": "5a5809d6f6e8a4a057c892ffd6fa4dd4ae7f4f0f90e9f98eb11c09eb79a2c52f",
+      "source_bbox": [
+        2,
+        2,
+        304,
+        486
+      ],
+      "reference_bbox": [
+        42,
+        34,
+        142,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9954,
+      "silhouette_iou": 0.9814,
+      "bytes": 103642
+    },
+    {
+      "path": "eat/00.png",
+      "source": "private-v3-eating/01.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "31a8eee70d9b94d7b668c180e2ccdf59c88707fd7b13e489ea2b5d2f11680fb6",
+      "source_bbox": [
+        322,
+        238,
+        893,
+        1230
+      ],
+      "uniform_scale": 0.31451612903225806,
+      "aspect_rescale_ratio": 1.0022901791728411,
+      "registration_origin": [
+        103,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "b9f9cd005ff62ac6e4b7e5cacdaa8c0a89998f7a97cb62f1ac7bd7323fb3c693",
+      "bytes": 83586
+    },
+    {
+      "path": "eat/01.png",
+      "source": "private-v3-eating/02.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "3d95d82cd921e98922e009aaa34dfb492a2952efb5e39a8a4406c8cee3d25eef",
+      "source_bbox": [
+        297,
+        106,
+        925,
+        1218
+      ],
+      "uniform_scale": 0.2805755395683453,
+      "aspect_rescale_ratio": 0.9988567695574065,
+      "registration_origin": [
+        104,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "f2ec91a8e0ffc6c3d8f6fe3560c00a6319f0517be8c987ddad8aeac3c95becf0",
+      "bytes": 80483
+    },
+    {
+      "path": "eat/02.png",
+      "source": "private-v3-eating/03.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "83e0464857eb6010a7e35f339a49e9f36fadd6b3a4e137c2b244f7fc3727da5e",
+      "source_bbox": [
+        300,
+        108,
+        923,
+        1214
+      ],
+      "uniform_scale": 0.2820976491862568,
+      "aspect_rescale_ratio": 1.0014405070584846,
+      "registration_origin": [
+        104,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "9374097b22d6b2f3e24f61425c27dd6fc23678ca38d842b0f99c4c31a6a799c1",
+      "bytes": 79269
+    },
+    {
+      "path": "eat/03.png",
+      "source": "private-v3-eating/04.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "fde1c9d64eefa64a9f5f3bbe8fcb763e7444d44e73f1bc69b9d300620bdb054d",
+      "source_bbox": [
+        299,
+        108,
+        922,
+        1214
+      ],
+      "uniform_scale": 0.2820976491862568,
+      "aspect_rescale_ratio": 1.0014405070584846,
+      "registration_origin": [
+        105,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "fd27b0e58c50495c1296d45fb2d8c1ec7ad8670fd1710158a90f1727fc8f7add",
+      "bytes": 79205
+    },
+    {
+      "path": "eat/04.png",
+      "source": "private-v3-eating/05.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "48074c0d26975f5516ca8fd4f42bce6e5706a8d16005b4c2ef5934eebd0cdf7f",
+      "source_bbox": [
+        298,
+        110,
+        923,
+        1214
+      ],
+      "uniform_scale": 0.2826086956521739,
+      "aspect_rescale_ratio": 1.0020923076923078,
+      "registration_origin": [
+        104,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "c3e86234a5e4546f74c99204b7d42fee48a114535d61a603a8199dc0c46f583a",
+      "bytes": 79345
+    },
+    {
+      "path": "eat/05.png",
+      "source": "private-v3-eating/06.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "b4724dc6cf15fcdcee67fa8f158789230f4791c123087631f32d3897a4c6a2a2",
+      "source_bbox": [
+        299,
+        110,
+        921,
+        1214
+      ],
+      "uniform_scale": 0.2826086956521739,
+      "aspect_rescale_ratio": 1.00123670541677,
+      "registration_origin": [
+        104,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "a8197da043945a70c34388a6b1769421b3e951ea6666ee98b4156be495e2b505",
+      "bytes": 79727
+    },
+    {
+      "path": "eat/06.png",
+      "source": "private-v3-eating/07.png",
+      "status": "generated_v3_eating_individual_original",
+      "source_sha256": "e003f9ab9968605228c4afe52ff90e01b007e1fe55c26bb1972aaee525501b9e",
+      "source_bbox": [
+        300,
+        111,
+        922,
+        1216
+      ],
+      "uniform_scale": 0.2823529411764706,
+      "aspect_rescale_ratio": 1.002143622722401,
+      "registration_origin": [
+        105,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "sha256": "2c9c598464a3577b6b8b1c83385b2bd0ba4f7f871f702f1b22e181b50bbd449a",
+      "bytes": 80696
+    },
+    {
+      "path": "eat/07.png",
+      "source": "private-v3-eating/08.png",
+      "status": "reused_v3_eating_individual_original",
+      "source_sha256": "31a8eee70d9b94d7b668c180e2ccdf59c88707fd7b13e489ea2b5d2f11680fb6",
+      "source_bbox": [
+        322,
+        238,
+        893,
+        1230
+      ],
+      "uniform_scale": 0.31451612903225806,
+      "aspect_rescale_ratio": 1.0022901791728411,
+      "registration_origin": [
+        103,
+        80
+      ],
+      "foot_anchor_2x": [
+        192,
+        392
+      ],
+      "reference_frame": "idle/00.png",
+      "visible_height": 312,
+      "reused_from_frame": "eat/00.png",
+      "sha256": "b9f9cd005ff62ac6e4b7e5cacdaa8c0a89998f7a97cb62f1ac7bd7323fb3c693",
+      "bytes": 83586
+    },
+    {
+      "path": "failed/00.png",
+      "source": "source-frames/failed/00.png",
+      "status": "original_hd",
+      "sha256": "454c7175d1e9917d2c506ad6289bf40e5bd8fda6d42850f896bc45b69661752c",
+      "source_bbox": [
+        5,
+        9,
+        262,
+        452
+      ],
+      "reference_bbox": [
+        51,
+        40,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0027,
+      "silhouette_iou": 0.9787,
+      "bytes": 86916
+    },
+    {
+      "path": "failed/01.png",
+      "source": "source-frames/failed/01.png",
+      "status": "original_hd",
+      "sha256": "68c3b9467a6074de00f962f27ddd86bb27b63f9192e8b584bfe4cad5cfef7a48",
+      "source_bbox": [
+        7,
+        11,
+        262,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        41,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.999,
+      "silhouette_iou": 0.9693,
+      "bytes": 85367
+    },
+    {
+      "path": "failed/02.png",
+      "source": "source-frames/failed/02.png",
+      "status": "original_hd",
+      "sha256": "1264094ee3e7d92465a812cce8a0fc54c80a64571211a628c3fda99b7a6250c6",
+      "source_bbox": [
+        8,
+        22,
+        259,
+        451
+      ],
+      "reference_bbox": [
+        52,
+        45,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0047,
+      "silhouette_iou": 0.9829,
+      "bytes": 83254
+    },
+    {
+      "path": "failed/03.png",
+      "source": "source-frames/failed/03.png",
+      "status": "original_hd",
+      "sha256": "49348ba1aca473710587a4c5076b9f1822989014ba828670c7013fa76ef6a0cf",
+      "source_bbox": [
+        9,
+        57,
+        259,
+        452
+      ],
+      "reference_bbox": [
+        52,
+        57,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0107,
+      "silhouette_iou": 0.9847,
+      "bytes": 76823
+    },
+    {
+      "path": "failed/04.png",
+      "source": "source-frames/failed/04.png",
+      "status": "original_hd",
+      "sha256": "6876b904e1c7cc5b6c420eaebcb154787dde4b592fda502f1e460f097f142f8e",
+      "source_bbox": [
+        12,
+        84,
+        257,
+        452
+      ],
+      "reference_bbox": [
+        53,
+        66,
+        138,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0053,
+      "silhouette_iou": 0.9854,
+      "bytes": 70455
+    },
+    {
+      "path": "failed/05.png",
+      "source": "source-frames/failed/05.png",
+      "status": "original_hd",
+      "sha256": "152faa608c1b6f9def59155fc5494362bff4d94313bef9fd2712dda4b5bc0fbf",
+      "source_bbox": [
+        8,
+        21,
+        260,
+        451
+      ],
+      "reference_bbox": [
+        52,
+        44,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9963,
+      "silhouette_iou": 0.9821,
+      "bytes": 84004
+    },
+    {
+      "path": "failed/06.png",
+      "source": "source-frames/failed/06.png",
+      "status": "original_hd",
+      "sha256": "ad88c031966a156f67db66b0b423f64f22f8fced147aefaf165c5cc54c883db9",
+      "source_bbox": [
+        6,
+        6,
+        262,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0046,
+      "silhouette_iou": 0.9899,
+      "bytes": 89168
+    },
+    {
+      "path": "failed/07.png",
+      "source": "source-frames/failed/07.png",
+      "status": "original_hd",
+      "sha256": "f5f996a4bd2ae874b0ba239c37e2633d6afbb6202eba3167d8cbd4c41416a095",
+      "source_bbox": [
+        5,
+        5,
+        264,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9952,
+      "silhouette_iou": 0.9791,
+      "bytes": 88722
+    },
+    {
+      "path": "idle/00.png",
+      "source": "private-v3-idle-modular/idle/00.png",
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "offen",
+      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/00.png",
+        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+        "translation_2x": [
+          0,
+          0
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "idle/01.png",
+      "source": "private-v3-idle-modular/idle/01.png",
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "offen",
+      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/00.png",
+        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+        "translation_2x": [
+          0,
+          0
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "idle/02.png",
+      "source": "private-v3-idle-modular/idle/02.png",
+      "source_sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "halboffen",
+      "eye_sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/02.png",
+        "historical_export_sha256": "729a063d153cf5fc77bc1eef9cc6be5ed8cf4300b577ce938521d661061f2e11",
+        "translation_2x": [
+          2,
+          -1
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "bytes": 90582
+    },
+    {
+      "path": "idle/03.png",
+      "source": "private-v3-idle-modular/idle/03.png",
+      "source_sha256": "cabcc4c65ddd6590f2dd61bfc75311700d0a10a676b367de43133b68623bb9d4",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "geschlossen",
+      "eye_sha256": "845eb839753b42ea67f5a393366f63ebbde7e80a912fd69a7645dd9bf862d5aa",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/03.png",
+        "historical_export_sha256": "3bd4b66867ed5eb965fcc2fb49fc463fde3928eb00c824284f3ac95b44da0ac8",
+        "translation_2x": [
+          0,
+          -2
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "cabcc4c65ddd6590f2dd61bfc75311700d0a10a676b367de43133b68623bb9d4",
+      "bytes": 90115
+    },
+    {
+      "path": "idle/04.png",
+      "source": "private-v3-idle-modular/idle/04.png",
+      "source_sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "halboffen",
+      "eye_sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/02.png",
+        "historical_export_sha256": "729a063d153cf5fc77bc1eef9cc6be5ed8cf4300b577ce938521d661061f2e11",
+        "translation_2x": [
+          2,
+          -1
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "bytes": 90582
+    },
+    {
+      "path": "idle/05.png",
+      "source": "private-v3-idle-modular/idle/05.png",
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "offen",
+      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/00.png",
+        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+        "translation_2x": [
+          0,
+          0
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "idle/06.png",
+      "source": "private-v3-idle-modular/idle/06.png",
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "offen",
+      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/00.png",
+        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+        "translation_2x": [
+          0,
+          0
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "idle/07.png",
+      "source": "private-v3-idle-modular/idle/07.png",
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_idle_fixed_head_eyes_only",
+      "source_kind": "reviewed_existing_2x_eye_composite",
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
+      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "eye_phase": "offen",
+      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+      "eye_provenance": {
+        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
+        "historical_source": "source-frames/idle/00.png",
+        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+        "translation_2x": [
+          0,
+          0
+        ],
+        "scale": 1.0
+      },
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "jumping/00.png",
+      "source": "source-frames/jumping/00.png",
+      "status": "original_hd",
+      "sha256": "c4440c4139d96e1ab20e049e909963814b19dd8f3f5b93193658b7528ce54eea",
+      "source_bbox": [
+        9,
+        145,
+        388,
+        695
+      ],
+      "reference_bbox": [
+        52,
+        70,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0065,
+      "silhouette_iou": 0.9725,
+      "bytes": 72698
+    },
+    {
+      "path": "jumping/01.png",
+      "source": "inbetweens/jumping/generated/new-0-1.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "1ec0b40264aa8c180850265ca2dac5f21a206103406a7bdaf0a461cfb3c8d632",
+      "source_bbox": [
+        334,
+        375,
+        880,
+        1192
+      ],
+      "reference_bbox": [
+        53,
+        60,
+        138,
+        190
+      ],
+      "aspect_rescale_ratio": 0.9784,
+      "silhouette_iou": 0.9779,
+      "bytes": 72492
+    },
+    {
+      "path": "jumping/02.png",
+      "source": "source-frames/jumping/01.png",
+      "status": "original_hd",
+      "sha256": "70f748beb7224c1fb49c01ca2f7e8d8ab3663ac7593b3135bbae1d98339f0430",
+      "source_bbox": [
+        8,
+        66,
+        390,
+        652
+      ],
+      "reference_bbox": [
+        52,
+        52,
+        139,
+        184
+      ],
+      "aspect_rescale_ratio": 1.0111,
+      "silhouette_iou": 0.9893,
+      "bytes": 75772
+    },
+    {
+      "path": "jumping/03.png",
+      "source": "source-frames/jumping/02.png",
+      "status": "original_hd",
+      "sha256": "e5b21beeb629dcccdc8e5c2163d98a8c27f1d7cd58c1a403bf915cb9fa931d69",
+      "source_bbox": [
+        5,
+        5,
+        393,
+        604
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        139,
+        173
+      ],
+      "aspect_rescale_ratio": 1.0063,
+      "silhouette_iou": 0.9655,
+      "bytes": 79369
+    },
+    {
+      "path": "jumping/04.png",
+      "source": "inbetweens/jumping/generated/new-2-3.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "f4d713e8c9d76ab5194b581eab5c08a9818f1c1c5b3ca785d323da96f00d74c0",
+      "source_bbox": [
+        339,
+        275,
+        888,
+        1101
+      ],
+      "reference_bbox": [
+        50,
+        46,
+        141,
+        182
+      ],
+      "aspect_rescale_ratio": 1.0067,
+      "silhouette_iou": 0.9935,
+      "bytes": 76770
+    },
+    {
+      "path": "jumping/05.png",
+      "source": "source-frames/jumping/03.png",
+      "status": "original_hd",
+      "sha256": "b1463998e653d54c8cb628639bacdc54f584ca59397f811f7a40e5af57fb2583",
+      "source_bbox": [
+        6,
+        78,
+        391,
+        674
+      ],
+      "reference_bbox": [
+        52,
+        55,
+        139,
+        189
+      ],
+      "aspect_rescale_ratio": 1.0051,
+      "silhouette_iou": 0.983,
+      "bytes": 77587
+    },
+    {
+      "path": "jumping/06.png",
+      "source": "inbetweens/jumping/generated/new-3-4.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "e11cc8ff042b9d2c7e7cf541eb21eac92cf2ff0f84d667f554469837a3d4de54",
+      "source_bbox": [
+        346,
+        409,
+        867,
+        1172
+      ],
+      "reference_bbox": [
+        52,
+        60,
+        140,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9763,
+      "silhouette_iou": 0.9711,
+      "bytes": 73596
+    },
+    {
+      "path": "jumping/07.png",
+      "source": "source-frames/jumping/04.png",
+      "status": "original_hd",
+      "sha256": "849ae51d7f41b7143ed5709b2eae38a77885ff88cfaf416fa53c9caa88a32c40",
+      "source_bbox": [
+        12,
+        126,
+        387,
+        695
+      ],
+      "reference_bbox": [
+        53,
+        65,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9998,
+      "silhouette_iou": 0.979,
+      "bytes": 74289
+    },
+    {
+      "path": "look/00.png",
+      "source": "private-v3-gaze-modular/look/00.png",
+      "source_sha256": "738572e438a2db2fe92c96cab9299390df7a97c157eb08deb8de2e9eca584d19",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 0.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "093f66e0a3d2f276629d9d9c500c971798fa9bf4c6075812ee83f4cac8dc4626",
+      "head_provenance": {
+        "kind": "corrected_individual_head",
+        "source": "private-v3-gaze-head-corrections/00.png",
+        "sha256": "21d84fd63efcf09def9a106ffb813564561a00d5cc653f0cccf64f527b1670b8",
+        "size": [
+          1254,
+          1254
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-kopfkorrektur/originale/00.png",
+          "source_sha256": "21d84fd63efcf09def9a106ffb813564561a00d5cc653f0cccf64f527b1670b8",
+          "source_size": [
+            1254,
+            1254
+          ],
+          "core_envelope_2x": [
+            117,
+            111,
+            269,
+            227
+          ],
+          "relative_uniform_head_scale": 1.0454187717601293,
+          "native_uniform_scale": 0.19066039075133506,
+          "rounding_aspect_ratio": 0.9980337344830853,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.91011235955057,
+            234.0787878787879
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "738572e438a2db2fe92c96cab9299390df7a97c157eb08deb8de2e9eca584d19",
+      "bytes": 86545
+    },
+    {
+      "path": "look/01.png",
+      "source": "private-v3-gaze-modular/look/01.png",
+      "source_sha256": "31ac1b1848b700380433606cd2d43d5e2ac8d544351e17006eacf8e194689e24",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 22.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "ce9dcf1506199971e5eb103cd73986c7d85a408136edd2bc69d32a007d7044d7",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/01.png",
+        "sha256": "3693984988a862060e3c8d9dbe683c7737f6dcff8a5c5151344a93a8a41ec1d0",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/01.png",
+          "source_sha256": "aff3b054981ae90debd78f73612d2a406f49c9aa83619118f5315849b0ea12fc",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            112,
+            120,
+            259,
+            231
+          ],
+          "relative_uniform_head_scale": 1.0811119686707242,
+          "native_uniform_scale": 0.3250273821340693,
+          "rounding_aspect_ratio": 1.0005872975920798,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.4848484848485,
+            234.33951454846977
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "31ac1b1848b700380433606cd2d43d5e2ac8d544351e17006eacf8e194689e24",
+      "bytes": 87071
+    },
+    {
+      "path": "look/02.png",
+      "source": "private-v3-gaze-modular/look/02.png",
+      "source_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 45.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "9e62cf16f77ea4487effc7389c2dba89d34f69dfce17beac83adabea624c29c8",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/02.png",
+        "sha256": "a1ba7b4d42a77c7b1399951bc73a8c147506aaaf0199115ea0a519ce9e8c6a94",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/02.png",
+          "source_sha256": "5097b77bf6db664ceddeaaa190663e40fd066db1b3dcb6e954985ae19353fc9d",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            115,
+            113,
+            260,
+            231
+          ],
+          "relative_uniform_head_scale": 1.0557615160280713,
+          "native_uniform_scale": 0.31665347680915684,
+          "rounding_aspect_ratio": 1.0039684232984853,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.64417177914112,
+            234.02103622906117
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+      "bytes": 84791
+    },
+    {
+      "path": "look/03.png",
+      "source": "private-v3-gaze-modular/look/03.png",
+      "source_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 67.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "d0cbc3703b2901e8236143b58992813495fa9f97bfb0498ce5732514000a6c1e",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/03.png",
+        "sha256": "4fb0ec20f239c5e9b8e73a35a3c52138a9ca377e871037d94fc824fc1551398b",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/03.png",
+          "source_sha256": "ab4d06805516dd3a8fb3b559fa4a9bdd7f4883797d13d5a8aa1374d82bdcf00b",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            114,
+            105,
+            263,
+            232
+          ],
+          "relative_uniform_head_scale": 1.0143159592506217,
+          "native_uniform_scale": 0.2836676081907092,
+          "rounding_aspect_ratio": 1.001669449081803,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.56547619047618,
+            233.8095238095238
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+      "bytes": 83382
+    },
+    {
+      "path": "look/04.png",
+      "source": "private-v3-gaze-modular/look/04.png",
+      "source_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 90.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "39ce85b6e7e473717768feca109d64abf1319cf0568900b66669c731505a2865",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/04.png",
+        "sha256": "616171ec41380e51c2d836514a197090f33a4d37fd0fda52d2ee9d2ed64eeea5",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/04.png",
+          "source_sha256": "8737521703463111dd4782d009746cb6b7c794bd207cc12e992a9c1069aeef65",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            115,
+            104,
+            263,
+            232
+          ],
+          "relative_uniform_head_scale": 1.0137536033194867,
+          "native_uniform_scale": 0.31177307787453123,
+          "rounding_aspect_ratio": 0.9974212900023738,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.06586826347305,
+            233.58572140839047
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+      "bytes": 84224
+    },
+    {
+      "path": "look/05.png",
+      "source": "private-v3-gaze-modular/look/05.png",
+      "source_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 112.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "7970486d597278a82a4338303c61f18f8f25f5055d7aafbb2cae79a5c0716f2b",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/05.png",
+        "sha256": "948ca85a646f3af0b405dc22ce722ce4f700a1ac34be847226bd205e502049f0",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/05.png",
+          "source_sha256": "0c4eb34c35611cfdd2a01fc465c61b42ae99bfd4e5fd9ac39918cc32f09cda45",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            116,
+            104,
+            264,
+            233
+          ],
+          "relative_uniform_head_scale": 1.0098166812494878,
+          "native_uniform_scale": 0.30953935241593034,
+          "rounding_aspect_ratio": 0.9985933503836316,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            235
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.06508875739644,
+            234.74735490620319
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+      "bytes": 84370
+    },
+    {
+      "path": "look/06.png",
+      "source": "private-v3-gaze-modular/look/06.png",
+      "source_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 135.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "24da50baac4eb56fc941afe4d320de744e393e98d9b7174c5cb8978468747c16",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/06.png",
+        "sha256": "26c2d02198036725b71d0d5e7d8e2e9727cd2c9ecad2ac7e196810431ce56106",
+        "size": [
+          1205,
+          1306
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/06.png",
+          "source_sha256": "fb74916582d253da5240eae7a186a585dd2d39d8f7dd46cc2216ea0f9fc32aa1",
+          "source_size": [
+            1205,
+            1306
+          ],
+          "core_envelope_2x": [
+            114,
+            99,
+            275,
+            236
+          ],
+          "relative_uniform_head_scale": 0.9442773906764288,
+          "native_uniform_scale": 0.256836493978609,
+          "rounding_aspect_ratio": 1.0040608864027538,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            236
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.97237569060772,
+            235.99941280093952
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+      "bytes": 82883
+    },
+    {
+      "path": "look/07.png",
+      "source": "private-v3-gaze-modular/look/07.png",
+      "source_sha256": "c38bf71dacd20da62d4858dfe8ec2107d683d51ee5b3e3028e85ce61e72c4ac8",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 157.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "709ceb1aade47eca952f83450690f8ce7b77f65b0e5e7ae2569f87ea3ebde6b3",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/07.png",
+        "sha256": "ad2d9c3495e4a96539a456d42383bb63687fab9f6f728808d777e7066eea3652",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/07.png",
+          "source_sha256": "c8dc2283afcfde2974e26c34fc24529bc906244d095e56f706972880f9cf4c2b",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            115,
+            105,
+            269,
+            234
+          ],
+          "relative_uniform_head_scale": 1.0,
+          "native_uniform_scale": 0.3134800253867697,
+          "rounding_aspect_ratio": 1.0008554319931564,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            236
+          ],
+          "rendered_jaw_at_neck_2x": [
+            192.0,
+            236.0271158887986
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "c38bf71dacd20da62d4858dfe8ec2107d683d51ee5b3e3028e85ce61e72c4ac8",
+      "bytes": 86541
+    },
+    {
+      "path": "look/08.png",
+      "source": "private-v3-gaze-modular/look/08.png",
+      "source_sha256": "3c51025df7925ac59a37a4b4d96df77c85a0f9ec737464cb2195325638cde1a5",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 180.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "6dc9c42582afe47fcdf42b5c59f2882191100c530161ec93586119dadae79198",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/08.png",
+        "sha256": "7da613df77cbb802e6f50d6269b7bad51e1ccb7afe0f9845f58c35798c70aecc",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/08.png",
+          "source_sha256": "2f88d75170db0725070f9d0864fce3b1fc88ec21780d52deb01d682fb752fa9f",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            115,
+            104,
+            269,
+            235
+          ],
+          "relative_uniform_head_scale": 0.9923370518263847,
+          "native_uniform_scale": 0.3116561047492397,
+          "rounding_aspect_ratio": 1.0008032128514057,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            236
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.5027932960894,
+            236.0797188410766
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "3c51025df7925ac59a37a4b4d96df77c85a0f9ec737464cb2195325638cde1a5",
+      "bytes": 86329
+    },
+    {
+      "path": "look/09.png",
+      "source": "private-v3-gaze-modular/look/09.png",
+      "source_sha256": "89b2153f2e5105137e766c59a5785242c21554ab6bea38e41aeca5c7b4e16e9f",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 202.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "ee0a2cd9ec32452499555dcf8c333bb918a6234adb1e501ab50bccf5371e3678",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/09.png",
+        "sha256": "1e35dfb71ce09ff233003fc1d8561d5e695e9dbdb43e9a507af49a2a597ab6f1",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/09.png",
+          "source_sha256": "f641a8d91b41616fdc7f5b2029bc95cbb6075f52c78db07d01e3e9654b3bb547",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            116,
+            104,
+            270,
+            235
+          ],
+          "relative_uniform_head_scale": 0.9923370518263847,
+          "native_uniform_scale": 0.2875823697787688,
+          "rounding_aspect_ratio": 0.9988036976617726,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            236
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.02247191011236,
+            235.99285999885763
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "89b2153f2e5105137e766c59a5785242c21554ab6bea38e41aeca5c7b4e16e9f",
+      "bytes": 83712
+    },
+    {
+      "path": "look/10.png",
+      "source": "private-v3-gaze-modular/look/10.png",
+      "source_sha256": "267f230f11b3c1e5f3a6a761381073d0183a5f907c1ccaa0645cf8aeac28c8f4",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 225.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "87fa8326c7f0c3b49d3ec6a459c40311e460a2843a630b6591f065d0e850fb03",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/10.png",
+        "sha256": "67caacc803d34da79eafd53a177f89015197b628975d1ef6c55727d3c90c94c4",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/10.png",
+          "source_sha256": "76371a48652aeb6974a34738477f14e90228737ba8f8521276463e2976f64d2a",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            115,
+            104,
+            271,
+            234
+          ],
+          "relative_uniform_head_scale": 0.984779133018365,
+          "native_uniform_scale": 0.29662417334996966,
+          "rounding_aspect_ratio": 0.9990503887471068,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            236
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.04918032786884,
+            236.28547332911657
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "267f230f11b3c1e5f3a6a761381073d0183a5f907c1ccaa0645cf8aeac28c8f4",
+      "bytes": 84156
+    },
+    {
+      "path": "look/11.png",
+      "source": "private-v3-gaze-modular/look/11.png",
+      "source_sha256": "5c9e882586a4264fa2ede633d8e61a02f91acdfc99f44c5ebb3e26175791ec38",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 247.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "c7fc8cdc462ab2e90256e3d96d052c98bef302900f4facf7122d7ad55d93c048",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/11.png",
+        "sha256": "74138d4130b73211d6e3dc97ac0e72050aca8439a78bbefd13dc266ff1ccc38a",
+        "size": [
+          1205,
+          1306
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/11.png",
+          "source_sha256": "17ebe03d19e0e051d560f5388acef9de9da0c9cc15ba345157046cff7af05938",
+          "source_size": [
+            1205,
+            1306
+          ],
+          "core_envelope_2x": [
+            121,
+            109,
+            271,
+            232
+          ],
+          "relative_uniform_head_scale": 1.0272356147107056,
+          "native_uniform_scale": 0.3133635743106451,
+          "rounding_aspect_ratio": 0.9970957581707366,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            235
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.3391812865497,
+            235.2954588637659
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "5c9e882586a4264fa2ede633d8e61a02f91acdfc99f44c5ebb3e26175791ec38",
+      "bytes": 83984
+    },
+    {
+      "path": "look/12.png",
+      "source": "private-v3-gaze-modular/look/12.png",
+      "source_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 270.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "43d129c900b1c44ea0515537b94593dc5a7ee516114928c20f90dbb544216c9e",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/12.png",
+        "sha256": "6b5cf8bc11a3c32d3919f5d476c8c6652532afba041aca0a7438c900622aba12",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/12.png",
+          "source_sha256": "05183fe4523913a323d87ceaf1b2464b1259734dd23c9e453df322d7a6cc0cb2",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            120,
+            107,
+            270,
+            231
+          ],
+          "relative_uniform_head_scale": 1.0230851508092822,
+          "native_uniform_scale": 0.3217534509096144,
+          "rounding_aspect_ratio": 0.9959896720320827,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.87134502923976,
+            234.44177274870344
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+      "bytes": 82725
+    },
+    {
+      "path": "look/13.png",
+      "source": "private-v3-gaze-modular/look/13.png",
+      "source_sha256": "2c112e3a623476dedb15a879d8140364080d67aa97fe1afb27b4ec327bd01a1b",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 292.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "aa5b084ccdd0d7cc85d2e4381cc797a4ab6a92666709b88e1bf6e76cd4354b1b",
+      "head_provenance": {
+        "kind": "extracted_individual_head",
+        "source": "private-v3-gaze/13.png",
+        "sha256": "50aa19189e50521a78e6ce4a252da51cdca7199bff0d9f774fb5b0fd94230ac4",
+        "size": [
+          1205,
+          1305
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-modularer-versuch/bausteine/koepfe-originalraster/13.png",
+          "source_sha256": "5a94713c3cc46edd8835c8a9b0ff479f9ce6ba0394865df1c394dcd87869b2b5",
+          "source_size": [
+            1205,
+            1305
+          ],
+          "core_envelope_2x": [
+            124,
+            111,
+            273,
+            228
+          ],
+          "relative_uniform_head_scale": 1.0567741669785065,
+          "native_uniform_scale": 0.27864712345186704,
+          "rounding_aspect_ratio": 1.000823529411765,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.44444444444446,
+            233.84232047022743
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "2c112e3a623476dedb15a879d8140364080d67aa97fe1afb27b4ec327bd01a1b",
+      "bytes": 82746
+    },
+    {
+      "path": "look/14.png",
+      "source": "private-v3-gaze-modular/look/14.png",
+      "source_sha256": "f47bfe581f748b0d82667f202952cc6e5f15961caa8bb3d6748f6d86b6173348",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 315.0,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "d1b31c2692d24c24eedb77a71985c3dbf45843e89fd88acb921f695885e17381",
+      "head_provenance": {
+        "kind": "corrected_individual_head",
+        "source": "private-v3-gaze-head-corrections/14.png",
+        "sha256": "a9751cc209d857c473db7890a71ab3f55613910ffca9817fae55a61978c7d24f",
+        "size": [
+          1254,
+          1254
+        ],
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-kopfkorrektur/originale/14.png",
+          "source_sha256": "a9751cc209d857c473db7890a71ab3f55613910ffca9817fae55a61978c7d24f",
+          "source_size": [
+            1254,
+            1254
+          ],
+          "core_envelope_2x": [
+            128,
+            116,
+            269,
+            225
+          ],
+          "relative_uniform_head_scale": 1.1139559737171172,
+          "native_uniform_scale": 0.21204249675141618,
+          "rounding_aspect_ratio": 0.997647375142838,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.39877300613497,
+            233.5769230769231
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "f47bfe581f748b0d82667f202952cc6e5f15961caa8bb3d6748f6d86b6173348",
+      "bytes": 83867
+    },
+    {
+      "path": "look/15.png",
+      "source": "private-v3-gaze-modular/look/15.png",
+      "source_sha256": "33541740e74c44c88371062416627dedd663f0bd1adbad0ef01cabad137da40a",
+      "source_size": [
+        384,
+        416
+      ],
+      "status": "composited_v3_gaze_shared_idle_body",
+      "degrees_clockwise_from_up": 337.5,
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "scale_calibration": "shared_idle_body_pixels",
+      "shared_body_from_y": 260,
+      "body_source": "private-v3-gaze-modular/body.png",
+      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "head_sha256": "cb30850c5042f87c48828b5a521a0089402e43d221ce3afea905bea6c402cc5c",
+      "head_provenance": {
+        "kind": "hair_corrected_individual_head",
+        "source": "private-v3-gaze-head15-hair/15-kopf-haar-korrigiert-originalraster.png",
+        "sha256": "a5ec138c8d08afd3f7d8e6f8ee39369957c9d6f18c69340702efe1b180cc31d4",
+        "size": [
+          1254,
+          1254
+        ],
+        "face_neck_preserved_from_preview_y": 170,
+        "native_lower_head_preserved_from_y": 720,
+        "original_head_sha256": "bf6bdb77320cfeddc16163d0381326641ea50947a122a03e5768148614eb71f4",
+        "hair_edit_sha256": "3b6e6ee228ba6dcff613a115546566906de70a9c9504b509bdd53cf71282392f",
+        "calibration": {
+          "method": "idle_core_envelope_uniform_scale_and_jaw_neck_registration",
+          "source": "2026-10-23-umsehen-v3-kopf15-haarkorrektur/bausteine/15-kopf-haar-korrigiert-originalraster.png",
+          "source_sha256": "a5ec138c8d08afd3f7d8e6f8ee39369957c9d6f18c69340702efe1b180cc31d4",
+          "source_size": [
+            1254,
+            1254
+          ],
+          "core_envelope_2x": [
+            127,
+            125,
+            272,
+            232
+          ],
+          "relative_uniform_head_scale": 1.1087022838025216,
+          "native_uniform_scale": 0.2113183995367551,
+          "rounding_aspect_ratio": 0.9967998079884792,
+          "target_jaw_at_neck_2x": [
+            191.5,
+            234
+          ],
+          "rendered_jaw_at_neck_2x": [
+            191.85454545454542,
+            233.95731334149326
+          ],
+          "body_and_collar_pixels_preserved": true,
+          "limitations": "Approximate visible core envelope; existing drawing differences retained."
+        }
+      },
+      "reference_foot_bounds": [
+        156,
+        351,
+        226,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "alpha128_normalized_pixels": 0,
+      "sha256": "33541740e74c44c88371062416627dedd663f0bd1adbad0ef01cabad137da40a",
+      "bytes": 83340
+    },
+    {
+      "path": "petting/00.png",
+      "source": "petting/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "6d2c067e7c6b5032e2fd5b256dded4efec2ce8ebb5ee7bb7c1e7d47c14d9cf2f",
+      "source_bbox": [
+        4,
+        2,
+        268,
+        480
+      ],
+      "reference_bbox": [
+        52,
+        37,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9907,
+      "silhouette_iou": 0.9853,
+      "bytes": 93744
+    },
+    {
+      "path": "petting/01.png",
+      "source": "petting/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "8758c18eb39d1fe8becaae42b3672f5c75245d5c334c3df2c418670314db4bb2",
+      "source_bbox": [
+        2,
+        2,
+        262,
+        585
+      ],
+      "reference_bbox": [
+        53,
+        3,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9875,
+      "silhouette_iou": 0.9602,
+      "bytes": 102167
+    },
+    {
+      "path": "petting/02.png",
+      "source": "petting/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "99741b05cc4ea1e9bac9d3a3eabeef443bd513297299ab65d63a33230676a39d",
+      "source_bbox": [
+        4,
+        3,
+        265,
+        496
+      ],
+      "reference_bbox": [
+        52,
+        32,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 1.002,
+      "silhouette_iou": 0.9878,
+      "bytes": 97006
+    },
+    {
+      "path": "petting/03.png",
+      "source": "petting/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "e960e6537bdfbc98730388199a7991b5e1bfea2c6fc0e29873a75f319acfb330",
+      "source_bbox": [
+        3,
+        3,
+        267,
+        488
+      ],
+      "reference_bbox": [
+        53,
+        35,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9813,
+      "silhouette_iou": 0.9684,
+      "bytes": 95116
+    },
+    {
+      "path": "petting/04.png",
+      "source": "petting/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "d628fd2972405fe9bedadd5e900e16cd7e0eae8b10a8ec92c23cf4e02095a933",
+      "source_bbox": [
+        4,
+        3,
+        265,
+        489
+      ],
+      "reference_bbox": [
+        54,
+        35,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9831,
+      "silhouette_iou": 0.9626,
+      "bytes": 93777
+    },
+    {
+      "path": "petting/05.png",
+      "source": "petting/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "42c904334540cb4ead7c61f75462092556f9745a67252b40086b113d530fbc21",
+      "source_bbox": [
+        4,
+        3,
+        258,
+        488
+      ],
+      "reference_bbox": [
+        54,
+        35,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9844,
+      "silhouette_iou": 0.9691,
+      "bytes": 93858
+    },
+    {
+      "path": "petting/06.png",
+      "source": "petting/frames-native/07.png",
+      "status": "original_hd",
+      "sha256": "d4d20172b6b50dcfb6d7f116dd9186df10cc0cba82c47b2080d7ed1b87cfae54",
+      "source_bbox": [
+        2,
+        3,
+        260,
+        585
+      ],
+      "reference_bbox": [
+        53,
+        3,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9935,
+      "silhouette_iou": 0.9721,
+      "bytes": 103101
+    },
+    {
+      "path": "petting/07.png",
+      "source": "petting/frames-native/08.png",
+      "status": "original_hd",
+      "sha256": "bcc4c7b3e4c6c71ed2e87583d5decf605af2b58af62b9b32bf31005b691c51b6",
+      "source_bbox": [
+        3,
+        3,
+        263,
+        481
+      ],
+      "reference_bbox": [
+        53,
+        37,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9828,
+      "silhouette_iou": 0.9776,
+      "bytes": 92146
+    },
+    {
+      "path": "pick_up/00.png",
+      "source": "Registriert_Hochaufloesend/01.png",
+      "status": "original_hd_pickup",
+      "sha256": "84b0eebb7ac0cf541bf7bab9302a2f16e0934fe9f0d84fe2ddb32b68c366db5a",
+      "source_bbox": [
+        155,
+        278,
+        840,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9827,
+      "silhouette_iou": 0.9604,
+      "bytes": 84818
+    },
+    {
+      "path": "pick_up/01.png",
+      "source": "Registriert_Hochaufloesend/02.png",
+      "status": "original_hd_pickup",
+      "sha256": "01aa5303e7633824b548d6f0109856f859a340fed1737cfb607b39d51f9b745a",
+      "source_bbox": [
+        157,
+        301,
+        845,
+        1479
+      ],
+      "reference_bbox": [
+        50,
+        42,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9895,
+      "silhouette_iou": 0.9693,
+      "bytes": 82536
+    },
+    {
+      "path": "pick_up/02.png",
+      "source": "Registriert_Hochaufloesend/03.png",
+      "status": "original_hd_pickup",
+      "sha256": "6c2c49e628c643ca32715a49c94e4de5bc228d503882b2cbf521bad43b6ca198",
+      "source_bbox": [
+        147,
+        422,
+        852,
+        1480
+      ],
+      "reference_bbox": [
+        49,
+        58,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9787,
+      "silhouette_iou": 0.9737,
+      "bytes": 81155
+    },
+    {
+      "path": "pick_up/03.png",
+      "source": "Registriert_Hochaufloesend/04.png",
+      "status": "original_hd_pickup",
+      "sha256": "3772ea8245d61b3a38afd7f6613b4f21a2c03ad56f7981f428d8c80fc93470b0",
+      "source_bbox": [
+        150,
+        397,
+        864,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        55,
+        141,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9771,
+      "bytes": 82490
+    },
+    {
+      "path": "pick_up/04.png",
+      "source": "Registriert_Hochaufloesend/05.png",
+      "status": "original_hd_pickup",
+      "sha256": "7517e6d2a494cbe2e5cda15c9062f82ee6709a93cd25b528524f61a65d94effe",
+      "source_bbox": [
+        162,
+        415,
+        835,
+        1478
+      ],
+      "reference_bbox": [
+        50,
+        57,
+        136,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9772,
+      "silhouette_iou": 0.9554,
+      "bytes": 77975
+    },
+    {
+      "path": "pick_up/05.png",
+      "source": "Registriert_Hochaufloesend/06.png",
+      "status": "original_hd_pickup",
+      "sha256": "a69719d41377e104c1301d2b44e991dd65828d4f213a894fb9a9c778fa8fe744",
+      "source_bbox": [
+        182,
+        348,
+        820,
+        1479
+      ],
+      "reference_bbox": [
+        53,
+        48,
+        135,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9822,
+      "silhouette_iou": 0.9785,
+      "bytes": 73641
+    },
+    {
+      "path": "pick_up/06.png",
+      "source": "Registriert_Hochaufloesend/07.png",
+      "status": "original_hd_pickup",
+      "sha256": "2f30232101d0305146f4d1bc2d5dff25865fdec9a7c4e472e2e19dba57c6594f",
+      "source_bbox": [
+        170,
+        335,
+        832,
+        1479
+      ],
+      "reference_bbox": [
+        51,
+        47,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9974,
+      "silhouette_iou": 0.976,
+      "bytes": 77456
+    },
+    {
+      "path": "pick_up/07.png",
+      "source": "Registriert_Hochaufloesend/08.png",
+      "status": "original_hd_pickup",
+      "sha256": "3d5e87a2e80cabc8ff8a6cc341e9f3bd180df9fec9bc091ca51f1cebf2427605",
+      "source_bbox": [
+        152,
+        341,
+        853,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        47,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9806,
+      "silhouette_iou": 0.9737,
+      "bytes": 79453
+    },
+    {
+      "path": "review/00.png",
+      "source": "source-frames/review/00.png",
+      "status": "original_hd",
+      "sha256": "3b31e4c0aae919e4180d3aca4c4b6f9580d66ebe6e108df6185829275465c509",
+      "source_bbox": [
+        11,
+        5,
+        322,
+        539
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9859,
+      "silhouette_iou": 0.9763,
+      "bytes": 89252
+    },
+    {
+      "path": "review/01.png",
+      "source": "decoded/review.png#tile=1",
+      "status": "recovered_original_hd_sheet",
+      "sha256": "57e6009a7ccec59ab78849a7b4ecf9ee508ac9f34919e75d356b8236c90ebb71",
+      "source_bbox": [
+        41,
+        107,
+        354,
+        641
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9906,
+      "silhouette_iou": 0.9684,
+      "bytes": 89503
+    },
+    {
+      "path": "review/02.png",
+      "source": "inbetweens/review/generated/01-02.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "8cb9b7af27a99d8ff9a6e4b309cdfa3c51f6298f2fb251446f2198003a329d2f",
+      "source_bbox": [
+        356,
+        257,
+        855,
+        1138
+      ],
+      "reference_bbox": [
+        54,
+        41,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9809,
+      "silhouette_iou": 0.9555,
+      "bytes": 79163
+    },
+    {
+      "path": "review/03.png",
+      "source": "source-frames/review/02.png",
+      "status": "original_hd",
+      "sha256": "1e76760f3dfe46831bd4defca4fae62722c210701051cfcf9c5020e3387d13a6",
+      "source_bbox": [
+        7,
+        25,
+        326,
+        540
+      ],
+      "reference_bbox": [
+        50,
+        44,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9968,
+      "silhouette_iou": 0.9667,
+      "bytes": 88880
+    },
+    {
+      "path": "review/04.png",
+      "source": "source-frames/review/03.png",
+      "status": "original_hd",
+      "sha256": "11162a7e28bd8231785c132bb44ff2ae6078b3f825def260753d61f384c76356",
+      "source_bbox": [
+        5,
+        21,
+        329,
+        539
+      ],
+      "reference_bbox": [
+        49,
+        43,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9912,
+      "silhouette_iou": 0.9798,
+      "bytes": 90008
+    },
+    {
+      "path": "review/05.png",
+      "source": "inbetweens/review/generated/03-04.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "045b3adf093ce568056e0da5933a2e71dc737da459f2d5b35c80fe8df2bef4d5",
+      "source_bbox": [
+        344,
+        242,
+        891,
+        1180
+      ],
+      "reference_bbox": [
+        51,
+        40,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.991,
+      "silhouette_iou": 0.976,
+      "bytes": 81432
+    },
+    {
+      "path": "review/06.png",
+      "source": "source-frames/review/04.png",
+      "status": "original_hd",
+      "sha256": "00974ae6a135db7918cff7f990b480e67ebf37bf82269d296736a3b81170b8f7",
+      "source_bbox": [
+        11,
+        5,
+        322,
+        539
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9923,
+      "silhouette_iou": 0.9726,
+      "bytes": 85309
+    },
+    {
+      "path": "review/07.png",
+      "source": "source-frames/review/05.png",
+      "status": "original_hd",
+      "sha256": "9074c5209376db3925c91276825f975821bf9e215e08ddb3b3843d196a085824",
+      "source_bbox": [
+        11,
+        5,
+        323,
+        540
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9957,
+      "silhouette_iou": 0.9702,
+      "bytes": 89183
+    },
+    {
+      "path": "running-left/00.png",
+      "source": "source-frames/running-left/00.png",
+      "status": "original_hd",
+      "sha256": "49ad5923b683aaea0bd714486ad287299a1d6e937e7ec3fe46998b9fab5be863",
+      "source_bbox": [
+        5,
+        8,
+        224,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9899,
+      "silhouette_iou": 0.9815,
+      "bytes": 88587
+    },
+    {
+      "path": "running-left/01.png",
+      "source": "source-frames/running-left/01.png",
+      "status": "original_hd",
+      "sha256": "d11256f0e8406685aa40294decf8d05e0b92117e47ef3a7ce853e669e09ff827",
+      "source_bbox": [
+        8,
+        8,
+        221,
+        386
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9975,
+      "silhouette_iou": 0.9852,
+      "bytes": 82559
+    },
+    {
+      "path": "running-left/02.png",
+      "source": "source-frames/running-left/02.png",
+      "status": "original_hd",
+      "sha256": "78194e6e88ddb93fdbb530a14078263f9e540eda43d2e7f27647656ae56eb0cf",
+      "source_bbox": [
+        4,
+        8,
+        224,
+        381
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9881,
+      "silhouette_iou": 0.9788,
+      "bytes": 84521
+    },
+    {
+      "path": "running-left/03.png",
+      "source": "source-frames/running-left/03.png",
+      "status": "original_hd",
+      "sha256": "6755c2f68890bb29bd0db182fb4266f79035527cef982eec246178b52f6e923a",
+      "source_bbox": [
+        7,
+        8,
+        222,
+        380
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9854,
+      "silhouette_iou": 0.9756,
+      "bytes": 82552
+    },
+    {
+      "path": "running-left/04.png",
+      "source": "source-frames/running-left/04.png",
+      "status": "original_hd",
+      "sha256": "c970dc1f7ec942ecdc09b162c5cb30e41174177926829a1fd25a5133f6fb826f",
+      "source_bbox": [
+        6,
+        7,
+        223,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9904,
+      "silhouette_iou": 0.972,
+      "bytes": 88301
+    },
+    {
+      "path": "running-left/05.png",
+      "source": "source-frames/running-left/05.png",
+      "status": "original_hd",
+      "sha256": "15c712966c6416e7c99ff2cf63a91d7b7c7101b90e5bbe8c82f5278522af938a",
+      "source_bbox": [
+        5,
+        5,
+        225,
+        387
+      ],
+      "reference_bbox": [
+        52,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9922,
+      "silhouette_iou": 0.9792,
+      "bytes": 82130
+    },
+    {
+      "path": "running-left/06.png",
+      "source": "source-frames/running-left/06.png",
+      "status": "original_hd",
+      "sha256": "a9741f2658dadb006de6b9de295a9e91b6d0d8eee3103d3530ee4738654a7811",
+      "source_bbox": [
+        8,
+        8,
+        222,
+        381
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9927,
+      "silhouette_iou": 0.9868,
+      "bytes": 84123
+    },
+    {
+      "path": "running-left/07.png",
+      "source": "source-frames/running-left/07.png",
+      "status": "original_hd",
+      "sha256": "2644070c2534ba49c032ea3a189aa02729a26c1b7dc360431f67f7da7c0b9ee5",
+      "source_bbox": [
+        8,
+        9,
+        222,
+        383
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9817,
+      "bytes": 81723
+    },
+    {
+      "path": "running-right/00.png",
+      "source": "source-frames/running-right/00.png",
+      "status": "original_hd",
+      "sha256": "49b1ca4a8db5aae13edbb0832f101527a5a2abfebd6f35b8ccabffeeb85940d9",
+      "source_bbox": [
+        5,
+        8,
+        224,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9899,
+      "silhouette_iou": 0.9811,
+      "bytes": 88257
+    },
+    {
+      "path": "running-right/01.png",
+      "source": "source-frames/running-right/01.png",
+      "status": "original_hd",
+      "sha256": "d076af6b8a378f9cbf77253d8a516100676b67ba12bf33a322d8320f484ecacb",
+      "source_bbox": [
+        9,
+        8,
+        222,
+        386
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9975,
+      "silhouette_iou": 0.9852,
+      "bytes": 82488
+    },
+    {
+      "path": "running-right/02.png",
+      "source": "source-frames/running-right/02.png",
+      "status": "original_hd",
+      "sha256": "e14460a86809fd7a28e966ce812eee1178dc8f3a97ce2d63f905498b31d0c242",
+      "source_bbox": [
+        5,
+        8,
+        225,
+        381
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9881,
+      "silhouette_iou": 0.9844,
+      "bytes": 84291
+    },
+    {
+      "path": "running-right/03.png",
+      "source": "source-frames/running-right/03.png",
+      "status": "original_hd",
+      "sha256": "d391339be5cdba344711e065fdf04129f474533a82ac4fffd15452a7b08fa824",
+      "source_bbox": [
+        7,
+        8,
+        222,
+        380
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9854,
+      "silhouette_iou": 0.9764,
+      "bytes": 82234
+    },
+    {
+      "path": "running-right/04.png",
+      "source": "source-frames/running-right/04.png",
+      "status": "original_hd",
+      "sha256": "96331550548d21d62327c71e3719c45844cbbc0e0dc651d5a1d5ba67f0adf70f",
+      "source_bbox": [
+        6,
+        7,
+        223,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 1.0017,
+      "silhouette_iou": 0.9788,
+      "bytes": 89016
+    },
+    {
+      "path": "running-right/05.png",
+      "source": "source-frames/running-right/05.png",
+      "status": "original_hd",
+      "sha256": "8561fd3362eba7af23ed28045a46cae6dfa2a9426cd754c7b526ea18501cc880",
+      "source_bbox": [
+        5,
+        5,
+        225,
+        387
+      ],
+      "reference_bbox": [
+        52,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9922,
+      "silhouette_iou": 0.9792,
+      "bytes": 81925
+    },
+    {
+      "path": "running-right/06.png",
+      "source": "source-frames/running-right/06.png",
+      "status": "original_hd",
+      "sha256": "214ba6307ae7dc4ec9064a3e2fc0785a6ee9cb0943a60a68b4e0020ff50eb916",
+      "source_bbox": [
+        8,
+        8,
+        222,
+        381
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9927,
+      "silhouette_iou": 0.9868,
+      "bytes": 83994
+    },
+    {
+      "path": "running-right/07.png",
+      "source": "source-frames/running-right/07.png",
+      "status": "original_hd",
+      "sha256": "ca3a1db884e56cacb208f339f47baa748b801cb9d579a379a15414d6286bd7aa",
+      "source_bbox": [
+        8,
+        9,
+        222,
+        383
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9817,
+      "bytes": 81657
+    },
+    {
+      "path": "sleep/00.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "e4d4bc96633e4c1d4a67722fdc1b14672c1f98e0028d51551ad9f8023c8d7c49",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.0,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 121841
+    },
+    {
+      "path": "sleep/01.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "deeb808f99bbdf8b1d8d7b7db82672cfa5df9b0c6ca34d3b2b9018cb5fb4fe14",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.146446609407,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 121166
+    },
+    {
+      "path": "sleep/02.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "5963cbba39daf58a13a9d6e260827c6f0b402358ef5293a7e69c3e2b08107a07",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.5,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 121565
+    },
+    {
+      "path": "sleep/03.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "0b7b955d172518360c0a49d148a77150caaac6414cc64f7e508139bc9add2a39",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.853553390593,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 122103
+    },
+    {
+      "path": "sleep/04.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "a7eb9fe79d03f5e901c95534a35bb02fa47273d85a6524d2fb0968eca3b4f002",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 1.0,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 122473
+    },
+    {
+      "path": "sleep/05.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "0b7b955d172518360c0a49d148a77150caaac6414cc64f7e508139bc9add2a39",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.853553390593,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 122103
+    },
+    {
+      "path": "sleep/06.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "5963cbba39daf58a13a9d6e260827c6f0b402358ef5293a7e69c3e2b08107a07",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.5,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 121565
+    },
+    {
+      "path": "sleep/07.png",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "deeb808f99bbdf8b1d8d7b7db82672cfa5df9b0c6ca34d3b2b9018cb5fb4fe14",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.146446609407,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
+      ],
+      "bytes": 121166
+    },
+    {
+      "path": "waiting/00.png",
+      "source": "private-v3-question-request/waiting/00.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "idle",
+      "eyes": "offen",
+      "pose_provenance": null,
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/offen.png",
+        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "e90df818e94f35d5b3570519cdc34395fd3fb91c06e3cbc0359193f1e3561771",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "waiting/01.png",
+      "source": "private-v3-question-request/waiting/01.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "A",
+      "eyes": "offen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/A.png",
+        "sha256": "41f9cfc1adcd262fb77715a23c4233029349da542a6ef4e36749aa05ed203f93",
+        "size": [
+          1205,
+          1305
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": true,
+        "registration": {
+          "file": "A-arme-angehoben-haende-getrennt.png",
+          "scale": 0.285,
+          "source_anchor": [
+            612,
+            702
+          ],
+          "target_anchor": [
+            191,
+            251
+          ],
+          "translation": [
+            16.580000000000013,
+            50.93000000000001
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/offen.png",
+        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "4984a4812fbbf9375777520cd21ee76ebf38dccd4eae727af06a32891add9760",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "bytes": 85647
+    },
+    {
+      "path": "waiting/02.png",
+      "source": "private-v3-question-request/waiting/02.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "cd63ea7cb8a91989df802bf9ce6bf6ac363f7ceb3bdd47d8e203a46cae29dd40",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "B",
+      "eyes": "offen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/B.png",
+        "sha256": "359dfaaba18ac1282984c5d062d5facb8491150920db6be54acd0ac7e6ad986f",
+        "size": [
+          1205,
+          1306
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": true,
+        "registration": {
+          "file": "B-haende-zusammen-tiefer.png",
+          "scale": 0.285,
+          "source_anchor": [
+            617,
+            740
+          ],
+          "target_anchor": [
+            191,
+            247
+          ],
+          "translation": [
+            15.155000000000001,
+            36.10000000000002
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/offen.png",
+        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "99c808447c7704bc9a860be6d93a1b7373b12e197d51970c73427491f419741c",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "cd63ea7cb8a91989df802bf9ce6bf6ac363f7ceb3bdd47d8e203a46cae29dd40",
+      "bytes": 85218
+    },
+    {
+      "path": "waiting/03.png",
+      "source": "private-v3-question-request/waiting/03.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "9eca86e7f02f52be1aa4bb4694a0ced6451e9dc02c84831b665340e350abe56f",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "C",
+      "eyes": "halboffen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/C.png",
+        "sha256": "1cc50d0a8a4073bff05778e06424c19fa86b0d112ce2bac4dd41ba9447ed47c3",
+        "size": [
+          1205,
+          1305
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": false,
+        "registration": {
+          "scale": 0.31867219917012446,
+          "translation": [
+            0,
+            0
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/halboffen.png",
+        "sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "80e5cb4446214c99efdc70490f37557abe69e48dd773dc80a037a490e4f34e6c",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "9eca86e7f02f52be1aa4bb4694a0ced6451e9dc02c84831b665340e350abe56f",
+      "bytes": 83792
+    },
+    {
+      "path": "waiting/04.png",
+      "source": "private-v3-question-request/waiting/04.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "771bdec74469a43357e4ec3d609c46daf9d279470abb23143c4d02f6c6cb7c29",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "C",
+      "eyes": "geschlossen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/C.png",
+        "sha256": "1cc50d0a8a4073bff05778e06424c19fa86b0d112ce2bac4dd41ba9447ed47c3",
+        "size": [
+          1205,
+          1305
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": false,
+        "registration": {
+          "scale": 0.31867219917012446,
+          "translation": [
+            0,
+            0
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/geschlossen.png",
+        "sha256": "845eb839753b42ea67f5a393366f63ebbde7e80a912fd69a7645dd9bf862d5aa",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "80e5cb4446214c99efdc70490f37557abe69e48dd773dc80a037a490e4f34e6c",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "771bdec74469a43357e4ec3d609c46daf9d279470abb23143c4d02f6c6cb7c29",
+      "bytes": 83351
+    },
+    {
+      "path": "waiting/05.png",
+      "source": "private-v3-question-request/waiting/05.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "6ec1167f46ed53d7042f972c667576eaf544d0d39b410d9b57657fb7ca5e9556",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "B",
+      "eyes": "halboffen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/B.png",
+        "sha256": "359dfaaba18ac1282984c5d062d5facb8491150920db6be54acd0ac7e6ad986f",
+        "size": [
+          1205,
+          1306
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": true,
+        "registration": {
+          "file": "B-haende-zusammen-tiefer.png",
+          "scale": 0.285,
+          "source_anchor": [
+            617,
+            740
+          ],
+          "target_anchor": [
+            191,
+            247
+          ],
+          "translation": [
+            15.155000000000001,
+            36.10000000000002
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/halboffen.png",
+        "sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "c86ccc45a7fa35022c7e7c2d92f7ab2a9034614800efba0d0a343ba463c726c5",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "6ec1167f46ed53d7042f972c667576eaf544d0d39b410d9b57657fb7ca5e9556",
+      "bytes": 84465
+    },
+    {
+      "path": "waiting/06.png",
+      "source": "private-v3-question-request/waiting/06.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "A",
+      "eyes": "offen",
+      "pose_provenance": {
+        "source": "private-v3-question-request/originale/A.png",
+        "sha256": "41f9cfc1adcd262fb77715a23c4233029349da542a6ef4e36749aa05ed203f93",
+        "size": [
+          1205,
+          1305
+        ],
+        "kind": "unmodified_native_imagegen_edit",
+        "new_in_this_run": true,
+        "registration": {
+          "file": "A-arme-angehoben-haende-getrennt.png",
+          "scale": 0.285,
+          "source_anchor": [
+            612,
+            702
+          ],
+          "target_anchor": [
+            191,
+            251
+          ],
+          "translation": [
+            16.580000000000013,
+            50.93000000000001
+          ]
+        },
+        "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
+      },
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/offen.png",
+        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "4984a4812fbbf9375777520cd21ee76ebf38dccd4eae727af06a32891add9760",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "bytes": 85647
+    },
+    {
+      "path": "waiting/07.png",
+      "source": "private-v3-question-request/waiting/07.png",
+      "source_size": [
+        384,
+        416
+      ],
+      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "status": "composited_v3_question_request_gesture",
+      "semantic_name": "question_request_gesture",
+      "pose": "idle",
+      "eyes": "offen",
+      "pose_provenance": null,
+      "eye_provenance": {
+        "source": "private-v3-idle-modular/eyes/offen.png",
+        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "size": [
+          384,
+          416
+        ],
+        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+      },
+      "reference_frame": "idle/00.png",
+      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "allowed_mask_sha256": "e90df818e94f35d5b3570519cdc34395fd3fb91c06e3cbc0359193f1e3561771",
+      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "bytes": 89746
+    },
+    {
+      "path": "waving/00.png",
+      "source": "source-frames/waving/00.png",
+      "status": "original_hd",
+      "sha256": "b595a26cbdd235bd103f31cc421b3cf86006de071324a6ec2c156d01929e2b7b",
+      "source_bbox": [
+        8,
+        5,
+        398,
+        671
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9962,
+      "silhouette_iou": 0.9882,
+      "bytes": 90058
+    },
+    {
+      "path": "waving/01.png",
+      "source": "inbetweens/waving/native/new-0-1-0.5.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "58d79e6dbc3b818ea0353b76aef1c8016737540eec407bdd82722b78189117b1",
+      "source_bbox": [
+        335,
+        259,
+        908,
+        1199
+      ],
+      "reference_bbox": [
+        48,
+        38,
+        143,
+        194
+      ],
+      "aspect_rescale_ratio": 0.999,
+      "silhouette_iou": 0.9923,
+      "bytes": 88318
+    },
+    {
+      "path": "waving/02.png",
+      "source": "source-frames/waving/01.png",
+      "status": "original_hd",
+      "sha256": "97271c3a3e11385ec39d4ed0c78b947a7bd58d6fdff2011b45b22910da44dfb4",
+      "source_bbox": [
+        9,
+        4,
+        398,
+        670
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9987,
+      "silhouette_iou": 0.9918,
+      "bytes": 89792
+    },
+    {
+      "path": "waving/03.png",
+      "source": "inbetweens/waving/native/new-1-2-0.5.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "7f244db5f7efb76c824aa93c6a7e918635f4cbecf00e2fe1168d79107df3b2fd",
+      "source_bbox": [
+        329,
+        246,
+        906,
+        1204
+      ],
+      "reference_bbox": [
+        48,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0004,
+      "silhouette_iou": 0.9938,
+      "bytes": 88405
+    },
+    {
+      "path": "waving/04.png",
+      "source": "source-frames/waving/02.png",
+      "status": "original_hd",
+      "sha256": "d9f2245d72aba6687a0be24350284f55d5c82d4ade5ab77caafe25851f793ef4",
+      "source_bbox": [
+        5,
+        5,
+        402,
+        671
+      ],
+      "reference_bbox": [
+        49,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0001,
+      "silhouette_iou": 0.9903,
+      "bytes": 89448
+    },
+    {
+      "path": "waving/05.png",
+      "source": "inbetweens/waving/native/new-2-3-0.333.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "842ed086df7feecbb1c874a1595ee9f3a712c74ffd859f53971622f7b34f15d5",
+      "source_bbox": [
+        321,
+        144,
+        919,
+        1163
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.994,
+      "silhouette_iou": 0.9694,
+      "bytes": 85743
+    },
+    {
+      "path": "waving/06.png",
+      "source": "inbetweens/waving/native/new-2-3-0.667.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "03edbb4434880fc4d6a05c3f0b957cc091cceb9db8220bf3fdde79912f94d908",
+      "source_bbox": [
+        337,
+        241,
+        892,
+        1194
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0017,
+      "silhouette_iou": 0.9918,
+      "bytes": 86245
+    },
+    {
+      "path": "waving/07.png",
+      "source": "source-frames/waving/03.png",
+      "status": "original_hd",
+      "sha256": "72f95c84ade9495b95fdcef841d928c41b415b0f16699747ff571bd4fccab45e",
+      "source_bbox": [
+        10,
+        5,
+        398,
+        671
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9903,
+      "silhouette_iou": 0.9812,
+      "bytes": 88653
+    }
+  ]
+}

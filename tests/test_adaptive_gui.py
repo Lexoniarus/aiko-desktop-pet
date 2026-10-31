@@ -7,9 +7,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.desktop_test_support import create_test_desktop
 
 
 class AdaptiveGuiTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class AdaptiveGuiTests(unittest.TestCase):
         self.folder = tempfile.TemporaryDirectory()
         self.addCleanup(self.folder.cleanup)
         self.store = StateStore(Path(self.folder.name) / "state.json")
-        self.app = DesktopPet(store=self.store)
+        self.app = create_test_desktop(store=self.store)
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
 

@@ -1,0 +1,391 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-state-calm",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "calm",
+            "satisfied"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gerade ist mir ganz wohl hier."
+        },
+        {
+          "kind": "text",
+          "content": "Wir können uns in Ruhe unterhalten."
+        },
+        {
+          "kind": "emote",
+          "content": "music"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-bright",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "cheerful",
+            "carefree",
+            "optimistic"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, mir ist gerade richtig leicht ums Herz."
+        },
+        {
+          "kind": "text",
+          "content": "Schön, dass du zum Plaudern vorbeischaust."
+        },
+        {
+          "kind": "emote",
+          "content": "faceHappy"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-proud",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "proud"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich fühle mich gerade ziemlich stolz."
+        },
+        {
+          "kind": "text",
+          "content": "Ein bisschen darüber reden würde mir gefallen."
+        },
+        {
+          "kind": "emote",
+          "content": "star"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-warm",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "affectionate",
+            "relieved"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gerade fühle ich mich bei dir wohl."
+        },
+        {
+          "kind": "text",
+          "content": "Bleib doch noch einen kleinen Moment zum Reden."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-low",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir ist gerade nicht nach großen Worten."
+        },
+        {
+          "kind": "text",
+          "content": "Ein ruhiges Gespräch ist mir lieber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-boundary",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich brauche gerade etwas Ruhe beim Reden."
+        },
+        {
+          "kind": "text",
+          "content": "Lass uns langsam machen, ja?"
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "In mir geht gerade ein bisschen was durcheinander."
+        },
+        {
+          "kind": "text",
+          "content": "Ich möchte trotzdem mit dir reden. Nur nicht alles auf einmal."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-hungry",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "need_conditions": [
+            "low_satiety"
+          ],
+          "emotional_states": [
+            "cheerful",
+            "proud",
+            "relieved",
+            "affectionate",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "downcast",
+            "lonely",
+            "ambivalent",
+            "subdued",
+            "calm",
+            "satisfied",
+            "carefree",
+            "optimistic",
+            "reserved",
+            "tense"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Bauch knurrt gerade dazwischen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich höre dir zu. Nur meine Gedanken wandern manchmal zum Essen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-state-tired",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "state"
+          ],
+          "sleeping": false,
+          "need_conditions": [
+            "low_energy"
+          ],
+          "emotional_states": [
+            "cheerful",
+            "proud",
+            "relieved",
+            "affectionate",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "downcast",
+            "lonely",
+            "ambivalent",
+            "subdued",
+            "calm",
+            "satisfied",
+            "carefree",
+            "optimistic",
+            "reserved",
+            "tense"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gerade ziemlich müde."
+        },
+        {
+          "kind": "text",
+          "content": "Wenn ich beim Reden ein bisschen langsamer bin, liegt es daran."
+        },
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-wish",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "wish"
+          ],
+          "sleeping": false
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Was mir gerade durch den Kopf geht?"
+        },
+        {
+          "kind": "text",
+          "content": "{wish_text}"
+        },
+        {
+          "kind": "emote",
+          "content": "idea"
+        }
+      ]
+    }
+  ]
+}

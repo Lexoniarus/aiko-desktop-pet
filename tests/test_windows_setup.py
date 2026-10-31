@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import os
 import shutil
@@ -10,6 +11,7 @@ import sys
 import tempfile
 import time
 import unittest
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +43,17 @@ class WindowsSetupTests(unittest.TestCase):
         self.save = self.folder / "preserved-state.json"
         self.save.write_text('{"existing": "progress"}', encoding="utf-8")
         self.environment["AIKO_SAVE_PATH"] = str(self.save)
+        # Package the installed pure-Python dependency for offline setup checks.
+        wheels = self.folder / "wheels"
+        wheels.mkdir()
+        package = importlib.metadata.distribution("astronomy-engine")
+        with zipfile.ZipFile(
+            wheels / f"astronomy_engine-{package.version}-py3-none-any.whl", "w",
+        ) as archive:
+            for member in package.files or ():
+                if ".." not in member.parts and "__pycache__" not in member.parts:
+                    archive.write(str(package.locate_file(member)), member.as_posix())
+        self.environment["PIP_FIND_LINKS"] = wheels.as_uri()
         self.environment["PIP_NO_INDEX"] = "1"
         self.environment["PIP_CONFIG_FILE"] = os.devnull
 
@@ -293,8 +306,20 @@ function Start-Process {
     return [pscustomobject]@{ ExitCode = $code }
 }
 try {
-    if ($Scenario -eq 'no-install') { $script:NoPythonInstall = $true }
-    Invoke-AikoSetup
+    if ($Scenario -eq 'no-install') {
+        $script:NoPythonInstall = $true
+        Invoke-AikoSetup
+    } elseif ($Scenario -eq 'success') {
+        # One complete automatic-install path verifies the setup wiring.
+        Invoke-AikoSetup
+    } else {
+        # Repair, reboot and failure cases exercise the real download helper.
+        # Recreating venv/pip here repeats the complete setup integration above.
+        $installed = Install-PythonWithTk
+        if ($installed -ne $script:TestPythonExecutable) {
+            throw 'Did not return the discovered Python runtime'
+        }
+    }
     exit 0
 } catch {
     Write-Host $_.Exception.Message
@@ -335,7 +360,12 @@ try {
                         0,
                         result.stdout + result.stderr,
                     )
-                    shutil.rmtree(self.folder / ".venv")
+                    if scenario == "success":
+                        self.assertTrue(
+                            (self.folder / ".venv/Scripts/python.exe").is_file(),
+                        )
+                    else:
+                        self.assertFalse((self.folder / ".venv").exists())
                 installs = sorted(self.folder.glob("install-*.json"))
                 if scenario in ("no-install", "offline", "bad-hash"):
                     self.assertEqual(installs, [])

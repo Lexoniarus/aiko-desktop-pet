@@ -4,36 +4,38 @@ import unittest
 
 from aiko_pet.application.object_relationship import ObjectRelationship
 from aiko_pet.pet.balance import BALANCE, parse_balance
-from aiko_pet.pet.catalog_validation import load_json
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
+from aiko_pet.pet.mind.catalog import DialogueBook
 from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.mind.object_withholding import (
     WithholdingEpisode,
     choose_withholding_response,
 )
 from aiko_pet.pet.state import PetState
+from tools.dialogue_test_support import balance_source_fixture
 
 
 class ObjectWithholdingTests(unittest.TestCase):
-    def test_application_receipts_and_cross_episode_cooldown_limit_actual_loss(self):
-        state = PetState(friendship=15)
+    def test_receipts_and_durable_rolling_limit_bound_cross_episode_loss(self):
+        state = PetState(friendship=15, updated_at=1_800_000_000)
         mind = PetMind(DialogueBook.from_file())
         relationship = ObjectRelationship(state, mind)
-        self.assertAlmostEqual(relationship.withheld(
-            "episode_a/1", .15, active_time=20, monotonic_time=1000,
-        ), .15)
-        until = mind.irritated_until
+        for index in range(4):
+            self.assertAlmostEqual(relationship.withheld(
+                f"episode_{index}/1", .5, active_time=20, monotonic_time=1000,
+            ), .5)
         self.assertEqual(relationship.withheld(
-            "episode_a/1", .15, active_time=200, monotonic_time=2000,
+            "episode_0/1", .5, active_time=200, monotonic_time=2000,
         ), 0)
-        self.assertEqual(mind.irritated_until, until)
+        # Recreating the coordinator cannot reset the aggregate's allowance.
+        relationship = ObjectRelationship(state, mind)
         self.assertEqual(relationship.withheld(
-            "episode_b/1", .15, active_time=30, monotonic_time=1010,
+            "new_episode/1", .5, active_time=200, monotonic_time=2000,
         ), 0)
+        state.advance(state.updated_at + 120)
         self.assertAlmostEqual(relationship.withheld(
-            "episode_c/1", .15, active_time=140, monotonic_time=1120,
-        ), .15)
-        self.assertAlmostEqual(state.friendship, 14.7)
+            "later_episode/1", .5, active_time=220, monotonic_time=2020,
+        ), .5)
+        self.assertAlmostEqual(state.friendship, 12.5)
 
     def test_grace_requests_escalation_and_return_do_not_replay_delayed_ticks(self):
         episode = WithholdingEpisode().taken(0)
@@ -45,17 +47,17 @@ class ObjectWithholdingTests(unittest.TestCase):
         response = choose_withholding_response(response.episode, 20)
         assert response is not None
         self.assertTrue(response.irritated)
-        self.assertEqual(response.friendship_loss, .15)
+        self.assertEqual(response.friendship_loss, .5)
         self.assertIsNone(choose_withholding_response(response.episode, 20))
         response = choose_withholding_response(response.episode, 1000)
         assert response is not None
-        self.assertAlmostEqual(response.episode.charged_loss, .3)
+        self.assertAlmostEqual(response.episode.charged_loss, 1.0)
         self.assertIsNone(choose_withholding_response(response.episode, 1000))
         self.assertIsNone(
             choose_withholding_response(response.episode.returned(), 2000),
         )
 
-    def test_repeated_takes_escalate_and_episode_loss_stays_capped(self):
+    def test_repeated_takes_keep_thirty_second_requests_without_ending_episode(self):
         episode = WithholdingEpisode().taken(0).returned().taken(1).returned().taken(2)
         response = choose_withholding_response(episode, 12)
         assert response is not None
@@ -65,7 +67,7 @@ class ObjectWithholdingTests(unittest.TestCase):
             response = choose_withholding_response(response.episode, stamp)
             assert response is not None
             total += response.friendship_loss
-        self.assertAlmostEqual(total, .6)
+        self.assertAlmostEqual(total, .5 * (1 + len(range(50, 1000, 40))))
 
     def test_friendship_loss_preserves_care_history_and_other_irritation(self):
         state = PetState(friendship=.1, friendship_gained_today=5,
@@ -79,14 +81,14 @@ class ObjectWithholdingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 state.apply_object_withholding(loss)
         mind = PetMind(DialogueBook.from_file())
-        mind.irritated_until = 1000
+        mind.irritation_reaction_until = 1000
         mind.note_object_withholding(1)
-        self.assertEqual(mind.irritated_until, 1000)
+        self.assertEqual(mind.irritation_reaction_until, 1000)
 
     def test_invalid_withholding_tuning_is_rejected(self):
         for key, value in (("repeated_takes", 0), ("maximum_episode_loss", .01),
                            ("request_interval_seconds", 100)):
-            raw = load_json(CATALOGUE.parent / "balance.json")
+            raw = balance_source_fixture()
             raw["object_withholding"][key] = value
             with self.assertRaisesRegex(ValueError, "withholding"):
                 parse_balance(raw)

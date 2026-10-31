@@ -17,6 +17,8 @@ from ..pet.animation.character import (
 from ..pet.animation.timing import VIRTUAL_CLIPS
 from ..pet.catalog_validation import load_json, object_fields
 from .animation_timing import load_timing_policy
+from .body_pose_assets import load_body_pose_clips
+from .expression_assets import load_expression_clips
 
 
 def _file(root: Path, value: Any) -> Path:
@@ -182,6 +184,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             return_to,
             playback_order,
             bool(entry.get("hold_last", False)),
+            rest_sway=name in ("idle", "look", "waiting"),
         )
     for variant, source_name in VIRTUAL_CLIPS.items():
         if variant in clips or source_name not in clips:
@@ -203,4 +206,5 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
         raise ValueError("Cursor gaze requires sixteen direction poses")
     if any(clip.return_to not in clips for clip in clips.values()):
         raise ValueError("Unknown return animation")
-    return CharacterCatalog(MappingProxyType(clips))
+    return CharacterCatalog(MappingProxyType(clips), load_body_pose_clips(root),
+                            load_expression_clips(root))

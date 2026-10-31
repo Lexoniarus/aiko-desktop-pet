@@ -1,0 +1,85 @@
+{
+  "created": "2026-10-25",
+  "generator": "OpenAI built-in Imagegen tool",
+  "scope": "Eight additional Moodlet icons; asset preparation only. UI mappings, Moodlet rules, wishes, horoscope props and character artwork unchanged.",
+  "transparent_background": true,
+  "style_review_references": [
+    "../icons/moodlet_secure.png",
+    "../icons/moodlet_connection.png"
+  ],
+  "reference_delivery": "Descriptive prompts only; existing images were inspected locally for visual comparison, not supplied as edit targets.",
+  "icons": [
+    {
+      "id": "moodlet_disappointed",
+      "moodlet_id": "disappointed",
+      "label": "Doch verloren",
+      "file": "../icons/moodlet_disappointed.png",
+      "generator_output_name": "exec-ecbee306-8f52-4ad5-acfc-5a331d4537a2.png",
+      "subject": "A single soft powder-blue five-point game star with its upper point gently drooping and a mildly disappointed little face: two tiny navy eyes and a tiny downturned mouth. One tiny dusty-rose downward accent beside it. Convey a disappointed lost game, gentle sadness rather than boredom or exhaustion. No controller, trophy, tears or broken heart.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: A single soft powder-blue five-point game star with its upper point gently drooping and a mildly disappointed little face: two tiny navy eyes and a tiny downturned mouth. One tiny dusty-rose downward accent beside it. Convey a disappointed lost game, gentle sadness rather than boredom or exhaustion. No controller, trophy, tears or broken heart."
+    },
+    {
+      "id": "moodlet_food_wish_disregarded",
+      "moodlet_id": "food_wish_disregarded",
+      "label": "Essenswunsch missachtet",
+      "file": "../icons/moodlet_food_wish_disregarded.png",
+      "generator_output_name": "exec-10a82af1-fba9-4757-b873-eb94c3132f92.png",
+      "subject": "One rounded pale powder-blue speech bubble containing ONE simple white triangular onigiri with a small navy nori rectangle. ONE clean diagonal dusty-rose dismissal slash crosses the bubble, indicating an expressed food wish was ignored. Keep the onigiri legible, simplify the shape. No repeated foods, utensils, words, additional bubbles, hand or face.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: One rounded pale powder-blue speech bubble containing ONE simple white triangular onigiri with a small navy nori rectangle. ONE clean diagonal dusty-rose dismissal slash crosses the bubble, indicating an expressed food wish was ignored. Keep the onigiri legible, simplify the shape. No repeated foods, utensils, words, additional bubbles, hand or face."
+    },
+    {
+      "id": "moodlet_trusting",
+      "moodlet_id": "trusting",
+      "label": "Vertrauensvoll",
+      "file": "../icons/moodlet_trusting.png",
+      "generator_output_name": "exec-5b515d72-ebff-487d-a7cd-553428ff2b50.png",
+      "subject": "TWO small stylized pale-blush hands gently clasping in one clear friendly handshake, with one small powder-blue cuff and one small blush-pink cuff, no arms beyond short cuffs. Simplified coherent human anatomy, precisely two hands, natural fingers and thumbs with no extra digits. Express mutual trust, not hands cupping a heart or a promise involving little fingers. Compact diagonal emblem, readable at small scale.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: TWO small stylized pale-blush hands gently clasping in one clear friendly handshake, with one small powder-blue cuff and one small blush-pink cuff, no arms beyond short cuffs. Simplified coherent human anatomy, precisely two hands, natural fingers and thumbs with no extra digits. Express mutual trust, not hands cupping a heart or a promise involving little fingers. Compact diagonal emblem, readable at small scale."
+    },
+    {
+      "id": "moodlet_appreciated",
+      "moodlet_id": "appreciated",
+      "label": "Wertgeschätzt",
+      "file": "../icons/moodlet_appreciated.png",
+      "generator_output_name": "exec-57955875-1f11-4041-949f-2d4f16b8f781.png",
+      "subject": "ONE intact rounded blush-pink heart accompanied at its upper right by ONE small warm-cream four-point recognition star, outlined in muted navy. The star overlaps the heart edge slightly as one coherent emblem. Express being valued and acknowledged. Small restrained highlight on each, no speech bubbles, hands, trophy, badge, ribbon or additional sparkles.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: ONE intact rounded blush-pink heart accompanied at its upper right by ONE small warm-cream four-point recognition star, outlined in muted navy. The star overlaps the heart edge slightly as one coherent emblem. Express being valued and acknowledged. Small restrained highlight on each, no speech bubbles, hands, trophy, badge, ribbon or additional sparkles."
+    },
+    {
+      "id": "moodlet_optimistic",
+      "moodlet_id": "optimistic",
+      "label": "Zuversichtlich",
+      "file": "../icons/moodlet_optimistic.png",
+      "generator_output_name": "exec-bac5c25f-f90d-48af-a432-dfed0bd47275.png",
+      "subject": "A softly rounded warm-cream sunrise: ONE half sun rising above ONE short gently curved powder-blue horizon stroke, with THREE short rounded rays above it. Compact simple graphic emblem of looking forward with confidence. No clouds, face, landscape, ocean, scenery or sky background, and no extra rays or sparkles.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: A softly rounded warm-cream sunrise: ONE half sun rising above ONE short gently curved powder-blue horizon stroke, with THREE short rounded rays above it. Compact simple graphic emblem of looking forward with confidence. No clouds, face, landscape, ocean, scenery or sky background, and no extra rays or sparkles."
+    },
+    {
+      "id": "moodlet_uncertain",
+      "moodlet_id": "uncertain",
+      "label": "Verunsichert",
+      "file": "../icons/moodlet_uncertain.png",
+      "generator_output_name": "exec-c5a7d94c-26c1-4c01-b399-23371652468c.png",
+      "subject": "One small rounded powder-blue signpost with TWO blank short directional arrow boards pointing in opposite directions: top board pale blush pointing right, lower board powder blue pointing left. Simple short blue post with rounded base, slight gentle tilt, navy contours. Express not knowing where one stands. No lettering, question marks, compass, map, landscape, ground or additional arrows.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: One small rounded powder-blue signpost with TWO blank short directional arrow boards pointing in opposite directions: top board pale blush pointing right, lower board powder blue pointing left. Simple short blue post with rounded base, slight gentle tilt, navy contours. Express not knowing where one stands. No lettering, question marks, compass, map, landscape, ground or additional arrows."
+    },
+    {
+      "id": "moodlet_overlooked",
+      "moodlet_id": "overlooked",
+      "label": "Übersehen",
+      "file": "../icons/moodlet_overlooked.png",
+      "generator_output_name": "exec-98cf423b-4e9d-4a08-83e8-b869448849c4.png",
+      "subject": "TWO companion five-point stars separated by a small clear gap: a small muted blue-gray star on the left set slightly lower, and a larger warm-cream star on the right. The small star looks gently overlooked with two tiny navy eyes and a subtle downturned mouth. Give both solid readable outlines and sufficient opacity; the smaller star is subdued but must remain clearly visible at 24 pixels. No speech bubbles, hearts, spotlight cone, background, extra stars or tears.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: TWO companion five-point stars separated by a small clear gap: a small muted blue-gray star on the left set slightly lower, and a larger warm-cream star on the right. The small star looks gently overlooked with two tiny navy eyes and a subtle downturned mouth. Give both solid readable outlines and sufficient opacity; the smaller star is subdued but must remain clearly visible at 24 pixels. No speech bubbles, hearts, spotlight cone, background, extra stars or tears."
+    },
+    {
+      "id": "moodlet_guarded",
+      "moodlet_id": "guarded",
+      "label": "Auf der Hut",
+      "file": "../icons/moodlet_guarded.png",
+      "generator_output_name": "exec-61adef21-2e7d-4f01-b0a7-ff2ebd81a2bf.png",
+      "subject": "ONE small blush-pink heart partly tucked behind ONE soft powder-blue rounded shield. Shield is in the foreground and covers the lower half of the heart; upper heart lobes peek above and slightly to one side. Shield has a clean simple navy outline and a tiny pale highlight, no emblem. Express gentle caution and protecting personal boundaries, not anger or injury. No hands, padlock, weapons, broken heart, badge border or additional objects.",
+      "prompt": "Use case: illustration-story. Asset type: ONE individual original transparent PNG moodlet icon for Aiko's approved anime visual-novel/cozy JRPG desktop UI. Style: clean smooth 2D illustrated icon, rounded desaturated dark-navy outlines (around #243C67), powder blue #B8DDF2, blush pink #F2B3C5, warm cream #FFF1D0, restrained gentle shading and small pale highlights. Friendly pastel illustrated style, not pixel art, not 3D, not a glossy plastic app logo. Keep the contour confidently readable at 24–48 pixels. Square canvas, centered balanced silhouette, approximately 70 percent canvas occupancy with at least 12 percent clear padding on every side. Genuine transparent background including all open gaps. No background, tile, circular backing, sticker rim, drawn checkerboard, drop shadow, text, lettering, numerals, watermark, full character or UI screenshot. Generate ONLY the specified compact symbol. Requested subject: ONE small blush-pink heart partly tucked behind ONE soft powder-blue rounded shield. Shield is in the foreground and covers the lower half of the heart; upper heart lobes peek above and slightly to one side. Shield has a clean simple navy outline and a tiny pale highlight, no emblem. Express gentle caution and protecting personal boundaries, not anger or injury. No hands, padlock, weapons, broken heart, badge border or additional objects."
+    }
+  ]
+}

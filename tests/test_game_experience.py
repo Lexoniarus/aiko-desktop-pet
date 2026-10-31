@@ -10,8 +10,10 @@ from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import (
     GameExperienceCoordinator,
     experience_from_rock_paper_scissors,
+    experience_from_session,
 )
 from aiko_pet.application.router import ApplicationRouter
+from aiko_pet.games.contracts import GameId, SessionSummary
 from aiko_pet.games.rock_paper_scissors import Score
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
@@ -25,6 +27,20 @@ def timestamp() -> float:
 
 
 class GameExperienceTests(unittest.TestCase):
+    def test_shared_summary_preserves_orientation_for_each_game(self) -> None:
+        for game in GameId:
+            if game is GameId.QUIZ:
+                continue  # Quiz completion has no player/opponent orientation.
+            result = experience_from_session(SessionSummary(game, 2, 1, 3))
+            self.assertEqual(result.game_id, game.value)
+            self.assertEqual(result.completed_units, 6)
+            self.assertEqual(result.successful_units, 1)
+            self.assertEqual(result.setback_units, 2)
+
+    def test_summary_rejects_invalid_counts(self) -> None:
+        with self.assertRaises(ValueError):
+            SessionSummary(GameId.BLACKJACK, wins=-1)
+
     def setUp(self) -> None:
         self.state = PetState(fun=35, updated_at=timestamp())
         self.mind = make_aiko_mind(started_at=0.0)
@@ -62,7 +78,7 @@ class GameExperienceTests(unittest.TestCase):
         self.assertEqual(self.state.fun, outcome.fun_after)
         self.assertGreater(self.state.social, 75)
         self.assertLess(self.state.energy, 75)
-        self.assertGreater(self.state.friendship, 15)
+        self.assertEqual(self.state.friendship, 15)
         saved = encode_pet_state(self.state)
         self.assertNotIn("score", saved)
         self.assertNotIn("completed_units", saved)
@@ -77,12 +93,25 @@ class GameExperienceTests(unittest.TestCase):
         self.assertEqual(result.fun_gained, 0)
         self.assertEqual(encode_pet_state(self.state), original)
 
+    def test_tic_tac_toe_uses_explicit_profile_and_generic_completion(self) -> None:
+        from aiko_pet.pet.fun import GAME_FUN_PROFILES
+
+        self.assertGreater(
+            GAME_FUN_PROFILES["tic_tac_toe"].base_fun_per_completed_unit,
+            GAME_FUN_PROFILES["rock_paper_scissors"].base_fun_per_completed_unit,
+        )
+        outcome = self.router.complete_game(
+            experience_from_session(SessionSummary(GameId.TIC_TAC_TOE, wins=1)),
+            inputs=self.runtime,
+        )
+        self.assertGreater(outcome.fun_gained, 0)
+
     def test_future_game_needs_only_a_profile_not_new_calculator(self) -> None:
         # There is intentionally no RPS dependency in the general fun domain.
         from aiko_pet.pet.fun import GAME_FUN_PROFILES, GameFunProfile
 
         GAME_FUN_PROFILES["test_quiz"] = GameFunProfile(
-            4.0, 1.0, 0.0, 0.0, 0.2, 0.3,
+            4.0, 0.2, 0.3,
         )
         try:
             outcome = self.router.complete_game(

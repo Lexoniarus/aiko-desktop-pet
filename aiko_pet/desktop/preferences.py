@@ -31,6 +31,8 @@ class DesktopPreferencePorts:
     place_x: Callable[[float], None]
     save: Callable[[], None]
     set_context: Callable[[TimeContext], None]
+    social_sources_changed: Callable[[bool], None] = lambda _enabled: None
+    reset_cursor: Callable[[], None] = lambda: None
 
 
 class DesktopPreferences:
@@ -67,6 +69,7 @@ class DesktopPreferences:
             "spontaneous_talk": self.set_spontaneous_talk,
             "observe_computer": self.set_observe_computer,
             "learn_rhythm": self.set_learn_rhythm,
+            "online_social": self.set_online_social,
         }
         handler = handlers.get(name)
         if handler is None:
@@ -83,6 +86,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_auto_walk(self, value: bool) -> None:
+        self._ports.reset_cursor()
         self._walk.set_auto_walk(value, time.monotonic())
         self._ports.save()
 
@@ -96,6 +100,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
+        self._ports.reset_cursor()
         self._settings.follow_cursor = bool(enabled)
         self._visual.reset()
         self._ports.save()
@@ -106,6 +111,15 @@ class DesktopPreferences:
 
     def set_learn_rhythm(self, enabled: bool) -> None:
         self._settings.learn_rhythm = bool(enabled)
+        self._ports.save()
+
+    def set_online_social(self, enabled: bool) -> None:
+        self._settings.online_social = bool(enabled)
+        self._ports.social_sources_changed(self._settings.online_social)
+        self._ports.save()
+
+    def set_zodiac(self, sign: str | None) -> None:
+        self._settings.zodiac_sign = sign
         self._ports.save()
 
     def forget_rhythm(self) -> None:
@@ -120,6 +134,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def toggle_scale(self) -> None:
+        self._ports.reset_cursor()
         center = (self._settings.x or 0) + self._window.width / 2
         self._settings.scale = 2 if self._settings.scale == 1 else 1
         self._window.resize()

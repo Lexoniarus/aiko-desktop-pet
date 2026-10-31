@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import datetime
 from unittest.mock import Mock, patch
 
@@ -11,8 +12,12 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
+from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from tools.pet_test_support import set_test_pet_values
+from tools.reaction_test_support import FakeScheduler
 
 
 class ContactCoordinatorTests(unittest.TestCase):
@@ -25,9 +30,14 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.show = Mock()
         self.cancel = Mock()
         self.hide = Mock()
+        self.wake = Mock()
+        self.claim = Mock()
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
+        self.incidental = False
         self.foreground = self.playback = False
+        self.game = self.story = False
+        self.event: str | None = None
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
         self.contact = ContactCoordinator(
             state=self.state,
@@ -35,11 +45,10 @@ class ContactCoordinatorTests(unittest.TestCase):
             adaptive=self.adaptive,
             ports=ContactPorts(
                 context=lambda: self.context,
-                toolbar_hidden=lambda: True,
                 mark_hover=self.hover,
                 interrupt_walk=self.interrupt,
                 show_toolbar=self.show,
-                game_open=lambda: False,
+                game_open=lambda: self.game,
                 cancel_followup=self.cancel,
                 hide_speech=self.hide,
                 react=lambda reaction, duration: self.reactions.append(
@@ -48,16 +57,104 @@ class ContactCoordinatorTests(unittest.TestCase):
                 should_greet=lambda _now: self.greet_enabled,
                 foreground_active=lambda: self.foreground,
                 playback_active=lambda: self.playback,
+                story_active=lambda: self.story,
+                reaction_event=lambda: self.event,
+                interruptible_playback=lambda: self.incidental,
+                wake_from_clicks=self.wake,
+                claim_cursor_access=self.claim,
             ),
         )
 
-    def test_hover_opens_toolbar_and_interrupts_walk(self) -> None:
-        with patch.object(self.mind, "return_to_pet", return_value=None):
+    def test_incidental_playback_yields_but_real_owners_still_block(self):
+        self.playback = self.incidental = True
+        for action in ("pet", "talk", "play", "sleep"):
+            self.assertTrue(self.contact.can_interact(action))
+        for owner in ("foreground", "game", "story"):
+            setattr(self, owner, True)
+            self.assertFalse(self.contact.can_interact("pet"))
+            setattr(self, owner, False)
+        self.incidental = False
+        self.assertFalse(self.contact.can_interact("talk"))
+
+    def test_cheerful_final_warning_then_silence_still_creates_poking_moodlet(self):
+        set_test_pet_values(self.state, mood=95, energy=100, friendship=75,
+                            satiety=100, fun=100, social=100, affection=100)
+        scheduler = FakeScheduler()
+        player = ReactionPlayer(
+            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
+            display_text=Mock(), display_emote=Mock(), start_action=Mock(),
+            mark_spoken=Mock(), is_closed=lambda: False,
+            on_text=self.contact.note_text,
+        )
+        self.contact._ports = replace(
+            self.contact._ports,
+            cancel_followup=player.cancel,
+            playback_active=lambda: player.active,
+            interruptible_playback=lambda: player.interruptible,
+            reaction_event=lambda: player.event,
+            react=lambda reaction, duration: player.play(reaction, duration),
+        )
+        for count in range(1, 9):
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + count / 10):
+                self.contact.click("left")
+        self.assertEqual(player.event, "click_last_word")
+        self.assertIsNotNone(self.state.moodlets.interactions.poke_boundary_at)
+        self.assertFalse(self.state.moodlets.active)
+        with patch("aiko_pet.application.contact.time.monotonic", return_value=1001):
+            self.contact.click("left")
+        self.assertFalse(player.active)  # No new line after the final warning.
+        episode = self.state.moodlets.active[0]
+        self.assertEqual((episode.definition_id, episode.level), (MoodletId.POKING, 1))
+
+    def test_repeated_hover_only_opens_toolbar_without_contact_or_reaction(self):
+        before = self.state.capture_checkpoint()
+        contact_at = self.mind.last_contact
+        with patch.object(self.mind, "return_to_pet") as greeting:
+            for _ in range(3):
+                self.contact.enter()
+        self.assertEqual(self.hover.call_count, 3)
+        self.assertEqual(self.show.call_count, 3)
+        self.interrupt.assert_not_called()
+        greeting.assert_not_called()
+        self.assertEqual(self.reactions, [])
+        self.assertEqual(self.mind.last_contact, contact_at)
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
+    def test_tracking_hover_opens_toolbar_without_interrupting_or_new_reaction(self):
+        with patch.object(self.mind, "return_to_pet") as greeting:
             self.contact.enter()
-        self.hover.assert_called_once()
-        self.interrupt.assert_called_once()
         self.show.assert_called_once()
-        self.assertEqual(self.reactions, [(None, 2800)])
+        self.hover.assert_called_once()
+        self.interrupt.assert_not_called()
+        greeting.assert_not_called()
+        self.assertFalse(self.reactions)
+
+    def test_explicit_click_still_interrupts_while_tracking(self):
+        self.contact.click("left")
+        self.interrupt.assert_called_once()
+        self.claim.assert_called_once()
+
+    def test_petting_refusal_is_semantic_and_playback_blocks_only_until_finished(self):
+        set_test_pet_values(self.state, affection=100)
+        for _ in range(3):
+            self.state.interact("pet")
+        self.contact.note_text("pet_refused")
+        self.state.interact("pet")
+        before = self.state.capture_checkpoint()
+        self.playback = True
+        self.assertFalse(self.contact.can_interact("pet"))
+        self.playback = False
+        for _ in range(4):
+            self.assertTrue(self.contact.can_interact("pet"))
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
+    def test_hover_greeting_and_ui_contact_do_not_renew_durable_care(self) -> None:
+        history = self.state.friendship_history
+        self.contact.enter()
+        self.contact.greet()
+        self.contact.click("left")
+        self.assertEqual(self.state.friendship_history, history)
 
     def test_busy_hover_only_opens_ui_and_busy_playback_ignores_clicks(self) -> None:
         for owner in ("foreground", "playback"):
@@ -87,6 +184,69 @@ class ContactCoordinatorTests(unittest.TestCase):
         choose.assert_called_once()
         noted.assert_called_once()
         self.assertEqual(self.reactions[-1], (reaction, 2800))
+
+    def test_click_replies_allow_escalation_and_yield_to_deliberate_care(self) -> None:
+        self.playback = self.incidental = True
+        for index, event in enumerate(("click_left", "click_right", "click_notice",
+                                       "rapid_click")):
+            self.event = event
+            self.assertTrue(self.contact.can_interact("pet"))
+            self.assertTrue(self.contact.can_interact("play"))
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + index / 10):
+                self.contact.click("left" if index % 2 == 0 else "right")
+        self.assertEqual(len(self.mind.clicks), 4)
+        self.assertGreater(self.mind.irritation_reaction_until, 1000.3)
+        reaction = self.reactions[-1][0]
+        assert reaction is not None
+        self.assertEqual(reaction.event, "rapid_click")
+
+    def test_other_playback_never_admits_teasing_clicks(self) -> None:
+        self.playback = True
+        for event in (None, "care_pet", "care_talk", "object_recognized",
+                      "game_greeting", "greeting"):
+            with self.subTest(event=event):
+                self.event = event
+                self.contact.click("left")
+                self.contact.click("right")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.reactions, [])
+
+    def test_game_and_story_take_priority_over_click_feedback(self) -> None:
+        self.playback, self.event = True, "click_left"
+        for blocked in ("game", "story"):
+            with self.subTest(blocked=blocked):
+                self.game = blocked == "game"
+                self.story = blocked == "story"
+                self.contact.click("left")
+                self.contact.click("right")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.reactions, [])
+
+    def test_sleep_replies_remain_interruptible_until_fourth_click_wakes(self) -> None:
+        set_test_pet_values(self.state, sleeping=True)
+        self.playback, self.event = True, "sleep"
+        for count in range(1, 5):
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + count / 10):
+                self.contact.click("left" if count % 2 else "right")
+            if count < 4:
+                reaction = self.reactions[-1][0]
+                assert reaction is not None
+                self.assertEqual(reaction.event, "sleep_click")
+                self.event = reaction.event
+                self.wake.assert_not_called()
+        self.wake.assert_called_once_with()
+        self.assertEqual(len(self.reactions), 3)
+        self.assertFalse(self.contact.can_interact("pet"))
+        self.assertTrue(self.contact.can_interact("sleep"))
+
+    def test_sleep_does_not_admit_clicks_during_unrelated_playback(self) -> None:
+        set_test_pet_values(self.state, sleeping=True)
+        self.playback, self.event = True, "care_pet"
+        self.contact.click("left")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.wake.assert_not_called()
 
     def test_no_reaction_hides_old_speech_and_cancels_followup(self) -> None:
         self.contact.react_to_click(None)

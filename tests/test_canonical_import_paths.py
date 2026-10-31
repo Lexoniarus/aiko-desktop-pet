@@ -101,13 +101,13 @@ class CanonicalImportTests(unittest.TestCase):
         from aiko_pet.pet import friendship
 
         self.assertFalse(hasattr(friendship, "award_friendship_for_care"))
-        self.assertTrue(hasattr(friendship, "calculate_friendship_reward"))
+        self.assertTrue(hasattr(friendship, "record_accepted_contact"))
 
-    def test_need_decay_only_publishes_pure_calculation(self) -> None:
-        from aiko_pet.pet import need_decay
+    def test_progression_only_publishes_pure_calculation(self) -> None:
+        from aiko_pet.pet import progression
 
-        self.assertFalse(hasattr(need_decay, "apply_need_decay"))
-        self.assertTrue(hasattr(need_decay, "calculate_need_decay"))
+        self.assertFalse(hasattr(progression, "apply_need_decay"))
+        self.assertTrue(hasattr(progression, "calculate_pet_progression"))
 
     def test_care_mutation_has_no_module_level_legacy_adapter(self) -> None:
         from aiko_pet.pet import care_actions

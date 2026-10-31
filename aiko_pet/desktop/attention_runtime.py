@@ -6,12 +6,22 @@ event, this desktop adapter coordinates the host snapshot and presentation.
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Literal
 
 from ..application.activity import TimeProgress
 from ..application.attention import AttentionCoordinator
+from ..pet.animation.expression import Expression
+from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.animation.idle_emote import choose_idle_emote
+from ..pet.animation.idle_gesture import IdleGestureChoice
+from ..pet.interaction_events import (
+    CursorExperience,
+    CursorWarning,
+    CursorWarningReceipt,
+)
+from ..pet.mind.cursor_behaviour import parameter
 from ..pet.routine import TimeContext
 from ..ui.pet_view.attention_presenter import AttentionPresenter
 
@@ -22,14 +32,20 @@ class AttentionRuntimePorts:
 
     context: Callable[[], TimeContext]
     game_open: Callable[[], bool]
-    toolbar_active: Callable[[], bool]
-    settings_engaged: Callable[[], bool]
     bubble_visible: Callable[[], bool]
     reaction_pending: Callable[[], bool]
     walking: Callable[[], bool]
     action_until: Callable[[], float]
     refresh_toolbar: Callable[[], None]
     foreground_active: Callable[[], bool] = lambda: False
+    clock: Callable[[], float] = lambda: time.monotonic()
+    apply_idle_profile: Callable[[IdleBehaviourProfile], None] = lambda _profile: None
+    render_character: Callable[[float, tuple[int, int]], None] = lambda _now, _p: None
+    prepare_idle_gesture: Callable[
+        [bool, float], Literal["blocked", "turning", "ready"]
+    ] = lambda _requested, _now: "blocked"
+    idle_gesture_duration: Callable[[str], float] = lambda _clip: 0.0
+    express: Callable[[Expression | None], object] = lambda _value: None
 
 
 class DesktopAttentionRuntime:
@@ -44,9 +60,11 @@ class DesktopAttentionRuntime:
         self.attention = attention
         self._presenter = presenter
         self._ports = ports
+        self._idle_gesture: IdleGestureChoice | None = None
 
     def handle_time_progress(self, progress: TimeProgress, now: float) -> None:
         """Present period transitions, leaving domain dialogue to attention."""
+        self.attention.evaluate_wishes()
         if not progress.period_changed:
             return
         self._ports.refresh_toolbar()
@@ -59,30 +77,52 @@ class DesktopAttentionRuntime:
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
 
-    def cursor_moved(
-        self,
-        distance: float,
-        screen_width: int,
-        now: float,
-    ) -> None:
-        if self._ports.foreground_active() or self._ports.reaction_pending():
+    def render_character(self, now: float, pointer: tuple[int, int]) -> None:
+        """Prepare once after lifecycle/attention admission in the main tick."""
+        self._ports.apply_idle_profile(self.attention.idle_profile())
+        self._ports.render_character(now, pointer)
+
+    def cursor_warning(self, event: CursorWarning, now: float) -> CursorWarningReceipt:
+        ports = self._ports
+        displayed = False
+        if (0 <= now - event.created_at <= parameter("warning_candidate_seconds")
+                and not any((ports.game_open(), ports.foreground_active(),
+                             ports.reaction_pending(), ports.bubble_visible()))):
+            reaction = self.attention.mind.select_reaction(
+                ("cursor_notice_playful" if event.tone == "playful"
+                 else "cursor_warning_near_fast"),
+                self.attention.state, ports.context(), now,
+            )
+            if reaction is not None:
+                displayed = self._presenter.show_cursor_warning(
+                    reaction.text, int(parameter("warning_duration_ms")),
+                )
+                if displayed:
+                    ports.express(reaction.expression)
+        return CursorWarningReceipt(
+            event.warning_id, ports.clock() if displayed else now, displayed,
+        )
+
+    def cursor_experience(self, event: CursorExperience) -> None:
+        """Brief feeling cue in a free speech slot; drop rather than queue."""
+        ports = self._ports
+        if (ports.game_open() or ports.foreground_active() or ports.reaction_pending()
+                or ports.bubble_visible()):
             return
-        reaction = self.attention.cursor_reaction(
-            distance,
-            screen_width,
-            now,
-            self._ports.context(),
-            toolbar_visible=self._ports.toolbar_active(),
+        emote = ("idea" if event.level >= 2 else "question"
+                 ) if event.feeling == "curiosity" else (
+                     "drops" if event.level >= 2 else "exclamation")
+        event_name = ("cursor_play_start", "cursor_play_more", "cursor_play_peak")[
+            event.level - 1
+        ] if event.feeling == "curiosity" else "cursor_fear_response"
+        reaction = self.attention.mind.select_reaction(
+            event_name, self.attention.state, ports.context(), ports.clock(),
         )
         if reaction is not None:
-            self._presenter.show_reaction(reaction, 2600)
-
-    def walk_finished(self, now: float) -> None:
-        if self._ports.reaction_pending():
-            return
-        reaction = self.attention.walk_reaction(now, self._ports.context())
-        if reaction is not None:
-            self._presenter.show_reaction(reaction, 2600)
+            if self._presenter.show_cursor_comment(reaction.text, 3000):
+                ports.express(reaction.expression)
+        else:
+            self._presenter.show_cursor_emote(emote, 1500)
 
     def idle_emote(self) -> None:
         ports = self._ports
@@ -94,22 +134,41 @@ class DesktopAttentionRuntime:
             satiety=state.satiety,
             mood=state.mood,
             affection=state.affection,
+            emotions=self.attention.mind.emotional_state(state),
         )
         self._presenter.show_idle_emote(emote)
 
     def maybe_show_idle_emote(self, now: float) -> None:
         ports = self._ports
-        if ports.game_open() or ports.foreground_active() or ports.reaction_pending():
+        if any((ports.game_open(), ports.foreground_active(), ports.reaction_pending(),
+                ports.bubble_visible(),
+                ports.walking(), now < ports.action_until())):
+            self._idle_gesture = None
+            ports.prepare_idle_gesture(False, now)
             return
-        animation = self.attention.select_idle_animation(
-            now,
-            action_until=ports.action_until(),
-            walking=ports.walking(),
-            toolbar_visible=ports.toolbar_active(),
-        )
-        if animation is not None:
-            self._presenter.show_animation(animation, 1.6)
-            self.idle_emote()
+        if self._idle_gesture is not None:
+            if (self._idle_gesture != self.attention.idle_gesture_choice()
+                    or now >= self.attention.next_idle_emote):
+                self._idle_gesture = None
+                ports.prepare_idle_gesture(False, now)
+                return
+        else:
+            self._idle_gesture = self.attention.select_idle_animation(
+                now, action_until=ports.action_until(), walking=False,
+            )
+        if self._idle_gesture is None:
+            ports.prepare_idle_gesture(False, now)
+            return
+        status = ports.prepare_idle_gesture(True, now)
+        if status == "turning":
+            return
+        choice, self._idle_gesture = self._idle_gesture, None
+        ports.prepare_idle_gesture(False, now)
+        if status == "ready":
+            duration = ports.idle_gesture_duration(choice.clip_id)
+            if duration > 0:
+                self._presenter.show_animation(choice.clip_id, duration)
+                self.idle_emote()
 
     def maybe_speak_spontaneously(self, now: float) -> None:
         ports = self._ports
@@ -118,10 +177,8 @@ class DesktopAttentionRuntime:
         choice = self.attention.spontaneous(
             now,
             ports.context(),
-            toolbar_visible=ports.toolbar_active(),
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
-            popup_visible=ports.settings_engaged(),
         )
         if choice.due:
             self._presenter.show_reaction(choice.reaction, 3600)
@@ -134,8 +191,6 @@ class DesktopAttentionRuntime:
             now,
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
-            popup_visible=ports.settings_engaged(),
-            toolbar_visible=ports.toolbar_active(),
         )
         if note is None:
             return

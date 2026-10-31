@@ -1,0 +1,1671 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-food-intake-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Ich erinnere mich noch daran, dieses Essen gegessen zu haben."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mir gutgetan. Ein wenig freue ich mich noch darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-intake-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das zu essen hat mir gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Ich denke noch gern daran zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-intake-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hach, das zu essen war schön."
+        },
+        {
+          "kind": "text",
+          "content": "Das gute Gefühl ist noch da. Davon wollte ich dir gerade erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-intake-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Beim Gedanken daran, das gegessen zu haben, muss ich noch lächeln."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses kleine gute Gefühl darfst du ruhig mitbekommen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-intake-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das Essen hat mir gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade freue ich mich eher still darüber. Schön bleibt es trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-intake-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das zu essen war schön."
+        },
+        {
+          "kind": "text",
+          "content": "Ein gutes Gefühl zwischen all dem anderen, das gerade in mir los ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Ich denke noch daran, dieses Essen bekommen zu haben."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber habe ich mich gefreut. Das Gefühl ist noch nicht weg."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das zu bekommen hat mich gefreut."
+        },
+        {
+          "kind": "text",
+          "content": "Ich denke noch gern an diesen kleinen Moment zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hihi, das zu bekommen war eine schöne kleine Freude."
+        },
+        {
+          "kind": "text",
+          "content": "Dass mich das noch lächeln lässt, wollte ich dir gerade erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Ich freue mich noch darüber, das bekommen zu haben."
+        },
+        {
+          "kind": "text",
+          "content": "Auch so eine kleine Freude mag ich dir direkt zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Ich freue mich noch darüber, das bekommen zu haben."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade eher leise. Aber das Schöne daran ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-handover-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das zu bekommen hat mich gefreut."
+        },
+        {
+          "kind": "text",
+          "content": "Diese kleine Freude bleibt. Auch wenn gerade noch andere Gefühle da sind."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau auf dieses Essen hatte ich Lust."
+        },
+        {
+          "kind": "text",
+          "content": "Es zu essen hat mir gutgetan. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau darauf hatte ich Lust."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich es gegessen habe, macht mir noch ein gutes Gefühl."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hach, genau das wollte ich essen."
+        },
+        {
+          "kind": "text",
+          "content": "Das zu essen war schön. Die Freude darüber ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau dieses Essen wollte ich haben."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen und freue mich noch darüber. Das muss ich dir gerade einfach erzählen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau das wollte ich essen, und das habe ich auch."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch, auch wenn ich gerade stiller bin."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-intake-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das Essen hat genau zu dem gepasst, worauf ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen. Diese Freude bleibt neben meinen anderen Gefühlen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau dieses Essen hatte ich mir gewünscht."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich es bekommen habe, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau darauf hatte ich Lust."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich dieses Essen bekommen habe, ist mir noch schön im Kopf geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hihi, genau das hatte ich mir gewünscht."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es bekommen und freue mich noch darüber. So eine kleine Freude bleibt eben."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau dieses Essen wollte ich haben."
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch darüber, es bekommen zu haben. Das darfst du ruhig wissen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen hatte ich mir gewünscht, und ich habe es bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade freue ich mich darüber ganz leise."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-handover-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau darauf hatte ich Lust, und ich habe es bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das freut mich noch. Meine anderen Gefühle machen diesen Moment nicht weniger schön."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir das Essen gegeben, auf das ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen. Danke, darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau das wollte ich essen, und du hast es mir gegeben."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich es gegessen habe, macht mir noch ein gutes Gefühl. Danke!"
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hach, du hast mir genau das Essen gegeben, auf das ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen und freue mich noch darüber. So lässt du mich gern lächeln."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, das ich wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen. Hach, dass du mich damit verwöhnt hast, fühlt sich noch schön an."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, auf das ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es gegessen. Gerade freue ich mich eher still darüber. Danke."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-given-and-eaten-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.intake"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, das ich wollte, und ich habe es gegessen."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich gefreut. Dieses schöne Gefühl bleibt neben allem anderen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, das ich mir gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch. Danke."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau darauf hatte ich Lust, und du hast es mir gegeben."
+        },
+        {
+          "kind": "text",
+          "content": "Daran denke ich noch gern zurück. Danke!"
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hihi, genau das hatte ich mir gewünscht und du hast es mir gegeben."
+        },
+        {
+          "kind": "text",
+          "content": "Die kleine Freude darüber ist noch da. So darfst du mich gern überraschen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, auf das ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, dass du mich damit verwöhnt hast, freut mich immer noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, das ich mir gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade freue ich mich eher still darüber. Schön war das trotzdem."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-desired-gift-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Du hast mir genau das Essen gegeben, auf das ich Lust hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber freue ich mich noch, auch wenn gerade nicht alles unbeschwert ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen zu bekommen war eine willkommene Abwechslung."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte etwas anderes. Dass das geklappt hat, freut mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Etwas anderes zu bekommen hat mir gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte Abwechslung. Darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hihi, das war mal etwas anderes."
+        },
+        {
+          "kind": "text",
+          "content": "Das zu bekommen hat mich gefreut. Genau so eine kleine Veränderung wollte ich."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Diese Abwechslung hat mich gefreut."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte mal etwas anderes bekommen. Die Freude darüber mag ich dir ruhig zeigen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Diese Abwechslung zu bekommen hat mich gefreut."
+        },
+        {
+          "kind": "text",
+          "content": "Ein kleines stilles gutes Gefühl ist davon noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-food-variety-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "food.handover"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau so eine Abwechslung wollte ich bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das freut mich noch. Daneben kann gerade trotzdem anderes in mir los sein."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    }
+  ]
+}

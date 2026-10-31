@@ -1,34 +1,38 @@
-"""The single movable care/status toolbar in the shared Kenney skin."""
+"""Single VN care/status window; HoverUi retains visibility and admission."""
 
 from __future__ import annotations
 
 import sys
 import tkinter as tk
 from functools import partial
-from typing import Callable, Literal
+from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
+from ..common.description_tip import DescriptionTip
+from ..common.image_button import ImageButton, update_button_state
+from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
+from ..common.status_readout import StatusReadout
 from ..common.window_drag import WindowDrag
 from ..view_models.contracts import HoverAnchor, HoverSnapshot, StatusSnapshot
-from .hover_contracts import HoverActions
+from ..view_models.food_models import FoodChoice
+from .hover_contracts import HoverActions, SelectorCloseReason
 from .hover_geometry import HoverGeometry, Rect
+from .moodlet_strip import MoodletStrip
 from .toolbar_details import ToolbarDetails
+from .wish_panel import WishPanel
 
 
 class ActionToolbar:
-    """Render care, pin state and optional details; HoverUi owns visibility."""
-
-    NEEDS = (
-        ("mood", GERMAN_TEXT.format("need.mood"), "#95ddc1"),
-        ("satiety", GERMAN_TEXT.format("need.satiety"), "#f5bd7a"),
-        ("fun", GERMAN_TEXT.format("need.fun"), "#f2d67b"),
-        ("energy", GERMAN_TEXT.format("need.energy"), "#98c9f5"),
-        ("social", GERMAN_TEXT.format("need.social"), "#dda9ef"),
-        ("affection", GERMAN_TEXT.format("need.affection"), "#f0a5be"),
-        ("friendship", GERMAN_TEXT.format("need.friendship"), "#ffb9c2"),
+    READOUTS = (
+        ("mood", GERMAN_TEXT.format("status.mood"), "detail_wellbeing"),
+        ("satiety", GERMAN_TEXT.format("need.satiety"), "status_satiety"),
+        ("fun", GERMAN_TEXT.format("need.fun"), "status_fun"),
+        ("energy", GERMAN_TEXT.format("need.energy"), "status_energy"),
+        ("social", GERMAN_TEXT.format("need.social"), "status_social"),
+        ("affection", GERMAN_TEXT.format("need.affection"), "status_affection"),
+        ("friendship", GERMAN_TEXT.format("status.friendship"), "status_friendship"),
     )
-    BAR_WIDTH = 92
 
     def __init__(
         self,
@@ -40,12 +44,14 @@ class ActionToolbar:
         always_on_top: bool,
         skin: AikoSkin | None = None,
         status_snapshot: Callable[[], StatusSnapshot] | None = None,
+        food_choices: tuple[FoodChoice, ...] = (),
     ) -> None:
-        self.root = root
-        self._snapshot = snapshot
-        self._anchor = anchor
-        self._actions = actions
-        self._current = snapshot()
+        self.root, self._snapshot, self._anchor, self._actions = (
+            root,
+            snapshot,
+            anchor,
+            actions,
+        )
         self.skin = skin if skin is not None else AikoSkin(root)
         self.font_family = self.skin.font
         self.window = tk.Toplevel(root)
@@ -55,232 +61,296 @@ class ActionToolbar:
         self.window.wm_attributes("-topmost", always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
-        outer = self.skin.frame(self.window)
-        outer.pack(fill="both", expand=True, padx=3, pady=3)
-        self.today = self.skin.header(outer, "")
-        self.today.pack(fill="x")
+        self.outer = self.skin.frame(self.window)
+        self.outer.pack(fill="both", expand=True, padx=1, pady=1)
+        title = tk.Frame(self.outer, bg=self.skin.title)
+        title.pack(fill="x")
+        self.today = self.skin.header(title, GERMAN_TEXT.format("vn.brand"))
+        self.today.configure(
+            image=self.skin.images.icon("ui_sparkle", 24), compound="left"
+        )
+        self.today.pack(side="left")
         self._drag = WindowDrag(
             self.window,
-            self.today,
+            title,
+            handles=(self.today,),
             moved=actions.move_speech,
             dropped=self._drag_dropped,
         )
-        needs_frame = tk.Frame(outer, bg=self.skin.background)
-        needs_frame.pack(fill="x", padx=7, pady=(1, 5))
-        self.needs: dict[str, tuple[tk.Canvas, int, tk.Label]] = {}
-        for column in range(3):
-            needs_frame.columnconfigure(column, weight=1, uniform="needs")
-        for i, (key, _title, color) in enumerate(self.NEEDS):
-            cell = tk.Frame(needs_frame, bg=self.skin.background)
-            if key == "mood":
-                cell.grid(row=0, column=0, columnspan=3, sticky="ew", padx=3,
-                          pady=(2, 7))
-            else:
-                cell.grid(row=(i - 1) // 3 + 1, column=(i - 1) % 3,
-                          sticky="ew", padx=3, pady=2)
-            label = tk.Label(
-                cell,
-                text="",
-                font=((self.font_family, 10, "bold") if key == "mood"
-                      else (self.font_family, 9)),
-                width=20,
-                fg=self.skin.text,
-                bg=self.skin.background,
-                anchor="w",
-            )
-            label.pack(anchor="w")
-            bar = tk.Canvas(
-                cell,
-                width=self.BAR_WIDTH,
-                height=14 if key == "mood" else 10,
-                bd=0,
-                highlightthickness=0,
-                bg="#969FB2",
-            )
-            rect = bar.create_rectangle(0, 0, 1, 10, outline="", fill=color)
-            bar.pack(fill="x", pady=(3, 3))
-            self.needs[key] = (bar, rect, label)
-            bar.bind("<Configure>", partial(self._on_need_resize, key))
-        actions_frame = tk.Frame(outer, bg=self.skin.background)
-        actions_frame.pack(fill="x", padx=5)
-        actions_row = tk.Frame(actions_frame, bg=self.skin.background)
-        actions_row.pack(fill="x")
-        extra_row = tk.Frame(actions_frame, bg=self.skin.background)
-        extra_row.pack(fill="x")
-        self.buttons: dict[str, tk.Button] = {}
-        for action, title, parent in (
-            ("feed", GERMAN_TEXT.format("ui.snack"), actions_row),
-            ("play", GERMAN_TEXT.format("ui.play"), actions_row),
-            ("pet", GERMAN_TEXT.format("ui.pet"), actions_row),
-            ("talk", GERMAN_TEXT.format("ui.talk"), actions_row),
-            ("sleep", GERMAN_TEXT.format("ui.sleep_start"), extra_row),
-        ):
-            self.buttons[action] = self._button(
-                parent,
-                title,
-                partial(actions.interact, action),
-            )
-        self.pin_button = self._button(
-            extra_row,
-            GERMAN_TEXT.format("ui.pin_keep"),
+        footer = tk.Frame(self.outer, bg=self.skin.background)
+        footer.pack(side="bottom", fill="x", padx=10, pady=6)
+        self.pin_button = self.skin.button(
+            footer,
+            "",
             actions.toggle_pin,
+            size="small",
+            icon=self.skin.images.icon("ui_pin", 24),
         )
-        self.settings_button = self._button(extra_row, "⋯", self._open_settings)
-        self.hardware = tk.Label(
-            outer,
-            text="",
-            font=(self.font_family, 8),
-            fg=self.skin.muted,
-            bg=self.skin.background,
-            anchor="w",
-            padx=10,
-            pady=3,
+        self.pin_button.pack(side="left", padx=2)
+        self.settings_button = self.skin.button(
+            footer, "", self._open_settings, size="small",
+            icon=self.skin.images.icon("ui_settings", 24),
         )
-        self.hardware.pack(fill="x")
-        self.food_info = tk.Label(
-            outer,
-            text="",
-            font=(self.font_family, 8),
-            fg=self.skin.muted,
-            bg=self.skin.background,
-            anchor="w",
-            padx=10,
-            pady=2,
+        self.settings_button.pack(side="left", padx=2)
+        self.details_button = self.skin.button(
+            footer,
+            GERMAN_TEXT.format("ui.details_show"),
+            self.toggle_details,
+            size="footer",
         )
-        self.food_info.pack(fill="x")
-        self.workload = tk.Label(
-            outer,
-            text="",
-            font=(self.font_family, 8),
+        self.details_button.pack(side="right", padx=2)
+        self.body = body = ScrollRegion(
+            self.outer,
+            self.skin,
+            width=676,
+            height=1,
+            autohide=True,
+            fit_content=True,
+            max_height=max(160, root.winfo_screenheight() - 160),
+        )
+        body.frame.pack(fill="both", expand=True)
+        content = tk.Frame(body.body, bg=self.skin.background, padx=16, pady=12)
+        content.pack(fill="both", expand=True)
+        self.tips = DescriptionTip(self.outer, self.skin)
+        self._pinned = False
+        self.tips.attach(self.pin_button, lambda: GERMAN_TEXT.format(
+            "ui.pin_release" if self._pinned else "ui.pin_keep",
+        ))
+        self.tips.attach(self.settings_button, lambda: GERMAN_TEXT.format(
+            "settings.window_title",
+        ))
+        summary = tk.Frame(
+            content,
+            bg=self.skin.panel,
+            padx=8,
+            pady=5,
+            highlightthickness=1,
+            highlightbackground=self.skin.border,
+        )
+        summary.pack(fill="x")
+        tk.Label(
+            summary, image=self.skin.images.icon("detail_wellbeing", 40),
+            bg=self.skin.panel,
+        ).pack(side="left", padx=(0, 8))
+        copy = tk.Frame(summary, bg=self.skin.panel)
+        copy.pack(side="left", fill="both", expand=True)
+        self.emotion = tk.Label(
+            copy,
+            bg=self.skin.panel,
             fg=self.skin.text,
-            bg=self.skin.background,
+            font=(self.skin.font, 12, "bold"),
             anchor="w",
-            padx=10,
-            pady=3,
+            wraplength=330,
+            justify="left",
         )
-        self.workload.pack(fill="x")
-        self.details: ToolbarDetails | None = None
-        self.details_button: tk.Button | None = None
-        self._details_open = False
-        if status_snapshot is not None:
-            self.details_button = self.skin.button(
-                outer,
-                GERMAN_TEXT.format("ui.details_show"),
-                self.toggle_details,
-                size="wide",
+        self.emotion.pack(fill="x")
+        self.wellbeing = tk.Label(
+            copy,
+            bg=self.skin.panel,
+            fg=self.skin.muted,
+            font=(self.skin.font, 8),
+            anchor="w",
+            wraplength=330,
+            justify="left",
+        )
+        self.wellbeing.pack(fill="x")
+        self.readouts: dict[str, StatusReadout] = {}
+        self.readouts["mood"] = StatusReadout(
+            summary, self.skin, title=GERMAN_TEXT.format("status.mood"), width=176
+        )
+        self.readouts["mood"].frame.pack(side="right")
+        self.moodlets = MoodletStrip(content, self.skin, self.tips)
+        self.moodlets.frame.pack(fill="x", pady=(7, 0))
+        self.wishes = WishPanel(
+            content,
+            self.skin,
+            self.tips,
+            {choice.id: choice.image_path for choice in food_choices},
+            pin_wish=actions.pin_wish, dismiss_wish=actions.dismiss_wish,
+        )
+        self.wishes.frame.pack(fill="x", pady=(4, 8))
+        care = tk.Frame(content, bg=self.skin.background)
+        care.pack(fill="x")
+        self.interaction_column = tk.Frame(
+            care, bg=self.skin.background, width=254, height=354
+        )
+        self.interaction_column.pack(side="right", padx=(13, 0))
+        self.interaction_column.pack_propagate(False)
+        self.actions_frame = tk.Frame(self.interaction_column, bg=self.skin.background)
+        self.actions_frame.pack(fill="both", expand=True)
+        values = tk.Frame(care, bg=self.skin.background)
+        values.pack(side="left", fill="both", expand=True)
+        for key, text, icon in self.READOUTS[1:]:
+            readout = StatusReadout(
+                self._care_row(values),
+                self.skin,
+                title=text,
+                icon=icon,
+                friendship=key == "friendship",
             )
-            self.details_button.pack(anchor="w", padx=9, pady=(0, 4))
-            self.details = ToolbarDetails(outer, self.skin, status_snapshot)
+            readout.frame.pack(fill="both", expand=True, pady=(1, 5))
+            self.readouts[key] = readout
+        self.buttons: dict[str, ImageButton] = {}
+        for action, text, icon, submenu in (
+            ("place_item", "ui.snack", "status_satiety", True),
+            ("play", "ui.play", "status_fun", True),
+            ("sleep", "ui.sleep_start", "action_sleep", False),
+            ("talk", "ui.talk", "status_social", True),
+            ("pet", "ui.pet", "action_pet", False),
+        ):
+            button = self.skin.button(
+                self._care_row(self.actions_frame),
+                GERMAN_TEXT.format(text) + ("  ›" if submenu else ""),
+                partial(actions.interact, action),
+                size="action",
+                icon=self.skin.images.icon(icon, 32),
+                align_left=True,
+            )
+            button.pack(pady=(1, 5))
+            self.buttons[action] = button
+        tk.Label(
+            self._care_row(self.actions_frame),
+            text=GERMAN_TEXT.format("vn.friendship_context"),
+            wraplength=220,
+            bg=self.skin.background,
+            fg=self.skin.muted,
+            font=(self.skin.font, 9),
+            pady=8,
+        ).pack(fill="both", expand=True)
+        context = tk.Frame(content, bg=self.skin.background)
+        context.pack(fill="x", pady=(6, 0))
+        self.hardware = self._context_label(context)
+        self.hardware.configure(
+            image=self.skin.images.icon("system_computer", 24), compound="left",
+        )
+        self.workload = self._context_label(context)
+        self.food_info = self._context_label(context)
+        self.details = (
+            ToolbarDetails(content, self.skin, status_snapshot)
+            if status_snapshot is not None
+            else None
+        )
+        self._details_open = False
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
+        self._selector_closed: Callable[[SelectorCloseReason], None] | None = None
+        self.window.bind("<Configure>", self._configured, add="+")
+        self.window.bind("<Escape>", lambda _e: self.close_selector())
+        body.adopt()
+
+    def _context_label(self, parent: tk.Misc) -> tk.Label:
+        label = tk.Label(
+            parent,
+            bg=self.skin.background,
+            fg=self.skin.muted,
+            font=(self.skin.font, 8),
+            anchor="w",
+            wraplength=620,
+        )
+        label.pack(fill="x", pady=2)
+        return label
+
+    def _care_row(self, parent: tk.Misc) -> tk.Frame:
+        row = tk.Frame(parent, bg=self.skin.background, height=59)
+        row.pack(fill="x")
+        row.pack_propagate(False)
+        return row
 
     @property
     def dragging(self) -> bool:
         return self._drag.dragging
 
     def set_pinned(self, enabled: bool) -> None:
-        """Display the controller's state without keeping a second pin flag."""
-        self.pin_button.configure(
-            text=GERMAN_TEXT.format("ui.pin_release")
-            if enabled
-            else GERMAN_TEXT.format("ui.pin_keep"),
-            fg=self.skin.accent if enabled else self.skin.text,
-        )
+        self._pinned = enabled
+        self.pin_button.set_selected(enabled)
 
     def toggle_details(self) -> None:
-        if self.details is None or self.details_button is None:
+        if self.details is None:
             return
+        self.tips.hide()
         self._details_open = not self._details_open
         if self._details_open:
             self.details.refresh()
-            self.details.frame.pack(fill="x", padx=9, pady=(0, 8))
+            self.details.frame.pack(fill="x", pady=(8, 0))
         else:
             self.details.frame.pack_forget()
         self.details_button.configure(
-            text=GERMAN_TEXT.format("ui.details_hide")
-            if self._details_open
-            else GERMAN_TEXT.format("ui.details_show"),
+            text=GERMAN_TEXT.format(
+                "ui.details_hide" if self._details_open else "ui.details_show"
+            )
         )
         if self.visible:
+            # Explicit expansion needs its new scroll extent before revealing it.
+            self.window.update_idletasks()
             self.place()
+            if self._details_open:
+                self.body.canvas.yview_moveto(1)
 
     def refresh_details(self) -> None:
         if self._details_open and self.details is not None:
             self.details.refresh()
 
     def refresh_actions(self) -> None:
-        """Project current permission; the controller rechecks on invocation."""
         for action, button in self.buttons.items():
-            state: Literal["normal", "disabled"] = (
-                "normal" if self._actions.can_interact(action) else "disabled"
+            allowed = (
+                True if action in ("place_item", "play", "talk")
+                else self._actions.can_interact(action)
             )
-            if button.cget("state") != state:
-                button.configure(state=state)
-
-    def _button(
-        self,
-        parent: tk.Widget,
-        text: str,
-        command: Callable[[], None],
-    ) -> tk.Button:
-        size = "small" if text == "⋯" else "wide" if len(text) > 13 else "regular"
-        button = self.skin.button(parent, text, command, size=size)
-        button.pack(side="left", padx=2, pady=4)
-        return button
+            update_button_state(button, enabled=allowed)
 
     def _open_settings(self) -> None:
-        button = self.settings_button
         self._actions.open_settings(
-            button.winfo_rootx() + button.winfo_width(),
-            button.winfo_rooty(),
+            self.window.winfo_rootx() + self.window.winfo_width(),
+            self.window.winfo_rooty(),
         )
 
-    def _on_need_resize(self, key: str, event: tk.Event) -> None:
-        self._resize_need(key, event.width)
+    def selector_parent(
+        self, closed: Callable[[SelectorCloseReason], None],
+    ) -> tk.Frame:
+        self.close_selector("navigation")
+        self.tips.hide()
+        self.actions_frame.pack_forget()
+        self._selector_closed = closed
+        return self.interaction_column
 
-    def _resize_need(self, key: str, width: int | None = None) -> None:
-        bar, rect, _label = self.needs[key]
-        actual_width = width if width is not None else bar.winfo_width()
-        if actual_width <= 1:
-            actual_width = bar.winfo_reqwidth()
-        amount = max(0.0, min(100.0, self._current.need_value(key)))
-        bar.coords(rect, 0, 0, round(actual_width * amount / 100),
-                   bar.winfo_reqheight())
+    def close_selector(self, reason: SelectorCloseReason = "explicit") -> None:
+        callback, self._selector_closed = self._selector_closed, None
+        if callback is not None:
+            callback(reason)
+        self.actions_frame.pack(fill="both", expand=True)
 
     def refresh(self) -> None:
         self.refresh_actions()
         view = self._snapshot()
-        self._current = view
-        changed = False
-        for widget, value in (
+        for widget, text in (
+            (self.emotion, view.emotional.state_label),
+            (self.wellbeing, view.wellbeing_line),
             (self.buttons["sleep"], view.sleep_label),
-            (self.buttons["feed"], view.feed_label),
-            (self.today, view.header),
+            (self.buttons["place_item"], view.feed_label + "  ›"),
             (self.hardware, view.hardware_line),
             (self.workload, view.workload_line),
             (self.food_info, view.food_line),
         ):
-            if widget.cget("text") != value:
-                widget.configure(text=value)
-                changed = True
-        for key, title, _color in self.NEEDS:
-            amount = max(0, min(100, view.need_value(key)))
-            _bar, _rect, label = self.needs[key]
-            text = GERMAN_TEXT.format(
-                "ui.need_value",
-                title=title,
-                percent=f"{amount:.0f}",
-            )
-            if key == "friendship":
-                text += GERMAN_TEXT.format(
-                    "ui.friendship_level_suffix",
-                    level=str(view.friendship_level),
+            if widget.cget("text") != text:
+                widget.configure(text=text)
+        for label in (self.hardware, self.workload, self.food_info):
+            if label.cget("text"):
+                label.pack(fill="x", pady=2)
+            else:
+                label.pack_forget()
+        for key, readout in self.readouts.items():
+            suffix = (
+                GERMAN_TEXT.format(
+                    "ui.friendship_level_suffix", level=str(view.friendship_level)
                 )
-            if label.cget("text") != text:
-                label.configure(text=text)
-            self._resize_need(key)
+                if key == "friendship"
+                else ""
+            )
+            readout.refresh(view.status_value(key), suffix=suffix)
+        self.moodlets.refresh(view.emotional.moodlets)
+        self.wishes.refresh(view.emotional.wishes)
         self.refresh_details()
-        if changed and self.visible:
+        if self.visible:
             self.place()
 
     def contains_pointer(self, px: int, py: int) -> bool:
@@ -314,10 +384,16 @@ class ActionToolbar:
             pinned=anchor.pinned_x is not None,
         )
 
+    def _configured(self, event: tk.Event) -> None:
+        # Toplevel bindtags also receive child Configure events. Only the actual
+        # window allocation needs a placement correction after Tk settles it.
+        if event.widget is self.window and self.visible:
+            self.place()
+
     def place(self) -> None:
+        """Read current geometry without draining unrelated World idle work."""
         if self.dragging:
             return
-        self.window.update_idletasks()
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
         x, y = HoverGeometry.placement(
@@ -351,6 +427,8 @@ class ActionToolbar:
         if self.visible:
             return
         self.refresh()
+        # Settle once before first mapping; recurring refresh/place stays passive.
+        self.window.update_idletasks()
         self.place()
         self.window.deiconify()
         self.visible = True
@@ -366,10 +444,14 @@ class ActionToolbar:
         if not self.visible:
             return
         self.visible = False
+        self.tips.hide()
+        self.close_selector("automatic")
         self.window.withdraw()
         self._last_placement = None
         self._actions.move_speech()
 
     def close(self) -> None:
+        self.tips.hide()
+        self.close_selector("shutdown")
         self._drag.close()
         self.window.destroy()

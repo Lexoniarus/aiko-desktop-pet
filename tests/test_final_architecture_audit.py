@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import random
 import unittest
 from datetime import datetime
 from pathlib import Path
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -27,23 +25,27 @@ class FinalArchitectureTests(unittest.TestCase):
         stamp = datetime(2026, 10, 12, 13).timestamp()
         context = context_at(stamp)
         state = PetState(satiety=10, mood=55)
-        mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
         reading = ComputerSnapshot(cpu=82, ram=55, measured_at=1000.0)
         for observing in (False, True):
             with self.subTest(observing=observing):
                 hover = project_hover(
-                    snapshot_pet(state), context, reading,
+                    snapshot_pet(state),
+                    context,
+                    reading,
                     observe_computer=observing,
                 )
                 status = project_status(
-                    snapshot_pet(state), context,
-                    mind.emotion(state, 1000.0), None, reading,
+                    snapshot_pet(state),
+                    context,
+                    None,
+                    reading,
                     observe_computer=observing,
                 )
                 self.assertEqual(hover.feed_label, "Mittagessen")
                 self.assertIn("Montag", hover.header)
                 self.assertEqual(
-                    status.hint, "Ein kleiner Snack wäre schön ...",
+                    status.hint,
+                    "Ein kleiner Snack wäre schön ...",
                 )
                 if observing:
                     self.assertIn("CPU 82 %", hover.hardware_line)

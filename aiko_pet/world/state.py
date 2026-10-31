@@ -30,6 +30,7 @@ class WorldFailure(StrEnum):
     CURSOR_OCCUPIED = "cursor_occupied"
     PET_OCCUPIED = "pet_occupied"
     NOT_EDIBLE = "not_edible"
+    READABLE_ALREADY_PRESENT = "readable_already_present"
 
 
 class WorldOperationError(ValueError):
@@ -75,6 +76,49 @@ class WorldState:
             self._next_id,
         )
 
+    def set_book_expiry(self, instance_id: str, expires_at: float) -> None:
+        """Set the first deadline once; replay and custody changes never renew it."""
+        self._require_owner()
+        item = self.get(instance_id)
+        definition = self._definitions[item.definition_id]
+        if (
+            ObjectInteraction.READ not in definition.interactions
+            or isinstance(expires_at, bool)
+            or not math.isfinite(expires_at)
+            or expires_at < 0
+        ):
+            raise ValueError("Only a readable book may have an expiry")
+        if item.expires_at is None:
+            self._revision += 1
+            self._objects[instance_id] = replace(
+                item,
+                expires_at=expires_at,
+                revision=item.revision + 1,
+            )
+        elif item.expires_at != expires_at:
+            raise ValueError("A book deadline cannot be renewed")
+
+    def expire_books(self, wall_time: float) -> tuple[str, ...]:
+        """Retire expired books in any custody; an hour is an absolute limit."""
+        self._require_owner()
+        expired: list[str] = []
+        for item in tuple(self._objects.values()):
+            if (
+                item.expires_at is not None
+                and wall_time >= item.expires_at
+                and item.state not in (ObjectState.REMOVED, ObjectState.CONSUMED)
+            ):
+                self._revision += 1
+                self._objects[item.instance_id] = replace(
+                    item,
+                    state=ObjectState.REMOVED,
+                    position=None,
+                    motion=None,
+                    revision=item.revision + 1,
+                )
+                expired.append(item.instance_id)
+        return tuple(expired)
+
     def get(self, instance_id: str) -> WorldObjectSnapshot:
         self._require_owner()
         try:
@@ -89,23 +133,41 @@ class WorldState:
             raise ValueError("World recovery requires the same definitions")
         objects: dict[str, WorldObjectSnapshot] = {}
         for item in snapshot.objects:
-            if (item.instance_id in objects
-                    or item.definition_id not in self._definitions):
+            if (
+                item.instance_id in objects
+                or item.definition_id not in self._definitions
+            ):
                 raise ValueError("Invalid restored instance identity")
-            if ((item.state in (ObjectState.FALLING, ObjectState.BOUNCING))
-                    != (item.motion is not None)):
+            if (item.state in (ObjectState.FALLING, ObjectState.BOUNCING)) != (
+                item.motion is not None
+            ):
                 raise ValueError("Restored motion must match object state")
             if item.position is not None and not snapshot.surface.contains(
-                item.position, item.footprint,
+                item.position,
+                item.footprint,
             ):
                 raise ValueError("Invalid restored position")
+            if item.expires_at is not None and (
+                ObjectInteraction.READ
+                not in self._definitions[item.definition_id].interactions
+                or isinstance(item.expires_at, bool)
+                or not math.isfinite(item.expires_at)
+                or item.expires_at < 0
+            ):
+                raise ValueError("Invalid restored book deadline")
             objects[item.instance_id] = item
         self._surface = snapshot.surface
         self._objects = objects
         self._revision = snapshot.revision
-        self._next_id = max(self._next_id, snapshot.next_instance_id, 1 + max(
-            (int(key.removeprefix("object_")) for key in objects), default=0,
-        ))
+        self._next_id = max(
+            self._next_id,
+            snapshot.next_instance_id,
+            1
+            + max(
+                (int(key.removeprefix("object_")) for key in objects),
+                default=0,
+            ),
+        )
 
     def create_held(
         self, definition_id: str, position: WorldPosition,
@@ -122,6 +184,17 @@ class WorldState:
             definition_id, WorldPosition(x, 0), footprint, ObjectState.RESTING,
         )
 
+    def can_place_definition(self, definition_id: str) -> bool:
+        self._require_owner()
+        definition = self._definitions.get(definition_id)
+        if definition is None:
+            return False
+        return ObjectInteraction.READ not in definition.interactions or not any(
+            item.definition_id == definition_id
+            and item.state not in (ObjectState.REMOVED, ObjectState.CONSUMED)
+            for item in self._objects.values()
+        )
+
     def _create(
         self, definition_id: str, position: WorldPosition,
         footprint: ObjectFootprint, state: ObjectState,
@@ -129,6 +202,8 @@ class WorldState:
         self._require_owner()
         if definition_id not in self._definitions:
             raise WorldOperationError(WorldFailure.UNKNOWN_DEFINITION)
+        if not self.can_place_definition(definition_id):
+            raise WorldOperationError(WorldFailure.READABLE_ALREADY_PRESENT)
         self._validate_position(position, footprint)
         if state == ObjectState.RESTING:
             position = WorldPosition(self._surface.ground_x(position.x, footprint), 0)
@@ -236,21 +311,29 @@ class WorldState:
         return self._commit(item, ObjectState.RESTING, position)
 
     def change_surface(
-        self, surface: WorldSurface, *, recovering: bool = False,
+        self,
+        surface: WorldSurface,
+        *,
+        recovering: bool = False,
     ) -> None:
         """Reproject active anchors atomically; reject shapes that cannot fit."""
         self._require_owner()
         if surface == self._surface:
             return
-        replacements: list[tuple[WorldObjectSnapshot, WorldPosition,
-                                 ObjectState, ItemMotion | None]] = []
+        replacements: list[
+            tuple[WorldObjectSnapshot, WorldPosition, ObjectState, ItemMotion | None]
+        ] = []
         for item in self._objects.values():
             if item.state not in (ObjectState.CONSUMED, ObjectState.REMOVED):
                 self._validate_footprint(surface, item.footprint)
             if item.position is not None:
-                x = max(item.footprint.left, min(
-                        item.position.x, surface.width - item.footprint.right,
-                    ))
+                x = max(
+                    item.footprint.left,
+                    min(
+                        item.position.x,
+                        surface.width - item.footprint.right,
+                    ),
+                )
                 state, motion = item.state, item.motion
                 if item.state == ObjectState.RESTING:
                     ground_x = surface.ground_x(x, item.footprint)
@@ -258,9 +341,15 @@ class WorldState:
                         x = ground_x
                     elif x != ground_x:
                         state, motion = ObjectState.BOUNCING, ItemMotion(settling=True)
-                replacements.append((item, WorldPosition(
-                    x, min(item.position.height, surface.height),
-                ), state, motion))
+                replacements.append((
+                    item,
+                    WorldPosition(
+                        x,
+                        min(item.position.height, surface.height),
+                    ),
+                    state,
+                    motion,
+                ))
         self._surface = surface
         self._revision += 1
         for item, position, state, motion in replacements:
@@ -273,30 +362,55 @@ class WorldState:
             raise ValueError("Invalid motion time")
         if elapsed == 0:
             return
-        updates: list[tuple[WorldObjectSnapshot, ObjectState,
-                            WorldPosition, ItemMotion | None]] = []
+        updates: list[
+            tuple[WorldObjectSnapshot, ObjectState, WorldPosition, ItemMotion | None]
+        ] = []
         for item in tuple(self._objects.values()):
-            if (item.state not in (ObjectState.FALLING, ObjectState.BOUNCING)
-                    or item.position is None or item.motion is None):
+            if (
+                item.state not in (ObjectState.FALLING, ObjectState.BOUNCING)
+                or item.position is None
+                or item.motion is None
+            ):
                 continue
             result = advance_motion(
-                item.position.x, item.position.height, item.motion, elapsed,
-                self._surface.ground_interval(item.footprint), parameters,
+                item.position.x,
+                item.position.height,
+                item.motion,
+                elapsed,
+                self._surface.ground_interval(item.footprint),
+                parameters,
                 ceiling=self._surface.height,
             )
-            state = (ObjectState.RESTING if result.motion is None else
-                     ObjectState.BOUNCING if result.contacted else item.state)
-            updates.append((item, state, WorldPosition(result.x, result.height),
-                            result.motion))
+            state: ObjectState = (
+                ObjectState.RESTING
+                if result.motion is None
+                else ObjectState.BOUNCING
+                if result.contacted
+                else item.state
+            )
+            updates.append((
+                item,
+                state,
+                WorldPosition(result.x, result.height),
+                result.motion,
+            ))
         for item, state, position, motion in updates:
             self._commit(item, state, position, motion=motion)
 
     def change_footprint(
-        self, instance_id: str, footprint: ObjectFootprint, *, expected_revision: int,
+        self,
+        instance_id: str,
+        footprint: ObjectFootprint,
+        *,
+        expected_revision: int,
     ) -> None:
         item = self._expect(
-            instance_id, expected_revision, ObjectState.USER_HELD,
-            ObjectState.FALLING, ObjectState.BOUNCING, ObjectState.RESTING,
+            instance_id,
+            expected_revision,
+            ObjectState.USER_HELD,
+            ObjectState.FALLING,
+            ObjectState.BOUNCING,
+            ObjectState.RESTING,
             ObjectState.PET_HELD,
         )
         self._validate_footprint(self._surface, footprint)
@@ -305,15 +419,26 @@ class WorldState:
         position = item.position
         state, motion = item.state, item.motion
         if position is not None:
-            position = WorldPosition(max(footprint.left, min(
-                position.x, self._surface.width - footprint.right,
-            )), position.height)
+            position = WorldPosition(
+                max(
+                    footprint.left,
+                    min(
+                        position.x,
+                        self._surface.width - footprint.right,
+                    ),
+                ),
+                position.height,
+            )
             if item.state == ObjectState.RESTING:
                 ground_x = self._surface.ground_x(position.x, footprint)
                 if ground_x != position.x:
                     state, motion = ObjectState.BOUNCING, ItemMotion(settling=True)
         self._objects[instance_id] = replace(
-            item, footprint=footprint, position=position, state=state, motion=motion,
+            item,
+            footprint=footprint,
+            position=position,
+            state=state,
+            motion=motion,
             revision=item.revision + 1,
         )
         self._revision += 1
@@ -356,17 +481,24 @@ class WorldState:
             raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS) from None
 
     def _commit(
-        self, item: WorldObjectSnapshot, state: ObjectState,
+        self,
+        item: WorldObjectSnapshot,
+        state: ObjectState,
         position: WorldPosition | None,
-        *, motion: ItemMotion | None = None,
+        *,
+        motion: ItemMotion | None = None,
     ) -> WorldObjectSnapshot:
         moving = state in (ObjectState.FALLING, ObjectState.BOUNCING)
         motion = (motion or item.motion or ItemMotion()) if moving else None
         if item.state == state and item.position == position and item.motion == motion:
             return item
-        updated = replace(item, revision=item.revision + 1, state=state,
-                          position=position,
-                          motion=motion)
+        updated = replace(
+            item,
+            revision=item.revision + 1,
+            state=state,
+            position=position,
+            motion=motion,
+        )
         self._objects[item.instance_id] = updated
         self._revision += 1
         return updated

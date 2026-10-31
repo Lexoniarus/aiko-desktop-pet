@@ -18,11 +18,25 @@ class FoodOverlay:
     """One Tk canvas item and reusable native-size sprite images."""
 
     def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, *,
-        catalog: ItemCatalog, scale: int,
+        self,
+        root: tk.Tk,
+        canvas: tk.Canvas,
+        *,
+        catalog: ItemCatalog,
+        scale: int,
     ) -> None:
         self._canvas = canvas
         self._foods = catalog.foods
+        self._readables = catalog.readables
+        self.readable_state = "carry_closed"
+        self._book_images = {
+            (name, state, size): tk.PhotoImage(
+                master=root, file=str(sprite.render_path)
+            )
+            for name, book in self._readables.items()
+            for state, variants in book.states.items()
+            for size, sprite in variants.items()
+        }
         self._images = {
             (name, size): tk.PhotoImage(master=root, file=str(sprite.render_path))
             for name, food in self._foods.items()
@@ -43,7 +57,11 @@ class FoodOverlay:
 
     def select(self, food_id: str | None) -> None:
         """Select a validated visual asset, never award any need."""
-        if food_id is not None and food_id not in self._foods:
+        if (
+            food_id is not None
+            and food_id not in self._foods
+            and food_id not in self._readables
+        ):
             raise ValueError(f"Unknown food overlay: {food_id}")
         self.current_food_id = food_id
         self._contact_at = time.monotonic()
@@ -51,24 +69,41 @@ class FoodOverlay:
             self._canvas.itemconfigure(self.item, state="hidden")
 
     def render(
-        self, clip: AnimationClip, frame: AnimationFrame, *,
+        self,
+        clip: AnimationClip,
+        frame: AnimationFrame,
+        *,
         scale: int,
     ) -> None:
         item_id = self.current_food_id
-        if (clip.name not in ("eat", "pick_up", "put_down")
-                or frame.food_anchor is None or item_id is None):
+        if (
+            clip.name not in ("eat", "pick_up", "put_down")
+            or frame.food_anchor is None
+            or item_id is None
+        ):
             self._canvas.itemconfigure(self.item, state="hidden")
             return
-        sprite = self._foods[item_id].sprites[scale]
-        image = self._images[(item_id, scale)]
+        if item_id in self._readables:
+            sprite = self._readables[item_id].states[self.readable_state][scale]
+            image = self._book_images[(item_id, self.readable_state, scale)]
+        else:
+            sprite = self._foods[item_id].sprites[scale]
+            image = self._images[(item_id, scale)]
         x: float = (FRAME_WIDTH // 2 - clip.anchor[0] + frame.food_anchor[0]) * scale
         y: float = (FOOT_BASELINE - clip.anchor[1] + frame.food_anchor[1]) * scale
+        if item_id in self._readables:
+            book = self._readables[item_id]
+            offset = book.state_offsets.get(self.readable_state, (0.0, 0.0))
+            x += (book.hand_offset[0] + offset[0]) * scale
+            y += (book.hand_offset[1] + offset[1]) * scale
         if self.contact_origin is not None and clip.name != "put_down":
             blend = min(1.0, (time.monotonic() - self._contact_at) / 0.13)
             x = self.contact_origin[0] * (1 - blend) + x * blend
             y = self.contact_origin[1] * (1 - blend) + y * blend
         self._canvas.coords(
-            self.item, round(x - sprite.pivot[0]), round(y - sprite.pivot[1]),
+            self.item,
+            round(x - sprite.pivot[0]),
+            round(y - sprite.pivot[1]),
         )
         self._canvas.itemconfigure(self.item, image=image, state="normal")
         # Consumables stay in front of the character in every interaction pose.
@@ -78,3 +113,4 @@ class FoodOverlay:
     def close(self) -> None:
         self._canvas.delete(self.item)
         self._images.clear()
+        self._book_images.clear()

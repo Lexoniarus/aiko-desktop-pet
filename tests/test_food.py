@@ -67,7 +67,7 @@ class FoodPolicyTests(unittest.TestCase):
         self.assertGreater(x.satiety, y.satiety)
         self.assertLess(x.food.remaining_digest_minutes, 100)
 
-    def test_hunger_accelerates_when_no_food_is_eaten(self) -> None:
+    def test_long_fasting_does_not_add_another_hunger_accelerator(self) -> None:
         normal = advance_food(FoodState(), 100, 2, sleeping=False)
         hungry = advance_food(
             FoodState(awake_hours_since_last_food=6),
@@ -75,7 +75,7 @@ class FoodPolicyTests(unittest.TestCase):
             2,
             sleeping=False,
         )
-        self.assertLess(hungry.satiety, normal.satiety)
+        self.assertEqual(hungry.satiety, normal.satiety)
         self.assertGreaterEqual(hungry.satiety, 0.0)
 
     def test_both_real_activity_axes_increase_hunger_but_are_bounded(self) -> None:
@@ -109,7 +109,7 @@ class FoodPolicyTests(unittest.TestCase):
             1 + FOOD_BALANCE.maximum_combined_activity_bonus,
         )
 
-    def test_repetition_changes_mood_but_never_nutrition(self) -> None:
+    def test_repetition_is_context_without_an_instant_mood_effect(self) -> None:
         food = FoodState()
         outcomes = []
         for _ in range(3):
@@ -120,7 +120,6 @@ class FoodPolicyTests(unittest.TestCase):
         self.assertFalse(outcomes[1].repetitive)
         self.assertTrue(outcomes[2].repetitive)
         self.assertEqual(outcomes[0].satiety, outcomes[2].satiety)
-        self.assertLess(outcomes[2].mood_change, outcomes[0].mood_change)
         self.assertFalse(
             is_repeated_food(
                 food,
@@ -217,7 +216,7 @@ class FoodPolicyTests(unittest.TestCase):
         self.assertLessEqual(pet.satiety, 100)
         pet.interact("sleep", now=day + 16 * 3600)
         pet.advance(day + 24 * 3600, auto_routine=False)
-        self.assertTrue(pet.sleeping)
+        self.assertFalse(pet.sleeping)
         self.assertGreater(pet.satiety, 0)
 
 

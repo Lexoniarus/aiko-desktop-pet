@@ -33,13 +33,13 @@ class CareActionRulesTests(unittest.TestCase):
     def test_each_care_action_retains_its_specific_effect(self) -> None:
         moment = stamp()
         expected = {
-            "talk": ("social", 100.0, "vorbeischaust"),
-            "pet": ("affection", 100.0, "tut gut"),
-            "energy_drink": ("energy", 85.0, "geholfen"),
+            "talk": ("social", 100.0, "reden"),
+            "pet": ("affection", 100.0, "streicheln"),
+            "energy_drink": ("energy", 85.0, "Schwung"),
         }
         for action, (attribute, value, reply) in expected.items():
             with self.subTest(action=action):
-                state = PetState(updated_at=moment)
+                state = PetState(updated_at=moment, friendship=50)
                 text = format_care_response(state.interact(action, now=moment))
                 self.assertEqual(getattr(state, attribute), value)
                 self.assertIn(reply, text)
@@ -65,7 +65,8 @@ class CareActionRulesTests(unittest.TestCase):
     def test_rejected_actions_leave_sleep_and_relationship_untouched(self) -> None:
         state = PetState(energy=4, sleeping=True, sleep_origin="manual")
         before = encode_pet_state(state)
-        self.assertIn("müde", format_care_response(state.interact("play", now=stamp())))
+        result = state.interact("play", now=stamp())
+        self.assertIn("Schlaf", format_care_response(result))
         self.assertEqual(before, encode_pet_state(state))
         with self.assertRaises(ValueError):
             state.interact("unknown", now=stamp())
@@ -74,7 +75,7 @@ class CareActionRulesTests(unittest.TestCase):
     def test_full_drink_does_not_wake_aiko(self) -> None:
         state = PetState(energy=100, sleeping=True, sleep_origin="manual")
         result = state.interact("energy_drink", now=stamp())
-        self.assertIn("voll", format_care_response(result))
+        self.assertIn("wach genug", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.energy, 100)
 
@@ -84,17 +85,19 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
         result = state.interact("sleep", now=night_time)
-        self.assertIn("Gute Nacht", format_care_response(result))
+        self.assertIn("Schlafen", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "manual")
         state.interact("talk", now=night_time + 1)
         self.assertFalse(state.sleeping)
         self.assertEqual(state.auto_sleep_night, context.night_key)
 
-    def test_drinks_and_sleep_never_credit_friendship(self) -> None:
+    def test_drink_and_sleep_do_not_give_instant_friendship(self) -> None:
         state = PetState(updated_at=stamp())
         before = state.friendship
         state.interact("energy_drink", now=stamp())
+        self.assertAlmostEqual(state.friendship - before, 0)
+        before = state.friendship
         state.interact("sleep", now=stamp() + 1)
         self.assertEqual(state.friendship, before)
 

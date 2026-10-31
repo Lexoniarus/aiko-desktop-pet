@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from ..pet.mind.cursor_attention import CursorAttention
+from ..pet.mind.cursor_attention import CursorAttention, CursorPerception
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,22 +21,76 @@ class CursorMotion:
     now: float
 
 
+@dataclass(frozen=True, slots=True)
+class CursorObservationResult:
+    """Every sample provides evidence; only changed positions emit motion facts."""
+
+    perception: CursorPerception
+    motion: CursorMotion | None
+
+
 class CursorObservation:
     """Connect a pointer sample to PetMind's session attention clock."""
 
     def __init__(self, attention: CursorAttention) -> None:
         self.attention = attention
+        self.current = CursorPerception()
+
+    def reset(self) -> None:
+        """Forget both the history and its derived sample on mode/scale changes."""
+        self.attention.reset()
+        self.current = CursorPerception()
+
+    def classify_contact(
+        self, pointer: tuple[int, int], *, pet_moved_at: float,
+    ) -> bool:
+        """Fresh pointer motion is intentional; a pet crossing is not."""
+        previous = self.attention.previous_pointer
+        if previous is None or math.dist(pointer, previous) > 1:
+            return True
+        return self.attention.last_pointer_move >= pet_moved_at
 
     def observe(
-        self, pointer: tuple[int, int], now: float, *,
-        game_mode: bool, eyes: tuple[float, float],
+        self,
+        pointer: tuple[int, int],
+        now: float,
+        *,
+        game_mode: bool,
+        eyes: tuple[float, float],
         screen_width: int,
-    ) -> CursorMotion | None:
+        scale: int = 1,
+    ) -> CursorObservationResult:
         """Report only actual changes; game samples update the baseline."""
-        if not self.attention.observe(pointer, now, game_mode=game_mode):
-            return None
-        return CursorMotion(
-            distance=math.hypot(pointer[0] - eyes[0], pointer[1] - eyes[1]),
-            screen_width=screen_width,
-            now=now,
+        width = 192.0 * max(1, scale)
+        moved = self.attention.observe(
+            pointer,
+            now,
+            game_mode=game_mode,
+            width=width,
         )
+        dx, dy = pointer[0] - eyes[0], pointer[1] - eyes[1]
+        distance = math.hypot(dx, dy)
+        vx, vy = self.attention.velocity
+        gap_x = max(0.0, abs(dx) - width * 0.34)
+        gap_y = max(0.0, -dy - width * 0.18, dy - width * 0.58)
+        self.current = CursorPerception(
+            now,
+            pointer,
+            math.hypot(gap_x, gap_y) / width,
+            math.hypot(vx, vy) / width,
+            -(vx * dx + vy * dy) / max(1.0, distance) / width,
+            max(0.0, now - self.attention.stationary_since),
+            1 if dx > width * 0.05 else -1 if dx < -width * 0.05 else 0,
+            width * 0.28 <= dy <= width * 0.75,
+            self.attention.valid,
+        )
+        motion = (
+            CursorMotion(
+                distance=math.hypot(pointer[0] - eyes[0], pointer[1] - eyes[1]),
+                screen_width=screen_width,
+                now=now,
+            )
+            if moved
+            else None
+        )
+        return CursorObservationResult(self.current, motion)

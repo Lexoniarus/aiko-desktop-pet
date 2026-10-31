@@ -10,18 +10,49 @@ import math
 import random
 from collections import deque
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from string import Formatter
 from typing import Any, Literal
 
+from ...games.contracts import BlackjackDetails, GameId, RockPaperScissorsDetails
+from ..animation.expression import Expression, event_expression
 from ..balance import BALANCE
-from ..catalog_validation import load_json, object_fields
-from ..routine import TimeContext
-from .dialogue_context import DialogueContext, FriendshipStage
+from ..catalog_validation import enum_value, load_json, object_fields
+from ..content import GERMAN_TEXT
+from ..emotions import EmotionalState
+from ..food_catalog import DEFAULT_CATALOG
+from ..interaction_events import SocialCompletion
+from ..moodlets import (
+    EmotionalDirection,
+    MoodletAttribution,
+    MoodletCauseKind,
+    MoodletOutcome,
+)
+from ..needs import NeedCondition
+from ..object_text_contract import OBJECT_TEXT_FIELDS
+from ..text_contract import TEXT_FIELDS
+from ..wish_catalog import WISH_CATALOG
+from ..wishes import ActiveWish, WishArea, WishId, WishObjective, wish_text_key
+from .conversation_topics import (
+    CONVERSATION_KEYS,
+    CONVERSATION_TEXT_FIELDS,
+    SOCIAL_REFERENCE_FIELDS,
+    conversation_fields,
+)
+from .dialogue_context import (
+    DialogueConditions,
+    DialogueContext,
+    FriendshipStage,
+    ReactionTone,
+    SituationalCondition,
+)
 from .dialogue_events import DIALOGUE_EVENTS
-from .reaction_sequence import Cue
+from .expression_policy import speech_expression
+from .reaction_sequence import Cue, conversation_timing
 
-CATALOGUE = Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"
+CATALOGUE = (
+    Path(__file__).resolve().parents[2] / "data" / "dialogues" / "de" / "index.json"
+)
 ANIMATIONS = frozenset({
     "idle",
     "waiting",
@@ -32,18 +63,6 @@ ANIMATIONS = frozenset({
     "jumping",
     "eat",
     "petting",
-})
-EMOTIONS = frozenset({
-    "asleep",
-    "irritated",
-    "tired",
-    "hungry",
-    "withdrawn",
-    "warm",
-    "playful",
-    "calm",
-    "lonely",
-    "seeking_affection",
 })
 PERIODS = frozenset({
     "night",
@@ -56,19 +75,161 @@ PERIODS = frozenset({
 })
 
 
+def render_wish_text(wish: ActiveWish) -> str:
+    """Use the same existing authored wish utterance for both speech contexts."""
+    definition = WISH_CATALOG.definitions[wish.definition_id]
+    key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance",
+                        target_id=wish.target_id)
+    values: dict[str, str] = {}
+    if definition.area == WishArea.FOOD:
+        values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name
+    elif definition.area == WishArea.GAMES:
+        values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
+        if "rounds" in TEXT_FIELDS[key]:
+            values["rounds"] = str(wish.goal_snapshot.required_count)
+    return GERMAN_TEXT.format(key, **values)
+
+
+def _source_excerpt(text: str, maximum: int = 123) -> str:
+    """A literal prefix, visibly marked when shortened; never a paraphrase."""
+    if len(text) <= maximum:
+        return text
+    prefix = text[:maximum - 1]
+    boundary = prefix.rfind(" ")
+    if boundary > 0:
+        prefix = prefix[:boundary]
+    return prefix.rstrip() + "…"
+
+
+def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
+    if not isinstance(raw, list) or len(raw) > 8:
+        raise ValueError("Invalid dialogue condition alternatives")
+    result = []
+    for value in raw:
+        row = object_fields(
+            value,
+            (),
+            optional=(
+                "emotional_states",
+                "emotional_directions",
+                "need_conditions",
+                "reaction_tones",
+                "situational_conditions",
+                "sleeping",
+                "conversation_topics",
+                "conversation_attributions",
+                "conversation_causes",
+                "conversation_objectives",
+                "conversation_targets",
+                "conversation_outcomes",
+                "conversation_round_outcomes",
+                "conversation_wishes",
+                "horoscope_comment_keys",
+            ),
+            context="dialogue conditions",
+        )
+        if not row or "sleeping" in row and type(row["sleeping"]) is not bool:
+            raise ValueError("Empty or invalid dialogue conditions")
+        for key in (
+            "emotional_states",
+            "emotional_directions",
+            "need_conditions",
+            "reaction_tones",
+            "situational_conditions",
+            "conversation_topics",
+            "conversation_attributions",
+            "conversation_causes",
+            "conversation_objectives",
+            "conversation_targets",
+            "conversation_outcomes",
+            "conversation_round_outcomes",
+            "conversation_wishes",
+        ):
+            items = row.get(key, [])
+            if not isinstance(items, list) or not all(
+                isinstance(i, str) for i in items
+            ):
+                raise ValueError("Invalid typed dialogue condition")
+        keys = row.get("horoscope_comment_keys", [])
+        if not isinstance(keys, list) or any(
+            not isinstance(k, str) or not k for k in keys
+        ):
+            raise ValueError("Invalid passage comment key conditions")
+        result.append(
+            DialogueConditions(
+                frozenset(
+                    enum_value(v, EmotionalState, context="emotional state")
+                    for v in row.get("emotional_states", [])
+                ),
+                frozenset(
+                    enum_value(v, EmotionalDirection, context="emotional direction")
+                    for v in row.get("emotional_directions", [])
+                ),
+                frozenset(
+                    enum_value(v, NeedCondition, context="need condition")
+                    for v in row.get("need_conditions", [])
+                ),
+                frozenset(
+                    enum_value(v, ReactionTone, context="reaction tone")
+                    for v in row.get("reaction_tones", [])
+                ),
+                frozenset(
+                    enum_value(v, SituationalCondition, context="situation")
+                    for v in row.get("situational_conditions", [])
+                ),
+                row.get("sleeping"),
+                frozenset(row.get("conversation_topics", [])),
+                frozenset(
+                    enum_value(v, MoodletAttribution, context="cause attribution")
+                    for v in row.get("conversation_attributions", [])
+                ),
+                frozenset(
+                    enum_value(v, MoodletCauseKind, context="conversation cause")
+                    for v in row.get("conversation_causes", [])
+                ),
+                frozenset(
+                    enum_value(v, WishObjective, context="conversation objective")
+                    for v in row.get("conversation_objectives", [])
+                ),
+                frozenset(row.get("conversation_targets", [])),
+                frozenset(
+                    enum_value(v, MoodletOutcome, context="conversation outcome")
+                    for v in row.get("conversation_outcomes", [])
+                ),
+                frozenset(
+                    enum_value(v, MoodletOutcome, context="conversation round")
+                    for v in row.get("conversation_round_outcomes", [])
+                ),
+                frozenset(
+                    enum_value(v, WishId, context="conversation source wish")
+                    for v in row.get("conversation_wishes", [])
+                ),
+                horoscope_comment_keys=frozenset(keys),
+            )
+        )
+        if not result[-1].conversation_topics <= CONVERSATION_KEYS:
+            raise ValueError("Unknown conversation topic")
+        if not result[-1].conversation_targets <= (
+            set(DEFAULT_CATALOG.foods)
+            | {game.value for game in GameId}
+            | {"chat", "single", "twopart", "fact", "pet"}
+        ):
+            raise ValueError("Unknown conversation target")
+    return tuple(result)
+
+
 @dataclass(frozen=True)
 class Line:
     id: str
     event: str
     beats: tuple[Cue, ...]
     animation: str
-    moods: tuple[str, ...]
+    conditions: tuple[DialogueConditions, ...]
     periods: tuple[str, ...]
     weekdays: tuple[int, ...]
     weight: int = BALANCE.integer("dialogue", "default_weight")
     cooldown_seconds: float = BALANCE.integer("dialogue", "default_cooldown_seconds")
     stages: tuple[FriendshipStage, ...] = ()
-    needs: frozenset[str] = frozenset()
     presentation: Literal["short", "story"] = "short"
     requires_present: bool = False
 
@@ -80,12 +241,12 @@ class Line:
     def parse(cls, raw: Any) -> Line:
         data = object_fields(
             raw,
-            ("id", "event", "beats", "animation", "moods", "periods", "weekdays"),
+            ("id", "event", "beats", "animation", "periods", "weekdays"),
             optional=(
                 "weight",
                 "cooldown_seconds",
                 "stages",
-                "needs",
+                "conditions",
                 "presentation",
                 "requires_present",
             ),
@@ -97,10 +258,8 @@ class Line:
         if data["event"] not in DIALOGUE_EVENTS or data["animation"] not in ANIMATIONS:
             raise ValueError("Unknown dialogue event or animation")
         for key, allowed in (
-            ("moods", EMOTIONS),
             ("periods", PERIODS),
             ("stages", frozenset(FriendshipStage)),
-            ("needs", EMOTIONS),
         ):
             values = data.get(key, [])
             if not isinstance(values, list) or any(
@@ -117,6 +276,12 @@ class Line:
             raise ValueError("Invalid dialogue beats")
         beats = tuple(Cue.parse(beat) for beat in raw_beats)
         texts = [beat.content for beat in beats if beat.kind == "text"]
+        if data["event"] in (
+                "cursor_warning_near_fast", "cursor_play_start", "cursor_play_more",
+                "cursor_play_peak", "cursor_fear_response", "cursor_notice_playful",
+        ) and (
+                len(beats) != 1 or beats[0].kind != "text"):
+            raise ValueError("Cursor feedback requires exactly one text cue")
         presentation = data.get("presentation", "short")
         if presentation not in ("short", "story"):
             raise ValueError("Invalid presentation")
@@ -129,12 +294,16 @@ class Line:
                 raise ValueError("Invalid dialogue template") from error
             for _, field, spec, conversion in fields:
                 if field is not None and (
-                    not data["event"].startswith("object_")
-                    or field != "item"
+                    field not in (OBJECT_TEXT_FIELDS
+                                  if data["event"].startswith("object_") else
+                                  CONVERSATION_TEXT_FIELDS if data["event"] == "talk"
+                                  else frozenset())
                     or spec
                     or conversion
                 ):
                     raise ValueError("Invalid dialogue placeholder")
+                if field in SOCIAL_REFERENCE_FIELDS and phrase != f"{{{field}}}":
+                    raise ValueError("Source references require their own text bubble")
         weight = data.get("weight", BALANCE.integer("dialogue", "default_weight"))
         cooldown = data.get(
             "cooldown_seconds", BALANCE.integer("dialogue", "default_cooldown_seconds")
@@ -150,53 +319,64 @@ class Line:
         present = data.get("requires_present", False)
         if type(present) is not bool:
             raise ValueError("Invalid presence filter")
+        conditions = _parse_conditions(data.get("conditions", []))
+        if data["event"] == "talk" and (
+            not conditions or any(not c.conversation_topics for c in conditions)
+        ):
+            raise ValueError("Requested chat requires a grounded conversation topic")
+        if data["event"] == "talk":
+            required = {field for text in texts
+                        for _, field, _, _ in Formatter().parse(text) if field}
+            for condition in conditions:
+                for topic in condition.conversation_topics:
+                    available = conversation_fields(topic)
+                    if (topic in ("negative.food_monotony",
+                                  "negative.food_wish_disregarded")
+                            and condition.conversation_targets
+                            and condition.conversation_targets
+                            <= set(DEFAULT_CATALOG.foods)):
+                        available |= {"target"}
+                    if not required <= available:
+                        raise ValueError(
+                            "Conversation placeholder is not proved by its topic"
+                        )
         return cls(
             data["id"],
             data["event"],
             beats,
             data["animation"],
-            tuple(data["moods"]),
+            conditions,
             tuple(data["periods"]),
             tuple(days),
             weight,
             float(cooldown),
             tuple(FriendshipStage(s) for s in data.get("stages", [])),
-            frozenset(data.get("needs", [])),
             presentation,
             present,
         )
 
-    def matches(
-        self,
-        emotion: str,
-        context: TimeContext,
-        dialogue: DialogueContext | None = None,
-    ) -> bool:
+    def matches(self, context: DialogueContext) -> bool:
         return (
-            (not self.moods or emotion in self.moods)
-            and (not self.periods or context.period in self.periods)
-            and (not self.weekdays or context.local.weekday() in self.weekdays)
-            and (
-                not self.stages
-                or dialogue is not None
-                and dialogue.stage in self.stages
-            )
-            and (
-                not self.needs or dialogue is not None and self.needs <= dialogue.states
-            )
-            and (
-                not self.requires_present
-                or dialogue is not None
-                and dialogue.present is True
-            )
+            (not self.conditions or any(c.matches(context) for c in self.conditions))
+            and (not self.periods or context.time.period in self.periods)
+            and (not self.weekdays or context.time.local.weekday() in self.weekdays)
+            and (not self.stages or context.stage in self.stages)
+            and (not self.requires_present or context.present is True)
         )
 
-    def specificity(self) -> int:
-        return bool(self.moods) + bool(self.stages) + len(self.needs)
+    def specificity(self, context: DialogueContext) -> tuple[int, int]:
+        rank = max(
+            (c.specificity() for c in self.conditions if c.matches(context)),
+            default=(0, 0),
+        )
+        return bool(self.stages) + rank[0], rank[1]
 
     def selection_weight(self) -> int:
         return self.weight * (
-            1 + 2 * bool(self.moods) + 2 * bool(self.periods) + 2 * bool(self.weekdays)
+            1
+            + 2 * bool(self.conditions)
+            + 2 * bool(self.periods)
+            + 2 * bool(self.weekdays)
         )
 
 
@@ -209,6 +389,19 @@ class Reaction:
     animation: str
     event: str
     presentation: Literal["short", "story"] = "short"
+    completed_social: SocialCompletion | None = None
+    wish_instance_id: int | None = None
+    expression: Expression | None = None
+    expression_at: int = 0
+
+    def __post_init__(self) -> None:
+        if self.expression is None:
+            object.__setattr__(self, "expression", event_expression(self.event))
+        if (type(self.expression_at) is not int
+                or not 0 <= self.expression_at <= len(self.beats)):
+            raise ValueError("Expression beat is outside the reaction")
+        if self.event == "talk":
+            object.__setattr__(self, "beats", conversation_timing(self.beats))
 
     @property
     def text(self) -> str:
@@ -217,6 +410,74 @@ class Reaction:
     @classmethod
     def spoken(cls, line_id: str, text: str, animation: str, event: str) -> Reaction:
         return cls(line_id, (Cue.text(text),), animation, event)
+
+
+def _source_lines(raw: Any) -> tuple[Line, ...]:
+    data = object_fields(
+        raw, ("catalogue_version", "language", "lines"), context="dialogues",
+    )
+    if (
+        type(data["catalogue_version"]) is not int
+        or data["catalogue_version"] != 3
+        or data["language"] != "de"
+    ):
+        raise ValueError("Unsupported dialogue catalogue version")
+    if not isinstance(data["lines"], list):
+        raise ValueError("Missing dialogue lines")
+    return tuple(Line.parse(item) for item in data["lines"])
+
+
+def _indexed_lines(file: Path, raw: Any) -> tuple[Line, ...]:
+    data = object_fields(
+        raw,
+        ("index_version", "catalogue_version", "language", "files", "line_order"),
+        context="dialogue index",
+    )
+    if (
+        type(data["index_version"]) is not int
+        or data["index_version"] != 1
+        or type(data["catalogue_version"]) is not int
+        or data["catalogue_version"] != 3
+        or data["language"] != "de"
+    ):
+        raise ValueError("Unsupported dialogue index version or language")
+    names = data["files"]
+    if (
+        not isinstance(names, list)
+        or not names
+        or any(not isinstance(name, str) or not name for name in names)
+    ):
+        raise ValueError("Invalid dialogue source files")
+    if len(set(names)) != len(names):
+        raise ValueError("Duplicate dialogue source file")
+    root = file.parent.resolve()
+    lines: list[Line] = []
+    for name in names:
+        relative = PurePosixPath(name)
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or "\\" in name
+            or ":" in name
+            or relative.as_posix() != name
+            or relative.suffix != ".json"
+        ):
+            raise ValueError(f"Invalid dialogue source path: {name}")
+        source = (root / name).resolve()
+        if not source.is_relative_to(root) or source == file.resolve():
+            raise ValueError(f"Dialogue source outside index or recursive: {name}")
+        lines.extend(_source_lines(load_json(source)))
+    by_id = {line.id: line for line in lines}
+    if len(by_id) != len(lines):
+        raise ValueError("Duplicate dialogue IDs across source files")
+    order = data["line_order"]
+    if not isinstance(order, list) or any(
+        not isinstance(item, str) or not item for item in order
+    ):
+        raise ValueError("Invalid dialogue line order")
+    if len(order) != len(set(order)) or set(order) != set(by_id):
+        raise ValueError("Dialogue line order must name every source ID exactly once")
+    return tuple(by_id[item] for item in order)
 
 
 class DialogueBook:
@@ -237,42 +498,36 @@ class DialogueBook:
     def from_file(
         cls, file: Path = CATALOGUE, *, rng: random.Random | None = None
     ) -> DialogueBook:
-        data = object_fields(
-            load_json(file),
-            ("catalogue_version", "language", "lines"),
-            context="dialogues",
+        """Read one indexed book or an explicitly supplied single-source catalogue."""
+        data = load_json(file)
+        lines = (
+            _indexed_lines(file, data)
+            if isinstance(data, dict) and "index_version" in data
+            else _source_lines(data)
         )
-        if (
-            type(data["catalogue_version"]) is not int
-            or data["catalogue_version"] != 2
-            or data["language"] != "de"
-        ):
-            raise ValueError("Unsupported dialogue catalogue version")
-        if not isinstance(data["lines"], list):
-            raise ValueError("Missing dialogue lines")
-        return cls(tuple(Line.parse(item) for item in data["lines"]), rng=rng)
+        return cls(lines, rng=rng)
 
     def choose(
         self,
         event: str,
-        emotion: str,
-        context: TimeContext,
+        context: DialogueContext,
         now: float,
         *,
-        dialogue: DialogueContext | None = None,
         presentation: Literal["short", "story"] | None = None,
     ) -> Reaction | None:
         candidates = [
             line
             for line in self.lines
             if line.event == event
-            and line.matches(emotion, context, dialogue)
+            and line.matches(context)
             and (presentation is None or line.presentation == presentation)
         ]
         if not candidates:
             return None
-        specificity = max(line.specificity() for line in candidates)
-        candidates = [line for line in candidates if line.specificity() == specificity]
+        specificity = max(line.specificity(context) for line in candidates)
+        candidates = [
+            line for line in candidates if line.specificity(context) == specificity
+        ]
         if candidates[0].presentation == "story":
             unseen = [line for line in candidates if line.id not in self._story_used]
             if not unseen:
@@ -303,4 +558,55 @@ class DialogueBook:
         self.recent.append(line.id)
         if line.presentation == "story":
             self._story_used.add(line.id)
-        return Reaction(line.id, line.beats, line.animation, event, line.presentation)
+        beats = line.beats
+        if event == "talk" and context.conversation_topic is not None:
+            topic = context.conversation_topic
+            cause = topic.cause
+            values: dict[str, str] = {}
+            if topic.wish is not None:
+                values["wish_text"] = render_wish_text(topic.wish)
+            if cause is not None:
+                target = cause.target_id
+                if target in DEFAULT_CATALOG.foods:
+                    assert target is not None
+                    values["target"] = DEFAULT_CATALOG.foods[target].display_name
+                elif target in {game.value for game in GameId}:
+                    values["target"] = GERMAN_TEXT.format(f"game.name.{target}")
+                if cause.wish is not None:
+                    values["count"] = str(cause.wish.required_count)
+                if isinstance(cause.game_details, BlackjackDetails):
+                    values["player_total"] = str(cause.game_details.player_total)
+                    values["aiko_total"] = str(cause.game_details.aiko_total)
+                if isinstance(cause.game_details, RockPaperScissorsDetails):
+                    values["aiko_move"] = GERMAN_TEXT.format(
+                        f"rps.move.{cause.game_details.aiko_move.value}",
+                    )
+                    values["player_move"] = GERMAN_TEXT.format(
+                        f"rps.move.{cause.game_details.player_move.value}",
+                    )
+                if cause.social_content is not None:
+                    content = cause.social_content
+                    if content.kind == "two_part":
+                        values["source_setup"] = (
+                            f"»{_source_excerpt(content.parts[0])}«"
+                        )
+                        values["source_punchline"] = (
+                            f"»{_source_excerpt(content.parts[1])}«"
+                        )
+                    else:
+                        values["source_quote"] = (
+                            f"»{_source_excerpt(content.parts[0])}«"
+                        )
+                    if content.kind == "quotation":
+                        values["source_author"] = GERMAN_TEXT.format(
+                            "social.quote_author",
+                            author=_source_excerpt(content.author, 120),
+                        )
+            beats = tuple(Cue.text(beat.content.format(**values))
+                          if beat.kind == "text" else beat for beat in beats)
+        return Reaction(
+            line.id, beats, line.animation, event, line.presentation,
+            expression=speech_expression(event, context),
+            expression_at=next((i for i, beat in enumerate(beats)
+                                if beat.kind == "text"), 0),
+        )

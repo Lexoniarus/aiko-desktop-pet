@@ -7,10 +7,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -26,7 +26,9 @@ class CareGuiTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
         self.addCleanup(self.folder.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(self.folder.name) / "save.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(self.folder.name) / "save.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
         set_test_pet_values(self.app.state, sleeping=False)
@@ -50,28 +52,19 @@ class CareGuiTests(unittest.TestCase):
         assert bar is not None
         return bar
 
-    def test_hover_shows_all_seven_full_bars(self):
-        self.assertEqual(set(self.toolbar.needs), {
-            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
-        })
-        for key in self.toolbar.needs:
-            set_test_pet_values(self.app.state, **{key: 100})
-        self.toolbar.refresh()
-        self.app.root.update()
-        for key, (canvas, rect, label) in self.toolbar.needs.items():
-            self.assertEqual(canvas.coords(rect)[2], canvas.winfo_width())
-            self.assertIn("100%", label.cget("text"))
-        self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
-
     def test_social_and_energy_actions_work_without_pinning(self):
         self.assertFalse(self.app._hover.keep_open)
         set_test_pet_values(self.app.state, social=9)
         set_test_pet_values(self.app.state, energy=12)
         self.toolbar.buttons["talk"].invoke()
+        menu = self.app._hover.social_menu
+        assert menu is not None
+        self.assertEqual(self.app.state.social, 9)
+        menu.choose(None)
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
-        self.assertEqual(self.toolbar.buttons["feed"].cget("state"), "disabled")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("state"), "normal")
         self.finish_response()
-        self.toolbar.buttons["feed"].invoke()
+        self.toolbar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
         menu.buttons["energy_drink"].invoke()
@@ -80,7 +73,7 @@ class CareGuiTests(unittest.TestCase):
         self.assertNotIn("energy_drink", self.toolbar.buttons)
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
-        self.assertIn("35%", self.toolbar.needs["social"][2].cget("text"))
+        self.assertIn("35 / 100", self.toolbar.readouts["social"].label.cget("text"))
 
     def test_foreground_care_owns_buttons_and_passive_hover_until_completion(self):
         for action in ("pet", "talk"):
@@ -89,41 +82,73 @@ class CareGuiTests(unittest.TestCase):
                 self.toolbar.refresh()
                 generation = self.app._reaction_player.generation
                 social = self.app.state.social
-                self.assertTrue(all(button.cget("state") == "disabled"
-                                    for button in self.toolbar.buttons.values()))
+                self.assertTrue(
+                    all(
+                        button.cget("state") == "disabled"
+                        for action, button in self.toolbar.buttons.items()
+                        if action not in ("place_item", "talk", "play")
+                    )
+                )
                 self.toolbar.buttons["talk"].invoke()
                 self.app._hover._interact("talk")
+                self.assertEqual(self.app.state.social, social)
+                menu = self.app._hover.social_menu
+                assert menu is not None
+                menu.choose(None)
+                self.assertEqual(self.app.state.social, social)
+                self.app._hover.close_social_menu()
                 self.app._hover._food_selected("energy_drink")
                 self.app._on_enter()
                 self.assertEqual(self.app._reaction_player.generation, generation)
-                self.assertEqual(self.app.state.social, social)
-                self.assertFalse(self.app._world.cursor.carrying)
+                # Placement advances life time while saving; it grants no care.
+                self.assertLessEqual(self.app.state.social, social)
+                self.assertTrue(self.app._world.cursor.carrying)
+                self.app._world.cursor.cancel()
+                self.assertEqual(self.app._reaction_player.generation, generation)
                 self.assertEqual(self.toolbar.pin_button.cget("state"), "normal")
                 self.assertEqual(self.toolbar.settings_button.cget("state"), "normal")
                 self.finish_response()
-                self.assertTrue(all(button.cget("state") == "normal"
-                                    for button in self.toolbar.buttons.values()))
+                self.assertTrue(
+                    all(
+                        button.cget("state") == "normal"
+                        for button in self.toolbar.buttons.values()
+                    )
+                )
         set_test_pet_values(self.app.state, sleeping=True)
         self.toolbar.refresh()
         self.assertEqual(self.toolbar.buttons["sleep"].cget("state"), "normal")
-        self.assertEqual(self.toolbar.buttons["play"].cget("state"), "disabled")
+        self.assertEqual(self.toolbar.buttons["play"].cget("state"), "normal")
+        self.app._hover._interact("play")
+        menu = self.app._hover.game_menu
+        assert menu is not None
+        self.assertTrue(all(button.cget("state") == "disabled"
+                            for button in menu.buttons.values()))
 
     def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()
         self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(set(self.toolbar.needs), {
-            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
-        })
+        self.assertEqual(
+            set(self.toolbar.readouts),
+            {
+                "satiety",
+                "fun",
+                "mood",
+                "energy",
+                "social",
+                "affection",
+                "friendship",
+            },
+        )
         set_test_pet_values(self.app.state, friendship=85)
         self.toolbar.refresh()
-        self.assertIn("Lv 9", self.toolbar.needs["friendship"][2].cget("text"))
+        self.assertIn("Lv 9", self.toolbar.readouts["friendship"].label.cget("text"))
 
     def test_lagged_or_disabled_hardware_has_no_live_effort(self):
         snapshot = ComputerSnapshot(cpu=97, gpu=88, measured_at=time.monotonic())
         with patch.object(self.app.activity_monitor, "latest", return_value=snapshot):
             live_effort = self.app._activity.live_effort()
             assert live_effort is not None
-            self.assertGreater(live_effort, .9)
+            self.assertGreater(live_effort, 0.9)
             self.app.settings.observe_computer = False
             self.assertIsNone(self.app._activity.live_effort())
             self.app.settings.observe_computer = True

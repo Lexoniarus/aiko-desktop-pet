@@ -1,0 +1,888 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "hungry-01",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Mein Magen knurrt. Ich könnte etwas zu essen gebrauchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "hungry-02",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe Hunger. Hoffentlich finde ich bald etwas Essbares."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "hungry-03",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "So langsam brauche ich eine richtige Portion."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "hungry-04",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Du, mein Magen meldet sich ziemlich deutlich. Hast du etwas für mich?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "hungry-05",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bekomme Hunger. Etwas zu essen würde mich jetzt glücklich machen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-hungry-friend-close-01",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, jetzt wäre eine Essenspause mit dir schön. Mein Magen ist schon dabei."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "tired-01",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Ich werde müde. Meine Augen bleiben kaum noch offen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "tired-02",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauche wohl bald etwas Schlaf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "tired-03",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Meine Beine sind schwer. Zeit, mich auszuruhen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "tired-04",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Du, ich gähne nur noch. Ich glaube, ich brauche mein Nickerchen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "tired-05",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, meine Augen wollen schon schlafen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-tired-friend-close-01",
+      "event": "tired",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 320,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Ich würde gern noch mitmischen, aber gerade bin ich einfach müde."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v012-affection_low-01",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Ein bisschen Streicheln fehlt mir gerade."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v012-affection_low-02",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte gerade gern etwas Zuwendung."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v012-affection_low-03",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Vielleicht könnte ich mich etwas bei dir zum Streicheln hinstellen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v012-affection_low-04",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Du, deine Hand auf meinem Kopf wäre jetzt schön."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-affection_low-friend-close-01",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Ich vermisse unser Streicheln gerade ein bisschen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-affection_low-friend-close-02",
+      "event": "affection_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 1,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "heart"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, ich hätte gern eine ausgiebige Streichelpause mit dir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v011-social_low-01",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich hätte gern jemanden zum Reden. Hast du etwas Zeit?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-social_low-02",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Gesellschaft würde mir gerade guttun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v011-social_low-03",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich würde mich über eine kleine Unterhaltung freuen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-social_low-friend-close-01",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Du, kommst du etwas zu mir? Mir fehlt unsere gemeinsame Zeit."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-social_low-friend-close-02",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann mich hier beschäftigen. Trotzdem hätte ich dich gerade gern bei mir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-social_low-friend-close-03",
+      "event": "social_low",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 95,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ein bisschen Zeit nur mit dir wäre jetzt schön."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "situation-morning-079",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "breakfast",
+        "quiet"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Guten Morgen. Meine Augen würden gern noch etwas schlafen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-morning-080",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "breakfast",
+        "quiet"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Morgen … ich bin da, aber noch ziemlich müde."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-morning-082",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "breakfast",
+        "quiet"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Morgen, du! Ich freue mich über dich, auch wenn ich erst mal gähnen muss."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "situation-morning-083",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "breakfast",
+        "quiet"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, guten Morgen. Mit meinen schweren Augen lasse ich es erst mal langsam angehen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "situation-night-085",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Es ist Nacht, und mir fallen die Augen zu. Ich brauche jetzt Schlaf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-night-086",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Für heute bin ich müde genug. Ich mache bald die Augen zu."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "situation-night-088",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du, es ist spät. Ich würde gern noch bleiben, aber ich brauche Schlaf."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "situation-night-089",
+      "event": "tired",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, so spät und so schläfrig. Ich kuschle mich gleich zum Nickerchen hin."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-hungry-shared-01",
+      "event": "hungry",
+      "conditions": [
+        {
+          "need_conditions": [
+            "low_satiety"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 340,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "drops"
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe einen knurrenden Magen. Etwas zu essen wäre gut."
+        }
+      ]
+    }
+  ]
+}

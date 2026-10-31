@@ -1,0 +1,2848 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "expanded-game_greeting-0001",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schere, Stein, Papier. Ich bin bereit für unsere Runde."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0002",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du kannst deine Hand wählen. Ich habe meine schon im Kopf."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0003",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dann spielen wir. Mal sehen, welche Hand gewinnt."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0004",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na los, such dir eine Hand aus! Ich bin gespannt."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0005",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe mich entschieden. Jetzt bist du dran."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0006",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schere, Stein, Papier! Diesmal will ich den Punkt holen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0007",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wähl deine Hand. Ich habe schon ein gutes Gefühl bei meiner."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0008",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bereit? Meine Hand ist ausgesucht, und mein Ehrgeiz ist wach."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0009",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Los, du! Mal sehen, ob du meine Wahl errätst."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0010",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Hand steht fest. Jetzt zeig mir, was du dir ausgedacht hast!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0011",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na, traust du dich? Ich bin schon bereit für unseren Schlagabtausch."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_greeting-0012",
+      "event": "game_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schere, Stein, Papier! Und guck nicht so siegessicher, das ist meine Aufgabe."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0013",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, ich habe gewonnen! Das freut mich."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0014",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Punkt geht an mich. Spielen wir noch eine Runde?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0015",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, diesmal hat meine Wahl gepasst."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0016",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gewonnen! Ein kleines bisschen stolz darf ich jetzt sein."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0017",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja! Den Punkt habe ich mir geholt."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0018",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Siehst du? Meine Hand war diesmal die richtige."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0019",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha! Hast du das gesehen? Der Punkt gehört mir!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0020",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gewonnen! Mein Siegerlächeln hat heute einen guten Grund."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0021",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war meine Runde! Na, was sagst du zu meiner Wahl?"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0022",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jaaa! Schau her, so sieht eine glückliche Siegerin aus."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0023",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Den Punkt habe ich! Jetzt darfst du mich ruhig ein bisschen bewundern."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_aiko_win-0024",
+      "event": "game_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, gewonnen! Komm, deine Revanche nehme ich auch noch an."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0025",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Na gut, dein Punkt. Noch eine Runde?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0026",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast gewonnen. Ich … würde es gern noch einmal versuchen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0027",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hm. Meine Hand war wohl nicht die richtige. Spielen wir weiter?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0028",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mist, der Punkt geht an dich. Das ärgert mich schon ein bisschen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0029",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich erwischt. Ich will eine Revanche."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0030",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Och, verloren. Dabei hatte ich mit meiner Wahl ein gutes Gefühl."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0031",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf! Ausgerechnet deine Hand musste es sein. Noch mal!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0032",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war mein Punkt in Gedanken schon gewesen. Revanche, bitte!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0033",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ach, menno! Freu dich nicht zu früh. Ich versuche es gleich wieder."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0034",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mennooo! Ich wollte dich doch schlagen. Los, noch eine Runde!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0035",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf. Ja, du hast gewonnen. Jetzt will ich meinen Punkt zurück!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0036",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ärgert mich! Und du grinst bestimmt schon. Revanche!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0037",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir haben dieselbe Hand. Also unentschieden."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0038",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleichstand. Dann versuchen wir es noch einmal."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0039",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keiner bekommt den Punkt. Neue Runde?"
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0040",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schon wieder dieselbe Idee? Dann eben noch eine Runde."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0041",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unentschieden! Ich hatte auf einen Punkt für mich gehofft."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0042",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleiche Hand. Da müssen wir wohl weiterspielen."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0043",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast dieselbe Hand gewählt wie ich! So wird das nichts mit meinem Sieg."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0044",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleichstand. Na los, im nächsten Versuch hole ich mir den Punkt."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0045",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir kommen beide nicht voran. Ich ändere jetzt meine Taktik!"
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0046",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du klaust meine Ideen! Na gut, gleich noch mal."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0047",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hihi, gleiche Hand. Beim nächsten Mal möchte ich dich aber überraschen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_draw-0048",
+      "event": "game_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Immerhin hast du auch nicht gewonnen. Komm, wir lösen den Gleichstand!"
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0127",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dein Punkt. Hm … ich bin wohl schon etwas müde für eine neue Runde."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0128",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast gewonnen. Meine müden Augen machen das Verlieren auch nicht schöner."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0151",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, verloren. Für die Revanche brauche ich erst etwas Schlaf."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-game_player_win-0152",
+      "event": "game_player_win",
+      "animation": "idle",
+      "conditions": [
+        {
+          "situational_conditions": [
+            "fatigued"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Menno, dein Punkt. Ich will es besser machen, aber erst muss ich mich ausruhen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_ttt_greeting-1",
+      "event": "game_ttt_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast die Kreuze, ich die Kreise. Fang an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_ttt_greeting-2",
+      "event": "game_ttt_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Drei in einer Reihe. Ich passe auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_player_win-1",
+      "event": "game_round_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Punkt geht an dich. Noch eine Runde?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_player_win-2",
+      "event": "game_round_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gut gespielt. Diesmal hast du gewonnen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_aiko_win-1",
+      "event": "game_round_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Punkt gehört mir. Ich freue mich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_aiko_win-2",
+      "event": "game_round_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gewonnen. Ich wäre für eine weitere Runde."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_draw-1",
+      "event": "game_round_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gleichstand. Wir können das so stehen lassen. Oder noch eine Runde spielen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_draw-2",
+      "event": "game_round_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unentschieden. Dann teilen wir uns den Erfolg."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_blackjack_greeting-1",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gebe die Karten. Du entscheidest, wann es genug ist."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_blackjack_greeting-2",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Karten liegen bereit. Eine von meinen bleibt erst einmal verdeckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_ttt_greeting-3",
+      "event": "game_ttt_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mal sehen, wer zuerst drei zusammenbekommt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_blackjack_greeting-3",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir spielen eine Hand. Ich gebe die Karten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_player_win-3",
+      "event": "game_round_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Runde geht an dich. Ich würde es gern noch einmal versuchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_aiko_win-3",
+      "event": "game_round_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal war ich vorn. Noch eine?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_draw-3",
+      "event": "game_round_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keiner liegt vorn. Ein fairer Gleichstand."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_greeting-1",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast Gelb, ich Rot. Vier in einer Reihe. Ich passe auf deine Diagonalen auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_greeting-2",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier gewinnt? Mhm. Du darfst anfangen. Ich suche mir schon mal einen guten Platz."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_greeting-3",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gelb gegen Rot. Mal sehen, wer zuerst eine kleine Reihe zusammenbekommt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-1",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah-ah. Den vierten Platz lasse ich dir nicht einfach frei."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-2",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da fehlt dir nur noch einer. Genau dort kommt jetzt mein Stein hin."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-3",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Reihe ist mir aufgefallen. Ich stelle dir mal etwas in den Weg. Hihi."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-1",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast die Lücke gesehen. Hmpf. Dann eben anders."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-2",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Da wollte ich gerade meine Reihe fertig machen. Gut aufgepasst."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-3",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm. Das war mein freier Platz. Ich brauche wohl einen neuen Plan."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-1",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier! Hihi. Die Reihe gehört mir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-2",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da sind sie: eins, zwei, drei, vier. Ich bin ein bisschen zufrieden mit mir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-3",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geschafft! Meine vier sind zusammen. Magst du eine Revanche?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-1",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh ... vier. Gut gespielt. Ich möchte eine Revanche."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-2",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Reihe ist fertig. Mhm. Die hast du dir verdient."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-3",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da sind deine vier. Ich habe es gesehen ... nur leider etwas zu spät."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-1",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Alles voll. Wir haben uns ziemlich gründlich gegenseitig aufgehalten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-2",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Kein Platz mehr und keine Viererreihe. Das war wohl ziemlich ausgeglichen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-3",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unentschieden. Mhm. Dann haben wir beide unsere Reihen gut bewacht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_greeting-1",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Code steht. Vier Stellen, sechs Farben. Na, knackst du ihn?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_greeting-2",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Farben bleiben erst mal unter Verschluss. Deine Hinweise verdienst du dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_greeting-3",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hüte vier kleine Farbgeheimnisse. Du darfst anfangen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-1",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm. Die Hinweise liegen vor dir. Ich halte meinen Code weiter gut versteckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-2",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du probierst dich durch. Lass dir Zeit, ich bleibe hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-3",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch ein Blick auf die Hinweise? Ich verrate jedenfalls keine Extrafarbe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-1",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch ein Versuch. Lass dir Zeit, ich laufe dir nicht weg."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-2",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt kommt dein letzter Tipp. Schau ruhig noch einmal auf die Hinweise."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-3",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Versuch bleibt. Mhm ... ich bin gespannt auf deine Farben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-1",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geknackt! Hihi, du hast mich erwischt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-2",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier Treffer! Mein kleines Farbgeheimnis gehört jetzt dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-3",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist mein Code! Gut kombiniert. Sollen wir noch eine Runde spielen?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-1",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal hat mein Code durchgehalten. Eine Revanche würde ich dir aber geben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-2",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt kennst du meine Farben. Mhm, die waren heute gut versteckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-3",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Versuche sind um. Lass uns meinen Code anschauen. Danach gern noch einmal."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-acquaintance",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Willkommen zum kleinen Desktop-Quiz. Zehn Fragen, und du hast alle Zeit zum Überlegen."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-familiar",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich übernehme heute die Moderation. Hihi, ein ganz eigener Job hier auf deinem Desktop."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-friend",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Quizmasterin ist bereit! Mein Publikum besteht aus dir. Übersichtlich, aber sehr wichtig."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-close",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Setz dich gedanklich in die erste Reihe. Ich hab zehn Fragen für uns. Und meinen großen Auftritt."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Richtig! Ein Punkt für dich. Mhm, das Verkünden gefällt mir."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-familiar",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Richtig! Hihi. Ich glaube, ich behalte den Job als Quizmasterin."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-friend",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau! Ich hatte mich schon so schön auf meine feierliche Auflösung vorbereitet."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-close",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ja! Richtig! Ich soll würdevoll moderieren. Ich freu mich aber gerade lieber mit dir."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, leider nicht. Ich zeig dir die Lösung. Wir haben ja Zeit."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-familiar",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leider daneben. Mein großer Auftritt mit der Auflösung kommt also doch noch."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-friend",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die war’s nicht. Ich könnte wissend nicken, aber ich hatte die Lösung vorher schon. Das wäre Angeberei."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-close",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die war’s nicht. Ich bin auf deiner Seite, aber die Lösung lässt sich von mir auch nicht bestechen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-acquaintance",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Lösung steht hier. Wir machen ganz in Ruhe weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-familiar",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Manche Fragen liegen einem weniger. Wir haben Zeit für die nächste."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-friend",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heute lassen die Punkte auf sich warten. Ich bleib trotzdem gern mit dir hier."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-close",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach. Die Punkte verstecken sich. Ich bin trotzdem gern deine Quizmasterin."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-acquaintance",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das waren unsere zehn Fragen. Danke, dass du mitgespielt hast."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-familiar",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Fragen geschafft. Meine kleine Quizshow hat mir mit dir Spaß gemacht."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-friend",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Und damit endet die erste Staffel meiner Desktop-Quizshow! Also, diese Runde. Ich werd schon übermütig."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-close",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Fragen, wir beide, und ich durfte moderieren. Das war schön. Die nächste Runde läuft uns nicht weg."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-acquaintance",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, das Thema mag ich. Ähm, ich bleibe natürlich ganz sachlich bei meiner Moderation."
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-familiar",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huh, ich hatte gerade meinen eigenen Kommentar im Kopf. Zurück zu deiner Frage."
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-friend",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde jetzt gern abschweifen. Aber meine winzige Quizbühne hat einen Ablauf. Angeblich."
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-close",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hehe, ich merke gerade, wie gern ich das mit dir mache. So. Meine Moderationsstimme hat sich wieder gefangen."
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_greeting-quiet",
+      "event": "game_quiz_greeting",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mache heute eine ruhige Quizrunde mit dir. Zehn Fragen, und du kannst dir Zeit nehmen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-quiet",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist richtig. Ein Punkt für dich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-quiet",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal nicht. Die richtige Antwort steht hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-quiet",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir schauen uns die Lösung an und machen in Ruhe weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_finish-quiet",
+      "event": "game_quiz_finish",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unsere zehn Fragen sind geschafft. Danke fürs gemeinsame Spielen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_rolebreak-quiet",
+      "event": "game_quiz_rolebreak",
+      "animation": "idle",
+      "conditions": [
+        {
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "irritated",
+            "frustrated",
+            "tense",
+            "reserved",
+            "crowded"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schweife gerade ab. Zurück zu unserer Frage."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance-simple-1",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau, richtig!"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_correct-acquaintance-simple-2",
+      "event": "game_quiz_correct",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das passt. Ein Punkt für dich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance-simple-1",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Leider nicht. Die richtige Antwort steht im Fenster."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_incorrect-acquaintance-simple-2",
+      "event": "game_quiz_incorrect",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die hier wäre richtig gewesen. Wir schauen weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_quiz_encourage-acquaintance-simple-1",
+      "event": "game_quiz_encourage",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die nächste Frage ist ein neues Thema. Wir haben Zeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    }
+  ]
+}

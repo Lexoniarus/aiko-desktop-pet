@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.perspective.begin.a",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute weckt etwas Ungewohntes deine Neugier. Ein Blick außerhalb deiner üblichen Wege kann den Tag überraschend weit machen."
+        },
+        {
+          "id": "p2",
+          "text": "Du musst nicht gleich tief einsteigen. Eine neue Frage oder ein fremder Gedanke reicht, um eine Tür zu öffnen."
+        },
+        {
+          "id": "p3",
+          "text": "Lass dich überraschen, ohne sofort alles einzuordnen. Nichtwissen darf der Anfang einer Entdeckung sein.",
+          "comment_key": "horoscope.curiosity_without_all_knowing"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.begin.b",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bringt dich ein fremder Gedanke auf eine neue Spur. Was abseits deiner Interessen liegt, wirkt plötzlich zugänglich."
+        },
+        {
+          "id": "p2",
+          "text": "Eine kleine gedankliche Reise reicht für den Anfang. Du musst nicht gleich entscheiden, wohin sie führen soll."
+        },
+        {
+          "id": "p3",
+          "text": "Heute öffnet eine gute Frage mehr als gespielte Gewissheit. Du brauchst dich noch nicht auszukennen, um etwas zu entdecken.",
+          "comment_key": "horoscope.curiosity_without_all_knowing"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.develop.a",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute führt dich ein Gedanke über das Gewohnte hinaus. Was fremd wirkt, kann einen neuen Zusammenhang sichtbar machen."
+        },
+        {
+          "id": "p2",
+          "text": "Eine andere Sichtweise regt dich an, genauer hinzusehen. Du musst sie nicht sofort übernehmen, um etwas daraus mitzunehmen."
+        },
+        {
+          "id": "p3",
+          "text": "Bleib bei der Frage, die dich neugierig macht. Eine Entdeckung gewinnt Tiefe, wenn du ihr noch ein Stück folgst."
+        },
+        {
+          "id": "p4",
+          "text": "Du musst nicht schon alles wissen, um weiterzukommen. Echtes Staunen ist heute ein guter Anfang für mehr Verständnis.",
+          "comment_key": "horoscope.curiosity_without_all_knowing"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.develop.b",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lohnt es sich, einer anderen Sicht länger zuzuhören. Hinter dem fremden Ansatz könnte ein brauchbarer Gedanke liegen."
+        },
+        {
+          "id": "p2",
+          "text": "Vergleiche ihn mit deiner Erfahrung, statt sofort Partei zu ergreifen. So wird aus einem Gegensatz mehr Verständnis."
+        },
+        {
+          "id": "p3",
+          "text": "Eine neue Sicht kann das Bisherige ergänzen. Offenheit lohnt sich, ohne dass du gleich deinen ganzen Standpunkt wechselst.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.reflect.a",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute passt ein vertrauter Gedanke nicht mehr ganz zu dem, was du neu entdeckt hast. Gerade darin liegt eine gute Frage."
+        },
+        {
+          "id": "p2",
+          "text": "Eine andere Sichtweise zeigt dir, welche Annahme du bisher kaum geprüft hast. Du musst dich dafür nicht selbst tadeln."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst dein Bild erweitern. Eine neue Erkenntnis nimmt dem bisherigen Weg nicht seinen Wert.",
+          "comment_key": "horoscope.different_perspectives"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.reflect.b",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wird dir eine Grenze deines Wissens bewusst. Sie muss nicht bremsen, sondern kann eine spannende Frage sichtbar machen."
+        },
+        {
+          "id": "p2",
+          "text": "Abstand zum ersten Urteil hilft dir, Erfahrung und Vermutung zu unterscheiden. Nicht alles Unbekannte ist rätselhaft."
+        },
+        {
+          "id": "p3",
+          "text": "Zugegebenes Nichtwissen schafft heute Raum für Neugier. Du musst nicht auf jede Frage sofort eine Antwort haben.",
+          "comment_key": "horoscope.curiosity_without_all_knowing"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.conclude.a",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fügt sich ein bisher unübersichtlicher Zusammenhang. Eine einfache Einsicht hilft dir mehr als weitere Einzelheiten."
+        },
+        {
+          "id": "p2",
+          "text": "Halte fest, was du daraus wirklich mitnehmen möchtest. Nicht jede offene Frage muss Teil derselben Suche bleiben."
+        },
+        {
+          "id": "p3",
+          "text": "Eine Erkenntnis darf vorläufig sein. Du musst nicht alles wissen, um für heute einen guten Schluss zu finden.",
+          "comment_key": "horoscope.enough_understanding"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.perspective.conclude.b",
+      "revision": 1,
+      "theme": "perspective",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kann eine längere Suche bei einer einfachen Einsicht ankommen. Du musst nicht jeden Nebenweg weiterverfolgen."
+        },
+        {
+          "id": "p2",
+          "text": "Trenne den Gedanken, den du mitnehmen möchtest, von den Fragen, die offenbleiben dürfen. Beides gehört zu einer Entdeckung."
+        },
+        {
+          "id": "p3",
+          "text": "Eine Suche darf für heute enden, auch wenn noch nicht die ganze Landkarte gefüllt ist.",
+          "comment_key": "horoscope.enough_understanding"
+        }
+      ]
+    }
+  ]
+}

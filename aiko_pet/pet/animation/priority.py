@@ -16,6 +16,9 @@ class RenderDecision:
 
     sprite: SpriteSelection
     clear_action: bool = False
+    refresh_after_ms: int | None = None
+    playback_rate: float = 1.0
+    reverse: bool = False
 
 
 @dataclass(frozen=True, slots=True)

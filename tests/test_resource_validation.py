@@ -25,14 +25,38 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.food_models import food_choices
 from aiko_pet.ui.view_models.projections import project_hover
+from tools.dialogue_test_support import dialogue_source_fixture
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
 
 class ResourceValidationTests(unittest.TestCase):
+    def test_idle_profile_parameters_reject_zero_cadence_and_invalid_ranges(self):
+        original = load_json(DATA / "balance.json")
+        for key, value in (("quiet_body_glance_every", 0),
+                           ("tired_step_gap_multiplier", 0),
+                           ("calm_hold_minimum_seconds", 11),
+                           ("active_two_step_probability", 2)):
+            raw = copy.deepcopy(original)
+            raw["idle_behaviour"][key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                parse_balance(raw)
+
+    def test_ambient_body_episodes_require_finite_positive_cadence_and_hold(self):
+        original = load_json(DATA / "balance.json")
+        for key, value in (("body_glance_every", 0),
+                           ("body_outing_every", 0),
+                           ("body_hold_minimum_seconds", 0),
+                           ("body_hold_minimum_seconds", 7)):
+            with self.subTest(key=key, value=value):
+                raw = copy.deepcopy(original)
+                raw["ambient"][key] = value
+                with self.assertRaises(ValueError):
+                    parse_balance(raw)
+
     def test_dialogue_weights_use_integer_scale_not_normalized_fractions(self) -> None:
         original = load_json(DATA / "balance.json")
-        line = load_json(DATA / "dialogues.de.json")["lines"][0]
+        line = dialogue_source_fixture()["lines"][0]
         line.pop("weight", None)
         for weight in range(1, 11):
             with self.subTest(weight=weight):
@@ -51,10 +75,8 @@ class ResourceValidationTests(unittest.TestCase):
     def test_normalized_weights_still_reject_values_above_one(self) -> None:
         original = load_json(DATA / "balance.json")
         for section, key in (
-            ("mood", "fun_weight"),
-            ("mood", "social_weight"),
+            ("mood", "need_weight"),
             ("food_activity", "short_window_weight"),
-            ("dialogue", "spontaneous_story_probability"),
         ):
             with self.subTest(section=section, key=key):
                 raw = copy.deepcopy(original)
@@ -127,10 +149,10 @@ class ResourceValidationTests(unittest.TestCase):
             parse_routine_catalog(routine)
 
     def test_dialogue_event_names_and_filter_types_are_checked(self) -> None:
-        original = load_json(DATA / "dialogues.de.json")["lines"][0]
+        original = dialogue_source_fixture()["lines"][0]
         for key, value in (
             ("event", "__misspelled_event__"),
-            ("moods", [{}]),
+            ("conditions", [{"emotional_states": [{}]}]),
             ("periods", [[]]),
             ("cooldown_seconds", float("nan")),
         ):
@@ -142,8 +164,8 @@ class ResourceValidationTests(unittest.TestCase):
     def test_boolean_and_float_versions_are_not_schema_versions(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             file = Path(folder) / "dialogues.json"
-            for version in (True, 1.0):
-                raw = load_json(DATA / "dialogues.de.json")
+            for version in (True, 3.0, 2):
+                raw = dialogue_source_fixture()
                 raw["catalogue_version"] = version
                 file.write_text(json.dumps(raw), encoding="utf-8")
                 with self.subTest(version=version), self.assertRaises(ValueError):
@@ -170,15 +192,46 @@ class ResourceValidationTests(unittest.TestCase):
         for section, key, value in (
             ("food", "awake_hunger_points_per_hour", True),
             ("food", "awake_hunger_points_per_hour", -1),
-            ("food", "internal_simulation_step_minutes", 0),
+            ("simulation", "needs_step_seconds", 0),
             ("food", "maximum_recent_foods", 2.5),
-            ("mood", "fun_weight", 0.8),
+            ("mood", "need_weight", 0.8),
+            ("mood", "healthy_need_threshold", 25),
+            ("mood", "zero_need_threshold", 1),
+            ("mood", "critical_need_deduction", 4),
+            ("mood", "zero_need_target_limit", 65),
+            ("mood", "low_decline_points_per_minute", 0),
+            ("mood", "recovery_points_per_minute", 0),
+            ("simulation", "needs_step_seconds", 61),
+            ("needs", "hardware_intensity_span", 0.8),
+            ("food", "maximum_digest_hunger_reduction", 1.1),
+            ("food", "maximum_hardware_hunger_bonus", 1.1),
             ("walk", "pause_min_seconds", 181),
             ("fun", "late_unit_reward_fraction", float("inf")),
             ("ambient", "blink_gap_minimum_seconds", 9),
             ("adaptive_learning", "effort_smoothing_seconds", 0),
             ("attention", "cursor_comment_probability", 2),
-            ("simulation", "step_seconds", 1000),
+            ("cursor_behaviour", "velocity_filter_seconds", 0),
+            ("cursor_behaviour", "attention_fast_speed", .2),
+            ("cursor_behaviour", "far_attention_cap", 30),
+            ("cursor_behaviour", "strong_release_below", 75),
+            ("cursor_behaviour", "side_required_seconds", 3),
+            ("cursor_behaviour", "warning_window_seconds", 10),
+            ("cursor_behaviour", "curiosity_level_two_seconds", 12),
+            ("cursor_behaviour", "curiosity_level_three_seconds", 6),
+            ("cursor_behaviour", "curiosity_refresh_seconds", 0),
+            ("cursor_behaviour", "play_pause_seconds", 5),
+            ("cursor_behaviour", "play_grace_seconds", 5),
+            ("cursor_behaviour", "run_release_distance", .65),
+            ("cursor_behaviour", "playful_score", 101),
+            ("cursor_behaviour", "playful_minimum_mood", -1),
+            ("simulation", "step_seconds", 1000),  # Retired routine interval.
+            ("sleep", "nap_seconds", 2700),
+            ("sleep", "manual_protection_seconds", 0),
+            ("sleep", "return_seconds", 0),
+            ("sleep", "minimum_input_events", 0),
+            ("sleep", "food_target", 15),
+            ("sleep", "learned_phases", 2),
+            ("sleep", "maximum_daily_shift_minutes", 31),
             ("object_behavior", "bounce_restitution_fraction", 1),
             ("object_behavior", "bounce_horizontal_damping_fraction", 1),
             ("object_behavior", "bounce_maximum_contacts", 33),

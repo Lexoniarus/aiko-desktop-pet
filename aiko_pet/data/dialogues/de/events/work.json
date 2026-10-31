@@ -1,0 +1,2508 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "expanded-computer_effort_rising-0157",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huch, jetzt bekomme ich mehr zu tun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rising-0158",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier kommt gerade Arbeit auf mich zu. Ich lege los."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rising-0159",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, jetzt muss ich mich etwas mehr konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rising-0160",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh, jetzt geht's los! Ich habe hier gerade alle Hände voll zu tun."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rising-0161",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da kommt Arbeit auf uns zu. Ich bin schon dran."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rising-0162",
+      "event": "computer_effort_rising",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huch, plötzlich so viel auf einmal! Na dann, packen wir es an."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0163",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, ich habe gerade einiges zu tun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0164",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich muss mich gerade ziemlich auf die Arbeit konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0165",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das fordert mich im Augenblick ganz schön."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0166",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Uff, heute habe ich ordentlich etwas zu stemmen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0167",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist ein ganz schöner Haufen Arbeit. Ich bleibe dran."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_heavy-0168",
+      "event": "computer_effort_heavy",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, du hältst mich hier gut beschäftigt. Ich gebe mir Mühe!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0169",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, ganz schön viel auf einmal. Aber das kriege ich hin."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0170",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt muss ich mich richtig anstrengen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0171",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das ist gerade wirklich viel Arbeit. Ich bleibe bei der Sache."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0172",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Uff! Jetzt geht es hier aber rund. Ich gebe alles!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0173",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, du verlangst mir gerade einiges ab. Das schaffe ich!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_peak-0174",
+      "event": "computer_effort_peak",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Heute kannst du mich ruhig für meinen Einsatz bewundern. Das ist gerade richtig viel!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-01",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Arbeit lässt noch nicht nach. Ich bleibe dran."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-02",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Es bleibt gerade viel zu tun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-03",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich muss mich weiterhin ziemlich konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-04",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch immer alle Hände voll. Ich halte mich tapfer, oder?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-05",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das zieht sich. Ich gebe trotzdem nicht nach."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_steady-06",
+      "event": "computer_effort_steady",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "review",
+      "weight": 1,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, immer noch so viel Arbeit. Da muss ich weiter durch."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0175",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, es wird etwas weniger. Jetzt kann ich wieder durchatmen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0176",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Arbeit lässt langsam nach. Das tut gut."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0177",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, der größte Druck nimmt ab."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0178",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, es wird leichter. Meine Schultern dürfen sich wieder entspannen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0179",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Na also, langsam bekommen wir wieder Luft."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_easing-0180",
+      "event": "computer_effort_easing",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, der schlimmste Andrang lässt nach. Gut gemacht, wir zwei."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0181",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geschafft. Jetzt habe ich wieder etwas Luft."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0182",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die anstrengende Arbeit ist erst mal vorbei."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0183",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, das liegt hinter mir. Ich bin froh."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0184",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ha, geschafft! Darauf bin ich schon ein bisschen stolz."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0185",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, jetzt kann ich wieder richtig durchatmen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_recovered-0186",
+      "event": "computer_effort_recovered",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So! Das haben wir hinter uns. Mein zufriedenes Gesicht ist verdient."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-01",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Uff. Das war wirklich anstrengend. Jetzt wird es besser."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-02",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Die größte Anstrengung ist vorbei. Ich atme erst mal durch."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-03",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich gefordert. Gut, dass ich es geschafft habe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-04",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Uff, geschafft! Sag ruhig, dass ich das gut gemacht habe."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-05",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Ha! Das war ein ordentlicher Brocken Arbeit. Jetzt bin ich stolz auf mich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_effort_recovered_peak-06",
+      "event": "computer_effort_recovered_peak",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 1,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das haben wir geschafft! Ich möchte jetzt bitte einmal zufrieden strahlen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0187",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gerade fällt wenig Arbeit an. Ich kann mich etwas umsehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0188",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe etwas Luft und schaue mich auf meinem Weg um."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0189",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei der Arbeit ist gerade weniger los. Zeit, die Beine zu vertreten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0190",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, etwas weniger zu tun. Jetzt habe ich wieder Augen für meine kleine Welt."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0191",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gerade habe ich Luft. Vielleicht findest du Zeit für mich?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "expanded-computer_effort_rest-0192",
+      "event": "computer_effort_rest",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 120,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schön, eine Pause vom großen Gewusel. Ich gehe mir die Füße vertreten."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "computer_uptime-02",
+      "event": "computer_uptime",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Rechner ist schon lange an. Ich bin also auch noch hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "computer_uptime-05",
+      "event": "computer_uptime",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So lange eingeschaltet. Da darf ich zwischendurch auch mal die Beine ausstrecken."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-uptime-legacy-01",
+      "event": "computer_uptime",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 2,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Rechner läuft schon einige Stunden. Mein Platz hier bleibt besetzt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-uptime-legacy-02",
+      "event": "computer_uptime",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 2,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir sind hier schon eine ganze Weile zugange. Ich vertrete mir mal die Füße."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-uptime-legacy-03",
+      "event": "computer_uptime",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 2,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So viele Stunden eingeschaltet! Gut, dass ich hier meinen eigenen Rhythmus habe."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-computer_uptime-friend-close-01",
+      "event": "computer_uptime",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 150,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Rechner läuft und läuft. Ich mache zwischendurch trotzdem meine kleinen Pausen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-computer_uptime_grounded-01",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Rechner ist schon lange eingeschaltet. Ich kann mich hier trotzdem ausruhen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-computer_uptime_grounded-03",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Viele Stunden seit dem Start. Das heißt für mich aber nicht ununterbrochen Arbeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "uptime-rest-0",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Auch bei einem langen Rechnertag brauche ich zwischendurch etwas Ruhe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "uptime-rest-1",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Lange eingeschaltet heißt zum Glück nicht, dass ich immer durchrennen muss."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "uptime-rest-2",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Rechner bleibt an, und ich mache es mir zwischendurch gemütlich."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-computer_uptime_grounded-friend-close-01",
+      "event": "computer_uptime_grounded",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So ein langer Rechnertag hat Platz für Arbeit und für meine kleinen Pausen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_concentrating-01",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ich muss gerade bei meiner Arbeit bleiben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_concentrating-02",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Das braucht jetzt meine volle Aufmerksamkeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_concentrating-03",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ich möchte das hier ordentlich hinbekommen. Dafür konzentriere ich mich."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-work_concentrating-friend-close-01",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin gerade ganz in meiner Arbeit drin. Das soll schließlich gut werden."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_concentrating-friend-close-02",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Da muss ich mich reinhängen. Nachher darfst du das Ergebnis bewundern."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_concentrating-friend-close-03",
+      "event": "work_concentrating",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "exclamation"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bleibe jetzt bei der Sache. Das möchte ich schaffen!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_finished_interrupted-01",
+      "event": "work_finished_interrupted",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt habe ich wieder Luft. Du hattest vorhin nach mir gesehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_interrupted-02",
+      "event": "work_finished_interrupted",
+      "animation": "waving",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin fertig. Vorhin konnte ich auf deinen Klick nicht richtig eingehen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_interrupted-03",
+      "event": "work_finished_interrupted",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Jetzt passt ein Besuch besser als mitten in der Arbeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_interrupted-04",
+      "event": "work_finished_interrupted",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "So, geschafft! Du wolltest vorhin doch zu mir. Jetzt bin ich da."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_finished_interrupted-friend-close-01",
+      "event": "work_finished_interrupted",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Du, jetzt habe ich Zeit für dich. Vorhin steckte ich noch mitten in der Arbeit."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_finished_interrupted-friend-close-02",
+      "event": "work_finished_interrupted",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 200,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Endlich fertig! Jetzt darfst du mich besuchen. Nur bitte ohne die ganze Klickserie."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_finished_long-01",
+      "event": "work_finished_long",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das hat lange gedauert. Jetzt ruhe ich mich etwas aus."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_long-02",
+      "event": "work_finished_long",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Nach der langen Arbeit brauche ich eine Verschnaufpause."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_long-03",
+      "event": "work_finished_long",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Puh, endlich geschafft. Ich strecke mich erst mal."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_finished_long-04",
+      "event": "work_finished_long",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Uff, das war ein langes Stück Arbeit. Jetzt lasse ich die Schultern sinken."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_finished_long-05",
+      "event": "work_finished_long",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Endlich fertig! Ich finde, dafür habe ich mir eine schöne Pause verdient."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_finished_long-friend-close-01",
+      "event": "work_finished_long",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das hat sich gezogen. Bleibst du mir bei meiner Pause etwas Gesellschaft?"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_long_thought-01",
+      "event": "work_long_thought",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin schon eine Weile beschäftigt. Das strengt langsam an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_long_thought-02",
+      "event": "work_long_thought",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das dauert heute. Ich muss noch ein bisschen durchhalten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_long_thought-03",
+      "event": "work_long_thought",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Nach so viel Arbeit sehne ich mich langsam nach einer Pause."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-work_long_thought-friend-close-01",
+      "event": "work_long_thought",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Puh, ich bin schon lange dran. So langsam hätte ich meine Pause gern."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_long_thought-friend-close-02",
+      "event": "work_long_thought",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Ich gebe mir Mühe, aber diese Arbeit zieht sich ganz schön."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_long_thought-friend-close-03",
+      "event": "work_long_thought",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 240,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Du, ich könnte bald etwas Erholung gebrauchen. Ich bin noch immer am Arbeiten."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_unexpected-01",
+      "event": "work_unexpected",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Huch, mit so viel Arbeit hatte ich jetzt nicht gerechnet."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_unexpected-02",
+      "event": "work_unexpected",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Um diese Zeit fällt sonst weniger an. Heute ist wohl mehr zu tun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_unexpected-03",
+      "event": "work_unexpected",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Das kommt überraschend. Jetzt muss ich doch noch richtig mit anpacken."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-work_unexpected-friend-close-01",
+      "event": "work_unexpected",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Oh! Ich hatte gerade nicht mit so einem Berg Arbeit gerechnet."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_unexpected-friend-close-02",
+      "event": "work_unexpected",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Na, heute wird es um diese Zeit wohl doch noch anstrengend für uns."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_unexpected-friend-close-03",
+      "event": "work_unexpected",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Huch, sonst ist jetzt weniger los. Dann heißt es wohl: noch mal ran!"
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-work_late-01",
+      "event": "work_late",
+      "animation": "review",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "So spät noch viel zu tun. Ich bleibe bei der Arbeit."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_late-02",
+      "event": "work_late",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Es ist schon Nacht, und ich muss mich noch konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_late-03",
+      "event": "work_late",
+      "animation": "review",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Um die Uhrzeit strengt die viele Arbeit mich besonders an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-work_late-04",
+      "event": "work_late",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Du, es ist Nacht und wir haben immer noch so viel zu tun. Puh."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_late-friend-close-01",
+      "event": "work_late",
+      "animation": "review",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "So spät noch schuften! Danach möchte ich mich ordentlich einkuscheln."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-work_late-friend-close-02",
+      "event": "work_late",
+      "animation": "review",
+      "conditions": [],
+      "periods": [
+        "night"
+      ],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 260,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "sleeps"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, ich wäre jetzt gern schon in meiner Schlafpause. Aber hier ist noch viel los."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-after_work_thought-01",
+      "event": "after_work_thought",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die anstrengende Arbeit hängt mir noch etwas nach."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-after_work_thought-02",
+      "event": "after_work_thought",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich muss nach der Arbeit erst wieder richtig durchatmen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-after_work_thought-03",
+      "event": "after_work_thought",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich lasse die Arbeit gerade hinter mir und komme hier wieder an."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-after_work_thought-friend-close-01",
+      "event": "after_work_thought",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Puh, ich bin mit dem Kopf noch halb bei der Arbeit. Gleich bin ich wieder ganz bei dir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-after_work_thought-friend-close-02",
+      "event": "after_work_thought",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war anstrengend. Jetzt freue ich mich auf etwas Schönes mit dir."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-after_work_thought-friend-close-03",
+      "event": "after_work_thought",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 250,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin noch etwas geschafft. Aber zufrieden bin ich auch."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-return_working-01",
+      "event": "return_working",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Hallo zurück. Ich bin noch mit der Arbeit beschäftigt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-return_working-02",
+      "event": "return_working",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Oh, du bist wieder da. Ich muss mich hier weiter konzentrieren."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-return_working-03",
+      "event": "return_working",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Willkommen zurück. Gerade habe ich noch einiges zu tun."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-return_working-04",
+      "event": "return_working",
+      "animation": "review",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Hey, du bist zurück! Ich freue mich, auch wenn ich noch mitten in der Arbeit stecke."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-return_working-friend-close-01",
+      "event": "return_working",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Da bist du! Ich arbeite gerade noch weiter, aber dein Besuch tut gut."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-return_working-friend-close-02",
+      "event": "return_working",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "alert"
+        },
+        {
+          "kind": "text",
+          "content": "Hallo, du. Ich würde gern mehr zu dir schauen. Erst muss ich hier dranbleiben."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-return_after_work-01",
+      "event": "return_after_work",
+      "animation": "waving",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Du bist wieder da. Meine Arbeit ist gerade weniger geworden."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-return_after_work-02",
+      "event": "return_after_work",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Hallo zurück. Jetzt habe ich wieder etwas Luft."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "v010-return_after_work-03",
+      "event": "return_after_work",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Das passt gut. Ich kann mich dir nach der Arbeit wieder zuwenden."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "voice-return_after_work-friend-close-01",
+      "event": "return_after_work",
+      "animation": "waving",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Du kommst genau richtig! Ich habe meine Arbeit gerade geschafft."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-return_after_work-friend-close-02",
+      "event": "return_after_work",
+      "animation": "waving",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Hach, zurück bei mir, und die Arbeit liegt hinter uns."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-return_after_work-friend-close-03",
+      "event": "return_after_work",
+      "animation": "waving",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 110,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "swirl"
+        },
+        {
+          "kind": "text",
+          "content": "Da bist du ja! Jetzt habe ich wieder Platz im Kopf für unsere Zeit."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    }
+  ]
+}

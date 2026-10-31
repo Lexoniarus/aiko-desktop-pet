@@ -78,6 +78,7 @@ class WorldSurface:
 class ObjectInteraction(StrEnum):
     EAT = "eat"
     DRINK = "drink"
+    READ = "read"
 
 
 @dataclass(frozen=True, slots=True)
@@ -126,6 +127,7 @@ class WorldObjectSnapshot:
     position: WorldPosition | None
     footprint: ObjectFootprint
     motion: ItemMotion | None = None
+    expires_at: float | None = None
 
 
 @dataclass(frozen=True, slots=True)

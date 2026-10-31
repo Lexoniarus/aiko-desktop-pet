@@ -11,6 +11,7 @@ from datetime import datetime
 
 from ..balance import BALANCE
 from ..routine import TimeContext, context_at
+from ..sleep import SleepContext, sleep_setting
 from .adaptive_models import (
     DAILY_DECAY,
     MAX_OBSERVATION_SECONDS,
@@ -20,10 +21,8 @@ from .adaptive_models import (
     Observation,
     clamp,
 )
-from .adaptive_policy import (
-    determine_activity_mode,
-    determine_sleep_options,
-)
+from .adaptive_policy import determine_activity_mode
+from .quiet_rhythm import QuietPhase, QuietWindow
 
 
 class AdaptiveRoutine:
@@ -40,6 +39,16 @@ class AdaptiveRoutine:
         self._previous_mono: float | None = None
         self._previous_wall: float | None = None
         self._last_result: Behaviour | None = None
+        self._input_start = 0.0
+        self._input_wall: float | None = None
+        self._input_mono: float | None = None
+        self._last_input: float | None = None
+        self._active_since: float | None = None
+        self._last_event_mono: float | None = None
+        self._input_events = 0
+        self._quiet_since: float | None = None
+        self._quiet_learnable = False
+        self._sleep_context = SleepContext()
 
     @staticmethod
     def _slot(context: TimeContext) -> int:
@@ -90,6 +99,9 @@ class AdaptiveRoutine:
             self.memory.last_contact_wall = now_wall
 
     def forget_profile(self) -> None:
+        self.memory.quiet_window = QuietWindow()
+        self._quiet_since = None
+        self._input_start = self._input_wall or 0.0
         for series in (
             self.memory.hour_seconds,
             self.memory.busy_seconds,
@@ -276,18 +288,6 @@ class AdaptiveRoutine:
             present=present,
             wall_time=wall_time,
         )
-        sleep_options = determine_sleep_options(
-            mode=mode,
-            energy=energy,
-            sleeping=sleeping,
-            manual_sleep=manual_sleep,
-            night=context.night,
-            effort=effort,
-            idle_seconds=observation.idle_seconds,
-            present=present,
-            rest_seconds=self.memory.rest_seconds,
-            expected_effort=expected,
-        )
         result = Behaviour(
             mode=mode,
             strain=self.memory.strain,
@@ -298,12 +298,129 @@ class AdaptiveRoutine:
             uptime_hours=observation.uptime_hours,
             prolonged_work_seconds=self.memory.session_seconds,
             rest_seconds=self.memory.rest_seconds,
-            can_sleep=sleep_options.can_sleep,
-            should_wake=sleep_options.should_wake,
-            can_nap=sleep_options.can_nap,
         )
         self._last_result = result
         return result
+
+    def observe_input(
+        self,
+        *,
+        wall: float,
+        monotonic: float,
+        idle_seconds: float | None,
+        learn: bool = True,
+        unavailable_seconds: float = 0.0,
+    ) -> SleepContext:
+        """Observe changes in anonymous OS last-input time, not keys or load."""
+        previous = self._input_mono
+        gap = 0.0 if previous is None else monotonic - previous
+        previous_wall = self._input_wall
+        self._input_mono, self._input_wall = monotonic, wall
+        valid = (
+            idle_seconds is not None
+            and math.isfinite(idle_seconds)
+            and idle_seconds >= 0
+            and math.isfinite(wall)
+            and math.isfinite(monotonic)
+        )
+        if (
+            previous is None
+            or gap < 0
+            or gap > sleep_setting("sample_gap_seconds")
+            or previous_wall is None
+            or abs((wall - previous_wall) - gap) > 5
+        ):
+            self._active_since = self._last_event_mono = None
+            self._input_events = 0
+            self._last_input = None
+            self._input_start = wall - max(0.0, unavailable_seconds)
+            # Only explicitly measured suspension may bridge an observation gap.
+            can_bridge = (previous_wall is not None
+                          and abs((wall - previous_wall) - gap) <= 5
+                          and unavailable_seconds
+                          >= gap - sleep_setting("sample_gap_seconds"))
+            bridge_existing = can_bridge and self._quiet_since is not None
+            self._quiet_since = (
+                self._quiet_since if bridge_existing
+                else wall - unavailable_seconds if unavailable_seconds > 0 else None
+            )
+            self._quiet_learnable = (self._quiet_learnable and learn
+                                     if bridge_existing else learn)
+        if not learn:
+            self._quiet_learnable = False
+        if not valid:
+            self._quiet_since = None
+            self._sleep_context = self.sleep_context()
+            return self._sleep_context
+        assert idle_seconds is not None
+        event_wall = wall - idle_seconds
+        event = (self._last_input is not None
+                 and event_wall > self._last_input + 0.05
+                 and idle_seconds <= max(0, gap) + .05)
+        self._last_input = event_wall
+        if event:
+            if (
+                self._last_event_mono is None
+                or monotonic - self._last_event_mono
+                > sleep_setting("input_gap_seconds")
+            ):
+                self._active_since, self._input_events = monotonic, 0
+            self._input_events = min(
+                int(sleep_setting("minimum_input_events")), self._input_events + 1
+            )
+            self._last_event_mono = monotonic
+        active = (
+            monotonic - self._active_since
+            if self._active_since is not None
+            and self._last_event_mono is not None
+            and monotonic - self._last_event_mono <= sleep_setting("input_gap_seconds")
+            and self._input_events >= sleep_setting("minimum_input_events")
+            else 0.0
+        )
+        if self._quiet_since is None and idle_seconds >= sleep_setting("quiet_seconds"):
+            # Never backfill quiet time before this process actually observed it.
+            self._quiet_since = max(event_wall, self._input_start)
+            self._quiet_learnable = learn
+        if self._quiet_since is not None and active >= sleep_setting("return_seconds"):
+            finish = wall - active
+            if (
+                learn and self._quiet_learnable
+                and sleep_setting("minimum_phase_seconds")
+                <= finish - self._quiet_since
+                <= sleep_setting("maximum_phase_seconds")
+            ):
+                start_local = datetime.fromtimestamp(self._quiet_since)
+                end_local = datetime.fromtimestamp(finish)
+                self.memory.quiet_window = self.memory.quiet_window.record(
+                    QuietPhase(
+                        start_local.date().isoformat(),
+                        start_local.hour * 60 + start_local.minute,
+                        end_local.hour * 60 + end_local.minute,
+                    )
+                )
+            self._quiet_since = None
+        # A jitter does not cancel an established quiet interval. Until a repeated
+        # return is recognized, ordinary sleep remains possible during that phase.
+        quiet_idle = idle_seconds
+        if self._quiet_since is not None and self._input_events < sleep_setting(
+            "minimum_input_events"
+        ):
+            quiet_idle = max(idle_seconds, wall - self._quiet_since)
+        window = self.memory.quiet_window
+        self._sleep_context = SleepContext(
+            window.start, window.end, quiet_idle, active, observed=True
+        )
+        return self._sleep_context
+
+    def sleep_context(self, *, observed: bool = False) -> SleepContext:
+        window = self.memory.quiet_window
+        if observed:
+            from dataclasses import replace
+
+            return replace(
+                self._sleep_context, start_minute=window.start, end_minute=window.end
+            )
+        return SleepContext(window.start, window.end)
 
     @property
     def current(self) -> Behaviour | None:

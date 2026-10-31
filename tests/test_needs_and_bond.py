@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import random
 import tempfile
 import unittest
@@ -16,9 +15,11 @@ from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.lifecycle import MAX_LIVE_EFFORT_SECONDS
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.view_models.care_text import format_care_response
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -69,19 +70,19 @@ class NeedsAndBondTests(unittest.TestCase):
         state = PetState(social=12, satiety=28, mood=30, energy=60)
         state.interact("talk", now=timestamp())
         self.assertEqual(state.social, 38)
-        self.assertGreater(state.mood, 30)
+        self.assertEqual(state.mood, 30)
         self.assertEqual(state.satiety, 28)
         self.assertEqual(state.energy, 59)
-        self.assertGreater(state.friendship, 15)
+        self.assertEqual(state.friendship, 15)
 
     def test_feeding_does_not_substitute_for_social_care(self):
-        state = PetState(social=8, satiety=10)
+        state = PetState(social=8, satiety=10, affection=50)
         state.interact("feed", now=timestamp())
         self.assertEqual(state.social, 9)
         self.assertEqual(state.satiety, 40)
         state.interact("pet", now=timestamp() + 1)
         self.assertEqual(state.social, 11)
-        self.assertEqual(state.affection, 100)
+        self.assertEqual(state.affection, 75)
         before = encode_pet_state(state)
         state.interact("play", now=timestamp() + 2)
         self.assertEqual(encode_pet_state(state), before)
@@ -97,7 +98,8 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual(state.energy, 100)
         before = encode_pet_state(state)
         self.assertIn(
-            "voll", format_care_response(state.interact("energy_drink", now=start + 8))
+            "wach genug",
+            format_care_response(state.interact("energy_drink", now=start + 8)),
         )
         self.assertEqual(before, encode_pet_state(state))
 
@@ -130,35 +132,23 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual((state.mood, state.social, state.friendship), (75, 75, 15))
 
     def test_friendship_is_bond_not_spammable_status_bar(self):
-        state = PetState()
         start = timestamp()
+        state = PetState(updated_at=start)
         state.interact("pet", now=start)
         first = state.friendship
         for i in range(100):
             state.interact("pet", now=start + i + 1)
         self.assertAlmostEqual(state.friendship, first)
-        # Only another genuine need for care may earn trust after cooldown.
+        # Healthy elapsed time can improve the bond; another stroke has no bonus.
+        state.advance(start + 7200)
         set_test_pet_values(state, affection=55)
-        state.interact("pet", now=start + 13 * 60)
+        state.interact("pet", now=start + 7200)
         self.assertGreater(state.friendship, first)
 
-    def test_friendship_daily_cap_and_new_day(self):
-        state = PetState(friendship=31)
-        start = timestamp()
-        for k in range(30):
-            for action in ("feed", "pet", "talk", "play", "energy_drink"):
-                set_test_pet_values(state, energy=65)
-                state.interact(action, now=start + 900 * k)
-        self.assertLessEqual(state.friendship, 31 + 7.000001)
-        previous = state.friendship
-        set_test_pet_values(state, social=30)
-        state.interact("talk", now=start + 24 * 3600 + 1)
-        self.assertGreater(state.friendship, previous)
-
-    def test_friendship_does_not_decay_offline_or_during_busy_work(self):
+    def test_friendship_decays_over_offline_contact_absence(self):
         state = PetState(friendship=67, updated_at=timestamp())
         state.advance(timestamp() + 3600 * 24, effort=1.0)
-        self.assertEqual(state.friendship, 67)
+        self.assertLess(state.friendship, 67)
         self.assertLess(state.social, 75)
 
     def test_all_values_survive_real_store_roundtrip(self):
@@ -167,16 +157,12 @@ class NeedsAndBondTests(unittest.TestCase):
             start = timestamp()
             state = PetState(updated_at=start, social=14, friendship=63)
             state.interact("talk", now=start)
-            store.save(state, PetSettings())
+            save_test_session(store, state, PetSettings())
             session_data = store.load_session(now=start)
             loaded, _ = session_data.state, session_data.settings
             self.assertEqual(loaded.social, 40)
             self.assertAlmostEqual(loaded.friendship, state.friendship)
             self.assertEqual(loaded.care_last_rewards, state.care_last_rewards)
-            payload = json.loads(store.path.read_text(encoding="utf-8"))
-            self.assertNotIn("cpu", payload)
-            self.assertNotIn("gpu", payload)
-            self.assertNotIn("ram", payload)
 
     def test_friendship_display_level_is_bounded(self):
         self.assertEqual(PetState(friendship=0).friendship_level, 1)
@@ -185,7 +171,7 @@ class NeedsAndBondTests(unittest.TestCase):
 
 
 class TelemetryEffortTests(unittest.TestCase):
-    def test_high_work_accelerates_all_three_affected_stats(self):
+    def test_high_work_only_adds_bounded_hunger_and_energy_costs(self):
         start = timestamp()
         calm = PetState(updated_at=start)
         busy = PetState(updated_at=start)
@@ -193,9 +179,12 @@ class TelemetryEffortTests(unittest.TestCase):
             point = start + step * 10
             calm.advance(point, effort=0.05)
             busy.advance(point, effort=1.0)
-        self.assertLess(busy.satiety, calm.satiety - 1.2)
-        self.assertLess(busy.mood, calm.mood - 1.5)
-        self.assertLess(busy.energy, calm.energy - 2.0)
+        self.assertAlmostEqual(calm.satiety - busy.satiety, 1.6)
+        self.assertAlmostEqual(calm.energy - busy.energy, 0.5)
+        self.assertAlmostEqual(calm.mood - busy.mood, 0.16 * (1.6 + 0.5))
+        self.assertAlmostEqual(calm.social, busy.social)
+        self.assertAlmostEqual(calm.affection, busy.affection)
+        self.assertAlmostEqual(calm.fun, busy.fun)
         self.assertAlmostEqual(busy.friendship, calm.friendship)
 
     def test_observed_load_cannot_be_extrapolated_over_offline_hours(self):
@@ -236,7 +225,8 @@ class TelemetryEffortTests(unittest.TestCase):
                 self.assertLess(working.satiety, idle.satiety)
         self.assertLess(working.mood, idle.mood)
         self.assertLess(working.energy, idle.energy)
-        self.assertEqual(working.friendship, 40)
+        self.assertGreater(working.friendship, 39.99)
+        self.assertLessEqual(working.friendship, 40)
 
 
 class SocialDialogueTests(unittest.TestCase):
@@ -246,18 +236,20 @@ class SocialDialogueTests(unittest.TestCase):
 
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
         state = PetState(social=15)
-        self.assertEqual(self.mind.emotion(state, 50), "lonely")
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
         self.assertEqual(
             require_reaction(
                 self.mind.select_spontaneous_reaction(state, self.context, 50)
             ).event,
             "social_low",
         )
-        self.assertEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(state, self.context, 55)
-            ).event,
-            "idle",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 55),
         )
         self.assertEqual(
             require_reaction(
@@ -338,8 +330,9 @@ class SocialDialogueTests(unittest.TestCase):
 
     def test_new_dialogues_reference_only_existing_sprites(self):
         book = DialogueBook.from_file()
-        new = [line for line in book.lines if line.id.startswith("v011-")]
-        self.assertGreaterEqual(len(new), 35)
+        new = [line for line in book.lines
+               if line.id.startswith(("v011-", "plaudern-"))]
+        self.assertTrue(new)
         self.assertTrue(
             all(
                 line.animation

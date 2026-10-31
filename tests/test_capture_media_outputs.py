@@ -9,6 +9,8 @@ from unittest.mock import MagicMock, patch
 
 from PIL import Image
 
+from aiko_pet.games.contracts import GameId
+from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from tools import capture_current_gallery as gallery
 from tools import capture_rock_paper_scissors_media as rps
 from tools.media_crop import CapturedFrame
@@ -19,7 +21,10 @@ class CaptureMediaOutputTests(unittest.TestCase):
         pet = MagicMock()
         pet._runtime.scheduled_greeting = None
         pet._reaction_player.pending_timer = None
-        game = pet._hover.game_window
+        game = MagicMock(spec=RockPaperScissorsWindow)
+        game.window = MagicMock()
+        game._sequence = MagicMock()
+        pet._hover.game_window = game
         for window in (pet.root, game.window):
             window.winfo_width.return_value = 900
             window.winfo_height.return_value = 550
@@ -54,6 +59,9 @@ class CaptureMediaOutputTests(unittest.TestCase):
             ):
                 gallery.main()
                 rps.record_media()
+            pet._hover.game_menu.choose.assert_called_once_with(
+                GameId.ROCK_PAPER_SCISSORS,
+            )
             self.assertEqual({path.name for path in output.iterdir()}, {
                 "Aiko_Current_Hover.png",
                 "Aiko_Current_Reaction_Sequence.gif",
