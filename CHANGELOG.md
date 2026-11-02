@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Make horoscope placement and visible-withholding GUI tests independent of the
+  user's native cursor position. Verify the intended on-monitor placement and
+  observed take before checking duplicate-book and friendship consequences.
+
 - Exclude remembered JokeAPI IDs before fetching through allowed ID ranges.
   Persist bounded unsuitable-content and empty-range exclusions across restarts;
   distinguish an exhausted joke pool and a bounded unsuccessful search from

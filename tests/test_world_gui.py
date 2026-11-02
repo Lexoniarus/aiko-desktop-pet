@@ -1569,10 +1569,16 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         item = world.world.place_resting("apple", world._body_x() + 70,
                                          ObjectFootprint(8, 8))
+        # The take must stay visible on Aiko's monitor, even when the native
+        # cursor is parked on another display while this test runs.
+        assert item.position is not None
+        self.look_at(item.position.x, height=80)
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "apple", "food")
         world.begin_relocate(item.instance_id, item.revision)
         self.complete_feedback()
+        self.assertTrue(world.cursor.carrying)
+        self.assertEqual(world.interaction.phase, "await_return")
         initial = self.app.state.friendship
         self.assertEqual(initial, 15)
         for _ in range(44):

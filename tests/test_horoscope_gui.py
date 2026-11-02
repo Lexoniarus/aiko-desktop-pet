@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import unittest
 from typing import cast
+from unittest.mock import patch
 
 import test_social_gui as support
 from test_social_coordinator import ManualSocialWorker
@@ -68,10 +69,19 @@ class HoroscopeGuiTests(unittest.TestCase):
 
     def test_placing_first_book_disables_a_second_before_reading(self):
         self.pet._preferences.set_zodiac("taurus")
+        # Place on Aiko's monitor, independently of the user's real cursor.
+        track = self.pet._world._track()
+        self.enterContext(patch.object(
+            self.pet.root, "winfo_pointerx", return_value=track.left + 180,
+        ))
+        self.enterContext(patch.object(
+            self.pet.root, "winfo_pointery", return_value=track.ground_y - 150,
+        ))
         self.pet._world.begin_carry("horoscope_book")
         token = self.pet._world.cursor.instance_id
         assert token is not None
         self.pet._world.cursor.release()
+        self.assertEqual(self.pet._world.world.get(token).state, ObjectState.FALLING)
         self.assertFalse(self.pet._care_runtime.horoscope_choice()[1])
         self.pet._world.begin_carry("horoscope_book")
         self.assertFalse(self.pet._world.cursor.carrying)
