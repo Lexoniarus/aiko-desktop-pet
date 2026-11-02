@@ -81,7 +81,7 @@ class RockPaperScissorsSequence:
             self._animate("waving-greeting")
             phrase = self._dialogue("game_greeting")
             self._express_event("game_greeting")
-            self._say(phrase, GAME_PACING.comment_text_ms(phrase))
+            self._say(phrase, GAME_PACING.rps_text_ms(phrase))
 
     def choose(self, move: Move) -> None:
         if self._closed or self.busy:
@@ -111,7 +111,7 @@ class RockPaperScissorsSequence:
                     return
                 self._reveal_player(result.player, self.score)
                 self._show_aiko_hand(result.aiko, 0)
-                # Adding the persistent hand rebuilds speech; admit the word afterwards.
+                # The independent side hand remains through the spoken result.
                 self._say(countdown_line(number), self.CYCLE_MS // 2)
                 self._set_busy(False)
             else:
@@ -147,7 +147,7 @@ class RockPaperScissorsSequence:
         def speak() -> None:
             phrase = self._dialogue(outcome_event(result))
             self._express_event(outcome_event(result))
-            self._say(phrase, GAME_PACING.comment_text_ms(phrase))
+            self._say(phrase, GAME_PACING.rps_text_ms(phrase))
 
         self._later(self.REACTION_EMOTE_MS, speak, generation)
 

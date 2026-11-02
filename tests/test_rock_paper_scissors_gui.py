@@ -68,6 +68,52 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.clock.advance(2.251)
         self.assertEqual(self.game.score.games, 2)
 
+    def test_side_hand_and_slow_result_have_independent_lifetimes_and_cleanup(self):
+        self.game._sequence._dialogue = lambda _event: (
+            'Du hast gewonnen! Mein grandioser Plan hatte wohl ein winziges Loch. '
+            'Eine Revanche?'
+        )
+        self.game.choose(Move.ROCK)
+        self.clock.advance(3.151)
+        spoken, hand = self.pet._speech.bubble, self.pet._speech.hand_bubble
+        assert spoken is not None and hand is not None
+        self.pet.root.update()
+        self.assertIn(hand, self.pet._overlay_windows())
+        self.assertIsNot(spoken, hand)
+        self.assertGreaterEqual(hand.winfo_rootx(),
+                                spoken.winfo_rootx() + spoken.winfo_width() + 8)
+        position = hand.winfo_geometry()
+        self.clock.advance(4.6)
+        self.assertIs(self.pet._speech.bubble, spoken)
+        self.assertEqual(self.game.buttons[Move.PAPER].cget('state'), 'normal')
+        self.clock.advance(10)
+        self.assertIsNone(self.pet._speech.bubble)
+        self.assertIs(self.pet._speech.hand_bubble, hand)
+        self.assertEqual(hand.winfo_geometry(), position)
+        self.game.buttons[Move.PAPER].invoke()
+        self.assertFalse(hand.winfo_exists())
+        self.assertIsNone(self.pet._speech.hand_bubble)
+        self.clock.advance(2.251)
+        current = self.pet._speech.hand_bubble
+        assert current is not None
+        self.game.close()
+        self.clock.advance(10)
+        self.assertFalse(current.winfo_exists())
+        self.assertEqual(self.pet._speech.windows, ())
+
+    def test_even_short_result_gets_over_three_seconds_without_locking_choices(self):
+        self.game._sequence._dialogue = lambda _event: 'Noch eine Runde?'
+        self.game.choose(Move.ROCK)
+        self.clock.advance(3.151)
+        spoken = self.pet._speech.bubble
+        assert spoken is not None
+        self.clock.advance(3)
+        self.assertIs(self.pet._speech.bubble, spoken)
+        self.assertEqual(self.game.buttons[Move.PAPER].cget('state'), 'normal')
+        self.clock.advance(.201)
+        self.assertIsNone(self.pet._speech.bubble)
+        self.assertIsNotNone(self.pet._speech.hand_bubble)
+
     def test_new_choice_interrupts_third_recovery_and_preserves_count(self):
         self.game.choose(Move.ROCK)
         self.clock.advance(2.251)

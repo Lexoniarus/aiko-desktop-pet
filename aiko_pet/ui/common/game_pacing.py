@@ -13,6 +13,10 @@ class GamePacing:
     bank_pause_ms: int = 100
     next_hand_ms: int = 4500
 
+    def rps_text_ms(self, text: str) -> int:
+        """Leave full Fingerduell sentences readable beside the persistent hand."""
+        return min(9000, max(3200, 900 + len(text.strip()) * 55))
+
     def comment_text_ms(self, text: str) -> int:
         """Readable optional chatter; its lifetime must not hold a game action."""
         return min(4500, max(1400, 400 + len(text.strip()) * 32))
