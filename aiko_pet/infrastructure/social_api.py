@@ -95,6 +95,13 @@ def social_endpoint(
         raise ValueError("No horoscope HTTP endpoint exists")
     if provider == SocialProvider.QUOTATIONS and category == SocialCategory.SINGLE:
         return "https://api.zitat-service.de/v1/quote?language=de"
+    if provider == SocialProvider.WITZAPI and category in (
+        SocialCategory.SINGLE, SocialCategory.TWO_PARTS,
+    ):
+        category_name = ("flachwitze" if category == SocialCategory.SINGLE
+                         else "scherzfragen")
+        return ("https://witzapi.de/api/joke/?limit=1&language=de"
+                f"&category={category_name}")
     if provider != default_provider(category):
         raise ValueError("Unreviewed social provider/category")
     if category == SocialCategory.FACT:
@@ -175,6 +182,11 @@ def fetch_social_response(
         if len(body) > MAX_RESPONSE_BYTES:
             raise ValueError("Social response exceeds size limit")
         payload = json.loads(body.decode("utf-8"))
+        if provider == SocialProvider.WITZAPI:
+            if (not isinstance(payload, list) or len(payload) != 1
+                    or not isinstance(payload[0], dict)):
+                raise ValueError("Invalid WitzAPI response envelope")
+            payload = payload[0]
         if request is not None and request.id_range is not None:
             identifier = payload.get("id") if isinstance(payload, dict) else None
             if (type(identifier) is not int

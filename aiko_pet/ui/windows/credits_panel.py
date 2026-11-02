@@ -25,6 +25,8 @@ class CreditsPanel:
         self._heading("vn.credits.apis")
         for name, url in (
             ("JokeAPI", "https://jokeapi.dev/"),
+            ("WitzAPI.de (privat, nicht kommerziell)", "https://witzapi.de/impressum.html"),
+            ("pyjokes (BSD-3-Clause, lokal)", "https://pyjok.es/"),
             ("Random Useless Facts", "https://uselessfacts.jsph.pl/"),
             ("Zitat-Service", "https://www.zitat-service.de/"),
             (

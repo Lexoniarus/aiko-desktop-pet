@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import sys
 from importlib import import_module
+from importlib.metadata import version
 
 
 class RuntimeDependencyError(RuntimeError):
@@ -26,6 +27,21 @@ def check_runtime_dependencies() -> None:
         raise RuntimeDependencyError(
             "Astronomy Engine fehlt oder funktioniert in dieser Python-Umgebung "
             "nicht.\n\n"
+            f"Verwendetes Python: {sys.executable}\n\n"
+            "Bitte Aiko_installieren.bat ausführen und anschließend "
+            "Aiko_starten.bat verwenden. Beide nutzen die lokale .venv.\n"
+            "Dein Spielstand wurde nicht geöffnet oder verändert."
+        ) from error
+    try:
+        library = import_module("pyjokes")
+        if version("pyjokes") != "0.8.3" or not library.get_jokes(
+            language="de", category="neutral",
+        ):
+            raise ValueError("Unsupported pyjokes version or missing German content")
+    except (ImportError, AttributeError, ValueError, TypeError) as error:
+        raise RuntimeDependencyError(
+            "Die benötigte Witzbibliothek pyjokes (Version 0.8.3) fehlt oder "
+            "funktioniert in dieser Python-Umgebung nicht.\n\n"
             f"Verwendetes Python: {sys.executable}\n\n"
             "Bitte Aiko_installieren.bat ausführen und anschließend "
             "Aiko_starten.bat verwenden. Beide nutzen die lokale .venv.\n"

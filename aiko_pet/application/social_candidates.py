@@ -5,7 +5,7 @@ from typing import Literal
 
 from ..pet.social_content_evidence import SocialCategory
 
-JOKE_FILTER_REVISION = 1
+JOKE_FILTER_REVISION = 2
 MAX_JOKE_ID = 100_000
 MAX_JOKE_EXCLUSIONS = 512
 JOKE_METADATA_SECONDS = 3600

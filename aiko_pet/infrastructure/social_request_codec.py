@@ -40,6 +40,8 @@ def decode_social_requests(raw: Any) -> SocialRequestHistory:
         if row["provider"] == "astroway":
             continue  # Retire the rejected provider from legacy saves.
         provider = enum_value(row["provider"], SocialProvider, context="provider")
+        if provider not in REQUEST_CAPS:
+            raise ValueError("Local providers cannot consume HTTP budgets")
         counts[provider] += 1
         if counts[provider] > REQUEST_CAPS[provider][2]:
             raise ValueError("Excessive provider request history")
@@ -51,6 +53,8 @@ def decode_social_requests(raw: Any) -> SocialRequestHistory:
         if row["provider"] == "astroway":
             continue  # Retire the rejected provider from legacy saves.
         provider = enum_value(row["provider"], SocialProvider, context="provider")
+        if provider not in REQUEST_CAPS:
+            raise ValueError("Local providers cannot have HTTP pauses")
         if provider in seen:
             raise ValueError("Duplicate provider block")
         seen.add(provider)

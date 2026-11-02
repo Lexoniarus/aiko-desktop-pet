@@ -24,7 +24,10 @@ from aiko_pet.application.social_candidates import (
     JokeExclusion,
 )
 from aiko_pet.application.social_content import SocialCategory, SocialProvider
-from aiko_pet.application.social_coordinator import SocialContentCoordinator
+from aiko_pet.application.social_coordinator import (
+    SocialContentCoordinator,
+    providers_for,
+)
 from aiko_pet.application.social_fetch import SocialFetchRequest, SocialFetchResult
 from aiko_pet.application.social_history import (
     SocialContentHistory,
@@ -61,6 +64,14 @@ class HeaderResponse(io.BytesIO):
 
 class CandidateTests(unittest.TestCase):
     def setUp(self):
+        sources = patch(
+            "aiko_pet.application.social_coordinator.providers_for",
+            side_effect=lambda category: tuple(
+                p for p in providers_for(category) if p != SocialProvider.WITZAPI
+            ),
+        )
+        sources.start()
+        self.addCleanup(sources.stop)
         self.worker = ManualSocialWorker()
         self.now = self.worker.clock()
         self.catalog = JokeCatalog(0, 5, self.now + 3600)
@@ -141,15 +152,16 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(social.select(TWO).status, "exhausted")
         self.assertEqual(len(self.worker.requests), 1)
 
-    def test_small_pool_with_all_ids_in_history_stops_without_http(self):
+    def test_small_pool_rotates_oldest_known_joke_without_immediate_repeat(self):
         history = SocialContentHistory(tuple(
             SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
             for i in range(6)
         ))
         social = self.coordinator(history)
         social.set_enabled(True)
-        self.assertEqual(social.select(TWO).status, "exhausted")
-        self.assertEqual(self.worker.requests, [])
+        self.assertEqual(social.select(TWO).status, "waiting")
+        self.assertEqual(self.plan().id_range, (0, 0))
+        self.assertNotEqual(self.plan().id_range, (5, 5))
         self.assertEqual(social.history.entries, history.entries)
 
     def test_three_invalid_responses_bound_search_without_provider_pause(self):

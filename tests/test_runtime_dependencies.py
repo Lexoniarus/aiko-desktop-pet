@@ -1,6 +1,7 @@
 """Dependency errors are detected before opening a save or constructing Tk UI."""
 
 import unittest
+from importlib import import_module
 from unittest.mock import Mock, patch
 
 from aiko_pet.desktop.startup import run_desktop
@@ -11,6 +12,25 @@ from aiko_pet.infrastructure.runtime_dependencies import (
 
 
 class RuntimeDependencyTests(unittest.TestCase):
+    def test_missing_library_or_wrong_version_is_reported_before_session_creation(self):
+        real_import = import_module
+
+        def missing_library(name):
+            if name == "pyjokes":
+                raise ModuleNotFoundError("pyjokes")
+            return real_import(name)
+
+        for library_import, installed in ((missing_library, "0.8.3"),
+                                           (real_import, "999.0")):
+            with patch("aiko_pet.infrastructure.runtime_dependencies.import_module",
+                       side_effect=library_import), patch(
+                "aiko_pet.infrastructure.runtime_dependencies.version",
+                return_value=installed,
+            ), self.assertRaises(RuntimeDependencyError) as raised:
+                check_runtime_dependencies()
+            self.assertIn("pyjokes", str(raised.exception))
+            self.assertIn("Aiko_installieren.bat", str(raised.exception))
+
     def test_real_installed_engine_computes_all_required_values(self):
         check_runtime_dependencies()
 

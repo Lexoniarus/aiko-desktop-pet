@@ -63,6 +63,12 @@ class ManualSocialWorker:
             payload = dict(quote=f"Test {identifier}.", language="de",
                            link=f"https://www.zitat-service.de/de/quotations/{identifier}",
                            authorName="Testautor")
+        elif provider == SocialProvider.WITZAPI:
+            payload = dict(
+                language="de", text=(f"Test {identifier}? Antwort {identifier}."
+                                     if category == SocialCategory.TWO_PARTS
+                                     else f"Test {identifier}."),
+            )
         content = (None if fail else prepare_social_content(
             category, payload, provider=provider,
         ))
@@ -146,6 +152,10 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.assertEqual(self.worker.providers[-1], SocialProvider.QUOTATIONS)
         self.worker.complete(2, fail=True)
         update = self.social.poll()
+        self.assertIsNone(update)
+        self.assertEqual(self.worker.providers[-1], SocialProvider.WITZAPI)
+        self.worker.complete(3, fail=True)
+        update = self.social.poll()
         assert update is not None
         self.assertEqual(update.status, "error")
         self.assertFalse(self.social.waiting)
@@ -207,7 +217,7 @@ class SocialCoordinatorTests(unittest.TestCase):
         assert offered is not None and offered.content is not None
         self.social.accept(offered.content)
         self.social.select(SocialCategory.SINGLE)
-        for _ in range(5):
+        for _ in range(8):
             self.worker.complete(1)
             self.assertIsNone(self.social.poll())
             self.assertTrue(self.social.waiting)
@@ -230,7 +240,7 @@ class SocialCoordinatorTests(unittest.TestCase):
             self.assertEqual(update.status, "ready")
             self.social.accept(update.content)
 
-    def test_all_hundred_receipts_block_ids_and_content_across_categories(self):
+    def test_only_recent_jokes_block_repeats_while_archive_survives(self):
         self.social.set_enabled(True)
         for identifier in range(1, 101):
             self.worker.clock.now += 3600
@@ -253,13 +263,14 @@ class SocialCoordinatorTests(unittest.TestCase):
             payload = joke_payload(SocialCategory.TWO_PARTS,
                                    int(entry.identity.split(":")[1]))
             item = prepare_social_content(SocialCategory.TWO_PARTS, payload)
-            self.assertTrue(restored._duplicate(item))
+            self.assertEqual(restored._duplicate(item),
+                             entry in history.protected_entries)
             # Changed ID/provider, normalized words still match.
             payload = fact_payload("new")
             payload["text"] = "  TEST   " + entry.identity.split(":")[1] + ".  "
-            self.assertTrue(restored._duplicate(
+            self.assertEqual(restored._duplicate(
                 prepare_social_content(SocialCategory.FACT, payload),
-            ))
+            ), entry in history.protected_entries)
         self.assertEqual(restored.history, history)
         self.social.set_enabled(False)
         self.social.set_enabled(True)

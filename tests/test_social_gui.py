@@ -402,6 +402,8 @@ class SocialGuiTests(unittest.TestCase):
         self.pet._social_runtime.poll()
         self.worker.complete(2, fail=True)
         self.pet._social_runtime.poll()
+        self.worker.complete(3, fail=True)
+        self.pet._social_runtime.poll()
         menu.refresh()
         self.assertIn("erneuten", menu.status.cget("text"))
         self.assertEqual(self.pet.state.social, 10)

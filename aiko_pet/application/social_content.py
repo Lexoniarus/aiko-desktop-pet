@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass, replace
-from typing import Any
+from typing import Any, cast
 from urllib.parse import urlsplit
 
 from ..pet.animation.expression import Expression
@@ -16,6 +16,7 @@ from ..pet.mind.reaction_sequence import Cue
 from ..pet.social_content_evidence import SocialCategory as SocialCategory
 from ..pet.social_content_evidence import SocialContentEvidence
 from ..pet.social_content_evidence import SocialProvider as SocialProvider
+from .joke_content_policy import question_parts, wording_allowed
 from .social_candidates import RejectionReason
 
 BUFFERED_CATEGORIES = (
@@ -91,7 +92,7 @@ def with_intro_variant(
     )
 
 
-def _text(value: object) -> str:
+def _text(value: object, *, continues: bool = False) -> str:
     if not isinstance(value, str) or not value.strip() or len(value) > 2500:
         raise ValueError("Missing or oversized social text")
     if any(ord(char) < 32 and char not in "\n\r\t" for char in value):
@@ -101,7 +102,7 @@ def _text(value: object) -> str:
         raise SocialContentRejectionError(
             "incomplete", "Provider truncated the content"
         )
-    if text.endswith(("...", "…")):
+    if not continues and text.endswith(("...", "…")):
         raise SocialContentRejectionError("incomplete", "Incomplete social text")
     return text
 
@@ -199,6 +200,42 @@ def prepare_social_content(
         parts = (text,)
         license_name = "CC BY 4.0"
         license_url = "https://creativecommons.org/licenses/by/4.0/"
+    elif provider in (SocialProvider.WITZAPI, SocialProvider.PYJOKES):
+        raw_parts: tuple[str, ...]
+        if category not in (SocialCategory.SINGLE, SocialCategory.TWO_PARTS):
+            raise ValueError("Joke source/category mismatch")
+        if payload.get("language") != "de":
+            raise ValueError("Joke is not German")
+        if provider == SocialProvider.WITZAPI:
+            original = _text(payload.get("text"))
+            raw_parts = ((original,) if category == SocialCategory.SINGLE
+                         else question_parts(original))
+            source, source_url = "WitzAPI.de", "https://witzapi.de/"
+            license_name = "Private, nicht kommerzielle Nutzung (Anbieterhinweis)"
+            license_url = "https://witzapi.de/impressum.html"
+        else:
+            provided_parts = payload.get("parts")
+            if (not isinstance(provided_parts, tuple)
+                    or len(provided_parts) !=
+                    (2 if category == SocialCategory.TWO_PARTS else 1)
+                    or not all(isinstance(p, str) for p in provided_parts)):
+                raise ValueError("Invalid reviewed library parts")
+            raw_parts = cast(tuple[str, ...], provided_parts)
+            source, source_url = "pyjokes", "https://pyjok.es/"
+            license_name = "BSD-3-Clause"
+            license_url = "https://github.com/pyjokes/pyjokes/blob/main/LICENCE.txt"
+        part_values = list(raw_parts)
+        parts = ((_short_content(part_values[0], joke=True),)
+                 if category == SocialCategory.SINGLE else (
+                     _text(part_values[0], continues=True), _text(part_values[1]),
+                 ))
+        if category == SocialCategory.SINGLE and "?" in parts[0]:
+            raise ValueError("Question/answer jokes belong to Witz erzählen")
+        source_identifier = int(hashlib.sha256(
+            " ".join(parts).casefold().encode()
+        ).hexdigest(), 16)
+        identity = f"{provider.value}:{source_identifier}"
+        permalink = ""
     elif provider != default_provider(category):
         raise ValueError("Provider/category mismatch")
     elif category == SocialCategory.FACT:
@@ -251,10 +288,13 @@ def prepare_social_content(
             (_short_content(payload.get("joke"), joke=True),)
             if category == SocialCategory.SINGLE
             else (
-                _text(payload.get("setup")),
+                _text(payload.get("setup"), continues=True),
                 _text(payload.get("delivery")),
             )
         )
+    if category != SocialCategory.FACT and provider != SocialProvider.QUOTATIONS:
+        if not wording_allowed(" ".join(parts)):
+            raise ValueError("Joke wording is not eligible")
     fingerprint = hashlib.sha256(" ".join(parts).casefold().encode()).hexdigest()
     # Initial framing is deterministic. The coordinator rotates it against the
     # last admitted receipt when offering it, before the immutable playback.

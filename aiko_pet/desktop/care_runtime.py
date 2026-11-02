@@ -66,6 +66,7 @@ class DesktopCareRuntime:
         game_open: Callable[[], bool],
         social_worker: SocialContentWorker | None = None,
         social_history: SocialContentHistory = SocialContentHistory(),
+        local_content: tuple[PreparedSocialContent, ...] = (),
         persist_requests: Callable[[], StorageError | None] = lambda: None,
         zodiac_sign: Callable[[], str | None] = lambda: None,
         horoscope_history: HoroscopeHistory = HoroscopeHistory(),
@@ -95,6 +96,7 @@ class DesktopCareRuntime:
             social_worker if social_worker is not None else HttpSocialContentWorker(),
             history=social_history,
             persist_requests=persist_requests,
+            local_content=local_content,
         )
 
         def reactions(
@@ -202,6 +204,7 @@ class DesktopCareRuntime:
                 show_wait=lambda reaction: player.play(reaction, animate=False),
                 clear_wait=self._clear_wait,
                 persist_admission=save,
+                show_status=lambda text: speech.show_text(text, 6500),
                 can_wait=lambda: (
                     not is_closed() and not state.sleeping and not game_open()
                 ),

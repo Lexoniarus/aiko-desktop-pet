@@ -20,6 +20,8 @@ class SocialProvider(StrEnum):
     JOKEAPI = "jokeapi"
     QUOTATIONS = "zitat-service"
     FACTS = "uselessfacts"
+    WITZAPI = "witzapi"
+    PYJOKES = "pyjokes"
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +51,10 @@ class SocialContentEvidence:
                 (SocialCategory.SINGLE, SocialProvider.QUOTATIONS),
                 (SocialCategory.TWO_PARTS, SocialProvider.JOKEAPI),
                 (SocialCategory.FACT, SocialProvider.FACTS),
+                (SocialCategory.SINGLE, SocialProvider.WITZAPI),
+                (SocialCategory.TWO_PARTS, SocialProvider.WITZAPI),
+                (SocialCategory.SINGLE, SocialProvider.PYJOKES),
+                (SocialCategory.TWO_PARTS, SocialProvider.PYJOKES),
             )
         ):
             raise ValueError("Incompatible social content category/provider")
@@ -106,7 +112,9 @@ class SocialContentEvidence:
                     or any(char.isspace() or ord(char) < 32 for char in url)
                 ):
                     raise ValueError("Invalid social source URL")
-        if not self.permalink:
+        if not self.permalink and self.provider not in (
+            SocialProvider.WITZAPI, SocialProvider.PYJOKES,
+        ):
             raise ValueError("Missing social content permalink")
 
     @property

@@ -20,6 +20,7 @@ class SocialRuntimePorts:
     clear_wait: Callable[[], None]
     can_wait: Callable[[], bool] = lambda: True
     persist_admission: Callable[[], None] = lambda: None
+    show_status: Callable[[str], None] = lambda _text: None
 
 
 class SocialConversationRuntime:
@@ -46,7 +47,9 @@ class SocialConversationRuntime:
         return frozenset(
             c.value
             for c in SocialCategory
-            if self.content.enabled and self.content.count(c)
+            if self.content.enabled and (
+                self.content.count(c) or self.content.local_candidates(c)
+            )
         )
 
     def snapshot(self) -> tuple[str, PreparedSocialContent | None]:
@@ -115,6 +118,8 @@ class SocialConversationRuntime:
                 if selection.status == "search_paused"
                 else "social.error"
             )
+            if self._ports.can_start():
+                self._ports.show_status(GERMAN_TEXT.format(self._status))
             return
         item, token = selection.content, self._token
         self._phase = "admitting"

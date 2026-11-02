@@ -5,13 +5,20 @@ from __future__ import annotations
 import unittest
 from dataclasses import replace
 from typing import Callable
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.social_candidates import JokeCatalog
-from aiko_pet.application.social_content import PreparedSocialContent, SocialCategory
-from aiko_pet.application.social_coordinator import SocialContentCoordinator
+from aiko_pet.application.social_content import (
+    PreparedSocialContent,
+    SocialCategory,
+    SocialProvider,
+)
+from aiko_pet.application.social_coordinator import (
+    SocialContentCoordinator,
+    providers_for,
+)
 from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
@@ -47,7 +54,7 @@ class SocialRuntimeTests(unittest.TestCase):
     def test_bounded_content_search_ends_holding_without_claiming_api_failure(self):
         self.runtime.select(SocialCategory.SINGLE)
         self.deferred.pop()()
-        for _ in range(6):
+        for _ in range(9):
             self.worker.complete(1)
             assert self.worker.result is not None
             self.worker.result = replace(
@@ -62,6 +69,14 @@ class SocialRuntimeTests(unittest.TestCase):
         self.assertEqual(self.content.history.requests.blocks, ())
 
     def test_exhausted_small_pool_has_distinct_status_without_starting_playback(self):
+        sources = patch(
+            "aiko_pet.application.social_coordinator.providers_for",
+            side_effect=lambda category: tuple(
+                p for p in providers_for(category) if p != SocialProvider.WITZAPI
+            ),
+        )
+        sources.start()
+        self.addCleanup(sources.stop)
         self.runtime.close()
         worker = ManualSocialWorker()
         content = SocialContentCoordinator(
@@ -146,6 +161,9 @@ class SocialRuntimeTests(unittest.TestCase):
         self.runtime.poll()
         self.assertTrue(self.runtime.waiting)
         self.worker.complete(2, fail=True)
+        self.runtime.poll()
+        self.assertTrue(self.runtime.waiting)
+        self.worker.complete(3, fail=True)
         self.runtime.poll()
         self.assertFalse(self.holding)
         self.assertFalse(self.runtime.waiting)

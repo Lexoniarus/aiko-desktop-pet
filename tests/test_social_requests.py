@@ -109,17 +109,18 @@ class RequestAdmissionTests(unittest.TestCase):
         )
         return self.content.poll()
 
-    def test_six_rejections_stop_refill_without_blocking_provider(self):
+    def test_three_rejections_per_source_stop_refill_without_provider_pause(self):
         self.content.set_enabled(True)
         self.content.select(SocialCategory.SINGLE)
-        for _ in range(5):
+        for _ in range(8):
             self.assertIsNone(self.invalid())
             # Repeated clicks join existing work and do not reset retry accounting.
             self.content.select(SocialCategory.SINGLE)
         result = self.invalid()
         assert result is not None
         self.assertEqual(result.status, "search_paused")
-        for provider in (SocialProvider.JOKEAPI, SocialProvider.QUOTATIONS):
+        for provider in (SocialProvider.JOKEAPI, SocialProvider.QUOTATIONS,
+                         SocialProvider.WITZAPI):
             self.assertEqual(sum(
                 p == provider and category == SocialCategory.SINGLE
                 for (category, _token), p
@@ -213,6 +214,6 @@ class RequestAdmissionTests(unittest.TestCase):
         self.content.set_enabled(True)
         self.assertEqual(self.worker.providers, [SocialProvider.QUOTATIONS])
         self.assertEqual(
-            self.content.select(SocialCategory.TWO_PARTS).status, "limited"
+            self.content.select(SocialCategory.TWO_PARTS).status, "waiting"
         )
         self.assertEqual(self.content.select(SocialCategory.SINGLE).status, "waiting")

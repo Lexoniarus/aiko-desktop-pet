@@ -31,6 +31,8 @@ def project_credits(content: PreparedSocialContent | None) -> CreditsSnapshot:
                 SocialProvider.FACTS: "Random Useless Facts",
                 SocialProvider.JOKEAPI: "JokeAPI",
                 SocialProvider.QUOTATIONS: "Zitat-Service",
+                SocialProvider.WITZAPI: "WitzAPI.de",
+                SocialProvider.PYJOKES: "pyjokes (lokal)",
             }[content.provider],
             content.source,
             content.source_url,

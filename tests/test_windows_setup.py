@@ -46,13 +46,15 @@ class WindowsSetupTests(unittest.TestCase):
         # Package the installed pure-Python dependency for offline setup checks.
         wheels = self.folder / "wheels"
         wheels.mkdir()
-        package = importlib.metadata.distribution("astronomy-engine")
-        with zipfile.ZipFile(
-            wheels / f"astronomy_engine-{package.version}-py3-none-any.whl", "w",
-        ) as archive:
-            for member in package.files or ():
-                if ".." not in member.parts and "__pycache__" not in member.parts:
-                    archive.write(str(package.locate_file(member)), member.as_posix())
+        for name in ("astronomy-engine", "pyjokes"):
+            package = importlib.metadata.distribution(name)
+            wheel_name = f"{name.replace('-', '_')}-{package.version}-py3-none-any.whl"
+            with zipfile.ZipFile(wheels / wheel_name, "w") as archive:
+                for member in package.files or ():
+                    if ".." not in member.parts and "__pycache__" not in member.parts:
+                        archive.write(
+                            str(package.locate_file(member)), member.as_posix(),
+                        )
         self.environment["PIP_FIND_LINKS"] = wheels.as_uri()
         self.environment["PIP_NO_INDEX"] = "1"
         self.environment["PIP_CONFIG_FILE"] = os.devnull

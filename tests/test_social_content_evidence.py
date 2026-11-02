@@ -76,6 +76,14 @@ def decode_cause(raw: dict[str, Any]) -> tuple[MoodletCause, ...]:
 
 
 class SocialEvidenceContractTests(unittest.TestCase):
+    def test_sources_without_item_urls_keep_original_evidence_and_source_credit(self):
+        for provider in (SocialProvider.WITZAPI, SocialProvider.PYJOKES):
+            content = replace(
+                evidence(SocialCategory.TWO_PARTS, provider), permalink="",
+            )
+            cause = social_cause(content)
+            self.assertEqual(decode_cause(encode_moodlet_cause(cause)), (cause,))
+
     def test_canonical_vocabulary_and_four_original_formats_round_trip(self):
         self.assertIs(SocialCategory, DomainCategory)
         for category, provider, kind in (
@@ -83,6 +91,8 @@ class SocialEvidenceContractTests(unittest.TestCase):
             (SocialCategory.SINGLE, SocialProvider.QUOTATIONS, "quotation"),
             (SocialCategory.TWO_PARTS, SocialProvider.JOKEAPI, "two_part"),
             (SocialCategory.FACT, SocialProvider.FACTS, "fact"),
+            (SocialCategory.SINGLE, SocialProvider.PYJOKES, "one_liner"),
+            (SocialCategory.TWO_PARTS, SocialProvider.WITZAPI, "two_part"),
         ):
             with self.subTest(kind=kind):
                 content = evidence(category, provider)

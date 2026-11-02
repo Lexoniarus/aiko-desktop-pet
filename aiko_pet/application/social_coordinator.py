@@ -25,7 +25,11 @@ from .social_content import (
     with_intro_variant,
 )
 from .social_fetch import SocialContentWorker, SocialFetchRequest
-from .social_history import SocialContentHistory, SocialContentReceipt
+from .social_history import (
+    JOKE_REPEAT_WINDOW,
+    SocialContentHistory,
+    SocialContentReceipt,
+)
 from .storage_contracts import StorageError
 
 Job = tuple[SocialCategory, SocialProvider]
@@ -33,8 +37,10 @@ Job = tuple[SocialCategory, SocialProvider]
 
 def providers_for(category: SocialCategory) -> tuple[SocialProvider, ...]:
     return (
-        (SocialProvider.JOKEAPI, SocialProvider.QUOTATIONS)
+        (SocialProvider.JOKEAPI, SocialProvider.QUOTATIONS, SocialProvider.WITZAPI)
         if category == SocialCategory.SINGLE
+        else (SocialProvider.JOKEAPI, SocialProvider.WITZAPI)
+        if category == SocialCategory.TWO_PARTS
         else (default_provider(category),)
     )
 
@@ -59,6 +65,7 @@ class SocialContentCoordinator:
         wall_time: Callable[[], float] | None = None,
         persist_requests: Callable[[], StorageError | None] = lambda: None,
         joke_catalog: JokeCatalog | None = None,
+        local_content: tuple[PreparedSocialContent, ...] = (),
     ) -> None:
         self._worker, self._wall_time = worker, wall_time or time.time
         self._persist_requests = persist_requests
@@ -81,6 +88,7 @@ class SocialContentCoordinator:
             requests=history.requests.pruned(self._wall_time()),
         )
         self._storage_failed = False
+        self._local_content = local_content
 
     @property
     def history(self) -> SocialContentHistory:
@@ -148,6 +156,11 @@ class SocialContentCoordinator:
             item = self._offer(item)
             self._pump()
             return SocialSelection("ready", item)
+        local = self.local_candidates(category)
+        if local:
+            item = self._offer(choice(local))
+            self._pump()
+            return SocialSelection("ready", item)
         self._waiting = category
         self._pump()
         status = self._unavailable()
@@ -195,7 +208,7 @@ class SocialContentCoordinator:
 
     def _duplicate(self, item: PreparedSocialContent) -> bool:
         known = (
-            *self._history.entries,
+            *self._history.protected_entries,
             *((self._offered,) if self._offered else ()),
             *(entry for buffer in self._buffers.values() for entry in buffer),
         )
@@ -204,16 +217,56 @@ class SocialContentCoordinator:
             for entry in known
         )
 
+    def local_candidates(
+        self, category: SocialCategory,
+    ) -> tuple[PreparedSocialContent, ...]:
+        pool = tuple(e for e in self._local_content if e.category == category)
+        if not pool:
+            return ()
+        window = min(JOKE_REPEAT_WINDOW, len(pool) - 1)
+        history = tuple(e for e in self.history.entries if e.category == category)
+        protected = history[-window:] if window else ()
+        occupied = tuple(e for buffer in self._buffers.values() for e in buffer)
+        if self._offered is not None:
+            occupied += (self._offered,)
+        identities = {e.identity for e in protected} | {e.identity for e in occupied}
+        fingerprints = ({e.fingerprint for e in protected}
+                        | {e.fingerprint for e in occupied})
+        return tuple(e for e in pool if e.identity not in identities
+                     and e.fingerprint not in fingerprints)
+
     def _ranges(self, category: SocialCategory) -> tuple[IdRange, ...] | None:
         if self._catalog is None or self._catalog.valid_until <= self._wall_time():
             return None
-        identities = tuple(e.identity for e in self.history.entries) + tuple(
+        identities = tuple(e.identity for e in self.history.protected_entries) + tuple(
             e.identity for buffer in self._buffers.values() for e in buffer
         ) + ((self._offered.identity,) if self._offered else ())
-        return JokeCandidatePolicy.remaining_ranges(
+        ranges = JokeCandidatePolicy.remaining_ranges(
             self._catalog, category, identities, self.history.exclusions,
             self._wall_time(),
         )
+        if ranges:
+            return ranges
+        # A provider/type pool smaller than the guard still needs a rotation.
+        # Release one oldest known valid item, never occupied content or the
+        # last joke from that source. Eligibility exclusions remain authoritative.
+        known = tuple(e for e in self.history.entries if e.category == category
+                      and e.identity.startswith("jokeapi:"))
+        occupied = tuple(e for buffer in self._buffers.values() for e in buffer)
+        if self._offered is not None:
+            occupied += (self._offered,)
+        for entry in known[:-1]:
+            if any(e.identity == entry.identity or e.fingerprint == entry.fingerprint
+                   for e in occupied):
+                continue
+            available = JokeCandidatePolicy.remaining_ranges(
+                self._catalog, category,
+                tuple(i for i in identities if i != entry.identity),
+                self.history.exclusions, self._wall_time(),
+            )
+            if available:
+                return available
+        return ()
 
     def _exhausted(self, job: Job) -> bool:
         return job[1] == SocialProvider.JOKEAPI and self._ranges(job[0]) == ()

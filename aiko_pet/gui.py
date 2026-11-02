@@ -39,6 +39,7 @@ from .infrastructure.active_time import elapsed_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
 from .infrastructure.hardware.monitor import ActivityMonitor
+from .infrastructure.local_jokes import load_local_jokes
 from .infrastructure.persistence import StateStore
 from .pet.animation.idle_gesture import with_idle_gestures
 from .pet.content import GERMAN_TEXT
@@ -69,6 +70,7 @@ class DesktopPet:
         self, *, store: SavedPetStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
         social_worker: SocialContentWorker | None = None,
+        local_social_content: tuple[PreparedSocialContent, ...] | None = None,
     ) -> None:
         self.store = store or StateStore()
         active_clock = ActiveSessionClock(elapsed_uptime_seconds, wall_time=time.time)
@@ -461,6 +463,8 @@ class DesktopPet:
             set_context=self._set_context, save=self._save,
             is_closed=lambda: self._closed, game_open=lambda: self._hover.game_open,
             social_worker=social_worker, social_history=session.social_history,
+            local_content=(load_local_jokes() if local_social_content is None
+                           else local_social_content),
             persist_requests=self._persistence.save,
             zodiac_sign=lambda: self.settings.zodiac_sign,
             horoscope_history=session.horoscope, mind=self.mind,

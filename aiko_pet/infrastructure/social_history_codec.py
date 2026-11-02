@@ -67,17 +67,15 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
             or not 0 <= intro_variant < SOCIAL_INTRO_VARIANTS
         ):
             raise ValueError("Invalid social introduction variant")
-        prefix = (
-            "uselessfacts:"
-            if category == SocialCategory.FACT
-            else "zitat-service:"
-            if category == SocialCategory.SINGLE
-            and isinstance(identity, str)
-            and identity.startswith("zitat-service:")
-            else "jokeapi:"
-        )
+        prefixes = (("uselessfacts:",) if category == SocialCategory.FACT
+                    else ("jokeapi:", "witzapi:", "pyjokes:", "zitat-service:")
+                    if category == SocialCategory.SINGLE
+                    else ("jokeapi:", "witzapi:", "pyjokes:"))
+        prefix = next((p for p in prefixes if isinstance(identity, str)
+                       and identity.startswith(p)), "")
         if (
             not isinstance(identity, str)
+            or not prefix
             or not identity.startswith(prefix)
             or not 1 <= len(identity.removeprefix(prefix)) <= 128
             or any(char.isspace() or ord(char) < 32 for char in identity)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from aiko_pet.application.session import SavedPetStore
+from aiko_pet.application.social_content import PreparedSocialContent
 from aiko_pet.application.social_fetch import SocialContentWorker
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
@@ -24,8 +25,10 @@ class _GuiTestMonitor(ActivityMonitor):
 
 def create_test_desktop(
     *, store: SavedPetStore, social_worker: SocialContentWorker | None = None,
+    local_social_content: tuple[PreparedSocialContent, ...] = (),
 ) -> DesktopPet:
     """Keep real widgets, lifecycle and state, without starting sensor threads."""
     return DesktopPet(
         store=store, activity_monitor=_GuiTestMonitor(), social_worker=social_worker,
+        local_social_content=local_social_content,
     )
