@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Pass the prepared startup resources into desktop composition and reuse the
+  checked joke contents without a second load. Direct DesktopPet construction
+  also prepares missing resources before creating a store, restoring a session
+  or opening a pet window.
+
 - Validate the complete reviewed local-joke catalogue in runtime preflight.
   Return immutable prepared resources and classify dependency, review-file and
   content failures through the existing startup-error contract before normal

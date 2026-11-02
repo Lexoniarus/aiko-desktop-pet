@@ -63,7 +63,7 @@ class RuntimeDependencyTests(unittest.TestCase):
 
     def test_failed_dependency_check_never_opens_the_application(self):
         create = Mock()
-        with patch("aiko_pet.desktop.startup.check_runtime_dependencies",
+        with patch("aiko_pet.desktop.startup.prepare_runtime_resources",
                    side_effect=RuntimeDependencyError("missing")), patch(
                        "aiko_pet.desktop.startup.messagebox.showerror") as report:
             with self.assertRaises(SystemExit) as raised:
@@ -71,3 +71,14 @@ class RuntimeDependencyTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, 1)
         create.assert_not_called()
         report.assert_called_once()
+
+    def test_prepared_resources_are_passed_to_factory_before_running_app(self):
+        resources = prepare_runtime_resources()
+        app = Mock()
+        create = Mock(return_value=app)
+        with patch("aiko_pet.desktop.startup.prepare_runtime_resources",
+                   return_value=resources) as prepare:
+            run_desktop(create)
+        prepare.assert_called_once_with()
+        create.assert_called_once_with(resources)
+        app.run.assert_called_once_with()
