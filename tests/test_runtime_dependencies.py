@@ -1,6 +1,7 @@
 """Dependency errors are detected before opening a save or constructing Tk UI."""
 
 import unittest
+from dataclasses import FrozenInstanceError
 from importlib import import_module
 from unittest.mock import Mock, patch
 
@@ -8,6 +9,7 @@ from aiko_pet.desktop.startup import run_desktop
 from aiko_pet.infrastructure.runtime_dependencies import (
     RuntimeDependencyError,
     check_runtime_dependencies,
+    prepare_runtime_resources,
 )
 
 
@@ -22,9 +24,9 @@ class RuntimeDependencyTests(unittest.TestCase):
 
         for library_import, installed in ((missing_library, "0.8.3"),
                                            (real_import, "999.0")):
-            with patch("aiko_pet.infrastructure.runtime_dependencies.import_module",
+            with patch("aiko_pet.infrastructure.local_jokes.import_module",
                        side_effect=library_import), patch(
-                "aiko_pet.infrastructure.runtime_dependencies.version",
+                "aiko_pet.infrastructure.local_jokes.version",
                 return_value=installed,
             ), self.assertRaises(RuntimeDependencyError) as raised:
                 check_runtime_dependencies()
@@ -33,6 +35,19 @@ class RuntimeDependencyTests(unittest.TestCase):
 
     def test_real_installed_engine_computes_all_required_values(self):
         check_runtime_dependencies()
+
+    def test_preparation_retains_the_checked_immutable_content(self):
+        from aiko_pet.infrastructure.local_jokes import load_local_jokes
+
+        contents = load_local_jokes()
+        with patch("aiko_pet.infrastructure.runtime_dependencies.load_local_jokes",
+                   return_value=contents) as load:
+            resources = prepare_runtime_resources()
+        load.assert_called_once_with()
+        self.assertIs(resources.local_social_content, contents)
+        self.assertEqual(len(contents), 17)
+        with self.assertRaises(FrozenInstanceError):
+            setattr(resources, "local_social_content", ())
 
     def test_missing_or_incomplete_engine_explains_the_actual_interpreter(self):
         for failure in (ModuleNotFoundError("astronomy"), AttributeError("Time")):

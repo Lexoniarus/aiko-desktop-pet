@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Validate the complete reviewed local-joke catalogue in runtime preflight.
+  Return immutable prepared resources and classify dependency, review-file and
+  content failures through the existing startup-error contract before normal
+  application construction. Use strict resource JSON decoding and actionable
+  recovery messages without exposing joke text.
+
 - Preserve a validated JokeAPI ID and typed `wording` reason when the shared
   wording filter rejects content. Persist that eligibility exclusion through the
   existing JSON/SQLite codecs so later requests skip the ID without a provider
