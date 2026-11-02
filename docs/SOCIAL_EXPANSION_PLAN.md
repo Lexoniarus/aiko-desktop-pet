@@ -22,6 +22,16 @@ Decisions below supersede earlier proposals for the selected scope. The current
 Sprüche and horoscope behavior are described in [social content](SOCIAL_CONTENT.md);
 the delivery records below retain their individual scope. Tarot remains future work.
 
+## Additional source approval (2026-11-02)
+
+The owner authorized WitzAPI and a local library when suitable, with care around
+wording. Current delivery is documented in [social content](SOCIAL_CONTENT.md):
+keyless private WitzAPI retrieval, a 17-entry reviewed subset of pyjokes 0.8.3,
+finite repeat protection, paired ellipsis validation and visible failure feedback.
+This explicitly extends the earlier API-only rule for jokes. Historical delivery
+records below retain their original scope. Authored joke fallbacks and an extra
+generation/translation model remain excluded.
+
 ## Owner decisions
 
 | Area | Selected direction |

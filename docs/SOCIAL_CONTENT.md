@@ -8,13 +8,14 @@ Tarot remains planned. Aiko reads an actual placed/held book and stays herself.
 
 The **Unterhalten** toolbar button opens five choices: **Plaudern**,
 **Sprüche**, **Witz erzählen**, **Kurioser Fakt** and **Tageshoroskop**. Plaudern
-keeps the existing authored, context-sensitive conversations. Sprüche, Witze
-and Fakten use API content exclusively; Tageshoroskop places a local book.
+keeps the existing authored, context-sensitive conversations. Sprüche and Witze
+use external sources, including an individually reviewed local library subset;
+facts use API content. Tageshoroskop places a local book.
 
-Enable **Onlinequellen für Sprüche, Zitate, Witze und Fakten verwenden** in
-settings to use the API categories. It defaults to off, including when loading
-older saves without the option. With online sources off, Plaudern and the local
-book remain available; the three API choices show a settings hint. The book
+Enable **Onlinequellen und lokale Witze für Unterhalten verwenden** in
+settings to use the additional sources. It defaults to off, including when loading
+older saves without the option. With additional sources off, Plaudern and the local
+book remain available; the other three choices show a settings hint. The book
 requires a directly selected zodiac sign and permits only one live instance.
 
 ## Providers and preparation
@@ -24,6 +25,8 @@ requires a directly selected zodiac sign and permits only one live instance.
 | Sprüche: Einzeiler | [JokeAPI](https://jokeapi.dev/), German `type=single`, Safe Mode and excluded flags | `joke`, numeric `id`, `lang`, `safe`, `flags` |
 | Sprüche: Zitate | [Zitat-Service](https://api.zitat-service.de/), public `/v1/quote?language=de` | `quote`, `language`, stable `link`, `authorName`, optional `authorLink`, `source`, `sourceLink` |
 | Witz erzählen | JokeAPI with `type=twopart` and the same language/filter settings | `setup`, `delivery` and the same metadata |
+| Sprüche / Witz erzählen | [WitzAPI.de](https://witzapi.de/api-docs/), German `flachwitze` / `scherzfragen`, one item per request | `text`, `language`; wording and format checks, content-derived identity |
+| Sprüche / Witz erzählen | [pyjokes 0.8.3](https://pypi.org/project/pyjokes/0.8.3/), local reviewed subset | 4 sayings and 13 two-part jokes, exact reviewed source hashes and boundaries |
 | Kurioser Fakt | [Random Useless Facts](https://uselessfacts.jsph.pl/), v2 random endpoint with `language=de` | `text`, string `id`, `source`, `source_url`, `language`, `permalink` |
 
 A Sprüche item is complete and at most **125 characters**, including spaces and
@@ -67,6 +70,46 @@ a valid response is not independent verification of their claims.
 The Credits view retains the most recently accepted item's source and API-entry links.
 Links open only when clicked. Source metadata remains attached to the prepared
 item; it is not added to Aiko's personal experiences or World knowledge.
+
+## Additional German joke sources (2026-11-02)
+
+The owner approved both a second live source and a local external library, with
+particular care around wording. This extends the former API-only boundary for
+jokes; authored substitute entertainment and an extra generation/translation
+model remain excluded. The same saved source opt-in controls the online and
+local additions. A local library response never claims it was found online.
+
+WitzAPI's documented random endpoint is free and keyless. Read-only requests on
+2026-11-02 returned German text successfully. The adapter restricts category
+and language and never follows redirects, submits content, or downloads a bulk
+catalogue. Responses have no stable ID, safety flags, or explicit punchline.
+Normalized content determines identity; only unambiguous single-question answers
+qualify as two-part content. Question/answer material does not enter Sprüche.
+The provider [imprint](https://witzapi.de/impressum.html) allows private,
+noncommercial copies; no general open-content redistribution licence was found.
+The integration performs private live retrieval and keeps provider texts out of
+the repository. This does not grant permission to redistribute a WitzAPI dump.
+
+`pyjokes==0.8.3` is the sole additional package, has no transitive dependencies,
+and uses BSD-3-Clause (copy in `LICENSES/PYJOKES_BSD_3_CLAUSE.txt`). Its label
+`neutral` is not an editorial guarantee. Only 17 individually inspected entries
+are enabled through `data/pyjokes.de.review.json`; no Chuck Norris pool is loaded.
+The review records the exact package version, text hashes, category and lossless
+presentation boundary. Unknown or changed entries cannot pass that review.
+Words and punctuation are preserved; only presentation boundaries and whitespace
+normalization are applied. Existing source limits still apply.
+
+All joke sources additionally pass `application/joke_content_policy.py`'s
+conservative wording rejection rules. These reject observed slurs, political,
+sexual and other unsuitable terms; they do not claim semantic safety for every
+possible remote text. The local subset has separate editorial review. WitzAPI
+category names alone never establish content suitability.
+
+Prepared online stock remains preferred. When it is empty, the coordinator can
+offer eligible local content immediately, including during network failures or
+provider quota waits. Local retrieval reserves no HTTP quota. Every actual
+admission follows the existing care, history, source-evidence and Credits path.
+Sources without a stable entry URL do not expose a misleading random-entry link.
 
 ## Local daily horoscope book
 
@@ -140,18 +183,25 @@ keeps its existing protection, including blank pauses and reading clicks.
 Sayings/jokes/facts have an eight-second network timeout. All their responses
 are bounded to 16 KiB. Local horoscope books do not use the worker or network.
 There is no separate four-second display deadline. Errors end the waiting
-attempt with a brief menu message; choosing the category retries. Failures never
+attempt with a menu message and an informational speech bubble; choosing the
+category retries. The message is not a rewarded conversation. Failures never
 select local authored entertainment or silently switch to Plaudern. Other ready
 API items remain usable if the network subsequently becomes unavailable.
 
-Ready and offered items cannot duplicate one another. The last 100 admitted
-contents per category also participate in repetition checking, including after
-restart. Namespaced provider IDs or normalized text fingerprints match across
+Ready and offered items cannot duplicate one another. The bounded archive keeps
+up to 100 unique admitted contents per category across restart. The last ten
+admissions per joke/saying category protect against repeats; facts retain their
+100-content protection. When a known JokeAPI pool smaller than that guard has
+no remaining candidates, release its oldest unoccupied eligible item while
+protecting the last item from that source. Category exclusions remain in force.
+Local source selection caps its protection at pool size minus one so a small
+reviewed pool cannot permanently exclude itself. Namespaced
+provider IDs or normalized text fingerprints match across
 all three categories, including text split differently into setup/delivery.
 Only actual playback admission records a receipt; preparation, selection and
-cancellation do not. One hundred newer admissions in its category release an older
-receipt, unless another category/buffer/offer still excludes it. Both Sprüche
-providers share the same 100-content history. Every rejected, duplicate or failed
+cancellation do not. A repeated admission moves the existing receipt to the
+latest position rather than producing duplicate save rows. Sources share one
+category history. Every rejected, duplicate or failed HTTP
 attempt consumes the provider budget. A refill cycle stops after three rejected
 or duplicate attempts per category/source, without imposing a provider pause.
 Another deliberate selection can continue searching; repeated clicks while the
@@ -161,7 +211,7 @@ No authored fallback is used.
 
 Before JokeAPI content requests, one separately budgeted `/info` request supplies
 the German ID bounds, cached for an hour in the session. The scheduler subtracts
-all admitted IDs, buffered/offered IDs and active category-specific exclusions,
+protected recent IDs, buffered/offered IDs and active category-specific exclusions,
 then chooses an allowed contiguous range for `idRange`. Counts are not hardcoded
 and no bulk joke download is used. Preparation still checks fingerprints, safety,
 language and presentation limits. A recognized unsuitable item's ID and reason,
@@ -171,7 +221,7 @@ trusted identity do not blacklist arbitrary IDs. Metadata and content share one
 worker, pacing, quotas and reservation-before-dispatch persistence.
 
 An exhausted candidate pool reports that no matching new jokes remain; the
-100-content history is never automatically cleared or relaxed. Reaching the
+archive remains intact while old jokes become eligible again. Reaching the
 three-attempt search bound reports a separate retry-selection message. Empty
 ranges and unsuitable content never block another JokeAPI category. Facts and
 quotations retain their existing random endpoints and final repetition checks.
@@ -194,7 +244,8 @@ network call or allowing it to touch destroyed Tk widgets.
 ## Free endpoints and request discipline
 
 Only the reviewed public URLs are used, with no keys, account, billing path,
-paid fallback or new dependency. HTTP redirects are refused; changed access
+paid fallback or generation model. The local library is pinned in requirements.
+HTTP redirects are refused; changed access
 requirements remain unavailable. Provider documentation/terms were rechecked on
 2026-10-23: JokeAPI documents 120 requests/minute per client; Zitat-Service and
 Random Useless Facts have no numeric quota in the reviewed public documentation.
@@ -207,6 +258,8 @@ These are **Aiko client caps**, not claims about undocumented provider quotas:
 | JokeAPI, shared by Einzeiler and Witz | 5 seconds | 60 | 300 |
 | Zitat-Service | 10 seconds | 20 | 60 |
 | Random Useless Facts | 10 seconds | 20 | 60 |
+| WitzAPI.de | 10 seconds | 20 | 60 |
+| pyjokes (local) | no HTTP | no HTTP | no HTTP |
 
 HTTP 429 respects Retry-After (seconds or HTTP date) and JokeAPI's HTTP-date
 RateLimit-Reset; without usable metadata it pauses for fifteen minutes. A valid
@@ -305,6 +358,10 @@ is added. See [storage and import](DATA_AND_SAVES.md).
 
 - `application/social_content.py` validates source data and prepares immutable
   source-aware reactions with separate original-content evidence.
+- `application/joke_content_policy.py` owns conservative wording rejection and
+  unambiguous question boundaries. `infrastructure/local_jokes.py` validates the
+  pinned library against the editorial review manifest before assembly supplies
+  immutable local content to the existing coordinator.
 - `pet/social_content_evidence.py` owns the frozen original parts/attribution and
   shared category/provider vocabulary; existing application imports re-export
   those same types. The existing completion path and Pet cause producers retain

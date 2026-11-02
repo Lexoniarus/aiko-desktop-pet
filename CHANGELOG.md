@@ -12,6 +12,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   user's native cursor position. Verify the intended on-monitor placement and
   observed take before checking duplicate-book and friendship consequences.
 
+- Add keyless WitzAPI retrieval and 17 individually reviewed German pyjokes
+  entries from pinned version 0.8.3. Preserve original source words and credits,
+  reject observed unsuitable wording, and keep local selection independent of
+  HTTP budgets. Release older jokes after a finite repeat window while retaining
+  the archive, allow a complete question/punchline ellipsis, and show an explicit
+  follow-up bubble when a content search ends unsuccessfully.
+
 - Exclude remembered JokeAPI IDs before fetching through allowed ID ranges.
   Persist bounded unsuitable-content and empty-range exclusions across restarts;
   distinguish an exhausted joke pool and a bounded unsuccessful search from

@@ -21,10 +21,12 @@ policy; the batch file sets the policy for its own setup process only.
    [official unattended install options](https://docs.python.org/3.13/using/windows.html#installing-without-ui).
 3. Create `.venv` inside the extracted Aiko folder. Only this environment
    receives the packages from [`requirements.txt`](../requirements.txt).
-   It pins Astronomy Engine 2.1.19 for offline Sun/Moon/phase calculation.
+   It pins Astronomy Engine 2.1.19 for offline Sun/Moon/phase calculation and
+   pyjokes 0.8.3 for the individually reviewed local joke subset.
    The horoscope needs no account, key or network access at runtime. Pillow, Ruff,
    Mypy and Pyright are developer tools, not required by players.
-4. Import the application, verify a real offline astronomy calculation,
+4. Import the application, verify a real offline astronomy calculation and the
+   pinned German joke library,
    validate the character catalog and load one
    character PNG in a hidden Tk window. No pet session or save is opened.
 5. Create `Aiko Desktop Pet` shortcuts on the current user's desktop and
@@ -65,12 +67,14 @@ create the shortcut in a chosen folder instead of the desktop and Start menu.
   Supporting those systems requires a separate compatibility baseline.
 - **Setup reports an error:** its window stays open with the failing step.
   Aiko's `Aiko_starten_debug.bat` keeps application errors visible.
-- **Missing `astronomy` module:** rerun `Aiko_installieren.bat`, then use
+- **Missing `astronomy` or missing/wrong-version `pyjokes`:** rerun
+  `Aiko_installieren.bat`, then use
   `Aiko_starten.bat`. Manual environments must install `requirements.txt`.
   Startup checks this before opening a save.
-- **Offline use:** setup may download Python and the required package. Once
-  installed, the local book works without network access; the separate online
-  sayings/jokes/facts still need their optional online-source setting.
+- **Offline use:** setup may download Python and the required packages. Once
+  installed, the local book and reviewed pyjokes subset work without network
+  access. Local jokes share the optional entertainment-source setting with
+  online sayings/jokes/facts; online retrieval still needs a connection.
 
 ## Removal
 

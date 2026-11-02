@@ -116,7 +116,7 @@ This source builds on the **v0.13 feature baseline and modular OOP refactor**, w
 
 4. Hover over Aiko to open the care panel. If the window fails to start, use `Aiko_starten_debug.bat` to keep the error output visible.
 
-Manual Python environments must install `requirements.txt`, including Astronomy Engine for the offline horoscope. Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers require the local `.venv`; startup checks its offline astronomy calculation before opening a save. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
+Manual Python environments must install `requirements.txt`, including Astronomy Engine for the offline horoscope and pyjokes for reviewed local jokes. Windows itself does not include Python or Tkinter. Tcl/Tk is installed as a Python component by setup; it is not a pip package. The launchers require the local `.venv`; startup checks its offline astronomy calculation and pinned joke library before opening a save. Keep the extracted folder in place after setup. [Setup options, troubleshooting and removal →](docs/WINDOWS_SETUP.md)
 
 If the optional Kenney Mini font is already installed, Aiko can use it; otherwise she falls back to Segoe UI. Font files are not redistributed.
 

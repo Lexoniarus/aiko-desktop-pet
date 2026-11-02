@@ -8,8 +8,9 @@ Read [README.md](README.md) for setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.
 
 The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11.
 Install `requirements.txt` in the interpreter you use for Aiko and tests; it
-pins Astronomy Engine for the offline horoscope. CI quality tools are separate
-development dependencies. The Windows setup creates and verifies `.venv`.
+pins Astronomy Engine for the offline horoscope and pyjokes for reviewed local
+jokes. CI quality tools are separate development dependencies. The Windows setup
+creates and verifies `.venv`.
 
 ## Development workflow
 
