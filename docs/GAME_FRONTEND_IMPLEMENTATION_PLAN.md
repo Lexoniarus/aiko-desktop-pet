@@ -1,11 +1,54 @@
 # Spieloberflächen und Aikos Auftritte — Umsetzungsplan
 
-Stand: 30.10.2026. **Native implementation delivered; validation recorded below.**
+Stand: 02.11.2026. **Native implementation delivered; validation recorded below.**
 
 Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 [UI_VN_DESIGN.md](UI_VN_DESIGN.md) in die bestehende Python/Tk-Anwendung.
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
+
+## Readable non-blocking Blackjack/RPS commentary — 2026-11-02
+
+Owner playtesting accepted the physical flow but found Blackjack and Fingerduell
+text too brief. Their optional greeting/result/waiting commentary now uses
+GamePacing.comment_text_ms: 400 ms plus 32 ms per character, bounded to 1.4–4.5
+seconds. Quiz retains its own slower, gated host pacing; the other games keep
+their existing timing. RPS arm cycles, spoken hand words, third-marker reveal,
+450 ms emoji and immediate next choice remain unchanged.
+
+BlackjackCommentary owns only speech, expressions and emoji on a separate
+cancellable timer. BlackjackSequence owns cards, input gates, settlement and
+round advancement; it never waits for that commentary timer. Welcome overlaps
+shuffle/deal. Stand acknowledgement overlaps the flip/bank turn rather than
+waiting through another reveal announcement. Outcomes replace queued obsolete
+cues, followed by an optional personal aside and one emoji, without replaying
+the aside. A new hand drops unheard old cues while the current phrase may
+finish over the new deal. Valid Hit/Stand decisions and Close cancel current
+and queued speech immediately; waiting reminders never accumulate behind it.
+
+The table uses a fixed 4.5-second result-view interval from settlement, followed
+by the existing gather/shuffle/deal. This supersedes the earlier speech → aside
+→ emoji → restored aside → restart chain, including its 900 ms final countdown.
+Text length or an unfinished aside cannot extend the result interval. Game
+rules, receipt/reward ownership, hidden-card handling, original card art and
+physical flight/shuffle speeds are preserved. Input still locks during actual
+card travel or the bank turn, not because a comment is being read.
+
+All 39 Blackjack and 19 RPS checks pass. Six native host scenarios additionally
+pass with timestamped speech/action traces. With intentionally long lines,
+Blackjack reaches player choice within 2.3 seconds while welcome remains visible;
+settlement and the next deal complete while speech is still active. A valid
+choice clears old speech, and stale text/emoji callbacks cannot return. RPS
+result text remains visible past the previous 3.2-second cap while all choices
+stay enabled, and the next hand still reveals at 2.25 seconds.
+
+Ruff and strict Mypy (386 files) pass; Pyright reports zero errors/warnings.
+Native traces and validation logs remain outside Git under
+`../lokale-daten/game-commentary-2026-11-02/`.
+
+The frozen full native suite passes **2,521 tests** in 411.586 seconds with no
+Python/JSON source changes during the run. Blackjack speech separation is
+committed as `c0f48cb`; longer RPS commentary as `61fb30e`.
 
 ## Quiz moderation reading-time correction — 2026-10-30
 

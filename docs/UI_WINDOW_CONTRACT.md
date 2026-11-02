@@ -349,3 +349,12 @@ including catalogue content, hosting lines and reminders. The bubble lifetime
 and Sequence continuation share the same deadline; input releases only after
 all four options and the release cue finish. This exception does not change
 the brisk pacing of the other games or the 450 ms game emoji interludes.
+
+Blackjack and RPS optional text now has an independent readable lifetime
+(1.4–4.5 seconds). RPS countdown/reveal timing and immediate replay stay intact.
+BlackjackCommentary owns only a cancellable speech/emoji timer, never game
+continuations. Welcome/deal and acknowledgement/flip overlap; input unlocks
+when card actions finish. The table advances after a fixed 4.5-second result
+view, independently of spoken-text length. A new hand discards unheard old
+cues, while the current phrase may finish. Valid Hit/Stand or Close cancels both
+current and queued speech. The former result-aside replay is removed.
