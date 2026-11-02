@@ -358,3 +358,13 @@ when card actions finish. The table advances after a fixed 4.5-second result
 view, independently of spoken-text length. A new hand discards unheard old
 cues, while the current phrase may finish. Valid Hit/Stand or Close cancels both
 current and queued speech. The former result-aside replay is removed.
+
+RPS now has separate native speech and side-hand bubbles, both owned by
+SpeechPresenter and exposed through its windows collection for stacking and
+occupied bounds. Text/emoji replacement or expiry preserves the hand window;
+hand expiry preserves text. The pair follows Aiko, clamps at screen edges and
+wraps text to fit beside the hand. A valid next choice or Close clears both.
+RPS full greetings/result sentences use a dedicated 3.2–9-second reading time;
+the single-word hand rhythm, 2.25-second reveal and immediate choice are unchanged.
+The earlier shared text-above-hand layout and 4.5-second RPS sentence cap are
+superseded by this owner-requested correction.

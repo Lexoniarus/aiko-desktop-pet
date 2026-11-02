@@ -7,6 +7,51 @@ Dieser Plan überträgt die sechs freigegebenen Entwürfe aus
 Nach der Planung hat der Nutzer den Einbau in kleinen Commits beauftragt.
 Keine neue Bildgenerierung, kein Push oder Merge.
 
+## RPS side-hand bubble and slower full sentences — 2026-11-02
+
+Further owner playtesting found Fingerduell's full sentences still too brief
+and the hand visually mixed into the speech bubble. SpeechPresenter now owns
+two independent native surfaces in game mode: the spoken text/emoji window and
+a persistent side-hand bubble with the existing 96px hand icon and labels.
+Showing the hand no longer destroys or restarts the current spoken text. Text
+and emoji expiry dismiss only that spoken surface; the hand remains visible
+without an empty speech panel. Hand timeout, if explicitly requested, cannot
+expire the spoken text. Valid new choices and game close still clear old cues.
+
+The two surfaces sit side by side and move with Aiko as one clamped group.
+A narrow screen reduces text wrap width and grows its content height to avoid
+clipping; native tests cover a 320×480 work area and screen-edge anchors. Both
+windows participate in the existing overlay stack, occupied bounds and topmost
+preference. The hand widget retains identity through text/emoji changes and
+text expiry. Its existing icon/panel art is reused; no character artwork or
+asset regeneration was performed.
+
+Fingerduell alone now uses GamePacing.rps_text_ms for greetings and complete
+result sentences: 900 ms plus 55 ms per character, bounded to 3.2–9 seconds.
+Even a short result stays for over three seconds; longer sentences are no
+longer capped at 4.5 seconds. Arm cycles, single hand-word cues, reveal at
+2.25 seconds, 450 ms emoji and immediate replay remain unchanged. Blackjack,
+Quiz and other game reading policies are preserved.
+
+Actual Windows/Tk checks inspect separate window identity, readable text past
+4.6 seconds, independent expiry, persistent hand position, next-choice/close
+cleanup, geometry, wrapping and topmost. A native staged capture was inspected;
+its text and hand remain in separate bubble outlines. Evidence is local-only
+under `../lokale-daten/rps-side-hand-2026-11-02/`.
+
+The worktree contains independent ongoing character/domain changes, which were
+left unmodified and excluded from these commits. Focused native checks and all
+quality gates pass in that worktree. Full regression and repeat quality gates
+are run on an immutable Git export of `67afc88`, after side-hand ownership was
+committed as `02c2dcc`. This keeps validation independent of parallel edits.
+
+The immutable committed export passes **2,563 native tests** in 526.984 seconds,
+with no Python/JSON changes during the run. Its Ruff, strict Mypy (390 files)
+and Pyright gates also pass. A further native run against that exact export
+checks win, loss and draw with their actual character reactions: each sentence
+remains visible after three seconds, choices stay enabled and the hand survives
+speech expiry before cleanup on close.
+
 ## Readable non-blocking Blackjack/RPS commentary — 2026-11-02
 
 Owner playtesting accepted the physical flow but found Blackjack and Fingerduell
