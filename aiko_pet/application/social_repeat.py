@@ -83,16 +83,9 @@ class SocialRepeatPolicy:
         for entry in known[:-1]:
             if not self.permits(entry, released_identity=entry.identity):
                 continue
-            identifier = entry.identity.removeprefix("jokeapi:")
-            # An eligible known repeat may recover from old duplicate receipts.
-            # Content eligibility and empty-range exclusions remain authoritative.
-            eligible = tuple(e for e in exclusions if not (
-                e.category == category and e.reason == "duplicate"
-                and str(e.lower) == identifier == str(e.upper)
-            ))
             available = JokeCandidatePolicy.remaining_ranges(
                 catalog, category, tuple(i for i in identities if i != entry.identity),
-                eligible, now,
+                exclusions, now,
             )
             if available:
                 return JokeRepeatPlan(available, entry.identity)

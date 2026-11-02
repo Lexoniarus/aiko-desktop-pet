@@ -1,7 +1,7 @@
 """Strict, bounded candidate exclusions; no provider bodies are saved here."""
 
 import math
-from typing import Any, cast
+from typing import Any, cast, get_args
 
 from ..application.social_candidates import (
     MAX_JOKE_EXCLUSIONS,
@@ -27,8 +27,7 @@ def decode_joke_exclusions(raw: Any) -> tuple[JokeExclusion, ...]:
         if (row["category"] not in ("single", "twopart")
                 or type(lower) is not int or type(upper) is not int
                 or not 0 <= lower <= upper <= MAX_JOKE_ID
-                or row["reason"] not in
-                ("format", "incomplete", "length", "no_match", "duplicate")
+                or row["reason"] not in get_args(RejectionReason)
                 or type(until) not in (int, float) or not math.isfinite(until)
                 or not 0 <= until <= 253402300799
                 or type(row["revision"]) is not int or row["revision"] < 1):

@@ -294,7 +294,7 @@ def prepare_social_content(
         )
     if category != SocialCategory.FACT and provider != SocialProvider.QUOTATIONS:
         if not wording_allowed(" ".join(parts)):
-            raise ValueError("Joke wording is not eligible")
+            raise SocialContentRejectionError("wording", "Joke wording is not eligible")
     fingerprint = hashlib.sha256(" ".join(parts).casefold().encode()).hexdigest()
     # Initial framing is deterministic. The coordinator rotates it against the
     # last admitted receipt when offering it, before the immutable playback.

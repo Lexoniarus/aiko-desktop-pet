@@ -105,6 +105,17 @@ sexual and other unsuitable terms; they do not claim semantic safety for every
 possible remote text. The local subset has separate editorial review. WitzAPI
 category names alone never establish content suitability.
 
+For a validated JokeAPI response, a wording rejection carries its ID and typed
+`wording` reason through the adapter to the persistent candidate exclusions.
+Subsequent requests skip that ID across restart without imposing a provider
+pause. Unrequested or malformed identities cannot create these exclusions.
+The strict exclusion codec reads the allowed reasons from the canonical typed
+contract; the existing JSON version and SQLite schema remain unchanged.
+Exclusion revision 3 replaces revision 2's potentially incorrect duplicate
+decisions. Revision 2 content and empty-range exclusions remain active; current
+duplicate exclusions are also honored, including when an API changes an old
+ID's text to match another protected entry.
+
 Prepared online stock remains preferred. When it is empty, the coordinator can
 offer eligible local content immediately, including during network failures or
 provider quota waits. Local retrieval reserves no HTTP quota. Every actual
@@ -232,9 +243,10 @@ local selection and returned content. A pending JokeAPI fetch carries its planne
 repeat release separately from the HTTP request. On arrival, current history and
 occupied stock are checked again; a released ID is not permission to repeat a
 newly admitted matching text. The last JokeAPI item remains protected. A known
-old repeat that is currently eligible may bypass a stale single-ID duplicate
-exclusion left by an earlier failed rotation; content and empty-range exclusions
-remain authoritative. No history is cleared and no additional save fields exist.
+old repeat that is currently eligible can recover once obsolete revision-2
+duplicate exclusions no longer apply. Current duplicate, content and empty-range
+exclusions remain authoritative. No history is cleared and no additional save
+fields exist.
 
 Automatically hiding the menu or browsing another selection view preserves the
 requested content. Explicitly leaving the social selection with Zurück, Escape

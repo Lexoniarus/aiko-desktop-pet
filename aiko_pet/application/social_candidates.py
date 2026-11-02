@@ -5,12 +5,14 @@ from typing import Literal
 
 from ..pet.social_content_evidence import SocialCategory
 
-JOKE_FILTER_REVISION = 2
+JOKE_FILTER_REVISION = 3
 MAX_JOKE_ID = 100_000
 MAX_JOKE_EXCLUSIONS = 512
 JOKE_METADATA_SECONDS = 3600
 JOKE_EXCLUSION_SECONDS = 86400
-RejectionReason = Literal["format", "incomplete", "length", "no_match", "duplicate"]
+RejectionReason = Literal[
+    "format", "incomplete", "length", "wording", "no_match", "duplicate",
+]
 IdRange = tuple[int, int]
 
 
@@ -44,7 +46,8 @@ class JokeCandidatePolicy:
     ) -> tuple[IdRange, ...]:
         blocked = [(e.lower, e.upper) for e in exclusions
                    if e.category == category and e.until > now
-                   and e.revision == JOKE_FILTER_REVISION]
+                   and (e.revision == JOKE_FILTER_REVISION
+                        or e.revision == 2 and e.reason != "duplicate")]
         for identity in identities:
             prefix, _, value = identity.partition(":")
             if prefix == "jokeapi" and value.isascii() and value.isdigit():

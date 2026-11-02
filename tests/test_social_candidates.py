@@ -202,20 +202,26 @@ class CandidateTests(unittest.TestCase):
         history = SocialContentHistory(tuple(
             SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
             for i in range(6)
-        )).excluded(JokeExclusion(TWO, 0, 0, "duplicate", self.now + 3600), self.now)
+        )).excluded(JokeExclusion(TWO, 0, 0, "duplicate", self.now + 3600,
+                                 revision=2), self.now)
         social = self.coordinator(history)
         social.set_enabled(True)
         self.assertEqual(self.plan().id_range, (0, 0))
 
     def test_repeat_release_keeps_content_exclusions_and_last_source_item(self):
-        history = SocialContentHistory(tuple(
+        receipts = tuple(
             SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
             for i in range(6)
-        )).excluded(JokeExclusion(TWO, 0, 4, "format", self.now + 3600), self.now)
-        social = self.coordinator(history)
-        social.set_enabled(True)
-        self.assertEqual(social.select(TWO).status, "exhausted")
-        self.assertFalse(self.worker.requests)
+        )
+        for reason in ("format", "wording", "no_match"):
+            with self.subTest(reason=reason):
+                history = SocialContentHistory(receipts).excluded(
+                    JokeExclusion(TWO, 0, 4, reason, self.now + 3600), self.now,
+                )
+                social = self.coordinator(history)
+                social.set_enabled(True)
+                self.assertEqual(social.select(TWO).status, "exhausted")
+                self.assertFalse(self.worker.requests)
 
     def test_released_id_still_rejects_a_changed_reply_matching_a_protected_fact(self):
         item = prepare_social_content(TWO, joke_payload(TWO, 0))
@@ -234,6 +240,16 @@ class CandidateTests(unittest.TestCase):
         self.assertIsNone(social.poll())
         self.assertEqual(social.history.entries, history.entries)
         self.assertEqual(social.count(TWO), 0)
+        self.assertEqual(self.plan().id_range, (1, 1))
+
+    def test_previous_eligibility_exclusions_remain_active_after_policy_upgrade(self):
+        previous = tuple(JokeExclusion(TWO, i, i, reason, self.now + 3600, revision=2)
+                         for i, reason in enumerate(("format", "incomplete", "length",
+                                                     "no_match")))
+        current = (JokeExclusion(TWO, 4, 4, "duplicate", self.now + 3600),)
+        self.assertEqual(JokeCandidatePolicy.remaining_ranges(
+            self.catalog, TWO, (), (*previous, *current), self.now,
+        ), ((5, 5),))
 
     def test_pending_repeat_rechecks_content_admitted_by_another_source(self):
         history = SocialContentHistory(tuple(
@@ -307,6 +323,46 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(JokeCandidatePolicy.remaining_ranges(
             self.catalog, TWO, ("jokeapi:3",), entries, self.now,
         ), ((0, 2), (4, 5)))
+
+    def test_wording_rejection_keeps_id_and_exclusion_after_restart(self):
+        social = self.coordinator()
+        social.set_enabled(True)
+        payload = dict(joke_payload(TWO, 2), setup="Ein Test mit Trump.")
+        with patch(
+            "aiko_pet.infrastructure.social_api.urlopen",
+            return_value=HeaderResponse(json.dumps(payload).encode()),
+        ), self.assertRaises(SocialFetchError) as raised:
+            fetch_social_response(TWO, SocialProvider.JOKEAPI, request=self.plan())
+        error = raised.exception
+        self.assertEqual((error.failure, error.rejected_id, error.reason),
+                         ("rejected", 2, "wording"))
+        self.complete_failure(social, error.failure, identifier=error.rejected_id,
+                              reason=error.reason)
+        self.assertEqual(social.history.exclusions[-1].reason, "wording")
+        with tempfile.TemporaryDirectory() as directory:
+            store = StateStore(Path(directory) / "wording.sqlite3")
+            save_test_session(store, PetState(updated_at=self.now), PetSettings(),
+                              social_history=social.history)
+            restored = store.load_session(now=self.now).social_history
+        self.assertEqual(restored, social.history)
+        restarted = self.coordinator(restored)
+        ranges = restarted._ranges(TWO)
+        assert ranges is not None
+        self.assertTrue(all(not lower <= 2 <= upper
+                            for lower, upper in ranges))
+        self.assertFalse(any(b.provider == SocialProvider.JOKEAPI
+                             for b in restored.requests.blocks))
+
+    def test_wording_rejection_cannot_blacklist_an_unrequested_identity(self):
+        payload = dict(joke_payload(TWO, 99), setup="Ein Test mit Trump.")
+        with patch(
+            "aiko_pet.infrastructure.social_api.urlopen",
+            return_value=HeaderResponse(json.dumps(payload).encode()),
+        ), self.assertRaises(SocialFetchError) as raised:
+            fetch_social_response(TWO, SocialProvider.JOKEAPI,
+                                  request=SocialFetchRequest(id_range=(0, 5)))
+        self.assertEqual(raised.exception.failure, "invalid")
+        self.assertIsNone(raised.exception.rejected_id)
 
     def test_exclusions_roundtrip_sqlite_and_keep_effect_after_restart(self):
         history = SocialContentHistory().excluded(

@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Preserve a validated JokeAPI ID and typed `wording` reason when the shared
+  wording filter rejects content. Persist that eligibility exclusion through the
+  existing JSON/SQLite codecs so later requests skip the ID without a provider
+  pause, including after restart. Revision 3 retires old duplicate decisions while
+  retaining revision-2 eligibility exclusions and honoring fresh duplicate blocks.
+
 - Use one social repetition policy for ID planning, local selection and returned
   content. Carry a small-pool repeat release with its pending fetch, recheck live
   history and occupied stock, and retain cross-category fingerprint protection.
