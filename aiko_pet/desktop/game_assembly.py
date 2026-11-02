@@ -49,7 +49,7 @@ def assemble_speech(
 def occupied_bounds(
     hover: HoverUi, speech: SpeechPresenter,
 ) -> tuple[WindowBounds, ...]:
-    windows = [speech.bubble]
+    windows = list(speech.windows)
     if hover.game_window is not None:
         windows.append(hover.game_window.window)
     return tuple(WindowBounds(
@@ -70,8 +70,7 @@ def collect_overlay_windows(
     windows.extend(hand.windows)
     if code is not None:
         windows.extend(code.windows)
-    if speech.bubble is not None:
-        windows.append(speech.bubble)
+    windows.extend(speech.windows)
     if hover.settings_window is not None:
         windows.append(hover.settings_window.window)
     return windows

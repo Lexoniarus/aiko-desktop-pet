@@ -5,9 +5,11 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 import unittest
+from unittest.mock import patch
 
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
+from tools.tk_test_time import ControlledTkTime
 
 
 class SpeechPresenterTests(unittest.TestCase):
@@ -18,12 +20,16 @@ class SpeechPresenterTests(unittest.TestCase):
         self.assertEqual(self.presenter._game_hand, Move.ROCK)
         self.presenter.show_emote("star", 900)
         self.assertEqual(self.presenter._game_hand, Move.ROCK)
+        hand = self.presenter.hand_bubble
         self.presenter._expire()
-        self.assertIsNotNone(self.presenter.bubble)
+        self.assertIsNone(self.presenter.bubble)
+        self.assertIs(self.presenter.hand_bubble, hand)
+        self.assertIsNotNone(hand)
         self.assertEqual(self.presenter._game_hand, Move.ROCK)
         self.presenter.hide()
         self.assertIsNone(self.presenter.bubble)
         self.assertIsNone(self.presenter._game_hand)
+        self.assertIsNone(self.presenter.hand_bubble)
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -34,6 +40,7 @@ class SpeechPresenterTests(unittest.TestCase):
         window.destroy()
 
     def setUp(self) -> None:
+        self.clock = self.enterContext(ControlledTkTime())
         self.root = tk.Tk()
         self.root.withdraw()
         self.anchor = SpeechAnchor(200, 500, 128)
@@ -86,6 +93,87 @@ class SpeechPresenterTests(unittest.TestCase):
             if hand:
                 self.assertEqual(self.presenter._game_hand, Move.ROCK)
                 self.assertIn(Move.ROCK, self.presenter.game_hand_images)
+
+    def test_side_hand_never_replaces_or_restarts_text_and_survives_text_expiry(self):
+        self.presenter.begin_game()
+        self.presenter.show_text('Ein vollständiger Ergebnissatz.', 6000)
+        spoken, deadline = self.presenter.bubble, self.presenter.pending_timer
+        self.clock.advance(2)
+        self.presenter.show_game_hand(Move.PAPER, 0)
+        self.root.update()
+        hand = self.presenter.hand_bubble
+        assert hand is not None and spoken is not None
+        self.assertIs(self.presenter.bubble, spoken)
+        self.assertEqual(self.presenter.pending_timer, deadline)
+        self.assertIsNot(hand, spoken)
+        self.assertGreaterEqual(hand.winfo_rootx(),
+                                spoken.winfo_rootx() + spoken.winfo_width() + 8)
+        position = hand.winfo_geometry()
+        self.clock.advance(4.001)
+        self.assertIsNone(self.presenter.bubble)
+        self.assertIs(self.presenter.hand_bubble, hand)
+        self.presenter.move()
+        self.root.update()
+        self.assertEqual(hand.winfo_geometry(), position)
+        self.presenter.show_emote('star', 450)
+        self.clock.advance(.451)
+        self.assertIsNone(self.presenter.bubble)
+        self.assertIs(self.presenter.hand_bubble, hand)
+        self.assertEqual(self.presenter.windows, (hand,))
+
+    def test_topmost_and_anchor_movement_include_both_owned_windows(self):
+        self.presenter.begin_game()
+        self.presenter.show_game_hand(Move.ROCK, 0)
+        self.presenter.show_text('Das ist meine Hand.', 6000)
+        spoken, hand = self.presenter.bubble, self.presenter.hand_bubble
+        assert spoken is not None and hand is not None
+        self.root.update()
+        before = (spoken.winfo_geometry(), hand.winfo_geometry())
+        self.anchor = SpeechAnchor(500, 600, 128)
+        self.presenter.move()
+        self.root.update()
+        self.assertNotEqual(before, (spoken.winfo_geometry(), hand.winfo_geometry()))
+        with (patch.object(spoken, 'wm_attributes') as text_attrs,
+              patch.object(hand, 'wm_attributes') as hand_attrs):
+            self.presenter.set_topmost(False)
+        text_attrs.assert_called_once_with('-topmost', False)
+        hand_attrs.assert_called_once_with('-topmost', False)
+
+    def test_timed_hand_expiry_cannot_hide_ongoing_text(self):
+        self.presenter.begin_game()
+        self.presenter.show_text('Dieser Text bleibt länger lesbar.', 6000)
+        spoken, deadline = self.presenter.bubble, self.presenter.pending_timer
+        self.presenter.show_game_hand(Move.ROCK, 900)
+        self.clock.advance(.901)
+        self.assertIsNone(self.presenter.hand_bubble)
+        self.assertIs(self.presenter.bubble, spoken)
+        self.assertEqual(self.presenter.pending_timer, deadline)
+        self.assertIsNone(self.presenter._game_hand)
+
+    def test_side_pair_clamps_at_edges_and_wraps_inside_a_narrow_screen(self):
+        self.presenter.begin_game()
+        with (patch.object(self.root, 'winfo_screenwidth', return_value=320),
+              patch.object(self.root, 'winfo_screenheight', return_value=480)):
+            self.presenter.show_text('Ein längerer Satz zum gut lesbaren Umbruch. ' * 3,
+                                     9000)
+            self.presenter.show_game_hand(Move.SCISSORS, 0)
+            for anchor in (SpeechAnchor(0, 0, 128), SpeechAnchor(190, 450, 128)):
+                self.anchor = anchor
+                self.presenter.move()
+                self.root.update()
+                spoken, hand = self.presenter.bubble, self.presenter.hand_bubble
+                assert spoken is not None and hand is not None
+                for window in (spoken, hand):
+                    self.assertGreaterEqual(window.winfo_x(), 0)
+                    self.assertGreaterEqual(window.winfo_y(), 0)
+                    self.assertLessEqual(window.winfo_x() + window.winfo_width(), 320)
+                    self.assertLessEqual(window.winfo_y() + window.winfo_height(), 480)
+                self.assertLessEqual(spoken.winfo_x() + spoken.winfo_width() + 8,
+                                     hand.winfo_x())
+                label = self.presenter._game_comment_label
+                assert label is not None and label.master is not None
+                self.assertGreaterEqual(label.master.winfo_height(),
+                                        label.winfo_reqheight())
 
     def test_queued_old_expiry_cannot_remove_a_new_game_comment(self):
         self.presenter.begin_game()

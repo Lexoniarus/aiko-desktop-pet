@@ -54,6 +54,10 @@ class SpeechPresenter:
         self._emote_assets = emote_assets
         self._ui_images = ui_images
         self.bubble: tk.Toplevel | None = None
+        self.hand_bubble: tk.Toplevel | None = None
+        self._hand_timer: str | None = None
+        self._game_comment_area: tk.Frame | None = None
+        self._game_comment_label: tk.Label | None = None
         self._nonblocking = False
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
@@ -64,6 +68,11 @@ class SpeechPresenter:
         root.bind("<Destroy>", lambda event: (
             self.release_images() if event.widget is root else None
         ), add="+")
+
+    @property
+    def windows(self) -> tuple[tk.Toplevel, ...]:
+        return tuple(window for window in (self.bubble, self.hand_bubble)
+                     if window is not None)
 
     @property
     def blocks_contact(self) -> bool:
@@ -103,12 +112,15 @@ class SpeechPresenter:
 
     def set_topmost(self, enabled: bool) -> None:
         """Apply the user's stacking preference to the active bubble."""
-        if self.bubble is not None:
-            self.bubble.wm_attributes("-topmost", enabled)
+        for window in self.windows:
+            window.wm_attributes("-topmost", enabled)
 
     def move(self) -> None:
         """Place speech above Aiko's head, never above the hover toolbar."""
         bubble = self.bubble
+        if self.hand_bubble is not None:
+            self._move_game_pair()
+            return
         if bubble is None:
             return
         bubble.update_idletasks()
@@ -128,6 +140,54 @@ class SpeechPresenter:
         y = max(0, min(y, max(0, screen_height - height)))
         bubble.geometry(f"+{x}+{y}")
 
+    def _game_comment_width(self) -> int:
+        hand = self.hand_bubble
+        if hand is None:
+            return 250
+        hand.update_idletasks()
+        available = self._root.winfo_screenwidth() - hand.winfo_reqwidth() - 48
+        return min(250, max(100, available))
+
+    def _resize_game_comment(self, width: int) -> None:
+        area, label = self._game_comment_area, self._game_comment_label
+        if area is None:
+            return
+        if label is None:
+            area.configure(width=width + 20)
+        else:
+            label.configure(wraplength=width - 20)
+            label.update_idletasks()
+            area.configure(width=width, height=max(90, label.winfo_reqheight() + 8))
+
+    def _move_game_pair(self) -> None:
+        hand = self.hand_bubble
+        assert hand is not None
+        hand.update_idletasks()
+        bubble = self.bubble
+        width = self._game_comment_width() + 20
+        self._resize_game_comment(width - 20)
+        if bubble is not None:
+            bubble.update_idletasks()
+        height = max(121, hand.winfo_reqheight(),
+                     bubble.winfo_reqheight() if bubble is not None else 0)
+        screen_width = self._root.winfo_screenwidth()
+        screen_height = self._root.winfo_screenheight()
+        total = width + 12 + hand.winfo_reqwidth()
+        anchor = self._anchor()
+        x = anchor.x + (anchor.width - total) // 2
+        y = anchor.y - height - 7
+        if y < 0:
+            y = anchor.y + 4
+            if anchor.x + anchor.width + total + 5 <= screen_width:
+                x = anchor.x + anchor.width + 5
+            elif anchor.x - total - 5 >= 0:
+                x = anchor.x - total - 5
+        x = max(0, min(x, max(0, screen_width - total)))
+        y = max(0, min(y, max(0, screen_height - height)))
+        if bubble is not None:
+            bubble.geometry(f"+{x}+{y}")
+        hand.geometry(f"+{x + width + 12}+{y}")
+
     def _present(self, window: tk.Toplevel, duration_ms: int) -> None:
         self.bubble = window
         self.move()
@@ -144,9 +204,7 @@ class SpeechPresenter:
 
     def _expire(self) -> None:
         self.pending_timer = None
-        if self._game_mode and self._game_hand is not None:
-            self._show_game_content("", None, 0)
-        elif self._game_mode:
+        if self._game_mode:
             self._dismiss_window()
         else:
             self.hide()
@@ -157,18 +215,22 @@ class SpeechPresenter:
 
     def clear_game_hand(self) -> None:
         self._game_hand = None
-        self._dismiss_window()
+        if self._hand_timer is not None:
+            self._root.after_cancel(self._hand_timer)
+            self._hand_timer = None
+        if self.hand_bubble is not None:
+            self.hand_bubble.destroy()
+            self.hand_bubble = None
+        self._resize_game_comment(250)
+        self.move()
 
     def clear_game_comment(self) -> None:
-        if self._game_mode and self._game_hand is not None:
-            self._show_game_content("", None, 0)
-        else:
-            self._dismiss_window()
+        self._dismiss_window()
 
     def _show_game_content(
         self, text: str, emote: str | None, duration_ms: int,
     ) -> None:
-        """One stable surface: exclusive comment above a persistent own hand."""
+        """Speech and emoji replace each other without rebuilding the side hand."""
         self._dismiss_window()
         bubble = self._new_window()
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
@@ -176,25 +238,31 @@ class SpeechPresenter:
             self._ui_images = IconImages(self._root)
         frame = tk.Frame(bubble, bg=transparent)
         frame.pack()
+        width = self._game_comment_width()
         if emote is None:
             surface = PanelSurface(
                 frame, self._ui_images, background=transparent,
                 surface="panel_surface.game_bubble",
             )
             surface.frame.pack()
-            hand_parent = surface.body
-            comment = tk.Frame(surface.body, width=250, height=90, bg="#FCF7F9")
+            comment = tk.Frame(surface.body, width=width, height=90, bg="#FCF7F9")
             comment.pack()
             comment.pack_propagate(False)
-            tk.Label(
-                comment, text=text, wraplength=230, justify="center", bg="#FCF7F9",
-                fg="#3E4C61", font=(self._font_name, 10),
-            ).pack(expand=True)
+            self._game_comment_area = comment
+            self._game_comment_label = tk.Label(
+                comment, text=text, wraplength=width - 20, justify="center",
+                bg="#FCF7F9", fg="#3E4C61", font=(self._font_name, 10),
+            )
+            self._game_comment_label.pack(expand=True)
+            tail = tk.Canvas(bubble, width=20, height=11, bg=transparent,
+                             bd=0, highlightthickness=0)
+            tail.pack()
+            tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
+                                outline="#B8CDDF", width=1)
         else:
             # Kenney emotes already include their own speech bubble and tail.
-            comment = tk.Frame(frame, width=270,
-                               height=101 if self._game_hand is not None else 121,
-                               bg=transparent)
+            comment = tk.Frame(frame, width=width + 20, height=121, bg=transparent)
+            self._game_comment_area = comment
             comment.pack()
             comment.pack_propagate(False)
             if emote not in self.emote_images:
@@ -204,36 +272,41 @@ class SpeechPresenter:
                 ).zoom(3)
             tk.Label(comment, image=self.emote_images[emote], bg=transparent,
                      bd=0, highlightthickness=0).pack(side="bottom")
-            hand_parent = frame
-            if self._game_hand is not None:
-                hand_surface = PanelSurface(
-                    frame, self._ui_images, background=transparent,
-                    surface="panel_surface.game_bubble",
-                )
-                hand_surface.frame.pack(fill="x")
-                hand_parent = hand_surface.body
-        if self._game_hand is not None:
-            move = self._game_hand
-            if move not in self.game_hand_images:
-                if self._ui_images is None:
-                    self._ui_images = IconImages(self._root)
-                self.game_hand_images[move] = self._ui_images.icon(
-                    f"play_rps_{move.value}", 96,
-                )
-            tk.Label(
-                hand_parent, image=self.game_hand_images[move], bg="#FCF7F9",
-            ).pack()
-            tk.Label(
-                hand_parent, text=GERMAN_TEXT.format(f"rps.move.{move.value}"),
-                font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A",
-            ).pack()
-        if emote is None:
-            tail = tk.Canvas(bubble, width=20, height=11, bg=transparent,
-                             bd=0, highlightthickness=0)
-            tail.pack()
-            tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
-                                outline="#B8CDDF", width=1)
         self._present(bubble, duration_ms)
+
+    def _show_side_hand(self, aiko: Move, duration_ms: int) -> None:
+        self.clear_game_hand()
+        self._game_hand = aiko
+        if self._ui_images is None:
+            self._ui_images = IconImages(self._root)
+        self.game_hand_images[aiko] = self._ui_images.icon(f"play_rps_{aiko.value}", 96)
+        window = self._new_window()
+        self.hand_bubble = window
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
+        surface = PanelSurface(
+            window, self._ui_images, background=transparent,
+            surface="panel_surface.game_bubble",
+        )
+        surface.frame.pack()
+        tk.Label(surface.body, text=GERMAN_TEXT.format('rps.choose_own_hand'),
+                 font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A").pack()
+        tk.Label(surface.body, image=self.game_hand_images[aiko], bg="#FCF7F9").pack()
+        tk.Label(surface.body, text=GERMAN_TEXT.format(f"rps.move.{aiko.value}"),
+                 font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A").pack()
+        tail = tk.Canvas(window, width=20, height=11, bg=transparent,
+                         bd=0, highlightthickness=0)
+        tail.pack()
+        tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
+                            outline="#B8CDDF", width=1)
+        self.move()
+        window.deiconify()
+        self._restore_stack()
+        if duration_ms > 0:
+            def expire() -> None:
+                if self.hand_bubble is window:
+                    self._hand_timer = None
+                    self.clear_game_hand()
+            self._hand_timer = self._root.after(duration_ms, expire)
 
     def show_emote(self, emote: str, duration_ms: int = 900) -> None:
         """Display one hand-authored icon in the same position as speech."""
@@ -315,12 +388,11 @@ class SpeechPresenter:
         aiko: Move,
         duration_ms: int = 2300,
     ) -> None:
-        """Show only Aiko's own hand in the existing character bubble."""
+        """Keep Aiko's own choice beside game speech, with an independent lifetime."""
         if not isinstance(aiko, Move):
             raise ValueError("Unknown game hand")
         if self._game_mode:
-            self._game_hand = aiko
-            self._show_game_content("", None, duration_ms)
+            self._show_side_hand(aiko, duration_ms)
             return
         if aiko not in self.game_hand_images:
             if self._ui_images is None:
@@ -387,10 +459,11 @@ class SpeechPresenter:
     def hide(self) -> None:
         """Cancel the old timeout so a previous bubble cannot hide a new one."""
         self._game_mode = False
-        self._game_hand = None
+        self.clear_game_hand()
         self._dismiss_window()
 
     def _dismiss_window(self) -> None:
+        self._game_comment_area = self._game_comment_label = None
         self._nonblocking = False
         if self.pending_timer is not None:
             self._root.after_cancel(self.pending_timer)

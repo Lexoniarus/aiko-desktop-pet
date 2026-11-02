@@ -1,6 +1,6 @@
 """Present minigame dialogue through Aiko's existing character overlays.
 
-The minigame never owns a second speech bubble or presentation stack.
+SpeechPresenter owns the spoken channel and its independent side-hand readout.
 """
 
 from __future__ import annotations
@@ -77,6 +77,7 @@ class GameSpeech:
     def clear_hand(self) -> None:
         self._express(None)
         self._speech.clear_game_hand()
+        self._speech.clear_game_comment()
 
     def silence(self) -> None:
         self._express(None)
