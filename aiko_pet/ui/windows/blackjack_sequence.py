@@ -10,6 +10,7 @@ from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.playing_cards import Card
 from ..common.game_pacing import GAME_PACING
 from ..view_models.game_models import HandView
+from .blackjack_commentary import BlackjackCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 
 Motion = Callable[[str, Card | None, int, Callable[[], None]], None]
@@ -32,10 +33,9 @@ class BlackjackSequence:
         self.game = game if game is not None else Blackjack()
         self._schedule, self._cancel = schedule, cancel
         self._present, self._hand = present, hand
-        self._say, self._animate, self._emote = say, animate, emote
         self._dialogue = dialogue or GameDialogue().choose
-        self._round_event, self._express_event = round_event, express_event
-        self._motion, self._silence = motion, silence
+        self._round_event = round_event
+        self._motion = motion
         self._session_id = uuid4().hex
         self._closed = self._started = False
         self._generation = 0
@@ -44,18 +44,25 @@ class BlackjackSequence:
         self.busy = True
         self._player_count = self._dealer_count = 0
         self._dealer_revealed = False
+        self._comments = BlackjackCommentary(
+            schedule=schedule, cancel=cancel, say=say, emote=emote,
+            express=express_event, silence=silence,
+        )
 
     def _later(self, ms: int, action: Callable[[], None]) -> None:
         generation = self._generation
+        token = ''
 
         def run() -> None:
-            if self._closed or generation != self._generation:
+            if (self._closed or generation != self._generation
+                    or self.pending_timer != token):
                 return
             self.pending_timer = None
             self._next = None
             action()
         self._next = run
-        self.pending_timer = self._schedule(ms, run)
+        token = self._schedule(ms, run)
+        self.pending_timer = token
 
     def advance(self) -> None:
         """Advance the pending logical cue, useful for controlled adapters."""
@@ -79,14 +86,8 @@ class BlackjackSequence:
                         else GAME_PACING.card_shuffle_ms)
             self._later(duration, landed)
 
-    def _line(self, event: str, done: Callable[[], None]) -> None:
-        text = self._dialogue(event)
-        duration = GAME_PACING.text_ms(text)
-        self._express_event(event)
-        self._say(text, duration)
-        if event == "game_bj_aside":
-            self._aside = text
-        self._later(duration, done)
+    def _narrate(self, event: str) -> None:
+        self._comments.cue(event, self._dialogue(event))
 
     def greet(self) -> None:
         if self._closed or self._started:
@@ -95,6 +96,7 @@ class BlackjackSequence:
         self._begin(welcome=True)
 
     def _begin(self, *, welcome: bool = False) -> None:
+        self._comments.clear_pending()
         self.busy = True
         self._player_count = self._dealer_count = 0
         self._dealer_revealed = False
@@ -103,9 +105,8 @@ class BlackjackSequence:
         ))
         self._publish()
         if welcome:
-            self._line('game_bj_welcome', self._shuffle)
-        else:
-            self._shuffle()
+            self._narrate('game_bj_welcome')
+        self._shuffle()
 
     def _shuffle(self) -> None:
         self._move('shuffle', None, 0, lambda: self._deal(0))
@@ -142,7 +143,7 @@ class BlackjackSequence:
     def hit(self) -> None:
         if self._closed or self.busy or self.game.table.phase is not Phase.PLAYER:
             return
-        self._silence()
+        self._comments.interrupt()
         self.busy = True
         self.game.hit()
         self._publish()
@@ -156,20 +157,23 @@ class BlackjackSequence:
     def stand(self) -> None:
         if self._closed or self.busy or self.game.table.phase is not Phase.PLAYER:
             return
-        self._silence()
+        self._comments.interrupt()
         self.busy = True
         self.game.stand()
         self._publish()
-        self._line('game_bj_stand', self._continue)
+        self._narrate('game_bj_stand')
+        self._continue(announce=False)
 
-    def _continue(self) -> None:
+    def _continue(self, *, announce: bool = True) -> None:
         if self.game.table.phase is Phase.PLAYER:
             self.busy = False
             self._publish()
         else:
             self.busy = True
             self._publish()
-            self._line('game_bj_reveal', self._reveal)
+            if announce:
+                self._narrate('game_bj_reveal')
+            self._reveal()
 
     def _reveal(self) -> None:
         self.game.reveal_dealer()
@@ -197,37 +201,31 @@ class BlackjackSequence:
                 GameId.BLACKJACK, self._session_id, self.game.score.games, result,
                 self.game.result_details,
             ))
-            self._line('game_bj_' + result, lambda: self._line(
-                'game_bj_aside', self._result_emote,
-            ))
-        else:
-            self._later(GAME_PACING.bank_pause_ms, self._bank)
-
-    def _result_emote(self) -> None:
-        self._emote('star', GAME_PACING.emote_ms)
-
-        def restored() -> None:
-            text = self._aside
-            self._say(text, self.RESULT_PAUSE_MS)
+            if self._closed:
+                return
+            event = 'game_bj_' + result
+            text, aside = self._dialogue(event), self._dialogue('game_bj_aside')
+            self._comments.result(event, text, aside)
+            # The table has its own result interval; commentary never extends it.
             self._later(self.RESULT_PAUSE_MS, lambda: self._move(
                 'gather', None, 0, self._restart,
             ))
-        self._later(GAME_PACING.emote_ms, restored)
+        else:
+            self._later(GAME_PACING.bank_pause_ms, self._bank)
 
     def _restart(self) -> None:
         self.game.next_round()
         self._begin()
 
     def wait_comment(self) -> None:
-        if not self._closed and not self.busy:
-            text = self._dialogue('game_bj_wait')
-            self._express_event('game_bj_wait')
-            self._say(text, GAME_PACING.text_ms(text))
+        if not self._closed and not self.busy and not self._comments.active:
+            self._narrate('game_bj_wait')
 
     def close(self) -> SessionSummary:
         if not self._closed:
             self._closed = True
             self._generation += 1
+            self._comments.interrupt()
             if self.pending_timer is not None:
                 self._cancel(self.pending_timer)
                 self.pending_timer = None

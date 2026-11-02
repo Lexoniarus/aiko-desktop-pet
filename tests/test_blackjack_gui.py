@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -47,6 +48,40 @@ class BlackjackGuiTests(unittest.TestCase):
 
     def ready(self, game):
         self.wait_for(lambda: not game._sequence.busy)
+
+    def test_long_welcome_and_stand_comment_never_hold_deal_flip_or_restart(self):
+        self.pet._hover._ports = replace(
+            self.pet._hover._ports,
+            game_dialogue=lambda event: event + ': ' + 'A' * 110,
+        )
+        start = self.timing.monotonic()
+        game = self.open_game(arranged_game(
+            card('10'), card('9'), card('8'), card('8', 'hearts')))
+        bubble = self.pet._speech.bubble
+        assert bubble is not None
+        self.ready(game)
+        self.assertLessEqual(self.timing.monotonic() - start, 2.3)
+        self.assertIs(self.pet._speech.bubble, bubble)
+        self.assertEqual(game.stand_button.cget('state'), 'normal')
+        game.stand_button.invoke()
+        stand_bubble = self.pet._speech.bubble
+        self.assertIsNot(stand_bubble, bubble)
+        self.wait_for(lambda: game._sequence.game.score.games == 1)
+        self.assertIs(self.pet._speech.bubble, stand_bubble)
+        self.assertTrue(any(self.pet._game_visuals.hand._hand.cards))
+        settled = self.timing.monotonic()
+        self.wait_for(lambda: game._sequence.game.table.result is None)
+        self.assertLessEqual(self.timing.monotonic() - settled, 5.0)
+        self.ready(game)
+        self.assertTrue(game._sequence._comments.active)
+        before = self.pet._speech.bubble
+        self.assertIsNotNone(before)
+        game.hit_button.invoke()
+        self.assertIsNot(self.pet._speech.bubble, before)
+        self.assertFalse(game._sequence._comments.active)
+        game.close()
+        self.timing.advance(20)
+        self.assertIsNone(self.pet._speech.bubble)
 
     def test_real_deal_uses_one_deck_and_equal_card_sizes_without_early_totals(self):
         started = self.timing.monotonic()

@@ -6,11 +6,13 @@ from test_blackjack import arranged_game, card
 
 from aiko_pet.games.contracts import BlackjackDecisionReason, BlackjackDetails
 from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence
+from tools.reaction_test_support import FakeScheduler
 
 
 class BlackjackSequenceTests(unittest.TestCase):
     def make_flow(self, game):
-        self.tasks = {}
+        self.clock = FakeScheduler()
+        self.tasks = self.clock.callbacks
         self.hands = []
         self.views = []
         self.lines = []
@@ -19,11 +21,10 @@ class BlackjackSequenceTests(unittest.TestCase):
 
         def schedule(delay, callback):
             self.delays.append(delay)
-            self.tasks['turn'] = callback
-            return 'turn'
+            return self.clock.schedule(delay, callback)
 
         flow = BlackjackSequence(
-            schedule=schedule, cancel=lambda token: self.tasks.pop(token, None),
+            schedule=schedule, cancel=self.clock.cancel,
             present=lambda table, score: self.views.append((table, score)),
             hand=lambda view, flip: self.hands.append((view, flip)),
             say=lambda line, _ms: self.lines.append(line), animate=lambda _name: None,
@@ -52,7 +53,6 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.assertEqual(self.views[-1][0].player, ())
         flow.hit()
         self.assertEqual(len(flow.game.table.player), 2)
-        flow.advance()  # greeting
         flow.advance()  # shuffle
         flow.advance()  # player one lands
         self.assertEqual(len(self.views[-1][0].player), 1)
@@ -92,27 +92,30 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.assertEqual(self.rounds[-1].details, BlackjackDetails(
             27, 5, BlackjackDecisionReason.PLAYER_BUST))
 
-    def test_result_speech_aside_emote_restore_precede_restart_countdown(self):
-        flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
+    def test_result_and_new_deal_continue_without_advancing_any_speech_timer(self):
+        flow = self.make_flow(arranged_game(
+            card('10'), card('9'), card('8'), card('7'), card('K')))
+        self.ready(flow)
+        flow.stand()
         self.settle(flow)
-        flow.hit()
-        self.assertEqual(self.lines[-1], 'game_bj_win')
-        flow.advance()
-        self.assertEqual(self.lines[-1], 'game_bj_aside')
-        flow.advance()
+        self.assertEqual(self.lines, ['game_bj_welcome', 'game_bj_stand'])
+        self.assertTrue(flow._comments.active)
+        self.assertEqual(self.delays[-1], 4500)
+        flow.advance()  # result view ends; gather starts even with speech still active
         self.assertEqual(self.delays[-1], 450)
-        flow.advance()
-        self.assertEqual(self.delays[-1], 900)
-        flow.advance()  # gather
         self.assertEqual(flow.game.score.games, 1)
-        flow.advance()  # restart, remains locked through new deal
-        self.assertTrue(flow.busy)
+        flow.advance()  # restart goes directly to shuffle
         self.assertEqual(len(self.rounds), 3)
         self.assertIsNone(self.rounds[-1].outcome)
+        self.assertEqual(self.delays[-1], 900)
+        self.ready(flow)
+        self.assertFalse(flow.busy)
+        self.assertTrue(flow._comments.active)
         self.assertEqual(self.lines.count('game_bj_welcome'), 1)
-        self.assertEqual(self.delays[-1], 900)  # Shuffle, no second welcome cue.
         flow.greet()
         self.assertEqual(self.lines.count('game_bj_welcome'), 1)
+        flow.close()
+        self.assertFalse(self.tasks)
 
     def test_close_cancels_every_logical_phase_and_stale_callback(self):
         for stop in range(14):
@@ -121,7 +124,8 @@ class BlackjackSequenceTests(unittest.TestCase):
                     card('A'), card('8'), card('K'), card('9')))
                 for _ in range(stop):
                     flow.advance()
-                stale = self.tasks.get('turn')
+                token = flow.pending_timer
+                stale = self.tasks[token][1] if token is not None else None
                 score = flow.close()
                 if stale:
                     stale()
@@ -135,9 +139,7 @@ class BlackjackSequenceTests(unittest.TestCase):
             card('10', 'hearts'), card('K')))
         self.ready(flow)
         flow.stand()
-        flow.advance()  # stand acknowledgement
-        flow.advance()  # reveal announcement
-        flow.advance()  # bank mutates, third card not yet visible
+        flow.advance()  # flip finishes; bank mutates, third card not yet visible
         self.assertEqual(len(self.hands[-1][0].cards), 2)
         flow.advance()
         self.assertEqual(len(self.hands[-1][0].cards), 3)

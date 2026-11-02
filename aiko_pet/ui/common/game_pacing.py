@@ -11,7 +11,11 @@ class GamePacing:
     card_flip_frame_ms: int = 25
     bank_reveal_ms: int = 260
     bank_pause_ms: int = 100
-    next_hand_ms: int = 900
+    next_hand_ms: int = 4500
+
+    def comment_text_ms(self, text: str) -> int:
+        """Readable optional chatter; its lifetime must not hold a game action."""
+        return min(4500, max(1400, 400 + len(text.strip()) * 32))
 
     def quiz_text_ms(self, text: str) -> int:
         """Give the quiz host time to present information rather than a short cue."""
