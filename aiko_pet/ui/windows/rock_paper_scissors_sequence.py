@@ -81,7 +81,7 @@ class RockPaperScissorsSequence:
             self._animate("waving-greeting")
             phrase = self._dialogue("game_greeting")
             self._express_event("game_greeting")
-            self._say(phrase, GAME_PACING.text_ms(phrase))
+            self._say(phrase, GAME_PACING.comment_text_ms(phrase))
 
     def choose(self, move: Move) -> None:
         if self._closed or self.busy:
@@ -147,7 +147,7 @@ class RockPaperScissorsSequence:
         def speak() -> None:
             phrase = self._dialogue(outcome_event(result))
             self._express_event(outcome_event(result))
-            self._say(phrase, GAME_PACING.text_ms(phrase))
+            self._say(phrase, GAME_PACING.comment_text_ms(phrase))
 
         self._later(self.REACTION_EMOTE_MS, speak, generation)
 
