@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Use one social repetition policy for ID planning, local selection and returned
+  content. Carry a small-pool repeat release with its pending fetch, recheck live
+  history and occupied stock, and retain cross-category fingerprint protection.
+  Eligible known repeats can recover from stale duplicate exclusions without
+  bypassing content-eligibility or empty-range exclusions.
+
 - Make horoscope placement and visible-withholding GUI tests independent of the
   user's native cursor position. Verify the intended on-monitor placement and
   observed take before checking duplicate-book and friendship consequences.

@@ -11,7 +11,6 @@ from typing import Callable, Literal
 from .social_candidates import (
     JOKE_EXCLUSION_SECONDS,
     IdRange,
-    JokeCandidatePolicy,
     JokeCatalog,
     JokeExclusion,
 )
@@ -25,11 +24,8 @@ from .social_content import (
     with_intro_variant,
 )
 from .social_fetch import SocialContentWorker, SocialFetchRequest
-from .social_history import (
-    JOKE_REPEAT_WINDOW,
-    SocialContentHistory,
-    SocialContentReceipt,
-)
+from .social_history import SocialContentHistory, SocialContentReceipt
+from .social_repeat import JokeRepeatPlan, SocialRepeatPolicy
 from .storage_contracts import StorageError
 
 Job = tuple[SocialCategory, SocialProvider]
@@ -54,6 +50,15 @@ class SocialSelection:
     content: PreparedSocialContent | None = None
 
 
+@dataclass(frozen=True, slots=True)
+class _PendingFetch:
+    token: object
+    job: Job
+    generation: int
+    request: SocialFetchRequest
+    released_identity: str | None = None
+
+
 class SocialContentCoordinator:
     """Readiness changes no pet needs; all providers share the existing worker."""
 
@@ -75,7 +80,7 @@ class SocialContentCoordinator:
         self._enabled = False
         self._closed = False
         self._generation = 0
-        self._request: tuple[object, Job, int, SocialFetchRequest] | None = None
+        self._request: _PendingFetch | None = None
         self._catalog = joke_catalog
         self._catalog_failed = False
         self._content_failed: set[Job] = set()
@@ -206,15 +211,17 @@ class SocialContentCoordinator:
             )
         )
 
-    def _duplicate(self, item: PreparedSocialContent) -> bool:
-        known = (
-            *self._history.protected_entries,
-            *((self._offered,) if self._offered else ()),
-            *(entry for buffer in self._buffers.values() for entry in buffer),
-        )
-        return any(
-            entry.identity == item.identity or entry.fingerprint == item.fingerprint
-            for entry in known
+    def _repeat_policy(self) -> SocialRepeatPolicy:
+        occupied = tuple(e for buffer in self._buffers.values() for e in buffer)
+        if self._offered is not None:
+            occupied += (self._offered,)
+        return SocialRepeatPolicy(self.history.entries, occupied)
+
+    def _duplicate(
+        self, item: PreparedSocialContent, *, released_identity: str | None = None,
+    ) -> bool:
+        return not self._repeat_policy().permits(
+            item, released_identity=released_identity,
         )
 
     def local_candidates(
@@ -223,50 +230,19 @@ class SocialContentCoordinator:
         pool = tuple(e for e in self._local_content if e.category == category)
         if not pool:
             return ()
-        window = min(JOKE_REPEAT_WINDOW, len(pool) - 1)
-        history = tuple(e for e in self.history.entries if e.category == category)
-        protected = history[-window:] if window else ()
-        occupied = tuple(e for buffer in self._buffers.values() for e in buffer)
-        if self._offered is not None:
-            occupied += (self._offered,)
-        identities = {e.identity for e in protected} | {e.identity for e in occupied}
-        fingerprints = ({e.fingerprint for e in protected}
-                        | {e.fingerprint for e in occupied})
-        return tuple(e for e in pool if e.identity not in identities
-                     and e.fingerprint not in fingerprints)
+        policy = self._repeat_policy()
+        return tuple(e for e in pool if policy.permits(e, local_pool_size=len(pool)))
 
     def _ranges(self, category: SocialCategory) -> tuple[IdRange, ...] | None:
+        return self._joke_plan(category).ranges
+
+    def _joke_plan(self, category: SocialCategory) -> JokeRepeatPlan:
         if self._catalog is None or self._catalog.valid_until <= self._wall_time():
-            return None
-        identities = tuple(e.identity for e in self.history.protected_entries) + tuple(
-            e.identity for buffer in self._buffers.values() for e in buffer
-        ) + ((self._offered.identity,) if self._offered else ())
-        ranges = JokeCandidatePolicy.remaining_ranges(
-            self._catalog, category, identities, self.history.exclusions,
+            return JokeRepeatPlan(None)
+        return self._repeat_policy().joke_candidates(
+            self._catalog, category, self.history.exclusions,
             self._wall_time(),
         )
-        if ranges:
-            return ranges
-        # A provider/type pool smaller than the guard still needs a rotation.
-        # Release one oldest known valid item, never occupied content or the
-        # last joke from that source. Eligibility exclusions remain authoritative.
-        known = tuple(e for e in self.history.entries if e.category == category
-                      and e.identity.startswith("jokeapi:"))
-        occupied = tuple(e for buffer in self._buffers.values() for e in buffer)
-        if self._offered is not None:
-            occupied += (self._offered,)
-        for entry in known[:-1]:
-            if any(e.identity == entry.identity or e.fingerprint == entry.fingerprint
-                   for e in occupied):
-                continue
-            available = JokeCandidatePolicy.remaining_ranges(
-                self._catalog, category,
-                tuple(i for i in identities if i != entry.identity),
-                self.history.exclusions, self._wall_time(),
-            )
-            if available:
-                return available
-        return ()
 
     def _exhausted(self, job: Job) -> bool:
         return job[1] == SocialProvider.JOKEAPI and self._ranges(job[0]) == ()
@@ -284,7 +260,9 @@ class SocialContentCoordinator:
         result = self._worker.poll()
         update: SocialSelection | None = None
         if result is not None and self._request is not None:
-            token, job, generation, request = self._request
+            pending = self._request
+            token, job = pending.token, pending.job
+            generation, request = pending.generation, pending.request
             category, provider = job
             if result.token is token:
                 self._request = None
@@ -299,6 +277,9 @@ class SocialContentCoordinator:
                     self._persist()
                 if self.enabled and generation == self._generation:
                     item = result.content
+                    duplicate = item is not None and self._duplicate(
+                        item, released_identity=pending.released_identity,
+                    )
                     if request.metadata:
                         if result.catalog is not None and result.failure is None:
                             self._catalog = result.catalog
@@ -312,7 +293,7 @@ class SocialContentCoordinator:
                         elif (result.failure == "rejected"
                               and result.rejected_id is not None):
                             rejected_range = (result.rejected_id, result.rejected_id)
-                        elif item is not None and self._duplicate(item):
+                        elif item is not None and duplicate:
                             identifier = item.identity.removeprefix("jokeapi:")
                             if identifier.isascii() and identifier.isdigit():
                                 rejected_range = (int(identifier), int(identifier))
@@ -331,7 +312,7 @@ class SocialContentCoordinator:
                         and result.category == category
                         and item.category == category
                         and item.provider == provider
-                        and not self._duplicate(item)
+                        and not duplicate
                     )
                     if request.metadata:
                         pass
@@ -363,7 +344,7 @@ class SocialContentCoordinator:
             return None
         if self._storage_failed:
             return "error"
-        if self._request is not None and self._request[1][0] == self._waiting:
+        if self._request is not None and self._request.job[0] == self._waiting:
             return None
         all_jobs = [(self._waiting, p) for p in providers_for(self._waiting)]
         if all(self._exhausted(job) for job in all_jobs):
@@ -410,7 +391,9 @@ class SocialContentCoordinator:
             ),
         )
         job = category, provider
-        ranges = self._ranges(category) if provider == SocialProvider.JOKEAPI else None
+        plan = (self._joke_plan(category) if provider == SocialProvider.JOKEAPI
+                else JokeRepeatPlan(None))
+        ranges = plan.ranges
         request = SocialFetchRequest(
             metadata=provider == SocialProvider.JOKEAPI and ranges is None,
             id_range=choice(ranges) if ranges else None,
@@ -424,7 +407,9 @@ class SocialContentCoordinator:
         if not request.metadata:
             self._attempts[job] = self._attempts.get(job, 0) + 1
         token = object()
-        self._request = (token, job, self._generation, request)
+        self._request = _PendingFetch(
+            token, job, self._generation, request, plan.released_identity,
+        )
         self._worker.start(category, token, provider, request=request)
 
     def close(self) -> None:

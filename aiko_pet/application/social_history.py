@@ -6,10 +6,11 @@ from dataclasses import dataclass, replace
 
 from .social_candidates import MAX_JOKE_EXCLUSIONS, JokeExclusion
 from .social_content import SocialCategory
+from .social_repeat import JOKE_REPEAT_WINDOW as JOKE_REPEAT_WINDOW
+from .social_repeat import SocialRepeatPolicy
 from .social_requests import SocialRequestHistory
 
 RECENT_CONTENTS_PER_CATEGORY = 100
-JOKE_REPEAT_WINDOW = 10
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,15 +32,7 @@ class SocialContentHistory:
     @property
     def protected_entries(self) -> tuple[SocialContentReceipt, ...]:
         """Keep the bounded archive, but release old jokes within a finite pool."""
-        return tuple(
-            entry
-            for category in (SocialCategory.SINGLE, SocialCategory.TWO_PARTS,
-                             SocialCategory.FACT)
-            for entry in tuple(e for e in self.entries if e.category == category)[
-                -(RECENT_CONTENTS_PER_CATEGORY if category == SocialCategory.FACT
-                  else JOKE_REPEAT_WINDOW):
-            ]
-        )
+        return SocialRepeatPolicy.protected(self.entries)
 
     def excluded(self, entry: JokeExclusion, now: float) -> SocialContentHistory:
         retained = tuple(e for e in self.exclusions if e.until > now

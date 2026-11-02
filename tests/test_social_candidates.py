@@ -23,7 +23,11 @@ from aiko_pet.application.social_candidates import (
     JokeCatalog,
     JokeExclusion,
 )
-from aiko_pet.application.social_content import SocialCategory, SocialProvider
+from aiko_pet.application.social_content import (
+    SocialCategory,
+    SocialProvider,
+    prepare_social_content,
+)
 from aiko_pet.application.social_coordinator import (
     SocialContentCoordinator,
     providers_for,
@@ -80,7 +84,8 @@ class CandidateTests(unittest.TestCase):
         selection.start()
         self.addCleanup(selection.stop)
 
-    def coordinator(self, history=None, *, catalog=True, persist=lambda: None):
+    def coordinator(self, history=None, *, catalog=True, persist=lambda: None,
+                    local_content=()):
         history = history or SocialContentHistory()
         # Isolate two-part selection without changing shared provider quotas.
         requests = history.requests
@@ -92,6 +97,7 @@ class CandidateTests(unittest.TestCase):
         return SocialContentCoordinator(
             self.worker, history=history, wall_time=self.worker.clock,
             joke_catalog=self.catalog if catalog else None, persist_requests=persist,
+            local_content=local_content,
         )
 
     def complete_failure(self, social, failure, *, identifier=None, reason=None):
@@ -154,7 +160,11 @@ class CandidateTests(unittest.TestCase):
 
     def test_small_pool_rotates_oldest_known_joke_without_immediate_repeat(self):
         history = SocialContentHistory(tuple(
-            SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+            SocialContentReceipt(
+                TWO, f"jokeapi:{i}", prepare_social_content(
+                    TWO, dict(joke_payload(TWO, i), setup=f"Test {i}."),
+                ).fingerprint,
+            )
             for i in range(6)
         ))
         social = self.coordinator(history)
@@ -163,6 +173,88 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(self.plan().id_range, (0, 0))
         self.assertNotEqual(self.plan().id_range, (5, 5))
         self.assertEqual(social.history.entries, history.entries)
+        self.worker.complete(0)
+        result = social.poll()
+        assert result is not None and result.content is not None
+        self.assertEqual(result.status, "ready")
+        social.accept(result.content)
+        self.assertEqual(social.history.entries[-1].identity, "jokeapi:0")
+        self.assertEqual(len(social.history.entries), 6)
+        self.assertFalse(any(e.reason == "duplicate"
+                             for e in social.history.exclusions))
+
+    def test_released_warm_content_survives_buffering_before_selection(self):
+        history = SocialContentHistory(tuple(
+            SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+            for i in range(6)
+        ))
+        social = self.coordinator(history)
+        social.set_enabled(True)
+        self.worker.complete(0)
+        self.assertIsNone(social.poll())
+        self.assertEqual(social.count(TWO), 1)
+        selected = social.select(TWO)
+        assert selected.content is not None
+        self.assertEqual(selected.content.identity, "jokeapi:0")
+        social.accept(selected.content)
+
+    def test_eligible_old_repeat_recovers_from_previous_duplicate_exclusions(self):
+        history = SocialContentHistory(tuple(
+            SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+            for i in range(6)
+        )).excluded(JokeExclusion(TWO, 0, 0, "duplicate", self.now + 3600), self.now)
+        social = self.coordinator(history)
+        social.set_enabled(True)
+        self.assertEqual(self.plan().id_range, (0, 0))
+
+    def test_repeat_release_keeps_content_exclusions_and_last_source_item(self):
+        history = SocialContentHistory(tuple(
+            SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+            for i in range(6)
+        )).excluded(JokeExclusion(TWO, 0, 4, "format", self.now + 3600), self.now)
+        social = self.coordinator(history)
+        social.set_enabled(True)
+        self.assertEqual(social.select(TWO).status, "exhausted")
+        self.assertFalse(self.worker.requests)
+
+    def test_released_id_still_rejects_a_changed_reply_matching_a_protected_fact(self):
+        item = prepare_social_content(TWO, joke_payload(TWO, 0))
+        history = SocialContentHistory((
+            *(SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+              for i in range(6)),
+            SocialContentReceipt(SocialCategory.FACT, "uselessfacts:prior",
+                                 item.fingerprint),
+        ))
+        social = self.coordinator(history)
+        social.set_enabled(True)
+        social.select(TWO)
+        category, token = self.worker.requests[-1]
+        self.worker.clock.now += 10
+        self.worker.result = SocialFetchResult(token, category, item)
+        self.assertIsNone(social.poll())
+        self.assertEqual(social.history.entries, history.entries)
+        self.assertEqual(social.count(TWO), 0)
+
+    def test_pending_repeat_rechecks_content_admitted_by_another_source(self):
+        history = SocialContentHistory(tuple(
+            SocialContentReceipt(TWO, f"jokeapi:{i}", f"{i + 1:064x}")
+            for i in range(6)
+        ))
+        payload = dict(joke_payload(TWO, 0), setup="Test 0.")
+        local = prepare_social_content(
+            TWO, dict(language="de", parts=(payload["setup"], payload["delivery"])),
+            provider=SocialProvider.PYJOKES,
+        )
+        social = self.coordinator(history, local_content=(local,))
+        social.set_enabled(True)
+        self.assertEqual(self.plan().id_range, (0, 0))
+        selected = social.select(TWO)
+        assert selected.content is not None
+        social.accept(selected.content)
+        self.worker.complete(0)
+        self.assertIsNone(social.poll())
+        self.assertEqual(social.count(TWO), 0)
+        self.assertEqual(social.history.entries[-1].identity, local.identity)
 
     def test_three_invalid_responses_bound_search_without_provider_pause(self):
         social = self.coordinator()

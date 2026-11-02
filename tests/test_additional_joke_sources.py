@@ -173,6 +173,24 @@ class AdditionalJokeSourceTests(unittest.TestCase):
         self.assertEqual(history.entries, (other, first))
         self.assertEqual(decode_social_history(encode_social_history(history)), history)
 
+    def test_local_selection_preserves_protected_text_from_other_categories(self):
+        local = load_local_jokes()[0]
+        for category, identity in ((SocialCategory.FACT, "uselessfacts:prior"),
+                                   (TWO, "jokeapi:999")):
+            with self.subTest(category=category):
+                receipt = SocialContentReceipt(category, identity, local.fingerprint)
+                worker = ManualSocialWorker()
+                content = SocialContentCoordinator(
+                    worker, history=SocialContentHistory((receipt,)),
+                    local_content=(local,), wall_time=worker.clock,
+                    joke_catalog=TEST_JOKE_CATALOG,
+                )
+                content.set_enabled(True)
+                self.assertNotIn(local, content.local_candidates(local.category))
+                self.assertNotEqual(content.select(local.category).status, "ready")
+                self.assertEqual(content.history.entries, (receipt,))
+                content.close()
+
     def test_old_jokes_release_after_ten_newer_items_without_erasing_archive(self):
         history = SocialContentHistory()
         for index in range(19):

@@ -195,7 +195,8 @@ admissions per joke/saying category protect against repeats; facts retain their
 no remaining candidates, release its oldest unoccupied eligible item while
 protecting the last item from that source. Category exclusions remain in force.
 Local source selection caps its protection at pool size minus one so a small
-reviewed pool cannot permanently exclude itself. Namespaced
+reviewed pool cannot permanently exclude itself. Other categories retain their
+normal fingerprint protection, including all retained facts. Namespaced
 provider IDs or normalized text fingerprints match across
 all three categories, including text split differently into setup/delivery.
 Only actual playback admission records a receipt; preparation, selection and
@@ -225,6 +226,15 @@ archive remains intact while old jokes become eligible again. Reaching the
 three-attempt search bound reports a separate retry-selection message. Empty
 ranges and unsuitable content never block another JokeAPI category. Facts and
 quotations retain their existing random endpoints and final repetition checks.
+
+`SocialRepeatPolicy` makes the shared repetition decision for candidate planning,
+local selection and returned content. A pending JokeAPI fetch carries its planned
+repeat release separately from the HTTP request. On arrival, current history and
+occupied stock are checked again; a released ID is not permission to repeat a
+newly admitted matching text. The last JokeAPI item remains protected. A known
+old repeat that is currently eligible may bypass a stale single-ID duplicate
+exclusion left by an earlier failed rotation; content and empty-range exclusions
+remain authoritative. No history is cleared and no additional save fields exist.
 
 Automatically hiding the menu or browsing another selection view preserves the
 requested content. Explicitly leaving the social selection with Zurück, Escape
@@ -362,6 +372,9 @@ is added. See [storage and import](DATA_AND_SAVES.md).
   unambiguous question boundaries. `infrastructure/local_jokes.py` validates the
   pinned library against the editorial review manifest before assembly supplies
   immutable local content to the existing coordinator.
+- `application/social_repeat.py` owns the common repetition policy and immutable
+  JokeAPI repeat plan. The coordinator retains that plan's release only in its
+  pending-fetch context; HTTP adapters do not interpret repetition decisions.
 - `pet/social_content_evidence.py` owns the frozen original parts/attribution and
   shared category/provider vocabulary; existing application imports re-export
   those same types. The existing completion path and Pet cause producers retain

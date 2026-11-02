@@ -1281,6 +1281,12 @@ are separate read dimensions, with no discovery or memory mutation on a read.
 
 The API repeat window is one immutable application value,
 `social_history.SocialContentHistory`, owned by SocialContentCoordinator.
+`application/social_repeat.py:SocialRepeatPolicy` owns the shared recent-content
+and cross-category fingerprint decision for local selection, JokeAPI candidate
+planning and response admission. The history's protected-entry projection
+delegates to that policy. A frozen pending-fetch record retains a planned
+small-pool repeat release separately from the transport request, and response
+admission rechecks current history and occupied stock before accepting it.
 The existing session read contracts carry it through StateStore and
 PetSessionRestorer; the codec validates receipt-only data, at most 100 entries
 per category, including the actual introduction variant. DesktopPersistence
