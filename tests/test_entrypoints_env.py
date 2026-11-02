@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+from aiko_pet.application.runtime_resources import PreparedRuntimeResources
 from aiko_pet.config import load_env_file
 from aiko_pet.infrastructure.persistence import default_save_path
 
@@ -19,21 +20,31 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
             runpy.run_path(str(ROOT / "main.py"), run_name="__main__")
         start.assert_called_once_with()
 
-    def test_gui_entrypoint_loads_env_before_creating_desktop(self) -> None:
+    def test_gui_entrypoint_orders_env_resources_and_desktop(self) -> None:
         from aiko_pet.gui import main
 
         order = []
+        resources = PreparedRuntimeResources(())
+
+        def prepare():
+            order.append("resources")
+            return resources
+
+        def create(*, local_social_content):
+            self.assertIs(local_social_content, resources.local_social_content)
+            order.append("pet")
+            return Mock(run=lambda: order.append("run"))
+
         with (
             patch(
                 "aiko_pet.gui.load_env_file", side_effect=lambda: order.append("env")
             ),
-            patch("aiko_pet.gui.DesktopPet") as pet,
+            patch("aiko_pet.desktop.startup.prepare_runtime_resources",
+                  side_effect=prepare),
+            patch("aiko_pet.gui.DesktopPet", side_effect=create),
         ):
-            pet.side_effect = lambda: order.append("pet") or Mock(
-                run=lambda: order.append("run")
-            )
             main()
-        self.assertEqual(order, ["env", "pet", "run"])
+        self.assertEqual(order, ["env", "resources", "pet", "run"])
 
     def test_env_example_requires_no_secrets(self) -> None:
         content = (ROOT / ".env.example").read_text(encoding="utf-8")

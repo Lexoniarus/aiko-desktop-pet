@@ -186,6 +186,27 @@ class WindowsSetupTests(unittest.TestCase):
             ),
         )
 
+    def test_bad_joke_review_stops_setup_before_shortcuts_or_save_access(self) -> None:
+        shutil.copytree(
+            ROOT / "aiko_pet", self.folder / "aiko_pet", dirs_exist_ok=True,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+        review = self.folder / "aiko_pet/data/pyjokes.de.review.json"
+        before = self.save.read_bytes()
+        for body in (None, "{"):
+            with self.subTest(body=body):
+                if body is None:
+                    review.unlink()
+                else:
+                    review.write_text(body, encoding="utf-8")
+                result = self.run_setup()
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("Freigabeliste", result.stdout + result.stderr)
+                self.assertEqual(self.save.read_bytes(), before)
+                self.assertFalse(self.save.with_suffix(".sqlite3").exists())
+                shortcut = self.folder / "shortcuts/Aiko Desktop Pet.lnk"
+                self.assertFalse(shortcut.exists())
+
     def run_batch(
         self,
         filename: str,

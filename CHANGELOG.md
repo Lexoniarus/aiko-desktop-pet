@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Cover missing and malformed local joke reviews in the Windows setup check and
+  normal entrypoint, retaining an existing save unchanged and creating no pet
+  window or success shortcut on failure. Document fresh-folder recovery for
+  modified project or library data and the prepared-resource startup contract.
+
 - Pass the prepared startup resources into desktop composition and reuse the
   checked joke contents without a second load. Direct DesktopPet construction
   also prepares missing resources before creating a store, restoring a session

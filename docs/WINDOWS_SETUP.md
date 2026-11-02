@@ -26,7 +26,7 @@ policy; the batch file sets the policy for its own setup process only.
    The horoscope needs no account, key or network access at runtime. Pillow, Ruff,
    Mypy and Pyright are developer tools, not required by players.
 4. Import the application, verify a real offline astronomy calculation and the
-   pinned German joke library,
+   pinned German joke library against its complete reviewed catalogue,
    validate the character catalog and load one
    character PNG in a hidden Tk window. No pet session or save is opened.
 5. Create `Aiko Desktop Pet` shortcuts on the current user's desktop and
@@ -71,6 +71,13 @@ create the shortcut in a chosen folder instead of the desktop and Start menu.
   `Aiko_installieren.bat`, then use
   `Aiko_starten.bat`. Manual environments must install `requirements.txt`.
   Startup checks this before opening a save.
+- **Local joke review missing, damaged, or inconsistent with the library:**
+  extract the complete Aiko project into a fresh folder and run setup there.
+  A fresh folder creates a fresh `.venv`; reinstalling over an already satisfied
+  package version does not repair modified library files. The normal startup and
+  setup both validate the complete review before creating a pet session. Existing
+  progress in `%LOCALAPPDATA%\AikoDesktopPet` remains separate; keep any custom
+  `AIKO_SAVE_PATH` outside a folder you replace.
 - **Offline use:** setup may download Python and the required packages. Once
   installed, the local book and reviewed pyjokes subset work without network
   access. Local jokes share the optional entertainment-source setting with

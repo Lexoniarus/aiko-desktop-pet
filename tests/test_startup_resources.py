@@ -16,6 +16,32 @@ from tools.tk_test_time import ControlledTkTime
 
 
 class StartupResourceTests(unittest.TestCase):
+    def test_main_reports_review_failure_without_opening_existing_save(self):
+        with tempfile.TemporaryDirectory() as folder:
+            save = Path(folder) / "existing.json"
+            before = b'{"existing":"progress"}'
+            save.write_bytes(before)
+            with (
+                patch.dict("os.environ", {"AIKO_SAVE_PATH": str(save)}),
+                patch("aiko_pet.gui.load_env_file"),
+                patch("aiko_pet.infrastructure.local_jokes.REVIEW_PATH",
+                      Path(folder) / "missing.json"),
+                patch("aiko_pet.gui.StateStore") as store,
+                patch("aiko_pet.gui.PetSessionRestorer") as restore,
+                patch("aiko_pet.gui.DesktopWindow") as window,
+                patch("aiko_pet.desktop.startup.messagebox.showerror") as report,
+                self.assertRaises(SystemExit) as stopped,
+            ):
+                main()
+            self.assertEqual(stopped.exception.code, 1)
+            store.assert_not_called()
+            restore.assert_not_called()
+            window.assert_not_called()
+            report.assert_called_once()
+            self.assertIn("Projektdateien", report.call_args.args[1])
+            self.assertEqual(save.read_bytes(), before)
+            self.assertFalse(save.with_suffix(".sqlite3").exists())
+
     def test_direct_constructor_rejects_missing_review_before_store_or_window(self):
         with tempfile.TemporaryDirectory() as folder, patch(
             "aiko_pet.infrastructure.local_jokes.REVIEW_PATH",

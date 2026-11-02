@@ -99,6 +99,24 @@ presentation boundary. Unknown or changed entries cannot pass that review.
 Words and punctuation are preserved; only presentation boundaries and whitespace
 normalization are applied. Existing source limits still apply.
 
+Startup prepares the complete local catalogue before creating a save store,
+restoring a session or opening a pet window. The canonical loader owns package
+version, strict review-file decoding, fingerprints and presentation boundaries.
+It classifies expected dependency, review and content failures; runtime preflight
+maps those to the existing understandable startup error and a suitable repair
+hint. A corrupt review or changed library text cannot become an unhandled late
+GUI-construction error.
+
+`application/runtime_resources.py:PreparedRuntimeResources` is the frozen output
+of `infrastructure/runtime_dependencies.py:prepare_runtime_resources()`.
+`desktop/startup.py:run_desktop()` passes it to its factory; normal composition
+injects the exact prepared tuple into `DesktopPet` without reloading it. Direct
+constructors prepare omitted resources before session access; explicit content
+injection remains available to isolated fixtures. The existing check-only
+`check_runtime_dependencies()` entry point uses the same preparation for setup.
+Neither resource preparation nor its failure path opens a pet save or starts an
+HTTP worker. Expected resource failures terminate startup with exit code 1.
+
 All joke sources additionally pass `application/joke_content_policy.py`'s
 conservative wording rejection rules. These reject observed slurs, political,
 sexual and other unsuitable terms; they do not claim semantic safety for every
