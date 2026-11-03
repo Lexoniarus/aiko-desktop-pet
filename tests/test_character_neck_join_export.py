@@ -151,6 +151,28 @@ class NeckJoinExportTests(unittest.TestCase):
             export_neck_joins(self.package, self.assets)
         self.assertEqual(self.snapshot(), self.before)
 
+    def test_step_collar_metadata_cannot_authorize_a_changed_jaw(self) -> None:
+        row = next(r for r in self.inputs["frames"] if r["group"] == "walk-right")
+        row["walk_collar_fit"] = {"jaw_boundary_y": 241}
+        self.write_inputs()
+        with self.assertRaisesRegex(ValueError, "approved jaw"):
+            export_neck_joins(self.package, self.assets)
+        self.assertEqual(self.snapshot(), self.before)
+
+    def test_step_collar_provenance_survives_reinstall(self) -> None:
+        row = next(r for r in self.inputs["frames"] if r["group"] == "walk-right")
+        row["walk_collar_fit"] = {"jaw_boundary_y": 240}
+        self.write_inputs()
+        export_neck_joins(self.package, self.assets)
+        after = self.snapshot()
+        export_neck_joins(self.package, self.assets)
+        self.assertEqual(self.snapshot(), after)
+        manifest = json.loads((self.assets / "frames_2x/manifest.json").read_text())
+        record = next(r for r in manifest["neck_join_corrections"]["frames"]
+                      if r["file"] == row["file"])
+        self.assertEqual(record["method"], "native_neck_fitted_to_step_collar")
+        self.assertEqual(record["walk_collar_fit"]["jaw_boundary_y"], 240)
+
 
 class InstalledNeckJoinTests(unittest.TestCase):
     def test_installed_join_hashes_and_scope_match_manifest(self) -> None:

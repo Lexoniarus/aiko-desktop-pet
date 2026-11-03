@@ -2,6 +2,18 @@
 
 ## Local neck-join corrections (2026-11-03)
 
+The subsequent walking-only pass fits each lower neck to its actual step
+collar. The previous complete head cutout still left hanging skin cuts and
+small detached dark garment strokes, especially on downward quarter-head
+axes. All fifty walking combinations (right 02..06, left 10..14; five unique
+step phases) now use the same head's skin texture below its preserved jaw.
+`tools/character_walk_neck.py` constructs that local fit; the reviewed-package
+installer records `native_neck_fitted_to_step_collar` and the per-frame jaw
+boundary. No head movement, head scaling or new drawing is involved. Standing
+gazes, full-profile steps, turns, Idle, 1x assets and timing remain unchanged.
+These are corrected runtime images pending the user's visual check, not a
+claim that automated tests establish visual acceptance.
+
 The existing head owns its complete drawn neck silhouette. The body's upper
 neck skin no longer overlays that contour; its collar and clothing remain in
 front. The original chin stays visible. No head is shifted or rescaled and

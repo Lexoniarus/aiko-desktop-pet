@@ -119,6 +119,16 @@ def export_neck_joins(package: Path, assets: Path) -> dict[str, Any]:
         }
         if inputs.get("neck_owner") == "head":
             info["method"] = "complete_original_neck_silhouette_collar_foreground"
+        if row.get("walk_collar_fit"):
+            if row["group"] not in ("walk-left", "walk-right"):
+                raise ValueError("Step collar fitting is limited to walking poses")
+            anchor = row["walk_collar_fit"]["jaw_boundary_y"]
+            if not 233 <= anchor <= 247 or current.crop(
+                (0, 0, 384, anchor),
+            ).tobytes() != candidate.crop((0, 0, 384, anchor)).tobytes():
+                raise ValueError("Step collar fitting must retain the approved jaw")
+            info.update(method="native_neck_fitted_to_step_collar",
+                        walk_collar_fit=row["walk_collar_fit"])
         category = "hd" if relative.startswith("frames_2x/") else "body"
         records[category].append(info)
         if category == "hd":

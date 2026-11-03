@@ -4452,440 +4452,86 @@
       },
       {
         "file": "body_poses/body-step-left-10/00.png",
-        "base_sha256": "bd51d966e7e21dfbbe0605cc14b0f6f92fcc5489f02f735124932ad81bb4978e",
-        "sha256": "abb02d6ed4beeeb1efc10bb2b83c689785d2823e0d9005c99573d94db34d4c01",
+        "base_sha256": "abb02d6ed4beeeb1efc10bb2b83c689785d2823e0d9005c99573d94db34d4c01",
+        "sha256": "3907fe26020c86b6da325e2263be706b270468697c18ef79d70dac7d2677fb7b",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 2,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 49,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 240,
+          "side": "left",
+          "phase": "00",
+          "head_axis": 10,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-left-10/01.png",
-        "base_sha256": "5b966a53800e78ba1619f0703db2aaf6c9c713ae95811586d14c4d74c926326b",
-        "sha256": "fd011a7f5cbca953daa4fff8d53b1002aa525f14871c3085c82e6e8b4fdc1703",
+        "base_sha256": "fd011a7f5cbca953daa4fff8d53b1002aa525f14871c3085c82e6e8b4fdc1703",
+        "sha256": "5ef935f5a421accf2aaede511bd1e2df2db265a01afaced6890edbdaee16bd70",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 42,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 242,
+          "side": "left",
+          "phase": "01",
+          "head_axis": 10,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-left-10/03.png",
-        "base_sha256": "7ddf6322db467587355ae7ff86009854a91c9c29c167c8e4fa7e98f18c492bd0",
-        "sha256": "d32051391dd12e45318d6cd45f088bcc70453167dbebd76bc9fe237360acfed6",
+        "base_sha256": "d32051391dd12e45318d6cd45f088bcc70453167dbebd76bc9fe237360acfed6",
+        "sha256": "338e1accb6cedeeae56061c10b8e930df1f9c9880d5753971bacec543cb52d6d",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 11,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 31,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "03",
+          "head_axis": 10,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-left-10/07.png",
-        "base_sha256": "8d398bf8efcaec82546ab05971d6075e5cda25377d609ff2894072f952d03f46",
-        "sha256": "140c6f6a370e39513a1bb18c6397afbeafd04dabc52f76bab86ff8f5e9e85a8c",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 1,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-10/stand.png",
-        "base_sha256": "0f390eb5ccd676a7ee362505eb919ff0439e03a8d69914a4b03c8dde0c223e7f",
-        "sha256": "3f511ee3ed3a886f787fd0704769fd2fbd9130f3d8bab37191dc142d7f022692",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-11/00.png",
-        "base_sha256": "823cd24adba0107b56ac3cb08c6d6c4561bf61aba2e567b3afbee5bfbfc6cddb",
-        "sha256": "37ee72e3e93306dd2ec8ac8c5fde00d7394ab03c8169f9e675543a643e32edb0",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 5,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-11/01.png",
-        "base_sha256": "a6faca53e3eab0532ff677034522dc90def6e62bc2023a689b890db2751cd224",
-        "sha256": "c8849111b326b3e58173dabf78d52ea5c0c3e6256bc6bd08f1e5e1c1bf7b8d05",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 14,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-11/03.png",
-        "base_sha256": "5418453979a2e6fb054f982736b4056695c633ace66dbc65819054b03d684bc2",
-        "sha256": "128afc8ae4c2237a6a7e884f573d5ad96aa4d8fde869f4061f66f34d7fffb727",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 16,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-11/07.png",
-        "base_sha256": "5bd0e28d99abfb854b92e31f812f451bc49baa1b2d1c3047b05462f4d400fd02",
-        "sha256": "80fd950461dd954072842863610b33adcb15cbd7b4dcd1af7f1d7e265224feca",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 14,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-11/stand.png",
-        "base_sha256": "97ca748243be14b4869b807db7effdea4ba3adf5b329d7a2a5b02f5c56b697a5",
-        "sha256": "75c48dfdec6c480d7daf24aed70791aa53fd8237b8a23f6f5fec6886f89bae79",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-12/00.png",
-        "base_sha256": "f35a2957edf89a917887daabe1d1d46d5bb5b3c9388ffbeee3c4987b0582151e",
-        "sha256": "33f43a2c0945aba5cb066bdf6dae51bb7afe9c0b42a7715099a5c5c289bd3adb",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 2,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-12/01.png",
-        "base_sha256": "3de9502cf5c8070325ffd0f97698bb11c016fefb08637cc1eb5ac1ec41cddf24",
-        "sha256": "d8504842aa15cafc17c0d3c2240a257a08b53ce4d6a249e2c203a7971d20c8fb",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 8,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-12/03.png",
-        "base_sha256": "b455dd822692501714629be5bf84e2bbee33d70b76744f72f094687d18231fff",
-        "sha256": "1cca0385f2ba71773308f4d1c6430e69bd3880f098dea3057235f998a3c649ef",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 12,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-12/07.png",
-        "base_sha256": "488d6a2af8da1ba8d71c54c2a7d01967415e05cadfdfc8e923e88ea57137eda5",
-        "sha256": "1ec4b41f03acae1c6b56cc7c96e2a9e8fbdc7c1915da3e77aceb19901bfb018d",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 11,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-12/stand.png",
-        "base_sha256": "c37c4780d12e9afddf1218f66f3f3bf5d5dd193da6233fce1cb918d9233bd8ad",
-        "sha256": "a7897cbfdc5505c134bcd6ca2a3ab4adb22b256cae9125a1dddd667d8cfeeea7",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-13/00.png",
-        "base_sha256": "3880f21f77f10add36337cc74cbb0d772346d4e17654ff41356ef5aaf3ea1c0d",
-        "sha256": "2b14a5c2128c4255e342dc123cdcfe51f213b49cc5b4aae7530d122c37c1fe61",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-13/01.png",
-        "base_sha256": "77299befcd616f0e99e5dac8ccd4f2c547cb30f195582b60a08a03e3d0c3ec92",
-        "sha256": "2da98c53fea73deeb05b89b2cfcd52c535183963679411e961863dcff4d41ca1",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 19,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-13/03.png",
-        "base_sha256": "c70a7ba066f25d988073a08e397f4a310a99ade0e5e6e0edb3957a246334b006",
-        "sha256": "09911087f38212d2ef512efa76c5e3980ab94e99a68727defa203d3e78541f6f",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 15,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-13/07.png",
-        "base_sha256": "ddcaeed654ed09d57a88684caa35cf4ffc4265e3b460595c358f42970ed3d96e",
-        "sha256": "2fff46c3f05479b5f44f8450027883e22ca56e4a1074e0b7cdf4de751d167674",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-13/stand.png",
-        "base_sha256": "b67141ce822aa937ff454f34f6312d948f19a939a1faeed87cd112d00ce15b2e",
-        "sha256": "a0ffa71e42137e75e3371c9708d140e8cb780ccb5fe1025e76b00f0ac823770a",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-14/00.png",
-        "base_sha256": "ab0165627a42a9d8abaf7925249d3d14d82d816474be4c60cfcf1a1110ee9ab7",
-        "sha256": "76b7f5d131308de695087c8e97f6580b99c6565eec3f95926116dfd54751f4dd",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 3,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-14/01.png",
-        "base_sha256": "d709c44aadc80dc0cf532014248ad536531f4eeaf42070396917b8939eb90adc",
-        "sha256": "8a6d3cc71b26694c417c42dba23d67aa714fa54988451c92534aaa4a1f861029",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 14,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-14/03.png",
-        "base_sha256": "e07d7aea0035db8e279bd59e4efaca3c7a22051c9342d9f5af69936511bda646",
-        "sha256": "666a0c1ecce9fad82cbbedc150f3e02c8323cbc14a57c95c6bf1e5f048c356cf",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 2,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-14/07.png",
-        "base_sha256": "1e4896d4e20fe3eddd5156e6fc93047530727934585d16d3759fca4896ceb14c",
-        "sha256": "f67d1126aed9d119bda19fe1bbb04b8b202f9d57c10b62a214e50e896fe4b802",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 1,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "body_poses/body-step-left-14/stand.png",
-        "base_sha256": "71c196c666c46ffe17b66b1f0f2edd68d7f3eb1227fccf80c8fa05fb633b0324",
-        "sha256": "e9f9ea615520cc7cebc7f6d2f32d33dc76a4b1dc258110498f52b00dabb59364",
+        "base_sha256": "140c6f6a370e39513a1bb18c6397afbeafd04dabc52f76bab86ff8f5e9e85a8c",
+        "sha256": "12c99c17b9cac8f62dcd8279b74a2f4fef4ecfcffb0263dd7769713421e7f834",
         "bounds_2x": [
           165,
           233,
@@ -4893,462 +4539,1216 @@
           259
         ],
         "changed_pixels": 28,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 240,
+          "side": "left",
+          "phase": "07",
+          "head_axis": 10,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-10/stand.png",
+        "base_sha256": "3f511ee3ed3a886f787fd0704769fd2fbd9130f3d8bab37191dc142d7f022692",
+        "sha256": "52fe4948940ac505541e05ea18232755a5eedbedf756141e5e02b5f3f42a2cb4",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 40,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 240,
+          "side": "left",
+          "phase": "stand",
+          "head_axis": 10,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-11/00.png",
+        "base_sha256": "37ee72e3e93306dd2ec8ac8c5fde00d7394ab03c8169f9e675543a643e32edb0",
+        "sha256": "9c08c6be95c02111d2de4024dab306f7a4a0901ad00247f881b7d125fd2d6cb6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 65,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "left",
+          "phase": "00",
+          "head_axis": 11,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-11/01.png",
+        "base_sha256": "c8849111b326b3e58173dabf78d52ea5c0c3e6256bc6bd08f1e5e1c1bf7b8d05",
+        "sha256": "590798ecca0f0c6f778d164b2c2cfbc15ba14a91681451075372b4a55c9d9df0",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 64,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 241,
+          "side": "left",
+          "phase": "01",
+          "head_axis": 11,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-11/03.png",
+        "base_sha256": "128afc8ae4c2237a6a7e884f573d5ad96aa4d8fde869f4061f66f34d7fffb727",
+        "sha256": "e05f154396a2cad36d1358cb223fd0ec02838100ba6ce33d5dfd3c44fbabdeb6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 50,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "left",
+          "phase": "03",
+          "head_axis": 11,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-11/07.png",
+        "base_sha256": "80fd950461dd954072842863610b33adcb15cbd7b4dcd1af7f1d7e265224feca",
+        "sha256": "9a69f0ac4ce511291f9c540094160b05e8223aaec86a625670ca848997aadb7f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 45,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "left",
+          "phase": "07",
+          "head_axis": 11,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-11/stand.png",
+        "base_sha256": "75c48dfdec6c480d7daf24aed70791aa53fd8237b8a23f6f5fec6886f89bae79",
+        "sha256": "901206ff11b999bf19f5bb65acced66bbce57c18982f0d8bf9253613006b98f5",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 59,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "left",
+          "phase": "stand",
+          "head_axis": 11,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-12/00.png",
+        "base_sha256": "33f43a2c0945aba5cb066bdf6dae51bb7afe9c0b42a7715099a5c5c289bd3adb",
+        "sha256": "655e1d65814037613c66b4ae52c4e57248fb812073f66dc528e54b5e4c2063f1",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 89,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "left",
+          "phase": "00",
+          "head_axis": 12,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-12/01.png",
+        "base_sha256": "d8504842aa15cafc17c0d3c2240a257a08b53ce4d6a249e2c203a7971d20c8fb",
+        "sha256": "e270209c053a030202c39775eb4a227c0dd56f911efcfa52945b41fe7e0871bc",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 84,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "left",
+          "phase": "01",
+          "head_axis": 12,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-12/03.png",
+        "base_sha256": "1cca0385f2ba71773308f4d1c6430e69bd3880f098dea3057235f998a3c649ef",
+        "sha256": "99027d91ab71fd73c0937dc0a59df2373766134ccc410ebe3d01af5165779760",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 69,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 235,
+          "side": "left",
+          "phase": "03",
+          "head_axis": 12,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-12/07.png",
+        "base_sha256": "1ec4b41f03acae1c6b56cc7c96e2a9e8fbdc7c1915da3e77aceb19901bfb018d",
+        "sha256": "ea76524902af8682121ee3724d6469157d4ff27cf3bd2e430987e7f40f93468a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 69,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "left",
+          "phase": "07",
+          "head_axis": 12,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-12/stand.png",
+        "base_sha256": "a7897cbfdc5505c134bcd6ca2a3ab4adb22b256cae9125a1dddd667d8cfeeea7",
+        "sha256": "0e423ed27ee7a75e3eaad72ed121095db216a87b091d52b17c8a2254f180677f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 91,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "left",
+          "phase": "stand",
+          "head_axis": 12,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-13/00.png",
+        "base_sha256": "2b14a5c2128c4255e342dc123cdcfe51f213b49cc5b4aae7530d122c37c1fe61",
+        "sha256": "3b3c45ce60886a997a950f02e6b5b9cbed547d8d37b0f4d1e60cb6d51c8465c2",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 84,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "00",
+          "head_axis": 13,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-13/01.png",
+        "base_sha256": "2da98c53fea73deeb05b89b2cfcd52c535183963679411e961863dcff4d41ca1",
+        "sha256": "aa0b1a6c17ee379cc83892d6c2809ac833686c817ff7c4a8a7715d6713471a23",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 86,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 240,
+          "side": "left",
+          "phase": "01",
+          "head_axis": 13,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-13/03.png",
+        "base_sha256": "09911087f38212d2ef512efa76c5e3980ab94e99a68727defa203d3e78541f6f",
+        "sha256": "97102e9c44436b02f4ab884807cdebf2fb6ea09d42bfba273c2146cd3211a680",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 66,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "left",
+          "phase": "03",
+          "head_axis": 13,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-13/07.png",
+        "base_sha256": "2fff46c3f05479b5f44f8450027883e22ca56e4a1074e0b7cdf4de751d167674",
+        "sha256": "f95fef36b012f616734d91245a8799e249ea2b67cbb71406154c3a5e9d533e8a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 62,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "07",
+          "head_axis": 13,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-13/stand.png",
+        "base_sha256": "a0ffa71e42137e75e3371c9708d140e8cb780ccb5fe1025e76b00f0ac823770a",
+        "sha256": "f3ed96b6375e61027cd54e15f60d8d0aab9303f943df2a32825cdaed6e3d87a5",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 83,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "stand",
+          "head_axis": 13,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-14/00.png",
+        "base_sha256": "76b7f5d131308de695087c8e97f6580b99c6565eec3f95926116dfd54751f4dd",
+        "sha256": "bab24b622ad1d781c5b8ac264bc36ffc7039b509fd8f7c3ffc65ed0a59f04588",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 74,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "00",
+          "head_axis": 14,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-14/01.png",
+        "base_sha256": "8a6d3cc71b26694c417c42dba23d67aa714fa54988451c92534aaa4a1f861029",
+        "sha256": "c1e56ebc6eedeea91ec4ede479404adcf033090d40a37892e7030fe02f80a14e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 63,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 240,
+          "side": "left",
+          "phase": "01",
+          "head_axis": 14,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-14/03.png",
+        "base_sha256": "666a0c1ecce9fad82cbbedc150f3e02c8323cbc14a57c95c6bf1e5f048c356cf",
+        "sha256": "74158431fe142e3da6a1f3f21cb1e3b3fba3c7c6661fdae1fbb4100f8562222c",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 53,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "left",
+          "phase": "03",
+          "head_axis": 14,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-14/07.png",
+        "base_sha256": "f67d1126aed9d119bda19fe1bbb04b8b202f9d57c10b62a214e50e896fe4b802",
+        "sha256": "bbd5950ad78b8abbf0370dc8ee2a626f5c1f7bb30535790cb5fa6d170ae545a2",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 49,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "07",
+          "head_axis": 14,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
+      },
+      {
+        "file": "body_poses/body-step-left-14/stand.png",
+        "base_sha256": "e9f9ea615520cc7cebc7f6d2f32d33dc76a4b1dc258110498f52b00dabb59364",
+        "sha256": "9697682a47663edd4ea145cc95c10e62a1e97e9722121d2d4be60605d99b094a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 96,
+        "method": "native_neck_fitted_to_step_collar",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "left",
+          "phase": "stand",
+          "head_axis": 14,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-02/00.png",
-        "base_sha256": "4035d59894539906271e6ad82a1906fb4408053c5cdf4183356b2524494b476a",
-        "sha256": "7a03f3618ef80b1835d49224c70f6d456d091e35cacf2b9023cf2972ecd7f819",
+        "base_sha256": "7a03f3618ef80b1835d49224c70f6d456d091e35cacf2b9023cf2972ecd7f819",
+        "sha256": "640f3cd98d6b1ad90d514698333d6290df3516098c330c7e3e3fd1ecda811c06",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 100,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "00",
+          "head_axis": 2,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-02/01.png",
-        "base_sha256": "6648d2aed395e436c2a54cdb31230abc1b3803fd88ffe3a1bea3be930858ec00",
-        "sha256": "f7f2fb1ae48e0fdc1bb3373ecb2343d3b76575e98b88f2461268761fe3fb4392",
+        "base_sha256": "f7f2fb1ae48e0fdc1bb3373ecb2343d3b76575e98b88f2461268761fe3fb4392",
+        "sha256": "b4cef0d448fc9087575d1e037b82a52063d99a0f3a4bfc2b0d0042b179de904b",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 98,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "right",
+          "phase": "01",
+          "head_axis": 2,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-02/03.png",
-        "base_sha256": "02c88ebc45c7058a5e8910a7aa1d7b860c86cdb30c0179413eaf8bcc40fb9ad3",
-        "sha256": "034da36a8dd5f68be1cad132cf90b21f843164b763eefa1759394499fcde073b",
+        "base_sha256": "034da36a8dd5f68be1cad132cf90b21f843164b763eefa1759394499fcde073b",
+        "sha256": "da19aa427f725e6be8789f4dcdf160bd440b029c87899fdf2437863b29c2e395",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 86,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 235,
+          "side": "right",
+          "phase": "03",
+          "head_axis": 2,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-02/07.png",
-        "base_sha256": "4d2694ff343f9cc3a052b3772209eaa99f890df5a7a0f7e8754d92a8a35a1878",
-        "sha256": "188896c77606a62f3052fc00d5c2b50e726dfa1d21b06054e175e7c324b21029",
+        "base_sha256": "188896c77606a62f3052fc00d5c2b50e726dfa1d21b06054e175e7c324b21029",
+        "sha256": "18a7204eac43e630850a9a63f01317bdde869ae3a205c366b2f23070dc768bd1",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 15,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 82,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "07",
+          "head_axis": 2,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-02/stand.png",
-        "base_sha256": "0b714d44caea5d265ecda9c6c9c874bdd4ac1528a85e5fadb34d09f4ad18f5de",
-        "sha256": "b2254b219807d6a7395eb4241958d3007201527b31abadd636f300171ad84469",
+        "base_sha256": "b2254b219807d6a7395eb4241958d3007201527b31abadd636f300171ad84469",
+        "sha256": "60aeb1162f72543e21942a4c70d1168d1440e990cbd13e6e25703016cebf3e58",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 94,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "stand",
+          "head_axis": 2,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-03/00.png",
-        "base_sha256": "a639e8e85ad9af6528239283e9ad828bf5fcec99a81cce311dcca2c50b01c855",
-        "sha256": "b2bc10e1346053b571c914e20528b269cd35a83d963ebb1ca45c97c20e71329e",
+        "base_sha256": "b2bc10e1346053b571c914e20528b269cd35a83d963ebb1ca45c97c20e71329e",
+        "sha256": "f70b2b64d8c8cfd57a39c7076fd703b97ffb15e0942dba0f1c27bb2c66a312e9",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 9,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 119,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "00",
+          "head_axis": 3,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-03/01.png",
-        "base_sha256": "3aee83fddfa2b10834eb642b4a5cf1eda52967fc3f80f1039fdda4eb50d5f5a4",
-        "sha256": "3ded5d1d9a99a92ceddf42db7f154b872ea0878c5dcaaa5786f2cb726b024bed",
+        "base_sha256": "3ded5d1d9a99a92ceddf42db7f154b872ea0878c5dcaaa5786f2cb726b024bed",
+        "sha256": "564a157a4103f81dc35dc26ff98b092509aa9d868a684b25909b467a87262f66",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 19,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 130,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "right",
+          "phase": "01",
+          "head_axis": 3,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-03/03.png",
-        "base_sha256": "484058953ff44d865a5207d30fee737936394d3645e0fb83acd18b0b7d539440",
-        "sha256": "bcc98dff2ec6cd77201a5e46fed637f02ff6fa9b668f6474d55ddc8c9aa0cc49",
+        "base_sha256": "bcc98dff2ec6cd77201a5e46fed637f02ff6fa9b668f6474d55ddc8c9aa0cc49",
+        "sha256": "43e7e1400675e7c20a363272338a8a81280fe5d01d0915b71a05f809b8ea6d72",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 2,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 115,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 234,
+          "side": "right",
+          "phase": "03",
+          "head_axis": 3,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-03/07.png",
-        "base_sha256": "b2be6ad982839801feda5b8654581746bf64d5fbb642ceb7b8e693afe1cc438b",
-        "sha256": "566e3d27ef2138d22e4e9223aa7dbd0e6c29f907180d62f8689c8429d7743fc0",
+        "base_sha256": "566e3d27ef2138d22e4e9223aa7dbd0e6c29f907180d62f8689c8429d7743fc0",
+        "sha256": "bdeed153ce1c4591c3442b46ef26b6805d0486452d5c33db50ec0f003d03a38f",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 2,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 93,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "07",
+          "head_axis": 3,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-03/stand.png",
-        "base_sha256": "f577770b7e455f6447366091b67e2f4061a6eb2200f285d3fe2f50eb9b6d6e00",
-        "sha256": "2724d3d0d27ab6bd5c4bd928fdaa69f65eef21937263418b1239bc4f15f08bb4",
+        "base_sha256": "2724d3d0d27ab6bd5c4bd928fdaa69f65eef21937263418b1239bc4f15f08bb4",
+        "sha256": "571330e799f3e9e511a6b3f43f9d2cb174310a9c44461661a6239d1a2447642e",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 110,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "stand",
+          "head_axis": 3,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-04/00.png",
-        "base_sha256": "47981e9d7aa9408e5192867df9f377c1a71c2486042c7479981dd57ffdf0f885",
-        "sha256": "57b5606e01b36e86c3a679b5ae1bbdc90ba3158e80473a062bb013f782840a84",
+        "base_sha256": "57b5606e01b36e86c3a679b5ae1bbdc90ba3158e80473a062bb013f782840a84",
+        "sha256": "6eb11b95437b1a2efeb9a27ee5401161f8bc30d088f9f255ffba20ce5b1cf940",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 8,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 116,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "00",
+          "head_axis": 4,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-04/01.png",
-        "base_sha256": "51f137f461739b32ad65327f2473e4be63ceff7ba668ea4971ae7e06e8564c29",
-        "sha256": "f33795945644b3e223ad19b6b870689459ee09091283d1015738636d1ff405b3",
+        "base_sha256": "f33795945644b3e223ad19b6b870689459ee09091283d1015738636d1ff405b3",
+        "sha256": "0e72e1d7f4e505758ccac9812b5e795411ef9afb6ec8ffa5475964b96c95caaa",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 129,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 238,
+          "side": "right",
+          "phase": "01",
+          "head_axis": 4,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-04/03.png",
-        "base_sha256": "5545680921034d49f927c47865f7a8801c399797e4cc75a2bd48bb78b096f50a",
-        "sha256": "41ee10e915271dd579a1a54989df6f8819ec89a8754c91b142ab39697f343f8a",
+        "base_sha256": "41ee10e915271dd579a1a54989df6f8819ec89a8754c91b142ab39697f343f8a",
+        "sha256": "eb77c07b267e8a92855dee847c636e2e0ebcde15851e687cdbc6977ad3aef908",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 112,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 234,
+          "side": "right",
+          "phase": "03",
+          "head_axis": 4,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-04/07.png",
-        "base_sha256": "4d15929eac646b44e61a3dec885443d3d82d89a23f4e51b44cba64326b14110f",
-        "sha256": "bb3717239b274b1c76745123d18d70df251aa4780d2b6fbe17eff411930fbfe6",
+        "base_sha256": "bb3717239b274b1c76745123d18d70df251aa4780d2b6fbe17eff411930fbfe6",
+        "sha256": "aeebbd40e443325c752cb38d24cfa6c9149faadf2c524245506b40bb6f118443",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 16,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 92,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "07",
+          "head_axis": 4,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-04/stand.png",
-        "base_sha256": "fcc0e73092e0e2c82357464fc6e3da43541680d000d275448025f2da85c6281b",
-        "sha256": "a4708da3b43bf544750a46d742bcd28ada4979e4fd29a84417e2105a84049dd6",
+        "base_sha256": "a4708da3b43bf544750a46d742bcd28ada4979e4fd29a84417e2105a84049dd6",
+        "sha256": "073ff91d5f7bf464b1f4735bccfe9f4f283667ce75bf2db9dd8655c03bbf9680",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 115,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 236,
+          "side": "right",
+          "phase": "stand",
+          "head_axis": 4,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-05/00.png",
-        "base_sha256": "992801fca355058c0d98cab8271b3ce4c829ee0313d5f6c7fb338e4c99e533d8",
-        "sha256": "c1bf7c20b026929b384683a5c5f41717715f2bf3e532e96f172808eddf0e12d4",
+        "base_sha256": "c1bf7c20b026929b384683a5c5f41717715f2bf3e532e96f172808eddf0e12d4",
+        "sha256": "70a74956ba1afed15532090d696e82f76685ba3e745c7e57990b2d52c1d40ba5",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 4,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 75,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "00",
+          "head_axis": 5,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-05/01.png",
-        "base_sha256": "5fe5beb84c5e8bdbe1dad61a02cd4f83700fbf8b6795f4a6421599beb7652408",
-        "sha256": "5df33cabe2ed9d2dee50d614f9cacc470a90e080ad09cf49bc0dcee4307d3fe1",
+        "base_sha256": "5df33cabe2ed9d2dee50d614f9cacc470a90e080ad09cf49bc0dcee4307d3fe1",
+        "sha256": "3d00a9551bead8c497e0177e74fcdb378becacbc8b5289ac1627644488ce98c3",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 12,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 83,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "right",
+          "phase": "01",
+          "head_axis": 5,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-05/03.png",
-        "base_sha256": "dbc737aee973a9f2e82fd6bcc6b3ef87ff290dd0c9d5f62474cbd6b72211ae88",
-        "sha256": "31fc11bad1c1e3b18d05b22bd4f337c14f753a7925bd6a301402d5ce7e58f8b6",
+        "base_sha256": "31fc11bad1c1e3b18d05b22bd4f337c14f753a7925bd6a301402d5ce7e58f8b6",
+        "sha256": "10443eb9327db252aac1f697c4e05fe37c75b3b46aeabac002f4131947999a2d",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 14,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 76,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 235,
+          "side": "right",
+          "phase": "03",
+          "head_axis": 5,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-05/07.png",
-        "base_sha256": "36d3a069e61788c9ff82f9c5c7a713a0ee50fe7da48b4bd096b4e4d8ba7e699d",
-        "sha256": "3aeb2b7ee5a36a0f5c01707c9c4cb856d1d69a4a297f0fe829b8d52fa772f5e1",
+        "base_sha256": "3aeb2b7ee5a36a0f5c01707c9c4cb856d1d69a4a297f0fe829b8d52fa772f5e1",
+        "sha256": "d04aaaf23c2855d9cb3f65b435a02af803f4b40dded40af6bc4aaf2300cd8c0d",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 59,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "07",
+          "head_axis": 5,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-05/stand.png",
-        "base_sha256": "06df7f216368a6b3c74406332c8c90416066cf5b38c04029a631d0f050752790",
-        "sha256": "0cb589c02f1776b713d29e1752bc525128a12724c114b1c645f4beb950835558",
+        "base_sha256": "0cb589c02f1776b713d29e1752bc525128a12724c114b1c645f4beb950835558",
+        "sha256": "3d3007d5c71e16ac4021c8edd809632ed719a4527641454a94b3b0a180dd8a4c",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 76,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "stand",
+          "head_axis": 5,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-06/00.png",
-        "base_sha256": "b4b7f13bc14cc5285b4dc8f2eb5a69b1a24f3d8c0c50a02f2850c8f8615a7089",
-        "sha256": "18036a5075459b7cd6ce1df1ad8452b5344b08f7ed0ef16a053653373b1506ac",
+        "base_sha256": "18036a5075459b7cd6ce1df1ad8452b5344b08f7ed0ef16a053653373b1506ac",
+        "sha256": "faa545b01fa5e03866a0d906f0b46ff08ef92fb330d7cda8fcc7d96b82488fc5",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 72,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "right",
+          "phase": "00",
+          "head_axis": 6,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-06/01.png",
-        "base_sha256": "3ef74c885f83e22d64d0dffb3ec28918bf797383fc7181b2fd76cf518dc7a4a9",
-        "sha256": "484fd83e784f5166c40cf8614345cac0aae1b6a26009c2263cc9246466678e1a",
+        "base_sha256": "484fd83e784f5166c40cf8614345cac0aae1b6a26009c2263cc9246466678e1a",
+        "sha256": "c0ad0bca3048da623fb40d9fb764ef73c1d629a673d65141bf30612ae8580ebf",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 9,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 64,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 241,
+          "side": "right",
+          "phase": "01",
+          "head_axis": 6,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-06/03.png",
-        "base_sha256": "8d213eb28296ac5f3da10aec5e8c6c1f8a048c1211376d15e767cae534588c98",
-        "sha256": "52d056913d2c7d9471cea023c81de9659363d2e9bff99c3afea0388bc17653f6",
+        "base_sha256": "52d056913d2c7d9471cea023c81de9659363d2e9bff99c3afea0388bc17653f6",
+        "sha256": "6b2544f9a0106f32e20928306e90fd989069cd6b964b0384ff8fe74d52fc7f98",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 1,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 55,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 237,
+          "side": "right",
+          "phase": "03",
+          "head_axis": 6,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-06/07.png",
-        "base_sha256": "c1d0c654098d186dc4aaea9d19c7b56736f6e193b8b7f1ca8400baf26186d77a",
-        "sha256": "5e5c8d58268d0f2a7d22d0909cd2ed61523c1df246736e55de9dfffb2197140f",
+        "base_sha256": "5e5c8d58268d0f2a7d22d0909cd2ed61523c1df246736e55de9dfffb2197140f",
+        "sha256": "aa915f029a8e2f47976ad4fe427cbd16425d8f4a903e99362471222037ee6d55",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 14,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 49,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "right",
+          "phase": "07",
+          "head_axis": 6,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "body_poses/body-step-right-06/stand.png",
-        "base_sha256": "338680355d286ae4783a61784542a356a9fc0d95f29c4a31e3e84d8c758bd5d5",
-        "sha256": "1674159fe5950bc216ed316c04cdcd703d71fe1acef1e2bae423da7ac340097b",
+        "base_sha256": "1674159fe5950bc216ed316c04cdcd703d71fe1acef1e2bae423da7ac340097b",
+        "sha256": "d2c65734f9d7843ce9a5e8211667bfb59078da20c1cb113a44c03ec1eff4ec9f",
         "bounds_2x": [
           165,
           233,
           231,
           259
         ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
+        "changed_pixels": 57,
+        "method": "native_neck_fitted_to_step_collar",
         "head_translation": [
           0,
           0
         ],
-        "head_scale": 1
+        "head_scale": 1,
+        "walk_collar_fit": {
+          "jaw_boundary_y": 239,
+          "side": "right",
+          "phase": "stand",
+          "head_axis": 6,
+          "texture_source": "same_original_head",
+          "collar_source": "same_original_step_body"
+        }
       },
       {
         "file": "frames_2x/look/00.png",
