@@ -772,15 +772,7 @@ class DesktopWorldRuntime:
             if self.cursor.carrying
             else None,
         )
-        state, _fixed = self._animated.frame_clock.active_key or ("idle", None)
-        # Passive body poses have no held-item overlay; AnimatedPet owns them.
-        if state not in ("pick_up", "put_down", "eat"):
-            return
-        clip = self._animated.assets.clips[state]
-        index = clip.sprite_index(self._animated.frame_clock.frame_index)
-        self._animated.food_overlay.render(
-            clip, clip.frames[index], scale=self.settings.scale
-        )
+        self._animated.refresh_food_overlay()
 
     def _frame(self) -> None:
         self._timer = None

@@ -1777,8 +1777,8 @@ class WorldGuiTests(unittest.TestCase):
     def finish_clip(self, name):
         self.complete_feedback()
         animated = self.app._animated
-        clip = animated.assets.clips[name]
-        for _ in range(32):
+        clip = animated.assets.clip_for(name, self.app.settings.scale)
+        for _ in range(len(clip.timings) + 1):
             if self.app._world.interaction.phase != name:
                 break
             index = animated.frame_clock.frame_index

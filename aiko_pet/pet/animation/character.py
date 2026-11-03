@@ -64,6 +64,16 @@ class CharacterCatalog:
     expression_clips: Mapping[str, AnimationClip] = field(
         default_factory=lambda: MappingProxyType({}),
     )
+    hd_action_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+
+    def clip_for(self, name: str, scale: int) -> AnimationClip:
+        """Resolve optional HD actions without changing legacy 1x playback."""
+        if scale == 2 and name in self.hd_action_clips:
+            return self.hd_action_clips[name]
+        return (self.expression_clips.get(name) or self.body_clips.get(name)
+                or self.clips[name])
 
 
 @dataclass(frozen=True, slots=True)

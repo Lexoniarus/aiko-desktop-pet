@@ -226,11 +226,24 @@ class AnimatedPet:
         state, fixed = self.frame_clock.active_key or ("idle", None)
         if state not in self.sprites:
             state = self._display_clip
+        if fixed is not None and not (
+            0 <= fixed < len(self.assets.clip_for(state, self.settings.scale).timings)
+        ):
+            fixed = None
         self.show_frame(state, time.monotonic(), fixed=fixed)
 
     def set_food_overlay(self, food_id: str) -> None:
         """Select the held graphic without changing nutrition."""
         self.food_overlay.select(food_id)
+
+    def refresh_food_overlay(self) -> None:
+        """Refresh contact using the same scale-specific clip as the sprite."""
+        state = self._display_clip
+        if state not in ("pick_up", "put_down", "eat"):
+            return
+        clip = self.assets.clip_for(state, self.settings.scale)
+        index = clip.sprite_index(self.frame_clock.frame_index)
+        self.food_overlay.render(clip, clip.frames[index], scale=self.settings.scale)
 
     def begin_action(self, state: str, now: float) -> None:
         """Start a new visual action, including repeated actions of one kind."""
@@ -269,8 +282,7 @@ class AnimatedPet:
     ) -> None:
         if self._stopped:
             return
-        clip = (self.assets.expression_clips.get(state)
-                or self.assets.body_clips.get(state) or self.assets.clips[state])
+        clip = self.assets.clip_for(state, self.settings.scale)
         self._display_clip = state
         # End a complete idle blink after frame 7, then hold neutral frame 0
         # until the ambient policy schedules another one. No frame is skipped.
@@ -287,6 +299,8 @@ class AnimatedPet:
             fixed = 0
         walking = clip.movement or state in ("running-left", "running-right")
         clock_key = clip.family or state
+        if self.settings.scale == 2 and state in self.assets.hd_action_clips:
+            clock_key += ":hd"
         if playback_rate != 1 or reverse:
             clock_key += f":{playback_rate:.6f}:{reverse}"
         timings = (self._game_timings if state == self._game_clip else
@@ -397,8 +411,7 @@ class AnimatedPet:
         if reselect:
             self.render(now, self._last_render_pointer)
             return
-        clip = (self.assets.expression_clips.get(state)
-                or self.assets.body_clips.get(state) or self.assets.clips[state])
+        clip = self.assets.clip_for(state, self.settings.scale)
         if clip.movement or state in ("running-left", "running-right"):
             progress = self.frame_clock.progress_seconds(
                 now,

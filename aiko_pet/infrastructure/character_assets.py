@@ -18,6 +18,7 @@ from ..pet.animation.timing import VIRTUAL_CLIPS
 from ..pet.catalog_validation import load_json, object_fields
 from .animation_timing import load_timing_policy
 from .body_pose_assets import load_body_pose_clips
+from .eating_assets import load_hd_eating_clip
 from .expression_assets import load_expression_clips
 
 
@@ -207,4 +208,4 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     if any(clip.return_to not in clips for clip in clips.values()):
         raise ValueError("Unknown return animation")
     return CharacterCatalog(MappingProxyType(clips), load_body_pose_clips(root),
-                            load_expression_clips(root))
+                            load_expression_clips(root), load_hd_eating_clip(root))

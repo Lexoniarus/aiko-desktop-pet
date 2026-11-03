@@ -40,7 +40,9 @@ class BodyPoseCache:
 
     def __init__(self, root: tk.Tk, catalog: CharacterCatalog) -> None:
         self._root = root
-        self._clips = {**catalog.body_clips, **catalog.expression_clips}
+        self._clips = {**catalog.body_clips, **catalog.expression_clips,
+                       **catalog.hd_action_clips}
+        self._hd_only = frozenset(catalog.hd_action_clips)
         self._images: dict[tuple[Path, int], tk.PhotoImage] = {}
 
     def image(self, path: Path, scale: int) -> tk.PhotoImage:
@@ -63,6 +65,7 @@ class BodyPoseCache:
         return {
             name: _BodyFrames(tuple(f.file for f in clip.frames), self, scale)
             for name, clip in self._clips.items()
+            if scale == 2 or name not in self._hd_only
         }
 
     def close(self) -> None:
