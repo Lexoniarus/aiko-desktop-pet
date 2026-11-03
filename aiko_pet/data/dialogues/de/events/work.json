@@ -368,7 +368,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 2,
       "cooldown_seconds": 150,
       "beats": [
@@ -388,7 +389,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 2,
       "cooldown_seconds": 150,
       "beats": [
@@ -408,7 +410,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 2,
       "cooldown_seconds": 150,
       "beats": [
@@ -428,7 +431,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 2,
       "cooldown_seconds": 150,
       "beats": [
@@ -448,7 +452,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 2,
       "cooldown_seconds": 150,
       "beats": [
@@ -468,7 +473,8 @@
       "conditions": [],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "weight": 1,
       "cooldown_seconds": 150,
       "beats": [
@@ -1223,7 +1229,8 @@
     {
       "id": "v010-work_concentrating-01",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1247,7 +1254,8 @@
     {
       "id": "v010-work_concentrating-02",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1271,7 +1279,8 @@
     {
       "id": "v010-work_concentrating-03",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1295,7 +1304,8 @@
     {
       "id": "voice-work_concentrating-friend-close-01",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1319,7 +1329,8 @@
     {
       "id": "voice-work_concentrating-friend-close-02",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1343,7 +1354,8 @@
     {
       "id": "voice-work_concentrating-friend-close-03",
       "event": "work_concentrating",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "questioning",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1415,7 +1427,8 @@
     {
       "id": "v010-work_finished_interrupted-03",
       "event": "work_finished_interrupted",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1559,7 +1572,8 @@
     {
       "id": "v010-work_finished_long-03",
       "event": "work_finished_long",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1655,7 +1669,8 @@
     {
       "id": "v010-work_long_thought-01",
       "event": "work_long_thought",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1679,7 +1694,8 @@
     {
       "id": "v010-work_long_thought-02",
       "event": "work_long_thought",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1727,7 +1743,8 @@
     {
       "id": "voice-work_long_thought-friend-close-01",
       "event": "work_long_thought",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1751,7 +1768,8 @@
     {
       "id": "voice-work_long_thought-friend-close-02",
       "event": "work_long_thought",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1775,7 +1793,8 @@
     {
       "id": "voice-work_long_thought-friend-close-03",
       "event": "work_long_thought",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1799,7 +1818,8 @@
     {
       "id": "v010-work_unexpected-01",
       "event": "work_unexpected",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1847,7 +1867,8 @@
     {
       "id": "v010-work_unexpected-03",
       "event": "work_unexpected",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1871,7 +1892,8 @@
     {
       "id": "voice-work_unexpected-friend-close-01",
       "event": "work_unexpected",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1895,7 +1917,8 @@
     {
       "id": "voice-work_unexpected-friend-close-02",
       "event": "work_unexpected",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1919,7 +1942,8 @@
     {
       "id": "voice-work_unexpected-friend-close-03",
       "event": "work_unexpected",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -1943,7 +1967,8 @@
     {
       "id": "v010-work_late-01",
       "event": "work_late",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [
         "night"
@@ -1995,7 +2020,8 @@
     {
       "id": "v010-work_late-03",
       "event": "work_late",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [
         "night"
@@ -2047,7 +2073,8 @@
     {
       "id": "voice-work_late-friend-close-01",
       "event": "work_late",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [
         "night"
@@ -2073,7 +2100,8 @@
     {
       "id": "voice-work_late-friend-close-02",
       "event": "work_late",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "worried",
       "conditions": [],
       "periods": [
         "night"
@@ -2243,7 +2271,8 @@
     {
       "id": "v010-return_working-02",
       "event": "return_working",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [],
       "periods": [],
       "weekdays": [],
@@ -2291,7 +2320,8 @@
     {
       "id": "v010-return_working-04",
       "event": "return_working",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [],
       "periods": [],
       "weekdays": [],

@@ -1,6 +1,7 @@
 """Bake a reviewed private interpolation bank into an optional HD meal pack.
 
-The legacy eight-frame atlas, 1x playback, gaze and locomotion are untouched.
+The legacy atlas files, gaze and locomotion assets are untouched; both display
+sizes reuse this approved sequence, with 1x derived from its HD images in memory.
 Interpolation dependencies and full-resolution originals stay outside Git.
 """
 

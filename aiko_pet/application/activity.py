@@ -33,7 +33,6 @@ class ActivityCallbacks:
     """No access to GUI internals: only specific side effects are injected."""
 
     read_idle_seconds: Callable[[], float | None]
-    start_review: Callable[[float], None]
     react: Callable[[Reaction, int], None]
     action_until: Callable[[], float]
     last_spoken: Callable[[], float]
@@ -253,11 +252,6 @@ class ActivityCoordinator:
             event = self.workload_events.observe_change(sample, now)
             if event and self.settings.spontaneous_talk and not self.state.sleeping:
                 self.pending_computer_line = (event, now)
-                if (
-                    now >= self.callbacks.action_until()
-                    and not self.callbacks.speech_busy()
-                ):
-                    self.callbacks.start_review(now)
         if self.pending_computer_line is None:
             return
         event, observed_at = self.pending_computer_line

@@ -148,12 +148,12 @@ class AmbientDirectorTests(unittest.TestCase):
         self.assertEqual(self.policy.motion_offset(101.0), 1)
         self.assertFalse(self.policy.blinking)
 
-    def test_busy_computer_overrides_idle_without_resetting_motion(self) -> None:
+    def test_busy_computer_keeps_idle_without_resetting_motion(self) -> None:
         selected = self.policy.select_passive_animation(
             101.0, gaze_direction=None, observing_computer=True,
             computer_busy=True, energy=80, mood=80, satiety=80,
         ).sprite
-        self.assertEqual(selected, SpriteSelection("review"))
+        self.assertEqual(selected, SpriteSelection("idle", 0))
         self.assertEqual(self.policy.motion_offset(101.0), 1)
         self.assertFalse(self.policy.blinking)
 

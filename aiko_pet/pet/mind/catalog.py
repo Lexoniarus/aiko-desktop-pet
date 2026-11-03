@@ -56,8 +56,6 @@ CATALOGUE = (
 ANIMATIONS = frozenset({
     "idle",
     "waiting",
-    "review",
-    "failed",
     "waving",
     "waving-greeting",
     "jumping",
@@ -232,6 +230,7 @@ class Line:
     stages: tuple[FriendshipStage, ...] = ()
     presentation: Literal["short", "story"] = "short"
     requires_present: bool = False
+    expression: Expression | None = None
 
     @property
     def text(self) -> str:
@@ -249,6 +248,7 @@ class Line:
                 "conditions",
                 "presentation",
                 "requires_present",
+                "expression",
             ),
             context="dialogue line",
         )
@@ -353,6 +353,8 @@ class Line:
             tuple(FriendshipStage(s) for s in data.get("stages", [])),
             presentation,
             present,
+            (enum_value(data["expression"], Expression, context="dialogue expression")
+             if "expression" in data else None),
         )
 
     def matches(self, context: DialogueContext) -> bool:
@@ -606,7 +608,7 @@ class DialogueBook:
                           if beat.kind == "text" else beat for beat in beats)
         return Reaction(
             line.id, beats, line.animation, event, line.presentation,
-            expression=speech_expression(event, context),
+            expression=speech_expression(event, context, authored=line.expression),
             expression_at=next((i for i, beat in enumerate(beats)
                                 if beat.kind == "text"), 0),
         )

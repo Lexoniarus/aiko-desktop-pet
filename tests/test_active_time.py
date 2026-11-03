@@ -55,7 +55,7 @@ class ActiveTimeTests(unittest.TestCase):
         activity = ActivityCoordinator(
             state, PetSettings(auto_routine=False), mind, adaptive,
             WorkloadEventDetector(), Monitor(),
-            ActivityCallbacks(lambda: None, lambda _: None, lambda *_: None,
+            ActivityCallbacks(lambda: None, lambda *_: None,
                               lambda: 0, lambda: 0), clock=clock,
         )
         care = CareController(state, mind, adaptive, clock=clock)
@@ -88,7 +88,7 @@ class ActiveTimeTests(unittest.TestCase):
                     state, PetSettings(auto_routine=False),
                     make_aiko_mind(started_at=0), AdaptiveRoutine(),
                     WorkloadEventDetector(), monitor,
-                    ActivityCallbacks(lambda: None, lambda _: None, lambda *_: None,
+                    ActivityCallbacks(lambda: None, lambda *_: None,
                                       lambda: 0, lambda: 0),
                     clock=ActiveSessionClock(lambda: uptime[0]),
                 )
@@ -158,7 +158,7 @@ class ActiveTimeTests(unittest.TestCase):
         activity = ActivityCoordinator(
             state, PetSettings(auto_routine=False), mind, adaptive,
             WorkloadEventDetector(), Monitor(),
-            ActivityCallbacks(lambda: None, lambda _: None, lambda *_: None,
+            ActivityCallbacks(lambda: None, lambda *_: None,
                               lambda: 0, lambda: 0), clock=clock,
         )
         care = CareController(state, mind, adaptive, clock=clock)

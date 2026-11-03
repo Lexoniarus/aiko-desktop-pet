@@ -42,6 +42,7 @@ def assemble_speech(
             lambda: (settings.x or 0, settings.y or 0, settings.scale),
             configure_object_window,
             lambda window: configure_object_window(window, interactive=True),
+            food_anchor=animated.game_food_anchor,
         ),
     )
 

@@ -61,9 +61,8 @@ def choose_passive_animation(
         return SpriteSelection("look", fixed_frame=gaze_direction)
     if forward_gaze:
         return SpriteSelection("idle", fixed_frame=0)
-    if observing_computer and computer_busy:
-        return SpriteSelection("review")
-    # Needs shape the idle profile. They do not invent a request or a defeat.
+    # Needs shape the idle profile; workload comments own short communication
+    # expressions. Computer load alone must not select a retired body pose.
     return SpriteSelection("idle")
 
 

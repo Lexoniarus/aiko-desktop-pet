@@ -580,7 +580,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         initial_deadline = self.action_deadlines[-1]
         self.anim._advance_frame("petting", None, old_generation)
         self.assertEqual(self.anim.frame_clock.active_key, ("eat", None))
-        for frame in self.anim.assets.clips["eat"].frames:
+        for frame in self.anim.assets.clip_for("eat", self.settings.scale).frames:
             shown_at = self.anim.frame_clock.frame_started_at
             self.anim.show_frame("eat", shown_at + frame.duration_ms / 1000 + 0.01)
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", None))

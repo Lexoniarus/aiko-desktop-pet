@@ -5,6 +5,15 @@ Der Folgeauftrag erlaubte den dokumentierten Codeumbau mit gezielten Prüfungen.
 Keine Bildgenerierung, Assetinstallation oder Save-Migration; kein Push/Merge.
 Die vorgeschlagenen Zeiten sind Startwerte für die spätere Sichtung.
 
+Präzisierung 02.11.2026: Idle meint die nachfolgend beschriebenen Blick-,
+Stand- und Schrittfolgen einschließlich des durchgehenden Schwankens. Die
+neue neutrale Ruhe-/Blinkbasis ist ein Baustein davon. Die fünf abgenommenen
+[Kommunikationsanimationen](V3_CHARACTER_EXPRESSIONS.md) werden bei konkreten
+Äußerungen und Reaktionen kurz abgespielt; sie liefern keine dauerhaften
+zustandsabhängigen Idle-Gesichter. Das Gesamtgefühl beeinflusst weiter das
+Bewegungs-/Blickprofil. Eigenständige dezente Ruhemimik bleibt eine getrennte
+Gestaltungsaufgabe.
+
 ## Ausgangspunkt und Geltung
 
 Ausgangsbasis ist `32ac4c0` auf `feature/social-optimization`. Die vier lokalen
@@ -100,20 +109,22 @@ Montage ist kein zusätzliches natives Ganzfigur-HD-Original.
 
 | Sichtbare Bedeutung / vorläufiger semantischer Name | Bestehende technische Quelle | Stand | Geplanter Einsatz |
 | --- | --- | --- | --- |
-| Ruhestand / `rest` | `idle` | Modulare V3-Fassung im regulären 2X-Satz | Frontaler Ruheanker und vorhandene Blinkfolge |
+| Ruhestand / `rest` | `rest-neutral`, ursprünglicher Fallback `idle` | Abgenommene V3-Ruhe-/Blinkbasis im separaten Ausdruckspaket; vorhandene Skalierung | Frontaler Ruheanker und neutrale Augenphasen, kein vollständiges Idle-Szenario |
 | Frontal umsehen / `look_around` | `look/00..15` | 16 modulare V3-Blicke im 2X-Satz | Alle frontalen Kopfsektoren; nachfolgende Körperabsicht separat |
 | Seitlich stehen und umsehen / `side_rest` | `body-look-left/right` | Installierte Standbasis mit V3-Kopfbausteinen | Länger getragene Dreiviertelhaltung, nur passende Kopfachsen |
 | Ausrichten / `turn` | `body-turn-*`, `body-orient-*` | Vorhandene installierte Drehbausteine | Frontal, Dreiviertel und Profil verbinden; Drehung verschiebt nicht selbst das Fenster |
 | Kleiner Ortswechsel / `small_step` | `body-step-left/right-profil` und Kopfvarianten | Vorhandene installierte Profil-Schrittbausteine | Ein oder zwei Schritte; fünf passende Kopfachsen und volles Profil je Seite |
 | Fragen/bitten / `question_request` | `waiting` | Vollständige V3-Geste im 2X-Satz | Einmal frontal bei einem tatsächlichen passenden Anlass |
-| Kopf fragend neigen / `head_tilt` | `review` | Älterer HD-Bestand | Möglicher gezielter Übergangsbaustein; keine zufällige normale Idle-Zutat |
-| Oberkörper/Kopf senken, verbeugen | `failed` | Älterer HD-Bestand | Exakten sozialen Anlass separat bestimmen; kein pauschales Müdigkeits-/Traurigkeits-Idle |
+| Kopf fragend neigen / `head_tilt` | Früher `review`, jetzt `expression-questioning` bei Kommunikation | Alter Clip stillgelegt; vorhandene V3-Kopfreaktion übernimmt passende Äußerungen | Kein automatischer Arbeits-/Idle-Dauerausdruck |
+| Oberkörper/Kopf senken, verbeugen | Früher `failed` | Alter Clip stillgelegt; bisherige müde Klickantworten nutzen kurze V3-Kommunikationsmimik | Keine automatische Verbeugung bei Müdigkeit; keine zusätzliche Bildproduktion |
 | Rennen / `run` | `running-left/right` | Ältere echte Rennanimation | Bestehende längere Ortswege mit passenden Kopf-/Bewegungsbedingungen; kein zufälliges Idle-Rennen |
 | Freudenhüpfer | `jumping` | Älterer Bestand | Bestehende Freude-Auslöser erhalten; kein zufälliges Ruheverhalten |
 
-Die normale Idle-Grundfolge benötigt `review` und `failed` nicht. Vorhandene
-explizite Einsätze außerhalb des generischen Idle werden vor einer Änderung
-vollständig nachverfolgt und nicht durch Umbenennung stillschweigend ersetzt.
+Die normale Idle-Grundfolge benötigt `review` und `failed` nicht. Nach
+Prüfung ihrer direkten Aufrufe und aller Dialogvarianten wurden auch die
+verbliebenen Einsätze am 02.11.2026 entfernt; passende vorhandene V3-Mimik
+ersetzt die Kommunikationsanlässe. Beide alten Bildsätze bleiben als
+Export-/Herkunftsbestand erhalten, ohne aktive Produktionsauswahl.
 Die Bedeutungszuordnung von Kopfneigen und Verbeugen ist kein Auftrag, neue
 soziale Auslöser zu erfinden. Schlaf und Essen bleiben eigene Vorgänge mit
 ihren vorhandenen Quellen und Zuständigkeiten.
@@ -130,9 +141,10 @@ ihren vorhandenen Quellen und Zuständigkeiten.
   ständig allein für einen Blinktermin frontal unterbrochen. Fehlende
   Augenvarianten sind ein später zu prüfender Bedarf, keine Freigabe zur
   Produktion oder zur ungeprüften Verwendung frontaler Augen auf Seitenköpfen.
-- Das kurze V3-Lächeln ist weiterhin eine separate, nicht für die Laufzeit
-  freigegebene Vorschau. Es wird nicht als verfügbarer positiver Idle-Ausdruck
-  eingeplant. Die vorhandenen Freude-Auslöser behalten ihren Freudenhüpfer.
+- Die frühe einzelne Lächel-Vorschau wurde nicht als positives Dauer-Idle
+  übernommen. Inzwischen ist die freigegebene vollständige positive
+  Kommunikationsanimation vorhanden. Sie wird gezielt kurz abgespielt;
+  die vorhandenen Freude-Auslöser behalten ihren Freudenhüpfer.
 - Die Frage-/Bitte-Geste ist frontal. Es gibt damit noch keine belegte passende
   Dreiviertel-Handgeste. Vor ihrer Ausführung muss Aiko frontal ausgerichtet sein.
 - Fehlt ein optionaler Körper-/Schrittbaustein, bleibt eine passende frontale

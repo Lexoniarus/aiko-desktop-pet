@@ -1,8 +1,8 @@
 """One disposable facial reaction over an already selected frontal rest pose.
 
 No movement, action deadline, dialogue queue or second emotional state lives
-here. Loss of a compatible pose consumes the reaction immediately. The latest
-prepared mood is projected again only when frontal rest becomes available.
+here. Loss of a compatible pose consumes the reaction immediately. Without an
+explicit reaction, frontal rest uses the neutral base and its blink phases.
 """
 
 from __future__ import annotations
@@ -33,8 +33,7 @@ class ExpressionPlayback:
         return True
 
     def select(
-        self, base: RenderDecision, now: float, *, mood: Expression,
-        blinking: bool,
+        self, base: RenderDecision, now: float, *, blinking: bool,
     ) -> tuple[RenderDecision, bool]:
         """Return presentation plus a receipt when the admitted blink completes."""
         self.compatible = (
@@ -61,13 +60,12 @@ class ExpressionPlayback:
             if not self._clock.finished:
                 return self._frame(base, clip, order[frame]), False
             self._clock.reset()
-            return self._rest(base, mood), True
+            return self._rest(base), True
         self._clock.reset()
-        return self._rest(base, mood), False
+        return self._rest(base), False
 
-    def _rest(self, base: RenderDecision, mood: Expression) -> RenderDecision:
-        clip = self._clips[EXPRESSION_CLIPS[mood]]
-        return self._frame(base, clip, 0 if mood == Expression.NEUTRAL else 1)
+    def _rest(self, base: RenderDecision) -> RenderDecision:
+        return self._frame(base, self._clips["rest-neutral"], 0)
 
     def _frame(
         self, base: RenderDecision, clip: AnimationClip, frame: int,

@@ -30,7 +30,7 @@ class ActionPlayback:
         self, clip_id: str, duration: float, *, started_at: float | None = None,
     ) -> None:
         now = time.monotonic() if started_at is None else started_at
-        clip = self._assets.clips[clip_id]
+        clip = self._assets.clip_for(clip_id, 1)
         if not clip.loop:
             duration = clip.duration_seconds
         self.clip_id = clip_id

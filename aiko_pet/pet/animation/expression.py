@@ -1,10 +1,8 @@
-"""Semantic facial presentation, independent of care and body movement."""
+"""Short communication expressions, independent of care and idle movement."""
 
 from __future__ import annotations
 
 from enum import StrEnum
-
-from ..emotions import EmotionalState
 
 
 class Expression(StrEnum):
@@ -24,21 +22,6 @@ EXPRESSION_CLIPS = {
     Expression.DOWNCAST: "expression-downcast",
     Expression.FIRM: "expression-firm",
 }
-
-
-def mood_expression(feeling: EmotionalState) -> Expression:
-    """Project the canonical feeling; physical tiredness is not sadness."""
-    if feeling in (EmotionalState.CHEERFUL, EmotionalState.PROUD,
-                   EmotionalState.CAREFREE):
-        return Expression.POSITIVE
-    if feeling in (EmotionalState.DOWNCAST, EmotionalState.LONELY):
-        return Expression.DOWNCAST
-    if feeling in (EmotionalState.IRRITATED, EmotionalState.CROWDED,
-                   EmotionalState.FRUSTRATED):
-        return Expression.FIRM
-    if feeling in (EmotionalState.TENSE, EmotionalState.RESERVED):
-        return Expression.WORRIED
-    return Expression.NEUTRAL
 
 
 def event_expression(event: str) -> Expression | None:

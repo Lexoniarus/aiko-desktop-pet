@@ -15,9 +15,10 @@ Completed = Callable[[], None]
 
 @dataclass(frozen=True, slots=True)
 class GamePresentation:
-    action: Callable[[str, int | tuple[int, ...], FrameMarker, Completed], None]
+    action: Callable[[str, int | tuple[int, ...] | None, FrameMarker, Completed], None]
     cancel: Callable[[], None]
     look: Callable[[tuple[float, float] | None], None]
     origin: Callable[[], tuple[float, float, int]] = lambda: (0, 0, 1)
     configure: Callable[[tk.Toplevel], None] = lambda _: None
     configure_control: Callable[[tk.Toplevel], None] = lambda _: None
+    food_anchor: Callable[[str, int], tuple[float, float] | None] = lambda _c, _i: None

@@ -142,9 +142,6 @@ class DesktopPet:
                 speech_busy=lambda: (self._reaction_player.pending_timer is not None
                                      or self._social_runtime.waiting),
                 read_idle_seconds=idle_seconds_windows,
-                start_review=lambda now: self._start_action(
-                    "review", 1.4, started_at=now,
-                ),
                 react=self._react,
                 action_until=lambda: self._action_playback.until,
                 last_spoken=lambda: self._attention.last_spoken,

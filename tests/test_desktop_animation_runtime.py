@@ -19,14 +19,59 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.expression import Expression
+from aiko_pet.pet.animation.idle_behaviour import (
+    IdleBehaviourContext,
+    derive_idle_profile,
+)
 from aiko_pet.pet.animation.priority import RenderDecision
+from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
+from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
+from aiko_pet.pet.mind.expression_policy import speech_expression
 from aiko_pet.pet.movement.contracts import WalkStep
+from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAnimationRuntimeTests(unittest.TestCase):
+    def test_feeling_shapes_idle_behaviour_but_only_speech_starts_a_face(self):
+        for feeling in EmotionalState:
+            with self.subTest(feeling=feeling):
+                self.create_runtime_fixture()
+                self.runtime.ambient = AmbientDirector(
+                    100, between=lambda low, _high: low,
+                    direction=lambda options: options[0], body_poses=True,
+                )
+                self.runtime.set_idle_profile(derive_idle_profile(
+                    IdleBehaviourContext(80, feeling),
+                ))
+                self.runtime.ambient.next_blink_at = 1000
+                self.runtime.ambient.next_glance_at = 110
+                self.assertEqual(self.choose().sprite,
+                                 SpriteSelection("rest-neutral", 0))
+
+                context = DialogueContext(FriendshipStage.FRIEND, 50,
+                                          EmotionalComposition(feeling),
+                                          context_at(1_800_000_000))
+                expression = speech_expression("talk", context)
+                if expression is not None:
+                    with patch("aiko_pet.desktop.animation_runtime.time.monotonic",
+                               return_value=100):
+                        self.assertTrue(self.runtime.request_expression(expression))
+                    clip = self.assets.expression_clips[f"expression-{expression}"]
+                    now = 100.0
+                    for frame in range(len(clip.frames)):
+                        self.assertEqual(self.choose(now=now).sprite,
+                                         SpriteSelection(clip.name, frame))
+                        now += clip.frames[frame].duration_ms / 1000 + .001
+                    self.assertEqual(self.choose(now=now).sprite,
+                                     SpriteSelection("rest-neutral", 0))
+                self.assertEqual(self.runtime.ambient.next_glance_at, 110)
+                self.assertEqual(self.choose(now=110).sprite.animation, "look")
+                self.assertIn(self.choose(now=110.1).sprite.fixed_frame,
+                              (2, 3, 4, 5, 6))
+
     def test_face_does_not_start_an_action_or_interrupt_walking_and_gaze(self):
         self.choose()
         with patch("aiko_pet.desktop.animation_runtime.time.monotonic",

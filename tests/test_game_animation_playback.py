@@ -85,3 +85,40 @@ class GameAnimationPlaybackTests(unittest.TestCase):
         self.clock.advance(1.81)
         self.assertEqual(frames, list(range(8)) * 2)
         self.assertEqual(done, [True])
+
+    def test_authored_meal_plays_all_phases_at_both_sizes_without_care_effects(self):
+        before = self.state.capture_checkpoint()
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.settings.scale = scale
+                self.anim.reload_sprites()
+                clip = self.anim.assets.clip_for("eat", scale)
+                frames, done = [], []
+                self.anim.play_game_action("eat", None, frames.append,
+                                           lambda: done.append(True))
+                self.clock.advance(clip.duration_seconds - .01)
+                self.assertEqual(done, [])
+                self.clock.advance(.02)
+                self.assertEqual(frames, list(range(85)))
+                self.assertEqual([i for i in frames if clip.frames[i].events],
+                                 [18, 42, 66])
+                self.assertEqual(done, [True])
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
+    def test_obsolete_eight_frame_meal_timing_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "all authored frames"):
+            self.anim.play_game_action("eat", (400,) * 8, lambda _: None,
+                                       lambda: None)
+
+    def test_size_switch_keeps_authored_meal_progress_and_single_completion(self):
+        frames, done = [], []
+        self.anim.play_game_action("eat", None, frames.append,
+                                   lambda: done.append(True))
+        self.clock.advance(1.5)
+        index = self.anim.frame_clock.frame_index
+        self.settings.scale = 2
+        self.anim.reload_sprites()
+        self.assertEqual(self.anim.frame_clock.frame_index, index)
+        self.clock.advance(7.42 - 1.5 + .01)
+        self.assertEqual(frames, list(range(85)))
+        self.assertEqual(done, [True])

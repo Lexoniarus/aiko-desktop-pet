@@ -454,7 +454,18 @@ Pet-owned pure behaviour lives in `pet/animation/` and `pet/movement/`:
 subtle idle motion, `animation.py` owns frame-selection and timing policies,
 `timing.py` validates already-decoded animation profiles, and the
 `RandomWalkPlanner` selects departures separately from the `WalkController`'s
-movement execution. `pet/mind/cursor_attention.py` retains only short-lived
+movement execution. `IdleBehaviourProfile` carries state-dependent rest,
+glance and step preferences, not a persistent speaking face. The neutral
+`rest-neutral` clip supplies frontal rest/blinking within these broader idle
+scenarios. `ExpressionPlayback` plays explicitly requested communication
+reactions once, then yields to the current base pose; it never holds a mood
+frame as an idle substitute. Speech intent remains in
+`pet/mind/expression_policy.py`. See [V3 expressions](V3_CHARACTER_EXPRESSIONS.md).
+Authored dialogue may specify an optional `expression` independently of its
+body action. The retired `review`/`failed` actions are rejected by the dialogue
+schema; workload sampling no longer requests a preliminary body gesture or a
+permanent work pose. Work commentary uses the existing admitted speech slot.
+`pet/mind/cursor_attention.py` retains only short-lived
 pointer samples, filtered velocity and attention timestamps, not operating-system access.
 `application/cursor_observation.py` derives normalized body distance, approach
 speed and contact origin from that one history. The new pure

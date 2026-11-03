@@ -35,14 +35,14 @@ class HdEatingAssetTests(unittest.TestCase):
     def save(self):
         (self.root / "actions/eat.json").write_text(json.dumps(self.data), "utf-8")
 
-    def test_hd_three_bites_keep_the_legacy_clip_at_one_x(self):
+    def test_approved_three_bite_clip_is_shared_by_both_display_sizes(self):
         self.save()
         hd = load_hd_eating_clip(self.root)
         legacy = AnimationClip("eat", (AnimationFrame(Path("old.png"), 100),),
                                False, (96, 196))
         catalog = CharacterCatalog({"eat": legacy}, hd_action_clips=hd)
-        self.assertIs(catalog.clip_for("eat", 1), legacy)
         meal = catalog.clip_for("eat", 2)
+        self.assertIs(catalog.clip_for("eat", 1), meal)
         self.assertEqual(meal.duration_seconds, 6)
         self.assertEqual(sum(f.events == ("bite",) for f in meal.frames), 3)
         self.assertIsNone(meal.frames[11].food_anchor)

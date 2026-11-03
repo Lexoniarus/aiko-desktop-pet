@@ -135,7 +135,7 @@ def record_media() -> None:
             frames.append(revealed)
             durations.append(2100)
             game._sequence.advance()
-            frame(900)  # Defeat emote and the existing failed animation
+            frame(900)  # Defeat emote before the spoken V3 facial reaction
             game._sequence.advance()
             frame(2300)  # Aiko's own defeat comment
             game._sequence.advance()

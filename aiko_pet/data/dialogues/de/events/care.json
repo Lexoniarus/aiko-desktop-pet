@@ -4501,7 +4501,8 @@
     {
       "id": "v010-pet_during_work-01",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4588,7 +4589,8 @@
     {
       "id": "state-pet_during_work-familiar-01",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4617,7 +4619,8 @@
     {
       "id": "state-pet_during_work-friend-01",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4646,7 +4649,8 @@
     {
       "id": "state-pet_during_work-friend-02",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4675,7 +4679,8 @@
     {
       "id": "state-pet_during_work-close-01",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4704,7 +4709,8 @@
     {
       "id": "state-pet_during_work-close-02",
       "event": "pet_during_work",
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "conditions": [
         {
           "need_conditions": [
@@ -4899,7 +4905,8 @@
       ],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "weight": 2,
       "cooldown_seconds": 75,
       "beats": [
@@ -4929,7 +4936,8 @@
       ],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "weight": 2,
       "cooldown_seconds": 75,
       "beats": [
@@ -5030,7 +5038,8 @@
       ],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "weight": 2,
       "cooldown_seconds": 70,
       "beats": [
@@ -5118,7 +5127,8 @@
       ],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "weight": 2,
       "cooldown_seconds": 75,
       "beats": [
@@ -5147,7 +5157,8 @@
       ],
       "periods": [],
       "weekdays": [],
-      "animation": "review",
+      "animation": "idle",
+      "expression": "positive",
       "weight": 2,
       "cooldown_seconds": 75,
       "beats": [

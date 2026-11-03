@@ -46,16 +46,29 @@ Energie allein wird nicht als Traurigkeit umbenannt.
 
 ## Mimik beim Sprechen und Spielen
 
-Die Ruhepose bleibt bei Zufriedenheit, Zuversicht, Erleichterung und
-Zugewandtheit neutral. Deutliche Freude, Unbeschwertheit und Stolz dürfen die
-milde positive Grundmimik halten. Damit führen langfristige freundliche
-Eindrücke nicht ständig zur gleichen Lächelpose.
+Präzisierung 02.11.2026: Die frontale Ruhe-/Blinkbasis bleibt für alle
+Gefühlslagen neutral. Die fünf Ausdrucksanimationen gehören zur Kommunikation,
+nicht zur dauerhaften Darstellung des Zustands. Frame 01 wird auch bei Freude,
+Stolz, Traurigkeit oder Gereiztheit nicht als feste Ruhepose gehalten.
+Das Gesamtgefühl beeinflusst weiterhin das Idle-Verhaltensprofil: Pausen,
+Kopfblickauswahl, Dreiviertelstand und die Bereitschaft zu kleinen Schritten.
+Der neutrale Blinkclip ersetzt dieses vollständige Idle-Verhalten nicht.
 
 `pet/mind/expression_policy.py` ordnet eine kurze Mimik dem tatsächlichen
 Sprechereignis, ausgewählten belegten Thema und Gesamtgefühl zu. Eine
 freundliche Äußerung kann ein kurzes Lächeln bekommen, ohne daraus eine
 permanente Grundmimik oder neue positive Stimmung zu erzeugen. Es gibt keine
 Sentimentanalyse des Textes und keine weiteren erfundenen Erfahrungen.
+
+Alle 94 verbliebenen `review`-/`failed`-Dialogzuordnungen verwenden nun
+`animation: idle` mit einem ausdrücklich hinterlegten kurzen `expression`.
+Dieses Feld beschreibt den Anlass der Äußerung; explizite Ereignisregeln und
+ein gereizter Reaktionston behalten Vorrang. Die ursprünglichen Texte,
+Bedingungen und Belege bleiben erhalten. Die alten Namen sind im
+Dialogschema nicht mehr zulässig; Computerlast startet ebenfalls keinen
+dieser Körperclips mehr. Körperaktionen wie Streicheln oder Essen werden
+weiter durch ihren bestehenden Besitzer zugelassen und können eine Mimik
+verdrängen.
 
 Bei allen sechs Spielen liefern die vorhandenen Sequenzen `express_event`
 direkt beim Beginn der jeweiligen Äußerung. Auswahl eines späteren Satzes

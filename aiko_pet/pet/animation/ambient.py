@@ -1,8 +1,9 @@
 """Small autonomous gestures while Aiko is genuinely idle.
 
-An idle blink is a complete eight-frame animation, followed by a neutral
-resting pose. Brief independent gaze choices use the existing sixteen static
-directional sprites without hijacking mouse tracking or dialogue scheduling.
+Rest and blinking are only part of idle: independent glances, settled quarter
+stances and post-outing holds use the existing directional/body sprites without
+hijacking mouse tracking or dialogue scheduling. The expression pack supplies
+neutral eye phases; installations without it retain the original idle blink.
 """
 
 from __future__ import annotations
@@ -232,7 +233,7 @@ class AmbientDirector:
         return AmbientIntent(choice)
 
     def finish_blink(self, now: float) -> None:
-        """A full eight-frame blink ended; do not immediately repeat it."""
+        """The selected blink ended; do not immediately repeat it."""
         if self._blink_active:
             self._blink_active = False
             self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)

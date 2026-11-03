@@ -142,11 +142,10 @@ class FoodRenderingTests(unittest.TestCase):
             )
             self.assertIsNotNone(self.anim._frame_timer)
 
-    def test_hand_overlay_uses_the_eight_authored_frame_anchors(self) -> None:
+    def test_hand_overlay_follows_all_canonical_meal_frames_until_bite_three(self):
         animated = self.anim
-        clip = animated.assets.clips["eat"]
-        self.assertEqual(len(clip.frames), 8)
-        self.assertTrue(all(frame.food_anchor is not None for frame in clip.frames))
+        clip = animated.assets.clip_for("eat", self.settings.scale)
+        self.assertEqual(len(clip.frames), 85)
         animated.set_food_overlay("sandwich")
         animated.begin_action("eat", time.monotonic())
         overlay = animated.food_overlay
@@ -156,8 +155,7 @@ class FoodRenderingTests(unittest.TestCase):
             animated.show_frame("eat", time.monotonic(), fixed=index)
             positions.append(tuple(self.canvas.coords(overlay.item)))
             self.assertEqual(self.canvas.itemcget(overlay.item, "state"),
-                             "normal")
-            self.assertIsNotNone(frame.food_anchor)
+                             "normal" if frame.food_anchor is not None else "hidden")
         self.assertGreater(len(set(positions)), 2)
         animated.show_frame("idle", time.monotonic(), fixed=0)
         self.assertEqual(self.canvas.itemcget(overlay.item, "state"), "hidden")

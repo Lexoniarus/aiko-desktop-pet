@@ -4,7 +4,6 @@ import unittest
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.animation.expression import Expression, mood_expression
 from aiko_pet.pet.emotions import EmotionalState, derive_emotional_state
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import (
@@ -83,11 +82,3 @@ class EmotionalBaseMoodTests(unittest.TestCase):
         for mood, items, expected in cases:
             with self.subTest(mood=mood, expected=expected):
                 self.assertEqual(self.derive(mood, *items).primary, expected)
-
-    def test_background_warmth_is_neutral_at_rest_and_joy_is_distinct(self):
-        for feeling in (EmotionalState.SATISFIED, EmotionalState.AFFECTIONATE,
-                        EmotionalState.OPTIMISTIC, EmotionalState.RELIEVED):
-            self.assertEqual(mood_expression(feeling), Expression.NEUTRAL)
-        for feeling in (EmotionalState.CHEERFUL, EmotionalState.CAREFREE,
-                        EmotionalState.PROUD):
-            self.assertEqual(mood_expression(feeling), Expression.POSITIVE)

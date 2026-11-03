@@ -69,8 +69,8 @@ class CharacterCatalog:
     )
 
     def clip_for(self, name: str, scale: int) -> AnimationClip:
-        """Resolve optional HD actions without changing legacy 1x playback."""
-        if scale == 2 and name in self.hd_action_clips:
+        """Use the same approved action and timing at either display scale."""
+        if name in self.hd_action_clips:
             return self.hd_action_clips[name]
         return (self.expression_clips.get(name) or self.body_clips.get(name)
                 or self.clips[name])

@@ -27,6 +27,71 @@ SECRET = ("red", "red", "blue", "green")
 
 
 class MastermindGuiTests(unittest.TestCase):
+    def test_snack_uses_three_bites_and_actual_hand_anchor_at_both_sizes(self):
+        finale = self.game._finale
+        assert finale is not None
+        animated = self.pet._animated
+        before = self.pet.state.capture_checkpoint()
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.pet.settings.scale = scale
+                self.pet._window.resize()
+                animated.reload_sprites()
+                original = finale._presentation
+                frames, finished, started = [], [], []
+
+                def action(clip, duration, marker, done):
+                    self.assertEqual((clip, duration), ("eat", None))
+                    started.append(self.clock.monotonic())
+
+                    def record(index):
+                        marker(index)
+                        anchor = animated.game_food_anchor("eat", index)
+                        visible = "snack" in finale.effects._visible
+                        self.assertEqual(visible, anchor is not None)
+                        if anchor is not None:
+                            x, y, actual_scale = original.origin()
+                            image, geometry = finale.effects._frames["snack"]
+                            self.assertEqual(geometry,
+                                f"{image.width()}x{image.height()}"
+                                f"+{round(x + (anchor[0] - 9) * actual_scale)}"
+                                f"+{round(y + (anchor[1] - 14) * actual_scale)}")
+                        frames.append((index, visible))
+                    original.action(clip, duration, record, done)
+
+                finale._presentation = replace(original, action=action)
+                finale.play(True, lambda: finished.append(True))
+                for _ in range(200):
+                    if frames:
+                        break
+                    self.clock.advance(.05)
+                self.assertEqual(frames, [(0, True)])
+                self.clock.advance(7.41 - self.clock.monotonic() + started[0])
+                self.assertEqual(finished, [])
+                self.clock.advance(.02)
+                self.assertEqual([i for i, _ in frames], list(range(85)))
+                self.assertEqual([v for _, v in frames], [True] * 66 + [False] * 19)
+                self.assertEqual(finished, [True])
+                finale._presentation = original
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+
+    def test_close_during_eating_drops_snack_and_pending_completion(self):
+        finale = self.game._finale
+        assert finale is not None
+        done = Mock()
+        finale.play(True, done)
+        for _ in range(200):
+            if self.pet._animated._game_clip == "eat":
+                break
+            self.clock.advance(.05)
+        self.assertEqual(self.pet._animated._game_clip, "eat")
+        self.clock.advance(1.4)
+        self.game.close()
+        self.clock.advance(10)
+        done.assert_not_called()
+        self.assertFalse(finale.effects._windows)
+        self.assertIsNone(self.pet._animated._game_clip)
+
     def test_safe_opening_and_snack_are_cosmetic_and_next_waits_for_completion(self):
         before = self.pet.state.satiety
         self.submit(SECRET)

@@ -221,8 +221,7 @@ class DesktopAnimationRuntime:
         )
         self._last_base_pose = base.sprite
         decision, blink_finished = self._expressions.select(
-            base, now, mood=self.ambient.profile.expression,
-            blinking=self.ambient.blinking,
+            base, now, blinking=self.ambient.blinking,
         )
         if blink_finished:
             self.ambient.finish_blink(now)

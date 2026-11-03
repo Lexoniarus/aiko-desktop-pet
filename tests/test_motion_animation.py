@@ -215,10 +215,10 @@ class PassiveAnimationTests(unittest.TestCase):
             SpriteSelection("look", fixed_frame=3),
         )
 
-    def test_busy_state_requires_observation(self) -> None:
+    def test_busy_state_keeps_idle_instead_of_a_permanent_work_expression(self) -> None:
         self.assertEqual(
             self.select(observing_computer=True, computer_busy=True).animation,
-            "review",
+            "idle",
         )
         self.assertEqual(self.select(computer_busy=True).animation, "idle")
 

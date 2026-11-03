@@ -27,22 +27,25 @@ class MastermindFinale:
                 return
             self._presentation.look(None)
             self._code.snack(False)
-            anchors = [156, 138, 132, 138, 138, 138, 156, 156]
 
             def marker(index: int) -> None:
                 x, y, scale = self._presentation.origin()
-                if index <= 5:
+                anchor = self._presentation.food_anchor('eat', index)
+                if anchor is not None:
                     snack = self.effects.image(
                         GAME_ART_DIR / 'mm-donut.png', 18 * scale,
                     )
-                    self.effects.show('snack', snack, x + 87 * scale,
-                                      y + (anchors[index] - 14) * scale)
+                    self.effects.show('snack', snack, x + (anchor[0] - 9) * scale,
+                                      y + (anchor[1] - 14) * scale)
                 else:
                     self.effects.hide('snack')
 
-            self._presentation.action(
-                'eat', (500, 350, 300, 240, 550, 600, 450, 600), marker, done,
-            )
+            def finished() -> None:
+                self.effects.hide('snack')
+                if not self._closed:
+                    done()
+
+            self._presentation.action('eat', None, marker, finished)
 
         def opened() -> None:
             if not self._closed:

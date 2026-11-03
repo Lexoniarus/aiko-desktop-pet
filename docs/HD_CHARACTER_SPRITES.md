@@ -1,5 +1,14 @@
 # True-resolution 2x Aiko sprites
 
+## Shared display source (2026-11-03)
+
+The approved 2x artwork is the common source for both display sizes. The
+renderer derives its 1x view in memory, including the same complete meal
+sequence and timings. No second small-image series is generated. Historical
+1x files remain atlas/export references until those dependencies are removed.
+The Mastermind snack finale uses that same clip and its authored hand anchors.
+See [three-bite eating](V3_EATING_THREE_BITES.md).
+
 ## Local neck-join corrections (2026-11-03)
 
 The subsequent walking-only pass fits each lower neck to its actual step
@@ -64,7 +73,13 @@ only the Idle source; each gaze retains its original head/body calibration.
 
 ## Earlier HD export and sources
 
-This is a **2x-only image-quality improvement** on `feature/social-optimization`.
+The original export was a **2x-only image-quality improvement** on
+`feature/social-optimization`; the shared source rule above supersedes its
+separate 1x display path.
+As of 2026-11-02, `review` and `failed` are retained only as source/export
+assets. Production dialogue and workload selection no longer display them;
+their communication uses now request the existing V3 expression clips. This
+does not change their archived PNGs or remove other physical game gestures.
 The application continues to use its unchanged **192 × 208** PNGs at 1x,
 including all event, hand-grip and interaction coordinates and existing timing.
 At 2x it loads **384 × 416**, independently rendered, correctly registered

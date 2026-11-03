@@ -1,8 +1,7 @@
-"""Cache 1x sprites and lazily load true-HD 2x originals when provisioned.
+"""Use approved HD artwork at 2x and derive its 1x view in memory.
 
-Every 1x frame remains the established 192x208 PNG. The optional, complete
-384x416 HD export comes from matching owner-licensed source artwork. Its
-metadata is validated once; images are only decoded on demand in the Tk thread.
+The legacy atlas remains a fallback for installations without the HD pack.
+No separate small PNGs are generated for the approved character variants.
 """
 
 from __future__ import annotations
@@ -53,12 +52,12 @@ class _ScaledFrames(Sequence[tk.PhotoImage]):
             raise IndexError(index)
         index %= len(self)
         original = self._originals[index]
-        if self._scale == 1:
-            return original
         key = str(original)
+        hd = self._hd_paths.get(key)
+        if self._scale == 1 and hd is None:
+            return original
         image = self._zoomed.get(key)
         if image is None:
-            hd = self._hd_paths.get(key)
             if hd is not None:
                 image = tk.PhotoImage(master=self._root, file=str(hd))
                 if (image.width(), image.height()) != (
@@ -69,7 +68,14 @@ class _ScaledFrames(Sequence[tk.PhotoImage]):
                 # Backward compatibility with older/partial installs.
                 image = original.zoom(2)
             self._zoomed[key] = image
-        return image
+        if self._scale == 2:
+            return image
+        small_key = f"{key}:1x"
+        small = self._zoomed.get(small_key)
+        if small is None:
+            small = image.subsample(2)
+            self._zoomed[small_key] = small
+        return small
 
 
 def _hd_assets_by_original(
@@ -120,7 +126,7 @@ def _hd_assets_by_original(
 
 
 class CharacterSpriteCache:
-    """Own native images and one persistent cache for visible 2x variants."""
+    """Cache canonical HD images and their derived 1x display views."""
 
     def __init__(self, root: tk.Tk, catalog: CharacterCatalog) -> None:
         originals: dict[str, tuple[tk.PhotoImage, ...]] = {}

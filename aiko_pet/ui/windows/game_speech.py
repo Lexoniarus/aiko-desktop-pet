@@ -38,7 +38,7 @@ class GameSpeech:
         ) if presentation is not None else None
 
     def _game_action(
-        self, clip: str, duration: int | tuple[int, ...],
+        self, clip: str, duration: int | tuple[int, ...] | None,
         marker: Callable[[int], None], done: Callable[[], None],
     ) -> None:
         self._express(None)

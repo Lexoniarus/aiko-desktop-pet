@@ -9,13 +9,17 @@ from .conversation_topics import ConversationKind
 from .dialogue_context import DialogueContext, ReactionTone
 
 
-def speech_expression(event: str, context: DialogueContext) -> Expression | None:
+def speech_expression(
+    event: str, context: DialogueContext, *, authored: Expression | None = None,
+) -> Expression | None:
     """No inference from text, no mood mutation and no independent topic choice."""
     explicit = event_expression(event)
     if explicit is not None:
         return explicit
     if context.reaction_tone == ReactionTone.IRRITATED:
         return Expression.FIRM
+    if authored is not None:
+        return authored
     topic = context.conversation_topic if event == "talk" else None
     if topic is not None and topic.kind == ConversationKind.GAME and topic.cause:
         cause = topic.cause

@@ -24,13 +24,37 @@ präzisieren inzwischen die Gefühlsableitung und den Zeitpunkt der Mimik bei
 allen sechs Spielen. Freundliche Langzeitgefühle halten keine permanente
 positive Ruhepose mehr.
 
+Präzisierung 02.11.2026: Die fünf Ausdrucksclips sind kurze
+Kommunikationsanimationen, keine zustandsabhängigen Dauer-Idle-Posen. Die
+bisherige Verwendung von Frame 01 als feste Grundmimik entfällt für alle
+Gefühlslagen. Die neutrale Basis samt Blinzeln ist nur ein Baustein des
+[vollständigen Idle-Verhaltens](IDLE_V3_BEHAVIOUR_PLAN.md).
+
+Die verbleibenden 94 Dialogvarianten mit `review` oder `failed` sind ebenfalls
+auf `idle` plus einen ausdrücklich hinterlegten V3-Kommunikationsausdruck
+umgestellt: 31 fragende, 28 bestimmte, 20 besorgte und 15 positive Varianten.
+Texte, IDs, Bedingungen, Gewichte, Pausen und Emoji-/Textfolgen bleiben
+unverändert. Müdigkeit allein erzeugt keine Traurigkeit: schläfrige Antworten
+verwenden fragende Aufmerksamkeit, wiederholte Störungen eine klare Grenze.
+
+Das optionale Dialogfeld `expression` benennt die kurze Mimik unabhängig von
+`animation`, das weiterhin eine echte Körperaktion beschreibt. Die Mimik
+beginnt am ersten tatsächlichen Textabschnitt. Explizite Ereignisregeln und
+ein gereizter Reaktionston haben Vorrang vor diesem redaktionellen Hinweis.
+Die Dialogvalidierung weist die alten Aktionsnamen `review` und `failed`
+zurück. Ihre Bilddateien bleiben als Herkunfts-/Exportbestand erhalten,
+werden aber nicht mehr durch Produktionsaufrufe ausgewählt. Die stumme
+`review`-Dauerpose bei Computerlast und der vorgezogene Arbeitsaktionsaufruf
+entfallen; konkrete Arbeitskommentare nutzen ihren zugelassenen Sprechslot.
+
 ## Zuständigkeiten
 
 | Eigentümer | Aufgabe |
 | --- | --- |
 | `pet/emotions.py` | Bestehende kanonische Gefühlsberechnung; keine neue Stimmungsspeicherung. |
-| `pet/animation/expression.py` | Ausdrucks-IDs, reine Zuordnung vorhandener Gefühle und ausdrücklich benannter Ereignisse. Keine Text-Sentimentanalyse. |
-| `application/attention.py`, `IdleBehaviourProfile` | Ein vorbereiteter Zustandsabruf verteilt Idle-Verhalten und milde Grundmimik gemeinsam. |
+| `pet/animation/expression.py` | Ausdrucks-IDs und ausdrücklich benannte Kommunikationsereignisse. Keine dauerhafte Zuordnung Gefühl → Ruhegesicht und keine Text-Sentimentanalyse. |
+| `pet/mind/expression_policy.py` | Kurzer Kommunikationsausdruck aus Sprechereignis, belegtem Thema und Gesamtgefühl. |
+| `application/attention.py`, `IdleBehaviourProfile` | Ein vorbereiteter Zustandsabruf beschreibt Blick-/Standpausen und Schrittbereitschaft. Er fordert keine Kommunikationsmimik an. |
 | `Reaction`, `ReactionPlayer` | Optionale Mimik und ihr tatsächlicher Gesprächsabschnitt. Abbruch entwertet auch schon eingereihte alte Timer. |
 | `desktop/animation_runtime.py` | Wählt zuerst Körperaktion, Bewegung und Blick. Die separate `ExpressionPlayback` darf ausschließlich eine passende frontale Ruhepose ersetzen. |
 | `AmbientDirector` | Einzige Zeitbasis für Grundschwanken und Abstand zwischen Blinzlern. Mimik startet keinen zweiten Idle-Takt. |
@@ -41,11 +65,11 @@ positive Ruhepose mehr.
 
 | Semantik | Clip | Grundstimmung / konkrete Reaktion |
 | --- | --- | --- |
-| Neutral gelassen | `rest-neutral` | Ruhige neutrale Basis; vorhandene gezeichnete Augenphasen. |
-| Positiv zugewandt | `expression-positive` | Positive Gefühle, spielerische Mausreaktionen, passende Quizreaktionen; Witzreaktion erst nach vollständigem Inhalt. |
+| Neutral gelassen | `rest-neutral` | Frontale Ruhe-/Blinkbasis innerhalb des Idle-Verhaltens; kein vollständiges Idle-Szenario. |
+| Positiv zugewandt | `expression-positive` | Positive Äußerungen, spielerische Mausreaktionen, passende Quizreaktionen; Witzreaktion erst nach vollständigem Inhalt. |
 | Aufmerksam/fragend | `expression-questioning` | Spielerisches erstes Interesse, Faktinhalt, Spielgleichstand und Nachdenken. |
-| Unsicher/besorgt | `expression-worried` | Angespannte/vorsichtige Grundstimmung, Mauswarnung/Angst und unterstützende Quizreaktionen. |
-| Bedrückt/enttäuscht | `expression-downcast` | Niedergeschlagenheit/Einsamkeit, verlorene kompetitive Spielrunde aus Aikos Perspektive. Müdigkeit allein ist keine Traurigkeit. |
+| Unsicher/besorgt | `expression-worried` | Besorgte Äußerung, Mauswarnung/Angst und unterstützende Quizreaktionen. |
+| Bedrückt/enttäuscht | `expression-downcast` | Äußerung aus Niedergeschlagenheit/Einsamkeit, verlorene kompetitive Spielrunde aus Aikos Perspektive. Müdigkeit allein ist keine Traurigkeit. |
 | Genervt/bestimmt | `expression-firm` | Gereiztheit/Bedrängnis und vorhandene wiederholte Stör-/Schlafklickreaktionen. |
 
 Die bestehenden Freudenhüpfer bleiben an ihren bisherigen Erfolgsanlässen
@@ -53,7 +77,15 @@ erhalten. Mastermind und Quiz unterscheiden Aikos Gastgeberrolle von einer
 kompetitiven Niederlage. Die Hände-zusammen-Bittepose bleibt eine eigene,
 begründete Körpergeste; sie wird nicht global durch den fragenden Kopf ersetzt.
 Ebenso bleiben Essen, Buchhalten, Schlafen und andere echte Körperaktionen
-eigenständig. Alte `review`-/`failed`-IDs werden nicht global umgedeutet.
+eigenständig. Die entfernten `review`-/`failed`-Aufrufe werden nicht durch
+eine globale Umdeutung ihrer alten PNGs ersetzt.
+
+Idle umfasst weiterhin kontinuierliches Schwanken, Blinzeln, eigene
+Kopfblickrichtungen, gelegentlichen Dreiviertelstand mit Umsehen und ein oder
+zwei kleine Profil-Schritte samt anschließender Standpause. `AmbientDirector`,
+`BodyOrientation` und der vorhandene Bewegungsweg führen diese Folgen aus.
+Der Zustand beeinflusst ihre Häufigkeit, Ruhezeiten und Bewegungsbereitschaft;
+er hält keinen Ausdrucksframe fest. Kleine eigene Ausflüge bleiben unkommentiert.
 
 ## Vorrang und Lebensdauer
 
@@ -64,8 +96,9 @@ eigenständig. Alte `review`-/`failed`-IDs werden nicht global umgedeutet.
 4. Ein Seitenblick oder eine echte Aktion verwirft sie sofort. Eine schon bei
    Anforderung unpassende Reaktion wird ebenfalls verworfen. Keine Warteschlange,
    kein erzwungenes Frontalstellen und kein späteres Nachholen.
-5. Bei Rückkehr zur Ruhe erscheint die zuletzt vorbereitete Grundstimmung in
-   einer milden Phase. Die starke Reaktion wird nicht erneut abgespielt.
+5. Nach Abschluss oder Abbruch übernimmt wieder die aktuell zulässige
+   Idle-/Blick-/Körperfolge. Freie frontale Ruhe verwendet `rest-neutral/00`;
+   kein Frame einer Kommunikationsanimation wird als Dauerpose gehalten.
 
 Die Mimik verändert keine Aktionsdeadline und unterbricht keine Bewegung.
 Nichtblockierende Mauskommentare bleiben nichtblockierend. Das Menü und die
@@ -91,10 +124,11 @@ Blink geschaltet: Die tatsächlich geschlossenen/halboffenen Phasen 02/03/04
 dauern 70/100/80 ms. Kurze Mimikreaktionen verwenden ihre vollständigen
 abgenommenen Zeiten und verschieben einen gleichzeitig fälligen Blink.
 
-Für die milde Grundmimik gibt es noch keine gesonderten geschlossenen Augen.
-Ihr Blink verwendet deshalb kurz den abgenommenen neutralen Kopf und kehrt
-danach zur aktuellen milden Mimik zurück. Keine erfundenen Zwischenbilder oder
-Gesichtspatches auf älteren Köpfen.
+Ein Blink kehrt zum neutralen Ruheanker zurück. Eine zusätzlich gezeichnete,
+dezente zustandsabhängige Ruhemimik ist bislang nicht vorhanden. Sie bleibt
+eine getrennte Gestaltungsaufgabe; Phasen der abgenommenen Kommunikationsclips
+werden dafür nicht automatisch wiederverwendet. Keine erfundenen Zwischenbilder
+oder Gesichtspatches auf älteren Köpfen.
 
 ## Quellen, Export und Größen
 
@@ -118,9 +152,35 @@ ist in allen 48 Bildern pixelgleich.
 
 ## Prüfung
 
+Ablösung von `review`/`failed` am 02.11.2026: 151 gezielte Tests bestanden,
+einschließlich der neuen Dialogfeld-Validierung, tatsächlichen Sprechzeitpunkte,
+erhaltenen Grenzreaktionen und ohne stumme Voraktion zugelassenen Arbeitskommentare.
+Ruff, striktes Mypy und Pyright sind grün. Die 94 Dialogänderungen wurden gegen
+Git auf unveränderte Texte, Auswahlregeln, IDs und Beatfolgen geprüft.
+Der vollständige Lauf ohne native Fenster erfasste 2.295 Tests mit 148
+übersprungenen GUI-Fällen und einem unabhängigen Fehler im bestehenden
+Start-Test (`test_entrypoints_env`: Test-Double ohne `local_social_content`).
+Dieser Fehler wurde anschließend parallel korrigiert; die gezielte Nachprüfung
+von `test_entrypoints_env` bestand alle acht Tests (0,168 Sekunden). In diesem
+Auftrag wurde der Startbereich nicht verändert. Der ursprüngliche Gesamtlauf
+bleibt als fehlgeschlagen protokolliert; ein erneuter Komplettlauf wurde nach
+der gezielt nachgeprüften Korrektur nicht gestartet.
+Private Prüflogs: `pruefung/2026-11-02-retired-reactions-tests.log` und `.json`
+im oben genannten Vorschauordner.
+
+Präzisierung geprüft am 02.11.2026: 133 gezielte Tests bestanden. Die
+Regression durchläuft alle 17 Gefühlslagen mit neutralem Ruheanker, passenden
+kurzen Sprechreaktionen und anschließend wieder möglichem eigenen Umsehen.
+Bestehende Prüfungen sichern außerdem Blinkphasen, durchgehendes Schwanken,
+Dreiviertelstand, kleine Schritte und Aktions-/Blickvorränge ab.
+Die lokale Gesamtsuite ohne native Fenster erfasste 2.286 Tests ohne Fehler
+(215,004 Sekunden); 147 GUI-Fälle wurden übersprungen. Dieser Lauf ersetzt
+keine praktische Windows-Sichtprüfung. Bilder und Originale bleiben unverändert.
+
 Gezielte Tests: `test_expression_assets`, `test_expression_playback`,
 `test_expression_reactions`, `test_ambient_director`,
 `test_desktop_animation_runtime`, `test_reaction_playback`,
+`test_retired_character_reactions`, `test_active_time`,
 `test_rock_paper_scissors_sequence` und bestehende Sprite-/Spiel-/Sozialtests.
 Die Tk-Prüfung verwendet isolierte, unsichtbare Testfenster und verändert
 weder Nutzerspielstand noch laufende Aiko. Praktische Sichtabnahme der neuen

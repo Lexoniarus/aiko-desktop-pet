@@ -89,11 +89,11 @@ class TrueHDSpriteCacheTests(unittest.TestCase):
         hd_view = self.cache.for_scale(2)["idle"]
         self.assertEqual(native.width(), 192)
         self.assertEqual(native.height(), 208)
-        self.assertEqual(len(getattr(hd_view, "_zoomed")), 0)
+        self.assertEqual(len(getattr(hd_view, "_zoomed")), 2)
         high = hd_view[0]
         self.assertEqual((high.width(), high.height()), (384, 416))
         self.assertIs(high, hd_view[0])
-        self.assertEqual(len(getattr(hd_view, "_zoomed")), 1)
+        self.assertEqual(len(getattr(hd_view, "_zoomed")), 2)
         # A true 2x image must be different from a nearest-neighbor zoom.
         legacy = native.zoom(2)
         sampled = [
@@ -105,6 +105,21 @@ class TrueHDSpriteCacheTests(unittest.TestCase):
         native_again = self.cache.for_scale(1)["idle"][0]
         self.assertEqual((native_again.width(), native_again.height()),
                          (192, 208))
+        self.assertIs(native, native_again)
+
+    def test_every_small_pose_is_derived_from_the_same_approved_hd_frame(self):
+        small = self.cache.for_scale(1)
+        high = self.cache.for_scale(2)
+        for name, frames in high.items():
+            for index, hd in enumerate(frames):
+                with self.subTest(clip=name, frame=index):
+                    image = small[name][index]
+                    self.assertEqual(image.cget("file"), "")
+                    for x, y in ((45, 46), (80, 96), (96, 110),
+                                 (96, 148), (90, 185), (0, 0)):
+                        self.assertEqual(image.get(x, y), hd.get(x * 2, y * 2))
+                        self.assertEqual(image.transparency_get(x, y),
+                                         hd.transparency_get(x * 2, y * 2))
 
     def test_look_pickup_and_sleep_frames_are_available_at_true_2x(self) -> None:
         for state, frames in (("look", 16), ("pick_up", 8), ("sleep", 8)):

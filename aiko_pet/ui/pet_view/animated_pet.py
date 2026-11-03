@@ -171,15 +171,17 @@ class AnimatedPet:
         self.ports.interrupt_walk()
 
     def play_game_action(
-        self, clip_id: str, duration_ms: int | tuple[int, ...],
+        self, clip_id: str, duration_ms: int | tuple[int, ...] | None,
         marker: Callable[[int], None], completed: Callable[[], None],
     ) -> None:
         """Use the one sprite clock, reporting actually displayed source poses."""
-        clip = self.assets.clips[clip_id]
+        clip = self.assets.clip_for(clip_id, self.settings.scale)
         if clip.loop or (isinstance(duration_ms, int) and duration_ms <= 0):
             raise ValueError("Game actions require a finite clip and positive duration")
         self.cancel_game_action()
-        if isinstance(duration_ms, tuple):
+        if duration_ms is None:
+            timings = clip.timings
+        elif isinstance(duration_ms, tuple):
             if len(duration_ms) != len(clip.timings) or min(duration_ms) <= 0:
                 raise ValueError("Game timing must match all authored frames")
             timings = duration_ms
@@ -200,6 +202,15 @@ class AnimatedPet:
         self.frame_clock.reset()
         self._ambient.suspend(time.monotonic())
         self.show_frame(clip_id, time.monotonic())
+
+    def game_food_anchor(self, clip_id: str, index: int) -> tuple[float, float] | None:
+        """Expose a cosmetic hand point in logical sprite-window coordinates."""
+        clip = self.assets.clip_for(clip_id, self.settings.scale)
+        anchor = clip.frames[index].food_anchor
+        if anchor is None:
+            return None
+        return (FRAME_WIDTH // 2 - clip.anchor[0] + anchor[0],
+                FOOT_BASELINE - clip.anchor[1] + anchor[1])
 
     def cancel_game_action(self) -> None:
         self._game_generation += 1
@@ -299,8 +310,6 @@ class AnimatedPet:
             fixed = 0
         walking = clip.movement or state in ("running-left", "running-right")
         clock_key = clip.family or state
-        if self.settings.scale == 2 and state in self.assets.hd_action_clips:
-            clock_key += ":hd"
         if playback_rate != 1 or reverse:
             clock_key += f":{playback_rate:.6f}:{reverse}"
         timings = (self._game_timings if state == self._game_clip else
