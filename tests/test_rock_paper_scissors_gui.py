@@ -81,7 +81,8 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIn(hand, self.pet._overlay_windows())
         self.assertIsNot(spoken, hand)
         self.assertGreaterEqual(hand.winfo_rootx(),
-                                spoken.winfo_rootx() + spoken.winfo_width() + 8)
+                                spoken.winfo_rootx() + spoken.winfo_width()
+                                + self.game.skin.scale.pixels(8))
         position = hand.winfo_geometry()
         self.clock.advance(4.6)
         self.assertIs(self.pet._speech.bubble, spoken)
