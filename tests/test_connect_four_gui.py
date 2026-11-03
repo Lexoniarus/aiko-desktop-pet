@@ -92,11 +92,13 @@ class ConnectFourGuiTests(unittest.TestCase):
         self.timing.advance(10)
         self.assertFalse(flow.busy)
         self.assertEqual(len(game.canvas.find_withtag("hole")), 42)
-        x = MARGIN + 3 * CELL + CELL // 2
-        game.canvas.event_generate("<Motion>", x=x, y=60)
+        x = game.skin.scale.pixels(MARGIN + 3 * CELL + CELL // 2)
+        y = game.skin.scale.pixels(60)
+        game.canvas.event_generate("<Motion>", x=x, y=y)
+        self.assertEqual(game._hover_column, 3)
         self.assertEqual(len(game.canvas.find_withtag("preview")), 2)
         for turn in range(4):
-            game.canvas.event_generate("<Button-1>", x=x, y=60)
+            game.canvas.event_generate("<Button-1>", x=x, y=y)
             board = flow.game.board
             game.choose(4)
             self.assertIs(flow.game.board, board)
