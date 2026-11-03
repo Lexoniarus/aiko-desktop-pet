@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import unittest
 
@@ -172,13 +171,16 @@ class ShippedGazeExportTests(unittest.TestCase):
         for index in range(16):
             self.assertLessEqual(abs(centers[index] - centers[(index + 1) % 16]), 1.5)
 
-    def test_all_gaze_body_scales_match_idle_while_head_pitch_can_change(
+    def test_gaze_keeps_approved_shared_body_when_neutral_idle_is_replaced(
         self,
     ) -> None:
         hd_root = ASSET_ROOT / "frames_2x"
         with Image.open(hd_root / "idle/00.png") as idle:
             reference_feet = planted_foot_bounds(idle)
-            reference_body = idle.crop((0, 260, 384, 416)).tobytes()
+        # The approved gaze body is retained; swapping neutral Idle must not
+        # silently transplant that newer body into all sixteen gaze poses.
+        with Image.open(hd_root / "look/00.png") as gaze_reference:
+            reference_body = gaze_reference.crop((0, 260, 384, 416)).tobytes()
         manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
         entries = {entry["path"]: entry for entry in manifest["frames"]}
         for index in range(16):
@@ -202,9 +204,16 @@ class ShippedGazeExportTests(unittest.TestCase):
         manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
         entries = {entry["path"]: entry for entry in manifest["frames"]}
         idle_path = hd_root / "idle/00.png"
-        idle_sha = hashlib.sha256(idle_path.read_bytes()).hexdigest()
+        # This records the original approved calibration, independently of
+        # the later neutral Idle replacement. It is provenance, not a demand
+        # to rebase approved heads and bodies on every new Idle image.
+        approved_reference_sha = (
+            "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743"
+        )
         with Image.open(idle_path) as idle:
-            target = planted_foot_bounds(idle)
+            current_floor = planted_foot_bounds(idle)[3]
+        target = entries["look/00.png"]["reference_foot_bounds"]
+        self.assertEqual(target[3], current_floor)
         target_x = (target[0] + target[2]) / 2
         for index in range(16):
             path = f"look/{index:02d}.png"
@@ -214,7 +223,7 @@ class ShippedGazeExportTests(unittest.TestCase):
             self.assertEqual(entry["status"], "composited_v3_gaze_shared_idle_body")
             self.assertEqual(entry["source_size"], [384, 416])
             self.assertGreaterEqual(min(entry["head_provenance"]["size"]), 1000)
-            self.assertEqual(entry["reference_sha256"], idle_sha)
+            self.assertEqual(entry["reference_sha256"], approved_reference_sha)
             self.assertEqual(entry["degrees_clockwise_from_up"], index * 22.5)
             self.assertLess(abs(entry["aspect_rescale_ratio"] - 1), 0.006)
             with Image.open(hd_root / path) as hd:

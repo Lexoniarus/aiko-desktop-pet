@@ -1,5 +1,16 @@
 # V3: Idle, Mimik und durchgehendes Schwanken
 
+Nachtrag 03.11.2026: Die Halskontur wird vollständig aus dem passenden
+vorhandenen Kopf geführt. Die Halsfläche des Körpers überdeckt sie nicht mehr;
+Kragen und Kleidung bleiben davor. Das betrifft 84 bestehende Bilder:
+16 frontale Blicke, 18 Dreiviertel-Stehbilder und 50 Geh-/Kopfachsenkombinationen.
+Kopfposition und Größe, Körper außerhalb X165..230/Y233..258, Fußanker und
+Taktung bleiben erhalten. Die acht HD-Idle-Slots verwenden unabhängig davon
+die abgenommenen neutralen Augenphasen. Ausdrucksbilder, volle Profile,
+Drehbilder, Essen und 1X bleiben unverändert. Keine Neugenerierung.
+Details: [lokale Halskorrekturen](HD_CHARACTER_SPRITES.md#local-neck-join-corrections-2026-11-03)
+und [getrennter Idle-Export](HD_CHARACTER_SPRITES.md#current-neutral-idle-and-preserved-gaze-2026-11-02).
+
 Stand: 28.10.2026. Der neue neutrale Idle samt Körper und fünf vollständige
 Kopfbewegungen wurden nach der gezielten Neutral-Mundkorrektur visuell
 abgenommen. Die Laufzeit übernimmt diese 48 abgenommenen Posen. Ausschließlich

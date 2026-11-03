@@ -1,5 +1,57 @@
 # True-resolution 2x Aiko sprites
 
+## Local neck-join corrections (2026-11-03)
+
+The existing head owns its complete drawn neck silhouette. The body's upper
+neck skin no longer overlays that contour; its collar and clothing remain in
+front. The original chin stays visible. No head is shifted or rescaled and
+no new body or artwork is generated.
+
+84 HD PNGs are corrected: sixteen frontal gazes, eighteen standing quarter
+poses and fifty walking/head combinations. Changes are restricted to
+`[165, 233, 231, 259)` in 384x416 images. Complete artwork outside this join
+is protected by frozen pixel fingerprints. Foot anchors, clip paths and
+frame timing are unchanged. Full profiles, turning frames, expressions,
+eating and original 1x assets are retained.
+
+```console
+python -m tools.character_neck_join_export \
+  "<private neck-join source package>" aiko_pet/assets
+```
+
+The installer validates all 126 inspected poses and controls before replacing
+files. It rejects missing/tampered sources, concurrent artwork changes, head
+transforms, withdrawn packages and pixel changes outside the join. Repeated
+installation is idempotent. Provenance and final PNG hashes are in the HD
+manifest's `neck_join_corrections` extension; `neck_owner: head` identifies
+the complete source contour. The strict body-pose manifest remains byte-identical.
+Reapply the reviewed correction package after a historical body/gaze rebuild.
+Private full-resolution originals and source packages remain outside Git.
+
+Verification covers protected artwork, source chin visibility, all fifty
+walking contacts, actual sprite loading and existing movement/expression
+integration. Automated checks and phase-sheet inspection do not replace the
+user's visual check in Aiko. A running instance retains cached PNGs; restart
+it to inspect the current images. Verification uses isolated saves.
+
+## Current neutral Idle and preserved gaze (2026-11-02)
+
+The eight HD `idle` slots use the approved complete `expressions/rest-neutral`
+phases. This is independent of the gaze and body packs: replacing neutral
+Idle must not transplant its body into all sixteen gaze poses.
+
+```console
+python -m tools.character_neutral_idle_export aiko_pet/assets
+```
+
+The Idle-only exporter validates all eight neutral sources before replacing
+Idle PNGs and their metadata. It preserves gaze records, body poses, expressions,
+eating and 1x assets. Turn/orientation entries retain `frames_2x/idle/00.png`;
+side-pose anchors and timing stay unchanged. `neutral_idle_reference` describes
+only the Idle source; each gaze retains its original head/body calibration.
+
+## Earlier HD export and sources
+
 This is a **2x-only image-quality improvement** on `feature/social-optimization`.
 The application continues to use its unchanged **192 × 208** PNGs at 1x,
 including all event, hand-grip and interaction coordinates and existing timing.

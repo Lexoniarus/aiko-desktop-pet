@@ -554,251 +554,107 @@
     },
     {
       "path": "idle/00.png",
-      "source": "private-v3-idle-modular/idle/00.png",
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source": "expressions/rest-neutral/00.png",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "offen",
-      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/00.png",
-        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-        "translation_2x": [
-          0,
-          0
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "idle/01.png",
-      "source": "private-v3-idle-modular/idle/01.png",
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source": "expressions/rest-neutral/01.png",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "offen",
-      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/00.png",
-        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-        "translation_2x": [
-          0,
-          0
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "idle/02.png",
-      "source": "private-v3-idle-modular/idle/02.png",
-      "source_sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "source": "expressions/rest-neutral/02.png",
+      "source_sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "halboffen",
-      "eye_sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/02.png",
-        "historical_export_sha256": "729a063d153cf5fc77bc1eef9cc6be5ed8cf4300b577ce938521d661061f2e11",
-        "translation_2x": [
-          2,
-          -1
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
-      "bytes": 90582
+      "sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
+      "bytes": 86454
     },
     {
       "path": "idle/03.png",
-      "source": "private-v3-idle-modular/idle/03.png",
-      "source_sha256": "cabcc4c65ddd6590f2dd61bfc75311700d0a10a676b367de43133b68623bb9d4",
+      "source": "expressions/rest-neutral/03.png",
+      "source_sha256": "4a08ea07845fa4dbb78160fecaabc52182f8d4185cd8ad49a05ff7466ad94531",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "geschlossen",
-      "eye_sha256": "845eb839753b42ea67f5a393366f63ebbde7e80a912fd69a7645dd9bf862d5aa",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/03.png",
-        "historical_export_sha256": "3bd4b66867ed5eb965fcc2fb49fc463fde3928eb00c824284f3ac95b44da0ac8",
-        "translation_2x": [
-          0,
-          -2
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "cabcc4c65ddd6590f2dd61bfc75311700d0a10a676b367de43133b68623bb9d4",
-      "bytes": 90115
+      "sha256": "4a08ea07845fa4dbb78160fecaabc52182f8d4185cd8ad49a05ff7466ad94531",
+      "bytes": 85113
     },
     {
       "path": "idle/04.png",
-      "source": "private-v3-idle-modular/idle/04.png",
-      "source_sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
+      "source": "expressions/rest-neutral/04.png",
+      "source_sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "halboffen",
-      "eye_sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/02.png",
-        "historical_export_sha256": "729a063d153cf5fc77bc1eef9cc6be5ed8cf4300b577ce938521d661061f2e11",
-        "translation_2x": [
-          2,
-          -1
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "6ad5344c847c43bdcf9cf38c1c926306ac1fa6851cc2d84408897d691a61a105",
-      "bytes": 90582
+      "sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
+      "bytes": 86454
     },
     {
       "path": "idle/05.png",
-      "source": "private-v3-idle-modular/idle/05.png",
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source": "expressions/rest-neutral/05.png",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "offen",
-      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/00.png",
-        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-        "translation_2x": [
-          0,
-          0
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "idle/06.png",
-      "source": "private-v3-idle-modular/idle/06.png",
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source": "expressions/rest-neutral/06.png",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "offen",
-      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/00.png",
-        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-        "translation_2x": [
-          0,
-          0
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "idle/07.png",
-      "source": "private-v3-idle-modular/idle/07.png",
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source": "expressions/rest-neutral/07.png",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "source_size": [
         384,
         416
       ],
-      "status": "composited_v3_idle_fixed_head_eyes_only",
-      "source_kind": "reviewed_existing_2x_eye_composite",
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
-      "head_sha256": "c6d673d76a8cdf6735b839fafaf1ae01fdc079fc12cfd235fd2020dedab2e744",
-      "eye_mask_sha256": "d909ad1405bf1e61b4a4bdb07ebeb4025787e65741187356ca04483812b90be8",
+      "status": "approved_neutral_idle_only",
       "eye_phase": "offen",
-      "eye_sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
-      "eye_provenance": {
-        "kind": "preserved_existing_2x_export_eye_patch_not_new_hd_original",
-        "historical_source": "source-frames/idle/00.png",
-        "historical_export_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-        "translation_2x": [
-          0,
-          0
-        ],
-        "scale": 1.0
-      },
-      "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "jumping/00.png",
@@ -1038,8 +894,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "738572e438a2db2fe92c96cab9299390df7a97c157eb08deb8de2e9eca584d19",
-      "bytes": 86545
+      "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
+      "bytes": 86564,
+      "neck_join": {
+        "file": "frames_2x/look/00.png",
+        "base_sha256": "dbb02fd00bbefe9468537b8b53ec54cb9405e28bd341c22faad84dfa10625d81",
+        "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/01.png",
@@ -1111,8 +985,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "31ac1b1848b700380433606cd2d43d5e2ac8d544351e17006eacf8e194689e24",
-      "bytes": 87071
+      "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
+      "bytes": 87079,
+      "neck_join": {
+        "file": "frames_2x/look/01.png",
+        "base_sha256": "384780c4fd23e36f8e0846bd2ae0a945bcd57514aad983e38a204958c48c7817",
+        "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/02.png",
@@ -1184,8 +1076,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
-      "bytes": 84791
+      "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
+      "bytes": 84791,
+      "neck_join": {
+        "file": "frames_2x/look/02.png",
+        "base_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+        "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 8,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/03.png",
@@ -1257,8 +1167,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
-      "bytes": 83382
+      "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
+      "bytes": 83391,
+      "neck_join": {
+        "file": "frames_2x/look/03.png",
+        "base_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+        "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/04.png",
@@ -1330,8 +1258,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
-      "bytes": 84224
+      "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
+      "bytes": 84234,
+      "neck_join": {
+        "file": "frames_2x/look/04.png",
+        "base_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+        "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 10,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/05.png",
@@ -1403,8 +1349,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
-      "bytes": 84370
+      "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
+      "bytes": 84377,
+      "neck_join": {
+        "file": "frames_2x/look/05.png",
+        "base_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+        "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/06.png",
@@ -1476,8 +1440,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
-      "bytes": 82883
+      "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
+      "bytes": 82816,
+      "neck_join": {
+        "file": "frames_2x/look/06.png",
+        "base_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+        "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 51,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/07.png",
@@ -1549,8 +1531,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "c38bf71dacd20da62d4858dfe8ec2107d683d51ee5b3e3028e85ce61e72c4ac8",
-      "bytes": 86541
+      "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
+      "bytes": 86542,
+      "neck_join": {
+        "file": "frames_2x/look/07.png",
+        "base_sha256": "ecc451df0fa359a462c58e2d496413e84a66f8ac48ab95813a106c2c33b7d7a2",
+        "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/08.png",
@@ -1622,8 +1622,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "3c51025df7925ac59a37a4b4d96df77c85a0f9ec737464cb2195325638cde1a5",
-      "bytes": 86329
+      "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
+      "bytes": 86320,
+      "neck_join": {
+        "file": "frames_2x/look/08.png",
+        "base_sha256": "875c5d33e48881ab42cc8bf2ae3286e63a54343e3291a5c3bd2549c77554118b",
+        "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 27,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/09.png",
@@ -1695,8 +1713,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "89b2153f2e5105137e766c59a5785242c21554ab6bea38e41aeca5c7b4e16e9f",
-      "bytes": 83712
+      "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
+      "bytes": 83687,
+      "neck_join": {
+        "file": "frames_2x/look/09.png",
+        "base_sha256": "be133162c80614c99ba447a50d457ae7e68b4d77b2508d03037e9be437b3e6d1",
+        "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 37,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/10.png",
@@ -1768,8 +1804,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "267f230f11b3c1e5f3a6a761381073d0183a5f907c1ccaa0645cf8aeac28c8f4",
-      "bytes": 84156
+      "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
+      "bytes": 84166,
+      "neck_join": {
+        "file": "frames_2x/look/10.png",
+        "base_sha256": "2a05610328fa25477ecf73f6bf2a115923b2750dd4ed0938e5638b3ceaf788fe",
+        "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/11.png",
@@ -1841,8 +1895,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "5c9e882586a4264fa2ede633d8e61a02f91acdfc99f44c5ebb3e26175791ec38",
-      "bytes": 83984
+      "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
+      "bytes": 83984,
+      "neck_join": {
+        "file": "frames_2x/look/11.png",
+        "base_sha256": "f79be811ccf5bf76f3c0361b171997cc7f85503800b7e6e15f53acb3cace2d6f",
+        "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 15,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/12.png",
@@ -1914,8 +1986,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
-      "bytes": 82725
+      "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
+      "bytes": 82735,
+      "neck_join": {
+        "file": "frames_2x/look/12.png",
+        "base_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+        "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/13.png",
@@ -1987,8 +2077,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "2c112e3a623476dedb15a879d8140364080d67aa97fe1afb27b4ec327bd01a1b",
-      "bytes": 82746
+      "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
+      "bytes": 82757,
+      "neck_join": {
+        "file": "frames_2x/look/13.png",
+        "base_sha256": "a1c12c57ce8dd2eb912de395b3d98f6e81009384e14fe0363fc4007c1fffe111",
+        "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/14.png",
@@ -2060,8 +2168,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "f47bfe581f748b0d82667f202952cc6e5f15961caa8bb3d6748f6d86b6173348",
-      "bytes": 83867
+      "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
+      "bytes": 83848,
+      "neck_join": {
+        "file": "frames_2x/look/14.png",
+        "base_sha256": "c5eeeac7b92a7b4aaff343c8b9747adab9ac0be74cf22981087cf69192186bc5",
+        "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 26,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "look/15.png",
@@ -2137,8 +2263,26 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "33541740e74c44c88371062416627dedd663f0bd1adbad0ef01cabad137da40a",
-      "bytes": 83340
+      "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
+      "bytes": 83356,
+      "neck_join": {
+        "file": "frames_2x/look/15.png",
+        "base_sha256": "c059d288057fcaf2f8a88e8aa4ca9e36f711db5e4b9468d506df43ce9a462888",
+        "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
     },
     {
       "path": "petting/00.png",
@@ -3966,5 +4110,1535 @@
       "silhouette_iou": 0.9812,
       "bytes": 88653
     }
-  ]
+  ],
+  "neutral_idle_reference": {
+    "file": "expressions/rest-neutral/00.png",
+    "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+    "scope": "eight_idle_slots_only_gaze_and_body_poses_unchanged"
+  },
+  "neck_join_corrections": {
+    "version": 1,
+    "bounds_2x": [
+      165,
+      233,
+      231,
+      259
+    ],
+    "source_kind": "reviewed_existing_source_pixels_no_generation",
+    "frames": [
+      {
+        "file": "body_poses/body-look-left/00.png",
+        "base_sha256": "d1136b3776645b156e54d26a121bd3c690909cf7d7dae450e0e0969e2e198385",
+        "sha256": "210af2f3ee4c186ef4f56048d40dd2dd33a737f45580b14fbb13b75031d7631b",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 177,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/01.png",
+        "base_sha256": "b9aa0a457a65a76a40959b04ee5f1f9a7ec174b9a1793b3e655c05ec90f73418",
+        "sha256": "6d528169a19340186d98a05f4b46ace66784d3d556433d0abe6fe957249a0b5d",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 164,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/02.png",
+        "base_sha256": "60c207686a1aa0078eb03514a8924027ad452b361fc886db8dde2b90b4a29c58",
+        "sha256": "1a70080430a4a113c7fac578700257080188b37e5d133394e250df1ee5e7529d",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 158,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/03.png",
+        "base_sha256": "20979453c314b7db5bed35a2ed64c81ac1ba68ed8f93d1eaee72a00b827a1c44",
+        "sha256": "0cfab482da5e98721abe4c65eb5727ab4a43a842c783aaf05d5dc726f8797e18",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 178,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/04.png",
+        "base_sha256": "0ab2ab3007536cd16147dcf58d517d161cf986fb8f49989e429a44a6aeabbe86",
+        "sha256": "d7f7ea78e8ced312618281ccbb5a01e25cfe7165b30db754d5ecc3a4a27b4534",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 169,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/05.png",
+        "base_sha256": "89a403d42a1dbed3bd5fe85d5fd20287e463b4528a540b426ce67ccf7a822ac6",
+        "sha256": "932c630c8f3b1910a4244e5918038fbd096850ed9ec90d31629ce9ebdf79a69e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 180,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/06.png",
+        "base_sha256": "0837b08ecd2059578ffa13dddd31b52b6ae4908514f14d26ee705dbe2f0e6061",
+        "sha256": "0fdc547b27c3a7bde7ea731cc6f214ddccf50e5aea24cd6b436b8fc42fdd6274",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 176,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/07.png",
+        "base_sha256": "3535dac713a83d5e71364760a31e4ddfe0450fdd8c740b2d48cdd3856676d6f3",
+        "sha256": "8fae3bd4baefb8ee4e55bc1799ef923db61a2f50cf7390dec4e9395ecadc0d3e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 199,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-left/08.png",
+        "base_sha256": "5ea8c98dafd60b26f8b5a3c0ce209ccb05211d1b05be9a8e2b3e51fe8546d19c",
+        "sha256": "3da3333cee32b74bef01bd0f85e4b07655408fc9503cd00d84afcc71bda2263c",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 170,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/00.png",
+        "base_sha256": "d17c76626553cf3d7c85b9f4e9c58541bc90e2a1a197c7e97d428ba072cd60f0",
+        "sha256": "4de22bc439fdd2eac11562b8b2a5ef7d36067b1be3af846943c40fa804b014a1",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 178,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/01.png",
+        "base_sha256": "5b95c8af174bd1fbb7979e50cfca9e631e899564ab4dc9d113f45217d427f17a",
+        "sha256": "c31304d623de8cac730583581b0cb3adc7c5954fc0a0541b59d02631d0e017e6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 179,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/02.png",
+        "base_sha256": "5f0968dfb479d14cfb2c90b79b32b658a3a9239e63d9b1490a41876e5a82384b",
+        "sha256": "33236168369b344bac10bb51c99a29c667d94c7447b520ad00ec691c9b977433",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 178,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/03.png",
+        "base_sha256": "ed0dbb2c94ed4bcea35aab3e77595ec057db1c5c1b6a3099c38daa524bbdce48",
+        "sha256": "34b57854770ea108665f94083d4417847ac53315f576c19871761fcfea32a587",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 194,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/04.png",
+        "base_sha256": "6bb1fdfa8b8fa3035477525cbe20a3401fa53341c3c7b0fdeb1a288f4ec5d81f",
+        "sha256": "96e462f4876fb7c48edd32b757a4c73b6aaf74441b4b39dbf6698a06ce1b5fc9",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 193,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/05.png",
+        "base_sha256": "ced0d0920bdf8a9968743ac55ec240e3f21f99f57f233717de0b76427c21a05e",
+        "sha256": "80e9a274f8161fc38b9c3169a90bb8ac0c344308de93f84af7dd13fde534c406",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 178,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/06.png",
+        "base_sha256": "c416022937297783927227709dca882018447b1bd5e6938446c83ce2b780387f",
+        "sha256": "ac8c5e5bfd32d589578ac6bfa4ec5125a901824955fa14e40249faadaddbbc35",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 186,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/07.png",
+        "base_sha256": "8aa698750e0d90b50dc8e7fd1c03fb74b7df2b0a183111b12a7bcaf0957a722d",
+        "sha256": "9868824d4646bb916e4b9c322dd43f0c97ca7e0fa1bb884750503efb478d2ecc",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 176,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-look-right/08.png",
+        "base_sha256": "1c29d7fe3f49e0db43b99ca92e634301779507bde188af873ea967e1af453d3f",
+        "sha256": "eb74ad8881a08862ad2b953adebd9858e1897d2863483e84ac5b6993f5e422c8",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 163,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-10/00.png",
+        "base_sha256": "bd51d966e7e21dfbbe0605cc14b0f6f92fcc5489f02f735124932ad81bb4978e",
+        "sha256": "abb02d6ed4beeeb1efc10bb2b83c689785d2823e0d9005c99573d94db34d4c01",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 2,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-10/01.png",
+        "base_sha256": "5b966a53800e78ba1619f0703db2aaf6c9c713ae95811586d14c4d74c926326b",
+        "sha256": "fd011a7f5cbca953daa4fff8d53b1002aa525f14871c3085c82e6e8b4fdc1703",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-10/03.png",
+        "base_sha256": "7ddf6322db467587355ae7ff86009854a91c9c29c167c8e4fa7e98f18c492bd0",
+        "sha256": "d32051391dd12e45318d6cd45f088bcc70453167dbebd76bc9fe237360acfed6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 11,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-10/07.png",
+        "base_sha256": "8d398bf8efcaec82546ab05971d6075e5cda25377d609ff2894072f952d03f46",
+        "sha256": "140c6f6a370e39513a1bb18c6397afbeafd04dabc52f76bab86ff8f5e9e85a8c",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 1,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-10/stand.png",
+        "base_sha256": "0f390eb5ccd676a7ee362505eb919ff0439e03a8d69914a4b03c8dde0c223e7f",
+        "sha256": "3f511ee3ed3a886f787fd0704769fd2fbd9130f3d8bab37191dc142d7f022692",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-11/00.png",
+        "base_sha256": "823cd24adba0107b56ac3cb08c6d6c4561bf61aba2e567b3afbee5bfbfc6cddb",
+        "sha256": "37ee72e3e93306dd2ec8ac8c5fde00d7394ab03c8169f9e675543a643e32edb0",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 5,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-11/01.png",
+        "base_sha256": "a6faca53e3eab0532ff677034522dc90def6e62bc2023a689b890db2751cd224",
+        "sha256": "c8849111b326b3e58173dabf78d52ea5c0c3e6256bc6bd08f1e5e1c1bf7b8d05",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 14,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-11/03.png",
+        "base_sha256": "5418453979a2e6fb054f982736b4056695c633ace66dbc65819054b03d684bc2",
+        "sha256": "128afc8ae4c2237a6a7e884f573d5ad96aa4d8fde869f4061f66f34d7fffb727",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 16,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-11/07.png",
+        "base_sha256": "5bd0e28d99abfb854b92e31f812f451bc49baa1b2d1c3047b05462f4d400fd02",
+        "sha256": "80fd950461dd954072842863610b33adcb15cbd7b4dcd1af7f1d7e265224feca",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 14,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-11/stand.png",
+        "base_sha256": "97ca748243be14b4869b807db7effdea4ba3adf5b329d7a2a5b02f5c56b697a5",
+        "sha256": "75c48dfdec6c480d7daf24aed70791aa53fd8237b8a23f6f5fec6886f89bae79",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-12/00.png",
+        "base_sha256": "f35a2957edf89a917887daabe1d1d46d5bb5b3c9388ffbeee3c4987b0582151e",
+        "sha256": "33f43a2c0945aba5cb066bdf6dae51bb7afe9c0b42a7715099a5c5c289bd3adb",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 2,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-12/01.png",
+        "base_sha256": "3de9502cf5c8070325ffd0f97698bb11c016fefb08637cc1eb5ac1ec41cddf24",
+        "sha256": "d8504842aa15cafc17c0d3c2240a257a08b53ce4d6a249e2c203a7971d20c8fb",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 8,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-12/03.png",
+        "base_sha256": "b455dd822692501714629be5bf84e2bbee33d70b76744f72f094687d18231fff",
+        "sha256": "1cca0385f2ba71773308f4d1c6430e69bd3880f098dea3057235f998a3c649ef",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 12,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-12/07.png",
+        "base_sha256": "488d6a2af8da1ba8d71c54c2a7d01967415e05cadfdfc8e923e88ea57137eda5",
+        "sha256": "1ec4b41f03acae1c6b56cc7c96e2a9e8fbdc7c1915da3e77aceb19901bfb018d",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 11,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-12/stand.png",
+        "base_sha256": "c37c4780d12e9afddf1218f66f3f3bf5d5dd193da6233fce1cb918d9233bd8ad",
+        "sha256": "a7897cbfdc5505c134bcd6ca2a3ab4adb22b256cae9125a1dddd667d8cfeeea7",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-13/00.png",
+        "base_sha256": "3880f21f77f10add36337cc74cbb0d772346d4e17654ff41356ef5aaf3ea1c0d",
+        "sha256": "2b14a5c2128c4255e342dc123cdcfe51f213b49cc5b4aae7530d122c37c1fe61",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-13/01.png",
+        "base_sha256": "77299befcd616f0e99e5dac8ccd4f2c547cb30f195582b60a08a03e3d0c3ec92",
+        "sha256": "2da98c53fea73deeb05b89b2cfcd52c535183963679411e961863dcff4d41ca1",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 19,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-13/03.png",
+        "base_sha256": "c70a7ba066f25d988073a08e397f4a310a99ade0e5e6e0edb3957a246334b006",
+        "sha256": "09911087f38212d2ef512efa76c5e3980ab94e99a68727defa203d3e78541f6f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 15,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-13/07.png",
+        "base_sha256": "ddcaeed654ed09d57a88684caa35cf4ffc4265e3b460595c358f42970ed3d96e",
+        "sha256": "2fff46c3f05479b5f44f8450027883e22ca56e4a1074e0b7cdf4de751d167674",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-13/stand.png",
+        "base_sha256": "b67141ce822aa937ff454f34f6312d948f19a939a1faeed87cd112d00ce15b2e",
+        "sha256": "a0ffa71e42137e75e3371c9708d140e8cb780ccb5fe1025e76b00f0ac823770a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-14/00.png",
+        "base_sha256": "ab0165627a42a9d8abaf7925249d3d14d82d816474be4c60cfcf1a1110ee9ab7",
+        "sha256": "76b7f5d131308de695087c8e97f6580b99c6565eec3f95926116dfd54751f4dd",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 3,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-14/01.png",
+        "base_sha256": "d709c44aadc80dc0cf532014248ad536531f4eeaf42070396917b8939eb90adc",
+        "sha256": "8a6d3cc71b26694c417c42dba23d67aa714fa54988451c92534aaa4a1f861029",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 14,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-14/03.png",
+        "base_sha256": "e07d7aea0035db8e279bd59e4efaca3c7a22051c9342d9f5af69936511bda646",
+        "sha256": "666a0c1ecce9fad82cbbedc150f3e02c8323cbc14a57c95c6bf1e5f048c356cf",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 2,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-14/07.png",
+        "base_sha256": "1e4896d4e20fe3eddd5156e6fc93047530727934585d16d3759fca4896ceb14c",
+        "sha256": "f67d1126aed9d119bda19fe1bbb04b8b202f9d57c10b62a214e50e896fe4b802",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 1,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-left-14/stand.png",
+        "base_sha256": "71c196c666c46ffe17b66b1f0f2edd68d7f3eb1227fccf80c8fa05fb633b0324",
+        "sha256": "e9f9ea615520cc7cebc7f6d2f32d33dc76a4b1dc258110498f52b00dabb59364",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 28,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-02/00.png",
+        "base_sha256": "4035d59894539906271e6ad82a1906fb4408053c5cdf4183356b2524494b476a",
+        "sha256": "7a03f3618ef80b1835d49224c70f6d456d091e35cacf2b9023cf2972ecd7f819",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-02/01.png",
+        "base_sha256": "6648d2aed395e436c2a54cdb31230abc1b3803fd88ffe3a1bea3be930858ec00",
+        "sha256": "f7f2fb1ae48e0fdc1bb3373ecb2343d3b76575e98b88f2461268761fe3fb4392",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-02/03.png",
+        "base_sha256": "02c88ebc45c7058a5e8910a7aa1d7b860c86cdb30c0179413eaf8bcc40fb9ad3",
+        "sha256": "034da36a8dd5f68be1cad132cf90b21f843164b763eefa1759394499fcde073b",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-02/07.png",
+        "base_sha256": "4d2694ff343f9cc3a052b3772209eaa99f890df5a7a0f7e8754d92a8a35a1878",
+        "sha256": "188896c77606a62f3052fc00d5c2b50e726dfa1d21b06054e175e7c324b21029",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 15,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-02/stand.png",
+        "base_sha256": "0b714d44caea5d265ecda9c6c9c874bdd4ac1528a85e5fadb34d09f4ad18f5de",
+        "sha256": "b2254b219807d6a7395eb4241958d3007201527b31abadd636f300171ad84469",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-03/00.png",
+        "base_sha256": "a639e8e85ad9af6528239283e9ad828bf5fcec99a81cce311dcca2c50b01c855",
+        "sha256": "b2bc10e1346053b571c914e20528b269cd35a83d963ebb1ca45c97c20e71329e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 9,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-03/01.png",
+        "base_sha256": "3aee83fddfa2b10834eb642b4a5cf1eda52967fc3f80f1039fdda4eb50d5f5a4",
+        "sha256": "3ded5d1d9a99a92ceddf42db7f154b872ea0878c5dcaaa5786f2cb726b024bed",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 19,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-03/03.png",
+        "base_sha256": "484058953ff44d865a5207d30fee737936394d3645e0fb83acd18b0b7d539440",
+        "sha256": "bcc98dff2ec6cd77201a5e46fed637f02ff6fa9b668f6474d55ddc8c9aa0cc49",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 2,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-03/07.png",
+        "base_sha256": "b2be6ad982839801feda5b8654581746bf64d5fbb642ceb7b8e693afe1cc438b",
+        "sha256": "566e3d27ef2138d22e4e9223aa7dbd0e6c29f907180d62f8689c8429d7743fc0",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 2,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-03/stand.png",
+        "base_sha256": "f577770b7e455f6447366091b67e2f4061a6eb2200f285d3fe2f50eb9b6d6e00",
+        "sha256": "2724d3d0d27ab6bd5c4bd928fdaa69f65eef21937263418b1239bc4f15f08bb4",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-04/00.png",
+        "base_sha256": "47981e9d7aa9408e5192867df9f377c1a71c2486042c7479981dd57ffdf0f885",
+        "sha256": "57b5606e01b36e86c3a679b5ae1bbdc90ba3158e80473a062bb013f782840a84",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 8,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-04/01.png",
+        "base_sha256": "51f137f461739b32ad65327f2473e4be63ceff7ba668ea4971ae7e06e8564c29",
+        "sha256": "f33795945644b3e223ad19b6b870689459ee09091283d1015738636d1ff405b3",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-04/03.png",
+        "base_sha256": "5545680921034d49f927c47865f7a8801c399797e4cc75a2bd48bb78b096f50a",
+        "sha256": "41ee10e915271dd579a1a54989df6f8819ec89a8754c91b142ab39697f343f8a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-04/07.png",
+        "base_sha256": "4d15929eac646b44e61a3dec885443d3d82d89a23f4e51b44cba64326b14110f",
+        "sha256": "bb3717239b274b1c76745123d18d70df251aa4780d2b6fbe17eff411930fbfe6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 16,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-04/stand.png",
+        "base_sha256": "fcc0e73092e0e2c82357464fc6e3da43541680d000d275448025f2da85c6281b",
+        "sha256": "a4708da3b43bf544750a46d742bcd28ada4979e4fd29a84417e2105a84049dd6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-05/00.png",
+        "base_sha256": "992801fca355058c0d98cab8271b3ce4c829ee0313d5f6c7fb338e4c99e533d8",
+        "sha256": "c1bf7c20b026929b384683a5c5f41717715f2bf3e532e96f172808eddf0e12d4",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 4,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-05/01.png",
+        "base_sha256": "5fe5beb84c5e8bdbe1dad61a02cd4f83700fbf8b6795f4a6421599beb7652408",
+        "sha256": "5df33cabe2ed9d2dee50d614f9cacc470a90e080ad09cf49bc0dcee4307d3fe1",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 12,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-05/03.png",
+        "base_sha256": "dbc737aee973a9f2e82fd6bcc6b3ef87ff290dd0c9d5f62474cbd6b72211ae88",
+        "sha256": "31fc11bad1c1e3b18d05b22bd4f337c14f753a7925bd6a301402d5ce7e58f8b6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 14,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-05/07.png",
+        "base_sha256": "36d3a069e61788c9ff82f9c5c7a713a0ee50fe7da48b4bd096b4e4d8ba7e699d",
+        "sha256": "3aeb2b7ee5a36a0f5c01707c9c4cb856d1d69a4a297f0fe829b8d52fa772f5e1",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-05/stand.png",
+        "base_sha256": "06df7f216368a6b3c74406332c8c90416066cf5b38c04029a631d0f050752790",
+        "sha256": "0cb589c02f1776b713d29e1752bc525128a12724c114b1c645f4beb950835558",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-06/00.png",
+        "base_sha256": "b4b7f13bc14cc5285b4dc8f2eb5a69b1a24f3d8c0c50a02f2850c8f8615a7089",
+        "sha256": "18036a5075459b7cd6ce1df1ad8452b5344b08f7ed0ef16a053653373b1506ac",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-06/01.png",
+        "base_sha256": "3ef74c885f83e22d64d0dffb3ec28918bf797383fc7181b2fd76cf518dc7a4a9",
+        "sha256": "484fd83e784f5166c40cf8614345cac0aae1b6a26009c2263cc9246466678e1a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 9,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-06/03.png",
+        "base_sha256": "8d213eb28296ac5f3da10aec5e8c6c1f8a048c1211376d15e767cae534588c98",
+        "sha256": "52d056913d2c7d9471cea023c81de9659363d2e9bff99c3afea0388bc17653f6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 1,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-06/07.png",
+        "base_sha256": "c1d0c654098d186dc4aaea9d19c7b56736f6e193b8b7f1ca8400baf26186d77a",
+        "sha256": "5e5c8d58268d0f2a7d22d0909cd2ed61523c1df246736e55de9dfffb2197140f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 14,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "body_poses/body-step-right-06/stand.png",
+        "base_sha256": "338680355d286ae4783a61784542a356a9fc0d95f29c4a31e3e84d8c758bd5d5",
+        "sha256": "1674159fe5950bc216ed316c04cdcd703d71fe1acef1e2bae423da7ac340097b",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/00.png",
+        "base_sha256": "dbb02fd00bbefe9468537b8b53ec54cb9405e28bd341c22faad84dfa10625d81",
+        "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/01.png",
+        "base_sha256": "384780c4fd23e36f8e0846bd2ae0a945bcd57514aad983e38a204958c48c7817",
+        "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/02.png",
+        "base_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+        "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 8,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/03.png",
+        "base_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+        "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/04.png",
+        "base_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+        "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 10,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/05.png",
+        "base_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+        "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 7,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/06.png",
+        "base_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+        "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 51,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/07.png",
+        "base_sha256": "ecc451df0fa359a462c58e2d496413e84a66f8ac48ab95813a106c2c33b7d7a2",
+        "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 17,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/08.png",
+        "base_sha256": "875c5d33e48881ab42cc8bf2ae3286e63a54343e3291a5c3bd2549c77554118b",
+        "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 27,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/09.png",
+        "base_sha256": "be133162c80614c99ba447a50d457ae7e68b4d77b2508d03037e9be437b3e6d1",
+        "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 37,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/10.png",
+        "base_sha256": "2a05610328fa25477ecf73f6bf2a115923b2750dd4ed0938e5638b3ceaf788fe",
+        "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/11.png",
+        "base_sha256": "f79be811ccf5bf76f3c0361b171997cc7f85503800b7e6e15f53acb3cace2d6f",
+        "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 15,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/12.png",
+        "base_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+        "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/13.png",
+        "base_sha256": "a1c12c57ce8dd2eb912de395b3d98f6e81009384e14fe0363fc4007c1fffe111",
+        "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 13,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/14.png",
+        "base_sha256": "c5eeeac7b92a7b4aaff343c8b9747adab9ac0be74cf22981087cf69192186bc5",
+        "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 26,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      },
+      {
+        "file": "frames_2x/look/15.png",
+        "base_sha256": "c059d288057fcaf2f8a88e8aa4ca9e36f711db5e4b9468d506df43ce9a462888",
+        "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
+        "bounds_2x": [
+          165,
+          233,
+          231,
+          259
+        ],
+        "changed_pixels": 6,
+        "method": "complete_original_neck_silhouette_collar_foreground",
+        "head_translation": [
+          0,
+          0
+        ],
+        "head_scale": 1
+      }
+    ],
+    "neck_owner": "head"
+  }
 }
