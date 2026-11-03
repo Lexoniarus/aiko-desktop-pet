@@ -7,6 +7,8 @@ from tkinter import ttk
 from typing import Any, Callable, cast
 
 from .icon_images import IconImages
+from .scaled_widgets import Layout
+from .ui_scale import UiScale
 
 
 def update_button_state(button: tk.Button | ttk.Button, *, enabled: bool) -> None:
@@ -15,7 +17,7 @@ def update_button_state(button: tk.Button | ttk.Button, *, enabled: bool) -> Non
         button.configure(state="normal" if enabled else "disabled")
 
 
-class ImageButton(ttk.Button):
+class ImageButton(Layout, ttk.Button):
     def __init__(
         self, parent: tk.Misc, text: str, command: Callable[[], None], *,
         images: IconImages, size: str, font: str, icon: tk.PhotoImage | None = None,
@@ -23,6 +25,7 @@ class ImageButton(ttk.Button):
         wraplength: int | None = None, preserve_selection: bool = False,
     ) -> None:
         self._images, self._size, self._font = images, size, font
+        self.ui_scale = UiScale.for_widget(parent)
         self._icon_width = icon.width() if icon is not None else 0
         self._align_left, self._stacked = align_left, stacked
         self._text = text
@@ -31,7 +34,8 @@ class ImageButton(ttk.Button):
         super().__init__(
             parent, text=self._label(text), command=command, width=0,
             # An explicit disabled image avoids Tk's generated stippled copy.
-            image=f"{icon} disabled {icon}" if icon is not None else "",
+            image=(f"{self.ui_scale.image(icon)} disabled {self.ui_scale.image(icon)}"
+                   if icon is not None else ""),
             compound="top" if stacked else "left" if icon is not None else "none",
             style=self._style(text), cursor="hand2", takefocus=True,
         )

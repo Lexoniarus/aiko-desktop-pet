@@ -188,7 +188,8 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.assertEqual(self.pet._animated.frame_clock.frame_index, 1)
         self.assertGreater(self.pet._action_playback.until, original_deadline)
         self.assertGreater(self.pet._action_playback.until, late)
-        for frame in self.pet._character_assets.clips["eat"].frames[1:]:
+        clip = self.pet._character_assets.clip_for('eat', self.pet.settings.scale)
+        for frame in clip.frames[1:]:
             shown_at = self.pet._animated.frame_clock.frame_started_at
             self.pet._animated.show_frame(
                 "eat", shown_at + frame.duration_ms / 1000 + .01,

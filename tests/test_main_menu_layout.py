@@ -24,6 +24,37 @@ from aiko_pet.ui.windows.hover_contracts import HoverActions
 
 
 class MainMenuLayoutTests(unittest.TestCase):
+    def test_every_action_has_full_visible_bounds_and_accepts_native_clicks(self):
+        for action, button in self.toolbar.buttons.items():
+            with self.subTest(action=action):
+                self.toolbar.tips.hide()
+                self.root.update_idletasks()
+                self.assertGreaterEqual(button.winfo_width(),
+                                        button.winfo_reqwidth())
+                self.assertGreaterEqual(button.winfo_height(),
+                                        button.winfo_reqheight())
+                x, y = button.winfo_rootx(), button.winfo_rooty()
+                ancestor = button.master
+                while ancestor is not self.toolbar.window:
+                    assert ancestor is not None
+                    self.assertGreaterEqual(x, ancestor.winfo_rootx())
+                    self.assertGreaterEqual(y, ancestor.winfo_rooty())
+                    self.assertLessEqual(
+                        x + button.winfo_width(),
+                        ancestor.winfo_rootx() + ancestor.winfo_width(),
+                    )
+                    self.assertLessEqual(
+                        y + button.winfo_height(),
+                        ancestor.winfo_rooty() + ancestor.winfo_height(),
+                    )
+                    ancestor = ancestor.master
+                self.calls.clear()
+                for event in ('<Enter>', '<ButtonPress-1>', '<ButtonRelease-1>'):
+                    button.event_generate(event, x=button.winfo_width() // 2,
+                                          y=button.winfo_height() // 2)
+                self.root.update()
+                self.assertEqual(self.calls, [action])
+
     def setUp(self) -> None:
         try:
             self.root = tk.Tk()
@@ -66,7 +97,7 @@ class MainMenuLayoutTests(unittest.TestCase):
         self.root.update()
 
     def test_three_wishes_fit_and_empty_rows_release_space(self) -> None:
-        wishes = self.toolbar.wishes._scroll
+        wishes = self.toolbar.wishes._content
         width = self.toolbar.window.winfo_width()
         for pinned in (False, True, False):
             with self.subTest(pinned=pinned):
@@ -79,9 +110,9 @@ class MainMenuLayoutTests(unittest.TestCase):
                 self.toolbar.refresh()
                 self.root.update()
                 self.assertEqual(self.toolbar.window.winfo_width(), width)
-                self.assertFalse(wishes.scrollbar.winfo_ismapped())
+                self.assertFalse(hasattr(wishes, "scrollbar"))
                 self.assertLessEqual(wishes.body.winfo_reqwidth(),
-                                     wishes.canvas.winfo_width())
+                                     wishes.frame.winfo_width())
                 for key, label in self.toolbar.wishes._labels.items():
                     pin = self.toolbar.wishes._pin_icons[key]
                     objective = self.toolbar.wishes._objectives[key]
@@ -103,7 +134,7 @@ class MainMenuLayoutTests(unittest.TestCase):
         self.toolbar.refresh()
         self.root.update()
         self.assertLess(self.toolbar.window.winfo_height(), populated)
-        self.assertFalse(self.toolbar.moodlets._scroll.scrollbar.winfo_ismapped())
+        self.assertFalse(hasattr(self.toolbar.moodlets._content, "scrollbar"))
 
     def test_selector_retains_geometry_and_uses_panel_art(self) -> None:
         before = self.toolbar.window.winfo_geometry()
@@ -113,23 +144,23 @@ class MainMenuLayoutTests(unittest.TestCase):
         )
         self.addCleanup(menu.close)
         self.root.update()
-        self.assertEqual(self.toolbar.window.winfo_geometry(), before)
+        self.assertEqual(self.toolbar.window.winfo_width(), int(before.split("x")[0]))
+        self.assertIs(menu.content.frame.ui_scale, self.skin.scale)
         self.assertIsNotNone(menu._surface._image)
-        # Choices may overflow the fixed selector; the last remains reachable.
-        menu.scroll.canvas.yview_moveto(1)
+        # The entire selector grows naturally; every choice remains visible.
         self.root.update()
         last = menu.buttons[GameId.MASTERMIND]
-        self.assertGreaterEqual(last.winfo_rooty(), menu.scroll.canvas.winfo_rooty())
+        self.assertGreaterEqual(last.winfo_rooty(), menu.content.frame.winfo_rooty())
         self.assertLessEqual(
             last.winfo_rooty() + last.winfo_height(),
-            menu.scroll.canvas.winfo_rooty() + menu.scroll.canvas.winfo_height(),
+            menu.content.frame.winfo_rooty() + menu.content.frame.winfo_height(),
         )
         for button in menu.buttons.values():
             self.assertLessEqual(
-                button.winfo_width(), menu.scroll.canvas.winfo_width(),
+                button.winfo_width(), menu.content.frame.winfo_width(),
             )
 
-    def test_overflow_can_be_scrolled_and_hides_bar_after_removal(self) -> None:
+    def test_many_moodlets_wrap_without_a_scroll_view(self) -> None:
         episodes = tuple(
             MoodletEpisode(i, key, 1, 0, 0, 7200)
             for i, key in enumerate(MOODLET_CATALOG.definitions, 1)
@@ -141,18 +172,16 @@ class MainMenuLayoutTests(unittest.TestCase):
         )
         self.view = overflow
         self.toolbar.refresh()
-        strip = self.toolbar.moodlets._scroll
+        strip = self.toolbar.moodlets._content
         self.root.update()
-        self.assertTrue(strip.scrollbar.winfo_ismapped())
-        strip.canvas.xview_moveto(1)
-        self.assertGreater(strip.canvas.xview()[0], 0)
+        self.assertFalse(hasattr(strip, "scrollbar"))
+        self.assertEqual(strip.frame.ui_scale, self.skin.scale)
         self.view = replace(
             overflow, emotional=replace(overflow.emotional, moodlets=()),
         )
         self.toolbar.refresh()
         self.root.update()
-        self.assertFalse(strip.scrollbar.winfo_ismapped())
-        self.assertEqual(strip.canvas.xview()[0], 0)
+        self.assertFalse(hasattr(strip, "scrollbar"))
 
     def test_details_are_bounded_and_button_copy_keeps_native_commands(self) -> None:
         self.toolbar.toggle_details()
@@ -180,26 +209,26 @@ class MainMenuLayoutTests(unittest.TestCase):
 
     def test_panel_resizing_preserves_corners_without_growing_cache(self) -> None:
         source = self.skin.images.surface("panel_surface.panel")
+        painted = self.skin.scale.image(source)
+        sw = int(self.root.tk.call('image', 'width', painted))
+        sh = int(self.root.tk.call('image', 'height', painted))
         cache_size = len(self.skin.images._images)
         for width, height in ((74, 30), (254, 354), (620, 228)):
             image = self.skin.images.panel_art(width, height)
-            self.assertEqual(image.get(1, 1), source.get(1, 1))
+            self.assertEqual(image.get(1, 1), self.root.tk.call(painted, 'get', 1, 1))
             self.assertEqual(
                 image.get(width - 2, height - 2),
-                source.get(source.width() - 2, source.height() - 2),
+                self.root.tk.call(painted, 'get', sw - 2, sh - 2),
             )
         self.assertEqual(len(self.skin.images._images), cache_size)
 
-    def test_short_viewport_reveals_details_and_preserves_footer_access(self) -> None:
-        self.toolbar.body._max_height = 380
-        self.toolbar.body.refresh_layout()
-        self.root.update()
+    def test_details_and_footer_use_the_shared_scale_without_viewports(self):
         self.toolbar.toggle_details()
         self.root.update()
-        self.assertLessEqual(self.toolbar.body.canvas.winfo_height(), 380)
-        self.assertAlmostEqual(self.toolbar.body.canvas.yview()[1], 1)
+        self.assertFalse(hasattr(self.toolbar.body, 'canvas'))
         self.assertTrue(self.toolbar.pin_button.winfo_ismapped())
         self.assertTrue(self.toolbar.details_button.winfo_ismapped())
+        self.assertIs(self.toolbar.details_button.ui_scale, self.skin.scale)
 
     def test_entire_button_uses_one_native_pointer_and_disabled_gate(self) -> None:
         button = self.toolbar.buttons["pet"]

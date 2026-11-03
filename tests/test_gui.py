@@ -135,9 +135,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertIn("36 / 100", bar.readouts["satiety"].label.cget("text"))
         self.assertIn("95 / 100", bar.readouts["energy"].label.cget("text"))
         self.app.root.update()
-        self.assertEqual(
+        self.assertAlmostEqual(
             max(bar.readouts["mood"].canvas.coords(bar.readouts["mood"]._fill)[::2]),
-            2 + (bar.readouts["mood"].canvas.winfo_reqwidth() - 4) * 0.22,
+            2 + (float(bar.readouts["mood"].canvas.design("width")) - 4) * 0.22,
         )
 
     def test_busy_computer_makes_aiko_concentrate_instead_of_walking(self):
@@ -205,14 +205,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
         for key, _title, _color in self.toolbar.READOUTS:
             readout = self.toolbar.readouts[key]
             bar, rect, text = readout.canvas, readout._fill, readout.label
-            self.assertEqual(max(bar.coords(rect)[::2]), bar.winfo_width() - 2, key)
+            self.assertAlmostEqual(max(bar.coords(rect)[::2]),
+                                   float(bar.design("width")) - 2, msg=key)
             self.assertIn("100 / 100", text.cget("text"))
         self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
         set_test_pet_values(self.app.state, mood=25)
         self.toolbar.refresh()
         readout = self.toolbar.readouts["mood"]
         bar, rect, _text = readout.canvas, readout._fill, readout.label
-        self.assertEqual(max(bar.coords(rect)[::2]), 2 + (bar.winfo_width() - 4) * 0.25)
+        self.assertAlmostEqual(max(bar.coords(rect)[::2]),
+                               2 + (float(bar.design("width")) - 4) * 0.25)
 
     def test_side_by_side_bridge_keeps_hover_active(self):
         self.app._on_enter()
@@ -313,7 +315,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(self.toolbar.window.winfo_rootx(), 25)
         self.assertEqual(self.toolbar.window.winfo_rooty(), 35)
 
-    def test_computer_load_can_trigger_first_person_speech(self):
+    def test_computer_load_can_trigger_first_person_speech_without_review(self):
         from aiko_pet.telemetry import ComputerSnapshot
 
         self.app._on_enter()
@@ -333,19 +335,13 @@ class TaskbarPetGuiTests(unittest.TestCase):
                 "latest",
                 return_value=ComputerSnapshot(cpu=92, gpu=15, ram=55, measured_at=now),
             ),
-            patch.object(
-                self.app.workload_events,
-                "maybe_event",
-                return_value="computer_effort_steady",
-            ),
         ):
             self.app._tick()
-            # Work observations can start a review gesture. Speech waits for it.
-            self.app._action_playback.until = 0
-            self.app._maybe_speak_spontaneously(now + 2)
-        self.assertTrue(
-            self.app.mind.book.recent[-1].startswith("computer_effort_steady-")
-        )
+            # Workload speech no longer waits for a retired review gesture.
+        selected = next(line for line in self.app.mind.book.lines
+                        if line.id == self.app.mind.book.recent[-1])
+        self.assertEqual(selected.event, 'computer_effort_rising')
+        self.assertIsNotNone(self.app._speech.bubble)
 
     def test_load_change_updates_visible_voice_and_reaction_with_hover_open(self):
         from aiko_pet.telemetry import ComputerSnapshot
@@ -363,7 +359,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._activity.react_to_computer(base + 7, self.app.context)
             self.toolbar.refresh()
             self.assertIn("deutlich erhöht", self.toolbar.workload.cget("text"))
-            self.assertIsNotNone(self.app._activity.pending_computer_line)
+            self.assertIsNone(self.app._activity.pending_computer_line)
+            self.assertIsNotNone(self.app._speech.bubble)
             self.app._activity.react_to_computer(base + 10, self.app.context)
         self.assertTrue(self.toolbar.visible)
         self.assertIsNone(self.app._activity.pending_computer_line)

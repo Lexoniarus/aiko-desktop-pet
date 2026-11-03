@@ -47,20 +47,8 @@ class OtherGameInputTests(unittest.TestCase):
         }
 
     def check_pointer_focus(self, region, widget):
-        # Dispatch the installed local bindings, including the tag which must
-        # precede native button focus. Native press/release itself is not emulated.
-        self.assertLess(widget.bindtags().index(region._tag),
-                        widget.bindtags().index("Widget"))
-        event = Mock(widget=widget)
-        with (
-            patch.object(region.canvas, "xview_moveto") as horizontal,
-            patch.object(region.canvas, "yview_moveto") as vertical,
-        ):
-            region.canvas.bindings[region._tag + "<ButtonPress-1>"](event)
-            region.canvas.bindings[region._tag + "<FocusIn>"](event)
-            region.canvas.bindings[region._tag + "<ButtonRelease-1>"](event)
-        horizontal.assert_not_called()
-        vertical.assert_not_called()
+        self.assertFalse(hasattr(region, 'canvas'))
+        self.assertFalse(any(tag.startswith('VnScroll') for tag in widget.bindtags()))
 
     def test_blackjack_first_decision_counts_and_dealer_turn_is_protected(self):
         for action in ("hit", "stand"):
@@ -77,7 +65,7 @@ class OtherGameInputTests(unittest.TestCase):
                 for _ in range(6):  # greeting, shuffle, four landing boundaries
                     game._sequence.advance()
                 button = game.hit_button if action == "hit" else game.stand_button
-                self.check_pointer_focus(game._panel.scroll, button)
+                self.check_pointer_focus(game._panel.content, button)
                 self.assertEqual(button.cget("state"), "normal")
                 button.invoke()
                 table = game._sequence.game.table
@@ -98,7 +86,7 @@ class OtherGameInputTests(unittest.TestCase):
         game = TicTacToeWindow(self.root, **self.effects)
         self.addCleanup(game.close)
         game.greet()
-        self.check_pointer_focus(game._board_scroll, game.buttons[0])
+        self.check_pointer_focus(game._board_content, game.buttons[0])
         game.buttons[0].invoke()
         board = game._sequence.game.board
         self.assertEqual(board.cells[0], "X")
@@ -116,7 +104,7 @@ class OtherGameInputTests(unittest.TestCase):
         )
         self.addCleanup(game.close)
         game.greet()
-        self.check_pointer_focus(game._choices_scroll, game.buttons[Move.ROCK])
+        self.check_pointer_focus(game._choices_content, game.buttons[Move.ROCK])
         game.buttons[Move.ROCK].invoke()
         self.assertTrue(game._sequence.busy)
         self.assertTrue(all(b.cget("state") == "disabled"
@@ -135,14 +123,8 @@ class OtherGameInputTests(unittest.TestCase):
         self.addCleanup(game.close)
         game.greet()
         canvas = cast(Any, game.canvas)
-        # The innermost region owns the canvas. Outer adoption must not replace it.
-        tag = next(t for t in canvas.bindtags() if t.startswith("VnScroll"))
-        region_canvas = canvas.master.master
         event = Mock(widget=canvas, x=MARGIN + CELL * 3 + CELL // 2, y=60)
-        region_canvas.bindings[tag + "<ButtonPress-1>"](event)
-        with patch.object(canvas, "focus_set", side_effect=lambda:
-                          region_canvas.bindings[tag + "<FocusIn>"](event)):
-            canvas.bindings["<Button-1>"](event)
+        canvas.bindings['<Button-1>'](event)
         board = game._view
         self.assertEqual(board.cells[38], 1)
         self.assertTrue(game._busy)

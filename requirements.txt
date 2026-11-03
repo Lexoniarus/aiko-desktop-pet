@@ -3,6 +3,8 @@
 astronomy-engine==2.1.19
 # Reviewed German joke subset; content updates require an explicit review.
 pyjokes==0.8.3
+# Filtered resizing of the common 4K UI artwork; character sources stay unchanged.
+Pillow==11.3.0
 # Run Aiko_installieren.bat to check the runtime and download/install it if missing.
 # Tkinter is a Python installer component, not a package installable through pip.
-# Pillow and CI quality tools are development-only, not runtime dependencies.
+# CI quality tools are development-only, not runtime dependencies.

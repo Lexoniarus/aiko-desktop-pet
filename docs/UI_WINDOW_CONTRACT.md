@@ -7,11 +7,15 @@ this delivery is headless; native Windows/DPI/input acceptance remains separate.
 
 ## Window behavior
 
+All forms and embedded views use the [central 4K UI scale](UI_SCALING.md).
+It is applied before first mapping, with one factor for the whole application.
+The earlier scroll/compact layout contracts below are superseded by that policy.
+
 Aiko exposes one `ActionToolbar`: white Aiko/settings header, shared emotional
 summary and numeric mood, horizontal `MoodletStrip`, dedicated `WishPanel`,
 six vertical readouts on the left and a narrower interaction column on the right.
 Computer/context lines and one Offen-halten/detail footer complete the menu.
-The scrollable expanded `ToolbarDetails` stays inside that window. There is no second
+The fully visible expanded `ToolbarDetails` stays inside that window. There is no second
 status/actions window. The F2 status action reveals and pins the existing
 toolbar. Clicking `Offen halten` keeps it visible when the pointer leaves or
 a foreign window receives a click; `Pin lösen` restores automatic hiding.
@@ -281,12 +285,12 @@ friendship remains blue. Numbers remain visible. Focus outlines are independent
 of button selection. The one pin is rendered from HoverUi's existing state.
 The shared root-local `IconImages` owns packaged art and composed icon/buttons;
 widget destruction drops button references and root destruction releases the
-cache on the owner thread. No Pillow dependency was added to runtime.
+cache on the owner thread. Pillow now filters reduced artwork for the common
+4K UI transform; source images remain unchanged.
 
-Scroll regions use local bind tags, wheel/keyboard access and automatic reveal
-of focused overflow; they do not install a global input hook. Content and details
-scroll without extra windows. UI feedback is immediate, with no added animation
-timers or continuous effects.
+Forms and details show their full content. Scroll regions, automatic overflow
+reveal and screen-dependent compact variants have been removed. UI feedback
+uses native controls without added layout/scale timers or continuous effects.
 
 ### Remaining native acceptance (not executed during 5C)
 

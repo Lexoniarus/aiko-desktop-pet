@@ -40,6 +40,18 @@ def prepare_runtime_resources() -> PreparedRuntimeResources:
     """Validate once and return the exact resources for desktop composition."""
     _check_astronomy()
     try:
+        image = import_module("PIL.Image")
+        image.Resampling.LANCZOS
+    except (ImportError, AttributeError) as error:
+        raise RuntimeDependencyError(
+            "Pillow für die UI-Skalierung fehlt oder ist unvollständig.\n\n"
+            "Bitte Aiko_installieren.bat ausführen und anschließend "
+            "Aiko_starten.bat verwenden. Beide nutzen die lokale .venv.\n"
+            f"Verwendetes Python: {sys.executable}\n"
+            "Dein Spielstand wurde nicht geöffnet "
+            "oder verändert."
+        ) from error
+    try:
         return PreparedRuntimeResources(load_local_jokes())
     except LocalJokeCatalogError as error:
         explanation, repair = {

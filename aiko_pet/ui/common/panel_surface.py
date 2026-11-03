@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 
+from . import scaled_widgets as scaled
 from .icon_images import IconImages
 
 
@@ -12,14 +13,14 @@ class PanelSurface:
         self, parent: tk.Misc, images: IconImages, *,
         background: str = "#FCF7F9", surface: str = "panel_surface.panel",
     ) -> None:
-        self.frame = tk.Frame(parent, bg=background, bd=0)
+        self.frame = scaled.Frame(parent, bg=background, bd=0)
         self._surface = surface
         self._images = images
         self._image: tk.PhotoImage | None = None
         self._size = (0, 0)
         self._background = tk.Label(self.frame, bd=0, bg=background)
         self._background.place(x=0, y=0, relwidth=1, relheight=1)
-        self.body = tk.Frame(self.frame, bg="#FCF7F9", bd=0)
+        self.body = scaled.Frame(self.frame, bg="#FCF7F9", bd=0)
         self.body.pack(fill="both", expand=True, padx=10, pady=10)
         self.frame.bind("<Configure>", self._resize, add="+")
         self.frame.bind("<Destroy>", self._destroyed, add="+")

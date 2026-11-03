@@ -542,8 +542,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertEqual(world.interaction.phase, "eat", trace)
         started = world.now
         self.app.canvas.event_generate("<Enter>")
-        trace += self.run_until(lambda: world.interaction.phase == "finish", 6)
+        clip = self.app._character_assets.clip_for('eat', self.app.settings.scale)
+        trace += self.run_until(lambda: world.interaction.phase == "finish",
+                                clip.duration_seconds + 2)
         self.assertEqual(world.interaction.phase, "finish", trace)
-        self.assertGreaterEqual(world.now - started, 3.4, trace)
+        self.assertGreaterEqual(world.now - started, clip.duration_seconds, trace)
         self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
         self.assertGreater(self.app.state.energy, 69)

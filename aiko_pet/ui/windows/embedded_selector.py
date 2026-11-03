@@ -6,7 +6,8 @@ import tkinter as tk
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
-from ..common.scroll_region import ScrollRegion
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from .hover_contracts import SelectorCloseReason
 
@@ -25,13 +26,13 @@ class EmbeddedSelector:
         self._surface = skin.surface(parent)
         self.frame = self._surface.frame
         self.frame.pack(fill="both", expand=True)
-        header = tk.Frame(self._surface.body, bg=skin.background)
+        header = scaled.Frame(self._surface.body, bg=skin.background)
         header.pack(fill="x")
         self.back = skin.button(
             header, GERMAN_TEXT.format("vn.back"), self.close, size="menu_back"
         )
         self.back.pack(side="right")
-        tk.Label(
+        scaled.Label(
             header,
             text=title,
             bg=skin.background,
@@ -39,10 +40,10 @@ class EmbeddedSelector:
             font=(skin.font, 10, "bold"),
             anchor="w",
         ).pack(side="left", pady=5)
-        self.scroll = ScrollRegion(
-            self._surface.body, skin, width=230, height=240, autohide=True,
+        self.content = ContentRegion(
+            self._surface.body, skin,
         )
-        self.scroll.frame.pack(fill="both", expand=True)
+        self.content.frame.pack(fill="both", expand=True)
 
     def contains_pointer(self, x: int, y: int) -> bool:
         return not self._closed and (

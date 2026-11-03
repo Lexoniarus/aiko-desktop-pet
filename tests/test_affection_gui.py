@@ -33,7 +33,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.app.settings.auto_routine = False
         set_test_pet_values(self.app.state, sleeping=False)
         self.app._hover.show_toolbar()
-        self.app.root.update_idletasks()
+        self.app.root.update()
 
     @property
     def toolbar(self) -> ActionToolbar:
@@ -61,7 +61,12 @@ class AffectionGuiTests(unittest.TestCase):
         )
         for key, readout in toolbar.readouts.items():
             bar, rect, label = readout.canvas, readout._fill, readout.label
-            self.assertEqual(max(bar.coords(rect)[::2]), bar.winfo_width() - 2, key)
+            self.assertAlmostEqual(max(bar.coords(rect)[::2]),
+                                   float(bar.design('width')) - 2, msg=key)
+            self.assertAlmostEqual(
+                max(bar.coords(rect)[::2]) * bar.ui_scale.factor,
+                bar.winfo_width() - bar.ui_scale.pixels(2), delta=1, msg=key,
+            )
             self.assertIn("100 / 100", label.cget("text"))
         self.assertIn("Zuwendung", toolbar.readouts["affection"].label.cget("text"))
         self.assertIn("Spaß", toolbar.readouts["fun"].label.cget("text"))

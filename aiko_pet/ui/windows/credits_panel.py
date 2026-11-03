@@ -9,6 +9,7 @@ from typing import Callable
 
 from ...asset_paths import ASSET_ROOT
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
 from ..common.skin import AikoSkin
 from ..view_models.credits import ContentCredit, CreditsSnapshot
 
@@ -17,7 +18,7 @@ class CreditsPanel:
     def __init__(
         self, parent: tk.Misc, skin: AikoSkin, snapshot: Callable[[], CreditsSnapshot]
     ) -> None:
-        self.frame = tk.Frame(parent, bg=skin.background)
+        self.frame = scaled.Frame(parent, bg=skin.background)
         self._snapshot = snapshot
         self._current: ContentCredit | None = None
         self._last_view: CreditsSnapshot | None = None
@@ -86,7 +87,7 @@ class CreditsPanel:
         webbrowser.open(url)
 
     def _heading(self, key: str) -> None:
-        tk.Label(
+        scaled.Label(
             self.frame,
             text=GERMAN_TEXT.format(key),
             bg=self._skin.background,
@@ -96,7 +97,7 @@ class CreditsPanel:
         ).pack(fill="x", pady=(10, 4))
 
     def _copy(self, text: str) -> tk.Label:
-        label = tk.Label(
+        label = scaled.Label(
             self.frame,
             text=text,
             bg=self._skin.background,

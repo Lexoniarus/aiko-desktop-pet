@@ -39,7 +39,8 @@ class TicTacToeGuiTests(unittest.TestCase):
         assert next_button is not None
         self.assertEqual(next_button.cget("state"), "normal")
         self.assertEqual(game.buttons[7].cget("bg"), "#E1EDF7")
-        self.assertEqual(game.buttons[7].cget("image"), str(game._tokens["X"]))
+        self.assertEqual(game.buttons[7].cget("image"),
+                         game.skin.scale.image(game._tokens["X"]))
         self.assertEqual(self.pet.state.fun, before)
         next_button.invoke()
         self.assertEqual(game._sequence.game.board.turn, "O")

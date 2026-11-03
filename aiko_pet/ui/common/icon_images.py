@@ -8,6 +8,7 @@ from pathlib import Path
 from ...asset_paths import ASSET_ROOT
 from ...pet.catalog_validation import load_json
 from .button_styles import ButtonStyles
+from .ui_scale import UiScale
 
 
 class IconImages:
@@ -42,12 +43,15 @@ class IconImages:
         """Keep rounded source corners; tile quiet center strips with native Tk.
 
         The view owns this size-specific image, avoiding an unbounded resize cache.
-        No runtime Pillow dependency or changes to the source artwork are needed.
+        The shared UI transform filters the source; generated backgrounds stay
+        local to this surface and do not change packaged artwork.
         """
-        source = self.surface(surface)
+        transform = UiScale.for_widget(self._root)
+        source = transform.image(self.surface(surface))
         width, height = max(1, width), max(1, height)
-        cap = min(12, width // 2, height // 2)
-        sw, sh = source.width(), source.height()
+        cap = min(max(1, transform.pixels(12)), width // 2, height // 2)
+        sw = int(self._root.tk.call('image', 'width', source))
+        sh = int(self._root.tk.call('image', 'height', source))
         sx = (0, cap, sw - cap, sw)
         sy = (0, cap, sh - cap, sh)
         dx, dy = (0, cap, width - cap, width), (0, cap, height - cap, height)

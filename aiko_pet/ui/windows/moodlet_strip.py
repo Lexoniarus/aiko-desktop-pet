@@ -1,11 +1,12 @@
-"""Passive horizontal impressions, retaining focus/scroll while time changes."""
+"""Passive horizontal impressions, retaining native focus while time changes."""
 
 import tkinter as tk
 from functools import partial
 
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..view_models.contracts import MoodletView
 from ..view_models.emotional_text import MOODLET_ICONS, moodlet_description
@@ -13,24 +14,19 @@ from ..view_models.emotional_text import MOODLET_ICONS, moodlet_description
 
 class MoodletStrip:
     def __init__(self, parent: tk.Misc, skin: AikoSkin, tips: DescriptionTip) -> None:
-        self.frame = tk.Frame(parent, bg=skin.background)
-        tk.Label(
+        self.frame = scaled.Frame(parent, bg=skin.background)
+        scaled.Label(
             self.frame,
             text=GERMAN_TEXT.format("vn.moodlets"),
             fg=skin.muted,
             bg=skin.background,
             font=(skin.font, 9, "bold"),
         ).pack(anchor="w")
-        self._scroll = ScrollRegion(
+        self._content = ContentRegion(
             self.frame,
             skin,
-            width=620,
-            height=1,
-            horizontal=True,
-            autohide=True,
-            fit_content=True,
         )
-        self._scroll.frame.pack(fill="x")
+        self._content.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
         self._items: dict[int, MoodletView] = {}
         self._ids: tuple[int, ...] | None = None
@@ -42,21 +38,21 @@ class MoodletStrip:
             return
         self._tips.hide()
         self._ids = ids
-        for child in self._scroll.body.winfo_children():
+        for child in self._content.body.winfo_children():
             child.destroy()
         if not items:
-            tk.Label(
-                self._scroll.body,
+            scaled.Label(
+                self._content.body,
                 text=GERMAN_TEXT.format("vn.no_moodlets"),
                 bg=self._skin.background,
                 fg=self._skin.muted,
                 font=(self._skin.font, 9),
                 pady=10,
             ).pack()
-        for item in items:
-            card = tk.Frame(self._scroll.body, bg=self._skin.background)
-            card.pack(side="left", padx=3)
-            halo = tk.Canvas(
+        for index, item in enumerate(items):
+            card = scaled.Frame(self._content.body, bg=self._skin.background)
+            card.grid(row=index // 6, column=index % 6, padx=3, pady=2)
+            halo = scaled.Canvas(
                 card, width=42, height=42, bg=self._skin.background,
                 bd=0, highlightthickness=0,
             )
@@ -70,7 +66,7 @@ class MoodletStrip:
                     MOODLET_ICONS[item.value.definition_id], 40
                 ),
             )
-            label = tk.Label(
+            label = scaled.Label(
                 card,
                 text=item.label,
                 wraplength=90,
@@ -91,8 +87,6 @@ class MoodletStrip:
                 label,
                 partial(self._description, item.value.instance_id),
             )
-        self._scroll.adopt()
-        self._scroll.refresh_layout()
 
     def _description(self, key: int) -> str:
         return moodlet_description(self._items[key])

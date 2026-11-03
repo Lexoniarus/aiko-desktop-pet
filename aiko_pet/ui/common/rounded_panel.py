@@ -2,13 +2,16 @@
 
 import tkinter as tk
 
+from . import scaled_widgets as scaled
+from .ui_scale import UiScale
+
 
 class RoundedPanel:
     def __init__(
         self, parent: tk.Misc, *, fill: str, border: str, background: str,
         padding: int = 10,
     ) -> None:
-        self.frame = tk.Frame(parent, bg=background, bd=0)
+        self.frame = scaled.Frame(parent, bg=background, bd=0)
         self._canvas = tk.Canvas(
             self.frame, bg=background, bd=0, highlightthickness=0,
         )
@@ -16,12 +19,13 @@ class RoundedPanel:
         self._shape = self._canvas.create_polygon(
             0, 0, 0, 0, fill=fill, outline=border, smooth=True,
         )
-        self.body = tk.Frame(self.frame, bg=fill, bd=0)
+        self.body = scaled.Frame(self.frame, bg=fill, bd=0)
         self.body.pack(fill="both", expand=True, padx=padding, pady=padding)
         self.frame.bind("<Configure>", self._resize, add="+")
 
     def _resize(self, event: tk.Event) -> None:
-        width, height, radius = event.width - 1, event.height - 1, 9
+        radius = UiScale.for_widget(self.frame).pixels(9)
+        width, height = event.width - 1, event.height - 1
         self._canvas.coords(
             self._shape,
             radius, 1, width - radius, 1, width, 1, width, radius,

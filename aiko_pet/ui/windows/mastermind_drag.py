@@ -6,7 +6,9 @@ import sys
 import tkinter as tk
 from collections.abc import Callable
 
+from ..common import scaled_widgets as scaled
 from ..common.mastermind_images import MastermindImages
+from ..common.ui_scale import UiScale
 
 
 class MastermindDrag:
@@ -49,7 +51,9 @@ class MastermindDrag:
         background = "#010203"
         if sys.platform == "win32":
             ghost.wm_attributes("-transparentcolor", background)
-        tk.Label(ghost, image=self._images.get(self._color), bd=0, bg=background).pack()
+        scaled.Label(
+            ghost, image=self._images.get(self._color), bd=0, bg=background,
+        ).pack()
 
     def _moved(self, event: tk.Event[tk.Misc]) -> bool:
         x, y = self._origin
@@ -60,7 +64,10 @@ class MastermindDrag:
             if self._source is not None and self._ghost is None and self._moved(event):
                 self._show_ghost()
             if self._ghost is not None:
-                self._ghost.geometry(f"+{event.x_root - 32}+{event.y_root - 32}")
+                offset = UiScale.for_widget(self._ghost).pixels(32)
+                self._ghost.geometry(
+                    f"+{event.x_root - offset}+{event.y_root - offset}",
+                )
                 self._ghost.deiconify()
                 self._ghost.lift()
         except Exception:

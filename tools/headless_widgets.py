@@ -96,6 +96,7 @@ class Widget:
         pass
 
     overrideredirect = protocol = title = geometry = wm_attributes
+    minsize = wm_attributes
 
     def withdraw(self) -> None:
         self.mapped = False
@@ -124,6 +125,21 @@ class Widget:
 
     create_image = create_polygon = create_rectangle = create_window
     create_oval = create_window
+    create_text = create_window
+
+    def delete(self, *_args: Any) -> None:
+        pass
+
+    tag_raise = tag_lower = delete
+
+    def logical(self, value: float) -> float:
+        return value
+
+    def screen_point(self, x: float, y: float) -> tuple[float, float]:
+        return self.winfo_rootx() + x, self.winfo_rooty() + y
+
+    def design(self, key: str) -> Any:
+        return self.cget(key)
 
     def grid_columnconfigure(self, *args: Any, **kwargs: Any) -> None:
         pass
@@ -140,11 +156,6 @@ class Widget:
 
     def bbox(self, *_args: Any) -> tuple[int, int, int, int]:
         return 0, 0, 660, 790
-
-    def xview(self, *args: Any) -> None:
-        pass
-
-    yview = xview_scroll = yview_scroll = yview_moveto = xview_moveto = xview
 
     def destroy(self) -> None:
         self.destroyed = True
@@ -183,6 +194,16 @@ class Images:
     surface = file = icon
 
 
+class DesignScale:
+    factor = 1.0
+
+    def pixels(self, value: float) -> int:
+        return round(value)
+
+    def logical(self, value: float) -> float:
+        return value
+
+
 class Skin:
     background = "#FCF7F9"
     panel = "#EDF4FA"
@@ -192,6 +213,7 @@ class Skin:
     muted = accent = "#65758A"
     font = speech_font = "Segoe UI"
     small_line_height = 11
+    scale = DesignScale()
 
     def __init__(self, *_args: Any) -> None:
         self.images = Images()
@@ -223,7 +245,6 @@ def widgets() -> Iterator[None]:
             Frame=Widget,
             Label=Widget,
             Canvas=Widget,
-            Scrollbar=Widget,
             Toplevel=Widget,
             Button=Widget,
             Checkbutton=Widget,
@@ -231,5 +252,9 @@ def widgets() -> Iterator[None]:
         ),
         patch("tkinter.ttk.Combobox", Widget),
         patch("tkinter.Tk", side_effect=AssertionError("Native windows prohibited")),
+        patch.multiple(
+            "aiko_pet.ui.common.scaled_widgets", Frame=Widget, Label=Widget,
+            Canvas=Widget, Button=Widget, Checkbutton=Widget, Combobox=Widget,
+        ),
     ):
         yield

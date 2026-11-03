@@ -10,7 +10,8 @@ from ...asset_paths import GAME_ART_DIR
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.tic_tac_toe import Board
 from ...pet.content import GERMAN_TEXT
-from ..common.scroll_region import ScrollRegion
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
@@ -39,7 +40,7 @@ class TicTacToeWindow:
         self._panel = GamePanel(
             root, GERMAN_TEXT.format("game.name.tic_tac_toe"), close=self.close,
             next_round=self.next_round, skin=skin, always_on_top=always_on_top,
-            game_id=GameId.TIC_TAC_TOE, bounds_at=bounds_at, body_height=430,
+            game_id=GameId.TIC_TAC_TOE, bounds_at=bounds_at,
         )
         self.window = self._panel.window
         try:
@@ -48,25 +49,24 @@ class TicTacToeWindow:
                 for mark in ("X", "O")
             }
             self._blank = tk.PhotoImage(master=root, width=64, height=64)
-            tk.Label(
+            scaled.Label(
                 self._panel.body, text=GERMAN_TEXT.format('game.frontend.ttt'),
                 bg=skin.background, fg='#716288', font=(skin.font, 10, 'bold'),
             ).pack(pady=(0, 8))
-            legend = tk.Frame(self._panel.body, bg=skin.background)
+            legend = scaled.Frame(self._panel.body, bg=skin.background)
             legend.pack(anchor="w", pady=(0, 10))
             for mark, key in (("X", "player"), ("O", "aiko")):
-                tk.Label(
+                scaled.Label(
                     legend, image=skin.images.icon(f"play_ttt_{mark.lower()}", 24),
                     text=GERMAN_TEXT.format(f"game.score.{key}"), compound="left",
                     bg=skin.background, fg=skin.muted, font=(skin.font, 9),
                 ).pack(side="left", padx=(0, 14))
-            self._board_scroll = ScrollRegion(
-                self._panel.body, skin, width=min(350, self._panel.content_width),
-                height=350, horizontal=True, autohide=True,
+            self._board_content = ContentRegion(
+                self._panel.body, skin,
             )
-            self._board_scroll.frame.pack()
-            self._board = tk.Canvas(
-                self._board_scroll.body, width=350, height=350,
+            self._board_content.frame.pack()
+            self._board = scaled.Canvas(
+                self._board_content.body, width=350, height=350,
                 bg=skin.background, bd=0, highlightthickness=0,
             )
             self._board.pack()
@@ -77,7 +77,7 @@ class TicTacToeWindow:
             self.buttons: list[tk.Button] = []
             self._token_labels: list[tk.Label] = []
             for i in range(9):
-                button = tk.Button(
+                button = scaled.Button(
                     self._board, text=" ", image=self._blank, compound="none",
                     width=84, height=84, padx=0, pady=0, bd=0,
                     highlightthickness=1, highlightbackground=skin.border,
@@ -91,9 +91,8 @@ class TicTacToeWindow:
                 self.buttons.append(button)
                 # Native disabled buttons stipple images on Windows. An inert
                 # label keeps occupied marks crisp; the button still owns input.
-                token = tk.Label(button, bd=0, padx=0, pady=0, cursor="arrow")
+                token = scaled.Label(button, bd=0, padx=0, pady=0, cursor="arrow")
                 self._token_labels.append(token)
-            self._board_scroll.adopt()
             self._sequence = TicTacToeSequence(
                 schedule=self.window.after, cancel=self.window.after_cancel,
                 present=self._present, say=speak, animate=animate, dialogue=dialogue,

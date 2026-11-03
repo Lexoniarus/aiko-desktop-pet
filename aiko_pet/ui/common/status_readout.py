@@ -6,6 +6,7 @@ import tkinter as tk
 
 from ...pet.content import GERMAN_TEXT
 from ..view_models.text_de import format_status_amount
+from . import scaled_widgets as scaled
 from .skin import AikoSkin
 
 
@@ -66,7 +67,7 @@ class StatusReadout:
         width: int = 280,
         friendship: bool = False,
     ) -> None:
-        self.frame = tk.Frame(
+        self.frame = scaled.Frame(
             parent,
             bg=skin.background if icon is not None else skin.panel,
         )
@@ -79,16 +80,16 @@ class StatusReadout:
             outline=skin.border if icon is not None else skin.panel, smooth=True,
         )
         self.frame.bind("<Configure>", self._resize, add="+")
-        body = tk.Frame(self.frame, bg=skin.panel)
+        body = scaled.Frame(self.frame, bg=skin.panel)
         body.pack(fill="both", expand=True, padx=9, pady=6)
         self._width, self._friendship = width, friendship
         if icon is not None:
-            tk.Label(body, image=skin.images.icon(icon), bg=skin.panel).pack(
+            scaled.Label(body, image=skin.images.icon(icon), bg=skin.panel).pack(
                 side="left", padx=(0, 8)
             )
-        content = tk.Frame(body, bg=skin.panel)
+        content = scaled.Frame(body, bg=skin.panel)
         content.pack(fill="both", expand=True)
-        self.label = tk.Label(
+        self.label = scaled.Label(
             content,
             text=title,
             bg=skin.panel,
@@ -97,7 +98,7 @@ class StatusReadout:
             anchor="w",
         )
         self.label.pack(fill="x")
-        self.canvas = tk.Canvas(
+        self.canvas = scaled.Canvas(
             content, width=width, height=12, bg=skin.panel, bd=0, highlightthickness=0
         )
         self.canvas.pack(anchor="w", pady=(4, 0))
@@ -116,7 +117,8 @@ class StatusReadout:
         self._title = title
 
     def _resize(self, event: tk.Event) -> None:
-        width, height, radius = event.width - 1, event.height - 1, 9
+        radius = self.canvas.ui_scale.pixels(9)
+        width, height = event.width - 1, event.height - 1
         self._backdrop.coords(
             self._outline,
             radius, 1, width - radius, 1, width, 1, width, radius,

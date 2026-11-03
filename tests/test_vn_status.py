@@ -13,7 +13,6 @@ from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import tip_position
-from aiko_pet.ui.common.scroll_region import ScrollRegion
 from aiko_pet.ui.common.status_readout import (
     StatusReadout,
     fill_geometry,
@@ -60,22 +59,6 @@ class VnStatusTests(unittest.TestCase):
     def test_description_position_stays_inside_window_and_avoids_explained_row(self):
         self.assertEqual(tip_position(600, 100, 150, 300, 100, 680, 800), (380, 154))
         self.assertEqual(tip_position(20, 700, 750, 300, 100, 680, 800), (20, 596))
-
-    def test_focus_reveals_overflow_without_a_global_input_hook(self):
-        region = ScrollRegion.__new__(ScrollRegion)
-        canvas, body, target = Mock(), Mock(), Mock()
-        region.canvas, region.body = cast(Any, canvas), cast(Any, body)
-        region._horizontal = True
-        region._pointer_focus = None
-        canvas.winfo_rootx.return_value = 0
-        canvas.winfo_width.return_value = 100
-        canvas.xview.return_value = (0, 0.25)
-        body.winfo_reqwidth.return_value = 400
-        target.winfo_rootx.return_value = 250
-        target.winfo_width.return_value = 50
-        region._focus_visible(cast(Any, Mock(widget=target)))
-        canvas.xview_moveto.assert_called_once_with(0.5)
-        target.focus_set.assert_not_called()
 
     def test_refresh_keeps_identity_and_placement_admission(
         self,
@@ -132,10 +115,10 @@ class VnStatusTests(unittest.TestCase):
             self.assertEqual(len(toolbar.readouts), 7)
             self.assertIn("33 / 100", toolbar.readouts["mood"].label.cget("text"))
             self.assertIn("Lv 8", toolbar.readouts["friendship"].label.cget("text"))
-            cards = toolbar.moodlets._scroll.body.winfo_children()
+            cards = toolbar.moodlets._content.body.winfo_children()
             self.assertEqual(len(cards), len(MOODLET_CATALOG.definitions))
             toolbar.refresh()
-            self.assertEqual(toolbar.moodlets._scroll.body.winfo_children(), cards)
+            self.assertEqual(toolbar.moodlets._content.body.winfo_children(), cards)
             toolbar.buttons["pet"].invoke()
             toolbar.buttons["place_item"].invoke()
             self.assertEqual(calls, ["place_item"])

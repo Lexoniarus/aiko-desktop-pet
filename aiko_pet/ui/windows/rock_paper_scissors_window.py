@@ -10,8 +10,9 @@ from ...asset_paths import GAME_ART_DIR
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton, update_button_state
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
@@ -47,7 +48,7 @@ class RockPaperScissorsWindow:
             close=self.close, next_round=None, skin=self.skin,
             always_on_top=always_on_top, game_id=GameId.ROCK_PAPER_SCISSORS,
             bounds_at=bounds_at,
-            body_height=540,
+
         )
         self.window = self._panel.window
         try:
@@ -57,17 +58,16 @@ class RockPaperScissorsWindow:
             }
             self._last_revealed: Move | None = None
             self._shown_score = Score()
-            tk.Label(
+            scaled.Label(
                 self._panel.body, text=GERMAN_TEXT.format('rps.choose_hand'),
                 bg=self.skin.background, fg=self.skin.text,
                 font=(self.skin.font, 10, 'bold'), anchor='w',
             ).pack(fill='x', pady=(0, 8))
-            self._choices_scroll = ScrollRegion(
-                self._panel.body, self.skin, width=self._panel.content_width,
-                height=116, horizontal=True, autohide=True,
+            self._choices_content = ContentRegion(
+                self._panel.body, self.skin,
             )
-            self._choices_scroll.frame.pack(fill='x')
-            choices = self._choices_scroll.body
+            self._choices_content.frame.pack(fill='x')
+            choices = self._choices_content.body
             self.buttons: dict[Move, ImageButton] = {}
             for move, label in _MOVES:
                 button = self.skin.button(
@@ -77,23 +77,21 @@ class RockPaperScissorsWindow:
                 )
                 button.pack(side='left', padx=2)
                 self.buttons[move] = button
-            self._choices_scroll.adopt()
             self._hand_panel = self._panel.passive(self._panel.body, padding=0)
             self.result_panel = self._hand_panel.frame
             self.result_panel.pack(fill='x', pady=(12, 0))
             body = self._hand_panel.body
-            self.result_title = tk.Label(
+            self.result_title = scaled.Label(
                 body, text=GERMAN_TEXT.format('rps.your_hand'), bg=self.skin.panel,
                 fg=self.skin.muted, font=(self.skin.font, 9),
             )
             self.result_title.pack()
-            self._mat_scroll = ScrollRegion(
-                body, self.skin, width=min(440, self._panel.content_width),
-                height=300, horizontal=True, autohide=True,
+            self._mat_content = ContentRegion(
+                body, self.skin,
             )
-            self._mat_scroll.frame.pack(fill='x')
-            self.player_hand = tk.Canvas(
-                self._mat_scroll.body, width=440, height=300, bg=self.skin.background,
+            self._mat_content.frame.pack(fill='x')
+            self.player_hand = scaled.Canvas(
+                self._mat_content.body, width=440, height=300, bg=self.skin.background,
                 bd=0, highlightthickness=0,
             )
             self.player_hand.pack()
@@ -108,8 +106,7 @@ class RockPaperScissorsWindow:
                 220, 150, text='?', fill=self.skin.muted,
                 font=(self.skin.font, 22),
             )
-            self._mat_scroll.adopt()
-            self.player_result_label = tk.Label(
+            self.player_result_label = scaled.Label(
                 body, text=GERMAN_TEXT.format('rps.no_rounds'), bg=self.skin.panel,
                 fg=self.skin.muted, font=(self.skin.font, 9),
             )

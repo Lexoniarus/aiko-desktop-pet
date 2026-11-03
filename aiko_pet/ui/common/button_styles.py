@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import ttk
 from typing import TYPE_CHECKING, Callable
 
+from .ui_scale import UiScale
+
 if TYPE_CHECKING:
     from tkinter.ttk import _Layout
 
@@ -13,6 +15,7 @@ if TYPE_CHECKING:
 class ButtonStyles:
     def __init__(self, root: tk.Tk, surface: Callable[[str], tk.PhotoImage]) -> None:
         self.style = ttk.Style(root)
+        self._scale = UiScale.for_widget(root)
         self._surface = surface
         self._prefix = f"Aiko{id(self)}"
         self._styles: dict[
@@ -23,7 +26,9 @@ class ButtonStyles:
             x = 2 + min(y - 3, 12 - y)
             self._arrow.put("#97667F", to=(x, y, x + 2, y + 1))
         self._arrow_element = f"{self._prefix}.arrow"
-        self.style.element_create(self._arrow_element, "image", self._arrow)
+        self.style.element_create(
+            self._arrow_element, "image", self._scale.image(self._arrow),
+        )
 
     def button(
         self, size: str, font: str, icon_width: int, *,
@@ -38,16 +43,18 @@ class ButtonStyles:
             state: self._surface(f"button_{state}.{size}")
             for state in ("normal", "hover", "pressed", "disabled", "active")
         }
+        painted = {state: self._scale.image(image) for state, image in art.items()}
         frame = f"{self._prefix}.{len(self._styles)}.frame"
         name = f"{self._prefix}.{len(self._styles)}.TButton"
-        selected = ("selected", art["active"])
+        selected = ("selected", painted["active"])
         self.style.element_create(
-            frame, "image", art["normal"],
+            frame, "image", painted["normal"],
             *((selected,) if preserve_selection else ()),
-            ("disabled", art["disabled"]),
+            ("disabled", painted["disabled"]),
             *((selected,) if not preserve_selection else ()),
-            ("pressed", art["pressed"]), ("active", art["hover"]),
-            border=min(18, art["normal"].height() // 3), padding=0, sticky="nsew",
+            ("pressed", painted["pressed"]), ("active", painted["hover"]),
+            border=self._scale.pixels(min(18, art["normal"].height() // 3)),
+            padding=0, sticky="nsew",
         )
         children: list[tuple[str, _Layout | None]] = []
         if submenu:
@@ -63,10 +70,12 @@ class ButtonStyles:
         if wraplength is not None:
             wrap = max(24, wraplength)
         self.style.configure(
-            name, font=(font, 8 if size == "menu_back" else 10),
+            name, font=self._scale.font((font, 8 if size == "menu_back" else 10)),
             foreground="#3E4C61", background="#FCF7F9", borderwidth=0,
-            padding=(4, 4, 4, 4) if size == "small" else (10, 4, 12, 4),
-            space=8, wraplength=wrap,
+            padding=self._scale.distance(
+                (4, 4, 4, 4) if size == "small" else (10, 4, 12, 4),
+            ),
+            space=self._scale.pixels(8), wraplength=self._scale.pixels(wrap),
             anchor="w" if align_left else "center",
             justify="left" if align_left else "center",
             focusthickness=1, focuscolor="#657F9D", embossed=False, stipple="",

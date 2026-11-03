@@ -9,8 +9,8 @@ from functools import partial
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import ATTEMPTS, COLORS, PLACES, RoundView
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
 from ..common.image_button import update_button_state
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from ..view_models.mastermind_models import CodeView
@@ -25,7 +25,6 @@ from .mastermind_sequence import MastermindSequence
 ROW_HEIGHT = 48
 HEADER_HEIGHT = 24
 BOARD_HEIGHT = HEADER_HEIGHT + ATTEMPTS * ROW_HEIGHT
-BOARD_PADDING = 6
 
 
 class MastermindWindow:
@@ -56,7 +55,6 @@ class MastermindWindow:
         self._sequence: MastermindSequence | None = None
         self._finale: MastermindFinale | None = None
         self._presentation = presentation
-        self._layout_timer: str | None = None
         self._palette_images: dict[str, tk.PhotoImage] = {}
         self._drag = MastermindDrag(codes.images, self._drop, self._click_piece)
         self._panel = GamePanel(
@@ -68,12 +66,11 @@ class MastermindWindow:
             always_on_top=always_on_top,
             game_id=GameId.MASTERMIND,
             bounds_at=bounds_at,
-            body_height=860,
             reserve_right=120,
         )
         self.window = self._panel.window
         try:
-            self._build(root, bounds_at)
+            self._build()
             if presentation is not None:
                 self._finale = MastermindFinale(
                     self.window, codes, presentation, topmost=always_on_top,
@@ -99,25 +96,13 @@ class MastermindWindow:
                 interrupt=interrupt, look=self._look_feedback,
             )
             self._present(self._sequence.game.view, self._sequence.game.score, True, 4)
-            # These allocations may settle after the top-level Configure event.
-            # Listen before show() so first mapping needs no click to finish.
-            for widget in (self._panel.scroll.canvas, self.board_scroll.frame):
-                widget.bind("<Configure>", self._configured, add="+")
-            self._panel.show(root, prepare_body=self._fit_board)
-            self._queue_layout()
-            # Palette arrows edit the draft before inherited scroll bindings.
-            tags = self.palette.bindtags()
-            self.palette.bindtags((
-                str(self.palette),
-                *(t for t in tags if t != str(self.palette)),
-            ))
+            self._panel.show(root)
             self.window.bind("<Configure>", self._configured, add="+")
         except Exception:
             self._closed = True
             if self._finale:
                 self._finale.close()
             self._drag.cancel()
-            self._cancel_layout()
             if self._sequence is not None:
                 self._sequence.close()
             self._panel.destroy()
@@ -126,7 +111,7 @@ class MastermindWindow:
             raise
 
     def _label(self, text: str, size: int = 9) -> None:
-        tk.Label(
+        scaled.Label(
             self._panel.body,
             text=text,
             wraplength=self._panel.content_width - 12,
@@ -136,28 +121,25 @@ class MastermindWindow:
             font=(self.skin.font, size),
         ).pack(fill="x")
 
-    def _build(self, root: tk.Tk, bounds_at: BoundsAt | None) -> None:
+    def _build(self) -> None:
         self._label(GERMAN_TEXT.format('game.frontend.mm'), 11)
         self._label(GERMAN_TEXT.format("mastermind.rules"))
         self._code_strip = MastermindCodeStrip(
             self._panel.body, self._codes.images, self.skin, self._panel.content_width,
         )
         self._code_strip.frame.pack(
-            fill='x', pady=0 if self._panel.content_width < 360 else 3,
+            fill='x', pady=3,
         )
-        compact = self._panel.content_width < 394
         self._palette_columns = 6
-        self._palette_step = 40 if compact else 64
+        self._palette_step = 64
         self._palette_images = {
-            color: self._codes.images.get(color).subsample(2)
-            if compact
-            else self._codes.images.get(color)
+            color: self._codes.images.get(color)
             for color in COLORS
         }
-        self.palette = tk.Canvas(
+        self.palette = scaled.Canvas(
             self._panel.body,
             width=self._palette_columns * self._palette_step,
-            height=64 if compact else 74,
+            height=74,
             highlightthickness=0,
             bg=self.skin.background,
             cursor="hand2",
@@ -168,10 +150,10 @@ class MastermindWindow:
         for i, color in enumerate(COLORS):
             x, y = (
                 i * self._palette_step + self._palette_step // 2,
-                18 if compact else 28,
+                28,
             )
             if color == "white":
-                radius = 12 if compact else 22
+                radius = 22
                 self.palette.create_oval(
                     x - radius,
                     y - radius,
@@ -182,13 +164,13 @@ class MastermindWindow:
                 )
             self.palette.create_image(x, y, image=self._palette_images[color])
             label = GERMAN_TEXT.format(f"mastermind.color.{color}")
-            separator = "\n" if compact else ": "
+            separator = ": "
             self.palette.create_text(
                 x,
-                y + 29 if compact else y + 31,
+                y + 31,
                 text=f"{i + 1}{separator}{label}",
                 fill=self.skin.text,
-                font=(self.skin.font, 8 if compact else 9),
+                font=(self.skin.font, 9),
             )
             self.palette.bind(str(i + 1), partial(self._key_color, color))
         self.palette.bind("<Left>", partial(self._key_slot, -1))
@@ -196,47 +178,25 @@ class MastermindWindow:
         self.palette.bind("<Delete>", lambda _event: self.clear_slot())
         self.palette.bind("<BackSpace>", lambda _event: self.clear_slot())
         self.palette.bind("<Return>", lambda _event: self.submit())
-        actions = tk.Frame(self._panel.body, bg=self.skin.background)
+        actions = scaled.Frame(self._panel.body, bg=self.skin.background)
         actions.pack(fill="x", pady=4)
         self.submit_button = self.skin.button(
             actions,
             GERMAN_TEXT.format("mastermind.submit"),
             self.submit,
-            size="game_close" if compact else "game_next",
+            size="game_next",
         )
         self.submit_button.pack(side="left")
         self.clear_button = self.skin.button(
             actions,
             GERMAN_TEXT.format("mastermind.clear"),
             self.clear_slot,
-            size="menu_back" if compact else "game_close",
+            size="game_close",
         )
         self.clear_button.pack(side="left", padx=6, pady=3)
         self._label(GERMAN_TEXT.format("mastermind.legend"), 8)
-        screen_height = (
-            bounds_at(root.winfo_rootx(), root.winfo_rooty()).height
-            if bounds_at
-            else root.winfo_screenheight()
-        )
-        self.board_scroll = ScrollRegion(
+        self.board = scaled.Canvas(
             self._panel.body,
-            self.skin,
-            width=min(470, self._panel.content_width - 10),
-            height=min(BOARD_HEIGHT, max(144, screen_height - 560)),
-            autohide=True,
-        )
-        self.board_scroll.frame.pack(pady=BOARD_PADDING)
-        self.board_horizontal = ScrollRegion(
-            self.board_scroll.body,
-            self.skin,
-            width=min(460, self._panel.content_width - 20),
-            height=BOARD_HEIGHT,
-            horizontal=True,
-            autohide=True,
-        )
-        self.board_horizontal.frame.pack()
-        self.board = tk.Canvas(
-            self.board_horizontal.body,
             width=460,
             height=BOARD_HEIGHT,
             bg='#E6E1F2',
@@ -247,7 +207,6 @@ class MastermindWindow:
         for source in (self.palette, self.board):
             source.bind("<B1-Motion>", self._drag.motion)
             source.bind("<ButtonRelease-1>", self._drag.release)
-        self.board_horizontal.adopt()
 
     def _show_code(self, view: CodeView) -> None:
         self._code_strip.show(view)
@@ -257,43 +216,8 @@ class MastermindWindow:
         if self._sequence is not None:
             self._sequence.greet()
 
-    def _fit_board(self, body_height: int | None = None) -> None:
-        """Keep the palette and the entire board viewport inside the body."""
-        if body_height is not None:
-            self._cancel_layout()
-        else:
-            self._layout_timer = None
-        if self._closed:
-            return
-        height = (
-            self._panel.scroll.canvas.winfo_height()
-            if body_height is None else body_height
-        )
-        if height <= 1:
-            # Preserve the prepared pre-map budget until Tk allocates the body.
-            return
-        # winfo_y already includes the top padding; reserve only the bottom.
-        available = height - self.board_scroll.frame.winfo_y() - BOARD_PADDING
-        self.board_scroll.canvas.configure(
-            height=max(1, min(BOARD_HEIGHT, available - 2)),
-        )
-        self._panel.scroll.canvas.yview_moveto(0)
-
     def _configured(self, event: tk.Event[tk.Misc]) -> None:
-        if event.widget in (
-            self.window, self._panel.scroll.canvas, self.board_scroll.frame,
-        ):
-            self._queue_layout()
         self._codes.move()
-
-    def _queue_layout(self) -> None:
-        if not self._closed and self._layout_timer is None:
-            self._layout_timer = self.window.after_idle(self._fit_board)
-
-    def _cancel_layout(self) -> None:
-        if self._layout_timer is not None:
-            self.window.after_cancel(self._layout_timer)
-            self._layout_timer = None
 
     def _present(
         self,
@@ -435,31 +359,18 @@ class MastermindWindow:
 
     def _palette_press(self, event: tk.Event[tk.Misc]) -> str:
         if self._editable():
-            index = event.x // self._palette_step
+            index = int(self.palette.logical(event.x) // self._palette_step)
             if 0 <= index < len(COLORS):
                 return self._drag.begin(event, COLORS[index])
         return "break"
 
     def _slot_at(self, x_root: int, y_root: int) -> int | None:
-        for viewport in (
-            self.board_scroll.canvas,
-            self.board_horizontal.canvas,
-            self._panel.scroll.canvas,
-        ):
-            if not (
-                viewport.winfo_rootx()
-                <= x_root
-                < viewport.winfo_rootx() + viewport.winfo_width()
-                and viewport.winfo_rooty()
-                <= y_root
-                < viewport.winfo_rooty() + viewport.winfo_height()
-            ):
-                return None
-        x, y = x_root - self.board.winfo_rootx(), y_root - self.board.winfo_rooty()
+        x = self.board.logical(x_root - self.board.winfo_rootx())
+        y = self.board.logical(y_root - self.board.winfo_rooty())
         row = (y - HEADER_HEIGHT) // ROW_HEIGHT
         if row != len(self._view.guesses) or not 28 <= x < 220:
             return None
-        return (x - 28) // 48
+        return int((x - 28) // 48)
 
     def _board_press(self, event: tk.Event[tk.Misc]) -> str:
         slot = self._slot_at(event.x_root, event.y_root)
@@ -541,19 +452,10 @@ class MastermindWindow:
                 self._draft[:] = [None] * PLACES
                 self._active = 0
                 self._draw_board()
-                row = min(len(self._view.guesses), ATTEMPTS - 1)
-                top = HEADER_HEIGHT + row * ROW_HEIGHT
-                viewport = self.board_scroll.canvas
-                if top + ROW_HEIGHT > viewport.yview()[1] * BOARD_HEIGHT:
-                    viewport.yview_moveto(
-                        (top + ROW_HEIGHT - viewport.winfo_height()) / BOARD_HEIGHT
-                    )
 
     def next_round(self) -> None:
         if not self._closed and self._sequence is not None:
             self._sequence.next_round()
-            if not self._view.guesses:
-                self.board_scroll.canvas.yview_moveto(0)
 
     def set_topmost(self, enabled: bool) -> None:
         self.window.wm_attributes("-topmost", enabled)
@@ -564,15 +466,13 @@ class MastermindWindow:
     def _look_feedback(self, row: int | None) -> None:
         if self._presentation is not None:
             self._presentation.look((
-                self.board.winfo_rootx() + 312,
-                self.board.winfo_rooty() + HEADER_HEIGHT + (row + .5) * ROW_HEIGHT,
+                *self.board.screen_point(312, HEADER_HEIGHT + (row + .5) * ROW_HEIGHT),
             ) if row is not None else None)
 
     def close(self) -> None:
         if not self._closed and self._sequence is not None:
             self._closed = True
             self._drag.cancel()
-            self._cancel_layout()
             if self._finale:
                 self._finale.close()
             score = self._sequence.close()

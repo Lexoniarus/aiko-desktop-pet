@@ -43,12 +43,16 @@ class WindowsSetupTests(unittest.TestCase):
         self.save = self.folder / "preserved-state.json"
         self.save.write_text('{"existing": "progress"}', encoding="utf-8")
         self.environment["AIKO_SAVE_PATH"] = str(self.save)
-        # Package the installed pure-Python dependency for offline setup checks.
+        # Package installed dependencies for offline setup checks, preserving
+        # native Pillow wheel tags instead of claiming a pure-Python wheel.
         wheels = self.folder / "wheels"
         wheels.mkdir()
-        for name in ("astronomy-engine", "pyjokes"):
+        for name in ("astronomy-engine", "pyjokes", "Pillow"):
             package = importlib.metadata.distribution(name)
-            wheel_name = f"{name.replace('-', '_')}-{package.version}-py3-none-any.whl"
+            metadata = package.read_text('WHEEL') or ''
+            tag = next(line.removeprefix('Tag: ').strip()
+                       for line in metadata.splitlines() if line.startswith('Tag: '))
+            wheel_name = f"{name.lower().replace('-', '_')}-{package.version}-{tag}.whl"
             with zipfile.ZipFile(wheels / wheel_name, "w") as archive:
                 for member in package.files or ():
                     if ".." not in member.parts and "__pycache__" not in member.parts:

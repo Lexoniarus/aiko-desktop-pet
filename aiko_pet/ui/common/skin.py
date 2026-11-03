@@ -9,6 +9,8 @@ from typing import Callable
 from .icon_images import IconImages
 from .image_button import ImageButton
 from .panel_surface import PanelSurface
+from .scaled_widgets import Frame, Label
+from .ui_scale import UiScale
 
 
 class AikoSkin:
@@ -21,11 +23,12 @@ class AikoSkin:
     title = "#FFFFFF"
 
     def __init__(self, root: tk.Tk) -> None:
+        self.scale = UiScale.for_widget(root)
         fonts = set(tkfont.families(root=root))
         self.font = "Segoe UI" if "Segoe UI" in fonts else "Arial"
         self.speech_font = "Kenney Mini" if "Kenney Mini" in fonts else "Segoe UI"
         self.small_line_height = tkfont.Font(
-            root=root, family=self.font, size=8
+            root=root, font=self.scale.font((self.font, 8))
         ).metrics("linespace")
         self.images = IconImages(root)
 
@@ -33,7 +36,7 @@ class AikoSkin:
         self.images.release()
 
     def frame(self, parent: tk.Misc) -> tk.Frame:
-        return tk.Frame(
+        return Frame(
             parent,
             bg=self.background,
             highlightthickness=1,
@@ -45,7 +48,7 @@ class AikoSkin:
         return PanelSurface(parent, self.images)
 
     def header(self, parent: tk.Misc, text: str) -> tk.Label:
-        return tk.Label(
+        return Label(
             parent,
             text=text,
             font=(self.font, 12, "bold"),

@@ -63,14 +63,14 @@ class WishControlTests(unittest.TestCase):
             with patch.object(Widget, "itemconfigure", autospec=True) as marker:
                 panel.refresh(views())
                 marker.assert_called_with(panel._pin_icons[1], "pin", state="hidden")
-            cards = panel._scroll.body.winfo_children()
+            cards = panel._content.body.winfo_children()
             label = cast(Any, panel._labels[1])
             self.assertEqual(label.bindings["<Button-1>"](Mock()), "break")
             self.assertTrue(pet.wishes.active[0].pinned)
             with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
                 panel.refresh(views())
                 marker.assert_called_once_with("pin", state="normal")
-            self.assertEqual(panel._scroll.body.winfo_children(), cards)
+            self.assertEqual(panel._content.body.winfo_children(), cards)
             self.assertIn("ohne Zeitablauf", panel._meta[1].cget("text"))
             self.assertNotIn("Noch", wish_description(views()[0]))
             # Left-click again keeps the wish pinned without another save.
@@ -87,7 +87,7 @@ class WishControlTests(unittest.TestCase):
             with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
                 panel.refresh(views())
                 marker.assert_called_once_with("pin", state="hidden")
-            self.assertEqual(panel._scroll.body.winfo_children(), cards)
+            self.assertEqual(panel._content.body.winfo_children(), cards)
             unpinned_save = decode_pet_state(saved[-1], now=wall)
             self.assertFalse(unpinned_save.wishes.active[0].pinned)
             # Only the next right-click removes the now unpinned wish.

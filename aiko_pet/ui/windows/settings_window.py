@@ -5,14 +5,14 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 from functools import partial
-from tkinter import ttk
 from typing import Callable
 
 from ...application.horoscope_models import ZODIAC_SIGNS
 from ...application.settings import SettingKey
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
 from ..view_models.contracts import SettingsSnapshot
@@ -67,7 +67,7 @@ class SettingsWindow:
         self._drag = WindowDrag(
             self.window, self.header, dropped=self._remember_position
         )
-        footer = tk.Frame(outer, bg=self.skin.background)
+        footer = scaled.Frame(outer, bg=self.skin.background)
         footer.pack(side="bottom", fill="x", padx=10, pady=8)
         self.quit_button = self.skin.button(
             footer, GERMAN_TEXT.format("ui.quit"), actions.quit
@@ -77,19 +77,17 @@ class SettingsWindow:
             footer, GERMAN_TEXT.format("ui.close"), self.close
         )
         self.close_button.pack(side="right")
-        body = tk.Frame(outer, bg=self.skin.background)
+        body = scaled.Frame(outer, bg=self.skin.background)
         body.pack(fill="both", expand=True, padx=10, pady=8)
-        navigation = tk.Frame(body, bg=self.skin.background)
+        navigation = scaled.Frame(body, bg=self.skin.background)
         navigation.pack(side="left", fill="y", padx=(0, 12))
-        self._scroll = ScrollRegion(
+        self._content = ContentRegion(
             body,
             self.skin,
-            width=500,
-            height=min(484, max(220, root.winfo_screenheight() - 180)),
         )
-        self._scroll.frame.pack(side="right", fill="both", expand=True)
+        self._content.frame.pack(side="right", fill="both", expand=True)
         self._pages = {
-            section: tk.Frame(self._scroll.body, bg=self.skin.background)
+            section: scaled.Frame(self._content.body, bg=self.skin.background)
             for section in self.SECTIONS
         }
         self.navigation: dict[str, ImageButton] = {}
@@ -117,7 +115,7 @@ class SettingsWindow:
         self.checkbuttons: dict[SettingKey, tk.Checkbutton] = {}
         self._state_labels: dict[SettingKey, tk.Label] = {}
         self.scale_buttons: dict[int, ImageButton] = {}
-        scales = tk.Frame(self._pages["appearance"], bg=self.skin.background)
+        scales = scaled.Frame(self._pages["appearance"], bg=self.skin.background)
         scales.pack(fill="x", pady=6)
         for scale in (1, 2):
             button = self.skin.button(
@@ -130,7 +128,7 @@ class SettingsWindow:
         for key in self.BEHAVIOUR:
             self._option(self._pages["behaviour"], key)
         zodiac = self._pages["behaviour"]
-        tk.Label(
+        scaled.Label(
             zodiac,
             text=GERMAN_TEXT.format("settings.zodiac_sign"),
             bg=self.skin.background,
@@ -142,7 +140,7 @@ class SettingsWindow:
             GERMAN_TEXT.format(f"social.zodiac.{s or 'none'}") for s in self._signs
         )
         self.zodiac_value = tk.StringVar(master=self.window)
-        self.zodiac_choice = ttk.Combobox(
+        self.zodiac_choice = scaled.Combobox(
             zodiac,
             textvariable=self.zodiac_value,
             values=self._sign_labels,
@@ -152,7 +150,7 @@ class SettingsWindow:
         )
         self.zodiac_choice.pack(anchor="w", pady=(0, 8))
         self.zodiac_choice.bind("<<ComboboxSelected>>", self._choose_zodiac)
-        tk.Label(
+        scaled.Label(
             zodiac,
             text=GERMAN_TEXT.format("settings.horoscope_note"),
             bg=self.skin.background,
@@ -207,8 +205,6 @@ class SettingsWindow:
             else:
                 page.pack_forget()
             self.navigation[key].set_selected(key == section)
-        self._scroll.canvas.yview_moveto(0)
-        self._scroll.adopt()
         self.refresh_credits()
 
     def _navigate(self, index: int, _event: tk.Event) -> str:
@@ -218,11 +214,11 @@ class SettingsWindow:
         return "break"
 
     def _option(self, parent: tk.Misc, key: SettingKey) -> None:
-        row = tk.Frame(parent, bg=self.skin.background)
+        row = scaled.Frame(parent, bg=self.skin.background)
         row.pack(fill="x", pady=5)
         variable = tk.BooleanVar(master=self.window)
         self.values[key] = variable
-        self._state_labels[key] = tk.Label(
+        self._state_labels[key] = scaled.Label(
             row,
             bg=self.skin.background,
             fg=self.skin.muted,
@@ -230,7 +226,7 @@ class SettingsWindow:
             width=4,
         )
         self._state_labels[key].pack(side="right")
-        button = tk.Checkbutton(
+        button = scaled.Checkbutton(
             row,
             text=GERMAN_TEXT.format(f"settings.{key}"),
             variable=variable,

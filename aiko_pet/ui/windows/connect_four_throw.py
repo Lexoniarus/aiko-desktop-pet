@@ -7,6 +7,7 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
+from ..common.scaled_widgets import Canvas
 from ..pet_view.game_effects import GameEffects
 from ..view_models.chip_flight import ChipTarget, flight_height, flight_point
 from ..view_models.connect_four_geometry import CELL, CHIP, MARGIN, PREVIEW
@@ -15,7 +16,7 @@ from .game_presentation import GamePresentation
 
 class ConnectFourThrow:
     def __init__(
-        self, window: tk.Toplevel, canvas: tk.Canvas, presentation: GamePresentation,
+        self, window: tk.Toplevel, canvas: Canvas, presentation: GamePresentation,
         *, topmost: bool,
     ) -> None:
         self._window, self._canvas, self._presentation = window, canvas, presentation
@@ -38,9 +39,11 @@ class ConnectFourThrow:
         self.effects.later(100, self._follow)
 
     def target(self, cell: int) -> ChipTarget:
-        x, y = self._canvas.winfo_rootx(), self._canvas.winfo_rooty()
-        return ChipTarget(x + MARGIN + (cell % 7 + .5) * CELL, y + PREVIEW - 20,
-                          x + MARGIN, x + MARGIN + 7 * CELL, y + PREVIEW, CHIP)
+        canvas = self._canvas
+        x, y = canvas.screen_point(MARGIN + (cell % 7 + .5) * CELL, PREVIEW - 20)
+        left, top = canvas.screen_point(MARGIN, PREVIEW)
+        right, _ = canvas.screen_point(MARGIN + 7 * CELL, PREVIEW)
+        return ChipTarget(x, y, left, right, top, canvas.ui_scale.pixels(CHIP))
 
     def play(self, cell: int, done: Callable[[], None]) -> None:
         self._generation += 1

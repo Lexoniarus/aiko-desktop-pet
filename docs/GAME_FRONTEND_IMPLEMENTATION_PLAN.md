@@ -142,8 +142,9 @@ four question marks during play, reveals each position on the existing
 color names visible throughout opening/eating and afterwards. Only an explicit
 new round conceals it again. No secret is queried by the widget; the rules
 owner still refuses any live-code reveal. Existing game art is reused, with
-32px gems normally and a 24px compact variant. The body budget preserves the
-large-screen ten-row layout; small windows keep their scrolling and input.
+32px gems on the authored 4K grid. The [shared UI transform](UI_SCALING.md)
+scales the entire form, including all ten rows and controls. Compact variants,
+nested viewports and scrolling have been removed.
 
 The secret itself was already constant: MastermindSession creates it once,
 uses it for every submitted guess and generates another only in next_round.

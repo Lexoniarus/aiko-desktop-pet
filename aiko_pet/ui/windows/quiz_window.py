@@ -11,6 +11,7 @@ from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
 from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel
 from ..common.skin import AikoSkin
@@ -43,7 +44,7 @@ class QuizWindow:
         self._panel = GamePanel(
             root, GERMAN_TEXT.format("game.name.quiz"), close=self.close,
             next_round=self.next_question, skin=skin, always_on_top=always_on_top,
-            game_id=GameId.QUIZ, bounds_at=bounds_at, body_height=570,
+            game_id=GameId.QUIZ, bounds_at=bounds_at,
             reserve_right=100,
         )
         self.window = self._panel.window
@@ -54,14 +55,14 @@ class QuizWindow:
             self.window.after, self.window.after_cancel, presentation,
             lambda: self._point(-1), self._wait_comment,
         )
-        self._stage = tk.Frame(self._panel.body, bg="#7871a5", padx=12, pady=10)
+        self._stage = scaled.Frame(self._panel.body, bg="#7871a5", padx=12, pady=10)
         self._stage.pack(fill="x", pady=(0, 8))
         self._stage_art = tk.PhotoImage(master=self.window,
                                        file=str(GAME_ART_DIR / 'quiz-stage.png'))
         self._emblem = tk.PhotoImage(master=self.window,
                                     file=str(GAME_ART_DIR / 'quiz-emblem.png'))
         width = self._panel.content_width - 32
-        self._marquee = tk.Canvas(self._stage, width=width, height=104,
+        self._marquee = scaled.Canvas(self._stage, width=width, height=104,
                                   bg="#7871a5", bd=0, highlightthickness=0)
         self._marquee.pack(fill="x")
         self._marquee.create_image(width // 2, 52, image=self._stage_art)
@@ -77,20 +78,20 @@ class QuizWindow:
             background="#7871a5", padding=12,
         )
         self._question_card.frame.pack(fill="x", pady=(0, 12))
-        self._question = tk.Label(
+        self._question = scaled.Label(
             self._question_card.body, text="", bg="#fffaee", fg="#4c416b",
             font=(skin.font, 11, "bold"), justify="center", anchor="center",
             wraplength=width - 36, pady=12,
         )
         self._question.pack(fill="x")
-        self._answers_grid = tk.Frame(self._stage, bg="#7871a5")
+        self._answers_grid = scaled.Frame(self._stage, bg="#7871a5")
         self._answers_grid.pack(fill="x")
-        columns = 2 if width >= 420 else 1
+        columns = 2
         button_width = (width - (columns - 1) * 12) // columns
         self.answers: list[ImageButton] = []
         self._answer_slots: list[tk.Frame] = []
         for index in range(4):
-            slot = tk.Frame(self._answers_grid, width=button_width, height=106,
+            slot = scaled.Frame(self._answers_grid, width=button_width, height=106,
                             bg="#7871a5")
             slot.grid(row=index // columns, column=index % columns,
                       padx=(0, 12 if index % columns == 0 and columns == 2 else 0),
@@ -103,11 +104,11 @@ class QuizWindow:
             self._answer_slots.append(slot)
             self.answers.append(button)
             self.window.bind(str(index + 1), partial(self._key, index))
-        self._lights = tk.Canvas(self._panel.body, width=300, height=26,
+        self._lights = scaled.Canvas(self._panel.body, width=300, height=26,
                                  bg=skin.background, bd=0, highlightthickness=0)
         self._lights.pack(pady=6)
         self._explanation_card = self._panel.passive(self._panel.body, padding=12)
-        self._explanation = tk.Label(
+        self._explanation = scaled.Label(
             self._explanation_card.body, text="", bg=skin.panel, fg=skin.text,
             font=(skin.font, 10), justify="left", anchor="w",
             wraplength=self._panel.content_width - 48,
@@ -137,8 +138,7 @@ class QuizWindow:
         game = sequence.game
         question = game.current
         if self._shown_id != question.id:
-            columns = (2 if self._panel.content_width >= 444
-                       and max(len(a.text) for a in question.answers) < 65 else 1)
+            columns = 2 if max(len(a.text) for a in question.answers) < 65 else 1
             width = (self._panel.content_width - 32 - (columns - 1) * 12) // columns
             slots = zip(self._answer_slots, self.answers)
             for index, (slot, button) in enumerate(slots):
@@ -217,9 +217,7 @@ class QuizWindow:
             ))
             update_button_state(self._panel.next_button,
                                 enabled=answered and not sequence.busy)
-        self._panel.scroll.adopt()
         if self._shown_id != question.id:
-            self._panel.scroll.canvas.yview_moveto(0)
             self._shown_id = question.id
         # Paint the committed resolution before emitting its completion receipt.
         self.window.update_idletasks()

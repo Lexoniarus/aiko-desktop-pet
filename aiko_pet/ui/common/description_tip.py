@@ -6,6 +6,7 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
+from . import scaled_widgets as scaled
 from .skin import AikoSkin
 
 
@@ -26,9 +27,10 @@ def tip_position(
 class DescriptionTip:
     def __init__(self, parent: tk.Misc, skin: AikoSkin) -> None:
         self._parent = parent
+        self._scale = skin.scale
         self._surface = skin.surface(parent)
         self._frame = self._surface.frame
-        self._label = tk.Label(
+        self._label = scaled.Label(
             self._surface.body,
             bg=skin.background,
             fg=skin.text,
@@ -84,8 +86,10 @@ class DescriptionTip:
             self.show(widget, text)
 
     def show(self, widget: tk.Widget, text: str) -> None:
-        width = min(420, max(80, self._parent.winfo_width() - 12))
-        self._label.configure(text=text, wraplength=width - 24)
+        width = min(self._scale.pixels(420), max(
+            self._scale.pixels(80), self._parent.winfo_width() - self._scale.pixels(12),
+        ))
+        self._label.configure(text=text, wraplength=self._scale.logical(width) - 24)
         self._frame.update_idletasks()
         x, y = tip_position(
             widget.winfo_rootx() - self._parent.winfo_rootx(),
@@ -96,7 +100,10 @@ class DescriptionTip:
             self._parent.winfo_width(),
             self._parent.winfo_height(),
         )
-        self._frame.place(x=x, y=y, width=width)
+        self._frame.place(
+            x=self._scale.logical(x), y=self._scale.logical(y),
+            width=self._scale.logical(width),
+        )
         self._frame.lift()
         self._anchor = widget
 

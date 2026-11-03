@@ -143,9 +143,16 @@ class GameSurfaceLayoutTests(unittest.TestCase):
         self.assertEqual(game.window.winfo_geometry(), geometry)
         for button in game.buttons:
             self.assertEqual(button.winfo_width(), button.winfo_height())
-        self.assertEqual(game.buttons[0].cget('image'), str(game._tokens['X']))
-        self.assertEqual(game.buttons[1].cget('image'), str(game._tokens['O']))
-        self.assertEqual(game._token_labels[0].cget('image'), str(game._tokens['X']))
+        self.assertEqual(
+            game.buttons[0].cget('image'), self.skin.scale.image(game._tokens['X']),
+        )
+        self.assertEqual(
+            game.buttons[1].cget('image'), self.skin.scale.image(game._tokens['O']),
+        )
+        self.assertEqual(
+            game._token_labels[0].cget('image'),
+            self.skin.scale.image(game._tokens['X']),
+        )
         self.assertTrue(game._token_labels[0].winfo_ismapped())
         game._present(Board(('',) * 9, 'X'), game._sequence.game.score)
         self.root.update()
@@ -162,7 +169,7 @@ class GameSurfaceLayoutTests(unittest.TestCase):
         wrap = self.skin.images.buttons.style.lookup(
             game._panel.close_button.cget('style'), 'wraplength',
         )
-        self.assertGreaterEqual(int(wrap), 100)
+        self.assertGreaterEqual(int(wrap), self.skin.scale.pixels(100))
         self.assertTrue(game._panel.title.bind('<B1-Motion>'))
         event = tk.Event()
         event.x_root = game.window.winfo_x() + 10
@@ -180,28 +187,28 @@ class GameSurfaceLayoutTests(unittest.TestCase):
         self.root.update()
         self.assertEqual(game.window.winfo_geometry(), placed)
 
-    def test_narrow_blackjack_scrolls_full_size_cards_and_keeps_close_accessible(self):
-        self.area = WindowBounds(0, 0, 420, 650)
+    def test_blackjack_cards_and_controls_share_the_application_factor(self):
         game = self.make_game('blackjack')
         assert isinstance(game, BlackjackWindow)
-        self.assertEqual(game.player_cards.winfo_width(), 480)
-        self.assertTrue(game._hand_scroll.scrollbar.winfo_ismapped())
-        self.assertTrue(game._panel.close_button.winfo_ismapped())
-        self.assertLessEqual(game.window.winfo_height(), self.area.height)
-        self.assertLessEqual(game.window.winfo_width(), self.area.width)
+        self.assertAlmostEqual(game.player_cards.winfo_width(),
+                               480 * self.skin.scale.factor, delta=1)
+        self.assertIs(game.player_cards.ui_scale, self.skin.scale)
+        self.assertIs(game.hit_button.ui_scale, self.skin.scale)
+        self.assertIs(game._panel.close_button.ui_scale, self.skin.scale)
+        self.assertFalse(hasattr(game._hand_content, 'canvas'))
 
-    def test_narrow_boards_and_choices_keep_all_inputs_scrollable(self) -> None:
-        self.area = WindowBounds(0, 0, 320, 700)
+    def test_boards_and_choices_have_one_scale_and_no_scroll_views(self):
         for kind in ('ttt', 'rps'):
             game = self.make_game(kind)
+            assert isinstance(game, (TicTacToeWindow, RockPaperScissorsWindow))
             if isinstance(game, TicTacToeWindow):
-                strip = game._board_scroll
+                region, controls = game._board_content, game.buttons
             else:
-                assert isinstance(game, RockPaperScissorsWindow)
-                strip = game._choices_scroll
-            self.assertTrue(strip.scrollbar.winfo_ismapped())
-            strip.canvas.xview_moveto(1)
-            self.assertGreater(strip.canvas.xview()[0], 0)
+                region, controls = game._choices_content, list(game.buttons.values())
+            self.assertFalse(hasattr(region, 'canvas'))
+            for button in controls:
+                self.assertTrue(button.winfo_ismapped())
+                self.assertIs(getattr(button, "ui_scale"), self.skin.scale)
             game.close()
 
 

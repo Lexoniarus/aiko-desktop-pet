@@ -213,13 +213,11 @@ class EmoteTkTests(unittest.TestCase):
             set_test_pet_values(self.pet.state, **{key: 100})
         bar.refresh()
         self.pet.root.update()
-        self.assertTrue(
-            all(
-                max(bar.readouts[k].canvas.coords(bar.readouts[k]._fill)[::2])
-                == bar.readouts[k].canvas.winfo_width() - 2
-                for k in bar.readouts
+        for readout in bar.readouts.values():
+            self.assertAlmostEqual(
+                max(readout.canvas.coords(readout._fill)[::2]),
+                float(readout.canvas.design('width')) - 2,
             )
-        )
 
 
 if __name__ == "__main__":

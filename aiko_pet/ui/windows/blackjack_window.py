@@ -10,7 +10,8 @@ from ...asset_paths import GAME_ART_DIR
 from ...games.blackjack import Phase, Table
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...pet.content import GERMAN_TEXT
-from ..common.scroll_region import ScrollRegion
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .blackjack_motion import BlackjackMotion
@@ -45,7 +46,7 @@ class BlackjackWindow:
         self._panel = GamePanel(
             root, GERMAN_TEXT.format("game.name.blackjack"), close=self.close,
             next_round=None, skin=skin, always_on_top=always_on_top,
-            game_id=GameId.BLACKJACK, bounds_at=bounds_at, body_height=430,
+            game_id=GameId.BLACKJACK, bounds_at=bounds_at,
             reserve_right=310,
         )
         self.window = self._panel.window
@@ -55,32 +56,30 @@ class BlackjackWindow:
             lambda: self._sequence.wait_comment(),
         )
         try:
-            heading = tk.Frame(self._panel.body, bg=skin.background)
+            heading = scaled.Frame(self._panel.body, bg=skin.background)
             heading.pack(fill="x", pady=(0, 4))
-            tk.Label(
+            scaled.Label(
                 heading, text=GERMAN_TEXT.format("game.frontend.blackjack"),
                 bg=skin.background,
                 fg=skin.text, font=(skin.font, 10, "bold"),
             ).pack(side="left")
             total_panel = self._panel.passive(heading, padding=5)
             total_panel.frame.pack(side="right")
-            self.total = tk.Label(
+            self.total = scaled.Label(
                 total_panel.body, bg=skin.panel, fg=skin.text, font=(skin.font, 9),
             )
             self.total.pack()
-            self._hand_scroll = ScrollRegion(
+            self._hand_content = ContentRegion(
                 self._panel.body, skin,
-                width=min(self.HAND_WIDTH, self._panel.content_width), height=144,
-                horizontal=True, autohide=True,
             )
-            self._hand_scroll.frame.pack()
-            self.player_cards = tk.Canvas(
-                self._hand_scroll.body, width=self.HAND_WIDTH, height=144,
+            self._hand_content.frame.pack()
+            self.player_cards = scaled.Canvas(
+                self._hand_content.body, width=self.HAND_WIDTH, height=144,
                 bg=skin.background,
                 bd=0, highlightthickness=0,
             )
             self.player_cards.pack()
-            controls = tk.Frame(self._panel.body, bg=skin.background)
+            controls = scaled.Frame(self._panel.body, bg=skin.background)
             controls.pack(pady=3)
             self.hit_button = skin.button(
                 controls, GERMAN_TEXT.format("blackjack.hit") + "  [Z]",
@@ -92,13 +91,9 @@ class BlackjackWindow:
                 size="game_stand",
             )
             self.stand_button.pack(side="left")
-            if self._panel.content_width < 360:
-                self.hit_button.pack_configure(side="top", padx=0, pady=(0, 8))
-                self.stand_button.pack_configure(side="top")
             self._felt = tk.PhotoImage(master=self.window,
                                        file=str(GAME_ART_DIR / 'blackjack-table.png'))
             self.player_cards.configure(height=280, bg="#faedf3")
-            self._hand_scroll.canvas.configure(height=280)
             if presentation is not None:
                 self._motion = BlackjackMotion(
                     self.window, cards, presentation, self._player_point,
@@ -131,8 +126,7 @@ class BlackjackWindow:
     def _player_point(self, index: int, count: int) -> tuple[float, float]:
         step = min(92, (self.HAND_WIDTH - 144) // max(1, count - 1))
         left = (self.HAND_WIDTH - 128 - (count - 1) * step) // 2
-        return (self.player_cards.winfo_rootx() + left + index * step,
-                self.player_cards.winfo_rooty() + 70)
+        return self.player_cards.screen_point(left + index * step, 70)
 
     def _present(self, table: Table, score: SessionSummary) -> None:
         self._visible = table

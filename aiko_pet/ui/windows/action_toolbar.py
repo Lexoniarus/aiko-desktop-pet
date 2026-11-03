@@ -8,9 +8,10 @@ from functools import partial
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
 from ..common.image_button import ImageButton, update_button_state
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.status_readout import StatusReadout
 from ..common.window_drag import WindowDrag
@@ -63,7 +64,7 @@ class ActionToolbar:
             self.window.wm_attributes("-toolwindow", True)
         self.outer = self.skin.frame(self.window)
         self.outer.pack(fill="both", expand=True, padx=1, pady=1)
-        title = tk.Frame(self.outer, bg=self.skin.title)
+        title = scaled.Frame(self.outer, bg=self.skin.title)
         title.pack(fill="x")
         self.today = self.skin.header(title, GERMAN_TEXT.format("vn.brand"))
         self.today.configure(
@@ -77,7 +78,7 @@ class ActionToolbar:
             moved=actions.move_speech,
             dropped=self._drag_dropped,
         )
-        footer = tk.Frame(self.outer, bg=self.skin.background)
+        footer = scaled.Frame(self.outer, bg=self.skin.background)
         footer.pack(side="bottom", fill="x", padx=10, pady=6)
         self.pin_button = self.skin.button(
             footer,
@@ -99,17 +100,12 @@ class ActionToolbar:
             size="footer",
         )
         self.details_button.pack(side="right", padx=2)
-        self.body = body = ScrollRegion(
+        self.body = body = ContentRegion(
             self.outer,
             self.skin,
-            width=676,
-            height=1,
-            autohide=True,
-            fit_content=True,
-            max_height=max(160, root.winfo_screenheight() - 160),
         )
         body.frame.pack(fill="both", expand=True)
-        content = tk.Frame(body.body, bg=self.skin.background, padx=16, pady=12)
+        content = scaled.Frame(body.body, bg=self.skin.background, padx=16, pady=12)
         content.pack(fill="both", expand=True)
         self.tips = DescriptionTip(self.outer, self.skin)
         self._pinned = False
@@ -119,7 +115,7 @@ class ActionToolbar:
         self.tips.attach(self.settings_button, lambda: GERMAN_TEXT.format(
             "settings.window_title",
         ))
-        summary = tk.Frame(
+        summary = scaled.Frame(
             content,
             bg=self.skin.panel,
             padx=8,
@@ -128,13 +124,13 @@ class ActionToolbar:
             highlightbackground=self.skin.border,
         )
         summary.pack(fill="x")
-        tk.Label(
+        scaled.Label(
             summary, image=self.skin.images.icon("detail_wellbeing", 40),
             bg=self.skin.panel,
         ).pack(side="left", padx=(0, 8))
-        copy = tk.Frame(summary, bg=self.skin.panel)
+        copy = scaled.Frame(summary, bg=self.skin.panel)
         copy.pack(side="left", fill="both", expand=True)
-        self.emotion = tk.Label(
+        self.emotion = scaled.Label(
             copy,
             bg=self.skin.panel,
             fg=self.skin.text,
@@ -144,7 +140,7 @@ class ActionToolbar:
             justify="left",
         )
         self.emotion.pack(fill="x")
-        self.wellbeing = tk.Label(
+        self.wellbeing = scaled.Label(
             copy,
             bg=self.skin.panel,
             fg=self.skin.muted,
@@ -169,20 +165,21 @@ class ActionToolbar:
             pin_wish=actions.pin_wish, dismiss_wish=actions.dismiss_wish,
         )
         self.wishes.frame.pack(fill="x", pady=(4, 8))
-        care = tk.Frame(content, bg=self.skin.background)
+        care = scaled.Frame(content, bg=self.skin.background)
         care.pack(fill="x")
-        self.interaction_column = tk.Frame(
+        self.interaction_column = scaled.Frame(
             care, bg=self.skin.background, width=254, height=354
         )
         self.interaction_column.pack(side="right", padx=(13, 0))
-        self.interaction_column.pack_propagate(False)
-        self.actions_frame = tk.Frame(self.interaction_column, bg=self.skin.background)
+        self.actions_frame = scaled.Frame(
+            self.interaction_column, bg=self.skin.background,
+        )
         self.actions_frame.pack(fill="both", expand=True)
-        values = tk.Frame(care, bg=self.skin.background)
+        values = scaled.Frame(care, bg=self.skin.background)
         values.pack(side="left", fill="both", expand=True)
         for key, text, icon in self.READOUTS[1:]:
             readout = StatusReadout(
-                self._care_row(values),
+                self._care_row(values, width=352),
                 self.skin,
                 title=text,
                 icon=icon,
@@ -208,7 +205,7 @@ class ActionToolbar:
             )
             button.pack(pady=(1, 5))
             self.buttons[action] = button
-        tk.Label(
+        scaled.Label(
             self._care_row(self.actions_frame),
             text=GERMAN_TEXT.format("vn.friendship_context"),
             wraplength=220,
@@ -217,7 +214,7 @@ class ActionToolbar:
             font=(self.skin.font, 9),
             pady=8,
         ).pack(fill="both", expand=True)
-        context = tk.Frame(content, bg=self.skin.background)
+        context = scaled.Frame(content, bg=self.skin.background)
         context.pack(fill="x", pady=(6, 0))
         self.hardware = self._context_label(context)
         self.hardware.configure(
@@ -236,10 +233,9 @@ class ActionToolbar:
         self._selector_closed: Callable[[SelectorCloseReason], None] | None = None
         self.window.bind("<Configure>", self._configured, add="+")
         self.window.bind("<Escape>", lambda _e: self.close_selector())
-        body.adopt()
 
     def _context_label(self, parent: tk.Misc) -> tk.Label:
-        label = tk.Label(
+        label = scaled.Label(
             parent,
             bg=self.skin.background,
             fg=self.skin.muted,
@@ -250,8 +246,8 @@ class ActionToolbar:
         label.pack(fill="x", pady=2)
         return label
 
-    def _care_row(self, parent: tk.Misc) -> tk.Frame:
-        row = tk.Frame(parent, bg=self.skin.background, height=59)
+    def _care_row(self, parent: tk.Misc, *, width: int = 254) -> tk.Frame:
+        row = scaled.Frame(parent, bg=self.skin.background, width=width, height=59)
         row.pack(fill="x")
         row.pack_propagate(False)
         return row
@@ -283,8 +279,6 @@ class ActionToolbar:
             # Explicit expansion needs its new scroll extent before revealing it.
             self.window.update_idletasks()
             self.place()
-            if self._details_open:
-                self.body.canvas.yview_moveto(1)
 
     def refresh_details(self) -> None:
         if self._details_open and self.details is not None:

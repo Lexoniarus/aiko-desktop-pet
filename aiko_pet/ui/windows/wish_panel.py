@@ -6,9 +6,10 @@ from pathlib import Path
 from typing import Callable, Mapping, cast
 
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
 from ..common.panel_surface import PanelSurface
-from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..view_models.contracts import WishView
 from ..view_models.emotional_text import (
@@ -31,24 +32,19 @@ class WishPanel:
         pin_wish: Callable[[int, bool], None] = lambda _id, _pinned: None,
         dismiss_wish: Callable[[int], None] = lambda _id: None,
     ) -> None:
-        self.frame = tk.Frame(parent, bg=skin.background)
-        tk.Label(
+        self.frame = scaled.Frame(parent, bg=skin.background)
+        scaled.Label(
             self.frame,
             text=GERMAN_TEXT.format("vn.wishes"),
             bg=skin.background,
             fg=skin.muted,
             font=(skin.font, 9, "bold"),
         ).pack(anchor="w")
-        self._scroll = ScrollRegion(
+        self._content = ContentRegion(
             self.frame,
             skin,
-            width=620,
-            height=1,
-            horizontal=True,
-            autohide=True,
-            fit_content=True,
         )
-        self._scroll.frame.pack(fill="x")
+        self._content.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
         self._food_icons = food_icons
         self._pin_wish, self._dismiss_wish = pin_wish, dismiss_wish
@@ -70,12 +66,12 @@ class WishPanel:
             self._objectives.clear()
             self._meta.clear()
             self._pin_icons.clear()
-            for child in self._scroll.body.winfo_children():
+            for child in self._content.body.winfo_children():
                 child.destroy()
             self._cards.clear()
             if not items:
-                tk.Label(
-                    self._scroll.body,
+                scaled.Label(
+                    self._content.body,
                     text=GERMAN_TEXT.format("vn.no_wishes"),
                     bg=self._skin.background,
                     fg=self._skin.muted,
@@ -84,7 +80,6 @@ class WishPanel:
                 ).pack()
             for item in items:
                 self._card(item)
-            self._scroll.adopt()
         for key, label in self._labels.items():
             item = self._items[key]
             objective = "\n".join(
@@ -124,15 +119,13 @@ class WishPanel:
             self._pin_icons[key].itemconfigure(
                 "pin", state="normal" if item.value.pinned else "hidden",
             )
-        if layout_changed:
-            self._scroll.refresh_layout()
         # Publish the rendered identity only after every card is complete. If an
         # asset/widget fails, the next refresh must rebuild the partial layout.
         self._ids = ids
 
     def _card(self, item: WishView) -> None:
         skin = self._skin
-        surface = skin.surface(self._scroll.body)
+        surface = skin.surface(self._content.body)
         self._cards.append(surface)
         surface.frame.configure(
             highlightthickness=1, highlightbackground=skin.background,
@@ -142,7 +135,7 @@ class WishPanel:
         card = surface.body
         card.grid_columnconfigure(1, minsize=132)
         card.grid_rowconfigure(0, minsize=24)
-        icon = tk.Canvas(
+        icon = scaled.Canvas(
             card, width=42, height=42, bg=skin.background, highlightthickness=0,
         )
         icon.grid(row=0, column=0, rowspan=2, sticky="nw", padx=(0, 5))
@@ -159,7 +152,7 @@ class WishPanel:
         badge = wish_badge(item)
         if badge is not None:
             icon.create_image(32, 32, image=skin.images.icon(badge, 24))
-        label = tk.Label(
+        label = scaled.Label(
             card,
             bg=skin.background,
             fg=skin.text,
@@ -169,17 +162,17 @@ class WishPanel:
             anchor="nw",
         )
         label.grid(row=0, column=1, sticky="nw", padx=(0, 28))
-        objective = tk.Label(
+        objective = scaled.Label(
             card, bg=skin.background, fg=skin.muted, font=(skin.font, 8),
             wraplength=132, justify="left", anchor="nw",
         )
         objective.grid(row=1, column=1, sticky="nw")
-        meta = tk.Label(
+        meta = scaled.Label(
             card, bg=skin.background, fg=skin.muted, font=(skin.font, 8),
             wraplength=180, justify="left", anchor="w",
         )
         meta.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(4, 0))
-        pin = tk.Canvas(
+        pin = scaled.Canvas(
             card, width=24, height=24, bg=skin.background, highlightthickness=0,
         )
         pin.create_image(12, 12, image=skin.images.icon("ui_pin", 24),

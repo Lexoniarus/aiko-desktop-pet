@@ -12,9 +12,11 @@ from ...asset_paths import EMOTE_IMAGE_DIR
 from ...games.rock_paper_scissors import Move
 from ...pet.content import GERMAN_TEXT
 from ...pet.mind.reaction_sequence import EMOTES
+from ..common import scaled_widgets as scaled
 from ..common.icon_images import IconImages
 from ..common.panel_surface import PanelSurface
 from ..common.rounded_panel import RoundedPanel
+from ..common.ui_scale import UiScale
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +48,7 @@ class SpeechPresenter:
         ui_images: IconImages | None = None,
     ) -> None:
         self._root = root
+        self._scale = UiScale.for_widget(root)
         self._anchor = anchor
         self._font_name = font_name
         self._always_on_top = always_on_top
@@ -141,38 +144,40 @@ class SpeechPresenter:
         bubble.geometry(f"+{x}+{y}")
 
     def _game_comment_width(self) -> int:
-        hand = self.hand_bubble
-        if hand is None:
-            return 250
-        hand.update_idletasks()
-        available = self._root.winfo_screenwidth() - hand.winfo_reqwidth() - 48
-        return min(250, max(100, available))
+        return 250
 
     def _resize_game_comment(self, width: int) -> None:
         area, label = self._game_comment_area, self._game_comment_label
         if area is None:
             return
         if label is None:
-            area.configure(width=width + 20)
+            area.configure(width=self._scale.logical(
+                self._scale.pixels(width) + 2 * self._scale.pixels(10),
+            ))
         else:
             label.configure(wraplength=width - 20)
             label.update_idletasks()
-            area.configure(width=width, height=max(90, label.winfo_reqheight() + 8))
+            area.configure(
+                width=width,
+                height=max(90, self._scale.logical(label.winfo_reqheight()) + 8),
+            )
 
     def _move_game_pair(self) -> None:
         hand = self.hand_bubble
         assert hand is not None
         hand.update_idletasks()
         bubble = self.bubble
-        width = self._game_comment_width() + 20
-        self._resize_game_comment(width - 20)
+        design_width = self._game_comment_width() + 20
+        self._resize_game_comment(design_width - 20)
+        width = self._scale.pixels(design_width - 20) + 2 * self._scale.pixels(10)
         if bubble is not None:
             bubble.update_idletasks()
-        height = max(121, hand.winfo_reqheight(),
+        height = max(self._scale.pixels(121), hand.winfo_reqheight(),
                      bubble.winfo_reqheight() if bubble is not None else 0)
         screen_width = self._root.winfo_screenwidth()
         screen_height = self._root.winfo_screenheight()
-        total = width + 12 + hand.winfo_reqwidth()
+        gap = self._scale.pixels(12)
+        total = width + gap + hand.winfo_reqwidth()
         anchor = self._anchor()
         x = anchor.x + (anchor.width - total) // 2
         y = anchor.y - height - 7
@@ -186,7 +191,7 @@ class SpeechPresenter:
         y = max(0, min(y, max(0, screen_height - height)))
         if bubble is not None:
             bubble.geometry(f"+{x}+{y}")
-        hand.geometry(f"+{x + width + 12}+{y}")
+        hand.geometry(f"+{x + width + gap}+{y}")
 
     def _present(self, window: tk.Toplevel, duration_ms: int) -> None:
         self.bubble = window
@@ -236,7 +241,7 @@ class SpeechPresenter:
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         if self._ui_images is None:
             self._ui_images = IconImages(self._root)
-        frame = tk.Frame(bubble, bg=transparent)
+        frame = scaled.Frame(bubble, bg=transparent)
         frame.pack()
         width = self._game_comment_width()
         if emote is None:
@@ -245,23 +250,31 @@ class SpeechPresenter:
                 surface="panel_surface.game_bubble",
             )
             surface.frame.pack()
-            comment = tk.Frame(surface.body, width=width, height=90, bg="#FCF7F9")
+            comment = scaled.Frame(surface.body, width=width, height=90, bg="#FCF7F9")
             comment.pack()
             comment.pack_propagate(False)
             self._game_comment_area = comment
-            self._game_comment_label = tk.Label(
+            self._game_comment_label = scaled.Label(
                 comment, text=text, wraplength=width - 20, justify="center",
                 bg="#FCF7F9", fg="#3E4C61", font=(self._font_name, 10),
             )
             self._game_comment_label.pack(expand=True)
-            tail = tk.Canvas(bubble, width=20, height=11, bg=transparent,
+            tail = scaled.Canvas(bubble, width=20, height=11, bg=transparent,
                              bd=0, highlightthickness=0)
             tail.pack()
             tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
                                 outline="#B8CDDF", width=1)
         else:
             # Kenney emotes already include their own speech bubble and tail.
-            comment = tk.Frame(frame, width=width + 20, height=121, bg=transparent)
+            height = self._scale.logical(
+                self._scale.pixels(90) + 2 * self._scale.pixels(10)
+                + self._scale.pixels(11),
+            )
+            comment = scaled.Frame(
+                frame, width=self._scale.logical(
+                    self._scale.pixels(width) + 2 * self._scale.pixels(10),
+                ), height=height, bg=transparent,
+            )
             self._game_comment_area = comment
             comment.pack()
             comment.pack_propagate(False)
@@ -270,7 +283,7 @@ class SpeechPresenter:
                 self.emote_images[emote] = tk.PhotoImage(
                     master=self._root, file=str(path),
                 ).zoom(3)
-            tk.Label(comment, image=self.emote_images[emote], bg=transparent,
+            scaled.Label(comment, image=self.emote_images[emote], bg=transparent,
                      bd=0, highlightthickness=0).pack(side="bottom")
         self._present(bubble, duration_ms)
 
@@ -288,12 +301,14 @@ class SpeechPresenter:
             surface="panel_surface.game_bubble",
         )
         surface.frame.pack()
-        tk.Label(surface.body, text=GERMAN_TEXT.format('rps.choose_own_hand'),
+        scaled.Label(surface.body, text=GERMAN_TEXT.format('rps.choose_own_hand'),
                  font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A").pack()
-        tk.Label(surface.body, image=self.game_hand_images[aiko], bg="#FCF7F9").pack()
-        tk.Label(surface.body, text=GERMAN_TEXT.format(f"rps.move.{aiko.value}"),
+        scaled.Label(
+            surface.body, image=self.game_hand_images[aiko], bg="#FCF7F9",
+        ).pack()
+        scaled.Label(surface.body, text=GERMAN_TEXT.format(f"rps.move.{aiko.value}"),
                  font=(self._font_name, 9), bg="#FCF7F9", fg="#65758A").pack()
-        tail = tk.Canvas(window, width=20, height=11, bg=transparent,
+        tail = scaled.Canvas(window, width=20, height=11, bg=transparent,
                          bd=0, highlightthickness=0)
         tail.pack()
         tail.create_polygon(2, 0, 18, 0, 10, 10, fill="#FCF7F9",
@@ -325,7 +340,7 @@ class SpeechPresenter:
             original = tk.PhotoImage(file=str(path))
             self.emote_images[emote] = original.zoom(3)
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
-        tk.Label(
+        scaled.Label(
             bubble,
             image=self.emote_images[emote],
             bg=transparent,
@@ -341,9 +356,9 @@ class SpeechPresenter:
             return
         self.hide()
         bubble = self._new_window()
-        frame = tk.Frame(bubble, bg="#53687e", bd=0)
+        frame = scaled.Frame(bubble, bg="#53687e", bd=0)
         frame.pack()
-        tk.Label(
+        scaled.Label(
             frame,
             text=phrase,
             font=(self._font_name, 9),
@@ -355,13 +370,13 @@ class SpeechPresenter:
             pady=8,
         ).pack(padx=1, pady=1)
         if self.attribution:
-            tk.Label(
+            scaled.Label(
                 frame, text=self.attribution, font=(self._font_name, 7),
                 wraplength=235, bg="#f0f6fa", fg="#243247", justify="center",
                 padx=8, pady=4,
             ).pack(padx=1, pady=(0, 1))
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
-        tail = tk.Canvas(
+        tail = scaled.Canvas(
             bubble,
             width=20,
             height=11,
@@ -413,28 +428,28 @@ class SpeechPresenter:
             Move.PAPER: GERMAN_TEXT.format("rps.move.paper"),
             Move.SCISSORS: GERMAN_TEXT.format("rps.move.scissors"),
         }
-        tk.Label(
+        scaled.Label(
             panel,
             text=GERMAN_TEXT.format("rps.choose_own_hand"),
             bg="#FFFCFD",
             fg="#3E4C61",
             font=("Segoe UI", 9, "bold"),
         ).pack(padx=12, pady=(8, 1))
-        tk.Label(
+        scaled.Label(
             panel,
             image=self.game_hand_images[aiko],
             bg="#FFFCFD",
             bd=0,
             highlightthickness=0,
         ).pack(padx=8)
-        tk.Label(
+        scaled.Label(
             panel,
             text=names[aiko],
             bg="#FFFCFD",
             fg="#3E4C61",
             font=("Segoe UI", 9),
         ).pack(padx=12, pady=(1, 8))
-        tail = tk.Canvas(
+        tail = scaled.Canvas(
             bubble,
             width=20,
             height=11,

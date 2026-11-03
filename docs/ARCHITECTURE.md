@@ -1257,11 +1257,12 @@ review ledgers are [historical records](history/README.md), not active blockers.
 `ui/common/icon_images.py` is the one root-local image owner. The development-only
 `tools/export_vn_ui.py` normalizes the 46 approved masters and exports shared
 nine-slice button/control sizes from eight source surfaces into `assets/ui`.
-Their runtime catalogue records source hashes. Tk alone loads/composes the
-exports; runtime remains standard-library-only. `image_button.py` preserves
+Their runtime catalogue records source hashes. The root-local `UiScale` applies
+the [common 4K transform](UI_SCALING.md) before constructing native controls;
+Pillow filters reduced UI artwork in memory. `image_button.py` preserves
 native invocation and adds disabled/hover/press/active artwork, independent
-keyboard focus and explicit destruction cleanup. `scroll_region.py` owns local
-scroll bindings and focus reveal; `description_tip.py` renders in-window passive
+keyboard focus and explicit destruction cleanup. `content_region.py` contains
+unclipped content without scroll hooks; `description_tip.py` renders in-window passive
 details. These are UI behaviors, not new domain or input-capture authorities.
 
 Numeric target mood, current value, relationship stage, actual sleep reason and

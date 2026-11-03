@@ -14,6 +14,10 @@ from aiko_pet.ui.windows.mastermind_window import MastermindWindow
 
 class MastermindInputTests(unittest.TestCase):
     def setUp(self):
+        self.enterContext(patch(
+            "aiko_pet.ui.windows.mastermind_drag.UiScale.for_widget",
+            return_value=Mock(pixels=lambda value: round(value)),
+        ))
         self.source, self.images = Mock(), Mock()
         self.source.tk.call.side_effect = lambda *_args: str(self.source)
         self.drop, self.click = Mock(), Mock()
@@ -39,7 +43,7 @@ class MastermindInputTests(unittest.TestCase):
         with (
             patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
                   return_value=ghost),
-            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label") as label,
+            patch("aiko_pet.ui.windows.mastermind_drag.scaled.Label") as label,
         ):
             self.drag.begin(self.event(), "blue", 2)
             self.drag.motion(self.event(120, 130))
@@ -94,7 +98,8 @@ class MastermindInputTests(unittest.TestCase):
         with (
             patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
                   side_effect=preview),
-            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label", return_value=label),
+            patch("aiko_pet.ui.windows.mastermind_drag.scaled.Label",
+                  return_value=label),
         ):
             self.drag.begin(self.event(), "blue")
             self.drag.motion(self.event(120, 130))
@@ -114,7 +119,7 @@ class MastermindInputTests(unittest.TestCase):
         with (
             patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
                   return_value=ghost),
-            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label"),
+            patch("aiko_pet.ui.windows.mastermind_drag.scaled.Label"),
         ):
             self.drag.begin(self.event(), "green")
             # Cancellation must still remove the preview when Tk has already
@@ -182,14 +187,9 @@ class MastermindInputTests(unittest.TestCase):
     def board_window(self):
         game = self.window()
         game.board = cast(Any, Mock())
-        game.board_scroll, game.board_horizontal = cast(Any, Mock()), cast(Any, Mock())
-        game._panel = cast(Any, Mock())
-        for widget in (game.board, game.board_scroll.canvas,
-                       game.board_horizontal.canvas, game._panel.scroll.canvas):
-            widget.winfo_rootx.return_value = 300
-            widget.winfo_rooty.return_value = 200
-            widget.winfo_width.return_value = 460
-            widget.winfo_height.return_value = 200
+        game.board.winfo_rootx.return_value = 300
+        game.board.winfo_rooty.return_value = 200
+        game.board.logical.side_effect = lambda value: value
         return game
 
     def test_real_slot_mapping_supports_repickup_swap_and_invalid_drop_cleanup(self):
@@ -198,7 +198,7 @@ class MastermindInputTests(unittest.TestCase):
             patch.object(game, "_refresh"), patch.object(game, "_draw_board"),
             patch("aiko_pet.ui.windows.mastermind_drag.tk.Toplevel",
                   side_effect=lambda _owner: Mock()),
-            patch("aiko_pet.ui.windows.mastermind_drag.tk.Label"),
+            patch("aiko_pet.ui.windows.mastermind_drag.scaled.Label"),
         ):
             game._drag.begin(self.event(), "red")
             game._drag.motion(self.event(352, 248))
@@ -227,93 +227,31 @@ class MastermindInputTests(unittest.TestCase):
                 self.assertIsNone(game._drag._ghost)
         self.assertFalse(game._view.guesses)
 
-    def test_slot_mapping_respects_scrolled_active_row_and_all_viewport_clipping(self):
+    def test_slot_mapping_uses_shared_scale_and_rejects_history(self):
         game = self.board_window()
         game._view = RoundView((Guess(("red",) * 4, Feedback(1, 0)),))
-        # The first row is now scrolled out; the active row occupies its old
-        # screen position. Canvas-local coordinates alone would pick the past row.
-        cast(Any, game.board).winfo_rooty.return_value = 152
-        for slot, x in enumerate((352, 400, 448, 496)):
+        cast(Any, game.board).logical.side_effect = lambda value: value / .5
+        for slot, x in enumerate((326, 350, 374, 398)):
             self.assertEqual(game._slot_at(x, 248), slot)
-        self.assertIsNone(game._slot_at(352, 200))
-        self.assertIsNone(game._slot_at(352, 296))
-        for viewport in (game.board_scroll.canvas, game.board_horizontal.canvas,
-                         game._panel.scroll.canvas):
-            cast(Any, viewport).winfo_width.return_value = 120
-            self.assertIsNone(game._slot_at(448, 248))
-            cast(Any, viewport).winfo_width.return_value = 460
+        self.assertIsNone(game._slot_at(326, 224))
+        self.assertIsNone(game._slot_at(326, 272))
 
-    def test_body_is_prepared_before_the_first_mapping_and_only_once(self):
+    def test_natural_scaled_dimensions_are_placed_before_first_mapping(self):
         panel = GamePanel.__new__(GamePanel)
-        panel._placed, panel.width = False, 548
-        panel._reserve_right = 0
-        panel.window, panel.scroll = cast(Any, Mock()), cast(Any, Mock())
-        panel.window.winfo_reqheight.return_value = 1000
-        panel.scroll.canvas.winfo_reqheight.return_value = 740
-        panel._bounds_at = lambda _x, _y: WindowBounds(0, 0, 1920, 800)
+        panel._placed, panel.width, panel._reserve_right = False, 548, 0
+        panel.window, panel.skin = cast(Any, Mock()), cast(Any, Mock())
+        panel.window.winfo_reqheight.return_value = 600
+        panel.window.winfo_reqwidth.return_value = 300
+        panel.skin.scale.pixels.return_value = 274
+        panel._bounds_at = lambda _x, _y: WindowBounds(0, 0, 1920, 1080)
         root = Mock()
         root.winfo_rootx.return_value = root.winfo_rooty.return_value = 20
         root.winfo_width.return_value = root.winfo_height.return_value = 128
-        order = Mock()
-        order.attach_mock(panel.window.deiconify, "map")
-        prepare = Mock()
-        order.attach_mock(prepare, "prepare")
-        panel.show(root, prepare_body=prepare)
-        prepare.assert_called_once_with(520)
-        self.assertEqual([c[0] for c in order.mock_calls], ["prepare", "map"])
-        panel.show(root, prepare_body=prepare)
-        prepare.assert_called_once()
-
-    def layout_window(self):
-        game = self.window()
-        game._layout_timer = None
-        game.window, game._panel = cast(Any, Mock()), cast(Any, Mock())
-        game.board_scroll, game._codes = cast(Any, Mock()), cast(Any, Mock())
-        game.board_scroll.frame.winfo_y.return_value = 200
-        return game
-
-    def test_unmapped_viewport_does_not_replace_prepared_ten_row_height(self):
-        game = self.layout_window()
-        viewport = cast(Mock, game._panel.scroll.canvas)
-        board = cast(Mock, game.board_scroll.canvas)
-        viewport.winfo_height.return_value = 1
-        game._fit_board(740)
-        board.configure.assert_called_once_with(height=504)
-        # An early idle pass still sees Tk's unmapped one-pixel allocation.
-        game._fit_board()
-        board.configure.assert_called_once_with(height=504)
-
-    def test_viewport_allocation_finishes_layout_without_click_or_window_resize(self):
-        game = self.layout_window()
-        viewport = cast(Mock, game._panel.scroll.canvas)
-        board, window = cast(Mock, game.board_scroll.canvas), cast(Mock, game.window)
-        viewport.winfo_height.return_value = 740
-        callbacks = []
-        window.after_idle.side_effect = lambda callback: (
-            callbacks.append(callback) or "layout"
-        )
-        game._configured(cast(Any, Mock(widget=game._panel.scroll.canvas)))
-        self.assertEqual(len(callbacks), 1)
-        callbacks.pop()()
-        board.configure.assert_called_once_with(height=504)
-        # Genuine constrained work areas still use the available height.
-        viewport.winfo_height.return_value = 430
-        game._configured(cast(Any, Mock(widget=game._panel.scroll.canvas)))
-        callbacks.pop()()
-        self.assertEqual(board.configure.call_args.kwargs,
-                         {"height": 222})
-
-    def test_explicit_preparation_replaces_pending_idle_and_close_cancels_layout(self):
-        game = self.layout_window()
-        window = cast(Mock, game.window)
-        window.after_idle.return_value = "old-layout"
-        game._queue_layout()
-        game._fit_board(740)
-        window.after_cancel.assert_called_once_with("old-layout")
-        self.assertIsNone(game._layout_timer)
-        game._closed = True
-        game._queue_layout()
-        self.assertEqual(window.after_idle.call_count, 1)
+        panel.show(root)
+        panel.window.minsize.assert_called_once_with(274, 1)
+        self.assertTrue(panel.window.geometry.call_args.args[0].startswith('+'))
+        panel.show(root)
+        panel.window.geometry.assert_called_once()
 
 
 if __name__ == "__main__":

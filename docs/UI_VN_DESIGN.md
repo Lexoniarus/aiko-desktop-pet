@@ -1,5 +1,10 @@
 # Aiko VN interface direction — 2026-10-20
 
+Current scaling contract: [central 4K UI scaling](UI_SCALING.md). All earlier
+scrolling, viewport caps and screen-dependent compact variants in this design
+history are superseded; forms now share one application-wide scale.
+
+
 **Native implementation (2026-10-30):** the owner subsequently authorized the
 six-game rebuild in small commits. The native implementations and their checks
 are recorded in [GAME_FRONTEND_IMPLEMENTATION_PLAN.md](GAME_FRONTEND_IMPLEMENTATION_PLAN.md).

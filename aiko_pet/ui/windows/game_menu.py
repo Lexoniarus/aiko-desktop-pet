@@ -38,7 +38,7 @@ class GameMenu(EmbeddedSelector):
                 else skin.images.icon(GAME_ICONS[game.value], 40)
             )
             button = skin.button(
-                self.scroll.body,
+                self.content.body,
                 GERMAN_TEXT.format(f"game.name.{game.value}"),
                 partial(self.choose, game),
                 size="menu_game",
@@ -47,7 +47,6 @@ class GameMenu(EmbeddedSelector):
             )
             button.pack(fill="x", pady=4)
             self.buttons[game] = button
-        self.scroll.adopt()
         self.refresh()
 
     def refresh(self) -> None:

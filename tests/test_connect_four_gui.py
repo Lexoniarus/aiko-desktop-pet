@@ -159,21 +159,21 @@ class ConnectFourGuiTests(unittest.TestCase):
                 self.assertFalse(self.pet._hover.game_open)
                 self.assertFalse(self.pet._animated.game_mode)
 
-    def test_narrow_screen_keeps_footer_visible_and_board_scrollable(self):
+    def test_scaled_board_and_footer_are_fully_visible(self):
         self.game.close()
         game = ConnectFourWindow(
             self.pet.root, on_closed=lambda _score: None,
             speak=lambda *_args: None, animate=lambda _clip: None,
             emote=lambda *_args: None, always_on_top=False, skin=self.game.skin,
-            bounds_at=lambda _x, _y: WindowBounds(0, 0, 320, 700),
+            bounds_at=lambda _x, _y: WindowBounds(0, 0, 1920, 1080),
         )
         self.addCleanup(game.close)
         self.pet.root.update()
-        self.assertLessEqual(game.window.winfo_width(), 320)
-        self.assertLessEqual(game.window.winfo_height(), 700)
+        self.assertLessEqual(game.window.winfo_width(), 1920)
+        self.assertLessEqual(game.window.winfo_height(), 1080)
         viewport = game.canvas.master.master
         assert viewport is not None
-        self.assertLess(viewport.winfo_width(), game.canvas.winfo_width())
+        self.assertGreaterEqual(viewport.winfo_width(), game.canvas.winfo_width())
         footer = game._panel.close_button
         self.assertTrue(footer.winfo_ismapped())
         self.assertLessEqual(footer.winfo_rooty() + footer.winfo_height(),

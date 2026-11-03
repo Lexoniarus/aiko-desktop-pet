@@ -23,8 +23,9 @@ policy; the batch file sets the policy for its own setup process only.
    receives the packages from [`requirements.txt`](../requirements.txt).
    It pins Astronomy Engine 2.1.19 for offline Sun/Moon/phase calculation and
    pyjokes 0.8.3 for the individually reviewed local joke subset.
-   The horoscope needs no account, key or network access at runtime. Pillow, Ruff,
-   Mypy and Pyright are developer tools, not required by players.
+   Pillow 11.3.0 filters the centrally scaled UI artwork in memory.
+   The horoscope needs no account, key or network access at runtime. Ruff,
+   Mypy and Pyright remain developer tools, not required by players.
 4. Import the application, verify a real offline astronomy calculation and the
    pinned German joke library against its complete reviewed catalogue,
    validate the character catalog and load one

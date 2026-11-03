@@ -119,7 +119,7 @@ class FlexibleWishReadTests(unittest.TestCase):
                     panel.refresh(views)
             self.assertIsNone(panel._ids)
             panel.refresh(views)
-            self.assertEqual(len(panel._scroll.body.winfo_children()), 1)
+            self.assertEqual(len(panel._content.body.winfo_children()), 1)
             self.assertEqual(panel._labels[1].cget("text"), "Spiel frei wählen")
 
 

@@ -10,7 +10,8 @@ from ...asset_paths import GAME_ART_DIR
 from ...games.connect_four import COLUMNS, ROWS, Board, Move, landing_cell
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...pet.content import GERMAN_TEXT
-from ..common.scroll_region import ScrollRegion
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from ..view_models.connect_four_geometry import CELL, HEIGHT, MARGIN, PREVIEW, WIDTH
@@ -58,13 +59,13 @@ class ConnectFourWindow:
             always_on_top=always_on_top,
             game_id=GameId.CONNECT_FOUR,
             bounds_at=bounds_at,
-            body_height=540,
+
         )
         self.window = self._panel.window
         self._tokens: dict[int, tk.PhotoImage] = {}
         self._legend_tokens: dict[int, tk.PhotoImage] = {}
         try:
-            legend = tk.Frame(self._panel.body, bg=skin.background)
+            legend = scaled.Frame(self._panel.body, bg=skin.background)
             legend.pack(anchor="w", pady=(0, 6))
             for player, color, label in ((1, "yellow", "player"), (2, "red", "aiko")):
                 token = tk.PhotoImage(
@@ -72,7 +73,7 @@ class ConnectFourWindow:
                 ).subsample(3)
                 self._tokens[player] = token
                 self._legend_tokens[player] = token.subsample(2)
-                tk.Label(
+                scaled.Label(
                     legend,
                     image=self._legend_tokens[player],
                     compound="left",
@@ -81,16 +82,12 @@ class ConnectFourWindow:
                     fg=skin.text,
                     font=(skin.font, 9),
                 ).pack(side="left", padx=(0, 14))
-            region = ScrollRegion(
+            region = ContentRegion(
                 self._panel.body,
                 skin,
-                width=min(WIDTH, self._panel.content_width),
-                height=HEIGHT,
-                horizontal=True,
-                autohide=True,
             )
             region.frame.pack()
-            self.canvas = tk.Canvas(
+            self.canvas = scaled.Canvas(
                 region.body,
                 width=WIDTH,
                 height=HEIGHT,
@@ -114,7 +111,6 @@ class ConnectFourWindow:
                     str(column + 1),
                     partial(self._key, column),
                 )
-            region.adopt()
             self._sequence = ConnectFourSequence(
                 schedule=self.window.after,
                 cancel=self.window.after_cancel,
@@ -157,8 +153,10 @@ class ConnectFourWindow:
         self._focus_cell = cell
         if self._presentation is not None:
             self._presentation.look((
-                self.canvas.winfo_rootx() + MARGIN + (cell % 7 + .5) * CELL,
-                self.canvas.winfo_rooty() + PREVIEW + (cell // 7 + .5) * CELL,
+                *self.canvas.screen_point(
+                    MARGIN + (cell % 7 + .5) * CELL,
+                    PREVIEW + (cell // 7 + .5) * CELL,
+                ),
             ) if cell is not None else None)
 
     def _present(
@@ -251,7 +249,7 @@ class ConnectFourWindow:
         self.choose(column)
 
     def _hover(self, event: tk.Event[tk.Misc]) -> None:
-        self._hover_column = self._column(event.x)
+        self._hover_column = self._column(round(self.canvas.logical(event.x)))
         self._draw()
 
     def _leave(self, _event: tk.Event[tk.Misc]) -> None:
@@ -260,7 +258,7 @@ class ConnectFourWindow:
 
     def _click(self, event: tk.Event[tk.Misc]) -> None:
         self.canvas.focus_set()
-        column = self._column(event.x)
+        column = self._column(round(self.canvas.logical(event.x)))
         if column is not None:
             self.choose(column)
 

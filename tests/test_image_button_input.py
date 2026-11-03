@@ -1,4 +1,4 @@
-"""Single-window VN rendering, native input and repeated scrolling."""
+"""Single-window VN rendering, native input and repeated focus."""
 
 import tkinter as tk
 import unittest
@@ -88,7 +88,7 @@ class ImageButtonInputTests(unittest.TestCase):
         button.configure(state="normal")
         self.assertTrue(button.instate(["selected", "!disabled"]))
 
-    def test_snack_scroll_and_reopen_keep_icons_and_native_text_together(self):
+    def test_snack_focus_and_reopen_keep_icons_and_native_text_together(self):
         host = tk.Frame(self.root)
         host.pack()
         choices = food_choices(load_item_catalog())
@@ -108,8 +108,8 @@ class ImageButtonInputTests(unittest.TestCase):
             for key, button in menu.buttons.items()
         }
         count = len(self.skin.images.buttons._styles)
-        for position in (1, 0, 0.5, 0, 1, 0):
-            menu.scroll.canvas.yview_moveto(position)
+        for button in menu.buttons.values():
+            button.focus_set()
             self.root.update()
             for key, button in menu.buttons.items():
                 self.assertEqual(button.winfo_children(), [])

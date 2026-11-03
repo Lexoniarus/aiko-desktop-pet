@@ -8,6 +8,7 @@ from typing import Callable
 
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from .embedded_selector import EmbeddedSelector
@@ -50,7 +51,7 @@ class SocialMenu(EmbeddedSelector):
                 else f"wish_{category.value}"
             )
             button = skin.button(
-                self.scroll.body,
+                self.content.body,
                 GERMAN_TEXT.format(key),
                 partial(self.choose, category),
                 size="menu_social",
@@ -61,8 +62,8 @@ class SocialMenu(EmbeddedSelector):
             if category == SocialCategory.HOROSCOPE:
                 button.bind("<ButtonPress-1>", self._book_press)
             self.buttons[category] = button
-        self.status = tk.Label(
-            self.scroll.body,
+        self.status = scaled.Label(
+            self.content.body,
             bg=skin.background,
             fg=skin.muted,
             font=(skin.font, 8),
@@ -70,7 +71,6 @@ class SocialMenu(EmbeddedSelector):
             justify="left",
         )
         self.status.pack(fill="x", pady=4)
-        self.scroll.adopt()
         self.refresh()
 
     def _book_press(self, _event: tk.Event) -> str:

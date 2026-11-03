@@ -17,7 +17,6 @@ from aiko_pet.ui.view_models.game_models import HandAnchor
 from aiko_pet.ui.view_models.mastermind_models import place_code
 from aiko_pet.ui.windows.mastermind_window import (
     BOARD_HEIGHT,
-    BOARD_PADDING,
     MastermindWindow,
 )
 from tools.desktop_test_support import create_test_desktop
@@ -123,10 +122,12 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(captions, [str(i + 1) if color is None else
                                    f'{i + 1}: {names[color]}'
                                    for i, color in enumerate(slots)])
-        self.assertGreaterEqual(canvas.winfo_height(), 64)
+        self.assertGreaterEqual(canvas.winfo_height(),
+                                    self.game.skin.scale.pixels(64))
         for item in canvas.find_withtag('solution'):
             image = canvas.itemcget(item, 'image')
-            self.assertEqual(int(canvas.tk.call('image', 'width', image)), 32)
+            self.assertEqual(int(canvas.tk.call('image', 'width', image)),
+                             self.game.skin.scale.pixels(32))
 
     def test_closing_during_opening_invalidates_the_safe_completion(self):
         completed = []
@@ -184,10 +185,13 @@ class MastermindGuiTests(unittest.TestCase):
             if source is None
             else 48 + row * 48
         )
-        widget.event_generate("<ButtonPress-1>", x=x, y=y)
+        factor = widget.ui_scale.factor
+        widget.event_generate("<ButtonPress-1>",
+                              x=round(x * factor), y=round(y * factor))
         self.pet.root.update_idletasks()
-        target_x = board.winfo_rootx() + 52 + slot * 48
-        target_y = board.winfo_rooty() + 48 + row * 48
+        target_x, target_y = map(round, board.screen_point(
+            52 + slot * 48, 48 + row * 48,
+        ))
         for event in ("<B1-Motion>", "<ButtonRelease-1>"):
             widget.event_generate(
                 event,
@@ -283,7 +287,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertFalse(self.pet._hover.game_open)
         self.assertFalse(self.pet._animated.game_mode)
 
-    def test_ten_rows_remain_scrollable_and_scale_topmost_updates_strip(self):
+    def test_ten_rows_are_visible_and_character_scale_topmost_updates_strip(self):
         for attempt in range(10):
             self.submit(("white",) * 4)
             self.clock.advance(12)
@@ -294,7 +298,6 @@ class MastermindGuiTests(unittest.TestCase):
         assert self.game._sequence is not None
         self.assertEqual(self.game._sequence.game.score.losses, 1)
         self.assertEqual(len(self.game.board.find_withtag("guess")), 40)
-        self.game.board_scroll.canvas.yview_moveto(1)
         self.pet.root.update()
         self.assertEqual(len(self.game.board.find_withtag("row")), 10)
         assert self.code.window is not None and self.code.canvas is not None
@@ -313,101 +316,31 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertEqual(self.code.canvas.winfo_width(), 296)
         self.assertIn(self.code.window, self.pet._overlay_windows())
 
-    def test_first_mapping_shows_all_ten_rows_when_body_has_room_without_input(self):
-        self.game.close()
-        game = MastermindWindow(
-            self.pet.root,
-            on_closed=lambda _summary: None,
-            codes=self.pet._game_visuals.code_ports,
-            speak=lambda *_args: None,
-            animate=lambda _clip: None,
-            emote=lambda *_args: None,
-            always_on_top=False,
-            skin=self.pet._hover._skin,
-            bounds_at=lambda _x, _y: WindowBounds(0, 0, 1920, 1440),
-        )
-        self.addCleanup(game.close)
-        # Only initial layout work; no greet, focus event, click or drag.
-        self.pet.root.update_idletasks()
-        self.clock.advance(0)
-        self.pet.root.update_idletasks()
-        outer, viewport = game._panel.scroll.canvas, game.board_scroll.canvas
-        available = (outer.winfo_height() - game.board_scroll.frame.winfo_y()
-                     - BOARD_PADDING)
-        self.assertGreaterEqual(available, BOARD_HEIGHT)
-        self.assertEqual(viewport.winfo_height(), BOARD_HEIGHT)
-        self.assertEqual(len(game.board.find_withtag("row")), 10)
-        self.assertLessEqual(game.board.winfo_rooty() + BOARD_HEIGHT,
-                             viewport.winfo_rooty() + viewport.winfo_height())
+    def test_first_mapping_shows_all_ten_rows_without_a_viewport(self):
+        self.assertEqual(len(self.game.board.find_withtag('row')), 10)
+        self.assertFalse(hasattr(self.game, 'board_scroll'))
+        factor = self.game.skin.scale.factor
+        self.assertAlmostEqual(self.game.board.winfo_height(),
+                               BOARD_HEIGHT * factor, delta=1)
+        bottom = self.game.board.winfo_rooty() + self.game.board.winfo_height()
+        self.assertLessEqual(bottom, self.game._panel.status.winfo_rooty())
 
-    def test_narrow_panel_keeps_actions_and_footer_accessible(self):
-        self.game.close()
-        game = MastermindWindow(
-            self.pet.root,
-            on_closed=lambda _summary: None,
-            codes=self.pet._game_visuals.code_ports,
-            speak=lambda *_args: None,
-            animate=lambda _clip: None,
-            emote=lambda *_args: None,
-            always_on_top=False,
-            skin=self.game.skin,
-            bounds_at=lambda _x, _y: WindowBounds(0, 0, 320, 700),
-        )
-        self.addCleanup(game.close)
-        self.pet.root.update()
-        self.assertLessEqual(game.window.winfo_width(), 320)
-        self.assertLessEqual(game.window.winfo_height(), 700)
-        self.assertLessEqual(
-            game.submit_button.winfo_x() + game.submit_button.winfo_width(),
-            game._panel.content_width,
-        )
-        self.assertTrue(game._panel.close_button.winfo_ismapped())
-        viewport = game.board_scroll.canvas
-        outer = game._panel.scroll.canvas
-        self.assertLessEqual(
-            viewport.winfo_rooty() + viewport.winfo_height(),
-            outer.winfo_rooty() + outer.winfo_height(),
-        )
-        self.assertGreaterEqual(game.palette.winfo_rooty(), outer.winfo_rooty())
-        game.greet()
-        self.clock.advance(10)
+    def test_complete_scaled_board_accepts_the_last_row_without_scrolling(self):
         for _ in range(9):
-            for _ in range(4):
-                game.choose("white")
-            game.submit()
+            self.submit(('white',) * 4)
             self.clock.advance(12)
-        self.pet.root.update()
-        self.assertEqual(
-            game._slot_at(
-                game.board.winfo_rootx() + 52, game.board.winfo_rooty() + 48 + 9 * 48
-            ),
-            0,
-        )
-        self.assertGreater(viewport.yview()[0], 0)
-        self.assertEqual(outer.yview()[0], 0)
-        original = self.game
-        try:
-            self.game = game
-            self.submit(("white",) * 4)
-            self.clock.advance(12)
-            assert game._sequence is not None
-            self.assertEqual(game._sequence.game.score.losses, 1)
-            strip = game._code_strip.canvas
-            self.assertEqual(len(strip.find_withtag('solution')), 4)
-            for item in strip.find_withtag('caption'):
-                box = strip.bbox(item)
-                assert box is not None
-                self.assertGreaterEqual(box[0], 0)
-                self.assertLessEqual(box[2], strip.winfo_width())
-        finally:
-            self.game = original
+        self.drag('red', 0)
+        self.assertEqual(self.game._draft[0], 'red')
+        point = map(round, self.game.board.screen_point(52, 480))
+        self.assertEqual(self.game._slot_at(*point), 0)
+        self.assertEqual(self.game.board.ui_scale, self.game.skin.scale)
+        self.assertEqual(self.game.palette.ui_scale, self.game.skin.scale)
+        self.assertEqual(self.game.submit_button.ui_scale, self.game.skin.scale)
 
     def test_prepared_rows_accept_only_current_row_and_keep_history(self):
         self.assertEqual(len(self.game.board.find_withtag("row")), 10)
         self.assertEqual(len(self.game.board.find_withtag("slot")), 40)
         self.assertEqual(len(self.game.board.find_withtag("feedback")), 40)
-        if self.game._panel.scroll.canvas.winfo_height() >= 700:
-            self.assertGreaterEqual(self.game.board_scroll.canvas.winfo_height(), 400)
         self.assertEqual(self.game.palette.bindtags()[0], str(self.game.palette))
         self.drag("red", 0, row=1)
         self.assertEqual(self.game._draft, [None] * 4)

@@ -14,6 +14,20 @@ from aiko_pet.infrastructure.runtime_dependencies import (
 
 
 class RuntimeDependencyTests(unittest.TestCase):
+    def test_missing_ui_image_library_is_reported_before_opening_a_session(self):
+        real_import = import_module
+
+        def missing_pillow(name):
+            if name == 'PIL.Image':
+                raise ModuleNotFoundError('PIL')
+            return real_import(name)
+
+        with patch('aiko_pet.infrastructure.runtime_dependencies.import_module',
+                   side_effect=missing_pillow):
+            with self.assertRaisesRegex(RuntimeDependencyError, 'Pillow') as raised:
+                prepare_runtime_resources()
+        self.assertIn('Aiko_installieren.bat', str(raised.exception))
+
     def test_missing_library_or_wrong_version_is_reported_before_session_creation(self):
         real_import = import_module
 

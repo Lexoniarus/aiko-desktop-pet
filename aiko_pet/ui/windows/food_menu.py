@@ -32,7 +32,7 @@ class FoodMenu(EmbeddedSelector):
         self.buttons: dict[str, ImageButton] = {}
         for choice in choices:
             button = skin.button(
-                self.scroll.body,
+                self.content.body,
                 f"{choice.name}\n{choice.benefit_label}",
                 partial(self.choose, choice.id),
                 size="menu_choice",
@@ -42,7 +42,6 @@ class FoodMenu(EmbeddedSelector):
             button.pack(fill="x", pady=2)
             button.bind("<ButtonPress-1>", partial(self._press, choice.id))
             self.buttons[choice.id] = button
-        self.scroll.adopt()
         self.refresh()
 
     def refresh(self) -> None:

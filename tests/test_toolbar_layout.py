@@ -100,44 +100,41 @@ class ToolbarLayoutTests(unittest.TestCase):
         self.assertEqual(self.toolbar._last_placement, (*expected, 688, 930))
         self.assertTrue(self.toolbar.visible)
 
-    def test_wishes_only_relayout_when_rendered_content_changes(self):
+    def test_wishes_only_repaint_changed_text_and_preserve_cards(self):
         view = project_hover(snapshot_pet(PetState(wishes=WishState(active=(
             ActiveWish(1, WishId.FACT, "fact", 0, 14400),
         ),))), context_at(1800000000), ComputerSnapshot(), observe_computer=False)
         self.view = view
         self.toolbar.refresh()
         panel = self.toolbar.wishes
-        cards = panel._scroll.body.winfo_children()
+        cards = panel._content.body.winfo_children()
         original = view.emotional.wishes[0]
 
         def refresh_wish(item):
             self.view = replace(view, emotional=replace(view.emotional, wishes=(item,)))
             self.toolbar.refresh()
 
-        with patch.object(panel._scroll, "refresh_layout") as layout:
+        meta = panel._meta[1]
+        with patch.object(meta, 'configure', wraps=meta.configure) as repaint:
             for _ in range(3):
                 self.toolbar.refresh()
-            # A precise time update still refreshes descriptions but not the
-            # identical rounded minute shown on the card.
             updated = replace(original, value=replace(original.value,
                                                       remaining_seconds=14399))
             refresh_wish(updated)
             self.assertEqual(panel._items[1].value.remaining_seconds, 14399)
-            self.assertEqual(panel._scroll.body.winfo_children(), cards)
-            layout.assert_not_called()
+            self.assertEqual(panel._content.body.winfo_children(), cards)
+            repaint.assert_not_called()
             refresh_wish(replace(updated, value=replace(updated.value,
                                                        remaining_seconds=14339)))
-            layout.assert_called_once()
-            layout.reset_mock()
-            pinned = replace(updated, value=replace(updated.value, pinned=True))
-            with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
-                refresh_wish(pinned)
-                marker.assert_called_once_with("pin", state="normal")
-            layout.assert_called_once()
-            layout.reset_mock()
-            self.view = replace(view, emotional=replace(view.emotional, wishes=()))
-            self.toolbar.refresh()
-            layout.assert_called_once()
-            layout.reset_mock()
-            self.toolbar.refresh()
-            layout.assert_not_called()
+            repaint.assert_called_once()
+        pinned = replace(updated, value=replace(updated.value, pinned=True))
+        with patch.object(panel._pin_icons[1], 'itemconfigure') as marker:
+            refresh_wish(pinned)
+            marker.assert_called_once_with('pin', state='normal')
+        self.assertEqual(panel._content.body.winfo_children(), cards)
+        self.view = replace(view, emotional=replace(view.emotional, wishes=()))
+        self.toolbar.refresh()
+        empty = panel._content.body.winfo_children()
+        self.assertNotEqual(empty, cards)
+        self.toolbar.refresh()
+        self.assertEqual(panel._content.body.winfo_children(), empty)

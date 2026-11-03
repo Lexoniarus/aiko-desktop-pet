@@ -86,7 +86,7 @@ class SpeechPresenterTests(unittest.TestCase):
             self.assertEqual(len(region.winfo_children()), 1)
             icon = region.winfo_children()[0]
             self.assertEqual(icon.cget("image"),
-                             str(self.presenter.emote_images['star']))
+                             self.presenter._scale.image(self.presenter.emote_images['star']))
             self.assertEqual(window.winfo_children(), [frame])
             self.assertFalse(any(isinstance(child, tk.Canvas)
                                  for child in frame.winfo_children()))
@@ -107,7 +107,8 @@ class SpeechPresenterTests(unittest.TestCase):
         self.assertEqual(self.presenter.pending_timer, deadline)
         self.assertIsNot(hand, spoken)
         self.assertGreaterEqual(hand.winfo_rootx(),
-                                spoken.winfo_rootx() + spoken.winfo_width() + 8)
+                                spoken.winfo_rootx() + spoken.winfo_width()
+                                + self.presenter._scale.pixels(8))
         position = hand.winfo_geometry()
         self.clock.advance(4.001)
         self.assertIsNone(self.presenter.bubble)
@@ -168,7 +169,8 @@ class SpeechPresenterTests(unittest.TestCase):
                     self.assertGreaterEqual(window.winfo_y(), 0)
                     self.assertLessEqual(window.winfo_x() + window.winfo_width(), 320)
                     self.assertLessEqual(window.winfo_y() + window.winfo_height(), 480)
-                self.assertLessEqual(spoken.winfo_x() + spoken.winfo_width() + 8,
+                self.assertLessEqual(spoken.winfo_x() + spoken.winfo_width()
+                                     + self.presenter._scale.pixels(8),
                                      hand.winfo_x())
                 label = self.presenter._game_comment_label
                 assert label is not None and label.master is not None

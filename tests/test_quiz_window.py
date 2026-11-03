@@ -91,7 +91,10 @@ class QuizWindowTests(unittest.TestCase):
             self.assertEqual(button.winfo_children(), [])
             wrap = self.skin.images.buttons.style.lookup(button.cget("style"),
                                                          "wraplength")
-            self.assertEqual(int(wrap), button.master.winfo_reqwidth() - 40)
+            self.assertAlmostEqual(
+                int(wrap), button.master.winfo_reqwidth() - self.skin.scale.pixels(40),
+                delta=1,
+            )
         self.assertFalse(game._explanation_card.frame.winfo_ismapped())
         wrong = next(i for i, answer in enumerate(sequence.game.current.answers)
                      if answer.id != sequence.game.current.correct_answer_id)
@@ -113,8 +116,8 @@ class QuizWindowTests(unittest.TestCase):
                             for button in game.answers))
         self.assertLessEqual(len(self.skin.images.buttons._styles), style_count + 1)
 
-    def test_long_answers_wrap_in_a_narrow_work_area_and_abandon_counts_nothing(self):
-        game = self.make_game(width=340)
+    def test_long_answers_share_the_global_scale_and_abandon_counts_nothing(self):
+        game = self.make_game()
         sequence = game._sequence
         assert sequence is not None
         longest = max(QuizCatalogue.load().questions,
