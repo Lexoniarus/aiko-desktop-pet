@@ -1,4 +1,4 @@
-"""Embedded selection view; the existing HoverUi owns which menu is open."""
+"""Selection content inside a docked panel; HoverUi owns which menu is open."""
 
 from __future__ import annotations
 
@@ -31,7 +31,8 @@ class EmbeddedSelector:
         self.back = skin.button(
             header, GERMAN_TEXT.format("vn.back"), self.close, size="menu_back"
         )
-        self.back.pack(side="right")
+        # Back closes this selection through the existing lifetime callback.
+        self.back.pack(side="left", padx=(0, 8))
         scaled.Label(
             header,
             text=title,
@@ -44,6 +45,11 @@ class EmbeddedSelector:
             self._surface.body, skin,
         )
         self.content.frame.pack(fill="both", expand=True)
+
+    def place_choice(self, button: tk.Widget, index: int) -> None:
+        column, row = divmod(index, 3)
+        self.content.body.grid_columnconfigure(column, weight=1, uniform="choices")
+        button.grid(row=row, column=column, sticky="nsew", padx=3, pady=3)
 
     def contains_pointer(self, x: int, y: int) -> bool:
         return not self._closed and (

@@ -124,6 +124,8 @@ class HoverUi:
     def control_windows(self) -> tuple[tk.Toplevel, ...]:
         """Back-to-front transient controls; settings remain above speech."""
         windows = [self.toolbar.window] if self.toolbar and self.toolbar.visible else []
+        if self.toolbar is not None and self.toolbar.selector_panel is not None:
+            windows.append(self.toolbar.selector_panel.window)
         if self.game_window is not None:
             windows.append(self.game_window.window)
             for child in self.game_window.window.winfo_children():
@@ -133,14 +135,23 @@ class HoverUi:
 
     def _interact(self, action: str) -> None:
         if action == "place_item":
-            self.open_food_menu()
+            if self.food_menu is not None:
+                self.close_food_menu("explicit")
+            else:
+                self.open_food_menu()
             return
         if action == "talk" and self._ports.social_selected is not None:
-            self.open_social_menu()
+            if self.social_menu is not None:
+                self.close_social_menu("explicit")
+            else:
+                self.open_social_menu()
             return
         self.close_social_menu()
         if action == "play":
-            self.open_game_menu()
+            if self.game_menu is not None:
+                self.close_game_menu("explicit")
+            else:
+                self.open_game_menu()
         elif not self.game_open and self._ports.can_interact(action):
             self._ports.care(action)
 
@@ -154,7 +165,7 @@ class HoverUi:
             self._ports.place_item(food_id)
 
     def open_food_menu(self) -> None:
-        """Reuse one embedded placement view; no domain mutations before choice."""
+        """Reuse one docked placement view; no domain mutations before choice."""
         if self._ports.place_item is None:
             return
         self.close_social_menu()
@@ -165,13 +176,14 @@ class HoverUi:
         self.show_toolbar()
         assert self.toolbar is not None
         self.food_menu = FoodMenu(
-            self.toolbar.selector_parent(self.close_food_menu),
+            self.toolbar.selector_parent(self.close_food_menu, action="place_item"),
             choices=self._ports.food_choices,
             selected=self._food_selected,
             closed=self._food_menu_closed,
             skin=self._skin,
             can_select=self._ports.can_place_item,
         )
+        self.toolbar.show_selector()
         self.food_menu.focus()
         self._ports.restore_stack()
 
@@ -219,7 +231,7 @@ class HoverUi:
         self.show_toolbar()
         assert self.toolbar is not None
         self.game_menu = GameMenu(
-            self.toolbar.selector_parent(self.close_game_menu),
+            self.toolbar.selector_parent(self.close_game_menu, action="play"),
             choices=(GameId.ROCK_PAPER_SCISSORS,)
             + ((GameId.BLACKJACK,) if self._ports.cards is not None else ())
             + (GameId.TIC_TAC_TOE, GameId.CONNECT_FOUR)
@@ -230,6 +242,7 @@ class HoverUi:
             skin=self._skin,
             can_select=lambda: not self.game_open and self._ports.can_interact("play"),
         )
+        self.toolbar.show_selector()
         self.game_menu.focus()
         self._ports.restore_stack()
 
@@ -398,7 +411,7 @@ class HoverUi:
         self.show_toolbar()
         assert self.toolbar is not None
         self.social_menu = SocialMenu(
-            self.toolbar.selector_parent(self.close_social_menu),
+            self.toolbar.selector_parent(self.close_social_menu, action="talk"),
             selected=self._social_selected,
             closed=self._social_menu_closed,
             enabled=self._ports.social_enabled,
@@ -408,6 +421,7 @@ class HoverUi:
             can_place_item=self._ports.can_place_item,
             skin=self._skin,
         )
+        self.toolbar.show_selector()
         self.social_menu.focus()
         self._ports.restore_stack()
 
@@ -460,6 +474,7 @@ class HoverUi:
                 ),
                 always_on_top=self._ports.always_on_top(),
                 skin=self._skin,
+                bounds_at=self._ports.game_bounds_at,
             )
         self.toolbar.set_pinned(self._keep_open)
         self.toolbar.show()
@@ -521,6 +536,8 @@ class HoverUi:
             self.settings_window.close()
 
     def set_topmost(self, enabled: bool) -> None:
+        if self.toolbar is not None and self.toolbar.selector_panel is not None:
+            self.toolbar.selector_panel.window.wm_attributes("-topmost", enabled)
         if self._ports.cards is not None:
             self._ports.cards.set_topmost(enabled)
         if self._ports.codes is not None:
@@ -556,6 +573,7 @@ class HoverUi:
         toolbar = self.toolbar
         return bool(toolbar is not None and toolbar.visible and (
             toolbar.contains_pointer(x, y) or toolbar.contains_bridge(x, y)
+            or toolbar.contains_selector_pointer(x, y)
         ))
 
     def pointer_inside(self, x: int, y: int) -> bool:
@@ -564,6 +582,7 @@ class HoverUi:
         toolbar = self.toolbar
         over_toolbar = toolbar is not None and (
             toolbar.contains_pointer(x, y) or toolbar.contains_bridge(x, y)
+            or toolbar.contains_selector_pointer(x, y)
         )
         return bool(over_sprite or over_toolbar or self._ports.sprite_access(x, y))
 

@@ -41,7 +41,7 @@ class SocialMenu(EmbeddedSelector):
         self._horoscope_choice = horoscope_choice
         self._can_place_item = can_place_item
         self.buttons: dict[SocialCategory | None, ImageButton] = {}
-        for category in (None, *SocialCategory):
+        for index, category in enumerate((None, *SocialCategory)):
             key = (
                 "social.plain" if category is None else f"social.name.{category.value}"
             )
@@ -58,7 +58,7 @@ class SocialMenu(EmbeddedSelector):
                 icon=skin.images.icon(icon, 24),
                 align_left=True,
             )
-            button.pack(fill="x", pady=2)
+            self.place_choice(button, index)
             if category == SocialCategory.HOROSCOPE:
                 button.bind("<ButtonPress-1>", self._book_press)
             self.buttons[category] = button
@@ -70,7 +70,7 @@ class SocialMenu(EmbeddedSelector):
             wraplength=215,
             justify="left",
         )
-        self.status.pack(fill="x", pady=4)
+        self.status.grid(row=3, column=0, columnspan=2, sticky="ew", pady=4)
         self.refresh()
 
     def _book_press(self, _event: tk.Event) -> str:

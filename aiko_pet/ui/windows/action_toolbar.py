@@ -14,12 +14,14 @@ from ..common.description_tip import DescriptionTip
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..common.status_readout import StatusReadout
-from ..common.window_drag import WindowDrag
+from ..common.window_drag import WindowDrag, bounded_position
+from ..common.window_geometry import BoundsAt
 from ..view_models.contracts import HoverAnchor, HoverSnapshot, StatusSnapshot
 from ..view_models.food_models import FoodChoice
 from .hover_contracts import HoverActions, SelectorCloseReason
 from .hover_geometry import HoverGeometry, Rect
 from .moodlet_strip import MoodletStrip
+from .selector_panel import SelectorPanel
 from .toolbar_details import ToolbarDetails
 from .wish_panel import WishPanel
 
@@ -46,6 +48,7 @@ class ActionToolbar:
         skin: AikoSkin | None = None,
         status_snapshot: Callable[[], StatusSnapshot] | None = None,
         food_choices: tuple[FoodChoice, ...] = (),
+        bounds_at: BoundsAt | None = None,
     ) -> None:
         self.root, self._snapshot, self._anchor, self._actions = (
             root,
@@ -54,6 +57,7 @@ class ActionToolbar:
             actions,
         )
         self.skin = skin if skin is not None else AikoSkin(root)
+        self._bounds_at = bounds_at
         self.font_family = self.skin.font
         self.window = tk.Toplevel(root)
         self.window.withdraw()
@@ -230,7 +234,10 @@ class ActionToolbar:
         self._details_open = False
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
+        self._placement_anchor: HoverAnchor | None = None
         self._selector_closed: Callable[[SelectorCloseReason], None] | None = None
+        self.selector_panel: SelectorPanel | None = None
+        self._selector_action: str | None = None
         self.window.bind("<Configure>", self._configured, add="+")
         self.window.bind("<Escape>", lambda _e: self.close_selector())
 
@@ -300,18 +307,41 @@ class ActionToolbar:
 
     def selector_parent(
         self, closed: Callable[[SelectorCloseReason], None],
+        *, action: str | None = None,
     ) -> tk.Frame:
         self.close_selector("navigation")
         self.tips.hide()
-        self.actions_frame.pack_forget()
         self._selector_closed = closed
-        return self.interaction_column
+        self._selector_action = action
+        if action is not None:
+            self.buttons[action].set_selected(True)
+        self.selector_panel = SelectorPanel(
+            self.window, self.skin, closed=self.close_selector,
+            bounds_at=self._bounds_at,
+            anchor=self.buttons.get(action) if action is not None else None,
+        )
+        return self.selector_panel.body
+
+    def show_selector(self) -> None:
+        if self.selector_panel is not None:
+            self.selector_panel.show()
 
     def close_selector(self, reason: SelectorCloseReason = "explicit") -> None:
         callback, self._selector_closed = self._selector_closed, None
-        if callback is not None:
-            callback(reason)
-        self.actions_frame.pack(fill="both", expand=True)
+        panel, self.selector_panel = self.selector_panel, None
+        action, self._selector_action = self._selector_action, None
+        if action is not None:
+            self.buttons[action].set_selected(False)
+        try:
+            if callback is not None:
+                callback(reason)
+        finally:
+            if panel is not None:
+                panel.close()
+
+    def contains_selector_pointer(self, x: int, y: int) -> bool:
+        return bool(self.visible and self.selector_panel is not None
+                    and self.selector_panel.contains_pointer(x, y))
 
     def refresh(self) -> None:
         self.refresh_actions()
@@ -383,6 +413,8 @@ class ActionToolbar:
         # window allocation needs a placement correction after Tk settles it.
         if event.widget is self.window and self.visible:
             self.place()
+            if self.selector_panel is not None:
+                self.selector_panel.place()
 
     def place(self) -> None:
         """Read current geometry without draining unrelated World idle work."""
@@ -390,13 +422,24 @@ class ActionToolbar:
             return
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
+        anchor = self._anchor()
         x, y = HoverGeometry.placement(
-            self._anchor(),
+            anchor,
             width,
             height,
             self.root.winfo_screenwidth(),
             self.root.winfo_screenheight(),
         )
+        if self.visible and self._last_placement is not None and (
+            anchor == self._placement_anchor
+        ):
+            # Changing an embedded menu must not flip the toolbar to the other
+            # side of Aiko underneath the opening click or its release.
+            x, y = bounded_position(
+                *self._last_placement[:2], width, height,
+                self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
+            )
+        self._placement_anchor = anchor
         placement = x, y, width, height
         if placement != self._last_placement:
             self.window.geometry(f"+{x}+{y}")

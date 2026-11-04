@@ -26,6 +26,31 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class MainMenuLayoutTests(unittest.TestCase):
+    def test_back_click_closes_docked_panel_without_changing_toolbar(self):
+        from aiko_pet.infrastructure.item_assets import load_item_catalog
+        from aiko_pet.ui.view_models.food_models import food_choices
+        from aiko_pet.ui.windows.food_menu import FoodMenu
+
+        before = self.toolbar.window.winfo_geometry()
+        menu = FoodMenu(
+            self.toolbar.selector_parent(lambda _reason: None),
+            choices=food_choices(load_item_catalog()), selected=Mock(),
+            closed=self.toolbar.close_selector, skin=self.skin, can_select=lambda: True,
+        )
+        self.addCleanup(menu.close)
+        self.root.update()
+        x = menu.back.winfo_rootx() + menu.back.winfo_width() // 2
+        y = menu.back.winfo_rooty() + menu.back.winfo_height() // 2
+        for event in ('<Enter>', '<ButtonPress-1>', '<ButtonRelease-1>'):
+            menu.back.event_generate(event, x=menu.back.winfo_width() // 2,
+                                     y=menu.back.winfo_height() // 2)
+        self.root.update()
+        self.assertTrue(menu._closed)
+        self.assertFalse(self.toolbar.contains_selector_pointer(x, y))
+        self.assertIsNone(self.toolbar.selector_panel)
+        self.assertEqual(self.toolbar.window.winfo_geometry(), before)
+        self.assertTrue(self.toolbar.actions_frame.winfo_ismapped())
+
     def test_every_action_has_full_visible_bounds_and_accepts_native_clicks(self):
         for action, button in self.toolbar.buttons.items():
             with self.subTest(action=action):
@@ -141,12 +166,16 @@ class MainMenuLayoutTests(unittest.TestCase):
     def test_selector_retains_geometry_and_uses_panel_art(self) -> None:
         before = self.toolbar.window.winfo_geometry()
         menu = GameMenu(
-            self.toolbar.selector_parent(lambda _reason: None), choices=tuple(GameId),
-            selected=Mock(), closed=Mock(), skin=self.skin, can_select=lambda: True,
+            self.toolbar.selector_parent(lambda _reason: None),
+            choices=tuple(GameId),
+            selected=Mock(),
+            closed=Mock(),
+            skin=self.skin,
+            can_select=lambda: True,
         )
         self.addCleanup(menu.close)
         self.root.update()
-        self.assertEqual(self.toolbar.window.winfo_width(), int(before.split("x")[0]))
+        self.assertEqual(self.toolbar.window.winfo_geometry(), before)
         self.assertIs(menu.content.frame.ui_scale, self.skin.scale)
         self.assertIsNotNone(menu._surface._image)
         # The entire selector grows naturally; every choice remains visible.
@@ -159,7 +188,8 @@ class MainMenuLayoutTests(unittest.TestCase):
         )
         for button in menu.buttons.values():
             self.assertLessEqual(
-                button.winfo_width(), menu.content.frame.winfo_width(),
+                button.winfo_width(),
+                menu.content.frame.winfo_width(),
             )
 
     def test_many_moodlets_wrap_without_a_scroll_view(self) -> None:

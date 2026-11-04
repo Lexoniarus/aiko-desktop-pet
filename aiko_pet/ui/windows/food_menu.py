@@ -30,7 +30,7 @@ class FoodMenu(EmbeddedSelector):
         )
         self._selected, self._can_select = selected, can_select
         self.buttons: dict[str, ImageButton] = {}
-        for choice in choices:
+        for index, choice in enumerate(choices):
             button = skin.button(
                 self.content.body,
                 f"{choice.name}\n{choice.benefit_label}",
@@ -39,7 +39,7 @@ class FoodMenu(EmbeddedSelector):
                 icon=skin.images.file(choice.image_path, 32),
                 align_left=True,
             )
-            button.pack(fill="x", pady=2)
+            self.place_choice(button, index)
             button.bind("<ButtonPress-1>", partial(self._press, choice.id))
             self.buttons[choice.id] = button
         self.refresh()

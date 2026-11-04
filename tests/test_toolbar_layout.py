@@ -13,6 +13,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
+from aiko_pet.ui.common.window_drag import bounded_position
 from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.projections import project_hover
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
@@ -66,6 +67,8 @@ class ToolbarLayoutTests(unittest.TestCase):
     def test_settled_window_resize_repositions_once_and_ignores_child_events(self):
         self.toolbar.show()
         window = cast(Any, self.toolbar.window)
+        initial = self.toolbar._last_placement
+        assert initial is not None
         configure = window.bindings.get("<Configure>")
         self.assertIsNotNone(configure)
         with patch.object(window, "winfo_reqwidth", return_value=688), \
@@ -74,7 +77,7 @@ class ToolbarLayoutTests(unittest.TestCase):
             configure(Mock(widget=self.toolbar.today))
             geometry.assert_not_called()
             configure(Mock(widget=window))
-            expected = HoverGeometry.placement(self.anchor, 688, 930, 1920, 1080)
+            expected = bounded_position(*initial[:2], 688, 930, 1920, 1080)
             geometry.assert_called_once_with(f"+{expected[0]}+{expected[1]}")
             configure(Mock(widget=window))
             geometry.assert_called_once()

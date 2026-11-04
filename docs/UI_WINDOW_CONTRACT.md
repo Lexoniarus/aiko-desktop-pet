@@ -34,14 +34,32 @@ reset behavior remain unchanged.
 
 `SettingsWindow` is a persistent, nonmodal, independently movable window
 styled with the shared rose/blue VN controls. Its Darstellung, Verhalten,
-Lokale Daten and Credits navigation stays available beside a scrolling page.
-Scale uses two projected 1×/2× segments. Existing eight native checkboxes show
+Lokale Daten and Credits navigation stays available beside a naturally sized page.
+Aiko size uses two projected 1×/2× segments; the separate UI-Größe preference
+changes all open views immediately using the shared factor. Existing eight native checkboxes show
 An/Aus and apply immediately; there is no new preference store or Save action. Outside clicks, changing an option,
 moving Aiko, hiding the hover toolbar, and resizing Aiko do not close or move
 settings. Explicitly invoking settings again focuses its one existing instance.
 Close or Escape only closes settings. Reopening it in the same running session
-uses its last position and clamps it to the available screen; no save-file
-migration is needed.
+uses its last position and clamps it to the available screen. UI-Größe persists
+through the existing settings store with schema migration 5 (default 100%).
+
+Snack, game and conversation selectors arrange choices in three rows followed
+by further columns inside one toolbar-owned, frameless docked panel. Opening,
+switching or closing this panel never changes the toolbar's requested size or
+replaces its action column. The active category stays marked; clicking it again
+closes its panel, while another category replaces the open selection. The panel
+prefers the toolbar's right side and aligns its top with the invoking category
+button (Snacks, Spielen or Unterhalten). It uses the left when space is limited,
+clamps vertically to the monitor work area when necessary, and follows toolbar
+movement and live UI scaling. It has
+no independent title bar or drag position. Its window and narrow access seam
+belong to the toolbar's hover/input area. Back, Escape and outside clicks close
+the panel; hiding or destroying the toolbar also cleans it up. Existing explicit
+versus passive social-cancellation rules still apply. Opening a menu must not
+move its toolbar beneath the opening click. Conversation and game text share the same bubble
+surface; emoji artwork keeps its own bubble without a second shell. Filtered
+binary cutouts preserve binary alpha for Windows color-key transparency.
 
 ## OOP responsibilities
 
@@ -49,6 +67,7 @@ migration is needed.
 | --- | --- |
 | `ui/windows/hover_ui.py` | One owner of the toolbar pin, automatic visibility, settings/game instances and passive pointer geometry |
 | `ui/windows/action_toolbar.py` | One cohesive toolbar view and pin-button rendering, including expandable local details |
+| `ui/windows/selector_panel.py` | Toolbar-owned docked selection shell, independent size, monitor placement and access seam |
 | `ui/windows/toolbar_details.py` | Detached status display inside the toolbar; no duplicate care actions |
 | `ui/windows/settings_window.py` | Window geometry and controls, reading snapshots and invoking callbacks |
 | `ui/common/skin.py` | Shared colors, Kenney image ownership, font selection, common control factories |
@@ -75,7 +94,7 @@ been saved; visibility pinning does not pin its position. See the
 
 ### Conversations
 
-`Unterhalten` replaces the right interaction column with an embedded selector
+`Unterhalten` opens a docked selector beside the unchanged toolbar
 for Plaudern, API Single, API Two Parts and facts. `HoverUi` still owns its
 lifetime and admission. Loading/error/opt-out text uses the existing social
 snapshot, without another request queue. Automatic hiding and navigation to a
@@ -103,7 +122,7 @@ pending-action marker. See [social content](SOCIAL_CONTENT.md).
 
 ### Games
 
-`Spielen` opens an embedded right-column selector for RPS, Blackjack,
+`Spielen` opens a docked selector for RPS, Blackjack,
 Tic-Tac-Toe, Vier gewinnt and Mastermind.
 Escape/outside dismissal closes the selector without starting play. Selection
 uses the existing contact admission and World interruption; one pending token
@@ -113,12 +132,12 @@ The toolbar belongs to the selector's interaction area: delayed focus checks
 and global polling of the opening click must leave the selector open while
 the pointer is still on the toolbar. A click outside both dismisses it.
 
-`HoverUi` owns the one active game through `GameWindow`. Embedded selectors
-are frames in the toolbar, not extra control windows. Their geometry leaves
-the summary, Moodlets, wishes and left readouts in place. Game
+`HoverUi` owns the one active game through `GameWindow`. Selector contents
+are frames in the toolbar-owned popup, included in the existing overlay stack.
+Their geometry leaves the summary, Moodlets, wishes and left readouts unchanged. Game
 sequences cancel timers before closing; one summary is credited before final
 save. Scores, boards and decks never enter the save.
-All player windows retain their `WM_DELETE_WINDOW` handlers. Embedded
+All player windows retain their `WM_DELETE_WINDOW` handlers. Docked
 selectors use their existing close callbacks through Zurück/Escape instead. Failed
 Tic-Tac-Toe/Connect Four/Mastermind construction destroys its partial panel without reporting a
 completed session; `HoverUi` still owns releasing the pending/mode state.

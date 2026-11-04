@@ -31,7 +31,7 @@ class GameMenu(EmbeddedSelector):
         )
         self._selected, self._can_select = selected, can_select
         self.buttons: dict[GameId, ImageButton] = {}
-        for game in choices:
+        for index, game in enumerate(choices):
             image = (
                 skin.images.file(GAME_FILES[game.value], 40)
                 if game.value in GAME_FILES
@@ -45,7 +45,7 @@ class GameMenu(EmbeddedSelector):
                 icon=image,
                 align_left=True,
             )
-            button.pack(fill="x", pady=4)
+            self.place_choice(button, index)
             self.buttons[game] = button
         self.refresh()
 
