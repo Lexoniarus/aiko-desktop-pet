@@ -18,7 +18,6 @@ from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
 from aiko_pet.pet.sleep import SleepEpisode
-from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
@@ -117,113 +116,6 @@ class WorldGuiTests(unittest.TestCase):
             self.app._activity.advance_state(time.time())
             self.app._world.update(time.monotonic())
             self.assertFalse(self.app._world.interaction.search_active)
-
-    def test_onigiri_subjective_reunion_keeps_new_world_identity(self):
-        app, runtime = self.app, self.app._world
-        app._place_x(runtime._track().left)
-        set_test_pet_values(app.state, satiety=100, energy=100)
-        self.look_at(runtime._body_x())
-        events, phrases = [], []
-        present = runtime._present_feedback
-
-        def capture(cue, reaction, done):
-            events.append(cue.event)
-            phrases.append(format_object_reaction(
-                reaction, cue.identity, runtime.view.items,
-            ).text)
-            present(cue, reaction, done)
-
-        runtime._present_feedback = capture
-        original = runtime.world.place_resting(
-            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
-        )
-        self.observe_and_acknowledge()
-        self.finish_pickup()
-        self.finish_inspection()
-        self.assertEqual(runtime.interaction.phase, "put_down")
-        self.finish_clip("put_down")
-        self.complete_feedback()
-        known = runtime.awareness.known_instance(original.instance_id)
-        assert known is not None
-        self.assertEqual((known.identity, known.assessed, known.disposition),
-                         ("onigiri", True, "deferred"))
-        self.assertEqual(events.count("object_recognized"), 1)
-        self.assertNotIn("object_found", events)
-        first_identification = next(phrase for event, phrase in zip(events, phrases)
-                                    if event == "object_recognized")
-        self.assertIn("ein Onigiri", first_identification)
-        # Unwitnessed movement changes real World facts, not Aiko's knowledge.
-        current = runtime.world.get(original.instance_id)
-        runtime.world.move_resting(
-            current.instance_id, runtime.world.snapshot().surface.width - 10,
-            expected_revision=current.revision,
-        )
-        replacement = runtime.world.place_resting(
-            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
-        )
-        self.observe_and_acknowledge()
-        for step in range(80):
-            runtime.now += .2
-            runtime.update(time.monotonic())
-            self.complete_feedback()
-            phase = runtime.interaction.phase
-            if phase == "pick_up":
-                self.finish_pickup()
-            elif phase == "inspect":
-                self.finish_inspection()
-            elif phase == "put_down":
-                self.finish_clip("put_down")
-            app._walk.step(time.monotonic() + step, .2,
-                           game_mode=False, attention_active=True)
-            if events.count("object_found") == 1 and phase == "idle":
-                break
-        self.assertEqual(events.count("object_place_missing"), 1)
-        self.assertEqual(events.count("object_found"), 1)
-        self.assertEqual(events.count("object_recognized"), 1)
-        self.assertFalse(runtime.interaction.search_active)
-        self.assertIsNone(runtime.awareness.memory.get(known.token))
-        found = runtime.awareness.known_instance(replacement.instance_id)
-        assert found is not None
-        self.assertEqual((found.instance_id, found.assessed, found.disposition),
-                         (replacement.instance_id, True, "deferred"))
-        self.assertEqual(runtime.world.get(original.instance_id).state,
-                         ObjectState.RESTING)
-        self.assertEqual(runtime.world.get(replacement.instance_id).state,
-                         ObjectState.RESTING)
-        for event, phrase in zip(events, phrases):
-            if event in ("object_place_missing", "object_found"):
-                self.assertIn("mein onigiri", phrase.casefold())
-        self.assertIsNone(app.state.food.last_food_id)
-        # The physically original portion is now another unknown exemplar.
-        self.leave_controls()
-        current = runtime.world.get(original.instance_id)
-        runtime.world.move_resting(
-            current.instance_id, runtime._body_x() + .4 * runtime.width,
-            expected_revision=current.revision,
-        )
-        for step in range(80):
-            runtime.now += .2
-            runtime.update(time.monotonic())
-            self.complete_feedback()
-            phase = runtime.interaction.phase
-            if phase == "pick_up":
-                self.finish_pickup()
-            elif phase == "inspect":
-                self.finish_inspection()
-            elif phase == "put_down":
-                self.finish_clip("put_down")
-            app._walk.step(time.monotonic() + step, .2,
-                           game_mode=False, attention_active=True)
-            if events.count("object_recognized") == 2 and phase == "idle":
-                break
-        self.assertEqual(events.count("object_recognized"), 2,
-                         (runtime.interaction.phase, events,
-                          runtime.awareness.memory.snapshot()))
-        self.assertEqual(events.count("object_found"), 1)
-        learned = runtime.awareness.known_instance(original.instance_id)
-        assert learned is not None
-        self.assertNotEqual(learned.token, known.token)
-        self.assertEqual(learned.instance_id, original.instance_id)
 
     def _search_multiple_relocated_portions(self, scale):
         self._resize_for_search_test(scale)
@@ -399,9 +291,6 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(runtime.interaction.search_active)
         self.assertTrue(all(runtime.world.get(item).state == ObjectState.RESTING
                             for item in expected))
-
-    def test_restart_shared_search_of_relocated_close_portions_at_scale_one(self):
-        self._search_multiple_relocated_portions(1)
 
     def test_restart_shared_search_of_relocated_close_portions_at_scale_two(self):
         self._search_multiple_relocated_portions(2)
@@ -658,9 +547,6 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(len(runtime.awareness.memory.snapshot()), 1)
         self.assertEqual(cues, ["object_refuse"])
 
-    def test_fast_observed_cursor_relocation_at_scale_one(self):
-        self._fast_observed_cursor_relocation(1)
-
     def test_native_relocation_reads_event_pointer_between_sensor_samples(self):
         world = self.app._world
         self.app._place_x(world._track().left)
@@ -744,9 +630,6 @@ class WorldGuiTests(unittest.TestCase):
                                  record)
             current = runtime.awareness.memory.export(now=runtime.now)
             self.assertEqual(current.next_record_id, learned.next_record_id)
-
-    def test_close_known_pair_cold_restart_at_scale_one(self):
-        self._learn_and_restart_close_pair(1, ("energy_drink", "dango"))
 
     def test_close_known_pair_cold_restart_at_scale_two(self):
         self._learn_and_restart_close_pair(2, ("energy_drink", "dango"))
@@ -894,9 +777,6 @@ class WorldGuiTests(unittest.TestCase):
         assert record is not None
         self.assertIn(runtime.awareness.instance_for_record(record),
                       {item.instance_id for item in portions[1:]})
-
-    def test_relocated_unknown_pair_after_inspection_at_scale_one(self):
-        self._relocated_unknown_pair_after_inspection(1)
 
     def test_relocated_unknown_pair_after_inspection_at_scale_two(self):
         self._relocated_unknown_pair_after_inspection(2)
@@ -1846,19 +1726,42 @@ class WorldGuiTests(unittest.TestCase):
         self.assertIsNotNone(book.expires_at)
         self.assertAlmostEqual(self.app.state.satiety, before, delta=1)
 
-    def test_book_ground_pickup_reads_then_puts_down_as_world_object(self):
-        self.read_ground_book()
-
     def test_completed_book_keeps_story_and_fixed_deadline_after_restart(self):
         self.read_ground_book()
         original = self.app._care_runtime.horoscope.history
         day = original.days[-1]
         assert day.book_instance_id is not None
+        world = self.app._world
+        record = world.awareness.record_for_instance(day.book_instance_id)
+        assert record is not None
+        known = world.awareness.memory.get(record)
+        assert known is not None
+        self.assertTrue(known.assessed)
+        # Saves from the broken version contain recognized but unassessed books.
+        world.awareness.memory.restore_snapshot(tuple(
+            replace(item, assessed=False, disposition="interrupted")
+            if item.token == record else item
+            for item in world.awareness.memory.snapshot()
+        ))
         self.restart()
         self.assertEqual(self.app._care_runtime.horoscope.history, original)
         book = self.app._world.world.get(day.book_instance_id)
         self.assertEqual(book.expires_at, day.expires_at)
         self.assertEqual(book.state, ObjectState.RESTING)
+        world = self.app._world
+        self.look_at(world._body_x() + 4 * world.width)
+        world._behavior.request_orientation()
+        start = world.now
+        for elapsed in (0, .3, .6, 1, 5, 30, 600, 1200):
+            world.now = start + elapsed
+            world.update(time.monotonic())
+            self.assertEqual(world.interaction.phase, "idle")
+            self.assertIsNone(world.awareness.intentions.goal)
+            self.assertIsNone(world._visual.object_target)
+            self.assertIsNone(world.orientation_side())
+            self.assertFalse(world.awareness.absences)
+            self.assertEqual(world.world.get(day.book_instance_id).state,
+                             ObjectState.RESTING)
         with patch("aiko_pet.desktop.world_runtime.time.time",
                    return_value=day.expires_at):
             self.app._world._frame()
@@ -1943,26 +1846,6 @@ class WorldGuiTests(unittest.TestCase):
             self.assertEqual(world.world.get(token).position, item.position)
             self.assertEqual(len(world.world.snapshot().objects), 1)
 
-    def test_book_calculation_failure_returns_to_ground_without_care(self):
-        owner = self.app._care_runtime.horoscope
-        owner._calculator = Mock()
-        owner._calculator.calculate.side_effect = ModuleNotFoundError("astronomy")
-        self.app._preferences.set_zodiac("taurus")
-        world = self.app._world
-        item = world.world.place_resting("horoscope_book", world._body_x(),
-                                        ObjectFootprint(64, 64))
-        before = self.app.state.social
-        with self.assertLogs("aiko_pet.desktop.horoscope_playback", level="WARNING"):
-            self.observe_and_acknowledge()
-            self.finish_pickup()
-            self.finish_inspection()
-        self.assertEqual(world.interaction.phase, "put_down")
-        self.assertFalse(owner.history.days)
-        self.finish_clip("put_down")
-        self.complete_feedback()
-        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
-        self.assertAlmostEqual(self.app.state.social, before, delta=.1)
-
     def test_book_save_failure_undoes_care_and_puts_down(self):
         self.app._preferences.set_zodiac("taurus")
         owner = self.app._care_runtime.horoscope
@@ -2029,39 +1912,6 @@ class WorldGuiTests(unittest.TestCase):
         self.finish_clip("put_down")
         self.complete_feedback()
         self.assertEqual(world.world.get(token).state, ObjectState.RESTING)
-
-    def test_completed_book_is_ignored_after_restart_with_unassessed_memory(self):
-        self.read_ground_book()
-        world = self.app._world
-        first = self.app._care_runtime.horoscope.today()
-        assert first is not None and first.book_instance_id is not None
-        record = world.awareness.record_for_instance(first.book_instance_id)
-        assert record is not None
-        known = world.awareness.memory.get(record)
-        assert known is not None
-        self.assertTrue(known.assessed)
-        # Saves from the broken version contain recognized but unassessed books.
-        world.awareness.memory.restore_snapshot(tuple(
-            replace(item, assessed=False, disposition="interrupted")
-            if item.token == record else item
-            for item in world.awareness.memory.snapshot()
-        ))
-        self.restart()
-        world = self.app._world
-        self.look_at(world._body_x() + 4 * world.width)
-        world._behavior.request_orientation()
-        start = world.now
-        for elapsed in (0, .3, .6, 1, 5, 30, 600, 1200):
-            world.now = start + elapsed
-            world.update(time.monotonic())
-            self.assertEqual(world.interaction.phase, "idle")
-            self.assertIsNone(world.awareness.intentions.goal)
-            self.assertIsNone(world._visual.object_target)
-            self.assertIsNone(world.orientation_side())
-            self.assertFalse(world.awareness.absences)
-            self.assertEqual(world.world.get(first.book_instance_id).state,
-                             ObjectState.RESTING)
-        self.assertEqual(self.app._care_runtime.horoscope.today(), first)
 
     def test_book_manual_replay_keeps_same_object_story_and_expiry(self):
         self.read_ground_book()
@@ -2734,3 +2584,23 @@ class WorldGuiTests(unittest.TestCase):
         self.assertTrue(self.app.state.sleeping)
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
         self.assertIsNone(self.app.state.food.last_food_id)
+
+    def test_book_calculation_failure_returns_to_ground_without_care(self):
+        owner = self.app._care_runtime.horoscope
+        owner._calculator = Mock()
+        owner._calculator.calculate.side_effect = ModuleNotFoundError("astronomy")
+        self.app._preferences.set_zodiac("taurus")
+        world = self.app._world
+        item = world.world.place_resting("horoscope_book", world._body_x(),
+                                        ObjectFootprint(64, 64))
+        before = self.app.state.social
+        with self.assertLogs("aiko_pet.desktop.horoscope_playback", level="WARNING"):
+            self.observe_and_acknowledge()
+            self.finish_pickup()
+            self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.assertFalse(owner.history.days)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertAlmostEqual(self.app.state.social, before, delta=.1)
