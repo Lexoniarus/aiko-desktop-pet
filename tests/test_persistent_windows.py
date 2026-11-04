@@ -172,6 +172,9 @@ class PersistentWindowTests(unittest.TestCase):
         self.assertFalse(bar.visible)
         self.assertIs(self.pet._hover.settings_window, window)
         self.assertTrue(window.window.winfo_exists())
+        self.pet._hover.show_toolbar()
+        self.assertTrue(bar.visible)
+        self.assertIs(self.pet._hover.settings_window, window)
 
     def test_settings_reopen_focuses_existing_instance(self) -> None:
         window = self.settings()
