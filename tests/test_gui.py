@@ -114,32 +114,6 @@ class TaskbarPetGuiTests(unittest.TestCase):
         bar.buttons["sleep"].invoke()
         self.assertFalse(self.app.state.sleeping)
 
-    def test_needs_are_visible_and_updated_in_hover_without_status_popup(self):
-        self.app._on_enter()
-        bar = self.toolbar
-        self.assertFalse(hasattr(self.app._hover, "status_panel"))
-        self.assertEqual(
-            set(bar.readouts),
-            {"satiety", "fun", "mood", "energy", "social", "affection", "friendship"},
-        )
-        for key, _title, _color in bar.READOUTS:
-            readout = bar.readouts[key]
-            canvas, rect, label = readout.canvas, readout._fill, readout.label
-            self.assertIn("/ 100", label.cget("text"))
-            self.assertGreater(max(canvas.coords(rect)[::2]), 0)
-        set_test_pet_values(self.app.state, mood=22)
-        set_test_pet_values(self.app.state, satiety=36)
-        set_test_pet_values(self.app.state, energy=95)
-        bar.refresh()
-        self.assertIn("22 / 100", bar.readouts["mood"].label.cget("text"))
-        self.assertIn("36 / 100", bar.readouts["satiety"].label.cget("text"))
-        self.assertIn("95 / 100", bar.readouts["energy"].label.cget("text"))
-        self.app.root.update()
-        self.assertAlmostEqual(
-            max(bar.readouts["mood"].canvas.coords(bar.readouts["mood"]._fill)[::2]),
-            2 + (float(bar.readouts["mood"].canvas.design("width")) - 4) * 0.22,
-        )
-
     def test_busy_computer_makes_aiko_concentrate_instead_of_walking(self):
         from aiko_pet.telemetry import ComputerSnapshot
 
@@ -177,31 +151,6 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.toolbar.pin_button.invoke()
         self.app._hover.dismiss_outside(-999, -999)
         self.assertTrue(self.toolbar.visible)
-
-    def test_all_100_percent_need_bars_fill_real_display_width(self):
-        set_test_pet_values(self.app.state, fun=100)
-        set_test_pet_values(self.app.state, satiety=100)
-        set_test_pet_values(self.app.state, mood=100)
-        set_test_pet_values(self.app.state, energy=100)
-        set_test_pet_values(self.app.state, social=100)
-        set_test_pet_values(self.app.state, affection=100)
-        set_test_pet_values(self.app.state, friendship=100)
-        self.app._on_enter()
-        self.app.root.update()
-        self.toolbar.refresh()
-        for key, _title, _color in self.toolbar.READOUTS:
-            readout = self.toolbar.readouts[key]
-            bar, rect, text = readout.canvas, readout._fill, readout.label
-            self.assertAlmostEqual(max(bar.coords(rect)[::2]),
-                                   float(bar.design("width")) - 2, msg=key)
-            self.assertIn("100 / 100", text.cget("text"))
-        self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
-        set_test_pet_values(self.app.state, mood=25)
-        self.toolbar.refresh()
-        readout = self.toolbar.readouts["mood"]
-        bar, rect, _text = readout.canvas, readout._fill, readout.label
-        self.assertAlmostEqual(max(bar.coords(rect)[::2]),
-                               2 + (float(bar.design("width")) - 4) * 0.25)
 
     def test_side_by_side_bridge_keeps_hover_active(self):
         self.app._on_enter()

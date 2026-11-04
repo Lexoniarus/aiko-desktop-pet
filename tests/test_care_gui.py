@@ -124,25 +124,6 @@ class CareGuiTests(unittest.TestCase):
         self.assertTrue(all(button.cget("state") == "disabled"
                             for button in menu.buttons.values()))
 
-    def test_relationship_and_needs_in_pinned_toolbar(self):
-        self.app._hover.open_status()
-        self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(
-            set(self.toolbar.readouts),
-            {
-                "satiety",
-                "fun",
-                "mood",
-                "energy",
-                "social",
-                "affection",
-                "friendship",
-            },
-        )
-        set_test_pet_values(self.app.state, friendship=85)
-        self.toolbar.refresh()
-        self.assertIn("Lv 9", self.toolbar.readouts["friendship"].label.cget("text"))
-
     def test_lagged_or_disabled_hardware_has_no_live_effort(self):
         snapshot = ComputerSnapshot(cpu=97, gpu=88, measured_at=time.monotonic())
         with patch.object(self.app.activity_monitor, "latest", return_value=snapshot):

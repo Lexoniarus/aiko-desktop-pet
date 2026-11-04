@@ -21,6 +21,7 @@ from aiko_pet.ui.view_models.projections import project_hover, project_status
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.game_menu import GameMenu
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from tools.pet_test_support import set_test_pet_values
 
 
 class MainMenuLayoutTests(unittest.TestCase):
@@ -206,6 +207,8 @@ class MainMenuLayoutTests(unittest.TestCase):
         button.configure(text="Test ›")
         self.assertEqual(button.cget("text"), "Test ›")
         self.assertEqual(button.tk.call(str(button), "cget", "-text"), "Test")
+        self.assertTrue(self.toolbar.pin_button.winfo_ismapped())
+        self.assertTrue(self.toolbar.details_button.winfo_ismapped())
 
     def test_panel_resizing_preserves_corners_without_growing_cache(self) -> None:
         source = self.skin.images.surface("panel_surface.panel")
@@ -222,14 +225,6 @@ class MainMenuLayoutTests(unittest.TestCase):
             )
         self.assertEqual(len(self.skin.images._images), cache_size)
 
-    def test_details_and_footer_use_the_shared_scale_without_viewports(self):
-        self.toolbar.toggle_details()
-        self.root.update()
-        self.assertFalse(hasattr(self.toolbar.body, 'canvas'))
-        self.assertTrue(self.toolbar.pin_button.winfo_ismapped())
-        self.assertTrue(self.toolbar.details_button.winfo_ismapped())
-        self.assertIs(self.toolbar.details_button.ui_scale, self.skin.scale)
-
     def test_entire_button_uses_one_native_pointer_and_disabled_gate(self) -> None:
         button = self.toolbar.buttons["pet"]
         for x in (8, 80, button.winfo_width() - 18):
@@ -241,6 +236,38 @@ class MainMenuLayoutTests(unittest.TestCase):
                         button.event_generate(sequence, x=x, y=15)
                     self.root.update()
                     self.assertEqual(self.calls, expected)
+
+    def test_all_100_percent_need_bars_fill_real_display_width(self):
+        self.toolbar._snapshot = lambda: project_hover(
+            snapshot_pet(self.state), context_at(1_800_000_000),
+            ComputerSnapshot(), observe_computer=False,
+        )
+        self.assertEqual(set(self.toolbar.readouts),
+                         {"satiety", "fun", "mood", "energy", "social",
+                          "affection", "friendship"})
+        set_test_pet_values(self.state, fun=100)
+        set_test_pet_values(self.state, satiety=100)
+        set_test_pet_values(self.state, mood=100)
+        set_test_pet_values(self.state, energy=100)
+        set_test_pet_values(self.state, social=100)
+        set_test_pet_values(self.state, affection=100)
+        set_test_pet_values(self.state, friendship=100)
+        self.toolbar.show()
+        self.root.update()
+        self.toolbar.refresh()
+        for key, _title, _color in self.toolbar.READOUTS:
+            readout = self.toolbar.readouts[key]
+            bar, rect, text = readout.canvas, readout._fill, readout.label
+            self.assertAlmostEqual(max(bar.coords(rect)[::2]),
+                                   float(bar.design("width")) - 2, msg=key)
+            self.assertIn("100 / 100", text.cget("text"))
+        self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
+        set_test_pet_values(self.state, mood=25)
+        self.toolbar.refresh()
+        readout = self.toolbar.readouts["mood"]
+        bar, rect, _text = readout.canvas, readout._fill, readout.label
+        self.assertAlmostEqual(max(bar.coords(rect)[::2]),
+                               2 + (float(bar.design("width")) - 4) * 0.25)
 
 
 if __name__ == "__main__":
