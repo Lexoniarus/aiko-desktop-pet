@@ -3,7 +3,7 @@
 import unittest
 from copy import deepcopy
 
-from test_social_content import joke_payload
+from support.payloads import joke_payload
 
 from aiko_pet.application.social_content import (
     BUFFERED_CATEGORIES,

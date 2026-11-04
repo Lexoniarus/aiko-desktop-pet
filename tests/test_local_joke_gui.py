@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from test_social_coordinator import ManualSocialWorker
+from support.social import ManualSocialWorker
 
 from aiko_pet.application.social_content import SocialCategory, SocialProvider
 from aiko_pet.infrastructure.local_jokes import load_local_jokes

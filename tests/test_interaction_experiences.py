@@ -3,7 +3,7 @@
 import unittest
 from dataclasses import replace
 
-from test_wish_assignment import wish
+from support.wishes import wish
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.interaction_events import (

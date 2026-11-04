@@ -6,11 +6,10 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_conversation_topics import actual
-from test_food_handover_wishes import pet_with
-from test_plaudern import talk
-from test_wish_assignment import wish
-from test_wish_food import WALL, food_pet
+from support.social import actual, talk
+from support.wishes import WISH_FOOD_WALL as WALL
+from support.wishes import food_handover_wishes_pet_with as pet_with
+from support.wishes import food_pet, wish
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore

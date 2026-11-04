@@ -2,18 +2,9 @@
 
 import unittest
 
+from support.games import arranged_game, card
+
 from aiko_pet.games.blackjack import Blackjack, Phase, hand_total
-from aiko_pet.games.playing_cards import STANDARD_DECK, Card
-
-
-def arranged_game(*cards: Card) -> Blackjack:
-    def arrange(deck):
-        deck[:] = [c for c in STANDARD_DECK if c not in cards] + list(reversed(cards))
-    return Blackjack(shuffle_deck=arrange)
-
-
-def card(rank: str, suit: str = "clubs") -> Card:
-    return Card(suit, rank.zfill(2) if rank.isdecimal() else rank)
 
 
 class BlackjackTests(unittest.TestCase):

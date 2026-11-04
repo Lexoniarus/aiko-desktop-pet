@@ -8,8 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from test_care_evidence_storage import emotional_state
-from test_emotional_persistence import moodlet_state
+from support.care import emotional_state, moodlet_state
 
 from aiko_pet.application.storage_contracts import StorageError, StorageFailureKind
 from aiko_pet.infrastructure.moodlet_codec import encode_moodlets

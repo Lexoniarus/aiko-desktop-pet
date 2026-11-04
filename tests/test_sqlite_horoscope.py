@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from test_horoscope import NOW, coordinator
+from support.horoscope import NOW, coordinator
 
 from aiko_pet.infrastructure.sqlite.connection import open_database
 from aiko_pet.infrastructure.sqlite.horoscope_rows import (
@@ -19,12 +19,6 @@ from aiko_pet.infrastructure.sqlite.schema import (
     MIGRATIONS,
     SCHEMA_VERSION,
 )
-
-
-def admitted_day():
-    day = coordinator()[0].start("object_1")
-    assert day is not None
-    return day
 
 
 class SqliteHoroscopeTests(unittest.TestCase):

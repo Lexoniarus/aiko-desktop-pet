@@ -7,10 +7,12 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from test_sqlite_adaptive_rows import profile
-from test_sqlite_care_evidence import complete_emotional_state
-from test_sqlite_food_handovers import handover_state
-from test_sqlite_horoscope import admitted_day
+from support.storage import (
+    admitted_day,
+    complete_emotional_state,
+    handover_state,
+    profile,
+)
 
 from aiko_pet.application.horoscope_models import HoroscopeHistory
 from aiko_pet.application.session import PetSessionRestorer

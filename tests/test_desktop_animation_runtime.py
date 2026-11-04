@@ -6,16 +6,16 @@ import unittest
 from dataclasses import replace
 from types import MappingProxyType
 from typing import cast
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-from aiko_pet.application.settings import PetSettings
+from support.animation import AnimationRuntimeFixture
+
 from aiko_pet.desktop.animation_runtime import (
     AnimationRuntimePorts,
     DesktopAnimationRuntime,
 )
 from aiko_pet.desktop.visual_observation import DesktopVisualObservation
 from aiko_pet.desktop.walk_runtime import WalkDriver
-from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.expression import Expression
@@ -30,11 +30,10 @@ from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
 from aiko_pet.pet.mind.expression_policy import speech_expression
 from aiko_pet.pet.movement.contracts import WalkStep
 from aiko_pet.pet.routine import context_at
-from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
 
 
-class DesktopAnimationRuntimeTests(unittest.TestCase):
+class DesktopAnimationRuntimeTests(AnimationRuntimeFixture, unittest.TestCase):
     def test_feeling_shapes_idle_behaviour_but_only_speech_starts_a_face(self):
         for feeling in EmotionalState:
             with self.subTest(feeling=feeling):
@@ -137,54 +136,6 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.create_runtime_fixture()
-
-    def create_runtime_fixture(self) -> None:
-        self.state = PetState()
-        self.settings = PetSettings()
-        self.walk = MagicMock(spec=WalkDriver)
-        self.walk.movement = MagicMock()
-        self.walk.movement.remaining_distance = 0
-        self.walk.step.return_value = None
-        self.visual = MagicMock(spec=DesktopVisualObservation)
-        self.visual.observe.return_value = PassiveObservation(None, False)
-        self.visual.orienting = False
-        self.visual.cursor_watching = False
-        self.visual.cursor_intent = CursorIntent()
-        self.action_until = 0.0
-        self.action_clip_id = "review"
-        self.holding_readable = False
-        self.ready_for_handover = False
-        self.assets = load_character_catalog()
-        self.runtime = DesktopAnimationRuntime(
-            state=self.state,
-            settings=self.settings,
-            assets=self.assets,
-            walk=cast(WalkDriver, self.walk),
-            visual=cast(DesktopVisualObservation, self.visual),
-            ports=AnimationRuntimePorts(
-                action_until=lambda: self.action_until,
-                action_clip_id=lambda: self.action_clip_id,
-                holding_readable=lambda: self.holding_readable,
-                ready_for_handover=lambda: self.ready_for_handover,
-            ),
-        )
-        self.runtime.ambient.next_blink_at = 1000.0
-        self.runtime.ambient.next_glance_at = 1000.0
-
-    def choose(
-        self,
-        *,
-        now: float = 100.0,
-        game_mode: bool = False,
-        active_action: str | None = None,
-    ) -> RenderDecision:
-        return self.runtime.select_animation(
-            now,
-            (100, 0),
-            now - 1,
-            game_mode,
-            active_action,
-        )
 
     def test_game_one_shot_preempts_sleep_and_hardware(self) -> None:
         set_test_pet_values(self.state, sleeping=True)

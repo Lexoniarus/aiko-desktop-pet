@@ -4,22 +4,19 @@ import unittest
 from dataclasses import replace
 from unittest.mock import Mock
 
+from support.animation import AttentionRuntimeFixture
+
 from aiko_pet.application.activity import TimeProgress
-from aiko_pet.application.attention import AttentionCoordinator, SpontaneousChoice
+from aiko_pet.application.attention import SpontaneousChoice
 from aiko_pet.application.events import IncomingNotification
-from aiko_pet.desktop.attention_runtime import (
-    AttentionRuntimePorts,
-    DesktopAttentionRuntime,
-)
-from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.interaction_events import CursorExperience, CursorWarning
-from aiko_pet.pet.routine import context_at
-from aiko_pet.pet.state import PetState
-from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
 from tools.pet_test_support import set_test_pet_values
 
 
-class DesktopAttentionRuntimeTests(unittest.TestCase):
+class DesktopAttentionRuntimeTests(AttentionRuntimeFixture, unittest.TestCase):
+    def setUp(self):
+        self.prepare_fixture()
+
     def test_render_prepares_one_profile_before_forwarding_the_frame(self):
         from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
 
@@ -35,30 +32,6 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.runtime.render_character(100, (200, 300))
         self.assertEqual(calls, [("profile", profile), ("render", 100, (200, 300))])
         self.attention.idle_profile.assert_called_once_with()
-
-    def setUp(self) -> None:
-        self.attention = Mock(spec=AttentionCoordinator)
-        self.attention.state = PetState()
-        self.attention.mind = Mock()
-        self.attention.mind.emotional_state.return_value = EmotionalComposition(
-            EmotionalState.SATISFIED
-        )
-        self.presenter = Mock(spec=AttentionPresenter)
-        self.context = context_at(1_781_000_000.0)
-        self.toolbar_refresh = Mock()
-        self.runtime = DesktopAttentionRuntime(
-            self.attention,
-            self.presenter,
-            AttentionRuntimePorts(
-                context=lambda: self.context,
-                game_open=lambda: False,
-                bubble_visible=lambda: False,
-                reaction_pending=lambda: False,
-                walking=lambda: False,
-                action_until=lambda: 0.0,
-                refresh_toolbar=self.toolbar_refresh,
-            ),
-        )
 
     def test_period_transition_refreshes_and_presents_sleep_dialogue(self) -> None:
         reaction = Mock()

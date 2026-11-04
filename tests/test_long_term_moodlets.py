@@ -3,72 +3,19 @@
 import unittest
 from dataclasses import replace
 
+from support.care import DAY, HISTORY, HOUR, contact, evaluate, upsetting
+from support.care import long_term_moodlets_families as families
+
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
-from aiko_pet.pet.care_evidence import CareActivity, CareExperience
+from aiko_pet.pet.care_evidence import CareActivity
 from aiko_pet.pet.care_experiences import record_experience
-from aiko_pet.pet.friendship_history import CriticalBucket, FriendshipHistory
+from aiko_pet.pet.friendship_history import CriticalBucket
 from aiko_pet.pet.long_term_moodlets import advance_long_term, prepare_long_term
-from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import (
-    MoodletGroup,
     MoodletId,
-    MoodletOutcome,
     MoodletState,
 )
-from aiko_pet.pet.wishes import WishArea, WishTargetKind
 from tools.pet_test_support import require_test_value
-
-HOUR = 3600
-DAY = 24 * HOUR
-HISTORY = FriendshipHistory(baseline=0)
-
-
-def contact(receipt, at, activity=CareActivity.SOCIAL, *, wish=None, win=False):
-    area, kind, target = {
-        CareActivity.SOCIAL: (WishArea.SOCIAL, WishTargetKind.SOCIAL, "chat"),
-        CareActivity.PETTING: (WishArea.AFFECTION, WishTargetKind.CARE, "pet"),
-        CareActivity.PLAY: (WishArea.GAMES, WishTargetKind.GAME, "mastermind"),
-    }[activity]
-    return CareExperience(
-        receipt,
-        at,
-        activity,
-        MoodletOutcome.WIN if win else MoodletOutcome.COMPLETED,
-        area,
-        kind,
-        target,
-        wish_instance_id=wish,
-        pleasant=True,
-    )
-
-
-def upsetting(receipt, at, *, violation=True):
-    return CareExperience(
-        receipt,
-        at,
-        CareActivity.POKING,
-        MoodletOutcome.COMPLETED,
-        upsetting=True,
-        boundary_violated=violation,
-    )
-
-
-def evaluate(events, *, history=HISTORY):
-    state = prepare_long_term(MoodletState(), elapsed=0)
-    for event in events:
-        state = advance_long_term(
-            state, history, elapsed=event.occurred_at, sleeping=False
-        )
-        state, _ = record_experience(state, event)
-    return advance_long_term(state, history, elapsed=DAY, sleeping=False)
-
-
-def families(state):
-    return {
-        e.definition_id
-        for e in state.active
-        if MOODLET_CATALOG.definitions[e.definition_id].group == MoodletGroup.LONG_TERM
-    }
 
 
 class LongTermMoodletTests(unittest.TestCase):

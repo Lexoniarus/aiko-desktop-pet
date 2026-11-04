@@ -1,25 +1,21 @@
 """Requested personal chat derives facts from Pet, without native UI or history."""
 
 import json
-import random
 import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_blackjack import arranged_game, card
-from test_blackjack_result_evidence import finish_blackjack
-from test_conversation_topics import actual, episode
-from test_wish_assignment import wish
-from test_wish_game_assignment import INPUTS, WALL, coordinator, pet_with
-from test_wish_social_assignment import SocialHarness
+from support.games import arranged_game, card, finish_blackjack
+from support.social import actual, episode, mastermind_win, talk
+from support.wishes import WISH_GAME_ASSIGNMENT_WALL as WALL
+from support.wishes import SocialHarness, coordinator, wish
+from support.wishes import wish_game_assignment_pet_with as pet_with
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import (
     BlackjackDecisionReason,
     BlackjackDetails,
-    GameId,
-    GameRoundEvent,
 )
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore
@@ -34,22 +30,6 @@ from aiko_pet.pet.wishes import WishId, WishState
 from tools.dialogue_test_support import dialogue_context
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
-
-
-def mastermind_win():
-    pet = pet_with(wish(WishId.WIN_ROUND, "mastermind"))
-    runtime = coordinator(pet)
-    start = GameRoundEvent(GameId.MASTERMIND, "actual", 1)
-    runtime.observe_round(start, INPUTS)
-    runtime.observe_round(replace(start, outcome="loss"), INPUTS)
-    return pet
-
-
-def talk(pet, *, context=None):
-    mind = make_aiko_mind(rng=random.Random(0), started_at=0)
-    return require_test_value(mind.select_reaction(
-        "talk", pet, context_at(WALL), 10, dialogue=context,
-    ))
 
 
 class PlaudernTests(unittest.TestCase):

@@ -4,7 +4,7 @@ import unittest
 from typing import Any, cast
 from unittest.mock import Mock, patch
 
-from test_blackjack import arranged_game, card
+from support.games import arranged_game, card
 
 from aiko_pet.games.blackjack import Phase
 from aiko_pet.games.rock_paper_scissors import Move

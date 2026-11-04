@@ -9,17 +9,12 @@ from contextlib import closing
 from dataclasses import replace
 from pathlib import Path
 
-from test_social_content import fact_payload, joke_payload
-from test_social_sayings import quotation, quote_payload
-from test_wish_assignment import wish
-from test_wish_social_assignment import WALL, SocialHarness
+from support.social import originals, play_content, quote_payload
+from support.wishes import WISH_SOCIAL_ASSIGNMENT_WALL as WALL
+from support.wishes import SocialHarness, wish
 
-from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import (
-    PreparedSocialContent,
-    SocialCategory,
-    prepare_social_content,
     with_intro_variant,
 )
 from aiko_pet.application.social_history import (
@@ -34,28 +29,6 @@ from aiko_pet.pet.moodlets import MoodletCauseKind, MoodletId, MoodletState
 from aiko_pet.pet.wishes import WishId
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
-
-
-def originals() -> tuple[PreparedSocialContent, ...]:
-    fact = fact_payload()
-    fact["text"] = "Ein langer vollständiger Testsatz mit unveränderten Wörtern. " * 4
-    return (
-        prepare_social_content(SocialCategory.SINGLE,
-                               joke_payload(SocialCategory.SINGLE)),
-        quotation(quote_payload()),
-        prepare_social_content(SocialCategory.TWO_PARTS,
-                               joke_payload(SocialCategory.TWO_PARTS)),
-        prepare_social_content(SocialCategory.FACT, fact),
-    )
-
-
-def play_content(harness: SocialHarness, content: PreparedSocialContent):
-    outcome = harness.controller.execute(
-        CareCommand("talk", conversation=content), harness.inputs,
-    )
-    reaction = require_test_value(outcome.reaction)
-    harness.player.play(reaction)
-    return require_test_value(reaction.completed_social)
 
 
 class SocialEvidencePlaybackTests(unittest.TestCase):

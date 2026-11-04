@@ -7,7 +7,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_care_evidence_storage import emotional_state
+from support.storage import complete_emotional_state
 
 from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.infrastructure.sqlite.care_evidence_rows import read_care_evidence
@@ -19,46 +19,10 @@ from aiko_pet.infrastructure.sqlite.moodlet_rows import (
 )
 from aiko_pet.infrastructure.sqlite.pet_rows import write_pet_core
 from aiko_pet.pet.care_evidence import (
-    CareActivity,
     CareEvidenceState,
-    CareExperience,
-    LongTermProgress,
 )
-from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
-from aiko_pet.pet.moodlet_models import MoodletState, PoorCareCursor, PoorCareEvidence
-from aiko_pet.pet.moodlets import MoodletGroup, MoodletOutcome
-from aiko_pet.pet.need_exposure import ExposureMark
+from aiko_pet.pet.moodlet_models import MoodletState
 from aiko_pet.pet.state import PetState
-
-
-def complete_emotional_state() -> MoodletState:
-    source = emotional_state()
-    assert source.care_evidence is not None
-    evidence = replace(
-        source.care_evidence,
-        next_encounter_id=200,
-        next_experience_id=900,
-        progress=tuple(
-            LongTermProgress(definition.id, 86400, 86400, 90000, 123.5, 500.25)
-            for definition in MOODLET_CATALOG.definitions.values()
-            if definition.group == MoodletGroup.LONG_TERM
-        ),
-        experiences=(
-            *source.care_evidence.experiences,
-            CareExperience(
-                "withheld:1",
-                88000,
-                CareActivity.WITHHOLDING,
-                MoodletOutcome.COMPLETED,
-                upsetting=True,
-                boundary_violated=True,
-                object_id="object_99",
-            ),
-        ),
-    )
-    mark = ExposureMark(100, 30, 10)
-    poor = PoorCareEvidence(0, (PoorCareCursor(mark, mark),) * 5)
-    return replace(source, care_evidence=evidence, poor_care=poor)
 
 
 class SqliteCareEvidenceTests(unittest.TestCase):

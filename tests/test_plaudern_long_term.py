@@ -6,8 +6,8 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_long_term_moodlets import DAY, HOUR, contact, evaluate, upsetting
-from test_plaudern import talk
+from support.care import DAY, HOUR, contact, evaluate, upsetting
+from support.social import talk
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore

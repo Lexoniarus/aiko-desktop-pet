@@ -5,7 +5,8 @@ import unittest
 from dataclasses import replace
 from unittest.mock import Mock
 
-from test_wish_assignment import wish
+from support.social import actual, episode
+from support.wishes import wish
 
 from aiko_pet.pet.care_evidence import CarePeriodSummary
 from aiko_pet.pet.mind.conversation_topics import (
@@ -13,9 +14,7 @@ from aiko_pet.pet.mind.conversation_topics import (
     select_conversation_topic,
 )
 from aiko_pet.pet.moodlets import (
-    MoodletCause,
     MoodletCauseKind,
-    MoodletEpisode,
     MoodletGameResult,
     MoodletId,
     MoodletOutcome,
@@ -23,17 +22,6 @@ from aiko_pet.pet.moodlets import (
     MoodletWishCause,
 )
 from aiko_pet.pet.wishes import WishId
-
-
-def actual(number: int = 1, target: str = "chat") -> MoodletCause:
-    return MoodletCause(
-        MoodletCauseKind.INTERACTION, number, f"actual:{number}",
-        target_id=target, outcome=MoodletOutcome.COMPLETED,
-    )
-
-
-def episode(number, family, level=1, *causes):
-    return MoodletEpisode(number, family, level, 0, 50, 600, causes=causes)
 
 
 class ConversationTopicTests(unittest.TestCase):

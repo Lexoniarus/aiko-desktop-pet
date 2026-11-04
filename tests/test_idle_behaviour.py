@@ -3,7 +3,7 @@
 import unittest
 from dataclasses import FrozenInstanceError, replace
 
-import test_attention_policy as support
+from support import animation as support
 
 from aiko_pet.pet.animation.idle_behaviour import (
     IdleBehaviourContext,
@@ -53,10 +53,11 @@ class IdleBehaviourTests(unittest.TestCase):
                 replace(profile, **fields)
 
     def test_application_read_does_not_tick_or_mutate_the_pet(self):
-        fixture = support.AttentionPolicyTests()
-        fixture.setUp()
+        fixture = support.AttentionFixture()
+        fixture.prepare_fixture()
         before = fixture.state.capture_checkpoint()
         for _ in range(10):
-            self.assertIsInstance(fixture.attention.idle_profile(),
-                                  IdleBehaviourProfile)
+            self.assertIsInstance(
+                fixture.attention.idle_profile(), IdleBehaviourProfile
+            )
         self.assertEqual(fixture.state.capture_checkpoint(), before)

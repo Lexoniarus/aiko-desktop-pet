@@ -3,6 +3,9 @@
 import unittest
 from dataclasses import replace
 
+from support.wishes import WISH_FOOD_WALL as WALL
+from support.wishes import food_pet
+
 from aiko_pet.infrastructure.friendship_codec import (
     decode_friendship,
     encode_friendship,
@@ -11,35 +14,7 @@ from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.friendship_history import FriendshipHistory, RelationshipEvent
 from aiko_pet.pet.moodlets import MoodletAttribution, MoodletId, MoodletOutcome
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-
-WALL = 1800000000.0
-
-
-def food_pet(wish_id=WishId.FOOD, **values):
-    return PetState(
-        updated_at=WALL,
-        lived_seconds=100,
-        satiety=30,
-        friendship=50,
-        wishes=WishState(
-            2,
-            (
-                ActiveWish(
-                    1,
-                    wish_id,
-                    "apple",
-                    0,
-                    14400,
-                    goal=WISH_CATALOG.definitions[wish_id].goal,
-                ),
-            ),
-            ((WishArea.FOOD, 0),),
-        ),
-        **values,
-    )
 
 
 class FoodWishTests(unittest.TestCase):

@@ -11,21 +11,28 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
 
-from test_blackjack import arranged_game, card
-from test_everyday_experiences import pet_at
-from test_rps_result_evidence import WALL, pet_with_cause, rps_cause
-from test_wish_assignment import wish
-from test_wish_game_assignment import INPUTS, coordinator, pet_with
+from support.care import pet_at
+from support.games import (
+    REASON,
+    RESULTS,
+    WALL,
+    arranged_game,
+    blackjack_cause,
+    card,
+    finish_blackjack,
+    pet_with_cause,
+    rps_cause,
+)
+from support.wishes import INPUTS, coordinator, wish
+from support.wishes import wish_game_assignment_pet_with as pet_with
 
-from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.games.blackjack import Blackjack, Phase
+from aiko_pet.games.blackjack import Phase
 from aiko_pet.games.contracts import (
     BlackjackDecisionReason,
     BlackjackDetails,
     GameId,
     GameRoundEvent,
-    RoundOutcome,
 )
 from aiko_pet.infrastructure.moodlet_cause_codec import (
     decode_moodlet_causes,
@@ -34,59 +41,11 @@ from aiko_pet.infrastructure.moodlet_cause_codec import (
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.moodlets import (
-    MoodletAttribution,
-    MoodletCause,
-    MoodletCauseKind,
     MoodletId,
     MoodletOutcome,
 )
 from aiko_pet.pet.wishes import WishId
 from tools.persistence_test_support import save_test_session
-
-REASON = BlackjackDecisionReason
-RESULTS: tuple[tuple[int, int, BlackjackDecisionReason, RoundOutcome], ...] = (
-    (20, 26, REASON.AIKO_BUST, "win"),
-    (30, 5, REASON.PLAYER_BUST, "loss"),
-    (20, 21, REASON.AIKO_BLACKJACK, "loss"),
-    (21, 16, REASON.PLAYER_BLACKJACK, "win"),
-    (21, 21, REASON.BOTH_BLACKJACK, "draw"),
-    (20, 18, REASON.HIGHER_TOTAL, "win"),
-    (18, 20, REASON.HIGHER_TOTAL, "loss"),
-    (18, 18, REASON.EQUAL_TOTAL, "draw"),
-    (21, 21, REASON.EQUAL_TOTAL, "draw"),
-)
-
-
-def blackjack_cause(details: BlackjackDetails) -> MoodletCause:
-    return MoodletCause(
-        MoodletCauseKind.INTERACTION, 50, "play:blackjack:test:1",
-        MoodletAttribution.USER, target_id=GameId.BLACKJACK.value,
-        outcome=MoodletOutcome(details.aiko_outcome), game_details=details,
-    )
-
-
-def settle_game(game: Blackjack, *, hit: bool = False) -> BlackjackDetails:
-    """Advance only rule decisions; no scheduler, GUI or wall-clock waits."""
-    if game.table.phase is Phase.PLAYER:
-        game.hit() if hit else game.stand()
-    game.reveal_dealer()
-    while game.table.phase is Phase.DEALER:
-        game.dealer_step()
-    game.settle()
-    details = game.result_details
-    assert details is not None
-    return details
-
-
-def finish_blackjack(
-    runtime: GameExperienceCoordinator, game: Blackjack, number: int = 1,
-) -> GameRoundEvent:
-    start = GameRoundEvent(GameId.BLACKJACK, "actual", number)
-    runtime.observe_round(start, INPUTS)
-    details = settle_game(game)
-    event = replace(start, outcome=details.player_outcome, details=details)
-    runtime.observe_round(event, INPUTS)
-    return event
 
 
 class BlackjackEvidenceSourceTests(unittest.TestCase):

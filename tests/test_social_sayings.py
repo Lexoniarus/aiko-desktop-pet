@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import unittest
 from dataclasses import replace
-from typing import Any
 
-from test_social_content import joke_payload
-from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
+from support.payloads import joke_payload
+from support.social import (
+    TEST_JOKE_CATALOG,
+    ManualSocialWorker,
+    quotation,
+    quote_payload,
+)
 
 from aiko_pet.application.social_content import (
     SocialCategory,
@@ -20,25 +24,6 @@ from aiko_pet.application.social_history import (
     SocialContentReceipt,
 )
 from aiko_pet.ui.view_models.credits import project_credits
-
-
-def quote_payload(identifier: int = 1) -> dict[str, Any]:
-    return dict(
-        quote="Der Zweifel ist der Weisheit Anfang.",
-        language="de",
-        link=f"https://www.zitat-service.de/de/quotations/{identifier}",
-        authorName="René Descartes",
-        authorId=262,
-        authorLink="https://de.wikipedia.org/wiki/Ren%C3%A9_Descartes",
-        source="Test-Ausgabe",
-        sourceLink="https://example.org/original",
-    )
-
-
-def quotation(payload: dict[str, Any]):
-    return prepare_social_content(
-        SocialCategory.SINGLE, payload, provider=SocialProvider.QUOTATIONS
-    )
 
 
 class SayingPreparationTests(unittest.TestCase):

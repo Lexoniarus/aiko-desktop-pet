@@ -2,45 +2,20 @@
 
 from __future__ import annotations
 
-import random
 import unittest
 from unittest.mock import patch
 
-from aiko_pet.application.active_time import ActiveSessionClock
-from aiko_pet.application.attention import AttentionCoordinator
+from support.animation import AttentionFixture
+
 from aiko_pet.application.commands import NotificationCommand
-from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
-from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
-from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
-from aiko_pet.pet.state import PetState
-from aiko_pet.telemetry import ComputerSnapshot
 from tools.pet_test_support import set_test_pet_values
 
 
-class StaticReadings:
-    def latest(self) -> ComputerSnapshot:
-        return ComputerSnapshot()
-
-
-class AttentionPolicyTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.state = PetState()
-        self.settings = PetSettings()
-        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
-        self.workload_events = WorkloadEventDetector(rng=random.Random(8))
-        self.router = ApplicationRouter(
-            CareController(self.state, self.mind, AdaptiveRoutine(),
-                           clock=ActiveSessionClock(lambda: 0.0)),
-        )
-        self.attention = AttentionCoordinator(
-            self.state, self.settings, self.mind, self.workload_events,
-            StaticReadings(), self.router, started_at=100.0,
-        )
+class AttentionPolicyTests(AttentionFixture, unittest.TestCase):
+    def setUp(self):
+        self.prepare_fixture()
 
     def test_commentary_has_own_cooldown(self) -> None:
         self.assertGreaterEqual(self.attention.next_comment, 280.0)

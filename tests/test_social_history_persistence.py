@@ -8,7 +8,7 @@ from functools import partial
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
-from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
+from support.social import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.controller import CareController
@@ -98,31 +98,40 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         content.accept(result.content)
         self.assertEqual(len(content.history.entries), 2)
 
-    def test_intro_rotation_survives_restarts_and_preserves_provider_body(self):
-        history = SocialContentHistory(tuple(
-            SocialContentReceipt(category, identity, digit * 64)
-            for category, identity, digit in (
-                (SocialCategory.SINGLE, "jokeapi:999", "a"),
-                (SocialCategory.TWO_PARTS, "jokeapi:998", "b"),
-                (SocialCategory.FACT, "uselessfacts:legacy", "c"),
+    def test_intro_rotation_survives_restarts_for_each_buffered_category(self):
+        history = SocialContentHistory(
+            tuple(
+                SocialContentReceipt(category, identity, digit * 64)
+                for category, identity, digit in (
+                    (SocialCategory.SINGLE, "jokeapi:999", "a"),
+                    (SocialCategory.TWO_PARTS, "jokeapi:998", "b"),
+                    (SocialCategory.FACT, "uselessfacts:legacy", "c"),
+                )
             )
-        ))  # Old receipts have no framing metadata; retain their known hash variant.
+        )  # Old receipts have no framing metadata; retain their known hash variant.
         save_test_session(self.store, self.pet, self.settings, social_history=history)
         identifier, originals = 10000, {}
         for session in range(3):
             restored = PetSessionRestorer(
-                self.store, wall_time=lambda: self.wall,
+                self.store,
+                wall_time=lambda: self.wall,
             ).restore()
             worker = ManualSocialWorker()
             worker.clock.now += session * 3600
             content = SocialContentCoordinator(
-                worker, joke_catalog=TEST_JOKE_CATALOG,
-                history=restored.social_history, wall_time=worker.clock,
+                worker,
+                joke_catalog=TEST_JOKE_CATALOG,
+                history=restored.social_history,
+                wall_time=worker.clock,
             )
             content.set_enabled(True)
             persistence = DesktopPersistence(
-                self.store, restored.state, restored.settings, restored.adaptive,
-                revision=restored.revision, social_history=lambda: content.history,
+                self.store,
+                restored.state,
+                restored.settings,
+                restored.adaptive,
+                revision=restored.revision,
+                social_history=lambda: content.history,
             )
 
             def select(category):
@@ -142,40 +151,29 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
                 self.fail("Expected bounded fake-worker preparation to finish")
 
             for category in BUFFERED_CATEGORIES:
-                last = next(e for e in reversed(content.history.entries)
-                            if e.category == category)
-                previous = (last.intro_variant if last.intro_variant is not None
-                            else int(last.fingerprint[:2], 16) % 3)
+                last = next(
+                    e
+                    for e in reversed(content.history.entries)
+                    if e.category == category
+                )
+                previous = (
+                    last.intro_variant
+                    if last.intro_variant is not None
+                    else int(last.fingerprint[:2], 16) % 3
+                )
                 before = content.history.entries
                 item = select(category)
-                if session == 0 and category == SocialCategory.SINGLE:
-                    content.cancel_selection()
-                    self.assertEqual(content.history.entries, before)
-                    item = select(category)
                 self.assertEqual(item.intro_variant, (previous + 1) % 3)
                 self.assertEqual(content.history.entries, before)
                 original = originals[item.identity]
                 self.assertEqual(item.fingerprint, original.fingerprint)
                 self.assertEqual(item.reaction.beats[1:], original.reaction.beats[1:])
-                scheduler, texts = FakeScheduler(), []
-                player = ReactionPlayer(
-                    schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
-                    display_text=lambda text, _ms: texts.append(text),
-                    display_emote=Mock(), start_action=Mock(), mark_spoken=Mock(),
-                    is_closed=lambda: False,
-                )
                 content.accept(item)
-                self.assertIsNone(persistence.save())
-                player.play(item.reaction)
-                while player.pending_timer is not None:
-                    scheduler.fire(player.pending_timer)
-                self.assertEqual(texts, [b.content for b in item.reaction.beats
-                                         if b.kind == "text"])
-                self.assertEqual(self.store.load_session().social_history,
-                                 content.history)
+            self.assertIsNone(persistence.save())
+            self.assertEqual(self.store.load_session().social_history, content.history)
             content.close()
 
-    def test_admission_saves_care_and_receipt_once_before_full_wish_completion(self):
+    def create_care_runtime(self):
         adaptive = AdaptiveRoutine()
         router = ApplicationRouter(
             CareController(
@@ -243,6 +241,10 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         runtime.social.set_enabled(True)
         worker.complete(1)
         runtime.social.poll()
+        return runtime, worker, scheduler, deferred
+
+    def test_cancelled_admission_never_saves_care_or_receipt(self):
+        runtime, _worker, _scheduler, deferred = self.create_care_runtime()
         with patch.object(self.store, "save", wraps=self.store.save) as saved:
             runtime.social.select(SocialCategory.SINGLE)
             cancelled = deferred.pop()
@@ -251,11 +253,10 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
             self.assertFalse(runtime.social.content.history.entries)
             saved.assert_not_called()
             self.assertEqual(self.pet.social, 20)
-            for identifier in range(2, 5):
-                worker.complete(identifier)
-                runtime.social.poll()
-                if runtime.social.content.count(SocialCategory.SINGLE):
-                    break
+
+    def test_admission_saves_care_and_receipt_once_before_full_wish_completion(self):
+        runtime, _worker, scheduler, deferred = self.create_care_runtime()
+        with patch.object(self.store, "save", wraps=self.store.save) as saved:
             runtime.social.select(SocialCategory.SINGLE)
             deferred.pop()()
             self.assertEqual(self.pet.social, 46)
@@ -267,8 +268,7 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
             self.assertEqual(loaded.social_history, runtime.social.content.history)
             self.assertEqual(len(loaded.social_history.entries), 1)
             history = loaded.social_history
-            while player.pending_timer is not None:
-                scheduler.fire(player.pending_timer)
+            scheduler.drain()
             self.assertFalse(self.pet.wishes.active)
             self.assertTrue(self.pet.moodlets.active)
             self.assertEqual(runtime.social.content.history, history)

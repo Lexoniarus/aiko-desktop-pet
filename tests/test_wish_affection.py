@@ -3,28 +3,13 @@
 import unittest
 from dataclasses import replace
 
+from support.wishes import wishes
+
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.friendship_history import FriendshipHistory
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-
-
-def wishes(instance=1, created=0):
-    return WishState(
-        instance + 1,
-        (
-            ActiveWish(
-                instance,
-                WishId.PET,
-                "pet",
-                created,
-                created + 14400,
-            ),
-        ),
-        ((WishArea.AFFECTION, created),),
-    )
 
 
 class AffectionWishTests(unittest.TestCase):

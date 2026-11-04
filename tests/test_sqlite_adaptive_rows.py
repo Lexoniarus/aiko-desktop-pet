@@ -7,39 +7,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from support.storage import profile
+
 from aiko_pet.infrastructure.adaptive_codec import decode_adaptive, encode_adaptive
 from aiko_pet.infrastructure.sqlite.adaptive_rows import read_adaptive, write_adaptive
 from aiko_pet.infrastructure.sqlite.connection import open_database
-from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory
-from aiko_pet.pet.mind.quiet_rhythm import QuietPhase, QuietWindow
-
-
-def profile() -> AdaptiveMemory:
-    return AdaptiveMemory(
-        hour_seconds=[10.123456789 + i / 10000 for i in range(SLOTS)],
-        busy_seconds=[4.123456789] * SLOTS,
-        present_seconds=[9.123456789] * SLOTS,
-        observed_days=[0.123456789] * SLOTS,
-        last_slot_key="2026-10-24T15",
-        profile_day="2026-10-24",
-        strain=23.123456789,
-        settled_work=0.123456789,
-        session_seconds=7200.123456789,
-        rest_seconds=100.123456789,
-        last_session_seconds=3600.123456789,
-        last_work_wall=1780000000.1234567,
-        last_contact_wall=1780000001.1234567,
-        last_seen_wall=1780000002.1234567,
-        quiet_window=QuietWindow(
-            1380.123456789,
-            420.23456789,
-            (
-                QuietPhase("2026-10-21", 1380.123456789, 420.23456789),
-                QuietPhase("2026-10-22", 1390.123456789, 430.23456789),
-            ),
-            "2026-10-22",
-        ),
-    )
+from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 
 
 class SqliteAdaptiveRowsTests(unittest.TestCase):

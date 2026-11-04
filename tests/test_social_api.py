@@ -15,8 +15,8 @@ from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-from test_social_content import fact_payload, joke_payload
-from test_social_sayings import quote_payload
+from support.payloads import fact_payload, joke_payload
+from support.social import quote_payload
 
 from aiko_pet.application.social_content import (
     BUFFERED_CATEGORIES,

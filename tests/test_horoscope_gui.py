@@ -3,31 +3,22 @@
 from __future__ import annotations
 
 import unittest
-from typing import cast
 from unittest.mock import patch
 
-import test_social_gui as support
-from test_social_coordinator import ManualSocialWorker
+from support.desktop import SocialDesktopFixture
+from support.social import ManualSocialWorker
 
 from aiko_pet.application.social_content import SocialCategory
 from aiko_pet.gui import DesktopPet
-from aiko_pet.ui.windows.social_menu import SocialMenu
 from aiko_pet.world.contracts import ObjectInteraction, ObjectState
 
 
-class HoroscopeGuiTests(unittest.TestCase):
+class HoroscopeGuiTests(SocialDesktopFixture, unittest.TestCase):
+    def setUp(self):
+        self.prepare_fixture(self.addCleanup)
+
     pet: DesktopPet
     worker: ManualSocialWorker
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        support.SocialGuiTests.setUpClass()
-
-    def setUp(self) -> None:
-        support.SocialGuiTests.setUp(cast(support.SocialGuiTests, self))
-
-    def menu(self) -> SocialMenu:
-        return support.SocialGuiTests.menu(cast(support.SocialGuiTests, self))
 
     # Reuse only fixture setup, not the inherited online-service tests.
     def test_local_book_choice_does_not_require_online_opt_in(self):

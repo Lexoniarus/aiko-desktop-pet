@@ -1,51 +1,16 @@
 """Real round admission binds one wish, independently of its eventual outcome."""
 
 import unittest
-from dataclasses import replace
 
-from test_wish_assignment import wish
+from support.wishes import INPUTS, coordinator, finish, wish
+from support.wishes import WISH_GAME_ASSIGNMENT_WALL as WALL
+from support.wishes import wish_game_assignment_pet_with as pet_with
 
-from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
-from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.games.contracts import GameId, GameRoundEvent
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.moodlets import MoodletId, MoodletOutcome
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.wishes import WishArea, WishId, WishState, WishTargetMode
+from aiko_pet.pet.wishes import WishId, WishTargetMode
 from tools.pet_test_support import require_test_value
-
-WALL = 1800000000
-INPUTS = SessionInputs(WALL, 0, False, None, False, False, None)
-
-
-def coordinator(pet):
-    return GameExperienceCoordinator(
-        pet,
-        make_aiko_mind(started_at=0),
-        AdaptiveRoutine(),
-        clock=ActiveSessionClock(lambda: 0),
-    )
-
-
-def pet_with(*wishes):
-    return PetState(
-        updated_at=WALL,
-        lived_seconds=100,
-        friendship=50,
-        wishes=WishState(
-            max(w.instance_id for w in wishes) + 1,
-            wishes,
-            ((WishArea.GAMES, 0),),
-            refresh_at=600,
-        ),
-    )
-
-
-def finish(runtime, event, outcome):
-    # Public game events use the player's perspective.
-    runtime.observe_round(replace(event, outcome=outcome), INPUTS)
 
 
 class AssignedGameWishTests(unittest.TestCase):

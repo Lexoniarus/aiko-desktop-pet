@@ -10,8 +10,8 @@ from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
-from test_emotional_persistence import wish_state
-from test_legacy_json_codec import WALL, definitions, legacy_payload
+from support.care import wish_state
+from support.storage import WALL, definitions, legacy_payload
 
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings

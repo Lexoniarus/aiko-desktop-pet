@@ -4,68 +4,14 @@ import unittest
 from dataclasses import replace
 from typing import Any, cast
 
-from test_social_content import fact_payload, joke_payload
-from test_wish_assignment import wish
+from support.wishes import WISH_SOCIAL_ASSIGNMENT_WALL as WALL
+from support.wishes import SocialHarness, wish
 
-from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
-from aiko_pet.application.commands import CareCommand
-from aiko_pet.application.controller import CareController
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.interaction_events import SocialCompletion
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishArea, WishId, WishState, WishTargetMode
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from tools.pet_test_support import require_test_value
-from tools.reaction_test_support import FakeScheduler
-
-WALL = 1800000000
-
-
-class SocialHarness:
-    def __init__(self, *wishes):
-        self.pet = PetState(
-            updated_at=WALL, lived_seconds=100, friendship=50, social=50,
-            wishes=WishState(max((w.instance_id for w in wishes), default=0) + 1,
-                             wishes, ((WishArea.SOCIAL, 0),) if wishes else (),
-                             refresh_at=600),
-        )
-        self.inputs = SessionInputs(WALL, 0, False, None, False, False, None)
-        self.controller = CareController(
-            self.pet, make_aiko_mind(started_at=0), AdaptiveRoutine(),
-            clock=ActiveSessionClock(lambda: 0),
-        )
-        self.scheduler = FakeScheduler()
-        self.player = ReactionPlayer(
-            schedule=self.scheduler.schedule, cancel_timer=self.scheduler.cancel,
-            display_emote=lambda *_: None, display_text=lambda *_: None,
-            start_action=lambda *_: None, mark_spoken=lambda: None,
-            is_closed=lambda: False,
-            social_completed=lambda completion: self.controller.complete_social(
-                completion, self.inputs, arrangement_ready=False,
-            ),
-        )
-
-    def admit(self, category="chat"):
-        content = None
-        if category != "chat":
-            kind = SocialCategory(category)
-            content = prepare_social_content(
-                kind, fact_payload() if category == "fact" else joke_payload(kind),
-            )
-        reaction = self.controller.execute(
-            CareCommand("talk", conversation=content), self.inputs,
-        ).reaction
-        assert reaction is not None
-        self.player.play(reaction)
-        return reaction.completed_social
-
-    def finish(self):
-        while self.player.pending_timer is not None:
-            self.scheduler.fire(self.player.pending_timer)
 
 
 class AssignedSocialWishTests(unittest.TestCase):

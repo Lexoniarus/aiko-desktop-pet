@@ -7,7 +7,7 @@ from dataclasses import replace
 from datetime import datetime
 from unittest.mock import patch
 
-from test_social_content import fact_payload, joke_payload
+from support.payloads import fact_payload, joke_payload
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand

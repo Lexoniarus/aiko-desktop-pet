@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import Mock, patch
 
-from test_wish_assignment import wish
+from support.wishes import wish
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.infrastructure.item_assets import load_item_catalog

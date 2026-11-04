@@ -4,8 +4,8 @@ import random
 import unittest
 from dataclasses import replace
 
-from test_social_content import fact_payload, joke_payload
-from test_social_sayings import quotation, quote_payload
+from support.payloads import fact_payload, joke_payload
+from support.social import quotation, quote_payload
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
@@ -77,8 +77,7 @@ class SocialWishTests(unittest.TestCase):
         return outcome.reaction
 
     def complete_playback(self):
-        while self.player.pending_timer is not None:
-            self.scheduler.fire(self.player.pending_timer)
+        self.scheduler.drain()
 
     def test_all_four_categories_wait_for_whole_sequence_and_fulfill_once(self):
         for key, moodlet in (

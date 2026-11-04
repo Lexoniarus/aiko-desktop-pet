@@ -2,82 +2,28 @@
 
 from __future__ import annotations
 
-import tempfile
 import time
 import tkinter as tk
 import unittest
-from functools import partial
-from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
-from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
-from test_social_sayings import quotation, quote_payload
+from support.desktop import SocialDesktopFixture
+from support.social import (
+    ManualSocialWorker,
+    quotation,
+    quote_payload,
+)
 
 from aiko_pet.application.social_content import SocialCategory
-from aiko_pet.application.social_coordinator import SocialContentCoordinator
 from aiko_pet.application.social_fetch import SocialFetchResult
 from aiko_pet.games.contracts import GameId
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.content import GERMAN_TEXT
-from aiko_pet.ui.windows.social_menu import SocialMenu
 from tools.desktop_test_support import create_test_desktop
-from tools.pet_test_support import set_test_pet_values
 
 
-class SocialGuiTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest(f"No graphical display: {error}") from error
-        root.destroy()
-
-    def setUp(self) -> None:
-        coordinator_patch = patch(
-            "aiko_pet.desktop.care_runtime.SocialContentCoordinator",
-            partial(SocialContentCoordinator, joke_catalog=TEST_JOKE_CATALOG),
-        )
-        coordinator_patch.start()
-        self.addCleanup(coordinator_patch.stop)
-        folder = tempfile.TemporaryDirectory()
-        self.addCleanup(folder.cleanup)
-        self.worker = ManualSocialWorker()
-        clock_patch = patch("aiko_pet.application.social_coordinator.time",
-                            SimpleNamespace(time=self.worker.clock))
-        clock_patch.start()
-        self.addCleanup(clock_patch.stop)
-        self.pet = create_test_desktop(
-            store=StateStore(Path(folder.name) / "state.json"),
-            social_worker=self.worker,
-        )
-        self.addCleanup(self.pet.quit)
-        self.callback_errors: list[BaseException] = []
-        self.pet.root.report_callback_exception = lambda _kind, error, _trace: (
-            self.callback_errors.append(error)
-        )
-        self.addCleanup(lambda: self.assertEqual(self.callback_errors, []))
-        self.pet._runtime.stop()
-        self.pet.settings.auto_routine = False
-        self.pet.settings.spontaneous_talk = False
-        set_test_pet_values(self.pet.state, social=10, sleeping=False)
-        self.pet._reaction_player.cancel()
-        self.pet._action_playback.cancel_at(time.monotonic())
-        self.clock = patch(
-            "aiko_pet.application.active_time.ActiveSessionClock.consume",
-            return_value=0,
-        )
-        self.clock.start()
-        self.addCleanup(self.clock.stop)
-
-    def menu(self) -> SocialMenu:
-        self.pet._hover.show_toolbar()
-        self.pet._hover._interact("talk")
-        menu = self.pet._hover.social_menu
-        assert menu is not None
-        self.pet.root.update_idletasks()
-        return menu
+class SocialGuiTests(SocialDesktopFixture, unittest.TestCase):
+    def setUp(self):
+        self.prepare_fixture(self.addCleanup)
 
     def enable(self) -> None:
         self.pet._preferences.set_option("online_social", True)

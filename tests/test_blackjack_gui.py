@@ -6,7 +6,7 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from test_blackjack import arranged_game, card
+from support.games import arranged_game, card
 
 from aiko_pet.games.blackjack import Phase, Table
 from aiko_pet.games.contracts import GameId

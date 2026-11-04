@@ -7,7 +7,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
+from support.social import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import SocialCategory, SocialProvider

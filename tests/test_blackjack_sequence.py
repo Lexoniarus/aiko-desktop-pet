@@ -2,7 +2,7 @@
 
 import unittest
 
-from test_blackjack import arranged_game, card
+from support.games import arranged_game, card
 
 from aiko_pet.games.contracts import BlackjackDecisionReason, BlackjackDetails
 from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence

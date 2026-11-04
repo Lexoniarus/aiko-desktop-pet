@@ -5,11 +5,10 @@ import unittest
 from dataclasses import replace
 from itertools import product
 
-from test_conversation_topics import actual
-from test_plaudern import mastermind_win, talk
-from test_rps_result_evidence import finish_actual_round
-from test_wish_assignment import wish
-from test_wish_game_assignment import coordinator, pet_with
+from support.games import finish_actual_round
+from support.social import actual, mastermind_win, talk
+from support.wishes import coordinator, wish
+from support.wishes import wish_game_assignment_pet_with as pet_with
 
 from aiko_pet.games.contracts import (
     BlackjackDecisionReason,

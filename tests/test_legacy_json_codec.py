@@ -5,82 +5,20 @@ from __future__ import annotations
 import copy
 import json
 import unittest
-from datetime import datetime
 from typing import Any
 
-from test_sqlite_adaptive_rows import profile
-from test_sqlite_care_evidence import complete_emotional_state
-from test_sqlite_food_handovers import handover_state
-from test_sqlite_social_rows import social_history
+from support.storage import (
+    WALL,
+    definitions,
+    legacy_payload,
+    timestamp,
+)
 
-from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.legacy_json_codec import decode_legacy_session
-from aiko_pet.infrastructure.object_memory_codec import encode_object_memory
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.infrastructure.social_history_codec import encode_social_history
-from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
-from aiko_pet.infrastructure.world_codec import encode_world
-from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
-from aiko_pet.pet.mind.object_knowledge import (
-    ObjectMemorySnapshot,
-    SavedObjectKnowledge,
-)
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.value_rules import clamp_need_value
-from aiko_pet.world.contracts import ObjectDefinition, ObjectFootprint, WorldSurface
-from aiko_pet.world.state import WorldState
-
-WALL = 1_800_000_000.0
-
-
-def definitions() -> tuple[ObjectDefinition, ...]:
-    return build_consumable_definitions(DEFAULT_CATALOG, load_item_catalog())
-
-
-def legacy_payload() -> dict[str, Any]:
-    pet = PetState(
-        updated_at=WALL,
-        lived_seconds=100000,
-        moodlets=complete_emotional_state(),
-        wishes=handover_state(),
-    )
-    stock = WorldState(WorldSurface(800, 600), definitions())
-    item = stock.place_resting("apple", 100, ObjectFootprint(8, 8))
-    world = stock.snapshot()
-    memory = ObjectMemorySnapshot(
-        (
-            SavedObjectKnowledge(
-                "memory_1",
-                "apple",
-                "food",
-                100,
-                0,
-                True,
-                80,
-                True,
-                None,
-                instance_id=item.instance_id,
-            ),
-        ),
-        2,
-    )
-    return {
-        "version": 1,
-        "pet": encode_pet_state(pet),
-        "settings": PetSettings(scale=2, zodiac_sign="leo").to_dict(),
-        "adaptive": profile().to_dict(),
-        "social_history": encode_social_history(social_history()),
-        "world": encode_world(world, recovery_x=0),
-        "object_memory": encode_object_memory(
-            memory, world_next_id=world.next_instance_id
-        ),
-    }
-
-
-def timestamp(day: str = "2026-10-12", hour: int = 12) -> float:
-    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
 class LegacyJsonCodecTests(unittest.TestCase):

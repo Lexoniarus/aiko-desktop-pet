@@ -4,9 +4,9 @@ import random
 import unittest
 from dataclasses import replace
 
-from test_conversation_topics import actual
-from test_everyday_experiences import pet_at
-from test_wish_affection import wishes
+from support.care import pet_at
+from support.social import actual
+from support.wishes import wishes
 
 from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState

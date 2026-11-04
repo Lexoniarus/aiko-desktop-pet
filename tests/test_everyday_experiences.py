@@ -3,34 +3,19 @@
 import unittest
 from dataclasses import replace
 
-from test_wish_assignment import wish
-from test_wish_game_assignment import INPUTS, coordinator, finish
+from support.care import EVERYDAY_EXPERIENCES_WALL as WALL
+from support.care import everyday_experiences_families as families
+from support.care import pet_at
+from support.wishes import INPUTS, coordinator, finish, wish
 
 from aiko_pet.games.contracts import GameId, GameRoundEvent
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.care_evidence import CareEvidenceState
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.interaction_events import SocialCompletion
-from aiko_pet.pet.moodlets import MoodletId, MoodletState
+from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishId, WishState
 from tools.pet_test_support import require_test_value
-
-WALL = 1800000000
-
-
-def pet_at(elapsed):
-    return PetState(
-        updated_at=WALL,
-        lived_seconds=elapsed,
-        affection=20,
-        friendship=60,
-        moodlets=MoodletState(care_evidence=CareEvidenceState(0)),
-    )
-
-
-def families(pet):
-    return {e.definition_id for e in pet.moodlets.active}
 
 
 class EverydayExperienceTests(unittest.TestCase):

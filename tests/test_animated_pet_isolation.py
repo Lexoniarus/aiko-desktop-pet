@@ -9,40 +9,19 @@ from dataclasses import replace
 from itertools import product
 from unittest.mock import patch
 
-from aiko_pet.application.settings import PetSettings
-from aiko_pet.desktop.animation_runtime import (
-    AnimationRuntimePorts,
-    DesktopAnimationRuntime,
-)
+from support.animation import AnimatedPetFixture, animated_fixture
+
 from aiko_pet.desktop.geometry import TaskbarTrack
-from aiko_pet.desktop.visual_observation import (
-    DesktopVisualObservation,
-    VisualAttentionPorts,
-)
-from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
-from aiko_pet.infrastructure.character_assets import load_character_catalog
-from aiko_pet.infrastructure.item_assets import load_item_catalog
-from aiko_pet.pet.animation.character import FRAME_WIDTH
 from aiko_pet.pet.animation.idle_behaviour import IdleBehaviourProfile
 from aiko_pet.pet.animation.idle_gesture import (
     QUESTION_REQUEST_CLIP,
-    with_idle_gestures,
 )
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement import WalkController
-from aiko_pet.pet.state import PetState
-from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.pet_view.action_playback import ActionPlayback
-from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
-
-
-class IdleMonitor:
-    def latest(self) -> ComputerSnapshot:
-        return ComputerSnapshot(cpu=2)
 
 
 class ResponsiveTurnTimerTests(unittest.TestCase):
@@ -53,9 +32,7 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
     def test_grounded_gesture_plays_all_frames_once_at_both_sizes(self):
         for scale in (1, 2):
             with self.subTest(scale=scale), ControlledTkTime() as clock:
-                fixture = StandaloneAnimatedPetTests()
-                fixture.setUp()
-                try:
+                with animated_fixture() as fixture:
                     fixture.settings.scale = scale
                     fixture.settings.auto_walk = False
                     fixture.settings.follow_cursor = False
@@ -63,7 +40,8 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     fixture.anim.reload_sprites()
                     assets = fixture.anim.assets
                     action = ActionPlayback(
-                        assets, begin=fixture.anim.begin_action,
+                        assets,
+                        begin=fixture.anim.begin_action,
                         cancel=fixture.anim.cancel_action,
                     )
                     fixture.animation._ports = replace(
@@ -73,21 +51,27 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                         cancel_action=action.cancel_at,
                     )
                     fixture.anim.ports = replace(
-                        fixture.anim.ports, extend_action=action.extend,
+                        fixture.anim.ports,
+                        extend_action=action.extend,
                     )
                     events = []
                     fixture.anim.on_playback = events.append
                     before = fixture.state.capture_checkpoint()
                     clip = assets.clips[QUESTION_REQUEST_CLIP]
                     for index in range(len(clip.frames)):
-                        self.assertIs(fixture.anim.sprites[QUESTION_REQUEST_CLIP][index],
-                                      fixture.anim.sprites["waiting"][index])
-                    action.start(QUESTION_REQUEST_CLIP, 1.6,
-                                 started_at=clock.monotonic())
-                    clock.advance(clip.duration_seconds + .05)
-                    frames = [event.source_index for event in events
-                              if event.clip_id == QUESTION_REQUEST_CLIP
-                              and not event.finished]
+                        self.assertIs(
+                            fixture.anim.sprites[QUESTION_REQUEST_CLIP][index],
+                            fixture.anim.sprites["waiting"][index],
+                        )
+                    action.start(
+                        QUESTION_REQUEST_CLIP, 1.6, started_at=clock.monotonic()
+                    )
+                    clock.advance(clip.duration_seconds + 0.05)
+                    frames = [
+                        event.source_index
+                        for event in events
+                        if event.clip_id == QUESTION_REQUEST_CLIP and not event.finished
+                    ]
                     self.assertEqual(frames, list(range(len(clip.frames))))
                     self.assertEqual(sum(event.finished for event in events), 1)
                     self.assertEqual(fixture.anim._display_clip, "idle")
@@ -96,15 +80,11 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     self.assertEqual(sum(event.finished for event in events), 1)
                     self.assertEqual(fixture.state.capture_checkpoint(), before)
                     self.assertEqual(fixture.settings.x, 100)
-                finally:
-                    fixture.doCleanups()
 
     def test_changed_profile_keeps_settled_episode_then_applies_to_next_one(self):
         for scale, side in product((1, 2), (-1, 1)):
             with self.subTest(scale=scale, side=side), ControlledTkTime() as clock:
-                fixture = StandaloneAnimatedPetTests()
-                fixture.setUp()
-                try:
+                with animated_fixture() as fixture:
                     fixture.settings.scale = scale
                     fixture.settings.auto_walk = False
                     fixture.settings.follow_cursor = False
@@ -113,16 +93,22 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     ambient = fixture.animation.ambient
                     ambient._between = lambda low, _high: low
                     ambient._direction = lambda options: (
-                        next(value for value in options
-                             if (value < 8) == (side == 1)))
+                        next(value for value in options if (value < 8) == (side == 1))
+                    )
                     active = IdleBehaviourProfile(
-                        mode="active", hold_minimum=4, hold_maximum=4,
+                        mode="active",
+                        hold_minimum=4,
+                        hold_maximum=4,
                         body_glance_every=2,
                     )
                     tired = IdleBehaviourProfile(
-                        mode="tired", hold_minimum=10, hold_maximum=10,
-                        body_glance_every=4, allow_steps=False,
-                        maximum_steps=1, prefer_lower_gaze=True,
+                        mode="tired",
+                        hold_minimum=10,
+                        hold_maximum=10,
+                        body_glance_every=4,
+                        allow_steps=False,
+                        maximum_steps=1,
+                        prefer_lower_gaze=True,
                     )
                     fixture.animation.set_idle_profile(active)
                     ambient._glance_count = 1
@@ -130,46 +116,43 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     ambient.next_blink_at = 10000
                     before = fixture.state.capture_checkpoint()
                     fixture.anim.render(clock.monotonic(), (0, 0))
-                    clock.advance(.7)
+                    clock.advance(0.7)
                     self.assertTrue(ambient._body_settled)
                     deadline = ambient._glance_until
                     fixture.animation.set_idle_profile(tired)
                     for _ in range(10):
                         fixture.anim.render(clock.monotonic(), (0, 0))
-                        clock.advance(.14)
+                        clock.advance(0.14)
                     self.assertIs(ambient._episode_profile, active)
                     self.assertEqual(ambient._glance_until, deadline)
                     self.assertEqual(fixture.animation._body_orientation.phase, 4)
-                    clock.advance(deadline - clock.monotonic() + .02)
+                    clock.advance(deadline - clock.monotonic() + 0.02)
                     fixture.anim.render(clock.monotonic(), (0, 0))
-                    clock.advance(.6)
+                    clock.advance(0.6)
                     self.assertEqual(fixture.animation._body_orientation.phase, 0)
                     ambient._glance_count = 3
                     ambient.next_glance_at = clock.monotonic()
                     fixture.anim.render(clock.monotonic(), (0, 0))
-                    clock.advance(.7)
+                    clock.advance(0.7)
                     self.assertIs(ambient._episode_profile, tired)
                     self.assertEqual(ambient._body_hold_seconds, 10)
                     self.assertEqual(ambient._glance_side, side)
                     self.assertEqual(fixture.settings.x, 100)
                     self.assertEqual(fixture.state.capture_checkpoint(), before)
-                finally:
-                    fixture.doCleanups()
 
     def test_idle_steps_arrive_once_and_hold_without_extra_desktop_displacement(self):
         for scale, side, count in product((1, 2), (-1, 1), (1, 2)):
             with self.subTest(scale=scale, side=side, count=count):
                 with ControlledTkTime() as clock:
-                    fixture = StandaloneAnimatedPetTests()
-                    fixture.setUp()
-                    try:
+                    with animated_fixture() as fixture:
                         fixture.settings.scale = scale
                         fixture.settings.x = 200
                         fixture.settings.follow_cursor = False
                         fixture.settings.observe_computer = False
                         fixture.anim.reload_sprites()
                         fixture.walk.ports = replace(
-                            fixture.walk.ports, idle_steps=lambda: True,
+                            fixture.walk.ports,
+                            idle_steps=lambda: True,
                         )
                         planner = fixture.walk.movement.random_walk
                         planner.next_walk_at = clock.monotonic()
@@ -178,48 +161,50 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                         ambient.next_blink_at = ambient.next_glance_at = 10000
                         before = fixture.state.capture_checkpoint()
                         with (
-                            patch("aiko_pet.pet.movement.random_walk.random.choice",
-                                  return_value=side),
-                            patch("aiko_pet.pet.movement.random_walk.random.random",
-                                  return_value=.1 if count == 2 else .8),
+                            patch(
+                                "aiko_pet.pet.movement.random_walk.random.choice",
+                                return_value=side,
+                            ),
+                            patch(
+                                "aiko_pet.pet.movement.random_walk.random.random",
+                                return_value=0.1 if count == 2 else 0.8,
+                            ),
                         ):
                             fixture.anim.render(clock.monotonic(), (0, 0))
                         for _ in range(120):
-                            clock.advance(.033)
+                            clock.advance(0.033)
                             if ambient._outing_count:
                                 break
                         self.assertEqual(ambient._outing_count, 1)
-                        self.assertEqual(fixture.settings.x,
-                                         200 + side * 16 * scale * count)
+                        self.assertEqual(
+                            fixture.settings.x, 200 + side * 16 * scale * count
+                        )
                         self.assertFalse(fixture.animation.walk_active())
-                        clock.advance(.6)
-                        self.assertEqual(fixture.animation._body_orientation.phase,
-                                         4)
-                        self.assertTrue(fixture.anim._display_clip.startswith(
-                            "body-look-",
-                        ))
+                        clock.advance(0.6)
+                        self.assertEqual(fixture.animation._body_orientation.phase, 4)
+                        self.assertTrue(
+                            fixture.anim._display_clip.startswith(
+                                "body-look-",
+                            )
+                        )
                         at_rest = fixture.settings.x
                         clock.advance(1.6)
                         fixture.anim.render(clock.monotonic(), (0, 0))
                         self.assertEqual(fixture.settings.x, at_rest)
                         self.assertEqual(ambient._outing_count, 1)
-                        clock.advance(max(0, ambient._glance_until
-                                          - clock.monotonic()) + .02)
+                        clock.advance(
+                            max(0, ambient._glance_until - clock.monotonic()) + 0.02
+                        )
                         fixture.anim.render(clock.monotonic(), (0, 0))
-                        clock.advance(.6)
-                        self.assertEqual(fixture.animation._body_orientation.phase,
-                                         0)
+                        clock.advance(0.6)
+                        self.assertEqual(fixture.animation._body_orientation.phase, 0)
                         self.assertEqual(fixture.settings.x, at_rest)
                         self.assertEqual(fixture.state.capture_checkpoint(), before)
-                    finally:
-                        fixture.doCleanups()
 
     def test_opposite_head_returns_front_in_same_render_without_waiting_for_turn(self):
         for scale in (1, 2):
             with self.subTest(scale=scale), ControlledTkTime() as clock:
-                fixture = StandaloneAnimatedPetTests()
-                fixture.setUp()
-                try:
+                with animated_fixture() as fixture:
                     fixture.settings.scale = scale
                     fixture.anim.reload_sprites()
                     eyes = fixture.visual._eyes()
@@ -227,54 +212,64 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     left = (round(eyes[0] - 600 * scale), round(eyes[1]))
                     # A real settled quarter pose from ordinary observation.
                     fixture.selected_cursor = CursorIntent(
-                        "observe", side=1, body="three_quarter", target=right,
+                        "observe",
+                        side=1,
+                        body="three_quarter",
+                        target=right,
                     )
                     for _ in range(4):
                         fixture.anim.render(clock.monotonic(), right)
-                        clock.advance(.14)
+                        clock.advance(0.14)
                     self.assertEqual(fixture.animation._body_orientation.phase, 4)
                     before = fixture.state.capture_checkpoint()
                     fixture.selected_cursor = replace(
-                        fixture.selected_cursor, side=-1, target=left,
+                        fixture.selected_cursor,
+                        side=-1,
+                        target=left,
                         feeling="curiosity",
                     )
                     fixture.anim.render(clock.monotonic(), left)
                     self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 12))
                     self.assertEqual(fixture.animation._body_orientation.phase, 0)
-                    clock.advance(.2)
-                    self.assertEqual(fixture.anim.frame_clock.active_key,
-                                     ("body-look-left", 5))
+                    clock.advance(0.2)
+                    self.assertEqual(
+                        fixture.anim.frame_clock.active_key, ("body-look-left", 5)
+                    )
                     self.assertEqual(fixture.animation._body_orientation.phase, 4)
                     self.assertIsNone(fixture.anim._frame_timer)
                     self.assertEqual(fixture.state.capture_checkpoint(), before)
                     self.assertEqual(fixture.settings.x, 100)
-                finally:
-                    fixture.doCleanups()
 
     def test_run_follows_head_axes_and_reverses_same_attempt_at_both_sizes(self):
         for scale in (1, 2):
             with self.subTest(scale=scale), ControlledTkTime() as clock:
-                fixture = StandaloneAnimatedPetTests()
-                fixture.setUp()
-                try:
+                with animated_fixture() as fixture:
                     fixture.settings.scale = scale
                     fixture.anim.reload_sprites()
-                    fixture.walk.ports = replace(fixture.walk.ports,
-                                                 cursor_allowed=lambda: True)
+                    fixture.walk.ports = replace(
+                        fixture.walk.ports, cursor_allowed=lambda: True
+                    )
                     eyes = fixture.visual._eyes()
-                    right = (round(eyes[0] + 600 * scale),
-                             round(eyes[1] - 200 * scale))
+                    right = (round(eyes[0] + 600 * scale), round(eyes[1] - 200 * scale))
                     left = (round(eyes[0] - 600 * scale), right[1])
                     fixture.selected_cursor = CursorIntent(
-                        "approach", side=1, token=9, until=clock.monotonic() + 3,
-                        target=right, body="profile", feeling="curiosity",
-                        strength=2, running=True, steps=5,
+                        "approach",
+                        side=1,
+                        token=9,
+                        until=clock.monotonic() + 3,
+                        target=right,
+                        body="profile",
+                        feeling="curiosity",
+                        strength=2,
+                        running=True,
+                        steps=5,
                     )
-                    fixture.walk.apply_cursor_intent(fixture.selected_cursor,
-                                                     clock.monotonic())
+                    fixture.walk.apply_cursor_intent(
+                        fixture.selected_cursor, clock.monotonic()
+                    )
                     fixture.anim.render(clock.monotonic(), right)
                     self.assertEqual(fixture.anim._display_clip, "body-look-right")
-                    clock.advance(.23)
+                    clock.advance(0.23)
                     self.assertEqual(fixture.anim._display_clip, "body-step-right-03")
                     moved_x = fixture.settings.x
                     assert moved_x is not None
@@ -284,18 +279,22 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     original = fixture.walk.movement.request("cursor")
                     assert original is not None
                     fixture.selected_cursor = replace(
-                        fixture.selected_cursor, side=-1, target=left,
+                        fixture.selected_cursor,
+                        side=-1,
+                        target=left,
                     )
-                    fixture.walk.apply_cursor_intent(fixture.selected_cursor,
-                                                     clock.monotonic())
+                    fixture.walk.apply_cursor_intent(
+                        fixture.selected_cursor, clock.monotonic()
+                    )
                     fixture.anim.render(clock.monotonic(), left)
                     self.assertEqual(fixture.anim.frame_clock.active_key, ("look", 13))
                     self.assertEqual(fixture.animation._body_orientation.phase, 0)
-                    self.assertEqual(fixture.walk.movement._progress["cursor"],
-                                     consumed)
+                    self.assertEqual(
+                        fixture.walk.movement._progress["cursor"], consumed
+                    )
                     turned_at = fixture.settings.x
                     assert turned_at is not None
-                    clock.advance(.24)
+                    clock.advance(0.24)
                     self.assertEqual(fixture.anim._display_clip, "body-step-left-13")
                     moved_x = fixture.settings.x
                     assert moved_x is not None
@@ -305,41 +304,47 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     self.assertEqual(current.token, original.token)
                     self.assertEqual(current.until, original.until)
                     self.assertEqual(current.distance_pixels, original.distance_pixels)
-                    self.assertGreater(fixture.walk.movement._progress["cursor"][2],
-                                       consumed[2])
+                    self.assertGreater(
+                        fixture.walk.movement._progress["cursor"][2], consumed[2]
+                    )
                     key = fixture.anim.frame_clock.active_key
                     assert key is not None
                     self.assertEqual(key[0], "body-step-left")
-                finally:
-                    fixture.doCleanups()
 
     def test_running_timer_renders_canonical_frames_and_stops_at_budget(self):
         scale, side = 2, -1
         with ControlledTkTime() as clock:
-            fixture = StandaloneAnimatedPetTests()
-            fixture.setUp()
-            try:
+            with animated_fixture() as fixture:
                 fixture.settings.scale = scale
                 fixture.settings.x = 500
                 fixture.anim.reload_sprites()
                 fixture.visual._eyes = lambda: (
-                    (fixture.settings.x or 0) + 96 * scale, 82 * scale,
+                    (fixture.settings.x or 0) + 96 * scale,
+                    82 * scale,
                 )
                 completed = []
                 fixture.walk.ports = replace(
-                    fixture.walk.ports, cursor_allowed=lambda: True,
+                    fixture.walk.ports,
+                    cursor_allowed=lambda: True,
                     cursor_finished=completed.append,
                     track=lambda: TaskbarTrack(0, 2000, 800),
                 )
                 eyes = fixture.visual._eyes()
                 target = (round(eyes[0] + side * 600 * scale), round(eyes[1]))
                 fixture.selected_cursor = CursorIntent(
-                    "approach", side=side, token=20, until=clock.monotonic() + 5,
-                    target=target, body="profile", feeling="curiosity",
-                    strength=1, steps=3,
+                    "approach",
+                    side=side,
+                    token=20,
+                    until=clock.monotonic() + 5,
+                    target=target,
+                    body="profile",
+                    feeling="curiosity",
+                    strength=1,
+                    steps=3,
                 )
-                fixture.walk.apply_cursor_intent(fixture.selected_cursor,
-                                                 clock.monotonic())
+                fixture.walk.apply_cursor_intent(
+                    fixture.selected_cursor, clock.monotonic()
+                )
                 indices = []
                 original = fixture.anim.show_frame
                 running = "running-right" if side > 0 else "running-left"
@@ -351,8 +356,10 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                         if not indices or indices[-1] != index:
                             indices.append(index)
                         expected = fixture.anim.sprites[state][index]
-                        self.assertEqual(fixture.canvas.itemcget(
-                            fixture.anim.image_item, "image"), str(expected))
+                        self.assertEqual(
+                            fixture.canvas.itemcget(fixture.anim.image_item, "image"),
+                            str(expected),
+                        )
 
                 with patch.object(fixture.anim, "show_frame", side_effect=show):
                     fixture.anim.render(clock.monotonic(), target)
@@ -361,38 +368,42 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                 self.assertEqual(len(completed), 1)
                 self.assertEqual(completed[0].reason, "budget")
                 self.assertEqual(fixture.settings.x, 500 + side * 68 * scale)
-            finally:
-                fixture.doCleanups()
 
     def test_responsive_flight_still_spends_only_one_actual_movement_budget(self):
         with ControlledTkTime() as clock:
-            fixture = StandaloneAnimatedPetTests()
-            fixture.setUp()
-            try:
+            with animated_fixture() as fixture:
                 completed = []
                 fixture.walk.ports = replace(
-                    fixture.walk.ports, cursor_allowed=lambda: True,
+                    fixture.walk.ports,
+                    cursor_allowed=lambda: True,
                     cursor_finished=completed.append,
                 )
                 eyes = fixture.visual._eyes()
                 target = (round(eyes[0] + 600), round(eyes[1]))
                 fixture.selected_cursor = CursorIntent(
-                    "flee", side=-1, token=7, until=clock.monotonic() + 15,
-                    target=target, body="profile", feeling="fear",
+                    "flee",
+                    side=-1,
+                    token=7,
+                    until=clock.monotonic() + 15,
+                    target=target,
+                    body="profile",
+                    feeling="fear",
                 )
                 fixture.walk.apply_cursor_intent(
-                    fixture.selected_cursor, clock.monotonic(),
+                    fixture.selected_cursor,
+                    clock.monotonic(),
                 )
                 fixture.anim.render(clock.monotonic(), target)
-                clock.advance(.069)
+                clock.advance(0.069)
                 self.assertEqual(fixture.settings.x, 100)
-                clock.advance(.24)
+                clock.advance(0.24)
                 self.assertEqual(fixture.anim._display_clip, "running-right")
                 key = fixture.anim.frame_clock.active_key
                 assert key is not None
                 self.assertTrue(key[0].endswith(":True"))
                 direction = fixture.visual.attention(
-                    target, pointer_recent=True,
+                    target,
+                    pointer_recent=True,
                 ).direction
                 assert direction is not None
                 self.assertGreater(direction[0], 0)
@@ -407,11 +418,12 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                 clock.advance(2)
                 self.assertEqual(fixture.settings.x, stopped)
                 self.assertEqual(len(completed), 1)
-            finally:
-                fixture.doCleanups()
 
 
-class StandaloneAnimatedPetTests(unittest.TestCase):
+class StandaloneAnimatedPetTests(AnimatedPetFixture, unittest.TestCase):
+    def setUp(self):
+        self.prepare_fixture(self.addCleanup)
+
     def test_step_head_change_keeps_playback_progress(self) -> None:
         now = time.monotonic()
         self.anim.show_frame("body-step-right-02", now)
@@ -434,82 +446,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         except tk.TclError as error:
             raise unittest.SkipTest("No graphical display") from error
         probe.destroy()
-
-    def setUp(self) -> None:
-        self.root = tk.Tk()
-        self.root.withdraw()
-        self.canvas = tk.Canvas(self.root, width=192, height=208)
-        self.canvas.pack()
-        self.state = PetState()
-        self.settings = PetSettings(x=100, y=500)
-        self.action_deadlines: list[float] = []
-        assets = with_idle_gestures(load_character_catalog())
-        self.walk = WalkDriver(
-            state=self.state,
-            settings=self.settings,
-            adaptive=AdaptiveRoutine(),
-            monitor=IdleMonitor(),
-            walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
-            ports=WalkDriverPorts(
-                track=lambda: TaskbarTrack(0, 800, 800),
-                place_x=self._place_x,
-            ),
-        )
-        self.selected_cursor = CursorIntent()
-        self.visual = DesktopVisualObservation(
-            settings=self.settings,
-            monitor=IdleMonitor(),
-            attention=VisualAttentionPorts(cursor_intent=lambda: self.selected_cursor),
-            eyes=lambda: (
-                self.root.winfo_x() + (FRAME_WIDTH // 2) * self.settings.scale,
-                self.root.winfo_y() + 82 * self.settings.scale,
-            ),
-        )
-        self.animation = DesktopAnimationRuntime(
-            state=self.state,
-            settings=self.settings,
-            assets=assets,
-            walk=self.walk,
-            visual=self.visual,
-            ports=AnimationRuntimePorts(
-                action_until=lambda: 0.0,
-                action_clip_id=lambda: "idle",
-            ),
-        )
-        self.anim = AnimatedPet(
-            self.root,
-            self.canvas,
-            self.state,
-            self.settings,
-            AnimatedPorts(
-                walk_step=self._step_walk,
-                walk_active=self.animation.walk_active,
-                interrupt_walk=self.animation.interrupt_walk,
-                choose_animation=self.animation.select_animation,
-                reset_gaze=self.visual.reset,
-                extend_action=self.action_deadlines.append,
-            ),
-            assets=assets,
-            items=load_item_catalog(),
-            ambient=self.animation.ambient,
-        )
-        self.addCleanup(self.root.destroy)
-        self.addCleanup(self.anim.close)
-
-    def _place_x(self, value: float) -> None:
-        self.settings.x = round(value)
-
-    def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
-        self.selected_cursor = CursorIntent("observe", target=pointer)
-        return self.visual.gaze_direction(
-            pointer,
-            game_mode=self.anim.game_mode,
-        )
-
-    def _step_walk(self, now: float, elapsed: float) -> str | None:
-        return self.animation.advance_walk(
-            now, elapsed, game_mode=self.anim.game_mode,
-        )
 
     def test_sprites_and_gaze_do_not_require_hover_ui(self) -> None:
         self.assertFalse(hasattr(self.anim, "pet"))

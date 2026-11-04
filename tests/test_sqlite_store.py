@@ -11,12 +11,14 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from test_horoscope import NOW
-from test_sqlite_adaptive_rows import profile
-from test_sqlite_care_evidence import complete_emotional_state
-from test_sqlite_food_handovers import handover_state
-from test_sqlite_horoscope import admitted_day
-from test_sqlite_social_rows import social_history
+from support.horoscope import NOW
+from support.storage import (
+    admitted_day,
+    complete_emotional_state,
+    handover_state,
+    profile,
+    social_history,
+)
 
 from aiko_pet.application.horoscope_models import HoroscopeHistory
 from aiko_pet.application.session import SavedPetReader, SavedPetWriter

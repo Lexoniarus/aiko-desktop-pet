@@ -4,9 +4,9 @@ import unittest
 from dataclasses import replace
 from unittest.mock import Mock
 
-import test_attention_policy as policy_support
-import test_desktop_animation_runtime as animation_support
-import test_desktop_attention_runtime as runtime_support
+from support import animation as animation_support
+from support import animation as policy_support
+from support import animation as runtime_support
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.animation import FrameClock
@@ -21,15 +21,18 @@ from tools.pet_test_support import set_test_pet_values
 
 class IdleGestureTests(unittest.TestCase):
     def setUp(self):
-        fixture = policy_support.AttentionPolicyTests()
-        fixture.setUp()
+        fixture = policy_support.AttentionFixture()
+        fixture.prepare_fixture()
         self.attention = fixture.attention
         self.state = fixture.state
         set_test_pet_values(self.state, friendship=50, mood=75)
-        self.state.restore_checkpoint(replace(
-            self.state.capture_checkpoint(), lived_seconds=100,
-            wishes=WishState(2, (ActiveWish(1, WishId.FOOD, "apple", 0, 200),)),
-        ))
+        self.state.restore_checkpoint(
+            replace(
+                self.state.capture_checkpoint(),
+                lived_seconds=100,
+                wishes=WishState(2, (ActiveWish(1, WishId.FOOD, "apple", 0, 200),)),
+            )
+        )
         self.attention.next_idle_emote = 0
 
     def test_real_request_is_read_only_and_uses_existing_cooldown(self):
@@ -82,8 +85,8 @@ class IdleGestureTests(unittest.TestCase):
         self.assertTrue(clock.finished)
 
     def test_quarter_returns_through_real_phases_before_gesture_is_ready(self):
-        fixture = animation_support.DesktopAnimationRuntimeTests()
-        fixture.setUp()
+        fixture = animation_support.AnimationRuntimeFixture()
+        fixture.create_runtime_fixture()
         fixture.visual.object_target = None
         body = fixture.runtime._body_orientation
         body.side, body.phase = 1, 4
@@ -99,8 +102,8 @@ class IdleGestureTests(unittest.TestCase):
         self.assertFalse(fixture.runtime._idle_gesture_front)
 
     def test_cursor_preempts_running_idle_gesture_through_existing_action_owner(self):
-        fixture = animation_support.DesktopAnimationRuntimeTests()
-        fixture.setUp()
+        fixture = animation_support.AnimationRuntimeFixture()
+        fixture.create_runtime_fixture()
         fixture.runtime._assets = with_idle_gestures(fixture.assets)
         fixture.visual.object_target = None
         fixture.visual.cursor_watching = True
@@ -114,8 +117,8 @@ class IdleGestureTests(unittest.TestCase):
         self.assertNotEqual(decision.sprite.animation, QUESTION_REQUEST_CLIP)
 
     def runtime_fixture(self):
-        fixture = runtime_support.DesktopAttentionRuntimeTests()
-        fixture.setUp()
+        fixture = runtime_support.AttentionRuntimeFixture()
+        fixture.prepare_fixture()
         fixture.attention.select_idle_animation.return_value = IdleGestureChoice(1)
         fixture.attention.idle_gesture_choice.return_value = IdleGestureChoice(1)
         fixture.attention.next_idle_emote = 200

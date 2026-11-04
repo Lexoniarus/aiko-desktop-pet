@@ -7,172 +7,23 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
+from support.care import CARE_EVIDENCE_STORAGE_ELAPSED as ELAPSED
+from support.care import CARE_EVIDENCE_STORAGE_WALL as WALL
+from support.care import emotional_state
+
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.care_evidence import (
-    CareActivity,
-    CareEncounter,
-    CareEvidenceState,
-    CareExperience,
-    CarePeriodSummary,
-    LongTermProgress,
-)
 from aiko_pet.pet.moodlets import (
-    MoodletCause,
-    MoodletCauseKind,
     MoodletEpisode,
     MoodletId,
-    MoodletOutcome,
     MoodletState,
-    MoodletWishCause,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.wish_catalog import WISH_CATALOG
-from aiko_pet.pet.wishes import WishArea, WishId, WishTargetKind
 from aiko_pet.ui.view_models.moodlet_causes import cause_description
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
-
-ELAPSED = 90000
-WALL = 1800000000
-
-
-def emotional_state():
-    evidence = CareEvidenceState(
-        0,
-        4,
-        (
-            CareEncounter(1, 100, 120),
-            CareEncounter(2, 7500, 7520),
-            CareEncounter(3, 30000, 30030),
-        ),
-        (
-            CareExperience(
-                "round:a:1",
-                120,
-                CareActivity.PLAY,
-                MoodletOutcome.WIN,
-                WishArea.GAMES,
-                WishTargetKind.GAME,
-                "mastermind",
-                1,
-                1,
-                pleasant=True,
-            ),
-            CareExperience(
-                "social:1",
-                7520,
-                CareActivity.SOCIAL,
-                MoodletOutcome.COMPLETED,
-                WishArea.SOCIAL,
-                WishTargetKind.SOCIAL,
-                "fact",
-                2,
-                2,
-                pleasant=True,
-            ),
-            CareExperience(
-                "social:2",
-                30030,
-                CareActivity.SOCIAL,
-                MoodletOutcome.COMPLETED,
-                WishArea.SOCIAL,
-                WishTargetKind.SOCIAL,
-                "chat",
-                3,
-                3,
-                pleasant=True,
-            ),
-        ),
-        (
-            LongTermProgress(MoodletId.TRUSTING, 86400, 86400, 90000),
-            LongTermProgress(MoodletId.APPRECIATED, 0, 0, 90000),
-        ),
-    )
-    summary = CarePeriodSummary(
-        0,
-        86400,
-        3,
-        (CareActivity.PLAY, CareActivity.SOCIAL),
-        3,
-        (WishArea.GAMES, WishArea.SOCIAL),
-        1,
-    )
-    trust = MoodletEpisode(
-        1,
-        MoodletId.TRUSTING,
-        1,
-        86400,
-        86400,
-        129600,
-        causes=(
-            MoodletCause(
-                MoodletCauseKind.LONG_TERM,
-                86400,
-                "trust:0:86400",
-                outcome=MoodletOutcome.COMPLETED,
-                period=summary,
-            ),
-        ),
-    )
-    definition = WISH_CATALOG.definitions[WishId.PLAY_ANY_GAME]
-    play = MoodletEpisode(
-        2,
-        MoodletId.SHARED_PLAY,
-        3,
-        80000,
-        89000,
-        3600,
-        causes=(
-            MoodletCause(
-                MoodletCauseKind.WISH_FULFILLED,
-                89000,
-                "round:b:2",
-                wish=MoodletWishCause(
-                    7,
-                    definition.id.value,
-                    "",
-                    "total_rounds",
-                    2,
-                    definition.bind_target(),
-                ),
-                target_id="connect_four",
-                outcome=MoodletOutcome.COMPLETED,
-            ),
-        ),
-        lower_stage_seconds=(4200, 2700),
-    )
-    food = WISH_CATALOG.definitions[WishId.AVOID_FOOD]
-    refused = MoodletEpisode(
-        3,
-        MoodletId.FOOD_WISH_DISREGARDED,
-        1,
-        88000,
-        88000,
-        1800,
-        causes=(
-            MoodletCause(
-                MoodletCauseKind.WISH_FAILED,
-                88000,
-                "offer:3",
-                wish=MoodletWishCause(
-                    8,
-                    food.id.value,
-                    "donut",
-                    "food_handover",
-                    0,
-                    food.bind_target("donut"),
-                ),
-                target_id="donut",
-                outcome=MoodletOutcome.HANDOVER,
-                object_id="item:3",
-                handed_over_at=87000,
-            ),
-        ),
-    )
-    return MoodletState(0, 4, (trust, play, refused), care_evidence=evidence)
 
 
 class CareEvidenceStorageTests(unittest.TestCase):

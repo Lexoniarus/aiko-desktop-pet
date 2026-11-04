@@ -3,33 +3,14 @@
 import unittest
 from dataclasses import replace
 
-from aiko_pet.pet.wish_catalog import WISH_CATALOG
-from aiko_pet.pet.wish_matching import assign_activity_wish
+from support.wishes import assigned, wish
+
 from aiko_pet.pet.wishes import (
     ActiveWish,
     GameWishProgress,
     WishArea,
     WishId,
-    WishState,
 )
-
-DEFINITIONS = WISH_CATALOG.definitions
-
-
-def wish(key, reference=None, *, instance=1, at=0, pinned=False, progressed=False):
-    definition = DEFINITIONS[key]
-    target = definition.bind_target(reference)
-    return ActiveWish(
-        instance, key, reference or "", at, 600, goal=definition.goal,
-        target=target, pinned=pinned,
-        game=GameWishProgress(("earlier:1",), 1, 0) if progressed
-        else GameWishProgress(),
-    )
-
-
-def assigned(*wishes, area=WishArea.GAMES, target="blackjack", elapsed=100):
-    return assign_activity_wish(WishState(active=wishes), area, target,
-                                elapsed=elapsed, definitions=DEFINITIONS)
 
 
 class WishAssignmentTests(unittest.TestCase):

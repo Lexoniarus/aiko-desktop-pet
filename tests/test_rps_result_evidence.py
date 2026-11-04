@@ -12,11 +12,11 @@ from itertools import product
 from pathlib import Path
 from typing import Any
 
-from test_everyday_experiences import pet_at
-from test_wish_assignment import wish
-from test_wish_game_assignment import INPUTS, coordinator, pet_with
+from support.care import pet_at
+from support.games import WALL, finish_actual_round, pet_with_cause, rps_cause
+from support.wishes import INPUTS, coordinator, wish
+from support.wishes import wish_game_assignment_pet_with as pet_with
 
-from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import (
     GameId,
@@ -25,7 +25,7 @@ from aiko_pet.games.contracts import (
     RockPaperScissorsDetails,
     RockPaperScissorsMove,
 )
-from aiko_pet.games.rock_paper_scissors import Move, RockPaperScissors
+from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.infrastructure.moodlet_cause_codec import (
     decode_moodlet_causes,
     encode_moodlet_cause,
@@ -35,9 +35,6 @@ from aiko_pet.infrastructure.sqlite.moodlet_cause_rows import read_causes
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.moodlets import (
-    MoodletAttribution,
-    MoodletCause,
-    MoodletCauseKind,
     MoodletEpisode,
     MoodletId,
     MoodletOutcome,
@@ -46,29 +43,6 @@ from aiko_pet.pet.moodlets import (
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishId
 from tools.persistence_test_support import save_test_session
-
-WALL = 1800000000
-
-
-def rps_cause() -> MoodletCause:
-    return MoodletCause(
-        MoodletCauseKind.INTERACTION, 50, "play:rock_paper_scissors:test:1",
-        MoodletAttribution.USER, target_id=GameId.ROCK_PAPER_SCISSORS.value,
-        outcome=MoodletOutcome.WIN,
-        game_details=RockPaperScissorsDetails(Move.SCISSORS, Move.ROCK),
-    )
-
-
-def pet_with_cause(cause: MoodletCause) -> PetState:
-    return PetState(
-        updated_at=WALL, lived_seconds=100,
-        moodlets=MoodletState(next_instance_id=2, active=(
-            MoodletEpisode(
-                1, MoodletId.SHARED_PLAY, 1, 50, 50, 7200,
-                attribution=MoodletAttribution.USER, causes=(cause,),
-            ),
-        )),
-    )
 
 
 class RpsEvidenceContractTests(unittest.TestCase):
@@ -180,19 +154,6 @@ class RpsEvidenceStorageTests(unittest.TestCase):
                     )
                     with self.subTest(snapshot=snapshot), self.assertRaises(ValueError):
                         read_causes(connection)
-
-
-def finish_actual_round(
-    runtime: GameExperienceCoordinator, number: int, player: Move, aiko: Move,
-) -> GameRoundEvent:
-    game = RockPaperScissors(random_index=lambda _size: tuple(Move).index(aiko))
-    game.begin(player)
-    start = GameRoundEvent(GameId.ROCK_PAPER_SCISSORS, "actual", number)
-    runtime.observe_round(start, INPUTS)
-    revealed = game.reveal()
-    event = replace(start, outcome=revealed.outcome.value, details=revealed.details)
-    runtime.observe_round(event, INPUTS)
-    return event
 
 
 class RpsEvidenceIntegrationTests(unittest.TestCase):

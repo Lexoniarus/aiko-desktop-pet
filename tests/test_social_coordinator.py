@@ -4,82 +4,18 @@ from __future__ import annotations
 
 import unittest
 
-from test_social_content import fact_payload, joke_payload
+from support.payloads import fact_payload, joke_payload
+from support.social import TEST_JOKE_CATALOG, ManualSocialWorker
 
-from aiko_pet.application.social_candidates import JokeCatalog
 from aiko_pet.application.social_content import (
     BUFFERED_CATEGORIES,
     SocialCategory,
     SocialProvider,
-    default_provider,
     prepare_social_content,
 )
 from aiko_pet.application.social_coordinator import (
     SocialContentCoordinator,
 )
-from aiko_pet.application.social_fetch import SocialFetchRequest, SocialFetchResult
-
-TEST_JOKE_CATALOG = JokeCatalog(0, 100000, 253402300799.0)
-
-
-class SocialTestClock:
-    def __init__(self) -> None:
-        self.now = 1800000000.0
-
-    def __call__(self) -> float:
-        return self.now
-
-
-class ManualSocialWorker:
-    def __init__(self, *, clock: SocialTestClock | None = None) -> None:
-        self.requests: list[tuple[SocialCategory, object]] = []
-        self.providers: list[SocialProvider] = []
-        self.clock = clock or SocialTestClock()
-        self.result: SocialFetchResult | None = None
-        self.closed = False
-        self.plans: list[SocialFetchRequest | None] = []
-
-    def start(self, category: SocialCategory, token: object,
-              provider: SocialProvider | None = None, *,
-              request: SocialFetchRequest | None = None) -> None:
-        self.plans.append(request)
-        self.requests.append((category, token))
-        self.providers.append(provider or default_provider(category))
-
-    def poll(self) -> SocialFetchResult | None:
-        result, self.result = self.result, None
-        return result
-
-    def complete(self, identifier: int, *, fail: bool = False) -> None:
-        category, token = self.requests[-1]
-        provider = self.providers[-1]
-        payload = (fact_payload(str(identifier)) if category == SocialCategory.FACT
-                   else joke_payload(category, identifier))
-        # Distinct content, not just distinct provider IDs.
-        field = ("text" if category == SocialCategory.FACT else "joke"
-                 if category == SocialCategory.SINGLE else "setup")
-        payload[field] = f"Test {identifier}."
-        if provider == SocialProvider.QUOTATIONS:
-            payload = dict(quote=f"Test {identifier}.", language="de",
-                           link=f"https://www.zitat-service.de/de/quotations/{identifier}",
-                           authorName="Testautor")
-        elif provider == SocialProvider.WITZAPI:
-            payload = dict(
-                language="de", text=(f"Test {identifier}? Antwort {identifier}."
-                                     if category == SocialCategory.TWO_PARTS
-                                     else f"Test {identifier}."),
-            )
-        content = (None if fail else prepare_social_content(
-            category, payload, provider=provider,
-        ))
-        self.clock.now += 10
-        self.result = SocialFetchResult(
-            token, category, content, failure="temporary" if fail else None,
-            retry_at=self.clock.now + 60 if fail else None,
-        )
-
-    def close(self) -> None:
-        self.closed = True
 
 
 class SocialCoordinatorTests(unittest.TestCase):

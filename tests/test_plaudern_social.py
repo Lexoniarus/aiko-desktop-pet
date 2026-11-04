@@ -6,11 +6,10 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from test_plaudern import talk
-from test_social_content import fact_payload
-from test_social_evidence_playback import originals, play_content
-from test_wish_assignment import wish
-from test_wish_social_assignment import WALL, SocialHarness
+from support.payloads import fact_payload
+from support.social import originals, play_content, talk
+from support.wishes import WISH_SOCIAL_ASSIGNMENT_WALL as WALL
+from support.wishes import SocialHarness, wish
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import SocialCategory, prepare_social_content

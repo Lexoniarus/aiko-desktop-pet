@@ -7,7 +7,7 @@ from dataclasses import replace
 from typing import Callable
 from unittest.mock import Mock, patch
 
-from test_social_coordinator import TEST_JOKE_CATALOG, ManualSocialWorker
+from support.social import TEST_JOKE_CATALOG, ManualSocialWorker
 
 from aiko_pet.application.social_candidates import JokeCatalog
 from aiko_pet.application.social_content import (

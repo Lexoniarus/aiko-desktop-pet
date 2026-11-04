@@ -11,8 +11,8 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlsplit
 
-from test_social_content import joke_payload
-from test_social_coordinator import ManualSocialWorker
+from support.payloads import joke_payload
+from support.social import ManualSocialWorker
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_candidates import (

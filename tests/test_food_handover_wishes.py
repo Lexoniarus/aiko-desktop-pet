@@ -3,22 +3,16 @@
 import unittest
 from dataclasses import replace
 
-from test_wish_assignment import wish
+from support.wishes import food_handover_wishes_pet_with as pet_with
+from support.wishes import wish
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.food_handover import HandoverStatus
 from aiko_pet.pet.food_wishes import food_wish_permission
 from aiko_pet.pet.moodlets import MoodletAttribution, MoodletId, MoodletOutcome
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
-from aiko_pet.pet.wishes import WishArea, WishId, WishState
+from aiko_pet.pet.wishes import WishArea, WishId
 from tools.pet_test_support import require_test_value
-
-
-def pet_with(*wishes):
-    return PetState(lived_seconds=100, satiety=100, friendship=50,
-                    wishes=WishState(max(w.instance_id for w in wishes) + 1,
-                                     wishes, ((WishArea.FOOD, 0),), refresh_at=600))
 
 
 class FoodHandoverWishTests(unittest.TestCase):

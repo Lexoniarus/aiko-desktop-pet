@@ -11,6 +11,10 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import patch
 
+from support.care import EMOTIONAL_PERSISTENCE_ELAPSED as ELAPSED
+from support.care import EMOTIONAL_PERSISTENCE_WALL as WALL
+from support.care import moodlet_state, wish_state
+
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
@@ -42,29 +46,6 @@ from aiko_pet.pet.wishes import (
     WishState,
 )
 from tools.persistence_test_support import save_test_session
-
-WALL = 1_800_000_000.0
-ELAPSED = 1000.0
-
-
-def moodlet_state() -> MoodletState:
-    return MoodletState(100, 8, (
-        MoodletEpisode(1, MoodletId.POKING, 2, 100, 950, 570, (2, 3), 1),
-        MoodletEpisode(3, MoodletId.HUNGER_WORN, 1, 200, 200, 2400, (1,),
-                       decay_paused=True),
-        MoodletEpisode(5, MoodletId.WITHHELD, 3, 300, 900, 1200,
-                       decay_paused=True),
-        MoodletEpisode(7, MoodletId.PRIDE, 2, 800, 850, 3600),
-    ))
-
-
-def wish_state() -> WishState:
-    return WishState(6, (
-        ActiveWish(1, WishId.FOOD, "apple", 100, 14500),
-        ActiveWish(3, WishId.WIN_OVERALL, "blackjack", 200, 14600, 900,
-                   GameWishProgress(("session-a:1", "session-b:1"), 1, 1)),
-        ActiveWish(5, WishId.PET, "pet", 300, 14700),
-    ), ((WishArea.FOOD, 100), (WishArea.GAMES, 200), (WishArea.AFFECTION, 300)), 900)
 
 
 class MoodletPersistenceTests(unittest.TestCase):

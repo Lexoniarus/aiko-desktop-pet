@@ -7,6 +7,8 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
+from support.storage import handover_state
+
 from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.infrastructure.sqlite.connection import open_database
 from aiko_pet.infrastructure.sqlite.pet_rows import write_pet_core
@@ -16,38 +18,12 @@ from aiko_pet.infrastructure.sqlite.wish_rows import (
     write_wishes,
 )
 from aiko_pet.pet.food_handover import (
-    FoodHandoverReceipt,
-    FoodWishSnapshot,
     HandoverStatus,
 )
 from aiko_pet.pet.food_wishes import recognize_food_handover
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
-from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-
-
-def handover_state() -> WishState:
-    desired, excluded = (
-        WISH_CATALOG.definitions[key] for key in (WishId.FOOD, WishId.AVOID_FOOD)
-    )
-    context = (
-        FoodWishSnapshot(
-            10, desired.id, desired.bind_target("apple"), desired.goal, 100, 200, True
-        ),
-        FoodWishSnapshot(
-            11, excluded.id, excluded.bind_target("donut"), excluded.goal, 110
-        ),
-    )
-    return WishState(
-        30,
-        last_created_by_area=((WishArea.FOOD, 110),),
-        last_expressed_at=200,
-        refresh_at=1200,
-        food_handovers=(
-            FoodHandoverReceipt("offer:first", "object_99", 500.125, context),
-            FoodHandoverReceipt("offer:second", "object_100", 600.375, context[:1]),
-        ),
-    )
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId
 
 
 class SqliteFoodHandoverTests(unittest.TestCase):

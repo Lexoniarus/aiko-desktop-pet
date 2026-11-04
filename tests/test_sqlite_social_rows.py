@@ -7,8 +7,9 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
+from support.storage import social_history
+
 from aiko_pet.application.social_content import (
-    BUFFERED_CATEGORIES,
     SocialCategory,
     SocialProvider,
 )
@@ -16,48 +17,11 @@ from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
 )
-from aiko_pet.application.social_requests import (
-    SocialProviderBlock,
-    SocialRequestHistory,
-    SocialRequestReceipt,
-)
 from aiko_pet.infrastructure.sqlite.connection import open_database
 from aiko_pet.infrastructure.sqlite.social_rows import (
     read_social_core,
     write_social_core,
 )
-
-
-def social_history() -> SocialContentHistory:
-    entries = []
-    for index in range(100):
-        for offset, category in enumerate(BUFFERED_CATEGORIES):
-            identity = (
-                f"uselessfacts:fact-{index}"
-                if category == SocialCategory.FACT
-                else f"jokeapi:{100 + index}"
-                if category == SocialCategory.TWO_PARTS
-                else f"zitat-service:{index}"
-                if index % 2 == 0
-                else f"jokeapi:{index}"
-            )
-            entries.append(
-                SocialContentReceipt(
-                    category, identity, f"{3 * index + offset:064x}", index % 3
-                )
-            )
-    requests = SocialRequestHistory(
-        (
-            SocialRequestReceipt(SocialProvider.FACTS, 1800000000.1234567),
-            SocialRequestReceipt(SocialProvider.QUOTATIONS, 1800000002.1234567),
-            SocialRequestReceipt(SocialProvider.JOKEAPI, 1799999999.1234567),
-        ),
-        (
-            SocialProviderBlock(SocialProvider.QUOTATIONS, 1800003600.1234567),
-            SocialProviderBlock(SocialProvider.FACTS, 1799999000.1234567),
-        ),
-    )
-    return SocialContentHistory(tuple(entries), requests)
 
 
 class SqliteSocialRowsTests(unittest.TestCase):
