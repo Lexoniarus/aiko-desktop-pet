@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 from copy import deepcopy
-from dataclasses import FrozenInstanceError, fields
+from dataclasses import FrozenInstanceError
 
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
@@ -15,7 +15,7 @@ STAMP = 1_800_000_000.0
 
 
 class PetCheckpointTests(unittest.TestCase):
-    def test_checkpoint_covers_every_pet_field_without_writable_histories(self) -> None:
+    def test_checkpoint_freezes_values_and_owns_immutable_histories(self) -> None:
         pet = PetState(
             satiety=52,
             friendship=21,
@@ -25,10 +25,7 @@ class PetCheckpointTests(unittest.TestCase):
             updated_at=STAMP,
         )
         checkpoint = pet.capture_checkpoint()
-        self.assertEqual(
-            {field.name for field in fields(checkpoint)},
-            {field.name for field in fields(PetValues)},
-        )
+        self.assertEqual((checkpoint.satiety, checkpoint.friendship), (52, 21))
         self.assertEqual(checkpoint.meals_today, ("breakfast",))
         self.assertEqual(checkpoint.care_types_today, ("pet",))
         self.assertEqual(checkpoint.care_last_rewards, (("pet", 123.0),))

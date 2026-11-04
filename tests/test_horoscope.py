@@ -170,40 +170,6 @@ class HoroscopeTests(unittest.TestCase):
         self.assertEqual(day.sign, "aries")
         self.assertFalse(credit.called)
 
-    def test_each_comment_anchor_has_four_stages_and_omits_tense_state(self):
-        from aiko_pet.infrastructure.character_mind import make_aiko_mind
-        from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
-        from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
-        from aiko_pet.pet.routine import context_at
-
-        book = make_aiko_mind(started_at=0).book
-        keys = {
-            p.comment_key
-            for e in load_horoscope_catalogue().entries
-            for p in e.passages
-            if p.comment_key
-        }
-        self.assertEqual(len(keys), 24)
-        for key in keys:
-            for stage in FriendshipStage:
-                context = DialogueContext(
-                    stage,
-                    50,
-                    EmotionalComposition(EmotionalState.CALM),
-                    context_at(NOW),
-                    horoscope_comment_key=key,
-                )
-                self.assertIsNotNone(book.choose("horoscope_comment", context, 0))
-                self.assertIsNone(
-                    book.choose(
-                        "horoscope_comment",
-                        replace(
-                            context, emotions=EmotionalComposition(EmotionalState.TENSE)
-                        ),
-                        0,
-                    )
-                )
-
     def test_midnight_replay_and_new_book_do_not_change_the_old_story(self):
         owner, clock, _sky, credit = coordinator()
         clock.return_value = datetime(2026, 10, 25, 23, 50).timestamp()

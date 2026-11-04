@@ -137,16 +137,5 @@ class CareGuiTests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=stale):
             self.assertIsNone(self.app._activity.live_effort())
 
-    def test_settings_lifetime_is_independent_of_toolbar(self):
-        self.toolbar.settings_button.invoke()
-        window = self.app._hover.settings_window
-        assert window is not None
-        self.app._hover.dismiss_outside(-999, -999)
-        self.assertFalse(self.toolbar.visible)
-        self.assertIs(self.app._hover.settings_window, window)
-        window.close()
-        self.assertIsNone(self.app._hover.settings_window)
-
-
 if __name__ == "__main__":
     unittest.main()

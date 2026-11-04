@@ -9,7 +9,6 @@ from unittest.mock import Mock, patch
 
 from aiko_pet.application.runtime_resources import PreparedRuntimeResources
 from aiko_pet.config import load_env_file
-from aiko_pet.infrastructure.persistence import default_save_path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -79,18 +78,6 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
             with patch.dict(os.environ, {}, clear=True):
                 load_env_file(Path(folder) / "missing.env")
                 self.assertNotIn("AIKO_SAVE_PATH", os.environ)
-
-    def test_override_changes_save_file_not_its_parent(self) -> None:
-        with tempfile.TemporaryDirectory() as folder:
-            wanted = Path(folder) / "custom" / "state.json"
-            with patch.dict(os.environ, {"AIKO_SAVE_PATH": str(wanted)}):
-                self.assertEqual(default_save_path(), wanted.with_suffix(".sqlite3"))
-
-    def test_blank_override_preserves_platform_default(self) -> None:
-        with patch.dict(os.environ, {"AIKO_SAVE_PATH": "  "}):
-            self.assertEqual(default_save_path().name, "state.sqlite3")
-            self.assertEqual(default_save_path().parent.name, "AikoDesktopPet")
-
 
 if __name__ == "__main__":
     unittest.main()

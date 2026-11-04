@@ -111,9 +111,10 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertEqual(state.friendship, before)
 
     def test_talk_is_distinct_from_play_and_food(self):
-        state = PetState(social=12, satiety=28, mood=30, energy=60)
+        state = PetState(social=12, satiety=28, mood=30, energy=60, affection=21)
         state.interact("talk", now=timestamp())
         self.assertEqual(state.social, 38)
+        self.assertEqual(state.affection, 21)
         self.assertEqual(state.mood, 30)
         self.assertEqual(state.satiety, 28)
         self.assertEqual(state.energy, 59)

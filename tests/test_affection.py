@@ -40,13 +40,6 @@ class AffectionNeedTests(unittest.TestCase):
         self.assertLess(state.energy, 50)
         self.assertEqual((state.affection, state.satiety), (17, 50))
 
-    def test_talking_improves_social_not_affection(self):
-        state = PetState(affection=21, social=19, mood=32)
-        state.interact("talk", now=stamp())
-        self.assertEqual(state.social, 45)
-        self.assertEqual(state.mood, 32)
-        self.assertEqual(state.affection, 21)
-
     def test_food_and_energy_drinks_do_not_refill_affection(self):
         state = PetState(affection=16, satiety=23, energy=30)
         state.interact("feed", now=stamp())

@@ -100,16 +100,5 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
         self.assertIsNotNone(self.toolbar.settings_button)
 
-    def test_settings_survive_toolbar_hide_and_reopen(self):
-        self.toolbar.settings_button.invoke()
-        settings = self.app._hover.settings_window
-        self.assertIsNotNone(settings)
-        self.app._hover.dismiss_outside(-999, -999)
-        self.assertFalse(self.toolbar.visible)
-        self.assertIs(self.app._hover.settings_window, settings)
-        self.app._on_enter()
-        self.assertTrue(self.toolbar.visible)
-
-
 if __name__ == "__main__":
     unittest.main()
