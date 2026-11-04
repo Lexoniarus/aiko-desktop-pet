@@ -92,14 +92,6 @@ class TicTacToeGuiTests(unittest.TestCase):
         self.timing.advance(5)
         self.assertIsNone(self.pet._speech.bubble)
 
-    def test_pending_turn_does_not_reward_and_callbacks_are_cancelled(self):
-        before = self.pet.state.fun
-        self.game.buttons[0].invoke()
-        self.game.close()
-        self.game._sequence.advance()
-        self.assertEqual(self.pet.state.fun, before)
-        self.assertIsNone(self.game._sequence.pending_timer)
-
     def test_system_close_cancels_pending_turn_and_releases_the_host(self):
         before = self.pet.state.fun
         self.game.buttons[0].invoke()
