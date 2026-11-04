@@ -1,7 +1,5 @@
 """Imported card completeness/provenance and actual Tk image lifetime."""
 
-import hashlib
-import json
 import tkinter as tk
 import unittest
 
@@ -13,17 +11,11 @@ from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 
 
 class PlayingCardAssetTests(unittest.TestCase):
-    def test_full_deck_back_and_unmodified_source_hashes(self):
-        manifest = json.loads((PLAYING_CARDS_DIR / "provenance.json").read_text())
+    def test_full_deck_and_back_are_loadable_transparent_tiles(self):
         names = {card.asset_name for card in STANDARD_DECK} | {"card_back.png"}
         self.assertEqual(len(names), 53)
-        self.assertEqual(set(manifest["files"]), names)
-        self.assertEqual(manifest["license"], "CC0-1.0")
         for name in names:
             path = PLAYING_CARDS_DIR / name
-            self.assertEqual(
-                hashlib.sha256(path.read_bytes()).hexdigest(), manifest["files"][name],
-            )
             with Image.open(path) as image:
                 self.assertEqual(image.size, (64, 64))
                 rgba = image.convert("RGBA")

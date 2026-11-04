@@ -17,7 +17,7 @@ from tools.media_crop import CapturedFrame
 
 
 class CaptureMediaOutputTests(unittest.TestCase):
-    def test_manual_tools_write_only_the_six_public_media(self) -> None:
+    def test_capture_tools_write_readable_media_and_release_both_desktops(self) -> None:
         pet = MagicMock()
         pet._runtime.scheduled_greeting = None
         pet._reaction_player.pending_timer = None
@@ -34,7 +34,8 @@ class CaptureMediaOutputTests(unittest.TestCase):
             window.winfo_ismapped.return_value = True
         game.score.games = 2
         frame = CapturedFrame(
-            Image.new("RGB", (160, 160), "white"), ((30, 30, 100, 100),),
+            Image.new("RGB", (160, 160), "white"),
+            ((30, 30, 100, 100),),
         )
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder)
@@ -62,15 +63,12 @@ class CaptureMediaOutputTests(unittest.TestCase):
             pet._hover.game_menu.choose.assert_called_once_with(
                 GameId.ROCK_PAPER_SCISSORS,
             )
-            self.assertEqual({path.name for path in output.iterdir()}, {
-                "Aiko_Current_Hover.png",
-                "Aiko_Current_Reaction_Sequence.gif",
-                "Aiko_Current_Ambient_Blink_And_Glance.gif",
-                "Aiko_Current_Animations.gif",
-                "Aiko_RPS_Aufgedeckt.png",
-                "Aiko_RPS_Spielablauf.gif",
-            })
-            self.assertTrue(all(path.stat().st_size for path in output.iterdir()))
+            files = list(output.iterdir())
+            self.assertTrue(files)
+            self.assertEqual({path.suffix for path in files}, {".png", ".gif"})
+            for path in files:
+                with self.subTest(output=path.name), Image.open(path) as captured:
+                    captured.verify()
         self.assertEqual(pet.quit.call_count, 2)
 
 

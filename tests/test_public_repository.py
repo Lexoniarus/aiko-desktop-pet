@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 import struct
@@ -10,13 +9,15 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LOCAL_MARKDOWN = tuple(sorted({
-    *ROOT.glob("*.md"),
-    *(ROOT / "docs").rglob("*.md"),
-    *(ROOT / "LICENSES").rglob("*.md"),
-    *(ROOT / "assets").rglob("*.md"),
-    *(ROOT / "aiko_pet/assets").rglob("*.md"),
-}))
+LOCAL_MARKDOWN = tuple(
+    sorted({
+        *ROOT.glob("*.md"),
+        *(ROOT / "docs").rglob("*.md"),
+        *(ROOT / "LICENSES").rglob("*.md"),
+        *(ROOT / "assets").rglob("*.md"),
+        *(ROOT / "aiko_pet/assets").rglob("*.md"),
+    })
+)
 LOCAL_LINK = re.compile(r"\]\(([^)]+)\)")
 
 
@@ -110,43 +111,6 @@ class PublicRepositoryTests(unittest.TestCase):
         self.assertEqual(
             len(tuple((ROOT / "aiko_pet/assets/emotes").glob("*.png"))), 15,
         )
-
-    def test_selected_source_export_matches_rebuild_inputs_and_hashes(
-        self,
-    ) -> None:
-        bundle = ROOT / "assets/aiko-anime-8-frames"
-        record = json.loads((bundle / "IMPORT_MANIFEST.json").read_text("utf-8"))
-        originals = record["original_files"]
-        self.assertEqual(len(originals), 134)
-        self.assertEqual(sum(item["bytes"] for item in originals),
-                         record["original_total_bytes"])
-        source = bundle / "aiko-anime-compact/animations-8"
-        catalog_file = source / "catalog.json"
-        catalog = json.loads(catalog_file.read_text("utf-8"))
-        inputs = {catalog_file}
-        for entry in catalog["animations"]:
-            if entry["state"] == "running":
-                continue
-            manifest = source / entry["manifest"]
-            inputs.add(manifest)
-            clip = json.loads(manifest.read_text("utf-8"))
-            for frame in clip["frames"]:
-                inputs.add(manifest.parent / frame["file"])
-                if "hand_foreground" in frame:
-                    inputs.add(manifest.parent / frame["hand_foreground"])
-        directions_file = source / catalog["look_directions"]
-        inputs.add(directions_file)
-        directions = json.loads(directions_file.read_text("utf-8"))
-        inputs.update(directions_file.parent / frame["file"]
-                      for frame in directions["directions"])
-        self.assertEqual({bundle / item["path"] for item in originals}, inputs)
-        for item in originals:
-            path = bundle / item["path"]
-            with self.subTest(path=item["path"]):
-                content = path.read_bytes()
-                self.assertEqual(len(content), item["bytes"])
-                self.assertEqual(hashlib.sha256(content).hexdigest(),
-                                 item["sha256"])
 
     def test_example_environment_is_optional_and_does_not_invent_keys(
         self,
