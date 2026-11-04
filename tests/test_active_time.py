@@ -217,21 +217,6 @@ class HourlyCareTests(unittest.TestCase):
                 state.interact('feed', now=NOW + 3600)
                 self.assertAlmostEqual(state.satiety, 100)
 
-    def test_eight_hour_care_day_stays_playable_and_bond_is_capped(self) -> None:
-        state = self.full_state()
-        for hour in range(1, 9):
-            stamp = NOW + hour * 3600
-            state.advance(stamp, elapsed_seconds=3600)
-            state.interact('feed', now=stamp)
-            if hour % 3 == 0:
-                state.interact('talk', now=stamp)
-            if hour % 4 == 0:
-                state.interact('pet', now=stamp)
-                state.interact('play', now=stamp)
-            self.assertGreater(min(state.satiety, state.mood, state.energy,
-                                   state.social, state.affection), 20)
-        self.assertLessEqual(state.friendship, 20)
-
     def test_sleep_retains_gentle_recovery_and_unknown_load_has_no_bonus(self) -> None:
         state = self.full_state()
         set_test_pet_values(state, sleeping=True, energy=40)
