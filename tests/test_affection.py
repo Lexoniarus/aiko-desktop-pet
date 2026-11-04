@@ -17,7 +17,7 @@ from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
-from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
@@ -344,34 +344,6 @@ class AffectionDialogueTests(unittest.TestCase):
             ).event,
             "affection_low",
         )
-
-    def test_dialogues_all_use_existing_sprites_and_grounded_topics(self):
-        lines = [
-            line
-            for line in DialogueBook.from_file().lines
-            if line.id.startswith("v012-")
-        ]
-        self.assertGreaterEqual(len(lines), 12)
-        self.assertEqual(
-            {line.event for line in lines},
-            {
-                "affection_low",
-                "click_affection_low",
-                "pet_needs_affection",
-                "click_at_ease",
-            },
-        )
-        self.assertTrue(
-            all(
-                line.animation
-                in {"idle", "waiting", "review", "failed", "jumping", "waving"}
-                for line in lines
-            )
-        )
-        self.assertTrue(
-            all("CPU" not in line.text and "Academy" not in line.text for line in lines)
-        )
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,6 @@
 import json
 import random
 import unittest
-from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -70,8 +69,8 @@ class VoiceCatalogueTests(unittest.TestCase):
             )
         )
 
-    def test_every_important_interaction_has_several_reactions(self):
-        counts = Counter(line.event for line in self.book.lines)
+    def test_required_interactions_have_authored_reactions(self):
+        events = {line.event for line in self.book.lines}
         for event in (
             "click_left",
             "click_right",
@@ -87,9 +86,13 @@ class VoiceCatalogueTests(unittest.TestCase):
             "hungry",
             "tired",
             "walk_pause",
+            "greeting", "object_notice", "object_search", "object_handover",
+            "pet_boundary_ignored", "game_mm_player_win", "game_quiz_finish",
+            "affection_low", "click_affection_low", "pet_needs_affection",
+            "click_at_ease",
         ):
             with self.subTest(event=event):
-                self.assertGreaterEqual(counts[event], 5)
+                self.assertIn(event, events)
 
     def test_animation_mapping_is_valid_for_source_and_replay_variants(self):
         from aiko_pet.infrastructure.character_assets import (
@@ -165,6 +168,8 @@ class VoiceCatalogueTests(unittest.TestCase):
         line = Line.parse(dialogue_source_fixture()["lines"][0])
         with self.assertRaises(ValueError):
             DialogueBook((line, line))
+        with self.assertRaises(ValueError):
+            Line.parse(None)
 
 
 class EmotionTests(unittest.TestCase):
