@@ -178,6 +178,14 @@ class CareActionRulesTests(unittest.TestCase):
         state.advance(stamp + 1, auto_routine=True)
         self.assertFalse(state.sleeping)
 
+    def test_pet_primarily_refills_affection_and_never_gives_energy(self):
+        state = PetState(affection=30, mood=25, social=40, energy=50)
+        state.interact("pet", now=timestamp())
+        self.assertEqual(state.affection, 55)
+        self.assertEqual(state.mood, 25)
+        self.assertEqual(state.social, 42)
+        self.assertEqual(state.energy, 50)
+
 
 if __name__ == "__main__":
     unittest.main()

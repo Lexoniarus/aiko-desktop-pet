@@ -33,7 +33,7 @@ def period(value, hours, needs, *, contact=True, sleeping=False):
 
 
 def bond_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
-    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().bond_stamp()
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
 class FriendshipNeglectTests(unittest.TestCase):

@@ -9,6 +9,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
 from tools.persistence_test_support import save_test_session
+from tools.pet_test_support import set_test_pet_values
 
 # Early-epoch timestamps are not universally supported by Windows localtime.
 SAMPLE_TIMESTAMP = datetime(2026, 10, 12, 12).astimezone().timestamp()
@@ -60,8 +61,11 @@ class StateStoreTests(unittest.TestCase):
                     "energy": 88,
                     "sleeping": False,
                     "updated_at": timestamp,
+                    "social": 24, "friendship": 54,
+                    "care_last_rewards": {"sleep": timestamp - 400},
                 },
-                "settings": {"x": 400, "scale": 2, "auto_walk": False},
+                "settings": {"x": 400, "scale": 2, "auto_walk": False,
+                             "toolbar_x": 120, "toolbar_y": 70},
             })
         )
         session_data = self.store.load_session(now=timestamp)
@@ -74,6 +78,31 @@ class StateStoreTests(unittest.TestCase):
         self.assertTrue(settings.follow_cursor)
         self.assertTrue(settings.spontaneous_talk)
         self.assertEqual(pet.meals_today, [])
+        self.assertEqual((pet.social, pet.affection, pet.friendship), (24, 75, 54))
+        self.assertIn("sleep", pet.care_last_rewards)
+        self.assertEqual((settings.toolbar_x, settings.toolbar_y), (120, 70))
+        save_test_session(self.store, pet, settings)
+        again = self.store.load_session(now=timestamp).state
+        self.assertEqual(again.capture_checkpoint(), pet.capture_checkpoint())
+
+    def test_new_relationship_metadata_survives_save(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = StateStore(Path(tmp) / "pet.json")
+            state = PetState(updated_at=SAMPLE_TIMESTAMP, affection=35)
+            state.interact("pet", now=SAMPLE_TIMESTAMP)
+            set_test_pet_values(state, social=35)
+            state.interact("talk", now=SAMPLE_TIMESTAMP + 1)
+            save_test_session(store, state, PetSettings())
+            session_data = store.load_session(now=SAMPLE_TIMESTAMP + 1)
+            restored, _ = session_data.state, session_data.settings
+            self.assertEqual(restored.care_types_today, [])
+            self.assertEqual(
+                set(dict(restored.friendship_history.eligible)), set()
+            )
+            self.assertEqual(restored.friendship_history, state.friendship_history)
+            self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
+            self.assertEqual(restored.friendship, state.friendship)
+            self.assertAlmostEqual(restored.affection, state.affection, places=2)
 
 if __name__ == "__main__":
     unittest.main()

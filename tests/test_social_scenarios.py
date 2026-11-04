@@ -22,6 +22,7 @@ from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalConditio
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.view_models.text_de import format_emotional_state
 from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 
@@ -450,14 +451,14 @@ class CatalogueContractTests(unittest.TestCase):
                 self.assertGreaterEqual(sum(x.event == event for x in book.lines), 3)
 
 
-def bond_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
-    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().bond_stamp()
+def care_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
 class SocialDialogueTests(unittest.TestCase):
     def setUp(self):
         self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(57))
-        self.context = context_at(bond_stamp())
+        self.context = context_at(care_stamp())
 
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
         state = PetState(social=15)
@@ -491,7 +492,7 @@ class SocialDialogueTests(unittest.TestCase):
                 plan_care_action(
                     state,
                     "talk",
-                    now=self.context.local.bond_stamp(),
+                    now=self.context.local.timestamp(),
                 ).result,
                 self.mind.observe_care(state, self.context, 62),
             ),
@@ -505,7 +506,7 @@ class SocialDialogueTests(unittest.TestCase):
                 plan_care_action(
                     state,
                     "energy_drink",
-                    now=self.context.local.bond_stamp(),
+                    now=self.context.local.timestamp(),
                 ).result,
                 self.mind.observe_care(state, self.context, 90),
             ),
@@ -517,11 +518,100 @@ class SocialDialogueTests(unittest.TestCase):
                 plan_care_action(
                     state,
                     "energy_drink",
-                    now=self.context.local.bond_stamp(),
+                    now=self.context.local.timestamp(),
                 ).result,
                 self.mind.observe_care(state, self.context, 91),
             ),
             "energy_drink",
+        )
+
+
+class AffectionDialogueTests(unittest.TestCase):
+    def setUp(self):
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
+        self.context = context_at(care_stamp())
+
+    def test_low_affection_is_not_social_loneliness(self):
+        state = PetState(social=70, affection=12)
+        self.assertIn(
+            NeedCondition.LOW_AFFECTION,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            format_emotional_state(EmotionalState.SATISFIED),
+            "Stimmung: Zufrieden",
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_affection_low",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "pet",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "pet_needs_affection",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "talk",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "talk",
+        )
+
+    def test_existing_social_shortage_still_has_own_priority(self):
+        state = PetState(social=10, affection=10)
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_lonely",
+        )
+
+    def test_feeling_cared_for_can_make_aiko_more_at_ease(self):
+        state = PetState(affection=95, friendship=55, mood=73, social=78)
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_at_ease",
+        )
+        reserved = make_aiko_mind(started_at=0.0, rng=random.Random(12))
+        set_test_pet_values(state, affection=50)
+        self.assertEqual(
+            require_reaction(reserved.click("left", state, self.context, 50)).event,
+            "click_left",
+        )
+
+    def test_affection_spontaneous_hint_has_long_cooldown(self):
+        state = PetState(affection=8)
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60)
+            ).event,
+            "affection_low",
+        )
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 61),
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60 + 26 * 60)
+            ).event,
+            "affection_low",
         )
 
 if __name__ == "__main__":

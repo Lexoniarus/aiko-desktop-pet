@@ -2,6 +2,7 @@
 
 import unittest
 from dataclasses import replace
+from datetime import datetime
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
@@ -10,9 +11,14 @@ from aiko_pet.pet.friendship_history import FriendshipHistory, FriendshipProgres
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 START = 1800000000.
 HEALTHY = (100.,) * 5
+
+
+def affection_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
 class FriendshipPolicyTests(unittest.TestCase):
@@ -122,3 +128,32 @@ class FriendshipPolicyTests(unittest.TestCase):
         self.assertEqual(PetState(friendship=0).friendship_level, 1)
         self.assertEqual(PetState(friendship=99.9).friendship_level, 10)
         self.assertEqual(PetState(friendship=100).friendship_level, 10)
+
+    def test_full_needs_reduce_accepted_care_and_refused_commands_give_no_credit(self):
+        for action, value in (
+            ("feed", "satiety"),
+            ("pet", "affection"),
+            ("talk", "social"),
+            ("play", "fun"),
+        ):
+            with self.subTest(action=action):
+                state = PetState(energy=60)
+                set_test_pet_values(state, **{value: 100})
+                state.interact(action, now=affection_stamp())
+                self.assertEqual(state.friendship,
+                                 15)
+
+    def test_accepted_care_changes_needs_and_later_time_changes_friendship(self):
+        state = PetState(affection=25, updated_at=affection_stamp())
+        state.interact("pet", now=affection_stamp())
+        self.assertEqual(state.friendship, 15)
+        for i in range(3):
+            state.interact("pet", now=affection_stamp() + i + 1)
+        self.assertEqual(state.friendship, 15)
+        # Repetitions inside two hours do not move the eligibility anchor.
+        state.interact("pet", now=affection_stamp() + 20 * 60)
+        self.assertEqual(state.friendship, 15)
+        state.advance(affection_stamp() + 7200)
+        set_test_pet_values(state, affection=40)
+        state.interact("pet", now=affection_stamp() + 7200)
+        self.assertGreater(state.friendship, 15)

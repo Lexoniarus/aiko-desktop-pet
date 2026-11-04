@@ -22,6 +22,7 @@ from aiko_pet.infrastructure.social_history_codec import encode_social_history
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
 from aiko_pet.infrastructure.world_codec import encode_world
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
+from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.mind.object_knowledge import (
     ObjectMemorySnapshot,
     SavedObjectKnowledge,
@@ -271,3 +272,12 @@ class LegacyJsonCodecTests(unittest.TestCase):
         )
         self.assertEqual((state.social, state.friendship), (0, 15))
         self.assertEqual(state.care_last_rewards, {"sleep": timestamp()})
+
+    def test_corrupt_daily_action_list_is_sanitized(self):
+        state = decode_pet_state({
+            "care_types_today": ["pet", "pet", "other", 10, "talk"],
+            "affection": 12,
+            "friendship_gained_today": 999,
+        })
+        self.assertEqual(state.care_types_today, ["pet", "talk"])
+        self.assertEqual(state.friendship_gained_today, FRIENDSHIP_DAILY_CAP)

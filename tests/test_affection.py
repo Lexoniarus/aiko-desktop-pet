@@ -2,35 +2,14 @@
 
 from __future__ import annotations
 
-import json
-import random
-import tempfile
 import unittest
 from datetime import datetime
-from pathlib import Path
 
-from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state
-from aiko_pet.pet.care_actions import plan_care_action
-from aiko_pet.pet.emotions import EmotionalState
-from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
-from aiko_pet.pet.mind.catalog import Reaction
-from aiko_pet.pet.needs import NeedCondition
-from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.ui.view_models.text_de import format_emotional_state, status_hint_text
-from tools.persistence_test_support import save_test_session
-from tools.pet_test_support import set_test_pet_values
-
-
-def require_reaction(value: Reaction | None) -> Reaction:
-    """Fail immediately if an expected authored dialogue is unavailable."""
-    assert value is not None, "Expected a dialogue reaction"
-    return value
+from aiko_pet.ui.view_models.text_de import status_hint_text
 
 
 def stamp(day: str = "2026-10-12", hour: int = 12) -> float:
@@ -38,14 +17,6 @@ def stamp(day: str = "2026-10-12", hour: int = 12) -> float:
 
 
 class AffectionNeedTests(unittest.TestCase):
-    def test_pet_primarily_refills_affection_and_never_gives_energy(self):
-        state = PetState(affection=30, mood=25, social=40, energy=50)
-        state.interact("pet", now=stamp())
-        self.assertEqual(state.affection, 55)
-        self.assertEqual(state.mood, 25)
-        self.assertEqual(state.social, 42)
-        self.assertEqual(state.energy, 50)
-
     def test_completed_play_is_fun_and_company_not_affection(self):
         state = PetState(
             affection=17,
@@ -130,220 +101,6 @@ class AffectionNeedTests(unittest.TestCase):
         self.assertEqual(decode_pet_state({"affection": -7}).affection, 0)
         self.assertEqual(decode_pet_state({"affection": 700}).affection, 100)
 
-
-class MeaningfulFriendshipTests(unittest.TestCase):
-    def test_full_needs_reduce_accepted_care_and_refused_commands_give_no_credit(self):
-        for action, value in (
-            ("feed", "satiety"),
-            ("pet", "affection"),
-            ("talk", "social"),
-            ("play", "fun"),
-        ):
-            with self.subTest(action=action):
-                state = PetState(energy=60)
-                set_test_pet_values(state, **{value: 100})
-                state.interact(action, now=stamp())
-                self.assertEqual(state.friendship,
-                                 15)
-
-    def test_accepted_care_changes_needs_and_later_time_changes_friendship(self):
-        state = PetState(affection=25, updated_at=stamp())
-        state.interact("pet", now=stamp())
-        self.assertEqual(state.friendship, 15)
-        for i in range(40):
-            state.interact("pet", now=stamp() + i + 1)
-        self.assertEqual(state.friendship, 15)
-        # Repetitions inside two hours do not move the eligibility anchor.
-        state.interact("pet", now=stamp() + 20 * 60)
-        self.assertEqual(state.friendship, 15)
-        state.advance(stamp() + 7200)
-        set_test_pet_values(state, affection=40)
-        state.interact("pet", now=stamp() + 7200)
-        self.assertGreater(state.friendship, 15)
-
-    def test_diverse_care_repairs_more_needs_without_instant_relationship_gain(self):
-        diverse = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
-        repeated = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
-        start = stamp()
-        for action in ("feed", "pet", "talk"):
-            diverse.interact(action, now=start)
-        diverse.record_game_experience(
-            GameExperience("rock_paper_scissors", 2, successful_units=1),
-            now=start,
-        )
-        for i in range(4):
-            set_test_pet_values(repeated, affection=20)
-            repeated.interact("pet", now=start + i * 15 * 60)
-        self.assertEqual(diverse.friendship, repeated.friendship)
-        self.assertGreater(diverse.social, repeated.social)
-        self.assertGreater(diverse.satiety, repeated.satiety)
-        self.assertEqual(diverse.care_types_today, [])
-        self.assertEqual(
-            set(dict(diverse.friendship_history.eligible)),
-            set(),
-        )
-
-    def test_old_save_preserves_existing_relationship_and_needs(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            store = StateStore(Path(tmp) / "pet.json")
-            store.paths.legacy_json.write_text(
-                json.dumps({
-                    "version": 1,
-                    "pet": {
-                        "satiety": 30,
-                        "mood": 60,
-                        "energy": 40,
-                        "social": 24,
-                        "friendship": 54,
-                        "updated_at": stamp(),
-                        "care_last_rewards": {
-                            "pet": stamp() - 300,
-                            "sleep": stamp() - 400,
-                        },
-                    },
-                    "settings": {"scale": 2, "toolbar_x": 120, "toolbar_y": 70},
-                }),
-                encoding="utf8",
-            )
-            session_data = store.load_session(now=stamp())
-            state, settings = session_data.state, session_data.settings
-            self.assertEqual(
-                (
-                    state.satiety,
-                    state.mood,
-                    state.energy,
-                    state.social,
-                    state.affection,
-                    state.friendship,
-                ),
-                (30, 60, 40, 24, 75, 54),
-            )
-            self.assertEqual(
-                (settings.scale, settings.toolbar_x, settings.toolbar_y), (2, 120, 70)
-            )
-            self.assertIn("sleep", state.care_last_rewards)
-            save_test_session(store, state, settings)
-            session_data = store.load_session(now=stamp())
-            again, _ = session_data.state, session_data.settings
-            self.assertEqual(again.affection, 75)
-            self.assertEqual(again.friendship, 54)
-
-    def test_new_relationship_metadata_survives_save(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            store = StateStore(Path(tmp) / "pet.json")
-            state = PetState(updated_at=stamp(), affection=35)
-            state.interact("pet", now=stamp())
-            set_test_pet_values(state, social=35)
-            state.interact("talk", now=stamp() + 1)
-            save_test_session(store, state, PetSettings())
-            session_data = store.load_session(now=stamp() + 1)
-            restored, _ = session_data.state, session_data.settings
-            self.assertEqual(restored.care_types_today, [])
-            self.assertEqual(
-                set(dict(restored.friendship_history.eligible)), set()
-            )
-            self.assertEqual(restored.friendship_history, state.friendship_history)
-            self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
-            self.assertEqual(restored.friendship, state.friendship)
-            self.assertAlmostEqual(restored.affection, state.affection, places=2)
-
-    def test_corrupt_daily_action_list_is_sanitized(self):
-        state = decode_pet_state({
-            "care_types_today": ["pet", "pet", "other", 10, "talk"],
-            "affection": 12,
-            "friendship_gained_today": 999,
-        })
-        self.assertEqual(state.care_types_today, ["pet", "talk"])
-        self.assertEqual(state.friendship_gained_today, FRIENDSHIP_DAILY_CAP)
-
-
-class AffectionDialogueTests(unittest.TestCase):
-    def setUp(self):
-        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
-        self.context = context_at(stamp())
-
-    def test_low_affection_is_not_social_loneliness(self):
-        state = PetState(social=70, affection=12)
-        self.assertIn(
-            NeedCondition.LOW_AFFECTION,
-            self.mind.dialogue_context(
-                state, context_at(1800000000), 50
-            ).need_conditions,
-        )
-        self.assertEqual(
-            format_emotional_state(EmotionalState.SATISFIED),
-            "Stimmung: Zufrieden",
-        )
-        self.assertEqual(
-            require_reaction(self.mind.click("left", state, self.context, 50)).event,
-            "click_affection_low",
-        )
-        self.assertEqual(
-            self.mind.care_event(
-                plan_care_action(
-                    state,
-                    "pet",
-                    now=self.context.local.timestamp(),
-                ).result,
-                self.mind.observe_care(state, self.context, 55),
-            ),
-            "pet_needs_affection",
-        )
-        self.assertEqual(
-            self.mind.care_event(
-                plan_care_action(
-                    state,
-                    "talk",
-                    now=self.context.local.timestamp(),
-                ).result,
-                self.mind.observe_care(state, self.context, 55),
-            ),
-            "talk",
-        )
-
-    def test_existing_social_shortage_still_has_own_priority(self):
-        state = PetState(social=10, affection=10)
-        self.assertIn(
-            NeedCondition.LOW_SOCIAL,
-            self.mind.dialogue_context(
-                state, context_at(1800000000), 50
-            ).need_conditions,
-        )
-        self.assertEqual(
-            require_reaction(self.mind.click("left", state, self.context, 50)).event,
-            "click_lonely",
-        )
-
-    def test_feeling_cared_for_can_make_aiko_more_at_ease(self):
-        state = PetState(affection=95, friendship=55, mood=73, social=78)
-        self.assertEqual(
-            require_reaction(self.mind.click("left", state, self.context, 50)).event,
-            "click_at_ease",
-        )
-        reserved = make_aiko_mind(started_at=0.0, rng=random.Random(12))
-        set_test_pet_values(state, affection=50)
-        self.assertEqual(
-            require_reaction(reserved.click("left", state, self.context, 50)).event,
-            "click_left",
-        )
-
-    def test_affection_spontaneous_hint_has_long_cooldown(self):
-        state = PetState(affection=8)
-        self.assertEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(state, self.context, 60)
-            ).event,
-            "affection_low",
-        )
-        self.assertIsNone(
-            self.mind.select_spontaneous_reaction(state, self.context, 61),
-        )
-        self.assertEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(state, self.context, 60 + 26 * 60)
-            ).event,
-            "affection_low",
-        )
 
 if __name__ == "__main__":
     unittest.main()
