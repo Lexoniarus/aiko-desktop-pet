@@ -66,7 +66,10 @@ def main() -> int:
     args = parser.parse_args()
     with (
         tempfile.TemporaryDirectory(prefix="aiko-local-suite-") as folder,
-        patch.dict(os.environ, {"AIKO_SAVE_PATH": str(Path(folder) / "state.sqlite3")}),
+        patch.dict(os.environ, {
+            "AIKO_SAVE_PATH": str(Path(folder) / "state.sqlite3"),
+            "AIKO_TEST_NO_NATIVE_TK": "1",
+        }),
         patch("_tkinter.create", side_effect=reject_native_tk),
     ):
         groups = {

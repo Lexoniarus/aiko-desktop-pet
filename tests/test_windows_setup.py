@@ -19,6 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @unittest.skipUnless(sys.platform == "win32", "Windows setup integration")
+@unittest.skipIf(
+    os.environ.get("AIKO_TEST_NO_NATIVE_TK") == "1",
+    "Installer probes create native Tk in child processes",
+)
 class WindowsSetupTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="Aiko setup & space ")
