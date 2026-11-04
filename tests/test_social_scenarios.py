@@ -5,17 +5,21 @@ speak follows observations, that silence is real, and that no unobserved
 program/user activity can be invented.
 """
 
+from __future__ import annotations
+
 import random
 import re
 import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from tools.dialogue_test_support import dialogue_source_fixture
@@ -445,6 +449,80 @@ class CatalogueContractTests(unittest.TestCase):
                 self.assertIn(event, event_set)
                 self.assertGreaterEqual(sum(x.event == event for x in book.lines), 3)
 
+
+def bond_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().bond_stamp()
+
+
+class SocialDialogueTests(unittest.TestCase):
+    def setUp(self):
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(57))
+        self.context = context_at(bond_stamp())
+
+    def test_social_deficit_is_distinct_emotion_and_dialogue(self):
+        state = PetState(social=15)
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 50)
+            ).event,
+            "social_low",
+        )
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 55),
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 55 + 20 * 60)
+            ).event,
+            "social_low",
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 60)).event,
+            "click_lonely",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "talk",
+                    now=self.context.local.bond_stamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 62),
+            ),
+            "talk",
+        )
+
+    def test_energy_drink_has_grounded_line_even_when_full(self):
+        state = PetState(energy=100)
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "energy_drink",
+                    now=self.context.local.bond_stamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 90),
+            ),
+            "energy_drink_full",
+        )
+        set_test_pet_values(state, energy=70)
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "energy_drink",
+                    now=self.context.local.bond_stamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 91),
+            ),
+            "energy_drink",
+        )
 
 if __name__ == "__main__":
     unittest.main()

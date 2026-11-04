@@ -1,4 +1,5 @@
 """Real contact, continuous emotional flow and one-time policy migration."""
+
 import unittest
 from dataclasses import replace
 
@@ -116,3 +117,8 @@ class FriendshipPolicyTests(unittest.TestCase):
             pet = decode_pet_state(encode_pet_state(pet), now=START + end)
         for name in ('friendship', 'satiety', 'mood', 'energy', 'social', 'affection'):
             self.assertAlmostEqual(getattr(pet, name), getattr(whole, name), places=9)
+
+    def test_friendship_display_level_is_bounded(self):
+        self.assertEqual(PetState(friendship=0).friendship_level, 1)
+        self.assertEqual(PetState(friendship=99.9).friendship_level, 10)
+        self.assertEqual(PetState(friendship=100).friendship_level, 10)

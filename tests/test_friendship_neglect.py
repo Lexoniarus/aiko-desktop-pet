@@ -4,6 +4,7 @@ import copy
 import tempfile
 import unittest
 from dataclasses import replace
+from datetime import datetime
 from pathlib import Path
 
 from aiko_pet.application.storage_contracts import StorageError
@@ -29,6 +30,10 @@ def period(value, hours, needs, *, contact=True, sleeping=False):
                                                    last_contact=value.elapsed))
         value = advance_friendship(value, 15, needs, needs, sleeping=sleeping)
     return value
+
+
+def bond_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().bond_stamp()
 
 
 class FriendshipNeglectTests(unittest.TestCase):
@@ -165,3 +170,9 @@ class FriendshipNeglectTests(unittest.TestCase):
         ):
             raw = {**original, "rewards": records}
             self.assertFalse(valid_friendship(raw, 3600))
+
+    def test_friendship_decays_over_offline_contact_absence(self):
+        state = PetState(friendship=67, updated_at=bond_stamp())
+        state.advance(bond_stamp() + 3600 * 24, effort=1.0)
+        self.assertLess(state.friendship, 67)
+        self.assertLess(state.social, 75)

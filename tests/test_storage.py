@@ -40,7 +40,7 @@ class StateStoreTests(unittest.TestCase):
         save_test_session(self.store, pet, settings)
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         loaded, other = session_data.state, session_data.settings
-        self.assertEqual(loaded.satiety, 88)
+        self.assertEqual(loaded.capture_checkpoint(), pet.capture_checkpoint())
         self.assertTrue(loaded.sleeping)
         self.assertEqual(other, settings)
         self.assertGreater(self.store.load_session().revision.value, 0)

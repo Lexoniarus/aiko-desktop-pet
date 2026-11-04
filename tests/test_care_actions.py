@@ -160,6 +160,24 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertFalse(state.sleeping)
         self.assertEqual(state.satiety, 100)
 
+    def test_night_energy_drink_prevents_immediate_auto_sleep(self):
+        stamp = timestamp(hour=23) + 45 * 60
+        state = PetState(
+            updated_at=stamp, energy=18, sleeping=True, sleep_origin="manual"
+        )
+        state.interact("energy_drink", now=stamp)
+        self.assertFalse(state.sleeping)
+        state.advance(stamp + 1, auto_routine=True, allow_bedtime=True)
+        self.assertFalse(state.sleeping)
+        self.assertAlmostEqual(state.energy, 28, places=2)
+
+    def test_manual_night_wake_also_honors_user_intervention(self):
+        stamp = timestamp(hour=23) + 45 * 60
+        state = PetState(updated_at=stamp, sleeping=True, sleep_origin="manual")
+        state.interact("sleep", now=stamp)
+        state.advance(stamp + 1, auto_routine=True)
+        self.assertFalse(state.sleeping)
+
 
 if __name__ == "__main__":
     unittest.main()
