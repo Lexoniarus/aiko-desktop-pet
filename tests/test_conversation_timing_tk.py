@@ -16,6 +16,7 @@ from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 from tests.test_social_content import fact_payload, joke_payload
+from tools.desktop_test_support import destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -29,7 +30,7 @@ class ConversationTimingTkTests(unittest.TestCase):
         except tk.TclError as error:
             self.skipTest(f"Tk display unavailable: {error}")
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.presenter = SpeechPresenter(
             root=self.root, anchor=lambda: SpeechAnchor(200, 500, 128),
             font_name="Segoe UI", always_on_top=lambda: False,

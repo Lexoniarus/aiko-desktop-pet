@@ -6,6 +6,7 @@ import unittest
 from aiko_pet.ui.common import scaled_widgets as scaled
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.common.ui_scale import DisplayScale, UiScale
+from tools.desktop_test_support import destroy_test_root
 
 
 class DisplayScaleTests(unittest.TestCase):
@@ -79,7 +80,7 @@ class NativeUiScaleTests(unittest.TestCase):
     def setUp(self):
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         # One application-wide startup policy, independent of individual forms.
         self.scale = UiScale(self.root, DisplayScale.for_resolution(1920, 1080))
         UiScale._roots[self.root] = self.scale

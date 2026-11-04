@@ -21,6 +21,7 @@ from aiko_pet.ui.view_models.projections import project_hover, project_status
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.game_menu import GameMenu
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from tools.desktop_test_support import destroy_test_root
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -61,7 +62,7 @@ class MainMenuLayoutTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("Native Tk display required") from error
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.skin = AikoSkin(self.root)
         self.state = PetState(

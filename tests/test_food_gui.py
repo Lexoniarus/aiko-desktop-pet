@@ -3,25 +3,20 @@
 from __future__ import annotations
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class FoodGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("Tk display unavailable") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         temp = tempfile.TemporaryDirectory()

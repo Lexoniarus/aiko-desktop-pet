@@ -9,7 +9,7 @@ from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
@@ -61,11 +61,7 @@ class EmoteDomainTests(unittest.TestCase):
 class EmoteTkTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as err:
-            raise unittest.SkipTest("No screen for Tk tests") from err
-        root.destroy()
+        require_tk_display()
 
     def setUp(self):
         self.timing = self.enterContext(ControlledTkTime())

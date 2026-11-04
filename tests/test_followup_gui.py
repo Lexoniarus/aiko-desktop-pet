@@ -1,7 +1,6 @@
 """Real-Tk tests for readable sequential speech and deliberate interruption."""
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -9,7 +8,7 @@ from unittest.mock import patch
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -17,11 +16,7 @@ from tools.tk_test_time import ControlledTkTime
 class FollowupGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            probe = tk.Tk()
-        except tk.TclError as exc:
-            raise unittest.SkipTest("Display not available") from exc
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self):
         self.timing = self.enterContext(ControlledTkTime())

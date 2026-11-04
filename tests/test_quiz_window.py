@@ -9,6 +9,7 @@ from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.common.window_geometry import WindowBounds
 from aiko_pet.ui.windows.quiz_window import QuizWindow
+from tools.desktop_test_support import destroy_test_root
 
 
 class QuizWindowTests(unittest.TestCase):
@@ -18,7 +19,7 @@ class QuizWindowTests(unittest.TestCase):
         except tk.TclError as error:
             raise unittest.SkipTest('Native Tk display required') from error
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.skin = AikoSkin(self.root)
         self.closed = Mock()
         self.events = []
