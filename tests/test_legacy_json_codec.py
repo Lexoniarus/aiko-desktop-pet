@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 import unittest
+from datetime import datetime
 from typing import Any
 
 from test_sqlite_adaptive_rows import profile
@@ -16,7 +17,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.legacy_json_codec import decode_legacy_session
 from aiko_pet.infrastructure.object_memory_codec import encode_object_memory
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.infrastructure.social_history_codec import encode_social_history
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
 from aiko_pet.infrastructure.world_codec import encode_world
@@ -26,6 +27,7 @@ from aiko_pet.pet.mind.object_knowledge import (
     SavedObjectKnowledge,
 )
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.value_rules import clamp_need_value
 from aiko_pet.world.contracts import ObjectDefinition, ObjectFootprint, WorldSurface
 from aiko_pet.world.state import WorldState
 
@@ -74,6 +76,10 @@ def legacy_payload() -> dict[str, Any]:
             memory, world_next_id=world.next_instance_id
         ),
     }
+
+
+def timestamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
 class LegacyJsonCodecTests(unittest.TestCase):
@@ -217,3 +223,51 @@ class LegacyJsonCodecTests(unittest.TestCase):
         self.assertEqual(loaded.friendship_gained_today, 0.123456789)
         self.assertEqual(loaded.food.awake_hours_since_last_food, 0.123456789)
         self.assertEqual(loaded.care_last_rewards, {"pet": 0})
+
+    def test_malformed_save_is_safely_normalized(self):
+        state = decode_pet_state(
+            {
+                "satiety": "NaN",
+                "mood": -5,
+                "energy": float("inf"),
+                "sleeping": "yes",
+                "updated_at": "oops",
+            },
+            now=300,
+        )
+        self.assertEqual((state.satiety, state.mood, state.energy), (75, 0, 75))
+        self.assertFalse(state.sleeping)
+        self.assertEqual(state.updated_at, 300)
+        self.assertEqual(clamp_need_value(None), 75)
+
+    def test_migration_from_old_save_keeps_existing_values(self):
+        old = {
+            "satiety": 28,
+            "mood": 34,
+            "energy": 41,
+            "updated_at": timestamp(),
+            "sleeping": False,
+        }
+        state = decode_pet_state(old, now=timestamp())
+        self.assertEqual((state.satiety, state.mood, state.energy), (28, 34, 41))
+        self.assertEqual(state.social, 75)
+        self.assertEqual(state.friendship, 15)
+        self.assertEqual(state.friendship_level, 2)
+
+    def test_corrupt_new_values_and_reward_history_are_bounded(self):
+        state = decode_pet_state(
+            {
+                "social": -20,
+                "friendship": "nan",
+                "updated_at": timestamp(),
+                "care_last_rewards": {
+                    "feed": 9999999999,
+                    "pet": "malformed",
+                    "sleep": timestamp(),
+                    "unknown": 20,
+                },
+            },
+            now=timestamp(),
+        )
+        self.assertEqual((state.social, state.friendship), (0, 15))
+        self.assertEqual(state.care_last_rewards, {"sleep": timestamp()})

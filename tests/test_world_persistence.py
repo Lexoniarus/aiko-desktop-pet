@@ -1,17 +1,12 @@
 """Joint snapshots preserve old saves and normalize interrupted World items."""
 
-import tempfile
 import unittest
-from pathlib import Path
 
-from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.item_assets import load_item_catalog
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
 from aiko_pet.infrastructure.world_codec import decode_world, encode_world
 from aiko_pet.infrastructure.world_motion import motion_parameters
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
-from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
     ObjectFootprint,
     ObjectState,
@@ -19,7 +14,6 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
-from tools.persistence_test_support import save_test_session
 
 
 class WorldPersistenceTests(unittest.TestCase):
@@ -58,17 +52,3 @@ class WorldPersistenceTests(unittest.TestCase):
         restored.restore_snapshot(recovered)
         next_item = restored.place_resting("apple", 300, ObjectFootprint(8, 8))
         self.assertNotIn(next_item.instance_id, (first.instance_id, held.instance_id))
-
-    def test_consumed_food_and_pet_share_one_checkpoint(self):
-        item = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
-        held = self.world.collect_resting(item.instance_id, expected_revision=0)
-        self.world.consume(held.instance_id, expected_revision=held.revision)
-        with tempfile.TemporaryDirectory() as folder:
-            store = StateStore(Path(folder) / "state.json")
-            save_test_session(
-                store, PetState(satiety=64), PetSettings(), world=self.world.snapshot())
-            restored = store.load_session()
-            assert restored.world is not None
-            self.assertEqual(restored.world.objects, ())
-            self.assertEqual(restored.state.satiety, 64)
-            self.assertEqual(restored.world.next_instance_id, 2)

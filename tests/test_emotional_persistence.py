@@ -246,22 +246,6 @@ class MoodletPersistenceTests(unittest.TestCase):
         self.assertEqual((state.satiety, state.friendship), (42, 67))
         self.assertEqual(decode_pet_state({}, now=WALL).moodlets, MoodletState())
 
-    def test_immutable_checkpoint_restore_covers_episodes_and_counters(self):
-        state = PetState(lived_seconds=ELAPSED, updated_at=WALL,
-                         moodlets=moodlet_state())
-        checkpoint = state.capture_checkpoint()
-        identity = id(state)
-        with self.assertRaises(AttributeError):
-            cast(Any, state).moodlets = MoodletState()
-        with self.assertRaises(FrozenInstanceError):
-            cast(Any, state.moodlets.active[0]).relieved_levels = ()
-        state.restore_checkpoint(replace(checkpoint, moodlets=MoodletState()))
-        self.assertEqual(state.moodlets.active, ())
-        state.restore_checkpoint(checkpoint)
-        self.assertEqual(id(state), identity)
-        self.assertEqual(state.moodlets, moodlet_state())
-        self.assertEqual(copy.deepcopy(state).capture_checkpoint(), checkpoint)
-
     def test_stage_progress_and_paused_recovery_are_not_reset_on_load(self):
         episode = MoodletEpisode(2, MoodletId.HUNGER_WORN, 2, 200, 200, 2400,
                                  (2,), recovery_since=900)
@@ -494,13 +478,22 @@ class WishPersistenceTests(unittest.TestCase):
         pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
                        moodlets=moodlet_state(), wishes=wish_state())
         before = pet.capture_checkpoint()
+        identity = id(pet)
+        with self.assertRaises(AttributeError):
+            cast(Any, pet).moodlets = MoodletState()
+        with self.assertRaises(FrozenInstanceError):
+            cast(Any, pet.moodlets.active[0]).relieved_levels = ()
         with self.assertRaises(AttributeError):
             cast(Any, pet).wishes = WishState()
         with self.assertRaises(FrozenInstanceError):
             cast(Any, pet.wishes.active[1].game).wins = 3
         pet.restore_checkpoint(replace(before, moodlets=MoodletState(),
                                        wishes=WishState()))
+        self.assertEqual(pet.moodlets.active, ())
+        self.assertEqual(pet.wishes.active, ())
         pet.restore_checkpoint(before)
+        self.assertEqual(id(pet), identity)
+        self.assertEqual(pet.capture_checkpoint(), before)
         self.assertEqual(copy.deepcopy(pet).capture_checkpoint(), before)
         self.assertEqual(pet.wishes, wish_state())
 

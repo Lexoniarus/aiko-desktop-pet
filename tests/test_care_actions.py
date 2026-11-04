@@ -152,6 +152,14 @@ class CareActionRulesTests(unittest.TestCase):
         state.interact("energy_drink", now=timestamp())
         self.assertEqual((state.energy, state.satiety, state.social), (10, 41, 27))
 
+    def test_sleep_toggle_and_feeding_wakes(self):
+        state = PetState()
+        state.interact("sleep")
+        self.assertTrue(state.sleeping)
+        state.interact("feed")
+        self.assertFalse(state.sleeping)
+        self.assertEqual(state.satiety, 100)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -144,3 +144,5 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         self.assertEqual(loaded.world.objects, ())
         self.assertEqual(ObjectMemory(loaded.object_memory).snapshot(), ())
         self.assertGreater(loaded.state.satiety, 80)
+        self.assertEqual(loaded.state.capture_checkpoint(), self.state.capture_checkpoint())
+        self.assertEqual(loaded.world.next_instance_id, self.world.snapshot().next_instance_id)

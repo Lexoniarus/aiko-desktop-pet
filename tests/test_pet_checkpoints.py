@@ -147,6 +147,11 @@ class PetCheckpointTests(unittest.TestCase):
         self.assertEqual(pet.satiety, 56)
         self.assertEqual(pet.meals_today, ["breakfast"])
 
+    def test_defaults_are_friendly(self):
+        state = PetState(updated_at=1)
+        self.assertEqual((state.satiety, state.mood, state.energy), (75, 75, 75))
+        self.assertFalse(state.sleeping)
+
 
 if __name__ == "__main__":
     unittest.main()

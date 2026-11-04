@@ -11,7 +11,7 @@ from pathlib import Path
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.lifecycle import MAX_LIVE_EFFORT_SECONDS
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
@@ -33,38 +33,6 @@ def timestamp(day: str = "2026-10-12", hour: int = 12) -> float:
 
 
 class NeedsAndBondTests(unittest.TestCase):
-    def test_migration_from_old_save_keeps_existing_values(self):
-        old = {
-            "satiety": 28,
-            "mood": 34,
-            "energy": 41,
-            "updated_at": timestamp(),
-            "sleeping": False,
-        }
-        state = decode_pet_state(old, now=timestamp())
-        self.assertEqual((state.satiety, state.mood, state.energy), (28, 34, 41))
-        self.assertEqual(state.social, 75)
-        self.assertEqual(state.friendship, 15)
-        self.assertEqual(state.friendship_level, 2)
-
-    def test_corrupt_new_values_and_reward_history_are_bounded(self):
-        state = decode_pet_state(
-            {
-                "social": -20,
-                "friendship": "nan",
-                "updated_at": timestamp(),
-                "care_last_rewards": {
-                    "feed": 9999999999,
-                    "pet": "malformed",
-                    "sleep": timestamp(),
-                    "unknown": 20,
-                },
-            },
-            now=timestamp(),
-        )
-        self.assertEqual((state.social, state.friendship), (0, 15))
-        self.assertEqual(state.care_last_rewards, {"sleep": timestamp()})
-
     def test_night_energy_drink_prevents_immediate_auto_sleep(self):
         stamp = timestamp(hour=23) + 45 * 60
         state = PetState(
