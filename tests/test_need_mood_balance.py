@@ -14,6 +14,9 @@ NOW = datetime(2026, 10, 19, 7).timestamp()
 NEEDS = ("satiety", "energy", "fun", "social", "affection")
 
 
+DOMAIN_NOW = datetime(2026, 10, 13, 12).timestamp()
+
+
 class NeedMoodBalanceTests(unittest.TestCase):
     def test_documented_targets_and_combined_shortages(self) -> None:
         self.assertEqual(
@@ -131,6 +134,21 @@ class NeedMoodBalanceTests(unittest.TestCase):
         self.assertEqual(coarse.mood, before)
         coarse.advance(NOW + 4 * 3600 + 60)
         self.assertAlmostEqual(coarse.mood, before + 2)
+
+    def test_normal_decay(self):
+        state = PetState(updated_at=DOMAIN_NOW + 1000)
+        state.advance(DOMAIN_NOW + 1000 + 3600)
+        self.assertAlmostEqual(state.satiety, 67)
+        self.assertAlmostEqual(state.mood, 55.52)
+        self.assertAlmostEqual(state.fun, 72)
+        self.assertAlmostEqual(state.energy, 72)
+
+    def test_sleep_replenishes_energy(self):
+        night = datetime(2026, 10, 12, 23).timestamp()
+        state = PetState(energy=30, sleeping=True, updated_at=night)
+        state.advance(night + 3 * 3600)
+        self.assertAlmostEqual(state.energy, 52.5)
+        self.assertAlmostEqual(state.satiety, 70.8)
 
 
 if __name__ == "__main__":

@@ -15,36 +15,6 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual((state.satiety, state.mood, state.energy), (75, 75, 75))
         self.assertFalse(state.sleeping)
 
-    def test_normal_decay(self):
-        state = PetState(updated_at=NOW + 1000)
-        state.advance(NOW + 1000 + 3600)
-        self.assertAlmostEqual(state.satiety, 67)
-        self.assertAlmostEqual(state.mood, 55.52)
-        self.assertAlmostEqual(state.fun, 72)
-        self.assertAlmostEqual(state.energy, 72)
-
-    def test_sleep_replenishes_energy(self):
-        night = datetime(2026, 10, 12, 23).timestamp()
-        state = PetState(energy=30, sleeping=True, updated_at=night)
-        state.advance(night + 3 * 3600)
-        self.assertAlmostEqual(state.energy, 52.5)
-        self.assertAlmostEqual(state.satiety, 70.8)
-
-    def test_offline_gap_is_fully_consumed(self):
-        state = PetState(updated_at=NOW + 100)
-        duration = 72 * 3600
-        state.advance(NOW + 100 + duration)
-        self.assertEqual(state.satiety, 0)
-        self.assertEqual(state.energy, 0)
-        self.assertEqual(state.lived_seconds, duration)
-        self.assertEqual(state.updated_at, NOW + 100 + duration)
-
-    def test_clock_going_backwards_does_not_penalize(self):
-        state = PetState(updated_at=NOW + 5000)
-        state.advance(NOW + 4500)
-        self.assertEqual(state.satiety, 75)
-        self.assertEqual(state.updated_at, NOW + 4500)
-
     def test_sleep_toggle_and_feeding_wakes(self):
         state = PetState()
         state.interact("sleep")

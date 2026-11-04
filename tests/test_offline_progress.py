@@ -39,6 +39,12 @@ class OfflineProgressTests(unittest.TestCase):
         )
         session = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
         self.assertAlmostEqual(session.state.satiety, 92)
+        save_test_session(
+            self.store, session.state, session.settings,
+            adaptive=session.adaptive.memory,
+        )
+        reopened = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
+        self.assertEqual(encode_pet_state(reopened.state), encode_pet_state(session.state))
         uptime = [5000.0]
         clock = ActiveSessionClock(lambda: uptime[0])
         # Starting the live clock cannot consume the closed hour again.
@@ -118,21 +124,9 @@ class OfflineProgressTests(unittest.TestCase):
                 )
                 result = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
                 self.assertAlmostEqual(result.state.energy, expected_energy)
+                self.assertEqual(result.state.satiety, 0 if age > 0 else 75)
                 self.assertEqual(result.state.updated_at, now)
                 self.assertEqual(result.state.lived_seconds, max(0, age))
-
-    def test_saving_and_restarting_does_not_repeat_the_closed_interval(self) -> None:
-        now = local_stamp(15)
-        save_test_session(self.store,
-            PetState(satiety=100, updated_at=now - 3600),
-            PetSettings(auto_routine=False),
-        )
-        first = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        save_test_session(
-            self.store, first.state, first.settings, adaptive=first.adaptive.memory)
-        second = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        self.assertEqual(encode_pet_state(second.state), encode_pet_state(first.state))
-        self.assertAlmostEqual(second.state.satiety, 92)
 
     def test_failed_backup_preserves_original_and_existing_backup(self) -> None:
         contents = b'{"version": 1, "pet": {"satiety": 42}}'

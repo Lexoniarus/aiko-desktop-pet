@@ -67,13 +67,6 @@ class SessionRestorationTests(unittest.TestCase):
         self.assertEqual(restored_settings.to_dict(), settings.to_dict())
         self.assertTrue(session_data.restored_from_save)
 
-    def test_existing_save_advances_closed_time_and_resets_anchor(self) -> None:
-        saved = PetState(satiety=75, updated_at=NOW - 3600)
-        save_test_session(self.store, saved, PetSettings(auto_routine=False))
-        state, _settings, _memory = self.restore()
-        self.assertAlmostEqual(state.satiety, 67)
-        self.assertEqual(state.updated_at, NOW)
-
     def test_saved_elapsed_time_and_adaptive_memory_are_preserved(self) -> None:
         saved = PetState(satiety=65, energy=40, updated_at=NOW - 3600)
         settings = PetSettings(
