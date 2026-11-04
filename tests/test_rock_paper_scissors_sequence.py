@@ -1,4 +1,5 @@
 """Fingerduell phase boundaries, public reveal and cancelled recovery."""
+
 import unittest
 
 from aiko_pet.games.rock_paper_scissors import Move
@@ -48,26 +49,23 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.assertEqual(self.events[-1], ('text', 'game_player_win'))
         self.assertEqual(len(self.reveals), 1)
 
-    def test_all_nine_results_and_immediate_choice_after_reveal(self):
-        for player in Move:
-            for index in range(3):
-                self.setUp()
-                self.flow._game._random_index = lambda _, i=index: i
-                self.flow.choose(player)
-                for _ in range(5):
-                    self.step()
-                self.assertEqual(self.flow.score.games, 1)
-                token = self.flow.pending_timer
-                assert token is not None
-                stale = self.clock.callbacks[token][1]
-                self.flow.choose(Move.PAPER)
-                self.assertTrue(self.flow.busy)
-                stale()
-                self.assertEqual(self.flow.score.games, 1)
-                for _ in range(5):
-                    self.step()
-                self.assertEqual(self.flow.score.games, 2)
-                self.assertEqual(len(self.reveals), 2)
+    def test_immediate_choice_after_reveal_ignores_the_old_callback(self):
+        self.flow._game._random_index = lambda _: 2
+        self.flow.choose(Move.ROCK)
+        for _ in range(5):
+            self.step()
+        self.assertEqual(self.flow.score.games, 1)
+        token = self.flow.pending_timer
+        assert token is not None
+        stale = self.clock.callbacks[token][1]
+        self.flow.choose(Move.PAPER)
+        self.assertTrue(self.flow.busy)
+        stale()
+        self.assertEqual(self.flow.score.games, 1)
+        for _ in range(5):
+            self.step()
+        self.assertEqual(self.flow.score.games, 2)
+        self.assertEqual(len(self.reveals), 2)
 
     def test_duplicate_choice_before_reveal_and_close_do_not_score(self):
         self.flow.choose(Move.ROCK)

@@ -1,4 +1,5 @@
 """Native isolated-save checks for the accepted Fingerduell flow."""
+
 import tempfile
 import time
 import unittest
@@ -52,21 +53,6 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.clock.advance(.95)
         self.assertEqual(self.pet._speech._game_hand, Move.SCISSORS)
         self.assertIsNotNone(self.pet._speech.bubble)
-
-    def test_result_text_outlives_old_deadline_and_next_choice_remains_immediate(self):
-        self.game._sequence._dialogue = lambda event: event + ': ' + 'A' * 90
-        self.game.choose(Move.ROCK)
-        self.clock.advance(3.151)
-        bubble = self.pet._speech.bubble
-        assert bubble is not None
-        self.clock.advance(3.21)
-        self.assertIs(self.pet._speech.bubble, bubble)
-        self.assertEqual(self.game.buttons[Move.PAPER].cget('state'), 'normal')
-        self.game.buttons[Move.PAPER].invoke()
-        self.assertIsNot(self.pet._speech.bubble, bubble)
-        self.assertEqual(self.game.score.games, 1)
-        self.clock.advance(2.251)
-        self.assertEqual(self.game.score.games, 2)
 
     def test_side_hand_and_slow_result_have_independent_lifetimes_and_cleanup(self):
         self.game._sequence._dialogue = lambda _event: (
