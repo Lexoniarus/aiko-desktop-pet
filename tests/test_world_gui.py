@@ -19,7 +19,7 @@ from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
 from aiko_pet.pet.sleep import SleepEpisode
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -1105,12 +1105,7 @@ class WorldGuiTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-            root.update_idletasks()
-            root.destroy()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
+        require_tk_display()
 
     def setUp(self):
         folder = tempfile.TemporaryDirectory()

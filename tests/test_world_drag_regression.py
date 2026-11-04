@@ -3,25 +3,19 @@
 from __future__ import annotations
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 
 
 class WorldDragRegressionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-            root.update_idletasks()
-            root.destroy()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
+        require_tk_display()
 
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory(prefix="aiko-drag-regression-")

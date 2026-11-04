@@ -104,6 +104,7 @@ class WishControlTests(unittest.TestCase):
 
     def test_first_right_click_unpins_and_preserves_identity(self):
         self.runtime.set_wish_pinned(1, True)
+        self.panel.refresh(self.views())
         self.saved.clear()
         before = self.pet.wishes.active[0]
         cast(Any, self.panel._pin_icons[1]).bindings["<Button-3>"](Mock())

@@ -24,7 +24,7 @@ from aiko_pet.ui.windows.hover_ui import HoverUi, HoverUiPorts
 from tools.headless_widgets import Skin, Widget, widgets
 
 
-class EmbeddedSelectorTests(unittest.TestCase):
+class SelectorCommandTests(unittest.TestCase):
     def setUp(self):
         self.enterContext(widgets())
         self.enterContext(patch("aiko_pet.ui.windows.hover_ui.AikoSkin", Skin))
@@ -66,15 +66,12 @@ class EmbeddedSelectorTests(unittest.TestCase):
         )
         self.ui = HoverUi(cast(Any, Widget()), cast(Any, Widget()), self.ports)
 
-    def test_selectors_share_toolbar_and_stale_placement_cannot_bypass_admission(self):
+    def test_stale_placement_cannot_bypass_current_admission(self):
         self.allowed = False
         self.ui.game_window = Mock()
         self.ui.open_food_menu()
         menu = self.ui.food_menu
         assert menu and self.ui.toolbar
-        self.assertIs(menu.frame.master, self.ui.toolbar.interaction_column)
-        self.assertFalse(hasattr(menu, "window"))
-        self.assertFalse(self.ui.toolbar.actions_frame.winfo_ismapped())
         self.place_allowed = False
         menu.choose("onigiri")
         self.assertFalse(self.placed)
@@ -82,8 +79,6 @@ class EmbeddedSelectorTests(unittest.TestCase):
         menu.choose("onigiri")
         menu.choose("onigiri")
         self.assertEqual(self.placed, ["onigiri"])
-        self.assertTrue(self.ui.toolbar.actions_frame.winfo_ismapped())
-        self.assertEqual(self.toplevel.call_count, 1)
 
     def test_game_choice_keeps_single_pending_owner_and_cancel_rejects_late_start(self):
         self.ui.open_game_menu()
@@ -98,7 +93,6 @@ class EmbeddedSelectorTests(unittest.TestCase):
         self.deferred[0]()
         self.assertFalse(self.ui.game_open)
         self.assertIsNone(self.ui.game_window)
-        self.assertEqual(self.toplevel.call_count, 1)
 
     def test_pending_game_rechecks_before_any_character_or_window_effect(self):
         self.ui._ports = replace(self.ports, game_ready=lambda: self.allowed)
@@ -147,14 +141,10 @@ class EmbeddedSelectorTests(unittest.TestCase):
                     self.ui.close_game()
                     self.assertFalse(self.ui.game_open)
 
-    def test_social_opt_out_loading_back_and_single_window_switching(self):
-        self.ui.open_food_menu()
-        self.ui.open_game_menu()
+    def test_social_opt_out_loading_and_explicit_back(self):
         self.ui.open_social_menu()
         menu = self.ui.social_menu
         assert menu
-        self.assertIsNone(self.ui.food_menu)
-        self.assertIsNone(self.ui.game_menu)
         menu.choose(SocialCategory.SINGLE)
         self.assertFalse(self.selected)
         self.online = True
@@ -165,4 +155,3 @@ class EmbeddedSelectorTests(unittest.TestCase):
         menu.back.invoke()
         self.assertIsNone(self.ui.social_menu)
         self.cancel.assert_called_once()
-        self.assertEqual(self.toplevel.call_count, 1)

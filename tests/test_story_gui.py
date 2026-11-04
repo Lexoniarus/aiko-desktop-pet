@@ -15,7 +15,7 @@ from aiko_pet.pet.interaction_events import CursorExperience
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.persistence_test_support import save_test_session
 from tools.tk_test_time import ControlledTkTime
 
@@ -23,11 +23,7 @@ from tools.tk_test_time import ControlledTkTime
 class StoryGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-            probe.destroy()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
+        require_tk_display()
 
     def setUp(self) -> None:
         self.timing = self.enterContext(ControlledTkTime())

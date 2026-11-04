@@ -15,7 +15,7 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
@@ -24,11 +24,7 @@ from tools.tk_test_time import ControlledTkTime
 class WorldRuntimeFlowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-            root.destroy()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
+        require_tk_display()
 
     def setUp(self):
         self.timing = self.enterContext(ControlledTkTime())
@@ -129,7 +125,6 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                                 for action in ("place_item", "play", "talk")))
             social = app.state.social
             toolbar.buttons["talk"].invoke()
-            app._hover._interact("talk")
             self.assertEqual(app.state.social, social)
             menu = app._hover.social_menu
             assert menu is not None

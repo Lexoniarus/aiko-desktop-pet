@@ -1,23 +1,18 @@
 """Repeated restored sessions release Tk image owners before any later GC."""
 
 import tempfile
-import tkinter as tk
 import unittest
 import weakref
 from pathlib import Path
 
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectFootprint
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 
 
 class WorldAssetShutdownTests(unittest.TestCase):
     def test_quit_releases_all_image_owners_while_app_is_still_referenced(self):
-        try:
-            probe = tk.Tk()
-            probe.destroy()
-        except tk.TclError as error:
-            self.skipTest(str(error))
+        require_tk_display()
         with tempfile.TemporaryDirectory() as folder:
             app = create_test_desktop(store=StateStore(Path(folder) / "state.json"))
             self.addCleanup(app.quit)

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import tempfile
 import time
-import tkinter as tk
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -15,18 +14,14 @@ from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.state import PetState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.persistence_test_support import save_test_session
 from tools.tk_test_time import ControlledTkTime
 
 
 class ClickGuiTests(unittest.TestCase):
     def setUp(self) -> None:
-        try:
-            probe = tk.Tk()
-            probe.destroy()
-        except tk.TclError as error:
-            self.skipTest(str(error))
+        require_tk_display()
         self.timing = self.enterContext(ControlledTkTime())
         directory = tempfile.TemporaryDirectory(prefix="aiko-click-test-")
         self.addCleanup(directory.cleanup)

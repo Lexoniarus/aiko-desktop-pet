@@ -35,7 +35,11 @@ from aiko_pet.pet.movement.contracts import WalkStep
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.world.contracts import ObjectState
-from tools.desktop_test_support import create_test_desktop, destroy_test_root
+from tools.desktop_test_support import (
+    create_test_desktop,
+    destroy_test_root,
+    require_tk_display,
+)
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
@@ -225,11 +229,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         self.exercise_offer_positions(2)
 
     def exercise_offer_positions(self, scale):
-        try:
-            probe = tk.Tk()
-            probe.destroy()
-        except tk.TclError as error:
-            self.skipTest(str(error))
+        require_tk_display()
         directory = self.enterContext(tempfile.TemporaryDirectory())
         store = StateStore(Path(directory) / "state.json")
         save_test_session(
