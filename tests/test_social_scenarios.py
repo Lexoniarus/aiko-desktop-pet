@@ -614,5 +614,6 @@ class AffectionDialogueTests(unittest.TestCase):
             "affection_low",
         )
 
+
 if __name__ == "__main__":
     unittest.main()

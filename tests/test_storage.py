@@ -1,4 +1,3 @@
-
 import json
 import tempfile
 import unittest
@@ -103,6 +102,7 @@ class StateStoreTests(unittest.TestCase):
             self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
             self.assertEqual(restored.friendship, state.friendship)
             self.assertAlmostEqual(restored.affection, state.affection, places=2)
+
 
 if __name__ == "__main__":
     unittest.main()

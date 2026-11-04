@@ -274,6 +274,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 self.assertEqual(path.read_bytes(), before)
 
     def test_v3_database_migration_preserves_receipts_and_old_provider_pause(self):
+        now = 1_800_000_000.0
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "v3.sqlite3"
             with closing(sqlite3.connect(path)) as connection:
@@ -282,25 +283,25 @@ class SqliteMigrationTests(unittest.TestCase):
                     for statement in migration.statements:
                         connection.execute(statement)
                     connection.execute("INSERT INTO schema_migrations VALUES (?,?,?)",
-                                       (migration.version, migration.name, 1_800_000_000.0))
+                                       (migration.version, migration.name, now))
                 connection.execute("PRAGMA user_version=3")
                 connection.execute("INSERT INTO save_state VALUES (1,1,?,0)",
-                                   (1_800_000_000.0,))
+                                   (now,))
                 connection.execute("INSERT INTO social_receipts VALUES (0,1,?,?,?,0)",
                                    ("twopart", "jokeapi:1", "a" * 64))
                 connection.execute(
                     "INSERT INTO provider_pauses VALUES ('jokeapi',1,0,?)",
-                    (1_800_000_000.0 + 60,),
+                    (now + 60,),
                 )
                 connection.commit()
             with open_database(path) as connection:
                 connection.execute("BEGIN IMMEDIATE")
                 history = read_social_core(connection)
                 self.assertEqual(history.entries[0].identity, "jokeapi:1")
-                self.assertEqual(history.requests.blocks[0].until, 1_800_000_000.0 + 60)
+                self.assertEqual(history.requests.blocks[0].until, now + 60)
                 self.assertEqual(history.exclusions, ())
                 history = history.excluded(
-                    JokeExclusion(TWO, 2, 2, "format", 1_800_000_000.0 + 3600), 1_800_000_000.0,
+                    JokeExclusion(TWO, 2, 2, "format", now + 3600), now,
                 )
                 write_social_core(connection, history)
                 connection.commit()

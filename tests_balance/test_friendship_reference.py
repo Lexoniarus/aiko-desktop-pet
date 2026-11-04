@@ -53,4 +53,3 @@ class ContinuousFriendshipTests(unittest.TestCase):
                 extremes.append(progress.points)
                 self.assertGreaterEqual(min(extremes), low)
                 self.assertLessEqual(max(extremes), high)
-

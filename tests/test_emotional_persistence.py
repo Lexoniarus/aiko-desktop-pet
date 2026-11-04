@@ -288,7 +288,7 @@ class MoodletPersistenceTests(unittest.TestCase):
             with self.subTest(duplicate=duplicate), self.assertRaises(ValueError):
                 decode_moodlets(raw, ELAPSED)
 
-    def test_petting_evidence_round_trip_and_legacy_defaults_reject_future_boundaries(self):
+    def test_petting_evidence_retains_legacy_defaults_and_rejects_future_times(self):
         pet = PetState(lived_seconds=100)
         memory = replace(pet.moodlets.interactions, petting_excess_attempts=2,
                          petting_last_excess_at=100)

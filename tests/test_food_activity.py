@@ -188,5 +188,6 @@ class TelemetryEffortTests(unittest.TestCase):
         self.assertGreater(working.friendship, 39.99)
         self.assertLessEqual(working.friendship, 40)
 
+
 if __name__ == "__main__":
     unittest.main()

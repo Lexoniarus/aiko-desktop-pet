@@ -44,7 +44,8 @@ class OfflineProgressTests(unittest.TestCase):
             adaptive=session.adaptive.memory,
         )
         reopened = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        self.assertEqual(encode_pet_state(reopened.state), encode_pet_state(session.state))
+        self.assertEqual(encode_pet_state(reopened.state),
+                         encode_pet_state(session.state))
         uptime = [5000.0]
         clock = ActiveSessionClock(lambda: uptime[0])
         # Starting the live clock cannot consume the closed hour again.

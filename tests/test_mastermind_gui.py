@@ -369,6 +369,8 @@ class MastermindBoardLayoutTests(unittest.TestCase):
                     prepared = MastermindSession(lambda: SECRET)
                     for _ in range(9):
                         prepared.submit(("white",) * 4)
+                    assert game._sequence is not None
+                    game._sequence.game = prepared
                     game._present(prepared.view, prepared.score, False, 4)
                     root.update()
                     point = tuple(map(round, game.board.screen_point(52, 480)))

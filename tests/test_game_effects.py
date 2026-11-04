@@ -62,7 +62,9 @@ class MastermindFinaleTests(unittest.TestCase):
                     presentation = GamePresentation(
                         action=action, cancel=Mock(), look=Mock(),
                         origin=lambda: (100, 200, scale),
-                        food_anchor=lambda _clip, index: (96, 100) if index < 66 else None,
+                        food_anchor=lambda _clip, index: (
+                            (96, 100) if index < 66 else None
+                        ),
                     )
                     code = GameCodePorts(MastermindImages(root), Mock(), Mock(), Mock())
                     finale = MastermindFinale(owner, code, presentation, topmost=False)
@@ -74,7 +76,9 @@ class MastermindFinaleTests(unittest.TestCase):
                         done.assert_not_called()
                         for index in (0, 65, 66, 84):
                             marker(index)
-                            self.assertEqual("snack" in finale.effects._visible, index < 66)
+                            self.assertEqual(
+                                "snack" in finale.effects._visible, index < 66,
+                            )
                             if index < 66:
                                 image, geometry = finale.effects._frames["snack"]
                                 self.assertEqual(geometry,

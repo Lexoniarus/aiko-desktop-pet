@@ -146,6 +146,7 @@ class CareActionRulesTests(unittest.TestCase):
             format_care_response(state.interact("energy_drink", now=start + 8)),
         )
         self.assertEqual(before, encode_pet_state(state))
+        self.assertEqual(state.friendship, 15)
 
     def test_energy_drink_never_increases_hunger_or_social(self):
         state = PetState(energy=0, satiety=41, mood=55, social=27)

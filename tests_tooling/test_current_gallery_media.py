@@ -17,5 +17,5 @@ class CurrentGalleryTests(unittest.TestCase):
             with self.subTest(file=path.name), Image.open(path) as media:
                 self.assertGreater(min(media.size), 0)
                 if path.suffix.lower() == ".gif":
-                    self.assertGreater(media.n_frames, 1)
+                    self.assertGreater(getattr(media, "n_frames", 1), 1)
                 media.verify()

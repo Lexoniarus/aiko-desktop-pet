@@ -58,6 +58,7 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+
 def imported_modules(source: Path) -> tuple[str, ...]:
     """Inspect both regular imports and from-imports without executing code."""
     syntax = ast.parse(source.read_text("utf-8"))

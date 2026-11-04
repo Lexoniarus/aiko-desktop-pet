@@ -23,6 +23,7 @@ class DisplayScaleTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 DisplayScale.for_resolution(*size)
 
+
 class NativeUiScaleTests(unittest.TestCase):
     def test_status_actions_have_full_bounds_at_4k_and_full_hd(self):
         from unittest.mock import Mock
