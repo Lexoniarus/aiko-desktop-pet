@@ -59,13 +59,25 @@ class TimedResult(unittest.TextTestResult):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path)
+    parser.add_argument(
+        "--group", choices=("application", "tooling", "balance", "all"),
+        default="application", help="Select an explicit test group",
+    )
     args = parser.parse_args()
     with (
         tempfile.TemporaryDirectory(prefix="aiko-local-suite-") as folder,
         patch.dict(os.environ, {"AIKO_SAVE_PATH": str(Path(folder) / "state.sqlite3")}),
         patch("_tkinter.create", side_effect=reject_native_tk),
     ):
-        suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))
+        groups = {
+            "application": "tests", "tooling": "tests_tooling",
+            "balance": "tests_balance",
+        }
+        directories = groups.values() if args.group == "all" else (groups[args.group],)
+        suite = unittest.TestSuite(
+            unittest.TestLoader().discover(str(ROOT / directory))
+            for directory in directories
+        )
         result = unittest.TextTestRunner(verbosity=1, resultclass=TimedResult).run(
             suite
         )
@@ -77,6 +89,7 @@ def main() -> int:
         args.report.write_text(
             json.dumps(
                 {
+                    "group": args.group,
                     "tests_run": result.testsRun,
                     "failures": len(result.failures),
                     "errors": len(result.errors),
