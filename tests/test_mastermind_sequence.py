@@ -4,19 +4,20 @@ import unittest
 
 from aiko_pet.games.mastermind import MastermindSession
 from aiko_pet.ui.windows.mastermind_sequence import MastermindSequence
+from tools.reaction_test_support import FakeScheduler
 
 SECRET = ("red", "red", "blue", "green")
 
 
 class MastermindSequenceTests(unittest.TestCase):
     def setUp(self):
-        self.tasks = {}
-        self.serial = 0
+        self.scheduler = FakeScheduler()
+        self.tasks = self.scheduler.callbacks
         self.codes, self.events, self.lines, self.emotes = [], [], [], []
         self.hidden = 0
         self.flow = MastermindSequence(
-            schedule=self.schedule,
-            cancel=lambda key: self.tasks.pop(key, None),
+            schedule=self.scheduler.schedule,
+            cancel=self.scheduler.cancel,
             present=lambda *_view: None,
             show_code=self.codes.append,
             hide_code=self.hide,
@@ -32,20 +33,15 @@ class MastermindSequenceTests(unittest.TestCase):
     def hide(self):
         self.hidden += 1
 
-    def schedule(self, delay, callback):
-        self.serial += 1
-        key = str(self.serial)
-        self.tasks[key] = delay, callback
-        return key
-
     def advance_callback(self):
-        key = next(iter(self.tasks))
-        _, callback = self.tasks.pop(key)
-        callback()
+        self.scheduler.fire(next(iter(self.tasks)))
 
     def drain(self):
-        while self.tasks:
+        for _ in range(32):
+            if not self.tasks:
+                return
             self.advance_callback()
+        self.fail("Mastermind sequence did not finish within 32 callbacks")
 
     def test_greeting_blocks_input_then_reveals_only_after_terminal_guess(self):
         self.flow.greet()

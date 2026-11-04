@@ -4,26 +4,26 @@ import unittest
 
 from aiko_pet.games.tic_tac_toe import TicTacToe
 from aiko_pet.ui.windows.tic_tac_toe_sequence import TicTacToeSequence
+from tools.reaction_test_support import FakeScheduler
 
 
 class TicTacToeSequenceTests(unittest.TestCase):
     def setUp(self):
-        self.tasks = {}
+        self.scheduler = FakeScheduler()
+        self.tasks = self.scheduler.callbacks
         self.views = []
         self.lines = []
         self.rounds = []
         self.flow = TicTacToeSequence(
-            schedule=self.schedule, cancel=lambda token: self.tasks.pop(token, None),
+            schedule=self.scheduler.schedule,
+            cancel=self.scheduler.cancel,
             present=lambda board, score: self.views.append((board, score)),
-            say=lambda text, _ms: self.lines.append(text), animate=lambda _name: None,
+            say=lambda text, _ms: self.lines.append(text),
+            animate=lambda _name: None,
             dialogue=lambda event: event,
             game=TicTacToe(random_index=lambda _size: 0),
             round_event=self.rounds.append,
         )
-
-    def schedule(self, _ms, callback):
-        self.tasks["turn"] = callback
-        return "turn"
 
     def test_turn_blocks_second_choice_and_close_invalidates_callback(self):
         self.flow.greet()
@@ -31,7 +31,7 @@ class TicTacToeSequenceTests(unittest.TestCase):
         board = self.flow.game.board
         self.flow.choose(1)
         self.assertEqual(self.flow.game.board, board)
-        stale = self.tasks["turn"]
+        stale = next(iter(self.tasks.values()))[1]
         summary = self.flow.close()
         stale()
         self.assertEqual(summary.games, 0)

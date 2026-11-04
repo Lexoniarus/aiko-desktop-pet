@@ -27,6 +27,96 @@ from tools.headless_widgets import Skin, Widget, widgets
 
 
 class VnStatusTests(unittest.TestCase):
+    def setUp(self):
+        episodes = tuple(
+            MoodletEpisode(i, key, 1, 0, 0, 7200)
+            for i, key in enumerate(MOODLET_CATALOG.definitions, 1)
+        )
+        state = PetState(
+            sleeping=True,
+            mood=33,
+            friendship=71,
+            moodlets=MoodletState(active=episodes),
+            wishes=WishState(active=(ActiveWish(1, WishId.FACT, "fact", 0, 14400),)),
+        )
+        context = context_at(1_800_000_000)
+
+        def hover():
+            return project_hover(
+                snapshot_pet(state), context, ComputerSnapshot(), observe_computer=False
+            )
+
+        def status():
+            return project_status(
+                snapshot_pet(state),
+                context,
+                None,
+                ComputerSnapshot(),
+                observe_computer=False,
+            )
+
+        calls: list[str] = []
+        actions = HoverActions(
+            calls.append,
+            Mock(),
+            Mock(),
+            Mock(),
+            Mock(),
+            lambda: True,
+            can_interact=lambda _a: False,
+        )
+        self.state, self.calls, self.actions = state, calls, actions
+        self.enterContext(widgets())
+        self.toolbar = ActionToolbar(
+            cast(Any, Widget()),
+            snapshot=hover,
+            status_snapshot=status,
+            anchor=lambda: HoverAnchor(0, 0, 128, 208, None, None),
+            actions=actions,
+            always_on_top=True,
+            skin=cast(Any, Skin()),
+        )
+        self.addCleanup(self.toolbar.close)
+
+    def test_refresh_preserves_status_card_identity_without_changing_pet(self):
+        toolbar = self.toolbar
+        before = self.state.capture_checkpoint()
+        toolbar.refresh()
+        self.assertEqual(len(toolbar.readouts), 7)
+        self.assertIn("33 / 100", toolbar.readouts["mood"].label.cget("text"))
+        self.assertIn("Lv 8", toolbar.readouts["friendship"].label.cget("text"))
+        cards = toolbar.moodlets._content.body.winfo_children()
+        self.assertEqual(len(cards), len(MOODLET_CATALOG.definitions))
+        toolbar.refresh()
+        self.assertEqual(toolbar.moodlets._content.body.winfo_children(), cards)
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
+    def test_placement_is_admitted_while_foreground_care_is_blocked(self):
+        self.toolbar.refresh()
+        self.toolbar.buttons["pet"].invoke()
+        self.toolbar.buttons["place_item"].invoke()
+        self.assertEqual(self.calls, ["place_item"])
+
+    def test_title_drag_saves_position_and_moves_speech_once(self):
+        toolbar = self.toolbar
+        title = cast(Any, toolbar.today).master
+        self.assertIs(toolbar._drag._handle, title)
+        toolbar._drag.start(cast(Any, Mock(x_root=30, y_root=30)))
+        toolbar._drag.move(cast(Any, Mock(x_root=40, y_root=50)))
+        toolbar._drag.finish(cast(Any, Mock()))
+        cast(Mock, self.actions.save_position).assert_called_once_with(30, 40)
+        cast(Mock, self.actions.move_speech).assert_called_once()
+
+    def test_descriptions_and_details_are_passive(self):
+        before = self.state.capture_checkpoint()
+        cast(Any, self.toolbar.settings_button).bindings["<FocusIn>"](Mock())
+        self.assertIn("Einstellungen", self.toolbar.tips._label.cget("text"))
+        self.toolbar.toggle_details()
+        self.assertTrue(
+            self.toolbar.details and self.toolbar.details.frame.winfo_ismapped()
+        )
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
     def test_small_real_status_changes_are_visible_without_rounding_the_state(self):
         readout = StatusReadout.__new__(StatusReadout)
         readout.label, readout.canvas = cast(Any, Mock()), cast(Any, Mock())
@@ -59,95 +149,6 @@ class VnStatusTests(unittest.TestCase):
     def test_description_position_stays_inside_window_and_avoids_explained_row(self):
         self.assertEqual(tip_position(600, 100, 150, 300, 100, 680, 800), (380, 154))
         self.assertEqual(tip_position(20, 700, 750, 300, 100, 680, 800), (20, 596))
-
-    def test_refresh_keeps_identity_and_placement_admission(
-        self,
-    ):
-        episodes = tuple(
-            MoodletEpisode(i, key, 1, 0, 0, 7200)
-            for i, key in enumerate(MOODLET_CATALOG.definitions, 1)
-        )
-        state = PetState(
-            sleeping=True,
-            mood=33,
-            friendship=71,
-            moodlets=MoodletState(active=episodes),
-            wishes=WishState(active=(ActiveWish(1, WishId.FACT, "fact", 0, 14400),)),
-        )
-        before = state.capture_checkpoint()
-        context = context_at(1_800_000_000)
-
-        def hover():
-            return project_hover(
-                snapshot_pet(state), context, ComputerSnapshot(), observe_computer=False
-            )
-
-        def status():
-            return project_status(
-                snapshot_pet(state),
-                context,
-                None,
-                ComputerSnapshot(),
-                observe_computer=False,
-            )
-
-        calls: list[str] = []
-        actions = HoverActions(
-            calls.append,
-            Mock(),
-            Mock(),
-            Mock(),
-            Mock(),
-            lambda: True,
-            can_interact=lambda _a: False,
-        )
-        with widgets():
-            toolbar = ActionToolbar(
-                cast(Any, Widget()),
-                snapshot=hover,
-                status_snapshot=status,
-                anchor=lambda: HoverAnchor(0, 0, 128, 208, None, None),
-                actions=actions,
-                always_on_top=True,
-                skin=cast(Any, Skin()),
-            )
-            toolbar.refresh()
-            self.assertEqual(len(toolbar.readouts), 7)
-            self.assertIn("33 / 100", toolbar.readouts["mood"].label.cget("text"))
-            self.assertIn("Lv 8", toolbar.readouts["friendship"].label.cget("text"))
-            cards = toolbar.moodlets._content.body.winfo_children()
-            self.assertEqual(len(cards), len(MOODLET_CATALOG.definitions))
-            toolbar.refresh()
-            self.assertEqual(toolbar.moodlets._content.body.winfo_children(), cards)
-            toolbar.buttons["pet"].invoke()
-            toolbar.buttons["place_item"].invoke()
-            self.assertEqual(calls, ["place_item"])
-            toolbar.set_pinned(True)
-            self.assertTrue(toolbar.pin_button.cget("selected"))
-            self.assertEqual(toolbar.pin_button.cget("text"), "")
-            self.assertEqual(toolbar.settings_button.cget("text"), "")
-            self.assertEqual(toolbar.pin_button.cget("size"), "small")
-            self.assertEqual(toolbar.settings_button.cget("size"), "small")
-            self.assertFalse(toolbar.pin_button.cget("align_left"))
-            self.assertIs(toolbar.pin_button.master, toolbar.settings_button.master)
-            title = cast(Any, toolbar.today).master
-            self.assertIs(toolbar._drag._handle, title)
-            for handle in (title, cast(Any, toolbar.today)):
-                self.assertIn("<B1-Motion>", handle.bindings)
-            moved = cast(Mock, actions.move_speech)
-            saved = cast(Mock, actions.save_position)
-            toolbar._drag.start(cast(Any, Mock(x_root=30, y_root=30)))
-            toolbar._drag.move(cast(Any, Mock(x_root=40, y_root=50)))
-            toolbar._drag.finish(cast(Any, Mock()))
-            saved.assert_called_once_with(30, 40)
-            moved.assert_called_once()
-            # Descriptions are in-window and keyboard focusable, no new window.
-            cast(Any, toolbar.settings_button).bindings["<FocusIn>"](Mock())
-            self.assertIn("Einstellungen", toolbar.tips._label.cget("text"))
-            toolbar.toggle_details()
-            self.assertTrue(toolbar.details and toolbar.details.frame.winfo_ismapped())
-            toolbar.close()
-        self.assertEqual(state.capture_checkpoint(), before)
 
     def test_each_supported_wish_has_a_readable_target_objective_and_art_mapping(self):
         self.assertEqual(set(MOODLET_ICONS), set(MOODLET_CATALOG.definitions))

@@ -7,12 +7,13 @@ from unittest.mock import Mock
 
 from aiko_pet.games.connect_four import ConnectFourSession
 from aiko_pet.ui.windows.connect_four_sequence import ConnectFourSequence
+from tools.reaction_test_support import FakeScheduler
 
 
 class ConnectFourSequenceTests(unittest.TestCase):
     def setUp(self):
-        self.tasks = {}
-        self.serial = 0
+        self.scheduler = FakeScheduler()
+        self.tasks = self.scheduler.callbacks
         self.views, self.lines, self.events, self.emotes = [], [], [], []
         self.look = Mock()
         self.futures = []
@@ -26,26 +27,23 @@ class ConnectFourSequenceTests(unittest.TestCase):
         self.futures.append(future)
         return future
 
-    def schedule(self, milliseconds, callback):
-        self.serial += 1
-        token = str(self.serial)
-        self.tasks[token] = milliseconds, callback
-        return token
-
     def make_flow(self, game=None):
         return ConnectFourSequence(
-            schedule=self.schedule, cancel=lambda token: self.tasks.pop(token, None),
+            schedule=self.scheduler.schedule,
+            cancel=self.scheduler.cancel,
             present=lambda *view: self.views.append(view),
             say=lambda text, ms: self.lines.append((text, ms)),
-            animate=lambda _clip: None, emote=lambda *item: self.emotes.append(item),
-            dialogue=lambda event: event, round_event=self.events.append,
-            executor=cast(Executor, self.executor), game=game, look=self.look,
+            animate=lambda _clip: None,
+            emote=lambda *item: self.emotes.append(item),
+            dialogue=lambda event: event,
+            round_event=self.events.append,
+            executor=cast(Executor, self.executor),
+            game=game,
+            look=self.look,
         )
 
     def advance_callback(self):
-        token = next(iter(self.tasks))
-        _, callback = self.tasks.pop(token)
-        callback()
+        self.scheduler.fire(next(iter(self.tasks)))
 
     def finish_drop(self):
         for _ in range(6):
