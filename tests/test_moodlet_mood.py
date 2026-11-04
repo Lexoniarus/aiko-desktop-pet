@@ -110,20 +110,29 @@ class MoodletMoodTests(unittest.TestCase):
 
     def test_sleep_recovery_qualifies_at_40_then_waits_thirty_minutes(self):
         pet = seeded_pet(MoodletId.EXHAUSTION_IRRITATED, level=2, remaining=7200)
-        pet.restore_checkpoint(replace(pet.capture_checkpoint(), energy=39.99,
-                                       sleeping=True, sleep_origin="manual"))
+        pet.restore_checkpoint(
+            replace(
+                pet.capture_checkpoint(),
+                energy=39.99,
+                sleeping=True,
+                sleep_origin="manual",
+            )
+        )
         split = deepcopy(pet)
         pet._advance_progression(pet.lived_seconds + 1824, observed=False)
-        for _ in range(1824):
-            split._advance_progression(split.lived_seconds + 1, observed=False)
+        for elapsed in (4.79, 4.8, 4.81, 1804.79, 1804.8, 1804.81, 1824):
+            split._advance_progression(elapsed, observed=False)
         episode = pet.moodlets.active[0]
         # Sleep restores 7.5 energy/hour: crossing 40 takes 4.8 seconds.
         assert episode.recovery_since is not None
         self.assertAlmostEqual(episode.recovery_since, 4.8, places=6)
         self.assertAlmostEqual(episode.remaining_seconds, 7180.8, places=6)
-        self.assertAlmostEqual(split.moodlets.active[0].remaining_seconds,
-                               episode.remaining_seconds, places=5)
-        self.assertAlmostEqual(split.mood, pet.mood, delta=.05)
+        self.assertAlmostEqual(
+            split.moodlets.active[0].remaining_seconds,
+            episode.remaining_seconds,
+            places=5,
+        )
+        self.assertAlmostEqual(split.mood, pet.mood, delta=0.05)
 
     def test_falling_below_40_pauses_at_the_crossing_not_at_step_end(self):
         pet = seeded_pet(MoodletId.LONELY, remaining=100)

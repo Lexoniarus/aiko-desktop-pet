@@ -136,13 +136,16 @@ class CursorCoordinatorTests(unittest.TestCase):
         pet = co._state
         identity = pet.moodlets.active[0].instance_id
         feedback = []
-        for n in range(101, 601):
-            pet.advance(pet.updated_at + .1, elapsed_seconds=.1)
+        for now in range(11, 61):
+            pet.advance(pet.updated_at + 1, elapsed_seconds=1)
             co._observer.current = replace(
-                co._observer.current, sampled_at=n / 10, speed=4,
-                distance=1.5, reachable=False,
+                co._observer.current,
+                sampled_at=now,
+                speed=4,
+                distance=1.5,
+                reachable=False,
             )
-            co.begin_frame(n / 10, CursorActivityContext())
+            co.begin_frame(now, CursorActivityContext())
             if co.feedback is not None:
                 self.assertIsInstance(co.feedback, CursorExperience)
                 assert isinstance(co.feedback, CursorExperience)
@@ -153,13 +156,15 @@ class CursorCoordinatorTests(unittest.TestCase):
         self.assertEqual(feedback, [2, 3])
         self.assertGreater(current.last_trigger_at, 40)
         triggered = current.last_trigger_at
-        for n in range(601, 1701):
-            pet.advance(pet.updated_at + .1, elapsed_seconds=.1)
+        for now in range(61, 171):
+            pet.advance(pet.updated_at + 1, elapsed_seconds=1)
             co._observer.current = replace(
-                co._observer.current, sampled_at=n / 10, speed=0,
+                co._observer.current,
+                sampled_at=now,
+                speed=0,
                 stationary_seconds=2,
             )
-            co.begin_frame(n / 10, CursorActivityContext())
+            co.begin_frame(now, CursorActivityContext())
             self.assertIsNone(co.feedback)
             if pet.moodlets.active:
                 self.assertEqual(pet.moodlets.active[0].last_trigger_at, triggered)

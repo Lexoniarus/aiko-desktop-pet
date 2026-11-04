@@ -37,7 +37,10 @@ class ActivityReadings:
 
 
 class WalkDriverTests(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
+        self.create_walk_fixture()
+
+    def create_walk_fixture(self) -> None:
         self.settings = WalkSettings()
         self.finished: list[float] = []
 
@@ -60,23 +63,36 @@ class WalkDriverTests(unittest.TestCase):
         from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 
         for scale in (1, 2):
-            self.setUp()
+            self.create_walk_fixture()
             self.settings.scale = scale
             self.driver.ports = replace(self.driver.ports, cursor_allowed=lambda: True)
-            self.driver.apply_cursor_intent(CursorIntent(
-                "approach", side=1, token=1, until=20, target=(2000, 82),
-                feeling="curiosity", strength=1, steps=3,
-            ), 10)
+            self.driver.apply_cursor_intent(
+                CursorIntent(
+                    "approach",
+                    side=1,
+                    token=1,
+                    until=20,
+                    target=(2000, 82),
+                    feeling="curiosity",
+                    strength=1,
+                    steps=3,
+                ),
+                10,
+            )
             self.driver.align_cursor_pace(4)
             initial = self.driver.movement.request("cursor")
             assert initial is not None
             self.assertEqual(initial.kind, "run")
-            self.driver.step(10, .1, game_mode=False, attention_active=True)
+            self.driver.step(10, 0.1, game_mode=False, attention_active=True)
             progress = self.driver.movement._progress["cursor"]
             x = self.settings.x or 0
-            for distance, axis, expected in ((90, 4, "run"), (60, 4, "step"),
-                                              (100, 4, "step"), (180, 4, "run"),
-                                              (180, 3, "step")):
+            for distance, axis, expected in (
+                (90, 4, "run"),
+                (60, 4, "step"),
+                (100, 4, "step"),
+                (180, 4, "run"),
+                (180, 3, "step"),
+            ):
                 self.driver.movement.retarget("cursor", 1, x + distance * scale)
                 self.driver.align_cursor_pace(axis)
                 current = self.driver.movement.request("cursor")
@@ -136,7 +152,7 @@ class WalkDriverTests(unittest.TestCase):
 
         for scale in (1, 2):
             with self.subTest(scale=scale):
-                self.setUp()
+                self.create_walk_fixture()
                 self.settings.scale = scale
                 completed = []
                 self.driver.ports = replace(

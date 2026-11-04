@@ -88,17 +88,25 @@ class CareRequestTests(unittest.TestCase):
 
     def test_visible_ui_and_running_reactions_are_not_interrupted(self) -> None:
         set_test_pet_values(self.state, satiety=60)
-        for flag in ('bubble_visible',):
-            with self.subTest(flag=flag):
-                arguments = {flag: True}
-                self.assertFalse(self.attention.spontaneous(
-                    1000, self.context, **arguments,
-                ).due)
-        self.assertFalse(self.attention.spontaneous(
-            1000, self.context, action_until=1001,
-        ).due)
+        self.assertFalse(
+            self.attention.spontaneous(
+                1000,
+                self.context,
+                bubble_visible=True,
+            ).due
+        )
+        self.assertFalse(
+            self.attention.spontaneous(
+                1000,
+                self.context,
+                action_until=1001,
+            ).due
+        )
         self.settings.spontaneous_talk = False
-        self.assertFalse(self.attention.spontaneous(
-            1000, self.context,
-        ).due)
+        self.assertFalse(
+            self.attention.spontaneous(
+                1000,
+                self.context,
+            ).due
+        )
         self.assertEqual(self.attention.next_care_request, 0)

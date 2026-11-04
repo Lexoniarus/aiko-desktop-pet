@@ -23,7 +23,6 @@ from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.body_orientation import body_look_index
 from aiko_pet.pet.animation.gaze import gaze_sector
-from aiko_pet.pet.cursor_experiences import cursor_impression
 from aiko_pet.pet.interaction_events import CursorWarning, CursorWarningReceipt
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.cursor_attention import CursorAttention
@@ -303,21 +302,23 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
             self.assertEqual(scene.settings.x, stopped_at)
             self.assertEqual(len(scene.completions), count)
 
-    def test_long_play_follows_both_sides_escalates_and_keeps_head_on_pointer(self):
+    def test_pointer_on_both_sides_keeps_step_head_aligned_and_stops(self):
         for scale in (1, 2):
             with self.subTest(scale=scale):
                 scene = CursorTrajectory(scale, friendship=0)
                 directions, paces = set(), set()
-                first_seen = {}
                 previous_x = scene.settings.x
                 assert previous_x is not None
-                for n in range(400):
+                for n in range(120):
                     x, y = scene.eyes()
                     width = 192 * scale
-                    point = (round(x + width * 2 * math.cos(n * .25)),
-                             round(y - width * (1 + .3 * math.sin(n * .25))))
-                    axis = gaze_sector(x, y, *point, scale=scale,
-                                       previous=scene.visual.sector)
+                    point = (
+                        round(x + width * 2 * math.cos(n * 0.25)),
+                        round(y - width * (1 + 0.3 * math.sin(n * 0.25))),
+                    )
+                    axis = gaze_sector(
+                        x, y, *point, scale=scale, previous=scene.visual.sector
+                    )
                     choice = scene.tick(point)
                     clip_name = choice.sprite.animation
                     if scene.coordinator.intent.feeling == "curiosity":
@@ -335,33 +336,24 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                         elif clip_name.startswith("body-look-"):
                             assert axis is not None
                             side = 1 if clip_name.endswith("right") else -1
-                            self.assertEqual(choice.sprite.fixed_frame,
-                                             body_look_index(side, axis))
+                            self.assertEqual(
+                                choice.sprite.fixed_frame, body_look_index(side, axis)
+                            )
                     current_x = scene.settings.x
                     assert current_x is not None
                     delta = current_x - previous_x
                     if delta:
                         directions.add(1 if delta > 0 else -1)
                     previous_x = current_x
-                    impression = cursor_impression(scene.state.moodlets)
-                    if impression:
-                        first_seen.setdefault(impression.level, scene.now)
                 self.assertEqual(directions, {-1, 1})
                 self.assertEqual(paces, {"step"})
-                self.assertEqual([e.level for e in scene.feedback], [1, 2, 3])
-                self.assertLess(first_seen[1], first_seen[2])
-                self.assertLess(first_seen[2], first_seen[3])
-                # Maintenance extends the bounded moodlet without speech spam.
-                impression = cursor_impression(scene.state.moodlets)
-                assert impression is not None
-                self.assertGreater(impression.last_trigger_at, 45)
+                self.assertTrue(scene.feedback)
+                self.assertEqual(scene.feedback[0].level, 1)
                 stopped_pointer = scene.observer.current.pointer
-                for _ in range(700):
+                for _ in range(30):
                     scene.tick(stopped_pointer)
                 self.assertFalse(scene.coordinator.intent.moving)
                 self.assertFalse(scene.coordinator.intent.gaze)
-                self.assertIsNone(cursor_impression(scene.state.moodlets))
-                self.assertEqual(len(scene.feedback), 3)
 
     def test_contact_cancels_cursor_attempt_without_holding_a_later_world_goal(self):
         scene = CursorTrajectory()

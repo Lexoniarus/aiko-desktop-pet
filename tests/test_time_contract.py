@@ -49,6 +49,41 @@ def validate_time_evidence(pet: PetState) -> None:
     decode_wishes(encode_wishes(pet.wishes), elapsed)
 
 
+def fractional_pet(start: float, sleeping: bool) -> PetState:
+    return PetState(
+        updated_at=WALL,
+        lived_seconds=start,
+        energy=39.99,
+        satiety=75 if sleeping else 0,
+        affection=75 if sleeping else 0,
+        sleeping=sleeping,
+        sleep_origin="manual" if sleeping else "",
+        sleep_episode=SleepEpisode("main", start, 0, WALL + 8 * 3600, start + 300)
+        if sleeping
+        else None,
+        wishes=WishState(
+            2,
+            (ActiveWish(1, WishId.PET, "pet", start, start + 0.04),),
+            ((WishArea.AFFECTION, start),),
+        ),
+        moodlets=MoodletState(
+            start,
+            2,
+            (
+                MoodletEpisode(
+                    1,
+                    MoodletId.EXHAUSTION_IRRITATED,
+                    1,
+                    start,
+                    start,
+                    7200,
+                    decay_paused=True,
+                ),
+            ),
+        ),
+    )
+
+
 class TimeContractTests(unittest.TestCase):
     def test_plan_preserves_fractional_and_sub_wall_precision_intervals(self) -> None:
         for start in (0.0, 467390.5999761847):
@@ -79,140 +114,94 @@ class TimeContractTests(unittest.TestCase):
                             self.assertEqual(left.elapsed_end, right.elapsed_start)
                             self.assertEqual(left.wall_end, right.wall_start)
 
-    def test_direct_and_world_paths_keep_all_evidence_valid_through_save_restart(
-        self,
-    ) -> None:
+    def advance_fractional_evidence(self, pet: PetState, *, with_world: bool):
+        start, sleeping = pet.lived_seconds, pet.sleeping
+        world = WorldState(WorldSurface(800, 600), ())
+        memory = ObjectMemory()
+        progression = SessionTimeProgression(world, memory)
+        expected, wall = start, WALL
+        for duration in (0.016, 0.03, 29.999, 1e-10):
+            expected += duration
+            wall += duration
+            if with_world:
+                progression.advance(
+                    pet,
+                    SessionInputs(wall, 0, False, None, False, False, None),
+                    duration,
+                )
+            else:
+                pet.advance(wall, elapsed_seconds=duration, observed=False)
+            self.assertEqual(pet.lived_seconds, expected)
+            self.assertEqual(bool(pet.wishes.active), expected < start + 0.04)
+            validate_time_evidence(pet)
+            evidence = pet.moodlets.care_evidence
+            assert evidence is not None
+            self.assertTrue(
+                all(p.last_accounted_at == expected for p in evidence.progress)
+            )
+            self.assertEqual(pet.sleeping, sleeping)
+            if sleeping:
+                assert pet.sleep_episode is not None
+                self.assertAlmostEqual(
+                    pet.sleep_episode.slept_seconds,
+                    expected - start,
+                    places=9,
+                )
+                if expected - start > 5:
+                    recovering = next(
+                        p
+                        for p in pet.moodlets.active
+                        if p.definition_id == MoodletId.EXHAUSTION_IRRITATED
+                    )
+                    self.assertIsNotNone(recovering.recovery_since)
+        return world, memory, wall
+
+    def test_direct_and_world_fractional_steps_keep_evidence_valid(self) -> None:
         for start in (0.0, 467390.5999761847):
             for sleeping in (False, True):
                 for with_world in (False, True):
-                    with (
-                        self.subTest(
-                            start=start, sleeping=sleeping, with_world=with_world
-                        ),
-                        tempfile.TemporaryDirectory(prefix="aiko-time-contract-") as d,
+                    with self.subTest(
+                        start=start,
+                        sleeping=sleeping,
+                        with_world=with_world,
                     ):
-                        pet = PetState(
-                            updated_at=WALL,
-                            lived_seconds=start,
-                            energy=39.99,
-                            satiety=75 if sleeping else 0,
-                            affection=75 if sleeping else 0,
-                            sleeping=sleeping,
-                            sleep_origin="manual" if sleeping else "",
-                            sleep_episode=SleepEpisode(
-                                "main",
-                                start,
-                                0,
-                                WALL + 8 * 3600,
-                                start + 300,
-                            )
-                            if sleeping
-                            else None,
-                            wishes=WishState(
-                                2,
-                                (
-                                    ActiveWish(
-                                        1, WishId.PET, "pet", start, start + 0.04
-                                    ),
-                                ),
-                                ((WishArea.AFFECTION, start),),
-                            ),
-                            moodlets=MoodletState(
-                                start,
-                                2,
-                                (
-                                    MoodletEpisode(
-                                        1,
-                                        MoodletId.EXHAUSTION_IRRITATED,
-                                        1,
-                                        start,
-                                        start,
-                                        7200,
-                                        decay_paused=True,
-                                    ),
-                                ),
-                            ),
+                        self.advance_fractional_evidence(
+                            fractional_pet(start, sleeping),
+                            with_world=with_world,
                         )
-                        world = WorldState(WorldSurface(800, 600), ())
-                        memory = ObjectMemory()
-                        progression = SessionTimeProgression(world, memory)
-                        store = SqliteStateStore(
-                            Path(d) / "fixture.sqlite3", definitions=()
-                        )
-                        revision = SaveRevision()
-                        expected, wall = start, WALL
-                        for duration in (0.016, 0.03, 29.999, 1e-10):
-                            expected += duration
-                            wall += duration
-                            if with_world:
-                                progression.advance(
-                                    pet,
-                                    SessionInputs(
-                                        wall,
-                                        0,
-                                        False,
-                                        None,
-                                        False,
-                                        False,
-                                        None,
-                                    ),
-                                    duration,
-                                )
-                            else:
-                                pet.advance(
-                                    wall, elapsed_seconds=duration, observed=False
-                                )
-                            self.assertEqual(pet.lived_seconds, expected)
-                            self.assertEqual(
-                                bool(pet.wishes.active), expected < start + 0.04
-                            )
-                            validate_time_evidence(pet)
-                            evidence = pet.moodlets.care_evidence
-                            assert evidence is not None
-                            self.assertTrue(
-                                all(
-                                    p.last_accounted_at == expected
-                                    for p in evidence.progress
-                                )
-                            )
-                            self.assertEqual(pet.sleeping, sleeping)
-                            if sleeping:
-                                self.assertAlmostEqual(
-                                    pet.sleep_episode.slept_seconds,
-                                    expected - start,
-                                    places=9,
-                                )
-                                if expected - start > 5:
-                                    recovering = next(
-                                        p
-                                        for p in pet.moodlets.active
-                                        if p.definition_id
-                                        == MoodletId.EXHAUSTION_IRRITATED
-                                    )
-                                    self.assertIsNotNone(recovering.recovery_since)
-                            revision = store.save(
-                                pet,
-                                PetSettings(auto_routine=False),
-                                expected_revision=revision,
-                                adaptive=AdaptiveMemory(),
-                                social_history=SocialContentHistory(),
-                                world=world.snapshot() if with_world else None,
-                                object_memory=memory.export(now=0)
-                                if with_world
-                                else None,
-                            )
-                            loaded = store.load_session()
-                            self.assertEqual(
-                                loaded.state.capture_checkpoint(),
-                                pet.capture_checkpoint(),
-                            )
-                            restarted = PetSessionRestorer(
-                                store,
-                                wall_time=lambda: wall,
-                            ).restore()
-                            self.assertEqual(restarted.state.lived_seconds, expected)
-                            self.assertEqual(restarted.state.moodlets, pet.moodlets)
-                            self.assertEqual(restarted.revision, revision)
+
+    def test_fractional_evidence_survives_save_and_restart(self) -> None:
+        for start, sleeping, with_world in (
+            (0.0, False, False),
+            (467390.5999761847, True, True),
+        ):
+            with (
+                self.subTest(with_world=with_world),
+                tempfile.TemporaryDirectory() as d,
+            ):
+                pet = fractional_pet(start, sleeping)
+                world, memory, wall = self.advance_fractional_evidence(
+                    pet,
+                    with_world=with_world,
+                )
+                store = SqliteStateStore(Path(d) / "fixture.sqlite3", definitions=())
+                revision = store.save(
+                    pet,
+                    PetSettings(auto_routine=False),
+                    expected_revision=SaveRevision(),
+                    adaptive=AdaptiveMemory(),
+                    social_history=SocialContentHistory(),
+                    world=world.snapshot() if with_world else None,
+                    object_memory=memory.export(now=0) if with_world else None,
+                )
+                loaded = store.load_session()
+                self.assertEqual(
+                    loaded.state.capture_checkpoint(), pet.capture_checkpoint()
+                )
+                restarted = PetSessionRestorer(store, wall_time=lambda: wall).restore()
+                self.assertEqual(restarted.state.lived_seconds, pet.lived_seconds)
+                self.assertEqual(restarted.state.moodlets, pet.moodlets)
+                self.assertEqual(restarted.revision, revision)
 
     def test_fractional_period_crossing_keeps_causes_and_cursors_on_one_axis(
         self,

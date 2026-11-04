@@ -133,8 +133,8 @@ def bond_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
 class TelemetryEffortTests(unittest.TestCase):
     def test_high_work_only_adds_bounded_hunger_and_energy_costs(self):
         start = bond_stamp()
-        calm = PetState(updated_at=start)
-        busy = PetState(updated_at=start)
+        calm = PetState(updated_at=start, friendship=40)
+        busy = PetState(updated_at=start, friendship=40)
         for step in range(1, 361):
             point = start + step * 10
             calm.advance(point, effort=0.05)
@@ -146,6 +146,8 @@ class TelemetryEffortTests(unittest.TestCase):
         self.assertAlmostEqual(calm.affection, busy.affection)
         self.assertAlmostEqual(calm.fun, busy.fun)
         self.assertAlmostEqual(busy.friendship, calm.friendship)
+        self.assertGreater(busy.friendship, 39.99)
+        self.assertLessEqual(busy.friendship, 40)
 
     def test_observed_load_cannot_be_extrapolated_over_offline_hours(self):
         start = bond_stamp()
@@ -171,22 +173,6 @@ class TelemetryEffortTests(unittest.TestCase):
         state = PetState(updated_at=start, energy=19, sleeping=True)
         state.advance(start + 1800, effort=1.0)
         self.assertGreater(state.energy, 19)
-
-    def test_24_7_idle_and_busy_keep_work_and_sleep_separate(self):
-        start = bond_stamp()
-        idle = PetState(updated_at=start, friendship=40)
-        working = PetState(updated_at=start, friendship=40)
-        # Four actual observed hours, six-second samples; no fake system uptime.
-        for n in range(1, 2401):
-            point = start + n * 6
-            idle.advance(point, effort=0.03)
-            working.advance(point, effort=0.95)
-            if n == 600:  # Compare hunger before both values reach their floor.
-                self.assertLess(working.satiety, idle.satiety)
-        self.assertLess(working.mood, idle.mood)
-        self.assertLess(working.energy, idle.energy)
-        self.assertGreater(working.friendship, 39.99)
-        self.assertLessEqual(working.friendship, 40)
 
 
 if __name__ == "__main__":

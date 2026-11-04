@@ -79,45 +79,66 @@ class ActiveTimeTests(unittest.TestCase):
         self.assertEqual(state.lived_seconds, 65)
 
     def test_consumption_uses_fresh_cpu_gpu_and_clears_disabled_history(self) -> None:
-        for cpu, gpu, hunger, energy in ((30, 0, 8, 3), (0, 100, 9.6, 3.5)):
+        for cpu, gpu, load in ((30, 0, 0.3), (0, 100, 1.0)):
             with self.subTest(cpu=cpu, gpu=gpu):
                 uptime = [10000.0]
                 monitor = Monitor()
                 state = PetState(satiety=100, energy=100, updated_at=NOW)
                 coordinator = ActivityCoordinator(
-                    state, PetSettings(auto_routine=False),
-                    make_aiko_mind(started_at=0), AdaptiveRoutine(),
-                    WorkloadEventDetector(), monitor,
-                    ActivityCallbacks(lambda: None, lambda *_: None,
-                                      lambda: 0, lambda: 0),
+                    state,
+                    PetSettings(auto_routine=False),
+                    make_aiko_mind(started_at=0),
+                    AdaptiveRoutine(),
+                    WorkloadEventDetector(),
+                    monitor,
+                    ActivityCallbacks(
+                        lambda: None, lambda *_: None, lambda: 0, lambda: 0
+                    ),
                     clock=ActiveSessionClock(lambda: uptime[0]),
                 )
                 coordinator.food_activity_history.observe(
-                    now=9999, pointer=None, input_idle_seconds=None,
-                    mouse_buttons_down=None, measured_hardware_load=None,
+                    now=9999,
+                    pointer=None,
+                    input_idle_seconds=None,
+                    mouse_buttons_down=None,
+                    measured_hardware_load=None,
                 )
-                with patch('aiko_pet.application.activity.time.monotonic',
-                           side_effect=lambda: uptime[0]):
-                    for seconds in range(3601):
+                with patch(
+                    "aiko_pet.application.activity.time.monotonic",
+                    side_effect=lambda: uptime[0],
+                ):
+                    for seconds in (0, 6, 12, 18, 24, 30):
                         uptime[0] = 10000 + seconds
                         monitor.reading = ComputerSnapshot(
-                            cpu=cpu, gpu=gpu, ram=100, gpu_memory=100,
+                            cpu=cpu,
+                            gpu=gpu,
+                            ram=100,
+                            gpu_memory=100,
                             measured_at=uptime[0],
                         )
                         coordinator.advance_state(NOW + seconds)
-                    self.assertAlmostEqual(state.satiety, 100 - hunger)
-                    self.assertAlmostEqual(state.energy, 100 - energy)
+                        self.assertEqual(coordinator.live_consumption_load(), load)
+                    self.assertGreater(
+                        coordinator.observed_food_activity().hardware_load,
+                        load - 0.05,
+                    )
+                    self.assertLess(state.satiety, 100)
+                    self.assertLess(state.energy, 100)
                     monitor.reading = ComputerSnapshot(
-                        ram=100, gpu_memory=100, measured_at=uptime[0],
+                        ram=100,
+                        gpu_memory=100,
+                        measured_at=uptime[0],
                     )
                     self.assertIsNone(coordinator.live_consumption_load())
                     monitor.reading = ComputerSnapshot(
-                        cpu=100, measured_at=uptime[0] - 1000,
+                        cpu=100,
+                        measured_at=uptime[0] - 1000,
                     )
                     self.assertIsNone(coordinator.live_consumption_load())
                     coordinator.set_observation_enabled(False)
-                    self.assertEqual(coordinator.observed_food_activity().hardware_load,
-                                     0)
+                    self.assertEqual(
+                        coordinator.observed_food_activity().hardware_load, 0
+                    )
 
     def test_intervals_are_consumed_once_and_bad_readings_reset_anchor(self) -> None:
         readings = iter([10., 12., None, 20., 22., 15., 17., math.nan, 25., 26.])

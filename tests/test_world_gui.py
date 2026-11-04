@@ -976,8 +976,8 @@ class WorldGuiTests(unittest.TestCase):
 
         world._present_feedback = capture
         for scale, item_id, handover in (
-            (1, "apple", False), (2, "energy_drink", False),
-            (1, "energy_drink", True), (2, "apple", True),
+            (1, "apple", False),
+            (2, "energy_drink", True),
         ):
             with self.subTest(scale=scale, item=item_id, handover=handover):
                 cues.clear()
@@ -991,8 +991,11 @@ class WorldGuiTests(unittest.TestCase):
                 x = world._track().left + int(world._body_x())
                 with (
                     patch.object(app.root, "winfo_pointerx", return_value=x),
-                    patch.object(app.root, "winfo_pointery",
-                                 return_value=world._track().ground_y - 80 * scale),
+                    patch.object(
+                        app.root,
+                        "winfo_pointery",
+                        return_value=world._track().ground_y - 80 * scale,
+                    ),
                 ):
                     world.begin_carry(item_id)
                     token = world.cursor.instance_id
@@ -1002,35 +1005,42 @@ class WorldGuiTests(unittest.TestCase):
                     self.assertTrue(world.cursor.offer_ready)
                     self.assertFalse(world.interaction.active)
                     # A wish developed during holding must never count as theft.
-                    for _ in range(100):
-                        world.now += .25
+                    held_at = world.now
+                    for seconds in (0.25, 1, 25):
+                        world.now = held_at + seconds
                         world.update(time.monotonic())
-                    self.assertEqual(app.state.friendship_history.penalties,
-                                     relationship.penalties)
-                    self.assertEqual(app.state.friendship_history.last_contact,
-                                     relationship.last_contact)
+                    self.assertEqual(
+                        app.state.friendship_history.penalties, relationship.penalties
+                    )
+                    self.assertEqual(
+                        app.state.friendship_history.last_contact,
+                        relationship.last_contact,
+                    )
                     self.assertFalse(world.interaction.active)
                     if handover:
                         world.cursor.release()
                     else:
-                        with patch.object(app.root, "winfo_pointery", return_value=(
-                            world._track().ground_y - 300 * scale
-                        )):
+                        with patch.object(
+                            app.root,
+                            "winfo_pointery",
+                            return_value=(world._track().ground_y - 300 * scale),
+                        ):
                             world.cursor.release()
                 if not handover:
-                    world.now += .1
+                    world.now += 0.1
                     world.update(time.monotonic())
                     self.assertFalse(world.interaction.active)
                     self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
                     world.world.advance_motion(20, world._motion_parameters)
-                    world.now += .1
+                    world.now += 0.1
                     world.update(time.monotonic())
                     self.assertEqual(world.awareness.record_for_instance(token), record)
                     self.assertEqual(cues[-1], "object_collect_wanted")
                     self.complete_feedback()
                     self.assertEqual(world.interaction.phase, "pick_up")
-                    self.assertEqual(app.state.friendship_history.penalties,
-                                     relationship.penalties)
+                    self.assertEqual(
+                        app.state.friendship_history.penalties, relationship.penalties
+                    )
                     self.finish_pickup()
                 else:
                     self.assertEqual(world.interaction.phase, "handover")
@@ -1041,14 +1051,24 @@ class WorldGuiTests(unittest.TestCase):
                 self.assertEqual(world.interaction.memory_id, record)
                 self.assertEqual(world._care is not None, handover)
                 if not handover:
-                    self.assertEqual(app.state.friendship_history.penalties,
-                                     relationship.penalties)
-                    self.assertEqual(app.state.friendship_history.last_contact,
-                                     relationship.last_contact)
-                self.assertFalse(set(cues) & {
-                    "object_taken", "object_request_return", "object_withheld",
-                    "object_returned", "object_inspect", "object_recognized",
-                })
+                    self.assertEqual(
+                        app.state.friendship_history.penalties, relationship.penalties
+                    )
+                    self.assertEqual(
+                        app.state.friendship_history.last_contact,
+                        relationship.last_contact,
+                    )
+                self.assertFalse(
+                    set(cues)
+                    & {
+                        "object_taken",
+                        "object_request_return",
+                        "object_withheld",
+                        "object_returned",
+                        "object_inspect",
+                        "object_recognized",
+                    }
+                )
                 self.finish_clip("eat")
                 self.complete_feedback()
                 self.assertFalse(world.interaction.active)

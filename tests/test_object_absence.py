@@ -42,26 +42,37 @@ class ObjectAbsenceTests(unittest.TestCase):
         for reference in (None, "old"):
             for identified in (False, True):
                 with self.subTest(reference=reference, identified=identified):
-                    self.setUp()
-                    missing = replace(PLACE, identity="apple", kind="food",
-                                      instance_id=reference)
-                    other = replace(missing, token="other", identity="cookie",
-                                    instance_id="different")
+                    self.sensor = ObjectAbsencePerception()
+                    missing = replace(
+                        PLACE, identity="apple", kind="food", instance_id=reference
+                    )
+                    other = replace(
+                        missing,
+                        token="other",
+                        identity="cookie",
+                        instance_id="different",
+                    )
                     known = {OCCUPANT.token: other} if identified else None
                     self.sample(0, (OCCUPANT,), known=(missing,), identified=known)
                     self.assertTrue(self.sensor.checking)
-                    self.assertEqual(self.sample(.5, (OCCUPANT,), known=(missing,),
-                                                 identified=known), (missing.token,))
+                    self.assertEqual(
+                        self.sample(
+                            0.5, (OCCUPANT,), known=(missing,), identified=known
+                        ),
+                        (missing.token,),
+                    )
 
     def test_learned_portion_requires_its_exact_place_without_new_notice(self):
         missing = replace(PLACE, identity="apple", kind="food", instance_id="old")
         for x in (100, 101):
             with self.subTest(x=x):
-                self.setUp()
+                self.sensor = ObjectAbsencePerception()
                 occupant = replace(OCCUPANT, token="old", identity="apple", x=x)
                 self.sample(0, (occupant,), known=(missing,))
-                self.assertEqual(self.sample(.5, (occupant,), known=(missing,)),
-                                 () if x == 100 else (missing.token,))
+                self.assertEqual(
+                    self.sample(0.5, (occupant,), known=(missing,)),
+                    () if x == 100 else (missing.token,),
+                )
 
     def test_distraction_or_time_gap_cannot_accumulate_absence(self):
         for interruption in ("attention", "gap"):

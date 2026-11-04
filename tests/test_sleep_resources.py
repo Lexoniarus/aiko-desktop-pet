@@ -48,6 +48,9 @@ def inputs(wall, automatic=True):
 
 class SleepResourceTests(unittest.TestCase):
     def setUp(self):
+        self.create_sleep_fixture()
+
+    def create_sleep_fixture(self):
         self.world = WorldState(
             WorldSurface(1000, 600, 60),
             build_consumable_definitions(DEFAULT_CATALOG, load_item_catalog()),
@@ -365,14 +368,20 @@ class SleepResourceTests(unittest.TestCase):
     def test_prolonged_hunger_uses_only_actual_known_stock(self):
         self.food()
         self.advance(3 * 3600)
-        self.assertNotIn(MoodletId.HUNGER_WORN,
-                         [e.definition_id for e in self.pet.moodlets.active])
-        self.assertEqual(sum(o.state == ObjectState.CONSUMED
-                             for o in self.world.snapshot().objects), 1)
-        self.setUp()
+        self.assertNotIn(
+            MoodletId.HUNGER_WORN, [e.definition_id for e in self.pet.moodlets.active]
+        )
+        self.assertEqual(
+            sum(o.state == ObjectState.CONSUMED for o in self.world.snapshot().objects),
+            1,
+        )
+        self.create_sleep_fixture()
         unknown = self.food(known=False)
         self.advance(3 * 3600)
-        hunger = next(e for e in self.pet.moodlets.active
-                      if e.definition_id == MoodletId.HUNGER_WORN)
+        hunger = next(
+            e
+            for e in self.pet.moodlets.active
+            if e.definition_id == MoodletId.HUNGER_WORN
+        )
         self.assertEqual(hunger.level, 1)
         self.assertEqual(self.world.get(unknown.instance_id).state, ObjectState.RESTING)

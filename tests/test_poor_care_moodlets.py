@@ -23,6 +23,9 @@ HEALTHY = NeedLevels(50, 50, 50, 50, 50)
 
 class PoorCareMoodletTests(unittest.TestCase):
     def setUp(self):
+        self.create_care_fixture()
+
+    def create_care_fixture(self):
         self.state = MoodletState()
         self.relationship = FriendshipProgress(50, FriendshipHistory(baseline=0), 0)
 
@@ -52,11 +55,11 @@ class PoorCareMoodletTests(unittest.TestCase):
     def test_critical_and_zero_routes_use_alternative_levels_and_never_add_them(self):
         for need, first in ((20, 2), (0, 1)):
             with self.subTest(need=need):
-                self.setUp()
+                self.create_care_fixture()
                 low = replace(HEALTHY, satiety=need)
-                self.period(first - .01, low)
+                self.period(first - 0.01, low)
                 self.assertFalse(self.state.active)
-                self.period(.01, low)
+                self.period(0.01, low)
                 self.assertEqual(self.episode().level, 1)
                 self.period(first, low)
                 self.assertEqual(self.episode().level, 2)
@@ -69,10 +72,10 @@ class PoorCareMoodletTests(unittest.TestCase):
     def test_unqualified_disjoint_burden_survives_stable_care_but_expires_at_24h(self):
         low = replace(HEALTHY, satiety=20)
         self.period(1, low)
-        self.period(.5, HEALTHY)
+        self.period(0.5, HEALTHY)
         self.period(1, low)
         self.assertEqual(self.episode().level, 1)
-        self.setUp()
+        self.create_care_fixture()
         self.period(1, low)
         self.period(24, HEALTHY)
         self.period(1, low)

@@ -45,6 +45,9 @@ from tools.pet_test_support import object_test_attention, set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):
+    def setUp(self):
+        self.create_object_fixture()
+
     def test_unnoticed_carried_item_is_not_missing_even_outside_sensory_snapshot(self):
         item, goal = self.observed_stock()
         original = self.awareness.memory.get(goal.token)
@@ -347,15 +350,34 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.phase, "search")
         self.assertIsNotNone(self.awareness.memory.get("stock"))
 
-    def setUp(self):
+    def create_object_fixture(self):
         self.state = PetState(satiety=50, energy=100)
-        self.world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
-            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
-        ),))
+        self.world = WorldState(
+            WorldSurface(800, 600),
+            (
+                ObjectDefinition(
+                    "apple",
+                    "apple",
+                    "apple",
+                    frozenset((ObjectInteraction.EAT,)),
+                ),
+            ),
+        )
         self.awareness = ObjectAwareness()
-        self.awareness.memory.update((ObjectObservation(
-            "stock", "apple", "food", 100, 0, True, 0,
-        ),), now=0)
+        self.awareness.memory.update(
+            (
+                ObjectObservation(
+                    "stock",
+                    "apple",
+                    "food",
+                    100,
+                    0,
+                    True,
+                    0,
+                ),
+            ),
+            now=0,
+        )
         self.awareness.memory.mark_assessed("stock")
         self.now = 0
         self.cues, self.actions, self.completed = [], [], []
@@ -375,24 +397,35 @@ class ObjectBehaviorTests(unittest.TestCase):
             return len(self.actions)
 
         self.interaction = ObjectInteractionCoordinator(
-            self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
+            self.world,
+            play=play,
+            stop=lambda: None,
+            select_item=lambda _item: None,
             consume=lambda _key, _token, _record, _origin: False,
             resolve_instance=self.awareness.instance_for_record,
             record_for_instance=self.awareness.record_for_instance,
-            can_acquire=lambda _token: False, ground_x=lambda _token: 100,
+            can_acquire=lambda _token: False,
+            ground_x=lambda _token: 100,
             hand_type_conflicts=lambda record, instance: (
                 held_type_conflicts_with_memory(
-                    self.awareness.memory.get(record), instance,
+                    self.awareness.memory.get(record),
+                    instance,
                     self.world.snapshot(),
                 )
             ),
-            completed=completed, memory=self.awareness.memory,
+            completed=completed,
+            memory=self.awareness.memory,
             decide=lambda token, context: self.behavior.decide(token, context),
-            feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.now,
+            feedback=feedback,
+            cancel_feedback=lambda: None,
+            now=lambda: self.now,
             inspection_seconds=1,
         )
         self.behavior = ObjectBehaviorCoordinator(
-            self.state, self.awareness, self.interaction, self.world,
+            self.state,
+            self.awareness,
+            self.interaction,
+            self.world,
         )
 
     def acknowledge(self):
@@ -1222,26 +1255,28 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_new_unknown_investigation_survives_both_looks_and_rechecks_its_item(self):
         for side in (-1, 1):
             with self.subTest(side=side):
-                self.setUp()
+                self.create_object_fixture()
                 items = self.prepare_unknown_discovery(side)
                 token = None
                 looks = set()
                 returned_to_item = False
                 for step in range(60):
-                    self.now = step * .1
+                    self.now = step * 0.1
                     observation, attention, motion = self.sample_unknown_discovery(side)
                     if self.behavior.orientation_side is not None:
                         looks.add(self.behavior.orientation_side)
                         goal = self.awareness.intentions.goal
                         assert goal is not None
                         token = token or goal.token
-                        self.assertEqual((goal.token, goal.purpose),
-                                         (token, "investigate"))
+                        self.assertEqual(
+                            (goal.token, goal.purpose), (token, "investigate")
+                        )
                         self.assertIsNone(observation.goal)
                         self.assertIsInstance(motion, Hold)
                     elif token is not None:
-                        self.assertEqual(observation.gaze,
-                                         GazeTarget(400 + side * 150, 0))
+                        self.assertEqual(
+                            observation.gaze, GazeTarget(400 + side * 150, 0)
+                        )
                         returned_to_item = True
                     self.assertFalse(self.interaction.search_active)
                     if self.interaction.active:
@@ -1272,13 +1307,13 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_removed_new_item_during_orientation_does_not_start_lost_stock_search(self):
         for side in (-1, 1):
             with self.subTest(side=side):
-                self.setUp()
+                self.create_object_fixture()
                 items = self.prepare_unknown_discovery(side)
                 token = None
                 removed = False
                 looked_back = False
                 for step in range(60):
-                    self.now = step * .1
+                    self.now = step * 0.1
                     observation, _attention, motion = self.sample_unknown_discovery(
                         side,
                     )
@@ -1286,12 +1321,14 @@ class ObjectBehaviorTests(unittest.TestCase):
                         goal = self.awareness.intentions.goal
                         assert goal is not None
                         token = goal.token
-                        self.world.remove(items[0].instance_id,
-                                          expected_revision=items[0].revision)
+                        self.world.remove(
+                            items[0].instance_id, expected_revision=items[0].revision
+                        )
                         removed = True
                     if removed and self.behavior.orientation_side is None:
                         looked_back |= observation.gaze == GazeTarget(
-                            400 + side * 150, 0,
+                            400 + side * 150,
+                            0,
                         )
                     self.assertIsInstance(motion, Hold)
                     self.assertFalse(self.interaction.search_active)
@@ -1299,16 +1336,19 @@ class ObjectBehaviorTests(unittest.TestCase):
                         self.assertEqual(self.cues[-1].event, "object_place_missing")
                         self.assertIsNone(self.cues[-1].identity)
                         self.acknowledge()
-                    if removed and token is not None and (
-                        self.awareness.memory.get(token) is None
+                    if (
+                        removed
+                        and token is not None
+                        and (self.awareness.memory.get(token) is None)
                     ):
                         break
                 self.assertTrue(removed)
                 self.assertTrue(looked_back)
                 self.assertIsNone(self.awareness.intentions.goal)
                 self.assertFalse(self.interaction.active)
-                self.assertEqual([cue.event for cue in self.cues],
-                                 ["object_place_missing"])
+                self.assertEqual(
+                    [cue.event for cue in self.cues], ["object_place_missing"]
+                )
 
     def test_pending_new_item_outside_notice_range_is_released_without_patrol(self):
         self.prepare_unknown_discovery(-1)
@@ -1347,62 +1387,104 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_interrupted_right_look_requires_fresh_both_sides_after_release(self):
         for transport in (False, True):
             with self.subTest(transport=transport):
-                self.setUp()
+                self.create_object_fixture()
                 self.awareness.memory.restore_snapshot(())
                 set_test_pet_values(self.state, satiety=100)
-                portions = [self.world.place_resting("apple", x, ObjectFootprint(8, 8))
-                            for x in (200, 600)]
+                portions = [
+                    self.world.place_resting("apple", x, ObjectFootprint(8, 8))
+                    for x in (200, 600)
+                ]
                 for item in portions:
                     assert item.position is not None
-                    record = self.awareness.memory.observe_find(ObjectObservation(
-                        "earlier", "apple", "food", item.position.x, 0, True, 0, True,
-                    ), now=0, record=None, claimed=frozenset(), maximum_distance=0,
-                        instance_id=item.instance_id)
+                    record = self.awareness.memory.observe_find(
+                        ObjectObservation(
+                            "earlier",
+                            "apple",
+                            "food",
+                            item.position.x,
+                            0,
+                            True,
+                            0,
+                            True,
+                        ),
+                        now=0,
+                        record=None,
+                        claimed=frozenset(),
+                        maximum_distance=0,
+                        instance_id=item.instance_id,
+                    )
                     self.awareness.memory.mark_assessed(record)
 
                 def sample(now, *, activity=False):
                     self.now = now
                     following = self.awareness.following_record
-                    known = (self.awareness.memory.get(following)
-                             if following is not None else None)
-                    attention = replace(choose_object_attention(
-                        "idle", sleeping=False, game_open=False, walking=0,
-                        following_cursor=following is not None,
-                        orientation_side=self.behavior.orientation_side,
-                        activity_active=activity, cursor=(2, 0),
-                        target=((known.x - 400) / 100, (known.height - 60) / 100)
-                        if known is not None else None,
-                    ), origin=(400, 60), width=100)
+                    known = (
+                        self.awareness.memory.get(following)
+                        if following is not None
+                        else None
+                    )
+                    attention = replace(
+                        choose_object_attention(
+                            "idle",
+                            sleeping=False,
+                            game_open=False,
+                            walking=0,
+                            following_cursor=following is not None,
+                            orientation_side=self.behavior.orientation_side,
+                            activity_active=activity,
+                            cursor=(2, 0),
+                            target=((known.x - 400) / 100, (known.height - 60) / 100)
+                            if known is not None
+                            else None,
+                        ),
+                        origin=(400, 60),
+                        width=100,
+                    )
                     snapshot = self.world.snapshot()
                     observation = self.behavior.observe(
-                        snapshot, now=now, x=400, width=100, presentation=None,
-                        facts=BehaviorFacts(carrying=any(
-                            item.state == ObjectState.USER_HELD
-                            for item in snapshot.objects
-                        )), attention=attention,
+                        snapshot,
+                        now=now,
+                        x=400,
+                        width=100,
+                        presentation=None,
+                        facts=BehaviorFacts(
+                            carrying=any(
+                                item.state == ObjectState.USER_HELD
+                                for item in snapshot.objects
+                            )
+                        ),
+                        attention=attention,
                     )
                     return observation, attention
 
                 self.behavior.request_orientation()
                 sample(0)
-                sample(.5)
+                sample(0.5)
                 self.assertEqual(self.behavior.orientation_side, 1)
-                _, right = sample(.6)
+                _, right = sample(0.6)
                 held = None
                 if transport:
-                    held = self.world.take_resting(portions[1].instance_id,
-                                                   expected_revision=0)
-                    self.assertIsNotNone(self.awareness.witness_take(
-                        held.instance_id, position=(600, 0), now=.9, attention=right,
-                    ))
-                observation, attention = sample(.9, activity=not transport)
-                self.assertEqual(attention.mode,
-                                 "object" if transport else "unavailable")
+                    held = self.world.take_resting(
+                        portions[1].instance_id, expected_revision=0
+                    )
+                    self.assertIsNotNone(
+                        self.awareness.witness_take(
+                            held.instance_id,
+                            position=(600, 0),
+                            now=0.9,
+                            attention=right,
+                        )
+                    )
+                observation, attention = sample(0.9, activity=not transport)
+                self.assertEqual(
+                    attention.mode, "object" if transport else "unavailable"
+                )
                 self.assertTrue(observation.blocked)
                 self.assertEqual(self.awareness.absences, ())
                 if held is not None:
-                    self.world.return_user_held(held.instance_id, 600,
-                                                expected_revision=held.revision)
+                    self.world.return_user_held(
+                        held.instance_id, 600, expected_revision=held.revision
+                    )
                 sample(1)
                 sample(1.1)
                 self.assertEqual(self.behavior.orientation_side, -1)
@@ -1418,7 +1500,8 @@ class ObjectBehaviorTests(unittest.TestCase):
                 self.assertEqual(self.cues, [])
                 self.assertEqual(self.awareness.absences, ())
                 self.assertEqual(len(self.awareness.memory.snapshot()), 2)
-                self.assertTrue(all(known.recognized
-                                    for known in self.awareness.memory.snapshot()))
+                self.assertTrue(
+                    all(known.recognized for known in self.awareness.memory.snapshot())
+                )
                 self.assertEqual(self.state.moodlets.active, ())
                 self.assertEqual(self.state.friendship, 15)
