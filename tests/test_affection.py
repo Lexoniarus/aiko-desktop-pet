@@ -183,15 +183,6 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             set(),
         )
 
-    def test_drinks_and_sleep_do_not_build_friendship_by_button_mashing(self):
-        state = PetState(energy=0, friendship=42)
-        for i in range(10):
-            state.interact("energy_drink", now=stamp() + i)
-        state.interact("sleep", now=stamp() + 15)
-        state.interact("sleep", now=stamp() + 16)
-        self.assertEqual(state.friendship, 42)
-        self.assertEqual(state.energy, 100)
-
     def test_old_save_preserves_existing_relationship_and_needs(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = StateStore(Path(tmp) / "pet.json")

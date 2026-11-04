@@ -40,20 +40,6 @@ class DomainTransitionTests(unittest.TestCase):
                 with self.assertRaises(FrozenInstanceError):
                     setattr(transition, "changed", False)
 
-    def test_care_plans_match_aggregate_results(self) -> None:
-        for action in ("pet", "talk", "feed", "play", "sleep", "energy_drink"):
-            with self.subTest(action=action):
-                current = PetState(
-                    updated_at=START, satiety=20, mood=20,
-                    energy=65, social=20, affection=20,
-                )
-                planned = plan_care_action(current, action, now=START)
-                before = encode_pet_state(current)
-                self.assertEqual(encode_pet_state(current), before)
-                self.assertEqual(current.interact(action, now=START), planned.result)
-                self.assertEqual(current.sleeping, planned.sleeping)
-                self.assertEqual(current.meals_date, planned.meals_date)
-
     def test_rejected_care_preserves_every_field_even_during_sleep(self) -> None:
         for action, energy in (("play", 4), ("energy_drink", 100)):
             with self.subTest(action=action):

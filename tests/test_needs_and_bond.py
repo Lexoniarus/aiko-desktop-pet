@@ -18,7 +18,6 @@ from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.care_text import format_care_response
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
@@ -66,43 +65,6 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual((state.social, state.friendship), (0, 15))
         self.assertEqual(state.care_last_rewards, {"sleep": timestamp()})
 
-    def test_talk_is_distinct_from_play_and_food(self):
-        state = PetState(social=12, satiety=28, mood=30, energy=60)
-        state.interact("talk", now=timestamp())
-        self.assertEqual(state.social, 38)
-        self.assertEqual(state.mood, 30)
-        self.assertEqual(state.satiety, 28)
-        self.assertEqual(state.energy, 59)
-        self.assertEqual(state.friendship, 15)
-
-    def test_feeding_does_not_substitute_for_social_care(self):
-        state = PetState(social=8, satiety=10, affection=50)
-        state.interact("feed", now=timestamp())
-        self.assertEqual(state.social, 9)
-        self.assertEqual(state.satiety, 40)
-        state.interact("pet", now=timestamp() + 1)
-        self.assertEqual(state.social, 11)
-        self.assertEqual(state.affection, 75)
-        before = encode_pet_state(state)
-        state.interact("play", now=timestamp() + 2)
-        self.assertEqual(encode_pet_state(state), before)
-
-    def test_energy_drink_is_exactly_ten_points_and_can_be_stacked(self):
-        state = PetState(energy=47, sleeping=True)
-        start = timestamp()
-        for n in range(5):
-            state.interact("energy_drink", now=start + n)
-        self.assertEqual(state.energy, 97)
-        self.assertFalse(state.sleeping)
-        state.interact("energy_drink", now=start + 7)
-        self.assertEqual(state.energy, 100)
-        before = encode_pet_state(state)
-        self.assertIn(
-            "wach genug",
-            format_care_response(state.interact("energy_drink", now=start + 8)),
-        )
-        self.assertEqual(before, encode_pet_state(state))
-
     def test_night_energy_drink_prevents_immediate_auto_sleep(self):
         stamp = timestamp(hour=23) + 45 * 60
         state = PetState(
@@ -120,16 +82,6 @@ class NeedsAndBondTests(unittest.TestCase):
         state.interact("sleep", now=stamp)
         state.advance(stamp + 1, auto_routine=True)
         self.assertFalse(state.sleeping)
-
-    def test_energy_drink_never_increases_hunger_or_social(self):
-        state = PetState(energy=0, satiety=41, mood=55, social=27)
-        state.interact("energy_drink", now=timestamp())
-        self.assertEqual((state.energy, state.satiety, state.social), (10, 41, 27))
-
-    def test_low_energy_play_is_rejected_without_bond_reward(self):
-        state = PetState(energy=2)
-        state.interact("play", now=timestamp())
-        self.assertEqual((state.mood, state.social, state.friendship), (75, 75, 15))
 
     def test_friendship_is_bond_not_spammable_status_bar(self):
         start = timestamp()

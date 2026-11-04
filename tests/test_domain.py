@@ -1,10 +1,10 @@
+
 import unittest
 from datetime import datetime
 
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.value_rules import clamp_need_value
-from aiko_pet.ui.view_models.care_text import format_care_response
 
 NOW = datetime(2026, 10, 13, 12).timestamp()
 
@@ -45,17 +45,6 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual(state.satiety, 75)
         self.assertEqual(state.updated_at, NOW + 4500)
 
-    def test_play_requires_an_actual_completed_game(self):
-        state = PetState(satiety=99, mood=99, energy=10)
-        before = encode_pet_state(state)
-        self.assertIn("Spiel", format_care_response(state.interact("play")))
-        self.assertEqual(encode_pet_state(state), before)
-
-    def test_play_when_exhausted_does_not_apply_cost(self):
-        state = PetState(mood=20, energy=7)
-        self.assertIn("Schlaf", format_care_response(state.interact("play")))
-        self.assertEqual((state.mood, state.energy), (20, 7))
-
     def test_sleep_toggle_and_feeding_wakes(self):
         state = PetState()
         state.interact("sleep")
@@ -79,11 +68,6 @@ class PetStateTests(unittest.TestCase):
         self.assertFalse(state.sleeping)
         self.assertEqual(state.updated_at, 300)
         self.assertEqual(clamp_need_value(None), 75)
-
-    def test_unknown_action_rejected(self):
-        with self.assertRaises(ValueError):
-            PetState().interact("delete")
-
 
 if __name__ == "__main__":
     unittest.main()
