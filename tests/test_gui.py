@@ -166,19 +166,6 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(self.app.settings.observe_computer)
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
 
-    def test_settings_open_update_and_refocus_existing(self):
-        self.app._on_enter()
-        self.toolbar.settings_button.invoke()
-        window = self.settings_window
-        self.assertTrue(window.window.winfo_ismapped())
-        window.values["auto_walk"].set(False)
-        window.checkbuttons["auto_walk"].invoke()
-        self.assertTrue(self.app.settings.auto_walk)
-        self.toolbar.settings_button.invoke()
-        self.assertIs(self.settings_window, window)
-        window.close()
-        self.assertIsNone(self.app._hover.settings_window)
-
     def test_outside_click_only_hides_unpinned_toolbar(self):
         self.app._on_enter()
         self.toolbar.settings_button.invoke()
@@ -532,18 +519,6 @@ class TaskbarPetGuiTests(unittest.TestCase):
             "click_right",
         )
         self.assertTrue(self.toolbar.visible)
-
-    def test_speech_bubble_includes_a_pixel_tail(self):
-        self.app._speech.show_text("...Ich habe dich bemerkt.", 6000)
-        bubble = self.bubble
-        self.assertIsNotNone(bubble)
-        self.assertEqual(len(bubble.winfo_children()), 2)
-        tail = bubble.winfo_children()[-1]
-        self.assertIsInstance(tail, tk.Canvas)
-        assert isinstance(tail, tk.Canvas)
-        self.assertEqual(len(tail.find_all()), 1)
-        self.app._speech.hide()
-        self.assertIsNone(self.app._speech.bubble)
 
     def test_chatter_switch_suppresses_autonomous_lines(self):
         from unittest.mock import patch

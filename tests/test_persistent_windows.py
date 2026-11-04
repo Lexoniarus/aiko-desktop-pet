@@ -179,6 +179,10 @@ class PersistentWindowTests(unittest.TestCase):
             self.pet._hover.open_settings(20, 30)
         focus.assert_called_once()
         self.assertIs(self.pet._hover.settings_window, window)
+        self.assertTrue(window.window.winfo_ismapped())
+        window.values["auto_walk"].set(False)
+        window.checkbuttons["auto_walk"].invoke()
+        self.assertTrue(self.pet.settings.auto_walk)
 
     def test_settings_position_survives_updates_and_close_reopen(self) -> None:
         window = self.settings()

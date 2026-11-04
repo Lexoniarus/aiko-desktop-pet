@@ -218,6 +218,10 @@ class SpeechPresenterTests(unittest.TestCase):
         bubble = self.presenter.bubble
         assert bubble is not None
         self.assertEqual(len(bubble.winfo_children()), 2)
+        tail = bubble.winfo_children()[-1]
+        self.assertIsInstance(tail, tk.Canvas)
+        assert isinstance(tail, tk.Canvas)
+        self.assertEqual(len(tail.find_all()), 1)
         frame = bubble.winfo_children()[0]
         self.assertEqual(
             frame.winfo_children()[0].cget("text"), "Hallo <b>Browser</b>!",

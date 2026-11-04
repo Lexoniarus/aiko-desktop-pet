@@ -19,7 +19,11 @@ from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
 )
-from aiko_pet.ui.view_models.projections import project_hover, project_status
+from aiko_pet.ui.view_models.projections import (
+    project_hover,
+    project_settings,
+    project_status,
+)
 from aiko_pet.ui.view_models.read_models import DesktopPresentation
 from aiko_pet.ui.view_models.text_de import (
     describe_workload,
@@ -301,6 +305,44 @@ class UiProjectionParityTests(unittest.TestCase):
         self.assertEqual(original.status_value("energy"), 39)
         self.assertEqual(source.hover().status_value("energy"), 70)
         self.assertEqual(source.status().status_value("energy"), 70)
+
+    def test_projections_preserve_original_german_copy(self) -> None:
+        stamp = datetime(2026, 10, 12, 13).timestamp()
+        context = context_at(stamp)
+        state = PetState(satiety=10, mood=55)
+        reading = ComputerSnapshot(cpu=82, ram=55, measured_at=1000.0)
+        for observing in (False, True):
+            with self.subTest(observing=observing):
+                hover = project_hover(
+                    snapshot_pet(state),
+                    context,
+                    reading,
+                    observe_computer=observing,
+                )
+                status = project_status(
+                    snapshot_pet(state),
+                    context,
+                    None,
+                    reading,
+                    observe_computer=observing,
+                )
+                self.assertEqual(hover.feed_label, "Mittagessen")
+                self.assertIn("Montag", hover.header)
+                self.assertEqual(
+                    status.hint,
+                    "Ein kleiner Snack wäre schön ...",
+                )
+                if observing:
+                    self.assertIn("CPU 82 %", hover.hardware_line)
+                else:
+                    self.assertEqual(
+                        status.hardware_line,
+                        "Rechnerbeobachtung deaktiviert",
+                    )
+        preferences = PetSettings(auto_walk=False, spontaneous_talk=False)
+        projected = project_settings(preferences)
+        self.assertFalse(projected.value("auto_walk"))
+        self.assertFalse(projected.value("spontaneous_talk"))
 
 
 if __name__ == "__main__":
