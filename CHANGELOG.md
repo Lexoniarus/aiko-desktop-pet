@@ -11,8 +11,22 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 - Consolidate repeated test contracts, retire obsolete refactor guards and
   reduce desktop fixture replays. Separate exporter/media checks and long
   balance references from application runs, with explicit local groups and
-  path-filtered CI workflows. This cleanup has static review only; no tests
-  were executed for it. See [the testing guide](docs/TESTING.md).
+  path-filtered CI workflows. Final isolated checks passed after the cleanup;
+  native Windows checks remain a separate gate. See
+  [the testing guide](docs/TESTING.md).
+
+- Add a persistent UI-size preference (75–200%) independently of Aiko's 1X/2X
+  character size. Correct Windows DPI virtualization at startup and resize
+  existing widgets, fonts, images and canvas input in place. SQLite migration 5
+  preserves existing settings and defaults the new preference to 100%.
+
+- Dock food, game and social choices beside the status toolbar in three-row
+  columns, with stable readouts and selection lifetime. Share the prepared speech surface across
+  conversations and game comments, preserve independent RPS hand lifetime, and
+  retain binary cutout transparency during filtered UI resizing.
+
+- Record the shared-room/iPad PWA implementation plan, with the existing desktop
+  merge as phase 0. Room and browser-runtime implementation remain future work.
 
 - Cover missing and malformed local joke reviews in the Windows setup check and
   normal entrypoint, retaining an existing save unchanged and creating no pet

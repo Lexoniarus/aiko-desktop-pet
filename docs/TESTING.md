@@ -187,3 +187,15 @@ The safe Tk helpers drain pending idle work before destroying standalone test
 roots. Repeated display probes use that cleanup too. No-window local execution
 also excludes native installer child processes, whose Tk interpreters cannot
 be blocked by patching only the parent.
+
+## Phase 0 branch validation
+
+The reviewed live-scaling, docked-selector and speech-surface work is now
+committed with its tests. The cleanup results above describe the earlier
+combined worktree; the Phase 0 gate validates the complete committed branch.
+The Windows selection includes the native docked-selector checks.
+
+Follow the exact final head and workflow results on
+[PR #11](https://github.com/Lexoniarus/aiko-desktop-pet/pull/11). A successful
+older head does not validate subsequent commits. The PR remains a draft;
+merging and creating the shared-room branch are separate steps.
