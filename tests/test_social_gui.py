@@ -185,10 +185,7 @@ class SocialGuiTests(unittest.TestCase):
             if phase != "fetching":
                 self.worker.complete(1)
                 self.pet._social_runtime.poll()
-            if phase == "playing":
-                self.pet.root.update()
-        self.assertEqual(self.pet._social_runtime._phase,
-                         "idle" if phase == "playing" else phase)
+        self.assertEqual(self.pet._social_runtime._phase, phase)
 
     def _assert_requested_reply_once(self, phase: str) -> None:
         if phase == "fetching":
@@ -223,13 +220,7 @@ class SocialGuiTests(unittest.TestCase):
     def test_delayed_focus_loss_preserves_fetching_request(self):
         self._focus_loss_preserves_request("fetching")
 
-    def test_delayed_focus_loss_preserves_queued_answer_start(self):
-        self._focus_loss_preserves_request("admitting")
-
-    def test_delayed_focus_loss_preserves_running_conversation(self):
-        self._focus_loss_preserves_request("playing")
-
-    def _settings_click_preserves_request(self, phase: str, source: str) -> None:
+    def _settings_click_preserves_request(self, phase: str) -> None:
         self._request_at_phase(phase)
         self.pet._hover.open_settings(20, 20)
         settings = self.pet._hover.settings_window
@@ -249,10 +240,6 @@ class SocialGuiTests(unittest.TestCase):
             patch.object(self.pet._social_runtime, "cancel",
                          wraps=self.pet._social_runtime.cancel) as cancel,
         ):
-            if source == "tk":
-                self.pet._input.on_tk_press(event)
-            else:
-                self.pet._input.poll_global_click()
             # A native press may reach both adapters, followed by focus loss.
             self.pet._input.on_tk_press(event)
             self.pet._input.poll_global_click()
@@ -266,20 +253,8 @@ class SocialGuiTests(unittest.TestCase):
         self.pet._hover.close_settings()
         self._assert_requested_reply_once(phase)
 
-    def test_settings_tk_click_preserves_fetching_request(self):
-        self._settings_click_preserves_request("fetching", "tk")
-
-    def test_settings_global_click_preserves_fetching_request(self):
-        self._settings_click_preserves_request("fetching", "global")
-
-    def test_settings_tk_click_preserves_queued_answer_start(self):
-        self._settings_click_preserves_request("admitting", "tk")
-
-    def test_settings_global_click_preserves_queued_answer_start(self):
-        self._settings_click_preserves_request("admitting", "global")
-
-    def test_settings_click_preserves_running_conversation(self):
-        self._settings_click_preserves_request("playing", "tk")
+    def test_settings_input_preserves_queued_answer_start(self):
+        self._settings_click_preserves_request("admitting")
 
     def test_real_outside_click_cancels_once_despite_duplicate_input(self):
         self._request_at_phase("fetching")

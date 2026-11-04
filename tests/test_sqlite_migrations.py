@@ -10,7 +10,12 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_candidates import (
+    JokeExclusion,
+)
+from aiko_pet.application.social_content import (
+    SocialCategory,
+)
 from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
@@ -22,9 +27,17 @@ from aiko_pet.application.storage_contracts import (
 )
 from aiko_pet.infrastructure.sqlite import schema
 from aiko_pet.infrastructure.sqlite.backups import backup_database
+from aiko_pet.infrastructure.sqlite.connection import open_database
+from aiko_pet.infrastructure.sqlite.schema import APPLICATION_ID, MIGRATIONS
+from aiko_pet.infrastructure.sqlite.social_rows import (
+    read_social_core,
+    write_social_core,
+)
 from aiko_pet.infrastructure.sqlite.store import SqliteStateStore
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.state import PetState
+
+TWO = SocialCategory.TWO_PARTS
 
 
 class SqliteMigrationTests(unittest.TestCase):
@@ -259,6 +272,41 @@ class SqliteMigrationTests(unittest.TestCase):
                         social_history=SocialContentHistory(),
                     )
                 self.assertEqual(path.read_bytes(), before)
+
+    def test_v3_database_migration_preserves_receipts_and_old_provider_pause(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "v3.sqlite3"
+            with closing(sqlite3.connect(path)) as connection:
+                connection.execute(f"PRAGMA application_id={APPLICATION_ID}")
+                for migration in MIGRATIONS[:3]:
+                    for statement in migration.statements:
+                        connection.execute(statement)
+                    connection.execute("INSERT INTO schema_migrations VALUES (?,?,?)",
+                                       (migration.version, migration.name, 1_800_000_000.0))
+                connection.execute("PRAGMA user_version=3")
+                connection.execute("INSERT INTO save_state VALUES (1,1,?,0)",
+                                   (1_800_000_000.0,))
+                connection.execute("INSERT INTO social_receipts VALUES (0,1,?,?,?,0)",
+                                   ("twopart", "jokeapi:1", "a" * 64))
+                connection.execute(
+                    "INSERT INTO provider_pauses VALUES ('jokeapi',1,0,?)",
+                    (1_800_000_000.0 + 60,),
+                )
+                connection.commit()
+            with open_database(path) as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                history = read_social_core(connection)
+                self.assertEqual(history.entries[0].identity, "jokeapi:1")
+                self.assertEqual(history.requests.blocks[0].until, 1_800_000_000.0 + 60)
+                self.assertEqual(history.exclusions, ())
+                history = history.excluded(
+                    JokeExclusion(TWO, 2, 2, "format", 1_800_000_000.0 + 3600), 1_800_000_000.0,
+                )
+                write_social_core(connection, history)
+                connection.commit()
+            with open_database(path) as connection:
+                connection.execute("BEGIN")
+                self.assertEqual(read_social_core(connection), history)
 
 
 if __name__ == "__main__":
