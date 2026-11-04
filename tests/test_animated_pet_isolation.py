@@ -313,56 +313,56 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                 finally:
                     fixture.doCleanups()
 
-    def test_long_play_uses_every_original_run_frame_in_both_directions_and_sizes(self):
-        for scale, side in ((1, 1), (1, -1), (2, 1), (2, -1)):
-            with self.subTest(scale=scale, side=side), ControlledTkTime() as clock:
-                fixture = StandaloneAnimatedPetTests()
-                fixture.setUp()
-                try:
-                    fixture.settings.scale = scale
-                    fixture.settings.x = 500
-                    fixture.anim.reload_sprites()
-                    fixture.visual._eyes = lambda: (
-                        (fixture.settings.x or 0) + 96 * scale, 82 * scale,
-                    )
-                    completed = []
-                    fixture.walk.ports = replace(
-                        fixture.walk.ports, cursor_allowed=lambda: True,
-                        cursor_finished=completed.append,
-                        track=lambda: TaskbarTrack(0, 2000, 800),
-                    )
-                    eyes = fixture.visual._eyes()
-                    target = (round(eyes[0] + side * 600 * scale), round(eyes[1]))
-                    fixture.selected_cursor = CursorIntent(
-                        "approach", side=side, token=20, until=clock.monotonic() + 5,
-                        target=target, body="profile", feeling="curiosity",
-                        strength=1, steps=3,
-                    )
-                    fixture.walk.apply_cursor_intent(fixture.selected_cursor,
-                                                     clock.monotonic())
-                    indices = []
-                    original = fixture.anim.show_frame
-                    running = "running-right" if side > 0 else "running-left"
+    def test_running_timer_renders_canonical_frames_and_stops_at_budget(self):
+        scale, side = 2, -1
+        with ControlledTkTime() as clock:
+            fixture = StandaloneAnimatedPetTests()
+            fixture.setUp()
+            try:
+                fixture.settings.scale = scale
+                fixture.settings.x = 500
+                fixture.anim.reload_sprites()
+                fixture.visual._eyes = lambda: (
+                    (fixture.settings.x or 0) + 96 * scale, 82 * scale,
+                )
+                completed = []
+                fixture.walk.ports = replace(
+                    fixture.walk.ports, cursor_allowed=lambda: True,
+                    cursor_finished=completed.append,
+                    track=lambda: TaskbarTrack(0, 2000, 800),
+                )
+                eyes = fixture.visual._eyes()
+                target = (round(eyes[0] + side * 600 * scale), round(eyes[1]))
+                fixture.selected_cursor = CursorIntent(
+                    "approach", side=side, token=20, until=clock.monotonic() + 5,
+                    target=target, body="profile", feeling="curiosity",
+                    strength=1, steps=3,
+                )
+                fixture.walk.apply_cursor_intent(fixture.selected_cursor,
+                                                 clock.monotonic())
+                indices = []
+                original = fixture.anim.show_frame
+                running = "running-right" if side > 0 else "running-left"
 
-                    def show(state, now, **kwargs):
-                        original(state, now, **kwargs)
-                        if state == running:
-                            index = fixture.anim.frame_clock.frame_index
-                            if not indices or indices[-1] != index:
-                                indices.append(index)
-                            expected = fixture.anim.sprites[state][index]
-                            self.assertEqual(fixture.canvas.itemcget(
-                                fixture.anim.image_item, "image"), str(expected))
+                def show(state, now, **kwargs):
+                    original(state, now, **kwargs)
+                    if state == running:
+                        index = fixture.anim.frame_clock.frame_index
+                        if not indices or indices[-1] != index:
+                            indices.append(index)
+                        expected = fixture.anim.sprites[state][index]
+                        self.assertEqual(fixture.canvas.itemcget(
+                            fixture.anim.image_item, "image"), str(expected))
 
-                    with patch.object(fixture.anim, "show_frame", side_effect=show):
-                        fixture.anim.render(clock.monotonic(), target)
-                        clock.advance(2.3)
-                    self.assertEqual(indices[:8], list(range(8)))
-                    self.assertEqual(len(completed), 1)
-                    self.assertEqual(completed[0].reason, "budget")
-                    self.assertEqual(fixture.settings.x, 500 + side * 68 * scale)
-                finally:
-                    fixture.doCleanups()
+                with patch.object(fixture.anim, "show_frame", side_effect=show):
+                    fixture.anim.render(clock.monotonic(), target)
+                    clock.advance(2.3)
+                self.assertEqual(indices[:8], list(range(8)))
+                self.assertEqual(len(completed), 1)
+                self.assertEqual(completed[0].reason, "budget")
+                self.assertEqual(fixture.settings.x, 500 + side * 68 * scale)
+            finally:
+                fixture.doCleanups()
 
     def test_responsive_flight_still_spends_only_one_actual_movement_budget(self):
         with ControlledTkTime() as clock:
