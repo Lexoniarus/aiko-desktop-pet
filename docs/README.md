@@ -29,6 +29,7 @@ and test-cleanup plans.
 | Numeric base mood, bounded emotional modifiers and spoken game reactions | [Emotional base and reactions](EMOTIONAL_BASE_AND_REACTIONS.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
 | Branches, reviews and CI | [Development workflow](GITHUB_WORKFLOW.md) |
+| Test groups, behavior owners and the current cleanup scope | [Testing](TESTING.md) |
 | Existing media and its capture limitations | [Media gallery](MEDIA_GALLERY.md) |
 
 [Contributing](../CONTRIBUTING.md) gives local test and quality commands;

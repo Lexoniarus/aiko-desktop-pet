@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Consolidate repeated test contracts, retire obsolete refactor guards and
+  reduce desktop fixture replays. Separate exporter/media checks and long
+  balance references from application runs, with explicit local groups and
+  path-filtered CI workflows. This cleanup has static review only; no tests
+  were executed for it. See [the testing guide](docs/TESTING.md).
+
 - Cover missing and malformed local joke reviews in the Windows setup check and
   normal entrypoint, retaining an existing save unchanged and creating no pet
   window or success shortcut on failure. Document fresh-folder recovery for

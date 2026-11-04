@@ -19,18 +19,22 @@ creates and verifies `.venv`.
 3. Add or update tests when behavior, persistence, UI timing or public imports change.
    Name test modules, classes and cases by their feature or behavior, rather than
    the release that introduced them. Keep necessary legacy-format context in fixtures.
-4. Run the complete test suite (GUI tests need a display):
+4. Choose the relevant [test groups](docs/TESTING.md) when execution is authorized.
+   The local default creates no native windows:
 
    ```bash
-   python -m unittest discover -s tests -q
+   python tools/local_test_suite.py
    ```
 
-   Under Linux with Xvfb: `xvfb-run -a python -m unittest discover -s tests -q`.
+   Use `--group tooling`, `--group balance` or `--group all` explicitly.
+   Native GUI runs belong in CI/Xvfb or on the designated secondary display
+   when local native execution is authorized. Never start them on the user's
+   primary display or during a source-only analysis/cleanup request.
 
 5. Run the pinned quality checks used by CI:
 
    ```bash
-   python -m ruff check aiko_pet tests main.py tools
+   python -m ruff check aiko_pet tests tests_tooling tests_balance main.py tools
    python -m mypy --strict --no-incremental aiko_pet main.py tools
    python -m pyright --project pyrightconfig.json
    ```
