@@ -35,7 +35,7 @@ from aiko_pet.pet.movement.contracts import WalkStep
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.world.contracts import ObjectState
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, destroy_test_root
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
@@ -181,7 +181,7 @@ class EmptyHandPreviewTests(unittest.TestCase):
             root = tk.Tk()
         except tk.TclError as error:
             self.skipTest(str(error))
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.withdraw()
         canvas = tk.Canvas(root)
         settings = PetSettings()

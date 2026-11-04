@@ -43,6 +43,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
+from tools.desktop_test_support import destroy_test_root
 
 
 class IdleMonitor:
@@ -53,7 +54,7 @@ class IdleMonitor:
 class AnimatedPetFixture:
     def prepare_fixture(self, cleanup) -> None:
         self.root = tk.Tk()
-        cleanup(self.root.destroy)
+        cleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.canvas = tk.Canvas(self.root, width=192, height=208)
         self.canvas.pack()

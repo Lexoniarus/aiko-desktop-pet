@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import time
-import tkinter as tk
 import unittest
 from dataclasses import replace
 from itertools import product
@@ -20,6 +19,7 @@ from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.pet.mind.cursor_behaviour import CursorIntent
 from aiko_pet.pet.movement import WalkController
 from aiko_pet.ui.pet_view.action_playback import ActionPlayback
+from tools.desktop_test_support import require_tk_display
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -27,7 +27,7 @@ from tools.tk_test_time import ControlledTkTime
 class ResponsiveTurnTimerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        StandaloneAnimatedPetTests.setUpClass()
+        require_tk_display()
 
     def test_grounded_gesture_plays_all_frames_once_at_both_sizes(self):
         for scale in (1, 2):
@@ -441,11 +441,7 @@ class StandaloneAnimatedPetTests(AnimatedPetFixture, unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No graphical display") from error
-        probe.destroy()
+        require_tk_display()
 
     def test_sprites_and_gaze_do_not_require_hover_ui(self) -> None:
         self.assertFalse(hasattr(self.anim, "pet"))

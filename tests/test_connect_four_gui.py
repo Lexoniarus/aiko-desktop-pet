@@ -13,7 +13,7 @@ from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.common.window_geometry import WindowBounds
 from aiko_pet.ui.windows.connect_four_window import CELL, MARGIN, ConnectFourWindow
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -183,7 +183,7 @@ class ConnectFourLayoutTests(unittest.TestCase):
             root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("Native Tk display required") from error
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.withdraw()
         game = ConnectFourWindow(
             root, on_closed=lambda _score: None,

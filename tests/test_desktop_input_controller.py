@@ -8,6 +8,7 @@ from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.desktop.input import DesktopInput, DesktopInputActions
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 
 
 class FakeMouse:
@@ -25,11 +26,7 @@ class FakeMouse:
 class DesktopInputTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No Tk display") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
@@ -56,7 +53,7 @@ class DesktopInputTests(unittest.TestCase):
                 closed=lambda: self.closed,
             ), self.mouse,
         )
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
 
     def test_pointer_sampling_uses_desktop_input_boundary(self) -> None:
         with (

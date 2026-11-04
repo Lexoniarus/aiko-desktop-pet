@@ -13,17 +13,14 @@ from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.projections import project_hover
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class IndependentHoverTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("Tk display unavailable") from error
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
@@ -56,7 +53,7 @@ class IndependentHoverTests(unittest.TestCase):
             ),
             always_on_top=False,
         )
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
 
     def test_buttons_only_call_narrow_application_ports(self) -> None:
         self.assertFalse(hasattr(self.panel, "pet"))

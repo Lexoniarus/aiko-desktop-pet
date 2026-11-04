@@ -2,7 +2,6 @@
 
 import tempfile
 import time
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -10,18 +9,14 @@ from unittest.mock import patch
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.infrastructure.persistence import StateStore
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class HoverActionDecouplingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            probe = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self):
         folder = tempfile.TemporaryDirectory()

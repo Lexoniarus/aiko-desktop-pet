@@ -2,7 +2,6 @@
 
 import tempfile
 import time
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -10,18 +9,14 @@ from unittest.mock import patch
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class CareGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No display available") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
@@ -90,7 +85,6 @@ class CareGuiTests(unittest.TestCase):
                     )
                 )
                 self.toolbar.buttons["talk"].invoke()
-                self.app._hover._interact("talk")
                 self.assertEqual(self.app.state.social, social)
                 menu = self.app._hover.social_menu
                 assert menu is not None

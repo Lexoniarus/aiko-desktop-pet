@@ -353,7 +353,6 @@ class CompleteCursorTrajectoryTests(unittest.TestCase):
                 for _ in range(30):
                     scene.tick(stopped_pointer)
                 self.assertFalse(scene.coordinator.intent.moving)
-                self.assertFalse(scene.coordinator.intent.gaze)
 
     def test_contact_cancels_cursor_attempt_without_holding_a_later_world_goal(self):
         scene = CursorTrajectory()

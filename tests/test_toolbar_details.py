@@ -10,6 +10,7 @@ from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.view_models.contracts import EmotionalSnapshot, StatusSnapshot
 from aiko_pet.ui.windows.toolbar_details import ToolbarDetails
+from tools.desktop_test_support import destroy_test_root
 
 
 class ToolbarDetailTests(unittest.TestCase):
@@ -18,7 +19,7 @@ class ToolbarDetailTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("No Tk display") from error
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.view = StatusSnapshot(
             today="Montag",
             next_event="Pause",

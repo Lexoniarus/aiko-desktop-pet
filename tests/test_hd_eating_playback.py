@@ -13,6 +13,7 @@ from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.action_playback import ActionPlayback
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
+from tools.desktop_test_support import destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -22,7 +23,7 @@ class HdEatingPlaybackTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             self.skipTest(str(error))
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.canvas = tk.Canvas(self.root, width=384, height=416)
         self.settings = PetSettings(x=0, y=0, scale=2)

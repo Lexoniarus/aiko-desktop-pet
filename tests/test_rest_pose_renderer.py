@@ -6,22 +6,19 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.ui.pet_view.rest_pose_renderer import RestPoseRenderer
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 
 
 class RestPoseRendererTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No graphical display available") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
         self.root.withdraw()
         self.render = RestPoseRenderer(self.root)
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.addCleanup(self.render.clear)
 
     def test_head_sways_but_leg_pixels_remain_stationary(self) -> None:

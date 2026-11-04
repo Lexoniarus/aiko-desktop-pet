@@ -1,7 +1,6 @@
 """Desktop composition consumes checked resources before touching session state."""
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -11,7 +10,7 @@ from aiko_pet.gui import DesktopPet, main
 from aiko_pet.infrastructure.local_jokes import load_local_jokes
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.runtime_dependencies import RuntimeDependencyError
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -59,11 +58,7 @@ class StartupResourceTests(unittest.TestCase):
 class NativeStartupResourceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest(str(error)) from error
-        root.destroy()
+        require_tk_display()
 
     def test_main_loads_catalogue_once_and_composes_with_the_same_content(self):
         loaded: list[tuple[PreparedSocialContent, ...]] = []

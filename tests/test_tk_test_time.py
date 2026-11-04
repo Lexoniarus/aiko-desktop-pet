@@ -5,6 +5,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet import gui
+from tools.desktop_test_support import destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -14,7 +15,7 @@ class ControlledTkTimeTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             self.skipTest(str(error))
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
 
     def test_callbacks_keep_deadlines_and_nested_order_with_consistent_clocks(self):
         with ControlledTkTime() as clock:

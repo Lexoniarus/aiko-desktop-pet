@@ -10,12 +10,13 @@ from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 from aiko_pet.ui.windows.blackjack_motion import BlackjackMotion
 from aiko_pet.ui.windows.game_contracts import GameCardPorts
 from aiko_pet.ui.windows.game_presentation import GamePresentation
+from tools.desktop_test_support import destroy_test_root
 
 
 class BlackjackMotionTests(unittest.TestCase):
     def test_visible_and_hidden_cards_keep_the_same_centred_flight_plane(self):
         root = tk.Tk()
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.withdraw()
         owner = tk.Toplevel(root)
         owner.withdraw()

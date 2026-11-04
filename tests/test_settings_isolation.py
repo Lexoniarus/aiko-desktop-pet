@@ -9,21 +9,18 @@ from dataclasses import replace
 from aiko_pet.ui.view_models.contracts import SettingsSnapshot
 from aiko_pet.ui.windows.settings_contracts import SettingsActions
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 
 
 class StandaloneSettingsTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No Tk display") from error
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.events: list[str] = []
         self.view = SettingsSnapshot(
             scale=1,

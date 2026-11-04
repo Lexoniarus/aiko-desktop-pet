@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.ui.pet_view.body_pose_cache import BodyPoseCache
+from tools.desktop_test_support import destroy_test_root
 
 
 class BodyPoseCacheTests(unittest.TestCase):
@@ -17,7 +18,7 @@ class BodyPoseCacheTests(unittest.TestCase):
         except tk.TclError as error:
             raise unittest.SkipTest("Graphical display required") from error
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.cache = BodyPoseCache(self.root, load_character_catalog())
         self.addCleanup(self.cache.close)
 

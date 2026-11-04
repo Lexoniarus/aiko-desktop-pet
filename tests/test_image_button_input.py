@@ -7,6 +7,7 @@ from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.view_models.food_models import food_choices
 from aiko_pet.ui.windows.food_menu import FoodMenu
+from tools.desktop_test_support import destroy_test_root
 
 
 class ImageButtonInputTests(unittest.TestCase):
@@ -15,7 +16,7 @@ class ImageButtonInputTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("Native Tk display required") from error
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.calls = []
         self.skin = AikoSkin(self.root)
         self.button = self.skin.button(

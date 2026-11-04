@@ -16,6 +16,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.ui.view_models.food_models import food_choices
 from aiko_pet.ui.world_view import WorldView
+from tools.desktop_test_support import destroy_test_root
 
 
 class FoodRenderingTests(unittest.TestCase):
@@ -24,7 +25,7 @@ class FoodRenderingTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             self.skipTest(str(error))
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.canvas = tk.Canvas(self.root, width=192, height=208)
         self.settings = PetSettings(x=0, y=0)

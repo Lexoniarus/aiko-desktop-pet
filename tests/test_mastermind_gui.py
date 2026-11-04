@@ -19,7 +19,7 @@ from aiko_pet.ui.windows.mastermind_window import (
     BOARD_HEIGHT,
     MastermindWindow,
 )
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 SECRET = ("red", "red", "blue", "green")
@@ -347,7 +347,7 @@ class MastermindBoardLayoutTests(unittest.TestCase):
             root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("Native Tk display required") from error
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.withdraw()
         for size in ((3840, 2160), (1920, 1080)):
             with self.subTest(size=size):

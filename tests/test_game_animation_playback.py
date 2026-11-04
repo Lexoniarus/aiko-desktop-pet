@@ -11,6 +11,7 @@ from aiko_pet.pet.animation.animation import SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
+from tools.desktop_test_support import destroy_test_root
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -19,7 +20,7 @@ class GameAnimationPlaybackTests(unittest.TestCase):
         self.clock = self.enterContext(ControlledTkTime())
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.state = PetState()
         self.settings = PetSettings(x=100, y=200)
         self.anim = AnimatedPet(

@@ -1,14 +1,13 @@
 """GUI integration of affection, care controls and persistent windows."""
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -16,11 +15,7 @@ from tools.tk_test_time import ControlledTkTime
 class AffectionGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No display available") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self):
         self.enterContext(ControlledTkTime())

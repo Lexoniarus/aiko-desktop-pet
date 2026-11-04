@@ -18,6 +18,7 @@ from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
 from aiko_pet.ui.windows.game_contracts import GameCardPorts, GameWindow
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from aiko_pet.ui.windows.tic_tac_toe_window import TicTacToeWindow
+from tools.desktop_test_support import destroy_test_root
 
 
 class GameTestOptions(TypedDict):
@@ -80,7 +81,7 @@ class GameSurfaceLayoutTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest('Native Tk display required') from error
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.overrideredirect(True)
         self.root.geometry('192x208+1100+650')
         self.root.update()

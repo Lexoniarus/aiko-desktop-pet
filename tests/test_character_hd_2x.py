@@ -10,6 +10,7 @@ import unittest
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.ui.pet_view.character_sprite_cache import CharacterSpriteCache
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 
 try:
     from PIL import Image
@@ -71,16 +72,12 @@ class HighResolutionCharacterTests(unittest.TestCase):
 class TrueHDSpriteCacheTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-        except tk.TclError as e:
-            raise unittest.SkipTest("Desktop display required") from e
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.cache = CharacterSpriteCache(self.root, load_character_catalog())
         self.addCleanup(self.cache.close)
 

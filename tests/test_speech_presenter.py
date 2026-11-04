@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -33,11 +34,7 @@ class SpeechPresenterTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            window = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("Tk display unavailable") from error
-        window.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.clock = self.enterContext(ControlledTkTime())
@@ -50,7 +47,7 @@ class SpeechPresenterTests(unittest.TestCase):
             font_name="Segoe UI", always_on_top=lambda: False,
             restore_stack=lambda: self.restacks.append(True),
         )
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.addCleanup(self.presenter.hide)
 
     def test_game_comments_use_the_prepared_asset_and_keep_the_speech_tail(self):

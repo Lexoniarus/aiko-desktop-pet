@@ -8,6 +8,7 @@ from PIL import Image
 from aiko_pet.asset_paths import PLAYING_CARDS_DIR
 from aiko_pet.games.playing_cards import STANDARD_DECK, Card
 from aiko_pet.ui.common.playing_card_images import PlayingCardImages
+from tools.desktop_test_support import destroy_test_root
 
 
 class PlayingCardAssetTests(unittest.TestCase):
@@ -33,7 +34,7 @@ class PlayingCardImageTests(unittest.TestCase):
     def setUp(self):
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.images = PlayingCardImages(self.root)
         self.addCleanup(self.images.clear)
 

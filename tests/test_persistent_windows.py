@@ -17,18 +17,14 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from aiko_pet.ui.windows.settings_window import SettingsWindow
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class PersistentWindowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No Tk display") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()

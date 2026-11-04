@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import tempfile
 import time
-import tkinter as tk
-import unittest
 from functools import partial
 from pathlib import Path
 from types import SimpleNamespace
@@ -16,18 +14,14 @@ from support.social import (
     TEST_JOKE_CATALOG,
     ManualSocialWorker,
 )
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class SocialDesktopFixture:
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest(f"No graphical display: {error}") from error
-        root.destroy()
+        require_tk_display()
 
     def prepare_fixture(self, cleanup) -> None:
         coordinator_patch = patch(

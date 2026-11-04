@@ -9,13 +9,14 @@ from aiko_pet.games.playing_cards import Card
 from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 from aiko_pet.ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter
 from aiko_pet.ui.view_models.game_models import HandAnchor, HandView
+from tools.desktop_test_support import destroy_test_root
 
 
 class BlackjackHandPresenterTests(unittest.TestCase):
     def setUp(self):
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.anchor = HandAnchor(100, 400, 192, 208, 0, 0, 1280, 984, 1)
         self.images = PlayingCardImages(self.root)
         self.addCleanup(self.images.clear)

@@ -5,12 +5,13 @@ import unittest
 from unittest.mock import Mock, patch
 
 from aiko_pet.ui.pet_view.game_effects import GameEffects
+from tools.desktop_test_support import destroy_test_root
 
 
 class GameEffectsTests(unittest.TestCase):
     def test_moving_and_reshowing_a_card_does_not_reconfigure_or_raise_each_frame(self):
         root = tk.Tk()
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.withdraw()
         owner = tk.Toplevel(root)
         owner.withdraw()
@@ -52,7 +53,7 @@ class MastermindFinaleTests(unittest.TestCase):
                 root = tk.Tk()
             except tk.TclError as error:
                 raise unittest.SkipTest("Native Tk display required") from error
-            self.addCleanup(root.destroy)
+            self.addCleanup(destroy_test_root, root)
             root.withdraw()
             owner = tk.Toplevel(root)
             owner.withdraw()

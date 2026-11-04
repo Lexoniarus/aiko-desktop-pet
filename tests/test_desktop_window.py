@@ -2,21 +2,17 @@
 
 from __future__ import annotations
 
-import tkinter as tk
 import unittest
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.ui.pet_view.desktop_window import DesktopWindow
+from tools.desktop_test_support import require_tk_display
 
 
 class DesktopWindowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            probe = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No Tk display") from error
-        probe.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.settings = PetSettings()

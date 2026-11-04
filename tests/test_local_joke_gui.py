@@ -1,7 +1,6 @@
 """Native isolated-save admission and playback of the reviewed library source."""
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -11,7 +10,7 @@ from support.social import ManualSocialWorker
 from aiko_pet.application.social_content import SocialCategory, SocialProvider
 from aiko_pet.infrastructure.local_jokes import load_local_jokes
 from aiko_pet.infrastructure.persistence import StateStore
-from tools.desktop_test_support import create_test_desktop
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -19,11 +18,7 @@ from tools.tk_test_time import ControlledTkTime
 class LocalJokeGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest(f"No graphical display: {error}") from error
-        root.destroy()
+        require_tk_display()
 
     def test_local_joke_plays_and_saves_care_once_without_a_network_response(self):
         with (

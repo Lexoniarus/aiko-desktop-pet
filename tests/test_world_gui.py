@@ -379,9 +379,12 @@ class WorldGuiTests(unittest.TestCase):
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
         current = runtime.world.get(drink.instance_id)
-        runtime.world.move_resting(drink.instance_id,
-                                   runtime.world.snapshot().surface.width * .9,
-                                   expected_revision=current.revision)
+        runtime.world.move_resting(
+            drink.instance_id,
+            min(runtime.world.snapshot().surface.width - 8,
+                runtime._body_x() + 2.5 * runtime.width),
+            expected_revision=current.revision,
+        )
         runtime._character_action_busy = lambda: False
         for _ in range(4):
             runtime.now += .3
@@ -1005,9 +1008,8 @@ class WorldGuiTests(unittest.TestCase):
                     self.assertTrue(world.cursor.offer_ready)
                     self.assertFalse(world.interaction.active)
                     # A wish developed during holding must never count as theft.
-                    held_at = world.now
-                    for seconds in (0.25, 1, 25):
-                        world.now = held_at + seconds
+                    for _ in range(100):
+                        world.now += .25
                         world.update(time.monotonic())
                     self.assertEqual(
                         app.state.friendship_history.penalties, relationship.penalties
