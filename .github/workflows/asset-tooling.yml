@@ -6,6 +6,7 @@ on:
     paths:
       - 'tests_tooling/**'
       - 'tools/**'
+      - 'assets/**'
       - 'aiko_pet/assets/**'
       - 'aiko_pet/infrastructure/**'
       - 'aiko_pet/asset_paths.py'
@@ -19,6 +20,7 @@ on:
     paths:
       - 'tests_tooling/**'
       - 'tools/**'
+      - 'assets/**'
       - 'aiko_pet/assets/**'
       - 'aiko_pet/infrastructure/**'
       - 'aiko_pet/asset_paths.py'
