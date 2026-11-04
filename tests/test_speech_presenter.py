@@ -219,9 +219,10 @@ class SpeechPresenterTests(unittest.TestCase):
         self.assertIsInstance(tail, tk.Canvas)
         assert isinstance(tail, tk.Canvas)
         self.assertEqual(len(tail.find_all()), 1)
-        frame = bubble.winfo_children()[0]
+        label = self.presenter._game_comment_label
+        assert label is not None
         self.assertEqual(
-            frame.winfo_children()[0].cget("text"), "Hallo <b>Browser</b>!",
+            label.cget("text"), "Hallo <b>Browser</b>!",
         )
         self.assertTrue(self.restacks)
         self.assertIsNotNone(self.presenter.pending_timer)
@@ -237,8 +238,10 @@ class SpeechPresenterTests(unittest.TestCase):
         bubble = self.presenter.bubble
         assert bubble is not None
         self.assertIsNot(bubble, previous)
+        label = self.presenter._game_comment_label
+        assert label is not None
         self.assertEqual(
-            bubble.winfo_children()[0].winfo_children()[0].cget("text"),
+            label.cget("text"),
             "Nachher",
         )
         self.assertFalse(bool(previous and previous.winfo_exists()))

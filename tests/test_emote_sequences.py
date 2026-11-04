@@ -90,9 +90,8 @@ class EmoteTkTests(unittest.TestCase):
     def bubble_text(self) -> str | None:
         if not self.pet._speech.bubble or self.is_emote():
             return None
-        return (
-            self.pet._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
-        )
+        label = self.pet._speech._game_comment_label
+        return str(label.cget("text")) if label is not None else None
 
     def test_three_beats_replace_each_other_and_never_overlap(self):
         reaction = Reaction(

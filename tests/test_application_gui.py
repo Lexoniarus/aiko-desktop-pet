@@ -136,10 +136,8 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         bubble = self.pet._speech.bubble
         if bubble is None:
             return None
-        children = bubble.winfo_children()
-        frame = children[0]
-        children = frame.winfo_children()
-        return str(children[0].cget("text"))
+        label = self.pet._speech._game_comment_label
+        return str(label.cget("text")) if label is not None else None
 
     def test_care_passes_through_application_controller(self) -> None:
         set_test_pet_values(self.pet.state, affection=10)

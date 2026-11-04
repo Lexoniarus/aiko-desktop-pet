@@ -52,7 +52,8 @@ class FoodGuiTests(unittest.TestCase):
         self.assertTrue(all(button.cget("image") for button in menu.buttons.values()))
         toolbar = self.pet._hover.toolbar
         assert toolbar is not None
-        self.assertIs(menu.frame.master, toolbar.interaction_column)
+        assert toolbar.selector_panel is not None
+        self.assertIs(menu.frame.master, toolbar.selector_panel.body)
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)

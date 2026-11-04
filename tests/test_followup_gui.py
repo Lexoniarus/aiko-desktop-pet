@@ -37,9 +37,8 @@ class FollowupGuiTests(unittest.TestCase):
     def text(self):
         if self.app._speech.bubble is None:
             return None
-        return (
-            self.app._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
-        )
+        label = self.app._speech._game_comment_label
+        return str(label.cget("text")) if label is not None else None
 
     def pass_delay(self, seconds=None):
         self.timing.advance(

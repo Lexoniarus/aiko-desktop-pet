@@ -72,10 +72,9 @@ class ConversationTimingTkTests(unittest.TestCase):
                         assert bubble is not None
                         self.assertTrue(bubble.winfo_ismapped())
                         if cue.kind == "text":
-                            self.assertEqual(
-                                bubble.winfo_children()[0].winfo_children()[0]
-                                .cget("text"), cue.content,
-                            )
+                            label = self.presenter._game_comment_label
+                            assert label is not None
+                            self.assertEqual(label.cget("text"), cue.content)
                     self.clock.advance(0.001)
                 self.assertFalse(self.player.active)
                 self.assertIsNone(self.presenter.bubble)

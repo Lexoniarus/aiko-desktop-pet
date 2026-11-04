@@ -88,19 +88,15 @@ class PersistentWindowTests(unittest.TestCase):
             self.assertTrue(self.pet._input._stopped)
             bubble = self.pet._speech.bubble
             assert bubble is not None
-            labels = [
-                child
-                for frame in bubble.winfo_children()
-                for child in frame.winfo_children()
-                if isinstance(child, tk.Label)
-            ]
+            label = self.pet._speech._game_comment_label
+            assert label is not None
             farewell_texts = {
                 line.text
                 for line in self.pet.mind.book.lines
                 if line.event == "farewell"
             }
             self.assertTrue(
-                farewell_texts.intersection(str(label.cget("text")) for label in labels)
+                str(label.cget("text")) in farewell_texts
             )
             self.pet._farewell.begin()
             self.assertEqual(len(scheduled), 1)
