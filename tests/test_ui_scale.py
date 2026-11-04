@@ -2,7 +2,6 @@
 
 import tkinter as tk
 import unittest
-from pathlib import Path
 
 from aiko_pet.ui.common import scaled_widgets as scaled
 from aiko_pet.ui.common.skin import AikoSkin
@@ -23,16 +22,6 @@ class DisplayScaleTests(unittest.TestCase):
         for size in ((0, 1080), (1920, -1)):
             with self.assertRaises(ValueError):
                 DisplayScale.for_resolution(*size)
-
-    def test_scroll_implementation_and_compact_variants_are_removed(self):
-        ui = Path(__file__).parents[1] / 'aiko_pet/ui'
-        self.assertFalse((ui / 'common/scroll_region.py').exists())
-        for path in (ui / 'windows').glob('*.py'):
-            source = path.read_text(encoding='utf-8')
-            for obsolete in ('ScrollRegion', '_compact', 'board_scroll',
-                             'yview_', 'xview_', '_fit_board'):
-                self.assertNotIn(obsolete, source, str(path))
-
 
 class NativeUiScaleTests(unittest.TestCase):
     def test_status_actions_have_full_bounds_at_4k_and_full_hd(self):

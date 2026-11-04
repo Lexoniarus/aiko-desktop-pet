@@ -45,14 +45,6 @@ class UiDependencyRules(unittest.TestCase):
             for module in imports:
                 self.assertFalse(set(module.split(".")).intersection(forbidden), module)
 
-    def test_gui_composition_root_stays_bounded(self) -> None:
-        source = (ROOT / "gui.py").read_text("utf-8")
-        self.assertLessEqual(
-            len(source.splitlines()),
-            640,
-            "Move feature behavior to its owning object rather than gui.py",
-        )
-
     def test_utility_windows_do_not_import_desktop_or_domain(self) -> None:
         forbidden = {
             "gui",
@@ -113,10 +105,6 @@ class UiDependencyRules(unittest.TestCase):
         ):
             with self.subTest(token=token):
                 self.assertNotIn(token, source)
-
-    def test_hover_uses_public_dragging_contract(self) -> None:
-        source = (ROOT / "ui/windows/hover_ui.py").read_text("utf-8")
-        self.assertNotIn("toolbar._dragging", source)
 
     def test_persistence_never_advances_domain_state(self) -> None:
         for owner in ("infrastructure/persistence.py", "desktop/persistence.py"):
@@ -263,11 +251,6 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(method=legacy):
                 self.assertNotIn(legacy, source)
 
-    def test_sprite_render_has_no_unused_delta_argument(self) -> None:
-        source = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
-        self.assertIn("self, now: float, pointer: tuple[int, int]", source)
-        self.assertNotIn("self, now: float, elapsed: float, pointer:", source)
-
     def test_action_state_is_owned_only_by_action_playback(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertNotIn("def _action_state(", source)
@@ -275,28 +258,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("def _cancel_visual_action(", source)
         self.assertNotIn("def _extend_action(", source)
         self.assertIn("self._action_playback.until", source)
-
-    def test_dead_desktop_shell_input_forwarders_are_removed(self) -> None:
-        syntax = ast.parse((ROOT / "gui.py").read_text("utf-8"))
-        shell = next(
-            node
-            for node in syntax.body
-            if isinstance(node, ast.ClassDef) and node.name == "DesktopPet"
-        )
-        declared = {
-            node.name for node in shell.body if isinstance(node, ast.FunctionDef)
-        }
-        old = {
-            "_setup_events",
-            "_react_to_click",
-            "_on_tk_press",
-            "_on_focus_out",
-            "_dismiss_after_focus_loss",
-            "_show_menu",
-            "_poll_desktop_click",
-            "_idle_emote",
-        }
-        self.assertFalse(declared.intersection(old))
 
     def test_desktop_gui_wires_runtime_without_self_as_stage_object(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")

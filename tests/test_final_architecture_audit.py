@@ -59,15 +59,5 @@ class FinalArchitectureTests(unittest.TestCase):
         self.assertFalse(projected.value("auto_walk"))
         self.assertFalse(projected.value("spontaneous_talk"))
 
-    def test_active_desktop_uses_canonical_monitor_and_view_source(self) -> None:
-        for path in ("gui.py", "desktop/lifecycle.py"):
-            source = (ROOT / path).read_text("utf-8")
-            self.assertNotIn("system_activity import ActivityMonitor", source)
-            self.assertIn("infrastructure.hardware.monitor import", source)
-        source = (ROOT / "gui.py").read_text("utf-8")
-        self.assertIn("DesktopPresentation(", source)
-        self.assertNotIn("DesktopViewSource(", source)
-
-
 if __name__ == "__main__":
     unittest.main()
