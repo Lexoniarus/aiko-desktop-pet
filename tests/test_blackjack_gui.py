@@ -84,6 +84,8 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._speech.bubble)
 
     def test_real_deal_uses_one_deck_and_equal_card_sizes_without_early_totals(self):
+        self.pet._place_x(10000)
+        self.pet.root.update_idletasks()
         started = self.timing.monotonic()
         game = self.open_game(arranged_game(
             card('10'), card('9'), card('8'), card('7'), card('K')))
@@ -107,6 +109,8 @@ class BlackjackGuiTests(unittest.TestCase):
         game.stand()
         self.wait_for(lambda: game._sequence.game.score.games == 1)
         self.assertIsNone(game._panel.next_button)
+        self.assertLess(game.window.winfo_x() + game.window.winfo_width(),
+                        self.pet.root.winfo_x())
         game.close()
         self.assertGreater(self.pet.state.fun, before)
         self.assertEqual(hand.windows, ())
@@ -195,12 +199,3 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertEqual(self.pet._game_visuals.hand._hand, HandView())
         assert game._motion is not None
         self.assertEqual(game._motion.effects._windows, {})
-
-    def test_new_panel_uses_left_side_at_right_edge(self):
-        self.pet._place_x(10000)
-        self.pet.root.update_idletasks()
-        game = self.open_game(arranged_game(
-            card('10'), card('9'), card('8'), card('7')))
-        game.window.update_idletasks()
-        self.assertLess(game.window.winfo_x() + game.window.winfo_width(),
-                        self.pet.root.winfo_x())
