@@ -231,6 +231,8 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "settings.window_title": frozenset([]),
     "settings.header": frozenset([]),
     "settings.appearance_heading": frozenset([]),
+    "settings.character_size": frozenset([]),
+    "settings.ui_size": frozenset([]),
     "settings.always_on_top": frozenset([]),
     "settings.auto_walk": frozenset([]),
     "settings.follow_cursor": frozenset([]),

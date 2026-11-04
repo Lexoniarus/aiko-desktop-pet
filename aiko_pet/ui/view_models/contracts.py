@@ -102,6 +102,7 @@ class SettingsSnapshot:
     scale: int
     options: tuple[tuple[SettingKey, bool], ...]
     zodiac_sign: str | None = None
+    ui_scale_percent: int = 100
 
     def value(self, key: str) -> bool:
         for name, value in self.options:

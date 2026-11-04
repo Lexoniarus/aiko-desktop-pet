@@ -35,6 +35,7 @@ class DesktopDisplaySettings:
     x: int | None = None
     y: int | None = None
     scale: int = 1
+    ui_scale_percent: int = 100
     always_on_top: bool = True
     toolbar_x: int | None = None
     toolbar_y: int | None = None
@@ -66,11 +67,13 @@ class PetSettings:
         toolbar_y: int | None = None,
         online_social: bool = False,
         zodiac_sign: str | None = None,
+        ui_scale_percent: int = 100,
     ) -> None:
         self.desktop = DesktopDisplaySettings(
             x=x,
             y=y,
             scale=scale,
+            ui_scale_percent=ui_scale_percent,
             always_on_top=always_on_top,
             toolbar_x=toolbar_x,
             toolbar_y=toolbar_y,
@@ -109,6 +112,16 @@ class PetSettings:
     @scale.setter
     def scale(self, value: int) -> None:
         self.desktop.scale = value
+
+    @property
+    def ui_scale_percent(self) -> int:
+        return self.desktop.ui_scale_percent
+
+    @ui_scale_percent.setter
+    def ui_scale_percent(self, value: int) -> None:
+        if type(value) is not int or value not in (75, 100, 125, 150, 175, 200):
+            raise ValueError("Unsupported UI size")
+        self.desktop.ui_scale_percent = value
 
     @property
     def always_on_top(self) -> bool:
@@ -214,6 +227,11 @@ class PetSettings:
             x=coordinate(payload.get("x")),
             y=coordinate(payload.get("y")),
             scale=2 if payload.get("scale") == 2 else 1,
+            ui_scale_percent=(payload.get("ui_scale_percent", 100)
+                if type(payload.get("ui_scale_percent", 100)) is int
+                and payload.get("ui_scale_percent", 100)
+                in (75, 100, 125, 150, 175, 200)
+                else 100),
             always_on_top=payload.get("always_on_top") is not False,
             auto_walk=payload.get("auto_walk") is not False,
             auto_routine=payload.get("auto_routine") is not False,
@@ -232,6 +250,7 @@ class PetSettings:
             "x": self.x,
             "y": self.y,
             "scale": self.scale,
+            "ui_scale_percent": self.ui_scale_percent,
             "always_on_top": self.always_on_top,
             "auto_walk": self.auto_walk,
             "auto_routine": self.auto_routine,

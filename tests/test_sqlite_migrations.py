@@ -105,11 +105,18 @@ class SqliteMigrationTests(unittest.TestCase):
                 "INSERT INTO save_state VALUES (1,2,?,?)",
                 (original.state.updated_at, original.state.lived_seconds),
             )
-            # Populate other unchanged owners using the current mapper, excluding
-            # the independently versioned online/local-book rows.
+            # Populate unchanged owners using the current mapper. Settings,
+            # online receipts and local-book rows need their delivered v1 shape.
             from aiko_pet.infrastructure.sqlite import session_rows
+            from aiko_pet.infrastructure.sqlite.rows import upsert_singleton
+
+            def write_v1_settings(connection, settings):
+                row = settings.to_dict()
+                del row['ui_scale_percent']
+                upsert_singleton(connection, 'app_settings', row)
 
             with (
+                patch.object(session_rows, "write_settings", write_v1_settings),
                 patch.object(session_rows, "write_social_history"),
                 patch.object(
                     session_rows,
@@ -140,6 +147,10 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertEqual(len(backups), 1)
         with closing(sqlite3.connect(backups[0])) as connection:
             self.assertEqual(connection.execute("PRAGMA user_version").fetchone(), (1,))
+            self.assertNotIn(
+                "ui_scale_percent",
+                [r[1] for r in connection.execute("PRAGMA table_info(app_settings)")],
+            )
             self.assertNotIn(
                 "intro_variant",
                 [

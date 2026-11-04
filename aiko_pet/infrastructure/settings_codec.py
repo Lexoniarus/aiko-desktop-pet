@@ -10,7 +10,8 @@ _COORDINATES = ("x", "y", "toolbar_x", "toolbar_y")
 
 
 def decode_settings(row: dict[str, Any]) -> PetSettings:
-    expected = {*SETTING_FLAGS, *_COORDINATES, "scale", "zodiac_sign"}
+    expected = {*SETTING_FLAGS, *_COORDINATES, "scale", "zodiac_sign",
+                "ui_scale_percent"}
     if set(row) != expected:
         raise ValueError("Unsupported saved settings fields")
     for name in SETTING_FLAGS:
@@ -24,6 +25,9 @@ def decode_settings(row: dict[str, Any]) -> PetSettings:
             raise ValueError("Invalid saved window coordinate")
     if type(row["scale"]) is not int or row["scale"] not in (1, 2):
         raise ValueError("Invalid saved scale")
+    percent = row["ui_scale_percent"]
+    if type(percent) is not int or percent not in (75, 100, 125, 150, 175, 200):
+        raise ValueError("Invalid saved UI size")
     settings = PetSettings.from_dict(row)
     restored = settings.to_dict()
     restored.setdefault("zodiac_sign", None)

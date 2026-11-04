@@ -127,9 +127,18 @@ class QuizWindowTests(unittest.TestCase):
         game._present()
         self.root.update()
         for button in game.answers:
-            self.assertLessEqual(button.winfo_reqwidth(), game._panel.content_width)
+            self.assertLessEqual(button.winfo_reqwidth(),
+                                 self.skin.scale.pixels(game._panel.content_width))
+            self.assertGreaterEqual(button.winfo_width(), button.winfo_reqwidth())
+            self.assertGreaterEqual(button.winfo_height(), button.winfo_reqheight())
             self.assertGreater(button.winfo_height(), 20)
-        self.assertLessEqual(game.window.winfo_height(), 740)
+        self.assertLessEqual(game.window.winfo_height(), self.root.winfo_screenheight())
+        for button in (*game.answers, game._panel.close_button):
+            self.assertGreaterEqual(button.winfo_rooty(), game.window.winfo_rooty())
+            self.assertLessEqual(
+                button.winfo_rooty() + button.winfo_height(),
+                game.window.winfo_rooty() + game.window.winfo_height(),
+            )
         self.assertTrue(game.window.bind('1'))
         self.assertTrue(game.window.bind('<Escape>'))
         wrong = next(i for i, a in enumerate(sequence.game.current.answers)

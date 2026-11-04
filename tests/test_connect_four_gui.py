@@ -18,6 +18,28 @@ from tools.tk_test_time import ControlledTkTime
 
 
 class ConnectFourGuiTests(unittest.TestCase):
+    def test_live_ui_size_keeps_round_and_native_column_hit_testing(self):
+        self.timing.advance(10)
+        flow = self.flow
+        assert flow is not None
+        board = flow.game.board
+        window = self.game.window
+        character_size = (self.pet._window.width, self.pet._window.height)
+        for percent in (125, 150, 100):
+            self.pet._preferences.set_ui_scale(percent)
+            self.pet.root.update()
+            self.assertIs(self.game.window, window)
+            self.assertIs(flow.game.board, board)
+            self.assertFalse(flow.busy)
+            self.assertEqual((self.pet._window.width, self.pet._window.height),
+                             character_size)
+            self.game.canvas.event_generate(
+                '<Motion>',
+                x=self.game.skin.scale.pixels(MARGIN + 3 * CELL + CELL // 2),
+                y=self.game.skin.scale.pixels(60),
+            )
+            self.assertEqual(self.game._hover_column, 3)
+
     def test_real_pickup_and_flight_track_a_moved_window_and_cancel_cleanly(self):
         self.game.choose(3)
         self.timing.advance(1.6)

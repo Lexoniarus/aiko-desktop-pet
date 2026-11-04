@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from typing import cast
 
 from aiko_pet.application.settings import PetSettings
 
@@ -16,6 +17,7 @@ class PetSettingsModelTests(unittest.TestCase):
                 "x": None,
                 "y": None,
                 "scale": 1,
+                "ui_scale_percent": 100,
                 "always_on_top": True,
                 "auto_walk": True,
                 "auto_routine": True,
@@ -52,6 +54,18 @@ class PetSettingsModelTests(unittest.TestCase):
         defaults = PetSettings.from_dict({"scale": 1})
         self.assertTrue(defaults.observe_computer)
         self.assertIsNone(defaults.toolbar_x)
+        self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
+        for invalid in (True, 99, 201, "125", None):
+            with self.subTest(ui_scale=invalid):
+                self.assertEqual(
+                    PetSettings.from_dict({
+                        "ui_scale_percent": invalid
+                    }).ui_scale_percent,
+                    100,
+                )
+                with self.assertRaises(ValueError):
+                    settings.ui_scale_percent = cast(int, invalid)
+        settings.ui_scale_percent = 150
         self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
 
     def test_online_content_requires_explicit_saved_boolean_opt_in(self) -> None:

@@ -1,4 +1,4 @@
-"""One immutable 4K design-to-display transform for the entire Tk application."""
+"""One live 4K design-to-display transform for the entire Tk application."""
 
 from __future__ import annotations
 
@@ -10,10 +10,12 @@ from tkinter import font as tkfont
 from typing import Any
 from weakref import WeakKeyDictionary
 
+from .display_metrics import virtualization_factor
+
 
 @dataclass(frozen=True, slots=True)
 class DisplayScale:
-    """Coordinates already use Tk's screen space, including OS DPI virtualization."""
+    """A single design-to-Tk factor; physical display detection happens at startup."""
 
     factor: float
 
@@ -42,14 +44,20 @@ class UiScale:
             root = root.master
         if root not in cls._roots:
             cls._roots[root] = cls(root, DisplayScale.for_resolution(
-                root.winfo_screenwidth(), root.winfo_screenheight(),
+                round(root.winfo_screenwidth() * virtualization_factor()),
+                round(root.winfo_screenheight() * virtualization_factor()),
             ))
         return cls._roots[root]
 
     def __init__(self, root: tk.Misc, display: DisplayScale) -> None:
         self.root, self.display = root, display
+        self._base = display.factor
+        self.percent = 100
         self._images: dict[str, tk.PhotoImage] = {}
+        self._sources: dict[str, bytes] = {}
         self._fonts: dict[str, tkfont.Font] = {}
+        self._font_sizes: dict[str, float] = {}
+        self._pending: str | None = None
         root.bind("<Destroy>", self._destroyed, add="+")
 
     @property
@@ -79,28 +87,85 @@ class UiScale:
             pixels = size * 96 / 72 if size > 0 else abs(size)
             font.configure(size=-max(1, self.pixels(pixels)))
             self._fonts[key] = font
+            self._font_sizes[key] = pixels
         return str(self._fonts[key])
 
-    def image(self, value: Any) -> str:
+    def _image_data(self, name: str) -> bytes:
         from PIL import Image
 
-        name = str(value)
-        if not name or self.factor == 1:
-            return name
-        if name not in self._images:
+        if name not in self._sources:
             data = self.root.tk.call(name, "data", "-format", "png")
             if isinstance(data, str):
                 data = base64.b64decode(data)
-            with Image.open(io.BytesIO(data)) as source:
-                size = (max(1, self.pixels(source.width)),
-                        max(1, self.pixels(source.height)))
-                resized = source.convert("RGBA").resize(size, Image.Resampling.LANCZOS)
-                encoded = io.BytesIO()
-                resized.save(encoded, format="PNG")
+            self._sources[name] = data
+        data = self._sources[name]
+        with Image.open(io.BytesIO(data)) as source:
+            size = (max(1, self.pixels(source.width)),
+                    max(1, self.pixels(source.height)))
+            resized = source.convert("RGBA").resize(size, Image.Resampling.LANCZOS)
+            # Windows color-key windows cannot composite fractional alpha.
+            # Binary source masks must remain binary after filtering, otherwise
+            # Tk blends their edges with magenta and Windows leaves a fringe.
+            histogram = source.convert("RGBA").getchannel("A").histogram()
+            if not sum(histogram[1:255]):
+                resized.putalpha(resized.getchannel("A").point(
+                    [0] * 128 + [255] * 128,
+                ))
+            encoded = io.BytesIO()
+            resized.save(encoded, format="PNG")
+            return encoded.getvalue()
+
+    def image(self, value: Any) -> str:
+        name = str(value)
+        if not name:
+            return name
+        if name not in self._images:
             self._images[name] = tk.PhotoImage(
-                master=self.root, data=encoded.getvalue(),
+                master=self.root, data=self._image_data(name),
             )
         return str(self._images[name])
+
+    def set_percent(self, percent: int) -> None:
+        """Rescale existing views in place; models, focus and timers survive."""
+        if type(percent) is not int or percent not in (75, 100, 125, 150, 175, 200):
+            raise ValueError("Unsupported UI size")
+        if percent == self.percent:
+            return
+        previous = self.factor
+        self.percent = percent
+        self.display = DisplayScale(self._base * percent / 100)
+        for key, font in self._fonts.items():
+            font.configure(size=-max(1, self.pixels(self._font_sizes[key])))
+        for source, painted in self._images.items():
+            painted.configure(data=self._image_data(source))
+
+        def visit(widget: tk.Misc) -> None:
+            rescale = getattr(widget, "_rescale", None)
+            if rescale is not None:
+                rescale(self.factor / previous)
+            if isinstance(widget, tk.Toplevel):
+                width, height = widget.minsize()
+                widget.minsize(round(width * self.factor / previous),
+                               round(height * self.factor / previous))
+            for child in widget.winfo_children():
+                visit(child)
+        visit(self.root)
+        if self._pending is not None:
+            self.root.after_cancel(self._pending)
+        self._pending = self.root.after_idle(self._settled)
+
+    def _settled(self) -> None:
+        self._pending = None
+        self.root.event_generate("<<UiScaleChanged>>")
+        for widget in self.root.winfo_children():
+            if isinstance(widget, tk.Toplevel) and widget.winfo_ismapped():
+                x = max(0, min(widget.winfo_x(),
+                               self.root.winfo_screenwidth()
+                               - widget.winfo_reqwidth()))
+                y = max(0, min(widget.winfo_y(),
+                               self.root.winfo_screenheight()
+                               - widget.winfo_reqheight()))
+                widget.geometry(f"+{x}+{y}")
 
     def image_list(self, value: Any) -> tuple[Any, ...]:
         parts = getattr(self.root.tk, "splitlist")(str(value))
@@ -112,6 +177,10 @@ class UiScale:
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self.root:
+            if self._pending is not None:
+                self.root.after_cancel(self._pending)
+                self._pending = None
             self._images.clear()
+            self._sources.clear()
             self._fonts.clear()
             self._roots.pop(self.root, None)

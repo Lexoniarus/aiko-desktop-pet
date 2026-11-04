@@ -28,7 +28,7 @@ from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -131,6 +131,13 @@ MIGRATIONS = (
             revision INTEGER NOT NULL CHECK(revision > 0),
             UNIQUE(category, lower, upper)
         )""",),
+    ),
+    SchemaMigration(
+        5,
+        "ui_size_preference",
+        ("ALTER TABLE app_settings ADD COLUMN ui_scale_percent INTEGER NOT NULL "
+         "DEFAULT 100 CHECK(typeof(ui_scale_percent) = 'integer' AND "
+         "ui_scale_percent IN (75,100,125,150,175,200))",),
     ),
 )
 

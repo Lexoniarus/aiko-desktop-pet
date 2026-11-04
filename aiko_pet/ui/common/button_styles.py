@@ -19,7 +19,7 @@ class ButtonStyles:
         self._surface = surface
         self._prefix = f"Aiko{id(self)}"
         self._styles: dict[
-            tuple[str, str, int, bool, bool, bool, int | None, bool], str
+            tuple[float, str, str, int, bool, bool, bool, int | None, bool], str
         ] = {}
         self._arrow = tk.PhotoImage(master=root, width=10, height=16)
         for y in range(3, 13):
@@ -35,7 +35,7 @@ class ButtonStyles:
         align_left: bool, stacked: bool, submenu: bool,
         wraplength: int | None = None, preserve_selection: bool = False,
     ) -> str:
-        key = (size, font, icon_width, align_left, stacked, submenu,
+        key = (self._scale.factor, size, font, icon_width, align_left, stacked, submenu,
                wraplength, preserve_selection)
         if key in self._styles:
             return self._styles[key]

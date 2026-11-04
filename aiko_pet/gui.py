@@ -83,6 +83,7 @@ class DesktopPet:
         self.context: TimeContext = context_at(time.time())
         self._character_assets = with_idle_gestures(load_character_catalog())
         self._window = DesktopWindow(self.settings)
+        self._window.skin.scale.set_percent(self.settings.ui_scale_percent)
         self.root = self._window.root
         self.canvas = self._window.canvas
         self.background = self._window.background
@@ -273,6 +274,7 @@ class DesktopPet:
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
                 toggle_scale=self.toggle_scale,
+                set_ui_scale=lambda percent: self._preferences.set_ui_scale(percent),
                 forget_rhythm=self.forget_rhythm,
                 reset_toolbar=self.reset_toolbar_position,
                 center=self.center,

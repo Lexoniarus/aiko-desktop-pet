@@ -115,6 +115,12 @@ class SettingsWindow:
         self.checkbuttons: dict[SettingKey, tk.Checkbutton] = {}
         self._state_labels: dict[SettingKey, tk.Label] = {}
         self.scale_buttons: dict[int, ImageButton] = {}
+        scaled.Label(
+            self._pages["appearance"],
+            text=GERMAN_TEXT.format("settings.character_size"),
+            bg=self.skin.background,
+            fg=self.skin.text, font=(self.skin.font, 10),
+        ).pack(anchor="w")
         scales = scaled.Frame(self._pages["appearance"], bg=self.skin.background)
         scales.pack(fill="x", pady=6)
         for scale in (1, 2):
@@ -123,6 +129,20 @@ class SettingsWindow:
             )
             button.pack(side="left", padx=2)
             self.scale_buttons[scale] = button
+        scaled.Label(
+            self._pages["appearance"], text=GERMAN_TEXT.format("settings.ui_size"),
+            bg=self.skin.background,
+            fg=self.skin.text, font=(self.skin.font, 10),
+        ).pack(anchor="w", pady=(8, 3))
+        self.ui_size = tk.StringVar(master=self.window)
+        self._ui_sizes = (75, 100, 125, 150, 175, 200)
+        self.ui_size_choice = scaled.Combobox(
+            self._pages["appearance"], textvariable=self.ui_size,
+            values=tuple(f"{percent} %" for percent in self._ui_sizes),
+            state="readonly", width=12, font=(self.skin.font, 10),
+        )
+        self.ui_size_choice.pack(anchor="w", pady=(0, 8))
+        self.ui_size_choice.bind("<<ComboboxSelected>>", self._choose_ui_size)
         for key in self.APPEARANCE:
             self._option(self._pages["appearance"], key)
         for key in self.BEHAVIOUR:
@@ -253,6 +273,10 @@ class SettingsWindow:
         self._actions.set_zodiac(self._signs[index])
         self.refresh()
 
+    def _choose_ui_size(self, _event: tk.Event) -> None:
+        self._actions.set_ui_scale(self._ui_sizes[self.ui_size_choice.current()])
+        self.refresh()
+
     def _choose_scale(self, scale: int) -> None:
         if self._snapshot().scale != scale:
             self._invoke(self._actions.toggle_scale)
@@ -273,6 +297,7 @@ class SettingsWindow:
         if self._closed:
             return
         view = self._snapshot()
+        self.ui_size.set(f"{view.ui_scale_percent} %")
         self.zodiac_value.set(self._sign_labels[self._signs.index(view.zodiac_sign)])
         for key, variable in self.values.items():
             value = view.value(key)

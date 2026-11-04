@@ -41,6 +41,10 @@ class ImageButton(Layout, ttk.Button):
         )
         self.bind("<Return>", lambda _event: self.invoke())
 
+    def _rescale(self, ratio: float) -> None:
+        super().configure(style=self._style(self._text))
+        self._rescale_layout()
+
     def _label(self, text: str) -> str:
         return text.rstrip(" ›") if self._align_left else text
 

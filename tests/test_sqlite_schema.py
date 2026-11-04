@@ -16,6 +16,42 @@ from aiko_pet.infrastructure.sqlite.errors import translate_storage_error
 
 
 class SqliteSchemaTests(unittest.TestCase):
+    def test_ui_size_migration_preserves_existing_settings_and_checkpoint(self):
+        from aiko_pet.application.settings import PetSettings
+        from aiko_pet.infrastructure.sqlite.settings_rows import (
+            read_settings,
+            write_settings,
+        )
+
+        with (
+            patch.object(schema, 'SCHEMA_VERSION', 4),
+            patch.object(schema, 'MIGRATIONS', schema.MIGRATIONS[:4]),
+            open_database(self.path, initialize=True) as connection,
+        ):
+            connection.execute('INSERT INTO save_state VALUES (1,7,100,10)')
+            saved = PetSettings(x=120, scale=2, toolbar_x=80).to_dict()
+            del saved['ui_scale_percent']
+            names = ','.join(saved)
+            slots = ','.join('?' for _ in saved)
+            connection.execute(f'INSERT INTO app_settings(id,{names}) '
+                               f'VALUES(1,{slots})', tuple(saved.values()))
+            connection.commit()
+        with open_database(self.path) as connection:
+            connection.execute('BEGIN IMMEDIATE')
+            settings = read_settings(connection)
+            self.assertEqual(settings.scale, 2)
+            self.assertEqual(settings.x, 120)
+            self.assertEqual(settings.toolbar_x, 80)
+            self.assertEqual(settings.ui_scale_percent, 100)
+            settings.ui_scale_percent = 150
+            write_settings(connection, settings)
+            connection.commit()
+        with open_database(self.path) as connection:
+            connection.execute('BEGIN')
+            self.assertEqual(read_settings(connection).ui_scale_percent, 150)
+            self.assertEqual(connection.execute('SELECT revision FROM save_state')
+                             .fetchone(), (7,))
+
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory(prefix="aiko-schema-")
         self.addCleanup(folder.cleanup)

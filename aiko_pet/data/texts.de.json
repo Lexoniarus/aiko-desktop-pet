@@ -106,6 +106,8 @@
     "settings.window_title": "Aiko · Einstellungen",
     "settings.header": "AIKO · EINSTELLUNGEN",
     "settings.appearance_heading": "Darstellung und Bewegung",
+    "settings.character_size": "Aiko-Größe",
+    "settings.ui_size": "UI-Größe",
     "settings.always_on_top": "Immer im Vordergrund",
     "settings.auto_walk": "An der Taskleiste laufen",
     "settings.follow_cursor": "Maus beobachten",

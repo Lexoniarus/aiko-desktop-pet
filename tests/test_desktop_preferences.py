@@ -111,6 +111,19 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.assertEqual(self.positions, [420.0])
         self.assertEqual(self.saves, 1)
 
+    def test_ui_size_command_updates_shared_transform_and_saves_once(self) -> None:
+        self.window.skin = MagicMock()
+        self.prefs.set_ui_scale(150)
+        self.window.skin.scale.set_percent.assert_called_once_with(150)
+        self.assertEqual(self.settings.ui_scale_percent, 150)
+        self.assertEqual(self.settings.scale, 1)
+        self.assertEqual(self.saves, 1)
+        for invalid in (True, 99):
+            with self.subTest(percent=invalid), self.assertRaises(ValueError):
+                self.prefs.set_ui_scale(invalid)
+        self.assertEqual(self.settings.ui_scale_percent, 150)
+        self.assertEqual(self.saves, 1)
+
     def test_feature_settings_have_single_owner_and_save(self) -> None:
         self.prefs.set_option("auto_walk", False)
         self.prefs.set_option("follow_cursor", False)

@@ -24,7 +24,31 @@ class Layout:
             for k, v in options.items()
         }
 
+    def _remember_layout(self, manager: str, options: dict[str, Any]) -> None:
+        if not hasattr(self, "_placements"):
+            self._placements: dict[str, dict[str, Any]] = {}
+            self._columns: dict[Any, dict[str, Any]] = {}
+            self._rows: dict[Any, dict[str, Any]] = {}
+        self._placements.setdefault(manager, {}).update(options)
+
+    def _rescale_layout(self) -> None:
+        manager = getattr(self, "winfo_manager")()
+        placements = getattr(self, "_placements", {})
+        if manager in placements:
+            keys = (("x", "y", "width", "height") if manager == "place"
+                    else ("padx", "pady", "ipadx", "ipady"))
+            getattr(super(), f"{manager}_configure")(
+                **self._layout(placements[manager], keys),
+            )
+        for axis, entries in (("column", getattr(self, "_columns", {})),
+                              ("row", getattr(self, "_rows", {}))):
+            for index, options in entries.items():
+                getattr(super(), f"grid_{axis}configure")(
+                    index, self._layout(options, ("minsize", "pad")),
+                )
+
     def pack_configure(self, cnf: Any = None, **kw: Any) -> None:
+        self._remember_layout("pack", {**(cnf or {}), **kw})
         getattr(super(), "pack_configure")(**self._layout(
             {**(cnf or {}), **kw}, ("padx", "pady", "ipadx", "ipady"),
         ))
@@ -32,6 +56,7 @@ class Layout:
     pack = pack_configure
 
     def grid_configure(self, cnf: Any = None, **kw: Any) -> None:
+        self._remember_layout("grid", {**(cnf or {}), **kw})
         getattr(super(), "grid_configure")(**self._layout(
             {**(cnf or {}), **kw}, ("padx", "pady", "ipadx", "ipady"),
         ))
@@ -39,6 +64,7 @@ class Layout:
     grid = grid_configure
 
     def place_configure(self, cnf: Any = None, **kw: Any) -> None:
+        self._remember_layout("place", {**(cnf or {}), **kw})
         getattr(super(), "place_configure")(**self._layout(
             {**(cnf or {}), **kw}, ("x", "y", "width", "height"),
         ))
@@ -46,11 +72,22 @@ class Layout:
     place = place_configure
 
     def grid_columnconfigure(self, index: Any, cnf: Any = None, **kw: Any) -> Any:
+        self._remember_layout("columns", {})
+        self._columns.setdefault(index, {}).update({**(cnf or {}), **kw})
         return getattr(super(), "grid_columnconfigure")(
             index, self._layout({**(cnf or {}), **kw}, ("minsize", "pad")),
         )
 
     columnconfigure = grid_columnconfigure
+
+    def grid_rowconfigure(self, index: Any, cnf: Any = None, **kw: Any) -> Any:
+        self._remember_layout("rows", {})
+        self._rows.setdefault(index, {}).update({**(cnf or {}), **kw})
+        return getattr(super(), "grid_rowconfigure")(
+            index, self._layout({**(cnf or {}), **kw}, ("minsize", "pad")),
+        )
+
+    rowconfigure = grid_rowconfigure
 
 
 class Widget(Layout):
@@ -81,6 +118,12 @@ class Widget(Layout):
         return getattr(super(), "configure")(**self._scaled({**(cnf or {}), **kwargs}))
 
     config = configure
+
+    def _rescale(self, ratio: float) -> None:
+        options = dict(self._logical)
+        # Text variables, commands and state remain on the same native widgets.
+        getattr(super(), "configure")(**self._scaled(options))
+        self._rescale_layout()
 
     def design(self, name: str) -> Any:
         """Authored option for drawing algorithms; cget stays native pixels."""
@@ -151,6 +194,17 @@ class Canvas(Widget, tk.Canvas):
         )
 
     itemconfig = itemconfigure
+
+    def _rescale(self, ratio: float) -> None:
+        super()._rescale(ratio)
+        tk.Canvas.scale(self, "all", 0, 0, ratio, ratio)
+        for item in self.find_all():
+            kind = str(self.tk.call(str(self), "type", item))
+            if kind in ("line", "rectangle", "polygon", "oval", "arc"):
+                for name in ("width", "activewidth", "disabledwidth"):
+                    value = float(self.tk.call(str(self), "itemcget", item, "-" + name))
+                    self.tk.call(str(self), "itemconfigure", item, "-" + name,
+                                 value * ratio)
 
     def logical(self, value: float) -> float:
         return self.ui_scale.logical(value)

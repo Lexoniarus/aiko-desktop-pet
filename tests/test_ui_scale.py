@@ -2,6 +2,7 @@
 
 import tkinter as tk
 import unittest
+from unittest.mock import patch
 
 from aiko_pet.ui.common import scaled_widgets as scaled
 from aiko_pet.ui.common.skin import AikoSkin
@@ -26,6 +27,115 @@ class DisplayScaleTests(unittest.TestCase):
 
 
 class NativeUiScaleTests(unittest.TestCase):
+    def test_ui_size_setting_applies_without_reopening_settings(self):
+        from aiko_pet.application.settings import PetSettings
+        from aiko_pet.ui.view_models.projections import project_settings
+        from aiko_pet.ui.windows.settings_contracts import SettingsActions
+        from aiko_pet.ui.windows.settings_window import SettingsWindow
+
+        settings = PetSettings(scale=2)
+
+        def change(percent):
+            settings.ui_scale_percent = percent
+            self.scale.set_percent(percent)
+
+        window = SettingsWindow(
+            self.root, 100, 100, snapshot=lambda: project_settings(settings),
+            actions=SettingsActions(
+                lambda: None, lambda _key, _value: None, lambda: None,
+                lambda: None, lambda: None, lambda: None, lambda: None,
+                set_ui_scale=change,
+            ), always_on_top=False, skin=self.skin,
+        )
+        self.addCleanup(window.close)
+        self.root.update()
+        native = window.window
+        window.ui_size_choice.current(2)
+        window.ui_size_choice.event_generate('<<ComboboxSelected>>')
+        self.root.update()
+        self.assertIs(window.window, native)
+        self.assertTrue(native.winfo_ismapped())
+        self.assertEqual(settings.ui_scale_percent, 125)
+        self.assertEqual(settings.scale, 2)
+        self.assertEqual(window.ui_size.get(), '125 %')
+        self.assertEqual(self.scale.percent, 125)
+        self.assertEqual(window._pages['behaviour'].winfo_manager(), '')
+
+    def test_live_size_preserves_canvas_geometry_hidden_pages_and_button_input(self):
+        window = tk.Toplevel(self.root)
+        frame = scaled.Frame(window)
+        frame.pack(padx=20, pady=20)
+        canvas = scaled.Canvas(frame, width=400, height=200)
+        canvas.pack()
+        item = canvas.create_rectangle(20, 40, 120, 140, width=2)
+        positions = []
+        canvas.bind(
+            "<Button-1>",
+            lambda event: positions.append(
+                (canvas.logical(event.x), canvas.logical(event.y)),
+            ),
+        )
+        hidden = scaled.Frame(window, width=100, height=100)
+        hidden.pack()
+        hidden.pack_forget()
+        calls = []
+        button = self.skin.button(frame, "Test", lambda: calls.append(True))
+        button.pack(pady=10)
+        button.set_selected(True)
+        self.root.update()
+        for percent in (150, 75, 200, 100):
+            with self.subTest(percent=percent):
+                self.scale.set_percent(percent)
+                self.root.update()
+                self.assertEqual(hidden.winfo_manager(), "")
+                self.assertTrue(button.instate(["selected"]))
+                self.assertEqual(canvas.coords(item), [20, 40, 120, 140])
+                self.assertEqual(int(canvas.cget("width")), self.scale.pixels(400))
+                self.assertEqual(frame.pack_info()["padx"], self.scale.pixels(20))
+                positions.clear()
+                canvas.event_generate(
+                    "<Button-1>", x=self.scale.pixels(96), y=self.scale.pixels(80)
+                )
+                # Both coordinates map to whole pixels at every selected size.
+                self.assertEqual(positions, [(96, 80)])
+                calls.clear()
+                for event in ("<Enter>", "<ButtonPress-1>", "<ButtonRelease-1>"):
+                    button.event_generate(
+                        event, x=button.winfo_width() // 2, y=button.winfo_height() // 2
+                    )
+                self.root.update()
+                self.assertEqual(calls, [True])
+
+    def test_4k_at_150_percent_windows_dpi_is_not_shrunk_as_1440p(self):
+        root = tk.Tk()
+        root.withdraw()
+        self.addCleanup(destroy_test_root, root)
+        with (
+            patch.object(root, 'winfo_screenwidth', return_value=2560),
+            patch.object(root, 'winfo_screenheight', return_value=1440),
+            patch('aiko_pet.ui.common.ui_scale.virtualization_factor',
+                  return_value=1.5),
+        ):
+            self.assertEqual(UiScale.for_widget(root).factor, 1)
+
+    def test_binary_cutout_stays_binary_after_filtering_and_live_resize(self):
+        import io
+
+        from PIL import Image
+
+        source = tk.PhotoImage(master=self.root, width=11, height=11)
+        source.put('white', to=(3, 3, 8, 8))
+        painted = self.scale.image(source)
+        for percent in (100, 125, 200):
+            self.scale.set_percent(percent)
+            data = self.root.tk.call(painted, 'data', '-format', 'png')
+            with Image.open(io.BytesIO(data)).convert('RGBA') as image:
+                self.assertEqual(sum(image.getchannel('A').histogram()[1:255]), 0)
+                alpha = image.getchannel('A')
+                self.assertEqual(alpha.getpixel((0, 0)), 0)
+                self.assertEqual(alpha.getpixel((image.width // 2,
+                                                 image.height // 2)), 255)
+
     def test_status_actions_have_full_bounds_at_4k_and_full_hd(self):
         from unittest.mock import Mock
 

@@ -74,6 +74,7 @@ class HoverUiPorts:
     cards: GameCardPorts | None = None
     codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
+    set_ui_scale: Callable[[int], None] = lambda _percent: None
     set_zodiac: Callable[[str | None], None] = lambda _sign: None
     horoscope_choice: Callable[[], tuple[str, bool]] = lambda: ("", True)
     social_selected: Callable[[SocialCategory], None] | None = None
@@ -499,6 +500,7 @@ class HoverUi:
             snapshot=self._ports.settings_snapshot,
             actions=SettingsActions(
                 toggle_scale=self._ports.toggle_scale,
+                set_ui_scale=self._ports.set_ui_scale,
                 set_option=self._ports.set_option,
                 forget_rhythm=self._ports.forget_rhythm,
                 reset_toolbar=self._ports.reset_toolbar,

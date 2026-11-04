@@ -133,6 +133,11 @@ class DesktopPreferences:
             self._hover.toolbar.refresh()
         self._ports.save()
 
+    def set_ui_scale(self, percent: int) -> None:
+        self._settings.ui_scale_percent = percent
+        self._window.skin.scale.set_percent(percent)
+        self._ports.save()
+
     def toggle_scale(self) -> None:
         self._ports.reset_cursor()
         center = (self._settings.x or 0) + self._window.width / 2
