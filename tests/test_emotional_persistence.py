@@ -288,6 +288,39 @@ class MoodletPersistenceTests(unittest.TestCase):
             with self.subTest(duplicate=duplicate), self.assertRaises(ValueError):
                 decode_moodlets(raw, ELAPSED)
 
+    def test_petting_evidence_round_trip_and_legacy_defaults_reject_future_boundaries(self):
+        pet = PetState(lived_seconds=100)
+        memory = replace(pet.moodlets.interactions, petting_excess_attempts=2,
+                         petting_last_excess_at=100)
+        state = replace(pet.moodlets, interactions=memory)
+        self.assertEqual(decode_moodlets(encode_moodlets(state), 100), state)
+        legacy = encode_moodlets(pet.moodlets)
+        facts = legacy["interactions"]
+        facts.pop("petting_excess_attempts")
+        facts.pop("petting_last_excess_at")
+        facts["petting_boundary_at"] = 100
+        restored = decode_moodlets(legacy, 100).interactions
+        self.assertEqual(restored.petting_boundary_at, 100)
+        self.assertEqual(restored.petting_excess_attempts, 3)
+        self.assertEqual(restored.petting_last_excess_at, 100)
+        saved = encode_moodlets(pet.moodlets)
+        saved.pop("interactions")
+        self.assertEqual(decode_moodlets(saved, 100), pet.moodlets)
+        saved = encode_moodlets(pet.moodlets)
+        saved["interactions"]["petting_boundary_at"] = 101
+        with self.assertRaises(ValueError):
+            decode_moodlets(saved, 100)
+
+    def test_petting_warning_storage_rejects_unbounded_or_incomplete_evidence(self):
+        for count, at in ((4, 100), (-1, None), (True, 100), (1, None),
+                          (0, 100), (2, 101)):
+            with self.subTest(count=count, at=at):
+                saved = encode_moodlets(PetState(lived_seconds=100).moodlets)
+                saved["interactions"].update(petting_excess_attempts=count,
+                                              petting_last_excess_at=at)
+                with self.assertRaises(ValueError):
+                    decode_moodlets(saved, 100)
+
 
 class WishPersistenceTests(unittest.TestCase):
     def test_legacy_game_goals_keep_their_original_meaning_and_progress(self):
