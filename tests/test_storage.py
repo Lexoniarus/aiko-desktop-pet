@@ -1,3 +1,4 @@
+
 import json
 import tempfile
 import unittest
@@ -31,7 +32,10 @@ class StateStoreTests(unittest.TestCase):
             satiety=88, mood=62, energy=44, sleeping=True, updated_at=SAMPLE_TIMESTAMP
         )
         settings = PetSettings(
-            x=155, y=190, scale=2, always_on_top=False, auto_walk=False
+            x=155, y=190, scale=2, always_on_top=False, auto_walk=False,
+            auto_routine=False, follow_cursor=False, spontaneous_talk=False,
+            observe_computer=False, learn_rhythm=False, online_social=True,
+            toolbar_x=77, toolbar_y=130,
         )
         save_test_session(self.store, pet, settings)
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
@@ -70,49 +74,6 @@ class StateStoreTests(unittest.TestCase):
         self.assertTrue(settings.follow_cursor)
         self.assertTrue(settings.spontaneous_talk)
         self.assertEqual(pet.meals_today, [])
-
-    def test_malformed_settings_are_rejected(self):
-        settings = PetSettings.from_dict({
-            "x": True,
-            "y": 9999999,
-            "scale": 55,
-            "always_on_top": False,
-            "auto_walk": False,
-        })
-        self.assertIsNone(settings.x)
-        self.assertIsNone(settings.y)
-        self.assertEqual(settings.scale, 1)
-        self.assertFalse(settings.always_on_top)
-        self.assertFalse(settings.auto_walk)
-
-    def test_hardware_monitor_preference_is_optional_and_persisted(self):
-        old = PetSettings.from_dict({"scale": 1})
-        self.assertTrue(old.observe_computer)
-        save_test_session(self.store,
-            PetState(updated_at=SAMPLE_TIMESTAMP), PetSettings(observe_computer=False)
-        )
-        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
-        _pet, settings = session_data.state, session_data.settings
-        self.assertFalse(settings.observe_computer)
-
-    def test_toolbar_location_is_optional_and_survives_restart(self):
-        self.assertIsNone(PetSettings.from_dict({"scale": 1}).toolbar_x)
-        settings = PetSettings(toolbar_x=77, toolbar_y=130)
-        save_test_session(self.store, PetState(updated_at=SAMPLE_TIMESTAMP), settings)
-        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
-        _, loaded = session_data.state, session_data.settings
-        self.assertEqual((loaded.toolbar_x, loaded.toolbar_y), (77, 130))
-        invalid = PetSettings.from_dict({"toolbar_x": True, "toolbar_y": 70000})
-        self.assertIsNone(invalid.toolbar_x)
-        self.assertIsNone(invalid.toolbar_y)
-
-    def test_chatter_preference_survives_save_roundtrip(self):
-        pet = PetState(updated_at=SAMPLE_TIMESTAMP)
-        save_test_session(self.store, pet, PetSettings(spontaneous_talk=False))
-        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
-        _pet, settings = session_data.state, session_data.settings
-        self.assertFalse(settings.spontaneous_talk)
-
 
 if __name__ == "__main__":
     unittest.main()

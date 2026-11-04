@@ -38,7 +38,7 @@ class PetSettingsModelTests(unittest.TestCase):
             "always_on_top": False,
             "auto_routine": False,
             "toolbar_x": 17,
-            "toolbar_y": None,
+            "toolbar_y": 70000,
         }
         settings = PetSettings.from_dict(raw)
         self.assertIsNone(settings.x)
@@ -48,6 +48,10 @@ class PetSettingsModelTests(unittest.TestCase):
         self.assertFalse(settings.auto_routine)
         self.assertEqual(settings.toolbar_x, 17)
         self.assertIsNone(settings.toolbar_y)
+        self.assertIsNone(PetSettings.from_dict({"toolbar_x": True}).toolbar_x)
+        defaults = PetSettings.from_dict({"scale": 1})
+        self.assertTrue(defaults.observe_computer)
+        self.assertIsNone(defaults.toolbar_x)
         self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
 
     def test_online_content_requires_explicit_saved_boolean_opt_in(self) -> None:
