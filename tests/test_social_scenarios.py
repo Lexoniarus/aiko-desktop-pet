@@ -455,10 +455,16 @@ def care_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
     return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
 
 
+def care_dialogue(seed):
+    return (
+        make_aiko_mind(started_at=0.0, rng=random.Random(seed)),
+        context_at(care_stamp()),
+    )
+
+
 class SocialDialogueTests(unittest.TestCase):
     def setUp(self):
-        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(57))
-        self.context = context_at(care_stamp())
+        self.mind, self.context = care_dialogue(57)
 
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
         state = PetState(social=15)
@@ -528,8 +534,7 @@ class SocialDialogueTests(unittest.TestCase):
 
 class AffectionDialogueTests(unittest.TestCase):
     def setUp(self):
-        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
-        self.context = context_at(care_stamp())
+        self.mind, self.context = care_dialogue(12)
 
     def test_low_affection_is_not_social_loneliness(self):
         state = PetState(social=70, affection=12)

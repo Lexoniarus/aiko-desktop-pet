@@ -100,5 +100,6 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
         self.assertIsNotNone(self.toolbar.settings_button)
 
+
 if __name__ == "__main__":
     unittest.main()

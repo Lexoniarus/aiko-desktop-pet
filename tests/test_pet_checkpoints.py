@@ -9,7 +9,6 @@ from dataclasses import FrozenInstanceError
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.state_values import PetValues
 
 STAMP = 1_800_000_000.0
 

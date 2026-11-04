@@ -12,6 +12,7 @@ from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.state import PetState
 from tools.persistence_test_support import save_test_session
 
+
 class PersistencePackageTests(unittest.TestCase):
     def test_canonical_store_saves_sqlite_without_creating_legacy_json(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

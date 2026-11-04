@@ -27,5 +27,6 @@ class SettingsOwnershipTests(unittest.TestCase):
         self.assertEqual(settings.desktop.x, 600)
         self.assertFalse(settings.behavior.auto_walk)
 
+
 if __name__ == "__main__":
     unittest.main()

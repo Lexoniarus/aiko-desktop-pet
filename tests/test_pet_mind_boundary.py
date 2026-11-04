@@ -12,4 +12,3 @@ class PetMindBoundaryTests(unittest.TestCase):
         second = make_aiko_mind(started_at=0.0)
         self.assertIsInstance(first.cursor_attention, CursorAttention)
         self.assertIsNot(first.cursor_attention, second.cursor_attention)
-

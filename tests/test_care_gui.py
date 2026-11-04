@@ -137,5 +137,6 @@ class CareGuiTests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=stale):
             self.assertIsNone(self.app._activity.live_effort())
 
+
 if __name__ == "__main__":
     unittest.main()

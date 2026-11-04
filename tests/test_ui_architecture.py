@@ -183,5 +183,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("DesktopPet", source)
         self.assertIn("class DesktopPreferences:", source)
 
+
 if __name__ == "__main__":
     unittest.main()

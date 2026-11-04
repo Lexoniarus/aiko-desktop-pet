@@ -96,13 +96,22 @@ class InteractionReliefTests(unittest.TestCase):
             pet.experience_interaction(HelpfulInteraction(kind.kind))
 
         player = ReactionPlayer(
-            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
-            display_emote=lambda *_: None, display_text=lambda *_: None,
-            start_action=lambda *_: None, mark_spoken=lambda: None,
-            is_closed=lambda: False, social_completed=finish,
+            schedule=scheduler.schedule,
+            cancel_timer=scheduler.cancel,
+            display_emote=lambda *_: None,
+            display_text=lambda *_: None,
+            start_action=lambda *_: None,
+            mark_spoken=lambda: None,
+            is_closed=lambda: False,
+            social_completed=finish,
         )
-        reaction = Reaction("chat", (Cue.text("Eins."), Cue.text("Zwei.")),
-                            "idle", "talk", completed_social=SocialCompletion("chat"))
+        reaction = Reaction(
+            "chat",
+            (Cue.text("Eins."), Cue.text("Zwei.")),
+            "idle",
+            "talk",
+            completed_social=SocialCompletion("chat"),
+        )
         player.play(reaction)
         token = player.pending_timer
         assert token is not None
@@ -123,8 +132,7 @@ class InteractionReliefTests(unittest.TestCase):
         self.assertEqual(completed, [SocialCompletion("chat")])
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)
         player.play(replace(reaction, completed_social=None))
-        while player.pending_timer is not None:
-            scheduler.fire(player.pending_timer)
+        scheduler.drain()
         # Ambient dialogue is not human care.
         self.assertEqual(completed, [SocialCompletion("chat")])
 

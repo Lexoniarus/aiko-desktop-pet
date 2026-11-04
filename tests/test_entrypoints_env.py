@@ -79,5 +79,6 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
                 load_env_file(Path(folder) / "missing.env")
                 self.assertNotIn("AIKO_SAVE_PATH", os.environ)
 
+
 if __name__ == "__main__":
     unittest.main()
