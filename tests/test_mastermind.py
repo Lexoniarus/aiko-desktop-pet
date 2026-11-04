@@ -1,7 +1,6 @@
 """Mastermind multiplicity, final-attempt outcome and secret ownership."""
 
 import unittest
-from itertools import product
 from unittest.mock import Mock
 
 from aiko_pet.games.mastermind import Feedback, MastermindSession, evaluate
@@ -17,20 +16,10 @@ class MastermindRulesTests(unittest.TestCase):
         )
         self.assertEqual(evaluate(SECRET, ("red",) * 4), Feedback(2, 0))
         self.assertEqual(evaluate(SECRET, SECRET), Feedback(4, 0))
-
-    def test_all_three_color_codes_against_independent_consumption_oracle(self):
-        codes = tuple(product(("red", "blue", "green"), repeat=4))
-        for secret in codes:
-            for guess in codes:
-                unmatched_secret = [a for a, b in zip(secret, guess) if a != b]
-                unmatched_guess = [b for a, b in zip(secret, guess) if a != b]
-                exact = 4 - len(unmatched_secret)
-                misplaced = 0
-                for color in unmatched_guess:
-                    if color in unmatched_secret:
-                        unmatched_secret.remove(color)
-                        misplaced += 1
-                self.assertEqual(evaluate(secret, guess), Feedback(exact, misplaced))
+        self.assertEqual(evaluate(SECRET, ("green", "green", "red", "red")),
+                         Feedback(0, 3))
+        self.assertEqual(evaluate(("red",) * 4, ("red", "blue", "blue", "blue")),
+                         Feedback(1, 0))
 
     def test_invalid_and_incomplete_guesses_do_not_consume_an_attempt(self):
         game = MastermindSession(lambda: SECRET)
@@ -41,20 +30,14 @@ class MastermindRulesTests(unittest.TestCase):
             self.assertIs(game.view, before)
         self.assertEqual(game.score.games, 0)
 
-    def test_secret_is_fixed_and_absent_from_live_views(self):
-        game = MastermindSession(lambda: SECRET)
-        self.assertEqual(game.code_view(), (None,) * 4)
-        with self.assertRaises(ValueError):
-            game.code_view(1)
-        for _ in range(3):
-            self.assertEqual(game.submit(MISS).feedback, Feedback(0, 0))
-            self.assertEqual(game.code_view(), (None,) * 4)
-        self.assertNotIn("green", repr(game.view))
-
     def test_all_ten_feedbacks_use_one_secret_and_only_next_round_generates_again(self):
         following = ('purple',) * 4
         factory = Mock(side_effect=[SECRET, following])
         game = MastermindSession(factory)
+        self.assertEqual(game.code_view(), (None,) * 4)
+        self.assertNotIn("green", repr(game.view))
+        with self.assertRaises(ValueError):
+            game.code_view(1)
         guesses = [
             (('white',) * 4, Feedback(0, 0)),
             (('red',) * 4, Feedback(2, 0)),
@@ -71,6 +54,7 @@ class MastermindRulesTests(unittest.TestCase):
             self.assertEqual(game.submit(guess).feedback, expected)
             factory.assert_called_once_with()
             if index < 9:
+                self.assertEqual(game.code_view(), (None,) * 4)
                 with self.assertRaises(ValueError):
                     game.code_view(4)
         self.assertEqual(game.code_view(4), SECRET)

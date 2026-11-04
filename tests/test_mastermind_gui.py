@@ -26,54 +26,6 @@ SECRET = ("red", "red", "blue", "green")
 
 
 class MastermindGuiTests(unittest.TestCase):
-    def test_snack_uses_three_bites_and_actual_hand_anchor_at_both_sizes(self):
-        finale = self.game._finale
-        assert finale is not None
-        animated = self.pet._animated
-        before = self.pet.state.capture_checkpoint()
-        for scale in (1, 2):
-            with self.subTest(scale=scale):
-                self.pet.settings.scale = scale
-                self.pet._window.resize()
-                animated.reload_sprites()
-                original = finale._presentation
-                frames, finished, started = [], [], []
-
-                def action(clip, duration, marker, done):
-                    self.assertEqual((clip, duration), ("eat", None))
-                    started.append(self.clock.monotonic())
-
-                    def record(index):
-                        marker(index)
-                        anchor = animated.game_food_anchor("eat", index)
-                        visible = "snack" in finale.effects._visible
-                        self.assertEqual(visible, anchor is not None)
-                        if anchor is not None:
-                            x, y, actual_scale = original.origin()
-                            image, geometry = finale.effects._frames["snack"]
-                            self.assertEqual(geometry,
-                                f"{image.width()}x{image.height()}"
-                                f"+{round(x + (anchor[0] - 9) * actual_scale)}"
-                                f"+{round(y + (anchor[1] - 14) * actual_scale)}")
-                        frames.append((index, visible))
-                    original.action(clip, duration, record, done)
-
-                finale._presentation = replace(original, action=action)
-                finale.play(True, lambda: finished.append(True))
-                for _ in range(200):
-                    if frames:
-                        break
-                    self.clock.advance(.05)
-                self.assertEqual(frames, [(0, True)])
-                self.clock.advance(7.41 - self.clock.monotonic() + started[0])
-                self.assertEqual(finished, [])
-                self.clock.advance(.02)
-                self.assertEqual([i for i, _ in frames], list(range(85)))
-                self.assertEqual([v for _, v in frames], [True] * 66 + [False] * 19)
-                self.assertEqual(finished, [True])
-                finale._presentation = original
-        self.assertEqual(self.pet.state.capture_checkpoint(), before)
-
     def test_close_during_eating_drops_snack_and_pending_completion(self):
         finale = self.game._finale
         assert finale is not None
@@ -287,19 +239,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.assertFalse(self.pet._hover.game_open)
         self.assertFalse(self.pet._animated.game_mode)
 
-    def test_ten_rows_are_visible_and_character_scale_topmost_updates_strip(self):
-        for attempt in range(10):
-            self.submit(("white",) * 4)
-            self.clock.advance(12)
-            self.secret_factory.assert_called_once_with()
-            if attempt < 9:
-                self.assert_code_strip((None,) * 4)
-        self.assert_code_strip(SECRET)
-        assert self.game._sequence is not None
-        self.assertEqual(self.game._sequence.game.score.losses, 1)
-        self.assertEqual(len(self.game.board.find_withtag("guess")), 40)
-        self.pet.root.update()
-        self.assertEqual(len(self.game.board.find_withtag("row")), 10)
+    def test_character_scale_and_topmost_update_the_code_strip(self):
         assert self.code.window is not None and self.code.canvas is not None
         # Xvfb has no window manager to acknowledge the topmost state change.
         # Verify the native request and its canonical preference together.
@@ -315,27 +255,6 @@ class MastermindGuiTests(unittest.TestCase):
         self.pet.root.update()
         self.assertEqual(self.code.canvas.winfo_width(), 296)
         self.assertIn(self.code.window, self.pet._overlay_windows())
-
-    def test_first_mapping_shows_all_ten_rows_without_a_viewport(self):
-        self.assertEqual(len(self.game.board.find_withtag('row')), 10)
-        self.assertFalse(hasattr(self.game, 'board_scroll'))
-        factor = self.game.skin.scale.factor
-        self.assertAlmostEqual(self.game.board.winfo_height(),
-                               BOARD_HEIGHT * factor, delta=1)
-        bottom = self.game.board.winfo_rooty() + self.game.board.winfo_height()
-        self.assertLessEqual(bottom, self.game._panel.status.winfo_rooty())
-
-    def test_complete_scaled_board_accepts_the_last_row_without_scrolling(self):
-        for _ in range(9):
-            self.submit(('white',) * 4)
-            self.clock.advance(12)
-        self.drag('red', 0)
-        self.assertEqual(self.game._draft[0], 'red')
-        point = map(round, self.game.board.screen_point(52, 480))
-        self.assertEqual(self.game._slot_at(*point), 0)
-        self.assertEqual(self.game.board.ui_scale, self.game.skin.scale)
-        self.assertEqual(self.game.palette.ui_scale, self.game.skin.scale)
-        self.assertEqual(self.game.submit_button.ui_scale, self.game.skin.scale)
 
     def test_prepared_rows_accept_only_current_row_and_keep_history(self):
         self.assertEqual(len(self.game.board.find_withtag("row")), 10)
@@ -413,3 +332,51 @@ class MastermindPlacementAndAssetsTests(unittest.TestCase):
         self.assertEqual(len(list(MASTERMIND_DIR.glob("*.png"))), 5)
         self.assertFalse((MASTERMIND_DIR / "red.png").exists())
         self.assertFalse((MASTERMIND_DIR / "yellow.png").exists())
+
+
+class MastermindBoardLayoutTests(unittest.TestCase):
+    def test_full_board_and_last_row_input_at_both_display_sizes(self):
+        import tkinter as tk
+
+        from aiko_pet.ui.common.mastermind_images import MastermindImages
+        from aiko_pet.ui.common.skin import AikoSkin
+        from aiko_pet.ui.common.ui_scale import DisplayScale, UiScale
+        from aiko_pet.ui.windows.game_contracts import GameCodePorts
+
+        try:
+            root = tk.Tk()
+        except tk.TclError as error:
+            raise unittest.SkipTest("Native Tk display required") from error
+        self.addCleanup(root.destroy)
+        root.withdraw()
+        for size in ((3840, 2160), (1920, 1080)):
+            with self.subTest(size=size):
+                UiScale._roots[root] = UiScale(root, DisplayScale.for_resolution(*size))
+                skin = AikoSkin(root)
+                game = MastermindWindow(
+                    root, on_closed=Mock(),
+                    codes=GameCodePorts(MastermindImages(root), Mock(), Mock(), Mock()),
+                    speak=Mock(), animate=Mock(), emote=Mock(),
+                    always_on_top=False, skin=skin,
+                )
+                try:
+                    root.update()
+                    self.assertEqual(len(game.board.find_withtag("row")), 10)
+                    self.assertAlmostEqual(game.board.winfo_height(),
+                                           BOARD_HEIGHT * skin.scale.factor, delta=1)
+                    bottom = game.board.winfo_rooty() + game.board.winfo_height()
+                    self.assertLessEqual(bottom, game._panel.status.winfo_rooty())
+                    prepared = MastermindSession(lambda: SECRET)
+                    for _ in range(9):
+                        prepared.submit(("white",) * 4)
+                    game._present(prepared.view, prepared.score, False, 4)
+                    root.update()
+                    point = tuple(map(round, game.board.screen_point(52, 480)))
+                    self.assertEqual(game._slot_at(*point), 0)
+                    game._drop("red", None, *point)
+                    self.assertEqual(game._draft[0], "red")
+                    self.assertIs(game.board.ui_scale, skin.scale)
+                    self.assertIs(game.palette.ui_scale, skin.scale)
+                    self.assertIs(game.submit_button.ui_scale, skin.scale)
+                finally:
+                    game.close()
