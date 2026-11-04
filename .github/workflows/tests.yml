@@ -76,7 +76,6 @@ jobs:
             "test_idle_gesture.py",
             "test_body_orientation.py",
             "test_body_pose*.py",
-            "test_character_body_pose_export.py",
             "test_cursor_front_pose.py",
             "test_animated_pet_isolation.py",
             "test_desktop_animation_runtime.py",

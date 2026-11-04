@@ -7,12 +7,12 @@ import unittest
 from pathlib import Path
 from shutil import copy2
 
+from aiko_pet.asset_paths import ASSET_ROOT
+
 try:
     from PIL import Image
 except ImportError:
     Image = None
-
-from aiko_pet.asset_paths import ASSET_ROOT
 
 
 class CharacterPreparationTests(unittest.TestCase):
