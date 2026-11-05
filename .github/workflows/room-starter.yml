@@ -1,6 +1,8 @@
-name: Deploy room starter (manual)
+name: Deploy room installation
 on:
   workflow_dispatch:
+  push:
+    branches: [deploy/room-pwa]
 permissions:
   contents: read
   pages: write
@@ -16,23 +18,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: web/package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install Pillow==11.3.0
-      - run: npm ci
-        working-directory: web
-      - run: npm run build
-        working-directory: web
+      - name: Download the reviewed installation site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/prepare_room_deployment.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web/dist-starter
+          path: dist-room/published
       - name: Deploy starter
         id: deployment
         uses: actions/deploy-pages@v4

@@ -42,3 +42,17 @@ Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `npm ci`, `npm run build`, then the repository Python interpreter to run
 `../scripts/build_room_package.py`. Generated downloads and distributions stay
 outside Git. The resulting delivery includes a starter folder and runtime ZIP.
+
+The user-facing installer is now a single ZIP with a removable Web Clip profile
+and a brief instruction file. Build with `--starter-url <stable HTTPS directory>`
+to also generate `install.json` and the self-contained deployment site. Opening
+the installed icon downloads the verified runtime automatically on first launch;
+later starts use the active local package before any network request.
+The owner explicitly permits this first online setup. Profile confirmation in
+iPad Settings and the file handoff still need real-device acceptance.
+
+The deployment workflow reads `.room-release.json` only on the dedicated
+`deploy/room-pwa` branch (or manual dispatch). The descriptor pins a reviewed
+GitHub release asset by SHA-256. The release artifact contains the prebuilt site,
+including the runtime; private prototype originals are never required in CI or
+added to source Git. Actual publication is a separate external action.
