@@ -60,6 +60,15 @@ its headless touch/game and offline checks are recorded in
 Device acceptance remains open until the owner rechecks the same findings on
 the iPad. No Safari frame-rate or pixel-identical desktop parity pass is claimed.
 
+In the next device pass the owner confirmed improvement and acceptable normal
+character size, but requested native walking instead of running, smoother motion,
+better floor joins and desktop-equivalent food dragging/recognition/hand use.
+Follow-up build **0.1.0-3351f6ec864a** implements those corrections and retains
+normal size. Recheck holding food near the face, lowering it to ready hands,
+release acceptance versus falling, lifting existing portions, cancellation and
+the three-bite meal. Automated evidence is recorded in verification; actual
+Safari performance and visual acceptance remain open.
+
 Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
 
