@@ -72,7 +72,7 @@ def decode_object_memory(
             ("assessed", "place_status", "possible_sources") if version >= 2
             else ("examined",)
         ) + (("instance_id",) if version == 3 else ())
-        row = object_fields(entry, names, context="remembered object")
+        row = object_fields(entry, names, optional=("depth",), context="remembered object")
         token, identity, kind = row["token"], row["identity"], row["kind"]
         if (not isinstance(token, str) or not re.fullmatch(
             r"(?:object|memory)_[1-9][0-9]*" if version >= 2
@@ -120,6 +120,7 @@ def decode_object_memory(
             token, identity, kind, _number(row["x"]), _number(row["height"]),
             row["resting"], _number(row["age_seconds"]), assessed, disposition,
             cast(PlaceStatus, status), tuple(sources), instance,
+            _number(row.get("depth", 0.9)),
         ))
         tokens.add(token)
     by_token = {item.token: item for item in entries}

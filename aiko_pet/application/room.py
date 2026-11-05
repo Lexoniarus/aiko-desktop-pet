@@ -56,6 +56,7 @@ class RoomCoordinator:
         self.moving = False
         self.facing = 1
         self.held_item: str | None = None
+        self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
         self._wander: RoomPoint | None = None
         self._next_wander = 10.0
@@ -166,6 +167,15 @@ class RoomCoordinator:
         self._depth(item.instance_id, self.position.depth)
         self._offered = item.instance_id, self.now, f"offer_{item.instance_id}"
 
+    def offer_existing(self, instance: str, revision: int) -> None:
+        if self._offered is not None or self.game_open() or self.state.sleeping:
+            raise ValueError("Aiko kann gerade nichts entgegennehmen.")
+        item = self.world.take_resting(instance, expected_revision=revision)
+        item = self.world.move_held(instance, WorldPosition(self.position.x, 80),
+                                    expected_revision=item.revision)
+        self._depth(instance, self.position.depth)
+        self._offered = instance, self.now, f"offer_{instance}_{item.revision}"
+
     def update(self, seconds: float) -> None:
         self.now += seconds
         self.moving = False
@@ -194,6 +204,10 @@ class RoomCoordinator:
             facts=BehaviorFacts(game_open=self.game_open(),
                                 playback_busy=self.playback.player.active),
         )
+        for seen in self.awareness.observations:
+            instance = self.awareness.instance_for_record(seen.token)
+            if instance is not None and attention.sees(seen.x, seen.height):
+                self.awareness.memory.observe_depth(seen.token, self.spatial.depth_for(instance))
         if self._offered is not None:
             instance, started, _gesture = self._offered
             if self.now - started >= 1.5:
@@ -214,8 +228,8 @@ class RoomCoordinator:
             destination = RoomPoint(motion.center % 5100, 0.9)
         elif isinstance(motion, Approach):
             instance = self.awareness.instance_for_record(motion.target.token)
-            destination = RoomPoint(motion.target.x % 5100,
-                                    self.spatial.depth_for(instance or ""))
+            known = self.awareness.memory.get(motion.target.token)
+            destination = RoomPoint(motion.target.x % 5100, known.depth if known else 0.9)
             if instance is not None and self._can_acquire(instance):
                 self.interaction.arrive()
                 destination = None

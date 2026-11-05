@@ -197,7 +197,10 @@ class RoomSession:
             self.room.relocate(str(args["instance"]), int(args["revision"]),
                                RoomPoint(float(args["x"]) % 5100, float(args.get("depth", .9))))
         elif name == "offer":
-            self.room.offer(str(args["definition"]))
+            if "instance" in args:
+                self.room.offer_existing(str(args["instance"]), int(args["revision"]))
+            else:
+                self.room.offer(str(args["definition"]))
         elif name == "speech_next":
             self.playback.next_text()
         elif name == "speech_ack":
@@ -258,6 +261,7 @@ class RoomSession:
                           "running-left" if self.room.moving else self.playback.animation),
             "moving": self.room.moving, "facing": self.room.facing,
             "held_item": self.room.held_item, "game": self.game_snapshot,
+            "held_pose": self.room.held_pose,
             "social": json_value(self.content.runtime.snapshot()) if self.content else None,
             "horoscope": self.content.horoscope.availability() if self.content else None,
             "catalog": {

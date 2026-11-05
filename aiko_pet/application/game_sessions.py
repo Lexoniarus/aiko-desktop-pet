@@ -10,6 +10,7 @@ from ..games.contracts import GameId, GameRoundEvent
 from ..games.quiz import QuizSession
 from ..games.quiz_catalogue import QuizCatalogue
 from ..games.rock_paper_scissors import Move
+from ..games.mastermind import COLORS
 from ..pet.mind import PetMind
 from ..pet.routine import context_at
 from ..pet.state import PetState
@@ -90,6 +91,7 @@ class GameSessionCoordinator:
                 ),
             )
         elif self.game_id == GameId.MASTERMIND:
+            self.visible["colors"] = list(COLORS)
             self.sequence = MastermindSequence(
                 **common, emote=emote,
                 present=lambda view, score, busy, count: self._present(

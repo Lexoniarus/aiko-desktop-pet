@@ -25,6 +25,7 @@ class ObjectMemory:
                 item.token, item.identity, item.kind, item.x, item.height,
                 item.resting, now - item.age_seconds, item.assessed, item.disposition,
                 item.place_status, item.possible_sources, item.instance_id,
+                item.depth,
             ) for item in saved.entries))
 
     @staticmethod
@@ -62,7 +63,16 @@ class ObjectMemory:
                 (previous.possible_sources
                  if compatible and previous is not None else ()),
                 previous.instance_id if compatible and previous is not None else None,
+                previous.depth if compatible and previous is not None else 0.9,
             )
+
+    def observe_depth(self, token: str, depth: float) -> None:
+        """Only a fresh room observation can update the remembered depth."""
+        if not 0.2 <= depth <= 1.55:
+            raise ValueError("Invalid observed room depth")
+        known = self.get(token)
+        if known is not None:
+            self._known[token] = replace(known, depth=depth)
 
     def observe_find(
         self, seen: ObjectObservation, *, now: float, record: str | None,
@@ -309,5 +319,6 @@ class ObjectMemory:
             item.token, item.identity, item.kind, item.x, item.height, item.resting,
             max(0, now - item.observed_at), item.assessed, item.disposition,
             item.place_status, item.possible_sources, item.instance_id,
+            item.depth,
         ) for item in self._known.values() if self._retained(item, now)),
                                     self._next_id)

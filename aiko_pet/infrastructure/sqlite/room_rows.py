@@ -6,7 +6,7 @@ import json
 import sqlite3
 from dataclasses import replace
 
-from ...world.contracts import WorldSnapshot
+from ...world.contracts import ObjectState, WorldSnapshot
 from ...world.room import RoomPoint, RoomSpatialState
 from .rows import require_transaction
 
@@ -28,9 +28,12 @@ def write_room(connection: sqlite3.Connection, world: WorldSnapshot | None) -> N
     ids = {item.instance_id for item in world.objects}
     if any(key not in ids for key, _depth in room.object_depths):
         raise ValueError("Room object is outside its World")
+    retained = {item.instance_id for item in world.objects
+                if item.state not in (ObjectState.CONSUMED, ObjectState.REMOVED)}
     connection.execute(
         "INSERT INTO room_state VALUES (1, ?, ?, ?, ?)",
-        (room.environment, room.pet.x, room.pet.depth, json.dumps(room.object_depths)),
+        (room.environment, room.pet.x, room.pet.depth,
+         json.dumps([(key, depth) for key, depth in room.object_depths if key in retained])),
     )
 
 

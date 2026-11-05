@@ -26,6 +26,7 @@ class ObjectKnowledge:
     possible_sources: tuple[str, ...] = ()
     # Acquired only through hand/face identification, never from a remembered place.
     instance_id: str | None = None
+    depth: float = 0.9
 
     @property
     def recognized(self) -> bool:
@@ -52,6 +53,7 @@ class SavedObjectKnowledge:
     place_status: PlaceStatus = "remembered"
     possible_sources: tuple[str, ...] = ()
     instance_id: str | None = None
+    depth: float = 0.9
 
 
 @dataclass(frozen=True, slots=True)

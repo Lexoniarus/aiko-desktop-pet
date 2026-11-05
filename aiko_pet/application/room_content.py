@@ -51,7 +51,7 @@ class RoomContent:
         )
         self.book = HoroscopePlayback(
             self.horoscope, session.playback.player,
-            pose=lambda _pose: None,
+            pose=lambda pose: setattr(session.room, "held_pose", pose),
             schedule=session.playback.schedule, cancel_timer=session.playback.cancel_timer,
             unavailable=lambda: session.playback.comment("Das Horoskop ist gerade nicht verfügbar.", 6000),
         )

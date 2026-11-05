@@ -140,7 +140,10 @@ MIGRATIONS = (
          "DEFAULT 100 CHECK(typeof(ui_scale_percent) = 'integer' AND "
          "ui_scale_percent IN (75,100,125,150,175,200))",),
     ),
-    SchemaMigration(6, "shared_room_spatial_state", ROOM_SCHEMA),
+    SchemaMigration(6, "shared_room_spatial_state", ROOM_SCHEMA + (
+        "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 0.9 "
+        "CHECK(depth >= 0.2 AND depth <= 1.55)",
+    )),
 )
 
 

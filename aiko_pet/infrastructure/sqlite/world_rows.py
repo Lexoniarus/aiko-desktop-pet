@@ -49,7 +49,7 @@ def _write_memory(
     for index, item in enumerate(raw["entries"]):
         connection.execute(
             "INSERT INTO object_memories VALUES "
-            "(?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "(?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 item["token"],
                 index,
@@ -63,6 +63,7 @@ def _write_memory(
                 item["disposition"],
                 item["place_status"],
                 item["instance_id"],
+                item.get("depth", 0.9),
             ),
         )
     connection.executemany(
