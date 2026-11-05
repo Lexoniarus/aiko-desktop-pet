@@ -102,11 +102,11 @@ export class BrowserUpdates implements RoomUpdates {
         });
         return;
       }
-    } catch (error) {
+    } catch {
       if (!pending) {
         this.publish({
           phase: 'error',
-          message: `Update derzeit nicht verfügbar. Aiko läuft weiter. ${error instanceof Error ? error.message : String(error)}`,
+          message: `Update derzeit nicht verfügbar. Aiko läuft weiter. ${navigator.onLine ? 'Bitte später erneut versuchen.' : 'Du bist offline.'}`,
         });
         return;
       }

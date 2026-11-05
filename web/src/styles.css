@@ -72,6 +72,9 @@ select:focus-visible {
 .update-notice p {
   margin: 0 0 8px;
 }
+body:has(.room-panel[open]) .update-notice {
+  display: none;
+}
 .update-controls {
   border-bottom: 1px solid #9aa9bc;
   padding-bottom: 16px;
