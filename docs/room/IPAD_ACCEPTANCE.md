@@ -13,36 +13,40 @@ No Mac, Apple developer account or iOS signing step is part of this PWA route.
 $env:AIKO_PYTHON = '<absolute path to the project Python interpreter>'
 npm --prefix web ci
 npm --prefix web run build
-& $env:AIKO_PYTHON scripts/build_room_package.py --prototype '<path to aiko-360-raumtest-v16.zip>'
+& $env:AIKO_PYTHON scripts/build_room_package.py --prototype '<path to aiko-360-raumtest-v16.zip>' --starter-url '<stable HTTPS directory ending with />'
 ```
 
-`dist-room/starter/` is the small HTTPS-hosted starter.
-The same starter is supplied as `aiko-starter-<version>.zip`.
-`dist-room/aiko-room-<version>.zip` is the offline runtime to transfer through
-Dropbox or a GitHub download. `BUILD.json` records the package hash and commit.
+The user transfers only `Aiko-iPad-Installation-<version>.zip` to the iPad.
+It contains the launch profile and concise instructions. `starter/` and
+`aiko-starter-<version>.zip` are deployment artifacts: they include the starter,
+first-run descriptor and runtime download. `aiko-room-<version>.zip` remains
+the runtime/update artifact. `BUILD.json` records hashes, source and target.
 A source archive downloaded from a branch is not the built runtime ZIP.
 See [the German quick start](INSTALLATION_DE.md) and
 [completed automated checks](VERIFICATION.md).
 No private save, fonts, source-art authoring jobs or prototype review captures
 are included. The selected runtime artwork retains its existing asset terms.
 
-Deploy only the starter directory to a stable HTTPS origin/path. GitHub Pages
-can host it; `.github/workflows/room-starter.yml` provides a manual deployment.
-The workflow does not upload the prototype or publish the private runtime ZIP.
-Hosting/account configuration and actual deployment remain explicit actions.
+Deploy the generated site to the profile's stable HTTPS origin/path. GitHub
+Pages can host it; `.github/workflows/room-starter.yml` downloads a reviewed,
+hash-pinned release artifact. Neither source-art authoring originals nor saves
+are needed in CI. Hosting publishes the bundled program/runtime images for
+the initial download and remains a separate external publication step.
 
 ## First installation
 
-1. Open the starter's HTTPS address in Safari.
-2. Use Share → Add to Home Screen. This Safari step is manual.
-3. Launch Aiko from the new icon before importing anything.
-4. Download the built ZIP using Dropbox or GitHub and save it in Files.
-5. In Aiko, choose **Aiko-Paket auswählen** and select that ZIP.
-6. Wait for Aiko's real Python state and room to appear.
+1. Download the installation ZIP through Dropbox or GitHub into Files.
+2. Unpack it and open **Aiko-installieren.mobileconfig**.
+3. In Settings, confirm the downloaded profile. Enter the device code if asked.
+4. Launch Aiko through the new Home Screen icon while online.
+5. Wait for automatic download, verification and the actual Python room.
+6. Reopen offline. No manual Safari address or runtime file picker is required.
 
 The HTTPS origin identifies browser storage. Changing it is a different
-installation; do not move it between updates. A ZIP cannot install a Home Screen
-icon or replace Safari's shell automatically.
+installation; do not move it between updates. The profile adds a removable
+full-screen Web Clip after system confirmation. It does not itself embed the
+runtime. Direct opening from Files needs device acceptance; Apple Mail is the
+documented fallback for handing a profile to the system installer.
 
 ## Actual-device record — not yet performed
 
@@ -50,6 +54,10 @@ Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
 
 - Icon starts a standalone window; touch targets work in portrait and landscape.
+- Opening the profile from the unpacked ZIP reaches the system installer;
+  confirmation creates exactly one Aiko icon. Record any required Mail fallback.
+- First icon launch downloads the package automatically; interrupted/mismatched
+  downloads leave no active partial package and can be retried.
 - Swipe independently of Aiko, call her, and watch her own movement/routine.
 - Drag a new portion onto the floor and onto Aiko. Move an existing portion;
   quantities and custody remain correct. Cancel a gesture without losing food.
