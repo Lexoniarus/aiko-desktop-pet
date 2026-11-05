@@ -30,7 +30,7 @@ from aiko_pet.pet.wishes import (
     WishId,
     WishState,
 )
-from aiko_pet.ui.windows.quiz_sequence import QuizSequence
+from aiko_pet.presentation.games.quiz_sequence import QuizSequence
 
 ROOT = Path(__file__).resolve().parents[1]
 WALL = 1800000000.0

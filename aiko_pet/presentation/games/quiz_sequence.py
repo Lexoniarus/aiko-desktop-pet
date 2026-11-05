@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.quiz import QuizSession
-from ..common.game_pacing import GAME_PACING
+from .pacing import GAME_PACING
 from .rock_paper_scissors_dialogue import GameDialogue
 
 

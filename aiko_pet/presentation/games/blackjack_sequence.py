@@ -8,8 +8,8 @@ from uuid import uuid4
 from ...games.blackjack import Blackjack, Phase, Table, hand_total
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.playing_cards import Card
-from ..common.game_pacing import GAME_PACING
-from ..view_models.game_models import HandView
+from .pacing import GAME_PACING
+from ...ui.view_models.game_models import HandView
 from .blackjack_commentary import BlackjackCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 

@@ -90,7 +90,7 @@ class TextCatalogTests(unittest.TestCase):
         )
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
-        from aiko_pet.ui.windows.rock_paper_scissors_dialogue import (
+        from aiko_pet.presentation.games.rock_paper_scissors_dialogue import (
             GameDialogue,
             countdown_line,
         )

@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from ...games.connect_four import Board, ConnectFourSession, Move, choose_column
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
-from ..common.game_pacing import GAME_PACING
+from .pacing import GAME_PACING
 from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 

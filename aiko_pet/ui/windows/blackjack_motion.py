@@ -7,11 +7,11 @@ from collections.abc import Callable
 
 from ...games.blackjack import Table
 from ...games.playing_cards import Card
-from ..common.game_pacing import GAME_PACING
+from ...presentation.games.pacing import GAME_PACING
 from ..pet_view.game_effects import GameEffects
 from ..view_models.game_models import HandView
 from .game_contracts import GameCardPorts
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 
 
 class BlackjackMotion:

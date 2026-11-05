@@ -19,7 +19,7 @@ from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.view_models.game_models import HandAnchor
 from ..ui.windows.game_contracts import GameCardPorts, GameCodePorts
-from ..ui.windows.game_presentation import GamePresentation
+from ..presentation.games.ports import GamePresentation
 from ..ui.windows.game_speech import GameSpeech
 from ..ui.windows.hover_ui import HoverUi
 from .object_windows import configure_object_window

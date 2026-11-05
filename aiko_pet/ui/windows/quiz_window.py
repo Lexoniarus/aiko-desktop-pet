@@ -18,9 +18,9 @@ from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from ..pet_view.game_effects import GameEffects
 from .game_panel import GamePanel
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 from .game_waiting import GameWaiting
-from .quiz_sequence import QuizSequence
+from ...presentation.games.quiz_sequence import QuizSequence
 
 
 class QuizWindow:

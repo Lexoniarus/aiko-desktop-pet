@@ -9,7 +9,7 @@ from aiko_pet.games.playing_cards import Card
 from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 from aiko_pet.ui.windows.blackjack_motion import BlackjackMotion
 from aiko_pet.ui.windows.game_contracts import GameCardPorts
-from aiko_pet.ui.windows.game_presentation import GamePresentation
+from aiko_pet.presentation.games.ports import GamePresentation
 from tools.desktop_test_support import destroy_test_root
 
 

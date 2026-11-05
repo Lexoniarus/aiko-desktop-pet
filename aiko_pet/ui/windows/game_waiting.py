@@ -1,7 +1,7 @@
 """Sparse autonomous presentation, always interrupted by player decisions."""
 from collections.abc import Callable
 
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 
 
 class GameWaiting:

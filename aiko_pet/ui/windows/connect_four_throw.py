@@ -11,7 +11,7 @@ from ..common.scaled_widgets import Canvas
 from ..pet_view.game_effects import GameEffects
 from ..view_models.chip_flight import ChipTarget, flight_height, flight_point
 from ..view_models.connect_four_geometry import CELL, CHIP, MARGIN, PREVIEW
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 
 
 class ConnectFourThrow:

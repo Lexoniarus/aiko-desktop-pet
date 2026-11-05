@@ -16,8 +16,8 @@ from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
-from .game_presentation import GamePresentation
-from .rock_paper_scissors_sequence import RockPaperScissorsSequence
+from ...presentation.games.ports import GamePresentation
+from ...presentation.games.rock_paper_scissors_sequence import RockPaperScissorsSequence
 
 _MOVES: tuple[tuple[Move, str], ...] = (
     (Move.ROCK, GERMAN_TEXT.format('rps.move.rock')),

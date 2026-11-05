@@ -104,7 +104,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.secret_factory = Mock(return_value=SECRET)
         self.enterContext(
             patch(
-                "aiko_pet.ui.windows.mastermind_sequence.MastermindSession",
+                "aiko_pet.presentation.games.mastermind_sequence.MastermindSession",
                 side_effect=lambda: MastermindSession(self.secret_factory),
             )
         )

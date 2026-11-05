@@ -2,7 +2,7 @@
 from collections import deque
 from collections.abc import Callable
 
-from ..common.game_pacing import GAME_PACING
+from .pacing import GAME_PACING
 
 
 class BlackjackCommentary:

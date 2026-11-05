@@ -16,11 +16,11 @@ from ..common.window_geometry import BoundsAt
 from ..view_models.mastermind_models import CodeView
 from .game_contracts import GameCodePorts
 from .game_panel import GamePanel
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 from .mastermind_code_strip import MastermindCodeStrip
 from .mastermind_drag import MastermindDrag
 from .mastermind_finale import MastermindFinale
-from .mastermind_sequence import MastermindSequence
+from ...presentation.games.mastermind_sequence import MastermindSequence
 
 ROW_HEIGHT = 48
 HEADER_HEIGHT = 24

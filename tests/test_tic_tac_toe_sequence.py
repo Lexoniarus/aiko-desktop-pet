@@ -3,7 +3,7 @@
 import unittest
 
 from aiko_pet.games.tic_tac_toe import TicTacToe
-from aiko_pet.ui.windows.tic_tac_toe_sequence import TicTacToeSequence
+from aiko_pet.presentation.games.tic_tac_toe_sequence import TicTacToeSequence
 from tools.reaction_test_support import FakeScheduler
 
 

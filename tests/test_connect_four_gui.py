@@ -91,7 +91,7 @@ class ConnectFourGuiTests(unittest.TestCase):
         self.executor = Mock(spec=Executor)
         self.executor.submit.side_effect = self.bot_move
         self.enterContext(patch(
-            "aiko_pet.ui.windows.connect_four_sequence.ThreadPoolExecutor",
+            "aiko_pet.presentation.games.connect_four_sequence.ThreadPoolExecutor",
             return_value=self.executor,
         ))
         self.pet._hover.open_game(GameId.CONNECT_FOUR)

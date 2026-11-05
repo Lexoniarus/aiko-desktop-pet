@@ -7,8 +7,8 @@ from uuid import uuid4
 
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.rock_paper_scissors import Move, Outcome, RockPaperScissors, Round, Score
-from ..common.game_pacing import GAME_PACING
-from .game_presentation import GamePresentation
+from .pacing import GAME_PACING
+from .ports import GamePresentation
 from .rock_paper_scissors_dialogue import GameDialogue, countdown_line, outcome_event
 
 

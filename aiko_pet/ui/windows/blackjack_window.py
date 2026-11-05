@@ -15,10 +15,10 @@ from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .blackjack_motion import BlackjackMotion
-from .blackjack_sequence import BlackjackSequence
+from ...presentation.games.blackjack_sequence import BlackjackSequence
 from .game_contracts import GameCardPorts
 from .game_panel import GamePanel
-from .game_presentation import GamePresentation
+from ...presentation.games.ports import GamePresentation
 from .game_waiting import GameWaiting
 
 

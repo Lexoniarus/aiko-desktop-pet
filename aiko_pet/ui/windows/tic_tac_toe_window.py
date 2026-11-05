@@ -15,8 +15,8 @@ from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
 from .game_panel import GamePanel
-from .game_presentation import GamePresentation
-from .tic_tac_toe_sequence import TicTacToeSequence
+from ...presentation.games.ports import GamePresentation
+from ...presentation.games.tic_tac_toe_sequence import TicTacToeSequence
 
 
 class TicTacToeWindow:

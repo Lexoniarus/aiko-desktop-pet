@@ -3,7 +3,7 @@
 import unittest
 
 from aiko_pet.games.mastermind import MastermindSession
-from aiko_pet.ui.windows.mastermind_sequence import MastermindSequence
+from aiko_pet.presentation.games.mastermind_sequence import MastermindSequence
 from tools.reaction_test_support import FakeScheduler
 
 SECRET = ("red", "red", "blue", "green")

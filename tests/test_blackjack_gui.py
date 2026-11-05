@@ -32,7 +32,7 @@ class BlackjackGuiTests(unittest.TestCase):
 
     def open_game(self, game):
         with patch(
-            'aiko_pet.ui.windows.blackjack_sequence.Blackjack', return_value=game,
+            'aiko_pet.presentation.games.blackjack_sequence.Blackjack', return_value=game,
         ):
             self.pet._hover.open_game(GameId.BLACKJACK)
         window = self.pet._hover.game_window
