@@ -60,6 +60,12 @@ state.json
 *.log
 logs/
 
+# Reproducible room builds and downloaded browser runtime (never user saves).
+/web/node_modules/
+/web/dist-*/
+/web/.runtime/
+/dist-room/
+
 # External fonts and generated distributions are not source assets
 *.ttf
 *.otf
