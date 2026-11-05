@@ -54,7 +54,11 @@ On 2026-11-05 the owner confirmed profile installation and opening the room on
 the target iPad. They reported incorrect room transitions, bubble placement and
 some literal question marks, unreliable drag-and-drop, jerky motion, scale/depth
 and furniture overlap, and missing desktop-equivalent game presentation/assets.
-These remain open acceptance findings. No broad touch/game parity pass is claimed.
+The correction build **0.1.0-ff6d7142a7cc** implements fixes for these findings;
+its headless touch/game and offline checks are recorded in
+[verification](VERIFICATION.md#room-and-game-correction-build-2026-11-05).
+Device acceptance remains open until the owner rechecks the same findings on
+the iPad. No Safari frame-rate or pixel-identical desktop parity pass is claimed.
 
 Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
