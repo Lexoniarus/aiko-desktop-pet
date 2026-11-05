@@ -13,8 +13,9 @@ export class GameFrame {
   readonly element = element('section', 'game-view');
   readonly content = element('div', 'game-content');
   readonly score = element('p', 'game-score');
+  readonly status = element('p', 'game-state');
   constructor(readonly command: Command) {
-    this.element.append(this.score, this.content);
+    this.element.append(this.score, this.status, this.content);
   }
   action(name: string, value?: unknown): void {
     void this.command('game_action', { action: name, value });

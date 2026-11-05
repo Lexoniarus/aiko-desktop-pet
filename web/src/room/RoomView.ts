@@ -4,6 +4,7 @@ import { Viewport } from 'pixi-viewport';
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import { AikoView } from './AikoView';
 import type { Clip } from './AikoView';
+import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
 import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
@@ -58,14 +59,10 @@ export class RoomView {
   private objects = new Map<string, { sprite: Sprite; item: WorldItem }>();
   private snapshot?: RoomSnapshot;
   private motion = new RoomMotion();
+  private disposed = false;
+  private followers = new Set<(bounds: PetScreenBounds) => void>();
   draggingInstance?: string;
   private petTapBlockedUntil = 0;
-  onPetScreenChange: (bounds: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) => void = () => {};
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   private resizeObserver?: ResizeObserver;
@@ -215,6 +212,7 @@ export class RoomView {
       const asset = this.assets.items[item.definition_id];
       if (!asset) continue;
       const texture = await Assets.load<Texture>(new URL(asset.file, this.root).href);
+      if (this.disposed) return;
       if (this.objects.has(item.instance_id)) continue;
       if (
         !this.snapshot?.objects.some(
@@ -253,7 +251,7 @@ export class RoomView {
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.scale.set(depthScale(point.depth) * size);
     this.shadow.zIndex = this.aiko.zIndex - 0.1;
-    this.onPetScreenChange(this.aiko.screenBounds());
+    for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
     for (const { sprite, item } of this.objects.values()) {
       const position = item.position;
@@ -292,6 +290,23 @@ export class RoomView {
   suppressPetTap(): void {
     this.petTapBlockedUntil = performance.now() + 350;
   }
+  followPet(callback: (bounds: PetScreenBounds) => void): () => void {
+    this.followers.add(callback);
+    return () => this.followers.delete(callback);
+  }
+  frameForGame(): void {
+    const point = this.petPosition;
+    if (!point) return;
+    const desired = Math.min(
+      this.host.clientWidth * 0.35,
+      Math.max(160, this.host.clientWidth - 560) * 0.7,
+    );
+    const offset =
+      (((this.host.clientWidth / 2 - desired) / this.viewport.scale.x) *
+        depthScale(0.9)) /
+      depthScale(point.depth);
+    this.camera.lookAt(point.x + offset);
+  }
   floorPoint(
     clientX: number,
     clientY: number,
@@ -326,6 +341,8 @@ export class RoomView {
     return this.snapshot?.room.pet;
   }
   destroy(): void {
+    this.disposed = true;
+    this.followers.clear();
     this.resizeObserver?.disconnect();
     this.app.destroy(true, { children: true });
   }

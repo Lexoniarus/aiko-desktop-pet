@@ -1,4 +1,5 @@
 import './room.css';
+import './games/games.css';
 import { BrowserRoomClient } from './platforms/browser/BrowserRoomClient';
 import { BrowserLifecycle } from './platforms/browser/BrowserLifecycle';
 import type { RoomReply } from './bridge/RoomClient';

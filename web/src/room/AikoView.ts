@@ -13,6 +13,15 @@ export interface Clip {
   anchor: [number, number];
   duration: number;
 }
+export interface PetScreenBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  originX: number;
+  originY: number;
+  scale: number;
+}
 export class AikoView extends Container {
   private sprite = new AnimatedSprite([Texture.EMPTY]);
   private clipName = '';
@@ -156,13 +165,25 @@ export class AikoView extends Container {
     );
     this.hitArea = this.frameBounds;
   }
-  screenBounds(): { x: number; y: number; width: number; height: number } {
+  screenBounds(): PetScreenBounds {
     const top = this.toGlobal({ x: this.frameBounds.x, y: this.frameBounds.y });
     const bottom = this.toGlobal({
       x: this.frameBounds.right,
       y: this.frameBounds.bottom,
     });
-    return { x: top.x, y: top.y, width: bottom.x - top.x, height: bottom.y - top.y };
+    const clip = this.clips[this.clipName]!;
+    const origin = this.toGlobal({ x: -clip.anchor[0] * 2, y: -clip.anchor[1] * 2 });
+    const zero = this.toGlobal({ x: 0, y: 0 }),
+      unit = this.toGlobal({ x: 2, y: 0 });
+    return {
+      x: top.x,
+      y: top.y,
+      width: bottom.x - top.x,
+      height: bottom.y - top.y,
+      originX: origin.x,
+      originY: origin.y,
+      scale: unit.x - zero.x,
+    };
   }
   override destroy(): void {
     this.disposed = true;

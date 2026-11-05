@@ -32,7 +32,7 @@ export class SpeechBubbles {
     this.find.className = 'speech-find';
     this.element.hidden = this.find.hidden = true;
     host.append(this.element, this.find);
-    room.onPetScreenChange = (bounds) => this.position(bounds);
+    room.followPet((bounds) => this.position(bounds));
   }
 
   update(snapshot: RoomSnapshot): void {

@@ -2,16 +2,22 @@ import { element } from '../ui/dom';
 import type { Command } from '../ui/dom';
 import { GameFrame } from './GameView';
 import type { GameView } from './GameView';
+import type { RoomArtwork } from '../ui/RoomArtwork';
 
 export class RockPaperScissorsView extends GameFrame implements GameView {
-  private hands = element('div', 'rps-hands');
+  private hand = element('div', 'rps-player-hand');
+  private face = element('img');
+  private waiting = element('span', '', 'Wähle deine Hand');
   private choices: HTMLButtonElement[] = [];
   constructor(
     command: Command,
-    private root: string,
+    private art: RoomArtwork,
   ) {
     super(command);
-    this.content.append(this.hands);
+    this.element.dataset.game = 'rps';
+    this.hand.style.backgroundImage = `url("${art.game('rps-mat')}")`;
+    this.face.hidden = true;
+    this.hand.append(this.face, this.waiting);
     const choices = element('div', 'rps-choices');
     for (const [id, label] of [
       ['rock', 'Stein'],
@@ -19,39 +25,33 @@ export class RockPaperScissorsView extends GameFrame implements GameView {
       ['scissors', 'Schere'],
     ]) {
       const control = element('button', '', label!);
-      const image = element('img');
-      image.src = new URL(`assets/game_hands/${id}.png`, root).href;
-      image.alt = '';
+      const image = art.image(art.icon(`play_rps_${id}`, 64));
       control.prepend(image);
       control.addEventListener('click', () => this.action('choose', id));
       choices.append(control);
       this.choices.push(control);
     }
-    this.content.append(choices);
+    this.content.append(choices, element('h3', '', 'Deine Hand'), this.hand);
   }
   update(data: Record<string, unknown>): void {
     this.scoreline(data.score);
-    this.hands.replaceChildren();
     const labels: Record<string, string> = {
       rock: 'Stein',
       paper: 'Papier',
       scissors: 'Schere',
     };
-    for (const [owner, key] of [
-      ['Du', 'player'],
-      ['Aiko', 'aiko'],
-    ]) {
-      const hand = element('div', 'rps-hand');
-      hand.append(element('strong', '', owner!));
-      const value = data[key!];
-      if (typeof value === 'string') {
-        const image = element('img');
-        image.src = new URL(`assets/game_hands/${value}.png`, this.root).href;
-        image.alt = labels[value] ?? value;
-        hand.append(image);
-      } else hand.append(element('span', '', '?'));
-      this.hands.append(hand);
+    const value = typeof data.player === 'string' ? data.player : undefined;
+    this.face.hidden = !value;
+    this.waiting.hidden = !!value;
+    if (value) {
+      this.face.src = this.art.icon(`play_rps_${value}`);
+      this.face.alt = labels[value] ?? value;
     }
+    this.status.textContent = data.busy
+      ? 'Schere … Stein … Papier …'
+      : value
+        ? `Deine Hand: ${labels[value]}`
+        : 'Wähle deine Hand.';
     for (const control of this.choices) control.disabled = !!data.busy;
   }
 }

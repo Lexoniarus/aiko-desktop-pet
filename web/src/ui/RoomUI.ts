@@ -18,6 +18,7 @@ import { ConnectFourView } from '../games/ConnectFourView';
 import { MastermindView } from '../games/MastermindView';
 import { QuizView } from '../games/QuizView';
 import type { GameView } from '../games/GameView';
+import { GameProps } from '../games/GameProps';
 import { button, element } from './dom';
 import type { Command } from './dom';
 
@@ -25,6 +26,7 @@ export class RoomUI {
   private toolbar = element('nav', 'room-toolbar');
   private speech: SpeechBubbles;
   private artwork: RoomArtwork;
+  private props: GameProps;
   private panel = element('dialog', 'room-panel');
   private panelBody = element('div', 'panel-body');
   private title = element('h2');
@@ -52,6 +54,7 @@ export class RoomUI {
     this.artwork = new RoomArtwork(room.root, room.assets.ui);
     this.artwork.apply(host);
     this.speech = new SpeechBubbles(host, room, command);
+    this.props = new GameProps(host, room, this.artwork, command);
     if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
     for (const [name, label] of [
@@ -193,6 +196,7 @@ export class RoomUI {
     this.pet.disabled = !!snapshot.game;
     this.sleep.disabled = !!snapshot.game;
     this.speech.update(snapshot);
+    this.props.update(snapshot);
     if (this.activePanel) this.activePanel.update(snapshot);
     const id = String(snapshot.game?.id ?? '');
     if (id !== this.gameId) {
@@ -202,20 +206,22 @@ export class RoomUI {
       this.gameSignature = '';
       const types: Record<string, () => GameView> = {
         rock_paper_scissors: () =>
-          new RockPaperScissorsView(this.command, this.room.root),
-        tic_tac_toe: () => new TicTacToeView(this.command),
-        blackjack: () => new BlackjackView(this.command, this.room.root),
-        connect_four: () => new ConnectFourView(this.command),
-        mastermind: () => new MastermindView(this.command),
-        quiz: () => new QuizView(this.command),
+          new RockPaperScissorsView(this.command, this.artwork),
+        tic_tac_toe: () => new TicTacToeView(this.command, this.artwork),
+        blackjack: () => new BlackjackView(this.command, this.artwork),
+        connect_four: () => new ConnectFourView(this.command, this.artwork),
+        mastermind: () => new MastermindView(this.command, this.artwork),
+        quiz: () => new QuizView(this.command, this.artwork),
       };
       if (id && types[id]) {
+        this.room.frameForGame();
         this.game = types[id]!();
         this.open('games');
       } else {
         if (this.panelName === 'games') this.open('games');
       }
     }
+    this.panel.classList.toggle('game-panel', !!id);
     if (this.game && snapshot.game) {
       const signature = JSON.stringify(snapshot.game);
       if (signature !== this.gameSignature) {

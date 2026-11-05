@@ -23,7 +23,7 @@ export class RoomArtwork {
   }
   image(src: string, alt = '', className = ''): HTMLImageElement {
     const image = element('img', className);
-    image.src = src;
+    if (src) image.src = src;
     image.alt = alt;
     image.draggable = false;
     return image;
