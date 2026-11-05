@@ -120,8 +120,10 @@ export class AikoView extends Container {
   }
   async warmWalking(): Promise<void> {
     const names = [
-      'body-step-right-04',
-      'body-step-left-12',
+      'body-step-right-profil',
+      'body-step-left-profil',
+      'body-orient-right',
+      'body-orient-left',
       'body-look-right',
       'body-look-left',
     ];
