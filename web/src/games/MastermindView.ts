@@ -91,7 +91,13 @@ export class MastermindView extends GameFrame implements GameView {
         finish: (x, y, dragged, cancelled) => {
           this.ghost?.remove();
           this.ghost = undefined;
-          if (!dragged || cancelled || !this.editable) return;
+          if (cancelled || !this.editable) return;
+          // The stable capture owner receives pointerup, so dispatch the short
+          // tap to its original control explicitly instead of losing the click.
+          if (!dragged) {
+            control.click();
+            return;
+          }
           const target = document
             .elementFromPoint(x, y)
             ?.closest<HTMLElement>('[data-mm-slot]');

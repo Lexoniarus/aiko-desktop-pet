@@ -185,12 +185,12 @@
 .c4-columns {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  width: 58.333%;
+  width: 100%;
   margin: 0 auto;
   gap: 0;
 }
 .c4-columns button {
-  min-width: 0;
+  min-width: max(44px, calc(44px / var(--ui-scale, 1)));
   margin: 0;
   padding: 0 !important;
   font-size: 12px;
