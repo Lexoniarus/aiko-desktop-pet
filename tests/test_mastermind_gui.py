@@ -250,7 +250,7 @@ class MastermindGuiTests(unittest.TestCase):
         attrs.assert_called_once_with("-topmost", False)
         self.assertFalse(self.pet.settings.always_on_top)
         self.assertFalse(self.pet._overlay_stack.enabled)
-        self.pet.settings.scale = 2
+        self.pet.toggle_scale()
         self.pet._game_visuals.move()
         self.pet.root.update()
         self.assertEqual(self.code.canvas.winfo_width(), 296)
