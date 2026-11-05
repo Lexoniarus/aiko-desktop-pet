@@ -13,6 +13,7 @@ export interface RoomSnapshot {
   facing: number;
   game: Record<string, unknown> | null;
   catalog: Record<string, unknown>;
+  social?: unknown;
   error: string | null;
 }
 export interface RoomClient {
