@@ -70,6 +70,11 @@ class BlackjackSequence:
             self._cancel(self.pending_timer)
             self._next()
 
+    @property
+    def dealer_revealed(self) -> bool:
+        """Whether presentation adapters may expose the original hole-card face."""
+        return self._dealer_revealed
+
     def _move(
         self, kind: str, card: Card | None, index: int, done: Callable[[], None],
     ) -> None:

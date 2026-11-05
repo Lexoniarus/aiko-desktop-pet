@@ -12,6 +12,7 @@ import {
   validateManifest,
 } from '../src/platforms/browser/PackageImporter.ts';
 import { validatePublishedPackage } from '../src/platforms/browser/PublishedPackage.ts';
+import { RoomMotion } from '../src/room/RoomMotion.ts';
 
 test('room projection round-trips depth at the wrap boundary', () => {
   for (const [x, depth, center] of [
@@ -25,6 +26,15 @@ test('room projection round-trips depth at the wrap boundary', () => {
   }
   assert.equal(wrap(-10), 5090);
   assert.ok(depthScale(1.55) > depthScale(0.9));
+});
+
+test('display motion interpolates the short wrap and does not restart for repeated snapshots', () => {
+  const motion = new RoomMotion();
+  motion.receive({ x: 5080, depth: 0.9 }, 1000);
+  motion.receive({ x: 20, depth: 1.1 }, 1250);
+  assert.deepEqual(motion.position(1375), { x: 0, depth: 1 });
+  motion.receive({ x: 20, depth: 1.1 }, 1375);
+  assert.deepEqual(motion.position(1500), { x: 20, depth: 1.1 });
 });
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [

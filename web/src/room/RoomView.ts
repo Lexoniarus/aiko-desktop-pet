@@ -1,13 +1,21 @@
-import { Application, Assets, Container, Sprite, Texture } from 'pixi.js';
+import { Application, Assets, Container, Sprite, Texture, Graphics } from 'pixi.js';
 import type { FederatedPointerEvent } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import { AikoView } from './AikoView';
 import type { Clip } from './AikoView';
+import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
+import { RoomMotion } from './RoomMotion';
 import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
 
 export interface AssetManifest {
+  characterHeight: number;
+  obstacles: [number, number, number, number][];
+  ui: {
+    icons: Record<string, Record<string, string>>;
+    surfaces: Record<string, string>;
+  };
   clips: Record<string, Clip>;
   items: Record<
     string,
@@ -16,6 +24,8 @@ export interface AssetManifest {
       label: string;
       pivot: [number, number];
       states?: Record<string, string>;
+      size?: number;
+      dimensions: [number, number];
     }
   >;
   room: Record<string, string>;
@@ -43,9 +53,17 @@ export class RoomView {
   camera!: RoomCamera;
   private world = new Container();
   private aiko!: AikoView;
+  private shadow = new Graphics()
+    .ellipse(0, -3, 60, 8)
+    .fill({ color: 0x1b3a5d, alpha: 0.2 });
   private viewport!: Viewport;
   private objects = new Map<string, { sprite: Sprite; item: WorldItem }>();
   private snapshot?: RoomSnapshot;
+  private motion = new RoomMotion();
+  private disposed = false;
+  private followers = new Set<(bounds: PetScreenBounds) => void>();
+  draggingInstance?: string;
+  private petTapBlockedUntil = 0;
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   private resizeObserver?: ResizeObserver;
@@ -115,6 +133,15 @@ export class RoomView {
     ]) {
       ctx.fillRect(1800 + x!, y!, w!, h!);
     }
+    // The v16 reference uses narrow architectural pillars at every panel join,
+    // including both ends of the 360-degree loop. Keep art coordinates intact.
+    for (const x of [0, 1800, 3600, 5100]) {
+      ctx.fillStyle = '#e7e3f0';
+      ctx.strokeStyle = '#a1abc6';
+      ctx.lineWidth = 2;
+      ctx.fillRect(x - 18, 53, 36, 749);
+      ctx.strokeRect(x - 18, 53, 36, 749);
+    }
     const texture = Texture.from(background);
     const furnitureTextures = new Map<string, Texture>();
     for (const [name, definition] of Object.entries(cutouts)) {
@@ -143,8 +170,10 @@ export class RoomView {
       }
     }
     this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
-    this.aiko.on('pointertap', () => this.onPetTap());
-    this.world.addChild(this.aiko);
+    this.aiko.on('pointertap', () => {
+      if (performance.now() > this.petTapBlockedUntil) this.onPetTap();
+    });
+    this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
     this.resizeObserver = new ResizeObserver(() =>
       this.camera.resize(this.host.clientWidth, this.host.clientHeight),
@@ -157,7 +186,13 @@ export class RoomView {
 
   async update(snapshot: RoomSnapshot): Promise<void> {
     this.snapshot = snapshot;
-    void this.aiko.show(snapshot.animation, snapshot.animation_id);
+    this.motion.receive(snapshot.room.pet);
+    void this.aiko.show(
+      snapshot.animation,
+      snapshot.animation_id,
+      snapshot.animation_timings,
+      snapshot.animation_hold_frame,
+    );
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
     const live = new Set(
       snapshot.objects
@@ -178,6 +213,7 @@ export class RoomView {
       const asset = this.assets.items[item.definition_id];
       if (!asset) continue;
       const texture = await Assets.load<Texture>(new URL(asset.file, this.root).href);
+      if (this.disposed) return;
       if (this.objects.has(item.instance_id)) continue;
       if (
         !this.snapshot?.objects.some(
@@ -205,16 +241,25 @@ export class RoomView {
     const snapshot = this.snapshot;
     if (!snapshot) return;
     const center = this.viewport.center.x;
-    const point = snapshot.room.pet;
+    const point = this.motion.position() ?? snapshot.room.pet;
     this.aiko.position.set(projectX(point.x, point.depth, center), feetY(point.depth));
     const settings = snapshot.catalog.settings as Record<string, unknown>;
     const size = settings.scale === 2 ? 1.25 : 1;
-    this.aiko.scale.set((400 / 416) * depthScale(point.depth) * size);
+    this.aiko.scale.set(
+      (400 / this.assets.characterHeight) * depthScale(point.depth) * size,
+    );
     this.aiko.zIndex = feetY(point.depth);
+    this.shadow.position.copyFrom(this.aiko.position);
+    this.shadow.scale.set(depthScale(point.depth) * size);
+    this.shadow.zIndex = this.aiko.zIndex - 0.1;
+    for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
     for (const { sprite, item } of this.objects.values()) {
       const position = item.position;
-      sprite.visible = position !== null && item.state !== 'pet_held';
+      sprite.visible =
+        position !== null &&
+        item.state !== 'pet_held' &&
+        item.instance_id !== this.draggingInstance;
       if (!position) continue;
       const depth = depths.get(item.instance_id) ?? 0.9;
       sprite.position.set(
@@ -231,6 +276,75 @@ export class RoomView {
     const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
     return unproject(world.x, world.y, this.viewport.center.x);
   }
+  petContains(clientX: number, clientY: number): boolean {
+    const box = this.app.canvas.getBoundingClientRect();
+    const bounds = this.aiko.screenBounds();
+    const x = clientX - box.left,
+      y = clientY - box.top;
+    return (
+      x >= bounds.x &&
+      x <= bounds.x + bounds.width &&
+      y >= bounds.y &&
+      y <= bounds.y + bounds.height
+    );
+  }
+  suppressPetTap(): void {
+    this.petTapBlockedUntil = performance.now() + 350;
+  }
+  portionSize(definition: string, x: number, y: number): [number, number] {
+    const dimensions = this.assets.items[definition]?.dimensions ?? [72, 72];
+    const factor =
+      this.viewport.scale.x *
+      depthScale(this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 0.9);
+    return [dimensions[0]! * factor, dimensions[1]! * factor];
+  }
+  followPet(callback: (bounds: PetScreenBounds) => void): () => void {
+    this.followers.add(callback);
+    return () => this.followers.delete(callback);
+  }
+  frameForGame(): void {
+    this.camera.setGame(true);
+    const point = this.petPosition;
+    if (!point) return;
+    const desired = this.camera.portraitGame
+      ? this.host.clientWidth * 0.5
+      : Math.min(
+          this.host.clientWidth * 0.35,
+          Math.max(160, this.host.clientWidth - 560) * 0.7,
+        );
+    const offset =
+      (((this.host.clientWidth / 2 - desired) / this.viewport.scale.x) *
+        depthScale(0.9)) /
+      depthScale(point.depth);
+    this.camera.lookAt(point.x + offset);
+  }
+  floorPoint(
+    clientX: number,
+    clientY: number,
+  ): { x: number; depth: number } | undefined {
+    const box = this.app.canvas.getBoundingClientRect();
+    if (
+      clientX < box.left ||
+      clientX > box.right ||
+      clientY < box.top ||
+      clientY > box.bottom
+    )
+      return;
+    const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
+    if (world.y < feetY(0.2) || world.y > feetY(1.55)) return;
+    const point = this.pointAt(clientX, clientY);
+    if (
+      this.assets.obstacles.some(
+        ([left, right, back, front]) =>
+          point.x >= left &&
+          point.x <= right &&
+          point.depth >= back &&
+          point.depth <= front,
+      )
+    )
+      return;
+    return point;
+  }
   callPoint(): { x: number; depth: number } {
     return { x: wrap(this.viewport.center.x), depth: 1.1 };
   }
@@ -238,6 +352,8 @@ export class RoomView {
     return this.snapshot?.room.pet;
   }
   destroy(): void {
+    this.disposed = true;
+    this.followers.clear();
     this.resizeObserver?.disconnect();
     this.app.destroy(true, { children: true });
   }

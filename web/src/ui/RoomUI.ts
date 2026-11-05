@@ -8,6 +8,8 @@ import { WishPanel } from './WishPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { CreditsPanel } from './CreditsPanel';
 import { UpdateControls } from './UpdateControls';
+import { SpeechBubbles } from './SpeechBubbles';
+import { RoomArtwork } from './RoomArtwork';
 import type { RoomUpdates } from '../bridge/RoomUpdates';
 import { RockPaperScissorsView } from '../games/RockPaperScissorsView';
 import { TicTacToeView } from '../games/TicTacToeView';
@@ -16,17 +18,15 @@ import { ConnectFourView } from '../games/ConnectFourView';
 import { MastermindView } from '../games/MastermindView';
 import { QuizView } from '../games/QuizView';
 import type { GameView } from '../games/GameView';
+import { GameProps } from '../games/GameProps';
 import { button, element } from './dom';
 import type { Command } from './dom';
 
 export class RoomUI {
   private toolbar = element('nav', 'room-toolbar');
-  private dialogue = element('div', 'room-speech');
-  private text = element('p');
-  private emote = element('img', 'speech-emote');
-  private next = button('Weiter', () => {
-    void this.command('speech_next');
-  });
+  private speech: SpeechBubbles;
+  private artwork: RoomArtwork;
+  private props: GameProps;
   private panel = element('dialog', 'room-panel');
   private panelBody = element('div', 'panel-body');
   private title = element('h2');
@@ -36,7 +36,6 @@ export class RoomUI {
   private game: GameView | undefined;
   private gameId = '';
   private gameSignature = '';
-  private speechId = -1;
   private updates?: UpdateControls;
   private pet = button('Streicheln', () => {
     void this.command('care', { action: 'pet' });
@@ -52,6 +51,10 @@ export class RoomUI {
     private command: Command,
     updates?: RoomUpdates,
   ) {
+    this.artwork = new RoomArtwork(room.root, room.assets.ui);
+    this.artwork.apply(host);
+    this.speech = new SpeechBubbles(host, room, command);
+    this.props = new GameProps(host, room, this.artwork, command);
     if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
     for (const [name, label] of [
@@ -72,9 +75,6 @@ export class RoomUI {
         void command('call', room.callPoint());
       }),
     );
-    this.dialogue.setAttribute('aria-live', 'polite');
-    this.dialogue.append(this.emote, this.text, this.next);
-    this.dialogue.hidden = true;
     this.status.setAttribute('role', 'status');
     const care = element('div', 'quick-care');
     care.append(
@@ -100,11 +100,10 @@ export class RoomUI {
     });
     drag.onDragBegin = () => {
       this.panel.close();
-      this.host.append(this.dialogue);
       this.panelName = '';
       this.activePanel = undefined;
     };
-    host.append(this.toolbar, care, this.dialogue, this.panel, this.status);
+    host.append(this.toolbar, care, this.panel, this.status);
   }
   private open(name: string): void {
     const snapshot = this.snapshot;
@@ -114,7 +113,6 @@ export class RoomUI {
       return;
     }
     this.panelName = name;
-    this.panel.insertBefore(this.dialogue, this.panelBody);
     this.activePanel = undefined;
     this.panelBody.replaceChildren();
     const titles: Record<string, string> = {
@@ -163,28 +161,43 @@ export class RoomUI {
     if (name === 'credits')
       this.panelBody.append(new CreditsPanel(snapshot, this.room.root).element);
     if (name === 'games') {
-      if (this.game) this.panelBody.append(this.game.element);
-      else
-        for (const [id, label] of [
-          ['rock_paper_scissors', 'Schere–Stein–Papier'],
-          ['tic_tac_toe', 'Tic-Tac-Toe'],
-          ['blackjack', 'Blackjack'],
-          ['connect_four', 'Vier gewinnt'],
-          ['mastermind', 'Mastermind'],
-          ['quiz', 'Quiz'],
-        ])
-          this.panelBody.append(
-            button(label!, () => {
-              void this.command('game_open', { id });
-            }),
-          );
+      const games = [
+        ['rock_paper_scissors', 'Schere–Stein–Papier'],
+        ['tic_tac_toe', 'Tic-Tac-Toe'],
+        ['blackjack', 'Blackjack'],
+        ['connect_four', 'Vier gewinnt'],
+        ['mastermind', 'Mastermind'],
+        ['quiz', 'Quiz'],
+      ];
+      if (this.game) {
+        this.title.textContent =
+          games.find(([id]) => id === this.gameId)?.[1] ?? 'Spielen';
+        this.panelBody.append(this.game.element);
+      } else {
+        const menu = element('div', 'game-menu');
+        const icons: Record<string, string> = {
+          rock_paper_scissors: this.artwork.icon('game_rps', 64),
+          tic_tac_toe: this.artwork.icon('game_tic_tac_toe', 64),
+          blackjack: this.artwork.game('blackjack-table'),
+          connect_four: this.artwork.game('c4-board'),
+          mastermind: this.artwork.game('mm-blue'),
+          quiz: this.artwork.game('quiz-emblem'),
+        };
+        for (const [id, label] of games) {
+          const control = button(label!, () => {
+            void this.command('game_open', { id });
+          });
+          control.prepend(this.artwork.image(icons[id!]!));
+          menu.append(control);
+        }
+        this.panelBody.append(menu);
+      }
     }
     if (!this.panel.open) this.panel.show();
   }
   private close(): void {
     if (this.gameId) void this.command('game_close');
     this.panel.close();
-    this.host.append(this.dialogue);
     this.panelName = '';
     this.activePanel = undefined;
   }
@@ -198,26 +211,8 @@ export class RoomUI {
     this.sleep.textContent = snapshot.pet.sleeping ? 'Aufwecken' : 'Schlafen';
     this.pet.disabled = !!snapshot.game;
     this.sleep.disabled = !!snapshot.game;
-    const speech = snapshot.speech;
-    this.text.textContent = speech.text;
-    this.emote.hidden = !speech.emote;
-    if (speech.emote) {
-      this.emote.src = new URL(
-        `assets/emotes/emote_${speech.emote}.png`,
-        this.room.root,
-      ).href;
-      this.emote.alt = 'Aikos Reaktion';
-    }
-    this.dialogue.hidden = !speech.text && !speech.emote;
-    this.next.hidden = !speech.story;
-    if (speech.text && speech.id !== this.speechId && !document.hidden) {
-      requestAnimationFrame(() => {
-        if (this.dialogue.getClientRects().length) {
-          this.speechId = speech.id;
-          void this.command('speech_ack', { id: speech.id });
-        }
-      });
-    }
+    this.speech.update(snapshot);
+    this.props.update(snapshot);
     if (this.activePanel) this.activePanel.update(snapshot);
     const id = String(snapshot.game?.id ?? '');
     if (id !== this.gameId) {
@@ -227,21 +222,23 @@ export class RoomUI {
       this.gameSignature = '';
       const types: Record<string, () => GameView> = {
         rock_paper_scissors: () =>
-          new RockPaperScissorsView(this.command, this.room.root),
-        tic_tac_toe: () => new TicTacToeView(this.command),
-        blackjack: () => new BlackjackView(this.command, this.room.root),
-        connect_four: () => new ConnectFourView(this.command),
-        mastermind: () => new MastermindView(this.command),
-        quiz: () => new QuizView(this.command),
+          new RockPaperScissorsView(this.command, this.artwork),
+        tic_tac_toe: () => new TicTacToeView(this.command, this.artwork),
+        blackjack: () => new BlackjackView(this.command, this.artwork),
+        connect_four: () => new ConnectFourView(this.command, this.artwork),
+        mastermind: () => new MastermindView(this.command, this.artwork),
+        quiz: () => new QuizView(this.command, this.artwork),
       };
       if (id && types[id]) {
+        this.room.frameForGame();
         this.game = types[id]!();
         this.open('games');
       } else {
-        if (!this.panel.open) this.host.append(this.dialogue);
+        this.room.camera.setGame(false);
         if (this.panelName === 'games') this.open('games');
       }
     }
+    this.panel.classList.toggle('game-panel', !!id);
     if (this.game && snapshot.game) {
       const signature = JSON.stringify(snapshot.game);
       if (signature !== this.gameSignature) {

@@ -2,15 +2,24 @@ import { button, element } from '../ui/dom';
 import type { Command } from '../ui/dom';
 import { GameFrame, record, values } from './GameView';
 import type { GameView } from './GameView';
+import type { RoomArtwork } from '../ui/RoomArtwork';
 
 export class QuizView extends GameFrame implements GameView {
   private question = element('h3');
   private answers = element('div', 'quiz-answers');
   private explanation = element('p', 'quiz-explanation');
   private nextButton = button('Weiter', () => this.action('next'));
-  constructor(command: Command) {
+  constructor(command: Command, art: RoomArtwork) {
     super(command);
-    this.content.append(this.question, this.answers, this.explanation, this.nextButton);
+    this.element.dataset.game = 'quiz';
+    const stage = element('div', 'quiz-stage');
+    stage.style.backgroundImage = `url("${art.game('quiz-stage')}")`;
+    stage.append(art.image(art.game('quiz-emblem'), 'Aikos Quiz'), this.question);
+    this.content.append(stage, this.answers, this.explanation, this.nextButton);
+    this.answers.style.setProperty(
+      '--quiz-answer',
+      `url("${art.surface('button_normal.quiz_answer')}")`,
+    );
   }
   update(data: Record<string, unknown>): void {
     this.score.textContent = `Frage ${Number(data.index ?? 0) + 1} von 10 · ${data.score ?? 0} richtig`;

@@ -26,7 +26,9 @@ class RoomPlayback:
     """One serial timer queue; unread/unshown dialogue cannot earn completion."""
 
     def __init__(
-        self, catalog: CharacterCatalog, *,
+        self,
+        catalog: CharacterCatalog,
+        *,
         social_completed: Callable[[SocialCompletion], None],
         mark_spoken: Callable[[], None],
         text_presented: Callable[[str], None] = lambda _event: None,
@@ -39,6 +41,7 @@ class RoomPlayback:
         self._text = self._emote = ""
         self._text_id = 0
         self._unshown = False
+        self._require_text_ack = True
         self._pending_event: str | None = None
         self._pending_wish: int | None = None
         self._text_presented, self._wish_presented = text_presented, wish_presented
@@ -48,14 +51,20 @@ class RoomPlayback:
         self._emote_id = 0
         self.can_express: Callable[[], bool] = lambda: False
         self.action_id = 0
+        self.action_timings: tuple[int, ...] | None = None
+        self.hold_frame: int | None = None
         self._action_timers: list[str] = []
         self.receive: Callable[[PlaybackEvent], None] = lambda _event: None
         self.player = ReactionPlayer(
-            schedule=self.schedule, cancel_timer=self.cancel_timer,
-            display_emote=self._display_emote, display_text=self._display_text,
+            schedule=self.schedule,
+            cancel_timer=self.cancel_timer,
+            display_emote=self._display_emote,
+            display_text=self._display_text,
             start_action=self.start_action,
-            mark_spoken=mark_spoken, is_closed=lambda: False,
-            hide_speech=self._hide, social_completed=social_completed,
+            mark_spoken=mark_spoken,
+            is_closed=lambda: False,
+            hide_speech=self._hide,
+            social_completed=social_completed,
             on_text=lambda event: setattr(self, "_pending_event", event),
             on_wish_text=lambda wish: setattr(self, "_pending_wish", wish),
             express=self.express,
@@ -75,8 +84,11 @@ class RoomPlayback:
             return
         end = self._now + max(0, seconds)
         for _ in range(512):
-            due = [(token, value) for token, value in self._timers.items()
-                   if value[0] <= end]
+            due = [
+                (token, value)
+                for token, value in self._timers.items()
+                if value[0] <= end
+            ]
             if not due:
                 break
             token, (deadline, callback) = min(due, key=lambda item: item[1][0])
@@ -88,11 +100,14 @@ class RoomPlayback:
         self._now = end
 
     def _display_text(self, text: str, _milliseconds: int) -> None:
+        self._emote_id += 1
         self._text, self._emote = text, ""
         self._text_id += 1
-        self._unshown = True
+        self._unshown = self._require_text_ack
 
     def _display_emote(self, emote: str, milliseconds: int) -> None:
+        self._text_id += 1
+        self._unshown = False
         self._emote, self._text = emote, ""
         self._emote_id += 1
         current = self._emote_id
@@ -145,26 +160,47 @@ class RoomPlayback:
         self._pending_event = None
         self._pending_wish = None
         self._display_text(text, milliseconds)
+        # Optional game commentary must not freeze movement, dealing, drops or
+        # input while Aiko is outside the independently controlled camera.
+        self._unshown = False
         current = self._text_id
-        self.schedule(milliseconds, lambda: self._hide()
-                      if self._text_id == current else None)
+        self.schedule(
+            milliseconds, lambda: self._hide() if self._text_id == current else None
+        )
 
     def emote(self, name: str, milliseconds: int) -> None:
         self._display_emote(name, milliseconds)
 
+    def silence(self) -> None:
+        self._hide()
+
     def snapshot(self) -> SpeechSnapshot:
-        return SpeechSnapshot(self._text, self._emote, self._text_id,
-                              self.player.active, self.player.story_active)
+        return SpeechSnapshot(
+            self._text,
+            self._emote,
+            self._text_id,
+            self.player.active,
+            self.player.story_active,
+        )
 
     def speak(
-        self, reaction: Reaction | None, *,
+        self,
+        reaction: Reaction | None,
+        *,
         completed: Callable[[bool], None] | None = None,
         subject: str | None = None,
         progress: Callable[[int], bool] | None = None,
         animate: bool = True,
+        require_presentation: bool = True,
     ) -> None:
-        self.player.play(reaction, on_complete=completed, subject=subject,
-                         on_progress=progress, animate=animate)
+        self._require_text_ack = require_presentation
+        self.player.play(
+            reaction,
+            on_complete=completed,
+            subject=subject,
+            on_progress=progress,
+            animate=animate,
+        )
 
     def stop_animation(self) -> None:
         self.action_id += 1
@@ -172,6 +208,52 @@ class RoomPlayback:
             self.cancel_timer(token)
         self._action_timers.clear()
         self.animation = "idle"
+        self.action_timings = None
+        self.hold_frame = None
+
+    @property
+    def now(self) -> float:
+        return self._now
+
+    def game_action(
+        self,
+        name: str,
+        duration: int | tuple[int, ...] | None,
+        marker: Callable[[int], None],
+        done: Callable[[], None],
+    ) -> None:
+        """Render the existing game marker contract without object/care effects."""
+        self.stop_animation()
+        self.express(None)
+        self.animation = name
+        clip = self._catalog.clip_for(name, 2)
+        timings = clip.timings
+        if isinstance(duration, tuple):
+            if len(duration) != len(timings):
+                raise ValueError("Game animation timing does not match the clip")
+            timings = duration
+        elif isinstance(duration, int):
+            total = sum(timings)
+            boundaries = [
+                round(sum(timings[:i]) * duration / total)
+                for i in range(len(timings) + 1)
+            ]
+            timings = tuple(b - a for a, b in zip(boundaries, boundaries[1:]))
+        self.action_timings = timings
+        elapsed = 0
+        for index, milliseconds in enumerate(timings):
+            self._action_timers.append(
+                self.schedule(elapsed, partial(marker, clip.sprite_index(index)))
+            )
+            elapsed += milliseconds
+        action = self.action_id
+
+        def complete() -> None:
+            if self.action_id == action:
+                self.stop_animation()
+                done()
+
+        self._action_timers.append(self.schedule(elapsed, complete))
 
     def start_action(self, name: str, _duration: float) -> None:
         self.play_animation(name)
@@ -185,21 +267,29 @@ class RoomPlayback:
         indices = list(range(len(clip.timings)))
         if name == "hold_item":
             indices = [len(clip.timings) - 1]
+            self.hold_frame = clip.sprite_index(indices[0])
         for index in indices:
             source = clip.sprite_index(index)
             events = clip.frames[source].events
             if name == "put_down":
                 events = ("detach_object",) if source == 2 else ()
             event = PlaybackEvent(action_id, self.animation, source, events, False)
-            self._action_timers.append(self.schedule(
-                elapsed, partial(self.receive, event),
-            ))
+            self._action_timers.append(
+                self.schedule(
+                    elapsed,
+                    partial(self.receive, event),
+                )
+            )
             elapsed += clip.timings[index]
-        final = PlaybackEvent(action_id, self.animation,
-                              clip.sprite_index(indices[-1]), (), True)
-        self._action_timers.append(self.schedule(
-            elapsed, lambda: self.receive(final),
-        ))
+        final = PlaybackEvent(
+            action_id, self.animation, clip.sprite_index(indices[-1]), (), True
+        )
+        self._action_timers.append(
+            self.schedule(
+                elapsed,
+                lambda: self.receive(final),
+            )
+        )
         return action_id
 
     def suspend(self) -> None:

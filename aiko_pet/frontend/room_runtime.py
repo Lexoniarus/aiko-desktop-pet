@@ -84,6 +84,7 @@ class RoomRuntime:
         self._wander: RoomPoint | None = None
         self._next_wander = 10.0
         self._offered: tuple[str, float, str] | None = None
+        self._dragged: tuple[str, WorldPosition, float] | None = None
         self.interaction = ObjectInteractionCoordinator(
             world,
             play=playback.play_animation,
@@ -130,6 +131,9 @@ class RoomRuntime:
         playback.receive = self.interaction.receive
         if world.snapshot().room is None:
             world.locate_in_room(RoomSpatialState())
+        safe_position = RoomGeometry.accessible(self.position)
+        if safe_position != self.position:
+            world.locate_in_room(replace(self.spatial, pet=safe_position))
 
     @property
     def spatial(self) -> RoomSpatialState:
@@ -171,12 +175,15 @@ class RoomRuntime:
             else None,
             subject=cue.record_id,
             animate=False,
+            require_presentation=False,
             completed=lambda done: self.interaction.receive_feedback(
                 FeedbackReceipt(cue.key, done),
             ),
         )
 
     def _can_acquire(self, instance: str) -> bool:
+        if self._dragged is not None and self._dragged[0] == instance:
+            return False
         item = self.world.get(instance)
         if item.position is None:
             return False
@@ -193,7 +200,9 @@ class RoomRuntime:
     def call(self, point: RoomPoint) -> None:
         if self.state.sleeping:
             raise ValueError("Aiko schläft gerade.")
-        self.interaction.interrupt(lambda: setattr(self, "_called", point))
+        self.interaction.interrupt(
+            lambda: setattr(self, "_called", RoomGeometry.accessible(point))
+        )
         self.awareness.intentions.cancel(self.now)
 
     def pause_route(self) -> None:
@@ -201,6 +210,8 @@ class RoomRuntime:
         self.moving = False
 
     def place(self, definition: str, point: RoomPoint) -> str:
+        if RoomGeometry.accessible(point) != point:
+            raise ValueError("Bitte die Portion auf dem freien Boden ablegen.")
         footprint = ObjectFootprint(24, 24)
         x = self.world.snapshot().surface.ground_x(point.x, footprint)
         item = self.world.place_resting(definition, x, footprint)
@@ -216,6 +227,8 @@ class RoomRuntime:
         )
 
     def relocate(self, instance: str, revision: int, point: RoomPoint) -> None:
+        if RoomGeometry.accessible(point) != point:
+            raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
         item = self.world.get(instance)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
@@ -225,7 +238,12 @@ class RoomRuntime:
         self.behavior.refresh_after_placement()
 
     def offer(self, definition: str) -> None:
-        if self._offered is not None or self.game_open() or self.state.sleeping:
+        if (
+            self._offered is not None
+            or self._dragged is not None
+            or self.game_open()
+            or self.state.sleeping
+        ):
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
         self.pause_route()
         x = self.world.snapshot().surface.ground_x(
@@ -237,7 +255,12 @@ class RoomRuntime:
         self._offered = item.instance_id, self.now, f"offer_{item.instance_id}"
 
     def offer_existing(self, instance: str, revision: int) -> None:
-        if self._offered is not None or self.game_open() or self.state.sleeping:
+        if (
+            self._offered is not None
+            or self._dragged is not None
+            or self.game_open()
+            or self.state.sleeping
+        ):
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
         self.pause_route()
         item = self.world.take_resting(instance, expected_revision=revision)
@@ -247,6 +270,61 @@ class RoomRuntime:
         )
         self._depth(instance, self.position.depth)
         self._offered = instance, self.now, f"offer_{instance}_{item.revision}"
+
+    def begin_drag(self, instance: str, revision: int) -> None:
+        if self._dragged is not None or self._offered is not None:
+            raise ValueError("Ein Gegenstand wird bereits gehalten.")
+
+        item = self.world.get(instance)
+        if item.position is None:
+            raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
+        original = item.position
+        self.world.take_resting(instance, expected_revision=revision)
+        self._dragged = instance, original, self.spatial.depth_for(instance)
+        if self.interaction.instance_id == instance:
+            self.interaction.interrupt(lambda: None)
+        self.behavior.refresh_after_placement()
+
+    def cancel_drag(self) -> None:
+        if self._dragged is None:
+            return
+        instance, position, depth = self._dragged
+        item = self.world.get(instance)
+        self.world.return_user_held(
+            instance, position.x, expected_revision=item.revision
+        )
+        self._depth(instance, depth)
+        self._dragged = None
+        self.behavior.refresh_after_placement()
+
+    def drop_drag(self, point: RoomPoint, *, offer: bool) -> None:
+        if self._dragged is None:
+            raise ValueError("Kein Gegenstand wird gezogen.")
+        if offer and (
+            self._offered is not None or self.game_open() or self.state.sleeping
+        ):
+            raise ValueError("Aiko kann gerade nichts entgegennehmen.")
+        if not offer and RoomGeometry.accessible(point) != point:
+            raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
+        instance = self._dragged[0]
+        item = self.world.get(instance)
+        destination = self.position if offer else point
+        x = self.world.snapshot().surface.ground_x(destination.x, item.footprint)
+        item = self.world.move_held(
+            instance,
+            WorldPosition(x, 80 if offer else 0),
+            expected_revision=item.revision,
+        )
+        self._depth(instance, destination.depth)
+        if offer:
+            self.pause_route()
+            self._offered = instance, self.now, f"offer_{instance}_{item.revision}"
+        else:
+            self.world.release(instance, expected_revision=item.revision)
+            item = self.world.get(instance)
+            self.world.land(instance, expected_revision=item.revision)
+            self.behavior.refresh_after_placement()
+        self._dragged = None
 
     def update(self, seconds: float) -> None:
         self.now += seconds
@@ -320,7 +398,7 @@ class RoomRuntime:
             and not self.interaction.active
             and self.state.lived_seconds >= self.state.sleep_episode.protect_until
         ):
-            self._wander = RoomGeometry.anchors[-1].position
+            self._wander = RoomGeometry.accessible(RoomGeometry.anchors[-1].position)
             self._next_wander = self.now + 3600
         if isinstance(motion, SearchMotion):
             destination = RoomPoint(motion.center % 5100, 0.9)
@@ -340,7 +418,9 @@ class RoomRuntime:
                 and self.wandering()
                 and self.now >= self._next_wander
             ):
-                self._wander = self.mind.rng.choice(RoomGeometry.anchors).position
+                self._wander = RoomGeometry.accessible(
+                    self.mind.rng.choice(RoomGeometry.anchors).position
+                )
                 self._next_wander = self.now + self.mind.rng.uniform(20, 55)
             destination = destination or (
                 self._wander if self.wandering() or self.night() else None
@@ -359,10 +439,11 @@ class RoomRuntime:
         if self.moving:
             self.facing = 1 if RoomGeometry.delta(previous.x, current.x) >= 0 else -1
             self.world.locate_in_room(replace(self.spatial, pet=current))
-        if RoomGeometry.distance(current, destination) < 1:
+        if RoomGeometry.distance(current, RoomGeometry.accessible(destination)) < 1:
             self._called = self._wander = None
 
     def suspend(self) -> None:
+        self.cancel_drag()
         self.interaction.suspend()
         if self._offered is not None:
             item = self.world.get(self._offered[0])

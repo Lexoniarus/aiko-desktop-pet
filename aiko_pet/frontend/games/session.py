@@ -15,19 +15,23 @@ from ...application.room_contracts import json_value
 from ...application.router import ApplicationRouter
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.mastermind import COLORS
+from ...games.playing_cards import Card
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...games.rock_paper_scissors import Move
+from ...pet.animation.expression import event_expression
 from ...pet.mind import PetMind
 from ...pet.routine import context_at
 from ...pet.state import PetState
 from ..room_playback import RoomPlayback
+from ..view_models.mastermind_models import CodeView
 from .blackjack_sequence import BlackjackSequence
 from .connect_four_sequence import ConnectFourSequence
 from .deferred_executor import DeferredSearchExecutor
 from .mastermind_sequence import MastermindSequence
 from .quiz_sequence import QuizSequence
 from .rock_paper_scissors_sequence import RockPaperScissorsSequence
+from .room_effects import RoomGameEffects
 from .tic_tac_toe_sequence import TicTacToeSequence
 
 
@@ -48,6 +52,7 @@ class GameSessionCoordinator:
         self.game_id: GameId | None = None
         self.visible: dict[str, Any] = {}
         self._busy = False
+        self.effects: RoomGameEffects | None = None
 
     def _dialogue(self, event: str) -> str:
         reaction = self.mind.select_reaction(
@@ -64,6 +69,7 @@ class GameSessionCoordinator:
     def open(self, game_id: str) -> None:
         self.close()
         self.game_id = GameId(game_id)
+        self.effects = RoomGameEffects(self.playback)
         common: dict[str, Any] = dict(
             schedule=self.playback.schedule,
             cancel=self.playback.cancel_timer,
@@ -73,6 +79,7 @@ class GameSessionCoordinator:
             else self.playback.stop_animation(),
             dialogue=self._dialogue,
             round_event=self._round,
+            express_event=lambda event: self.playback.express(event_expression(event)),
         )
         emote = self.playback.emote
         if self.game_id == GameId.ROCK_PAPER_SCISSORS:
@@ -85,6 +92,7 @@ class GameSessionCoordinator:
                 ),
                 set_busy=self._set_busy,
                 clear_hand=lambda: self._present(aiko=None, player=None),
+                presentation=self.effects.presentation,
             )
         elif self.game_id == GameId.TIC_TAC_TOE:
             self.sequence = TicTacToeSequence(
@@ -98,6 +106,8 @@ class GameSessionCoordinator:
                 emote=emote,
                 present=lambda table, score: self._present(table=table, score=score),
                 hand=lambda hand, flip: self._present(hand=hand, flip=flip),
+                motion=self._card_motion,
+                silence=self.playback.silence,
             )
         elif self.game_id == GameId.CONNECT_FOUR:
             self.sequence = ConnectFourSequence(
@@ -110,6 +120,7 @@ class GameSessionCoordinator:
                     busy=busy,
                     drop=drop,
                 ),
+                throw=self.effects.throw,
             )
         elif self.game_id == GameId.MASTERMIND:
             self.visible["colors"] = list(COLORS)
@@ -122,8 +133,9 @@ class GameSessionCoordinator:
                     busy=busy,
                     feedback_count=count,
                 ),
-                show_code=lambda code: self._present(code=code),
+                show_code=self._show_code,
                 hide_code=lambda: self._present(code=None),
+                finale=self.effects.finale,
             )
         else:
             self.sequence = QuizSequence(
@@ -133,6 +145,20 @@ class GameSessionCoordinator:
                 present=lambda: None,
             )
         self.sequence.greet()
+
+    def _show_code(self, code: CodeView) -> None:
+        if self.effects is not None and all(slot is None for slot in code.slots):
+            self.effects.safe_frame = 0
+            self.effects.snack = False
+        self._present(code=code)
+
+    def _card_motion(
+        self, kind: str, card: Card | None, index: int, done: Callable[[], None]
+    ) -> None:
+        assert self.effects is not None
+        # Never send a hole-card face to the renderer during its dealing flight.
+        visible = kind != "dealer" or index == 0 or self.sequence.dealer_revealed
+        self.effects.card(kind, card if visible else None, index, done)
 
     def _set_busy(self, busy: bool) -> None:
         self._busy = busy
@@ -177,6 +203,7 @@ class GameSessionCoordinator:
         if self.sequence is None or self.game_id is None:
             return None
         data = {"id": self.game_id.value, **self.visible}
+        data["props"] = self.effects.snapshot() if self.effects else {}
         flow = self.sequence
         data["busy"] = getattr(flow, "busy", self._busy)
         if self.game_id == GameId.QUIZ:
@@ -203,6 +230,9 @@ class GameSessionCoordinator:
         flow, game_id = self.sequence, self.game_id
         self.sequence = None
         summary = flow.close()
+        if self.effects is not None:
+            self.effects.close()
+            self.effects = None
         if game_id == GameId.ROCK_PAPER_SCISSORS:
             self.router.complete_game(
                 experience_from_rock_paper_scissors(flow.score), inputs=self.inputs()

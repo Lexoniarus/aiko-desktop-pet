@@ -1,8 +1,9 @@
 # T1 verification record — 2026-11-05
 
-The implementation remains local on `feature/shared-room-pwa`, based on green
-desktop `ce4797e`. This is automated integration evidence, not actual-iPad
-acceptance or green GitHub CI on the room branch.
+The implementation is on `feature/shared-room-pwa`, based on green desktop
+`ce4797e`. The initial checks below are historical; publication and subsequent
+correction-build evidence are recorded separately. Automated checks do not
+replace actual-iPad acceptance.
 
 ## Completed checks
 
@@ -110,3 +111,71 @@ The starter/runtime/worker production build and both existing Node boundary
 checks passed. No Python behavior or native UI was changed, so the full native
 suite was not rerun for this update. Actual iPad update lifecycle and Safari
 storage limits still require device confirmation.
+
+### Published update and live upgrade
+
+The update is live at the existing
+`https://lexoniarus.github.io/aiko-desktop-pet/room/` origin and path. Runtime
+version **0.1.0-a8a6a75a11c9** was built from `a8a6a75a11c9` and published as
+[`room-test-0.1.0-a8a6a75a11c9`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-a8a6a75a11c9).
+The source [web check](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42022876595)
+and [deployment](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42023103814)
+both completed successfully. Deployment commit `8dc2747b` pins site asset
+SHA-256 `9c043d18f11f2a20ede4976caefe7bc5cb8972cbab4ca9041eb7cd7979b55549`.
+
+Before deployment, a separate headless browser profile installed the actual
+HTTPS d073 release and persisted a zodiac preference plus a World object. After
+deployment that same profile upgraded through the existing icon URL without
+storage recreation or manual ZIP import. The new version, preference and exact
+object ID were confirmed, then the real HTTPS app reopened offline. The version
+and controls were inspected in landscape and portrait, with no page errors.
+The existing Dropbox installer/profile does not need replacement for this
+transition. Device-specific confirmation remains pending; the room branch has
+not been merged into main.
+
+## Room and game correction build (2026-11-05)
+
+Runtime **0.1.0-ff6d7142a7cc**, from `ff6d7142a7cc`, addresses the owner's
+first-device findings. The v16 reference seams and actual visible character
+height are used; render interpolation follows Python-owned movement, with shared
+floor footprints and routes around furniture. Speech and original emote artwork
+are anchored over Aiko independently of menus and game-hand props. Pointer
+capture, cancellation and World reservations preserve the same dragged object;
+new portions are created only after a valid drop.
+
+All six games use the existing rules/sequences with their original boards,
+icons and presentation assets. The room adapter connects arm countdown, public
+card flight, chip pickup/throw and the cosmetic safe/snack finale. These visual
+effects do not create food, settle rules or award care. The portrait game sheet
+reserves the upper room area; boards fit inside the available play area.
+
+Final verification used the actual packaged Python/SQLite in an isolated,
+headless Chromium profile with software WebGL. No visible windows, resident
+desktop process or personal save were used. Tests ran after implementation.
+
+- Thirteen portable room tests passed, including five focused regressions for
+  furniture routing, drag custody/cancellation, hidden-card privacy and cosmetic
+  game boundaries. Forty-three existing pure game/reaction/architecture tests
+  passed. The full native GUI suite was not repeated.
+- All three Node checks passed, including motion interpolation; the production
+  TypeScript/Vite starter, runtime and Service Worker built successfully.
+- Ruff passed; strict Mypy passed for 421 application files; repository Pyright
+  reported zero errors and warnings.
+- Actual touch input exercised independent swipes, floor placement, same-ID
+  movement, cancelled reservation, secondary contacts, rejected wall drops and
+  direct torso offers. A completed touch tap is dispatched once even when the
+  browser omits its compatibility click after a captured drag.
+- All six games were played in landscape and opened/inspected in portrait.
+  Touch Mastermind ran through all attempts to the safe/snack finale without
+  reading its hidden code; swapping and invalid-drop recovery were checked.
+  Blackjack hole cards stayed private; chip flight and RPS hand/speech artwork
+  remained separate. The snack finale granted no food or satiety.
+- Menu scaling and portrait/landscape screenshots were inspected. A complete
+  browser close/relaunch offline retained the installed package and preference.
+  No page errors or unexpected console errors occurred; the offline fetch
+  produced the expected browser resource error.
+
+The source [web check](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42036861043)
+passed. The browser evidence establishes the exercised interactions, not Safari
+frame rate or final visual acceptance on the iPad. The owner must recheck the
+reported findings on the correction build; the device checklist remains open.

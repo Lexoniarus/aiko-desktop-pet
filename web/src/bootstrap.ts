@@ -1,4 +1,5 @@
 import './room.css';
+import './games/games.css';
 import { BrowserRoomClient } from './platforms/browser/BrowserRoomClient';
 import { BrowserLifecycle } from './platforms/browser/BrowserLifecycle';
 import type { RoomReply } from './bridge/RoomClient';
@@ -55,8 +56,12 @@ export async function startRoom(
         ui.message(error);
       }
     };
-    const drag = new ObjectDragController(room, command);
+    const drag = new ObjectDragController(room, command, async (name, args = {}) => {
+      if (closing) return;
+      await receive(await client.command(name, args));
+    });
     ui = new RoomUI(host, room, drag, command, options?.updates);
+    drag.onError = (error) => ui.message(error);
     room.onPetTap = () => {
       void command('contact');
     };

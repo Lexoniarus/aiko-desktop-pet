@@ -104,7 +104,8 @@ class RoomSession:
             time_progression=self._make_progression,
         )
         self.playback.can_express = lambda: (
-            not self.room.moving and not self.state.sleeping
+            not self.room.moving
+            and not self.state.sleeping
             and self.playback.animation == "idle"
         )
         self.router = ApplicationRouter(
@@ -271,7 +272,7 @@ class RoomSession:
                     time.monotonic(),
                 )
             )
-            self.playback.speak(reaction)
+            self.playback.speak(reaction, require_presentation=False)
             self._next_comment = time.monotonic() + self.mind.rng.uniform(60, 140)
         if now - self._last_saved >= 5:
             self.save()
@@ -338,6 +339,15 @@ class RoomSession:
                 self.room.offer_existing(str(args["instance"]), int(args["revision"]))
             else:
                 self.room.offer(str(args["definition"]))
+        elif name == "object_drag_start":
+            self.room.begin_drag(str(args["instance"]), int(args["revision"]))
+        elif name == "object_drag_drop":
+            self.room.drop_drag(
+                RoomPoint(float(args["x"]) % 5100, float(args["depth"])),
+                offer=args.get("offer") is True,
+            )
+        elif name == "object_drag_cancel":
+            self.room.cancel_drag()
         elif name == "speech_next":
             self.playback.next_text()
         elif name == "speech_ack":
@@ -434,10 +444,16 @@ class RoomSession:
             ),
             "moving": self.room.moving,
             "facing": self.room.facing,
-            "held_item": self.room.held_item,
+            "held_item": (
+                self.games.effects.held_item
+                if self.games.effects and self.games.effects.held_item
+                else self.room.held_item
+            ),
             "game": self.game_snapshot,
             "held_pose": self.room.held_pose,
             "animation_id": self.playback.action_id,
+            "animation_timings": self.playback.action_timings,
+            "animation_hold_frame": self.playback.hold_frame,
             "social": json_value(self.content.runtime.snapshot())
             if self.content
             else None,
