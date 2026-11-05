@@ -194,6 +194,7 @@
   accent-color: #3ab8ad;
 }
 .setting-row {
+  min-height: max(44px, calc(44px / var(--ui-scale, 1)));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -205,7 +206,7 @@
   accent-color: #3ab8ad;
 }
 .panel-body select {
-  min-height: 44px;
+  min-height: max(44px, calc(44px / var(--ui-scale, 1)));
   width: 100%;
   margin: 8px 0;
   font-size: 16px;
