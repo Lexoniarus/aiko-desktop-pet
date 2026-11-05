@@ -1,5 +1,6 @@
 import type { RoomClient, RoomReply } from '../../bridge/RoomClient';
 import type { RoomCommandName } from '../../bridge/commands';
+import { activePackage, packageRoot } from './PackageStore';
 
 export class BrowserRoomClient implements RoomClient {
   private worker = new Worker(new URL('./python.worker.ts', import.meta.url), {
@@ -45,6 +46,9 @@ export class BrowserRoomClient implements RoomClient {
         })
         .catch(reject);
     });
+    const active = await activePackage();
+    if (!active || packageRoot(active.id).href !== root)
+      throw new Error('Die App-Version hat sich geändert. Bitte Aiko neu öffnen.');
     const reply = await this.request({ name: 'initialize', root });
     this.initialized = true;
     return reply;
@@ -66,7 +70,14 @@ export class BrowserRoomClient implements RoomClient {
     return this.request({ name, args });
   }
 
-  async close(): Promise<void> {
+  async close(preserveOnFailure = false): Promise<void> {
+    if (preserveOnFailure) {
+      if (this.failure) throw this.failure;
+      if (this.initialized) await this.command('suspend');
+      this.worker.terminate();
+      this.unlock?.();
+      return;
+    }
     try {
       if (this.initialized && !this.failure) await this.command('suspend');
     } finally {

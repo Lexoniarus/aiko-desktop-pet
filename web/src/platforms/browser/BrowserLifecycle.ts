@@ -14,14 +14,16 @@ export class BrowserLifecycle {
     window.addEventListener('pageshow', this.show);
   }
   start(): void {
+    this.stopped = false;
     void this.tick();
   }
   private tick = async (): Promise<void> => {
     if (this.stopped || this.paused) return;
     try {
-      await this.receive(await this.client.command('tick'));
+      const reply = await this.client.command('tick');
+      if (!this.stopped) await this.receive(reply);
     } catch (error) {
-      this.error(error);
+      if (!this.stopped) this.error(error);
     }
     if (!this.stopped && !this.paused)
       this.timer = setTimeout(() => {
@@ -33,7 +35,7 @@ export class BrowserLifecycle {
     else this.show();
   };
   private hide = (): void => {
-    if (this.paused) return;
+    if (this.paused || this.stopped) return;
     this.paused = true;
     clearTimeout(this.timer);
     void this.client.command('suspend').then(this.receive).catch(this.error);

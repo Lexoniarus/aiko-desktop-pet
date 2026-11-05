@@ -7,6 +7,8 @@ import { StatusPanel } from './StatusPanel';
 import { WishPanel } from './WishPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { CreditsPanel } from './CreditsPanel';
+import { UpdateControls } from './UpdateControls';
+import type { RoomUpdates } from '../bridge/RoomUpdates';
 import { RockPaperScissorsView } from '../games/RockPaperScissorsView';
 import { TicTacToeView } from '../games/TicTacToeView';
 import { BlackjackView } from '../games/BlackjackView';
@@ -35,6 +37,7 @@ export class RoomUI {
   private gameId = '';
   private gameSignature = '';
   private speechId = -1;
+  private updates?: UpdateControls;
   private pet = button('Streicheln', () => {
     void this.command('care', { action: 'pet' });
   });
@@ -47,7 +50,9 @@ export class RoomUI {
     private room: RoomView,
     private drag: ObjectDragController,
     private command: Command,
+    updates?: RoomUpdates,
   ) {
+    if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
     for (const [name, label] of [
       ['food', 'Füttern'],
@@ -147,12 +152,13 @@ export class RoomUI {
       this.panelBody.append(
         new SettingsPanel(snapshot, this.command).element,
         button('Quellen und Bildrechte', () => this.open('credits')),
-        button('Paket aktualisieren', () => {
+        button('Paket aus Datei importieren', () => {
           void this.command('suspend').then(() =>
             location.assign(new URL('./', location.href).href + '?install=1'),
           );
         }),
       );
+      if (this.updates) this.panelBody.prepend(this.updates.element);
     }
     if (name === 'credits')
       this.panelBody.append(new CreditsPanel(snapshot, this.room.root).element);

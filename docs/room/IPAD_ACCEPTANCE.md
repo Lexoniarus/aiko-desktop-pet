@@ -48,7 +48,13 @@ full-screen Web Clip after system confirmation. It does not itself embed the
 runtime. Direct opening from Files needs device acceptance; Apple Mail is the
 documented fallback for handing a profile to the system installer.
 
-## Actual-device record — not yet performed
+## Actual-device record — first installation confirmed, parity open
+
+On 2026-11-05 the owner confirmed profile installation and opening the room on
+the target iPad. They reported incorrect room transitions, bubble placement and
+some literal question marks, unreliable drag-and-drop, jerky motion, scale/depth
+and furniture overlap, and missing desktop-equivalent game presentation/assets.
+These remain open acceptance findings. No broad touch/game parity pass is claimed.
 
 Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
@@ -71,8 +77,14 @@ headless-browser results do not mark these as passed.
   state. Background/kill during unfinished dialogue grants no false completion.
 - Start in airplane mode, including after an iPad reboot. Check Python resources,
   SQLite publication/revision writes, Astronomy Engine and pyjokes metadata.
-- Import an updated valid ZIP through **Einstellungen → Paket aktualisieren**;
-  keep the icon and Aiko's progress. A failed/corrupt import keeps the old package.
+- Keep the existing icon/profile and take the first d073 update online using
+  the close/reopen steps in [the quick start](INSTALLATION_DE.md). Confirm that
+  existing settings and World objects survive, and version information appears.
+- Use **Einstellungen → App-Version und Updates → Nach Updates suchen**.
+  A verified update is staged in the background. It must not interrupt a game;
+  **Jetzt neu starten** saves first. Check full close/reopen and offline start.
+- A failed/corrupt or interrupted update keeps the installed package and progress.
+  The manual **Paket aus Datei importieren** path remains an alternative.
 - Open a second window; it must refuse a second save writer.
 - Record startup time, responsiveness, any memory reload, and search cancellation.
   `?diagnostics=1` enables a local device-report download without the pet save.

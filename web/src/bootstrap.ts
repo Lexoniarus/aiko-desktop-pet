@@ -2,6 +2,7 @@ import './room.css';
 import { BrowserRoomClient } from './platforms/browser/BrowserRoomClient';
 import { BrowserLifecycle } from './platforms/browser/BrowserLifecycle';
 import type { RoomReply } from './bridge/RoomClient';
+import type { RoomHostOptions } from './bridge/RoomUpdates';
 import { RoomView } from './room/RoomView';
 import type { AssetManifest } from './room/RoomView';
 import { ObjectDragController } from './input/ObjectDragController';
@@ -10,7 +11,11 @@ import { element } from './ui/dom';
 import type { Command } from './ui/dom';
 import { downloadDeviceReport } from './platforms/browser/DeviceReport';
 
-export async function startRoom(host: HTMLElement, root: string): Promise<void> {
+export async function startRoom(
+  host: HTMLElement,
+  root: string,
+  options?: RoomHostOptions,
+): Promise<void> {
   const startedAt = performance.now();
   const styles = document.createElement('link');
   styles.rel = 'stylesheet';
@@ -33,14 +38,17 @@ export async function startRoom(host: HTMLElement, root: string): Promise<void> 
     const room = new RoomView(stage, root, assets);
     await room.initialize();
     let ui: RoomUI;
+    let closing = false;
     let latest = 0;
     const receive = async (reply: RoomReply): Promise<void> => {
-      if (!reply.snapshot || reply.requestId < latest) return;
+      if (closing || !reply.snapshot || reply.requestId < latest) return;
       latest = reply.requestId;
+      options?.setGameOpen(!!reply.snapshot.game);
       ui.update(reply.snapshot);
       await room.update(reply.snapshot);
     };
     const command: Command = async (name, args = {}) => {
+      if (closing) return;
       try {
         await receive(await client.command(name, args));
       } catch (error) {
@@ -48,7 +56,7 @@ export async function startRoom(host: HTMLElement, root: string): Promise<void> 
       }
     };
     const drag = new ObjectDragController(room, command);
-    ui = new RoomUI(host, room, drag, command);
+    ui = new RoomUI(host, room, drag, command, options?.updates);
     room.onPetTap = () => {
       void command('contact');
     };
@@ -66,6 +74,20 @@ export async function startRoom(host: HTMLElement, root: string): Promise<void> 
       ui.message(error),
     );
     lifecycle.start();
+    options?.registerShutdown(async () => {
+      if (closing) return;
+      closing = true;
+      lifecycle.stop();
+      drag.cancel();
+      try {
+        await client.close(true);
+        room.destroy();
+      } catch (error) {
+        closing = false;
+        lifecycle.start();
+        throw error;
+      }
+    });
     window.addEventListener('pagehide', () => drag.cancel());
   } catch (error) {
     await client.close().catch(() => {});

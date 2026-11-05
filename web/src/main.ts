@@ -1,5 +1,10 @@
 import './styles.css';
-import { activePackage, packageRoot } from './platforms/browser/PackageStore';
+import {
+  activePackage,
+  activatePendingPackage,
+  packageRoot,
+} from './platforms/browser/PackageStore';
+import { BrowserUpdates } from './platforms/browser/BrowserUpdates';
 import { importPackage } from './platforms/browser/PackageImporter';
 import {
   publishedPackage,
@@ -31,7 +36,27 @@ async function launch(): Promise<void> {
   try {
     const root = packageRoot(installed.id);
     const module = await import(/* @vite-ignore */ new URL(installed.entry, root).href);
-    await module.startRoom(host, root.href);
+    const updates = new BrowserUpdates(installed.version);
+    await module.startRoom(host, root.href, updates.host);
+    // Outside #app: the already installed runtime replaces that element's children
+    // and knows nothing about updates. It can still display this first-upgrade notice.
+    const notice = document.createElement('aside');
+    notice.className = 'update-notice';
+    notice.setAttribute('aria-label', 'App-Update');
+    const message = document.createElement('p');
+    const restart = document.createElement('button');
+    restart.textContent = 'Jetzt neu starten';
+    restart.onclick = () => {
+      void updates.apply();
+    };
+    notice.append(message, restart);
+    document.body.append(notice);
+    updates.subscribe((state) => {
+      notice.hidden = !['ready', 'applying'].includes(state.phase);
+      message.textContent = state.message;
+      restart.hidden = !state.canRestart;
+    });
+    updates.start();
     const locationURL = new URL(location.href);
     locationURL.searchParams.delete('install');
     history.replaceState(null, '', locationURL);
@@ -58,6 +83,7 @@ async function prepare(): Promise<void> {
       }),
     );
   }
+  await activatePendingPackage();
   const installed = await activePackage();
   start.hidden = !installed;
   report(

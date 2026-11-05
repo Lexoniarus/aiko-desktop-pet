@@ -26,9 +26,27 @@ Das Hinzufügen des Symbols allein installiert die Runtime noch nicht. Der
 erste Start muss den Download abschließen. Erst danach ist der Offline-Start
 abgesichert. Eine unterbrochene Einrichtung kann erneut gestartet werden.
 
-Zum Aktualisieren **Einstellungen → Paket aktualisieren** öffnen und die neue
-Runtime-ZIP importieren. Die Starter-Adresse beibehalten, damit Aikos vorhandener
-Spielstand zur gleichen Installation gehört. Es gibt keinen manuellen
+Updates werden beim Öffnen und bei Rückkehr in die App im Hintergrund geprüft.
+Nur vollständig heruntergeladene und geprüfte Pakete werden für den nächsten
+Start vorgemerkt. Unter **Einstellungen → App-Version und Updates** stehen die
+installierte Version, **Nach Updates suchen** und bei einem fertigen Update
+**Jetzt neu starten**. Ein laufendes Spiel wird nicht automatisch unterbrochen;
+vor einem bewussten Neustart wird der Spielstand gesichert. Ohne Internet läuft
+die bereits installierte Version weiter. Neue Updates brauchen wieder Internet.
+Ein Git-Push allein veröffentlicht noch kein App-Update: Das geprüfte Paket muss
+zusätzlich auf der bestehenden Startadresse bereitgestellt werden.
+
+**Erstes Update von der ursprünglichen Testversion:** Das vorhandene Aiko-Symbol
+online öffnen. Danach Aiko im App-Umschalter vollständig schließen und erneut
+öffnen, damit die neue Startoberfläche verwendet wird. Sobald „Update bereit“
+erscheint, nochmals vollständig schließen und wieder öffnen. Danach sind die
+Update-Einstellungen verfügbar. Je nach bereits erfolgtem Laden entfällt der
+erste Neustart. **Profil, Symbol und Website-Daten nicht entfernen.** Eine neue
+ZIP oder Profilinstallation ist für diesen Übergang nicht nötig.
+
+Der Dateiimport bleibt als manueller Ausweichweg in den Einstellungen erhalten.
+Die Starter-Adresse beibehalten, damit Aikos vorhandener Spielstand zur gleichen
+Installation gehört. Es gibt keinen manuellen
 Speichern-Knopf; bestätigte Aktionen und regelmäßige Zwischenstände werden
 automatisch lokal gesichert.
 
@@ -38,7 +56,11 @@ der persönliche Spielstand bleibt lokal. Die Dateien für die Veröffentlichung
 werden getrennt von der kleinen Installations-ZIP erzeugt.
 
 Die erste Geräteabnahme ist für **iPad, 9. Generation, iPadOS 26.6** vorgesehen.
-Sie steht noch aus. Neuere iPadOS-Versionen bleiben ebenfalls Zielplattformen.
+Profilinstallation und Start wurden vom Besitzer bestätigt. Die erste Nutzung
+hat offene Abweichungen bei Raumübergängen, Blasen, Drag-and-drop, Bewegung,
+Figurengröße/Tiefe, Möbelüberdeckung und Spieloberflächen gezeigt. Die
+Desktop-Parität ist damit noch nicht abgenommen. Neuere iPadOS-Versionen bleiben
+ebenfalls Zielplattformen.
 Die vollständige Abnahmeliste steht im Repository unter
 `docs/room/IPAD_ACCEPTANCE.md`.
 
