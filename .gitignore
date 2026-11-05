@@ -65,6 +65,8 @@ logs/
 /web/dist-*/
 /web/.runtime/
 /dist-room/
+/web/public/icon-192.png
+/web/public/icon-512.png
 
 # External fonts and generated distributions are not source assets
 *.ttf

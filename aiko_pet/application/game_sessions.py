@@ -114,6 +114,16 @@ class GameSessionCoordinator:
         if self.sequence is None or self.game_id is None:
             raise ValueError("Kein Spiel geöffnet.")
         flow = self.sequence
+        allowed = {
+            GameId.ROCK_PAPER_SCISSORS: {"choose"},
+            GameId.TIC_TAC_TOE: {"choose", "next"},
+            GameId.BLACKJACK: {"hit", "stand", "next"},
+            GameId.CONNECT_FOUR: {"choose", "next"},
+            GameId.MASTERMIND: {"submit", "next"},
+            GameId.QUIZ: {"answer", "next"},
+        }
+        if action not in allowed[self.game_id]:
+            raise ValueError("Diese Aktion gehört nicht zum aktuellen Spiel.")
         if self.game_id == GameId.ROCK_PAPER_SCISSORS and action == "choose":
             flow.choose(Move(value))
         elif self.game_id == GameId.TIC_TAC_TOE:

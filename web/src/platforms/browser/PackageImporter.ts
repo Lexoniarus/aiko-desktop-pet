@@ -25,7 +25,7 @@ export function validateManifest(input: unknown): PackageManifest {
   let total = 0;
   for (const [name, file] of entries) {
     if (!validPackagePath(name) || !file || !Number.isSafeInteger(file.size) ||
-        file.size < 0 || file.size > 32 * 1024 * 1024 ||
+        file.size < 0 || file.size > 64 * 1024 * 1024 ||
         !/^[a-f0-9]{64}$/.test(file.sha256)) throw new Error('Ungültiger Paketeintrag.');
     total += file.size;
   }
@@ -63,7 +63,7 @@ export async function importPackage(
       entry.ondata = (error, data, final) => {
         if (error) { failure = error; return; }
         size += data.length; total += data.length;
-        if (size > 32 * 1024 * 1024 || total > 514 * 1024 * 1024) {
+        if (size > 64 * 1024 * 1024 || total > 514 * 1024 * 1024) {
           failure = new Error('Entpacktes Paket ist zu groß.'); return;
         }
         chunks.push(data.slice());

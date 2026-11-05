@@ -5,6 +5,7 @@
   "type": "module",
   "engines": { "node": ">=22.12" },
   "scripts": {
+    "prebuild": "node scripts/prepare-assets.mjs",
     "build": "tsc --noEmit && vite build --config vite.starter.config.ts && vite build --config vite.runtime.config.ts && node scripts/build-service-worker.mjs",
     "preview": "vite preview --config vite.starter.config.ts --host 127.0.0.1",
     "check": "tsc --noEmit",

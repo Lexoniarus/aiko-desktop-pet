@@ -123,6 +123,7 @@ class RoomCoordinator:
         self.playback.speak(
             format_object_reaction(reaction, cue.identity, self.items) if reaction else None,
             subject=cue.record_id,
+            animate=False,
             completed=lambda done: self.interaction.receive_feedback(
                 FeedbackReceipt(cue.key, done),
             ),
@@ -193,7 +194,7 @@ class RoomCoordinator:
         target = self.awareness.intentions.goal
         focused = self.awareness.memory.get(self.interaction.focus_record or "")
         point = focused or target
-        side = self.behavior.orientation_side
+        side = self.behavior.orientation_side if not self.interaction.active else None
         direction = (side, 0.0) if side is not None else (
             ((point.x - self.position.x) / 192, (point.height - 80) / 192)
             if point is not None else (self.facing, -0.1)
@@ -204,7 +205,7 @@ class RoomCoordinator:
         attention = ObjectAttention(mode, direction, (self.position.x, 80), 192,
                                     focused_place=point is not None)
         presentation = None
-        if self._offered is not None:
+        if self._offered is not None and self.behavior.orientation_side is None:
             instance, started, gesture = self._offered
             presentation = instance, ItemPresentation(gesture, 0, 0)
             attention = ObjectAttention("cursor", (0, 0), (self.position.x, 80), 192)

@@ -10,6 +10,7 @@ import { element } from './ui/dom';
 import type { Command } from './ui/dom';
 
 export async function startRoom(host:HTMLElement,root:string):Promise<void>{
+  const styles=document.createElement('link');styles.rel='stylesheet';styles.href=new URL('app/room.css',root).href;document.head.append(styles);
   const loading=element('p','runtime-loading','Aiko wird wach …');host.replaceChildren(loading);
   const client=new BrowserRoomClient();
   try{

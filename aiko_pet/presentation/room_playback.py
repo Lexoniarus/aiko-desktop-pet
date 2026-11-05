@@ -91,6 +91,8 @@ class RoomPlayback:
     def _hide(self) -> None:
         self._text = self._emote = ""
         self._unshown = False
+        self._pending_event = None
+        self._pending_wish = None
 
     def acknowledge(self, text_id: int) -> None:
         if text_id == self._text_id:
@@ -111,6 +113,8 @@ class RoomPlayback:
 
     def comment(self, text: str, milliseconds: int) -> None:
         """Game commentary has its own expiry and never owns gameplay input."""
+        self._pending_event = None
+        self._pending_wish = None
         self._display_text(text, milliseconds)
         current = self._text_id
         self.schedule(milliseconds, lambda: self._hide()
@@ -128,9 +132,10 @@ class RoomPlayback:
         completed: Callable[[bool], None] | None = None,
         subject: str | None = None,
         progress: Callable[[int], bool] | None = None,
+        animate: bool = True,
     ) -> None:
         self.player.play(reaction, on_complete=completed, subject=subject,
-                         on_progress=progress)
+                         on_progress=progress, animate=animate)
 
     def stop_animation(self) -> None:
         self.action_id += 1
