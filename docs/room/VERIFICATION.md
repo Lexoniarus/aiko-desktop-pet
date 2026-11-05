@@ -110,3 +110,24 @@ The starter/runtime/worker production build and both existing Node boundary
 checks passed. No Python behavior or native UI was changed, so the full native
 suite was not rerun for this update. Actual iPad update lifecycle and Safari
 storage limits still require device confirmation.
+
+### Published update and live upgrade
+
+The update is live at the existing
+`https://lexoniarus.github.io/aiko-desktop-pet/room/` origin and path. Runtime
+version **0.1.0-a8a6a75a11c9** was built from `a8a6a75a11c9` and published as
+[`room-test-0.1.0-a8a6a75a11c9`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-a8a6a75a11c9).
+The source [web check](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42022876595)
+and [deployment](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42023103814)
+both completed successfully. Deployment commit `8dc2747b` pins site asset
+SHA-256 `9c043d18f11f2a20ede4976caefe7bc5cb8972cbab4ca9041eb7cd7979b55549`.
+
+Before deployment, a separate headless browser profile installed the actual
+HTTPS d073 release and persisted a zodiac preference plus a World object. After
+deployment that same profile upgraded through the existing icon URL without
+storage recreation or manual ZIP import. The new version, preference and exact
+object ID were confirmed, then the real HTTPS app reopened offline. The version
+and controls were inspected in landscape and portrait, with no page errors.
+The existing Dropbox installer/profile does not need replacement for this
+transition. Device-specific confirmation remains pending; the room branch has
+not been merged into main.

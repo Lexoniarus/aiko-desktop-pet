@@ -98,3 +98,11 @@ old runtime and stage its replacement. An external notice asks the user to close
 and reopen: old runtimes have no shutdown hook and never receive an unsafe
 restart button. Preserve the same URL, profile, icon and website data throughout.
 See [installation instructions](INSTALLATION_DE.md) for this first transition.
+
+The first installed-package update is published as `room-test-0.1.0-a8a6a75a11c9`.
+The source web check and deployment `8dc2747b` passed; the actual HTTPS upgrade
+from d073 retained the same settings/object IDs and reopened offline. Subsequent
+documentation commits do not change that packaged runtime. Future code pushes
+still require building, reviewing and publishing a new package/site release,
+then updating the deployment branch's release pin. The installed app discovers
+published packages automatically; a source push alone is not an app release.
