@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.browser.bootstrap import create_browser_session
+from aiko_pet.frontend.games.room_effects import RoomGameEffects
 from aiko_pet.world.room import RoomGeometry, RoomPoint
 
 
@@ -185,3 +186,88 @@ class RoomSessionTests(unittest.TestCase):
             ]),
             1,
         )
+
+    def test_drag_cancel_restores_the_same_portion(
+        self,
+    ) -> None:
+        original = self.command("place", definition="apple", x=800, depth=1.2)[
+            "snapshot"
+        ]["objects"][0]
+        self.command(
+            "object_drag_start",
+            instance=original["instance_id"],
+            revision=original["revision"],
+        )
+        held = self.command("snapshot")["snapshot"]["objects"][0]
+        self.assertEqual(held["state"], "user_held")
+        restored = self.command("object_drag_cancel")["snapshot"]["objects"]
+        self.assertEqual(len(restored), 1)
+        self.assertEqual(restored[0]["instance_id"], original["instance_id"])
+        self.assertEqual(restored[0]["position"], original["position"])
+        self.assertEqual(restored[0]["state"], "resting")
+
+    def test_drag_drop_and_suspension_keep_world_identity_and_depth(self) -> None:
+        item = self.command("place", definition="apple", x=800, depth=1.2)["snapshot"][
+            "objects"
+        ][0]
+        self.command(
+            "object_drag_start", instance=item["instance_id"], revision=item["revision"]
+        )
+        moved = self.command("object_drag_drop", x=1100, depth=1.1, offer=False)[
+            "snapshot"
+        ]["objects"][0]
+        self.assertEqual(moved["instance_id"], item["instance_id"])
+        self.assertEqual(moved["position"]["x"], 1100)
+        self.command(
+            "object_drag_start",
+            instance=moved["instance_id"],
+            revision=moved["revision"],
+        )
+        self.command("suspend")
+        reopened = create_browser_session(str(self.path)).session.room
+        self.assertEqual(reopened.world.get(item["instance_id"]).state.value, "resting")
+        self.assertEqual(reopened.spatial.depth_for(item["instance_id"]), 1.1)
+
+    def test_room_effects_never_expose_a_dealt_hole_card(self) -> None:
+        self.command("game_open", id="blackjack")
+
+        def hole_in_flight() -> bool:
+            game = self.endpoint.session.games.snapshot()
+            motion = game["props"]["motion"] if game else None
+            return bool(motion and motion["kind"] == "dealer" and motion["index"] == 1)
+
+        self.advance_until(hole_in_flight)
+        game = self.endpoint.session.games.snapshot()
+        assert game is not None
+        self.assertIsNone(game["props"]["motion"]["card"])
+
+    def test_cosmetic_snack_has_no_food_effects_and_cancels_cleanly(
+        self,
+    ) -> None:
+        session = self.endpoint.session
+        before = session.state.capture_checkpoint()
+        completed = []
+        effects = RoomGameEffects(session.playback)
+        effects.finale(False, lambda: completed.append(True))
+        session.playback.advance(20)
+        self.assertEqual(completed, [True])
+        self.assertIsNone(effects.held_item)
+        self.assertEqual(session.state.capture_checkpoint(), before)
+        self.assertFalse(session.room.world.snapshot().objects)
+        effects.finale(True, lambda: completed.append(False))
+        effects.close()
+        session.playback.advance(20)
+        self.assertEqual(completed, [True])
+
+
+class RoomGeometryTests(unittest.TestCase):
+    def test_routes_avoid_furniture_and_keep_the_short_wrapped_direction(self) -> None:
+        for start, destination in (
+            (RoomPoint(2000, 0.9), RoomPoint(2900, 0.9)),
+            (RoomPoint(4900, 0.9), RoomPoint(100, 0.9)),
+        ):
+            position = start
+            for _ in range(120):
+                position = RoomGeometry.approach(position, destination, 0.05)
+                self.assertEqual(RoomGeometry.accessible(position), position)
+            self.assertLess(RoomGeometry.distance(position, destination), 0.01)
