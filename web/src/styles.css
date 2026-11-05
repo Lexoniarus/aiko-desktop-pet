@@ -1,0 +1,13 @@
+:root { font-family: system-ui, sans-serif; color: #243451; background: #f7f2f3; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; overscroll-behavior: none; }
+button, input, select { font: inherit; }
+button, .button { min-height: 44px; padding: 10px 16px; border: 1px solid #9aa9bc; border-radius: 10px; background: #fffdf8; color: #243451; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #3ab8ad; outline-offset: 3px; }
+.installer { max-width: 580px; margin: max(8vh, 32px) auto; padding: 24px; line-height: 1.6; }
+.installer h1 { font-size: 30px; font-weight: 650; }
+.installer input { display: block; max-width: 100%; margin-top: 12px; }
+.installer .button { display: block; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; } }
