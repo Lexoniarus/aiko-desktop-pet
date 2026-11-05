@@ -8,6 +8,8 @@ import { WishPanel } from './WishPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { CreditsPanel } from './CreditsPanel';
 import { UpdateControls } from './UpdateControls';
+import { SpeechBubbles } from './SpeechBubbles';
+import { RoomArtwork } from './RoomArtwork';
 import type { RoomUpdates } from '../bridge/RoomUpdates';
 import { RockPaperScissorsView } from '../games/RockPaperScissorsView';
 import { TicTacToeView } from '../games/TicTacToeView';
@@ -21,12 +23,8 @@ import type { Command } from './dom';
 
 export class RoomUI {
   private toolbar = element('nav', 'room-toolbar');
-  private dialogue = element('div', 'room-speech');
-  private text = element('p');
-  private emote = element('img', 'speech-emote');
-  private next = button('Weiter', () => {
-    void this.command('speech_next');
-  });
+  private speech: SpeechBubbles;
+  private artwork: RoomArtwork;
   private panel = element('dialog', 'room-panel');
   private panelBody = element('div', 'panel-body');
   private title = element('h2');
@@ -36,7 +34,6 @@ export class RoomUI {
   private game: GameView | undefined;
   private gameId = '';
   private gameSignature = '';
-  private speechId = -1;
   private updates?: UpdateControls;
   private pet = button('Streicheln', () => {
     void this.command('care', { action: 'pet' });
@@ -52,6 +49,9 @@ export class RoomUI {
     private command: Command,
     updates?: RoomUpdates,
   ) {
+    this.artwork = new RoomArtwork(room.root, room.assets.ui);
+    this.artwork.apply(host);
+    this.speech = new SpeechBubbles(host, room, command);
     if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
     for (const [name, label] of [
@@ -72,9 +72,6 @@ export class RoomUI {
         void command('call', room.callPoint());
       }),
     );
-    this.dialogue.setAttribute('aria-live', 'polite');
-    this.dialogue.append(this.emote, this.text, this.next);
-    this.dialogue.hidden = true;
     this.status.setAttribute('role', 'status');
     const care = element('div', 'quick-care');
     care.append(
@@ -100,11 +97,10 @@ export class RoomUI {
     });
     drag.onDragBegin = () => {
       this.panel.close();
-      this.host.append(this.dialogue);
       this.panelName = '';
       this.activePanel = undefined;
     };
-    host.append(this.toolbar, care, this.dialogue, this.panel, this.status);
+    host.append(this.toolbar, care, this.panel, this.status);
   }
   private open(name: string): void {
     const snapshot = this.snapshot;
@@ -114,7 +110,6 @@ export class RoomUI {
       return;
     }
     this.panelName = name;
-    this.panel.insertBefore(this.dialogue, this.panelBody);
     this.activePanel = undefined;
     this.panelBody.replaceChildren();
     const titles: Record<string, string> = {
@@ -184,7 +179,6 @@ export class RoomUI {
   private close(): void {
     if (this.gameId) void this.command('game_close');
     this.panel.close();
-    this.host.append(this.dialogue);
     this.panelName = '';
     this.activePanel = undefined;
   }
@@ -198,26 +192,7 @@ export class RoomUI {
     this.sleep.textContent = snapshot.pet.sleeping ? 'Aufwecken' : 'Schlafen';
     this.pet.disabled = !!snapshot.game;
     this.sleep.disabled = !!snapshot.game;
-    const speech = snapshot.speech;
-    this.text.textContent = speech.text;
-    this.emote.hidden = !speech.emote;
-    if (speech.emote) {
-      this.emote.src = new URL(
-        `assets/emotes/emote_${speech.emote}.png`,
-        this.room.root,
-      ).href;
-      this.emote.alt = 'Aikos Reaktion';
-    }
-    this.dialogue.hidden = !speech.text && !speech.emote;
-    this.next.hidden = !speech.story;
-    if (speech.text && speech.id !== this.speechId && !document.hidden) {
-      requestAnimationFrame(() => {
-        if (this.dialogue.getClientRects().length) {
-          this.speechId = speech.id;
-          void this.command('speech_ack', { id: speech.id });
-        }
-      });
-    }
+    this.speech.update(snapshot);
     if (this.activePanel) this.activePanel.update(snapshot);
     const id = String(snapshot.game?.id ?? '');
     if (id !== this.gameId) {
@@ -238,7 +213,6 @@ export class RoomUI {
         this.game = types[id]!();
         this.open('games');
       } else {
-        if (!this.panel.open) this.host.append(this.dialogue);
         if (this.panelName === 'games') this.open('games');
       }
     }
