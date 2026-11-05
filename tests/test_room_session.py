@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 from aiko_pet.browser.bootstrap import create_browser_session
 from aiko_pet.frontend.games.room_effects import RoomGameEffects
+from aiko_pet.frontend.room_locomotion import RoomLocomotion
 from aiko_pet.world.room import RoomGeometry, RoomPoint
 
 
@@ -56,10 +57,10 @@ class RoomSessionTests(unittest.TestCase):
         before = self.endpoint.session.room.position
         self.command("call", x=900, depth=1.2)
         snapshot = self.command("snapshot")["snapshot"]
-        for _ in range(4):
+        for _ in range(12):
             self.wall += 0.25
             snapshot = self.command("tick")["snapshot"]
-        self.assertTrue(snapshot["animation"].startswith("body-step-right-"))
+        self.assertEqual(snapshot["animation"], "body-step-right-profil")
         position = self.endpoint.session.room.position
         self.assertLess(
             RoomGeometry.distance(position, RoomPoint(900, 1.2)),
@@ -319,6 +320,42 @@ class RoomSessionTests(unittest.TestCase):
         )
         self.assertGreater(session.state.satiety, 30)
 
+    def test_furniture_drops_and_legacy_depth_recovery_keep_portions_in_front(
+        self,
+    ) -> None:
+        session = self.endpoint.session
+        for x in (930, 1425, 2450, 4240, 4780):
+            self.command("place", definition="apple", x=x, depth=0.22)
+        objects = session.room.world.snapshot().objects
+        self.assertEqual(len(objects), 5)
+        self.assertTrue(
+            all(session.room.spatial.depth_for(o.instance_id) >= 1.05 for o in objects)
+        )
+        original = objects[0]
+        self.command(
+            "object_drag_start",
+            instance=original.instance_id,
+            revision=original.revision,
+        )
+        self.command("object_drag_drop", x=1425, depth=0.22, height=80, offer=False)
+        self.assertEqual(len(session.room.world.snapshot().objects), 5)
+        legacy = replace(
+            session.room.spatial,
+            pet=RoomPoint(2450, 0.8),
+            object_depths=tuple((o.instance_id, 0.22) for o in objects),
+        )
+        session.room.world.locate_in_room(legacy)
+        session.save()
+        restored = create_browser_session(str(self.path)).session.room
+        self.assertGreaterEqual(restored.position.depth, 1.05)
+        self.assertEqual(
+            [o.instance_id for o in restored.world.snapshot().objects],
+            [o.instance_id for o in objects],
+        )
+        self.assertTrue(
+            all(restored.spatial.depth_for(o.instance_id) >= 1.05 for o in objects)
+        )
+
     def test_room_effects_never_expose_a_dealt_hole_card(self) -> None:
         self.command("game_open", id="blackjack")
 
@@ -352,13 +389,31 @@ class RoomSessionTests(unittest.TestCase):
 
 
 class RoomGeometryTests(unittest.TestCase):
-    def test_routes_avoid_furniture_and_keep_the_short_wrapped_direction(self) -> None:
+    def test_foreground_routes_keep_the_short_wrapped_direction(self) -> None:
         for start, destination in (
-            (RoomPoint(2000, 0.9), RoomPoint(2900, 0.9)),
-            (RoomPoint(4900, 0.9), RoomPoint(100, 0.9)),
+            (RoomPoint(2000, 1.1), RoomPoint(2900, 1.1)),
+            (RoomPoint(4900, 1.1), RoomPoint(100, 1.1)),
         ):
             position = start
             for _ in range(120):
                 position = RoomGeometry.approach(position, destination, 0.05)
                 self.assertEqual(RoomGeometry.accessible(position), position)
             self.assertLess(RoomGeometry.distance(position, destination), 0.01)
+
+    def test_profile_steps_and_quarter_body_facing_use_distinct_source_banks(
+        self,
+    ) -> None:
+        pose = RoomLocomotion()
+        for step in range(10):
+            pose.walk(step * 0.1, RoomPoint(600), RoomPoint(900))
+        self.assertEqual(pose.selection.animation, "body-step-right-profil")
+        pose.rest(2, (1, 0))
+        self.assertEqual(
+            (pose.selection.animation, pose.selection.fixed_frame),
+            ("body-look-right", 4),
+        )
+        pose.walk(3, RoomPoint(600, 1.05), RoomPoint(600, 1.13))
+        self.assertEqual(pose.selection.animation, "body-look-right")
+        for step in range(10):
+            pose.walk(4 + step * 0.1, RoomPoint(900), RoomPoint(600))
+        self.assertEqual(pose.selection.animation, "body-step-left-profil")
