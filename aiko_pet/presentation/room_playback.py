@@ -93,6 +93,16 @@ class RoomPlayback:
         if not self._unshown:
             self.player.advance_story()
 
+    def comment(self, text: str, milliseconds: int) -> None:
+        """Game commentary has its own expiry and never owns gameplay input."""
+        self._display_text(text, milliseconds)
+        current = self._text_id
+        self.schedule(milliseconds, lambda: self._hide()
+                      if self._text_id == current else None)
+
+    def emote(self, name: str, milliseconds: int) -> None:
+        self._display_emote(name, milliseconds)
+
     def snapshot(self) -> SpeechSnapshot:
         return SpeechSnapshot(self._text, self._emote, self._text_id,
                               self.player.active, self.player.story_active)

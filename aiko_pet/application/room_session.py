@@ -6,6 +6,7 @@ import time
 from typing import Any
 
 from ..pet.animation.character import CharacterCatalog
+from ..pet.care_result import CareEffect
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import SocialCompletion
 from ..pet.mind import PetMind
@@ -19,6 +20,7 @@ from .active_time import ActiveSessionClock, SessionInputs
 from .commands import CareCommand
 from .controller import CareController
 from .game_experience import GameExperienceCoordinator
+from .game_sessions import GameSessionCoordinator
 from .room import RoomCoordinator
 from .room_contracts import json_value
 from .room_routine import RoomRoutine
@@ -69,6 +71,8 @@ class RoomSession:
                 arrangement_ready=lambda: not self.room.interaction.search_active,
             ),
         )
+        self.games = GameSessionCoordinator(self.router, self.state, mind,
+                                            self.playback, self.inputs)
         if loaded.restored_from_save:
             self.room.progression.advance(
                 self.state, self.inputs(), max(0, time.time() - self.state.updated_at),
@@ -113,6 +117,8 @@ class RoomSession:
 
     def suspend(self) -> None:
         self.tick()
+        self.games.close()
+        self.game_snapshot = None
         self.room.suspend()
         self.playback.suspend()
         self._suspended = True
@@ -156,6 +162,21 @@ class RoomSession:
             self.playback.next_text()
         elif name == "speech_ack":
             self.playback.acknowledge(int(args["id"]))
+        elif name == "game_open":
+            result = self.router.dispatch(CareCommand("play"), inputs=self.inputs())
+            if result.result.effect == CareEffect.PLAY_TIRED:
+                self.playback.speak(result.reaction)
+            else:
+                def open_game() -> None:
+                    self.playback.player.cancel()
+                    self.games.open(str(args["id"]))
+                    self.game_snapshot = self.games.snapshot()
+                self.room.interaction.interrupt(open_game)
+        elif name == "game_action":
+            self.games.action(str(args["action"]), args.get("value"))
+        elif name == "game_close":
+            self.games.close()
+            self.game_snapshot = None
         elif name == "wish_pin":
             self.router.set_wish_pinned(int(args["id"]), bool(args["pinned"]), inputs=self.inputs())
         elif name == "wish_dismiss":
@@ -178,6 +199,7 @@ class RoomSession:
 
     def snapshot(self) -> dict[str, Any]:
         world = self.room.world.snapshot()
+        self.game_snapshot = self.games.snapshot()
         return {
             "revision": self.revision.value,
             "pet": json_value(self.state.capture_checkpoint()),
