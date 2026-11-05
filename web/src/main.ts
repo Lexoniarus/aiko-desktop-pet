@@ -13,7 +13,9 @@ host.innerHTML = `<section class="installer"><h1>Aikos Zimmer</h1>
 const status = document.querySelector<HTMLElement>('#install-status')!;
 const input = document.querySelector<HTMLInputElement>('#package')!;
 const start = document.querySelector<HTMLButtonElement>('#start')!;
-const report = (text: string) => { status.textContent = text; };
+const report = (text: string) => {
+  status.textContent = text;
+};
 async function launch(): Promise<void> {
   const installed = await activePackage();
   if (!installed) return;
@@ -24,7 +26,9 @@ async function launch(): Promise<void> {
     await module.startRoom(host, root.href);
   } catch (error) {
     start.disabled = false;
-    report(`Aiko konnte nicht starten: ${error instanceof Error ? error.message : String(error)}`);
+    report(
+      `Aiko konnte nicht starten: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 async function prepare(): Promise<void> {
@@ -34,27 +38,41 @@ async function prepare(): Promise<void> {
   await navigator.serviceWorker.register('./sw.js', { scope: './' });
   await navigator.serviceWorker.ready;
   if (!navigator.serviceWorker.controller) {
-    await new Promise<void>(resolve => navigator.serviceWorker.addEventListener(
-      'controllerchange', () => resolve(), { once: true },
-    ));
+    await new Promise<void>((resolve) =>
+      navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), {
+        once: true,
+      }),
+    );
   }
   const installed = await activePackage();
   start.hidden = !installed;
-  report(installed ? `Aiko ${installed.version} ist bereit.` : 'Wähle dein Aiko-Paket.');
+  report(
+    installed ? `Aiko ${installed.version} ist bereit.` : 'Wähle dein Aiko-Paket.',
+  );
   if (installed && !new URL(location.href).searchParams.has('install')) await launch();
 }
 input.addEventListener('change', async () => {
-  const file = input.files?.[0]; if (!file) return;
-  input.disabled = true; start.disabled = true;
+  const file = input.files?.[0];
+  if (!file) return;
+  input.disabled = true;
+  start.disabled = true;
   try {
     const installed = await importPackage(file, report);
     report(`Aiko ${installed.version} ist installiert.`);
-    start.hidden = false; start.disabled = false;
+    start.hidden = false;
+    start.disabled = false;
     await launch();
   } catch (error) {
     report(error instanceof Error ? error.message : String(error));
     start.disabled = false;
-  } finally { input.disabled = false; input.value = ''; }
+  } finally {
+    input.disabled = false;
+    input.value = '';
+  }
 });
-start.addEventListener('click', () => { void launch(); });
-void prepare().catch(error => report(error instanceof Error ? error.message : String(error)));
+start.addEventListener('click', () => {
+  void launch();
+});
+void prepare().catch((error) =>
+  report(error instanceof Error ? error.message : String(error)),
+);

@@ -2,13 +2,18 @@ import type { RoomClient, RoomReply } from '../../bridge/RoomClient';
 import type { RoomCommandName } from '../../bridge/commands';
 
 export class BrowserRoomClient implements RoomClient {
-  private worker = new Worker(new URL('./python.worker.ts', import.meta.url), { type: 'module' });
+  private worker = new Worker(new URL('./python.worker.ts', import.meta.url), {
+    type: 'module',
+  });
   private sequence = 0;
-  private pending = new Map<number, { resolve: (value: RoomReply) => void; reject: (error: Error) => void }>();
+  private pending = new Map<
+    number,
+    { resolve: (value: RoomReply) => void; reject: (error: Error) => void }
+  >();
   private unlock: (() => void) | undefined;
 
   constructor() {
-    this.worker.onmessage = event => {
+    this.worker.onmessage = (event) => {
       const reply = event.data as RoomReply;
       const pending = this.pending.get(reply.requestId);
       if (!pending) return;
@@ -16,18 +21,27 @@ export class BrowserRoomClient implements RoomClient {
       if (reply.ok) pending.resolve(reply);
       else pending.reject(new Error(reply.error ?? 'Aiko meldet einen Fehler.'));
     };
-    this.worker.onerror = event => {
-      for (const pending of this.pending.values()) pending.reject(new Error(event.message));
+    this.worker.onerror = (event) => {
+      for (const pending of this.pending.values())
+        pending.reject(new Error(event.message));
       this.pending.clear();
     };
   }
 
   async initialize(root: string): Promise<RoomReply> {
     await new Promise<void>((resolve, reject) => {
-      void navigator.locks.request('aiko-pet-writer', { ifAvailable: true }, async lock => {
-        if (!lock) { reject(new Error('Aiko ist bereits in einem anderen Fenster geöffnet.')); return; }
-        await new Promise<void>(release => { this.unlock = release; resolve(); });
-      }).catch(reject);
+      void navigator.locks
+        .request('aiko-pet-writer', { ifAvailable: true }, async (lock) => {
+          if (!lock) {
+            reject(new Error('Aiko ist bereits in einem anderen Fenster geöffnet.'));
+            return;
+          }
+          await new Promise<void>((release) => {
+            this.unlock = release;
+            resolve();
+          });
+        })
+        .catch(reject);
     });
     return this.request({ name: 'initialize', root });
   }
@@ -40,12 +54,19 @@ export class BrowserRoomClient implements RoomClient {
     });
   }
 
-  command(name: RoomCommandName, args: Record<string, unknown> = {}): Promise<RoomReply> {
+  command(
+    name: RoomCommandName,
+    args: Record<string, unknown> = {},
+  ): Promise<RoomReply> {
     return this.request({ name, args });
   }
 
   async close(): Promise<void> {
-    try { await this.command('suspend'); }
-    finally { this.worker.terminate(); this.unlock?.(); }
+    try {
+      await this.command('suspend');
+    } finally {
+      this.worker.terminate();
+      this.unlock?.();
+    }
   }
 }

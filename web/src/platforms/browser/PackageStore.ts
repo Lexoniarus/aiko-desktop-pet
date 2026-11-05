@@ -26,7 +26,9 @@ export async function activePackage(): Promise<InstalledPackage | undefined> {
       request.onsuccess = () => resolve(request.result as InstalledPackage | undefined);
       request.onerror = () => reject(request.error);
     });
-  } finally { db.close(); }
+  } finally {
+    db.close();
+  }
 }
 
 export async function activatePackage(value: InstalledPackage): Promise<void> {
@@ -44,9 +46,14 @@ export async function activatePackage(value: InstalledPackage): Promise<void> {
       tx.onabort = () => reject(tx.error ?? new Error('Paketaktivierung abgebrochen.'));
       tx.onerror = () => reject(tx.error);
     });
-  } finally { db.close(); }
+  } finally {
+    db.close();
+  }
 }
 
 export function packageRoot(id: string): URL {
-  return new URL(`__packages__/${encodeURIComponent(id)}/`, new URL('./', location.href));
+  return new URL(
+    `__packages__/${encodeURIComponent(id)}/`,
+    new URL('./', location.href),
+  );
 }

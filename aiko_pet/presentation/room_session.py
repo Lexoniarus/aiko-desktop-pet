@@ -34,6 +34,7 @@ from .room_content import RoomContent
 from ..application.room_routine import RoomRoutine
 from ..application.router import ApplicationRouter
 from ..application.session import LoadedPetData, SavedPetStore
+from ..application.session_time import SessionTimeProgression
 from ..application.settings import PetSettings
 from ..application.read_snapshot import snapshot_pet
 from ..application.wish_context import wish_context_for
@@ -77,8 +78,8 @@ class RoomSession:
             memory=loaded.object_memory, inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,
             items=items, night=lambda: self.routine.sleep_context().window(time.time())[0],
+            time_progression=self._make_progression,
         )
-        self.progression = RoomTimeProgression(self.room.progression, self.wish_context)
         self.router = ApplicationRouter(
             CareController(self.state, mind, self.routine, clock=self.clock,
                            progression=self.progression),
@@ -124,6 +125,10 @@ class RoomSession:
             online_social=self.settings.online_social,
             prepared_social=self.content.runtime.prepared_categories if self.content else frozenset(),
         )
+
+    def _make_progression(self, base: SessionTimeProgression) -> RoomTimeProgression:
+        self.progression = RoomTimeProgression(base, self.wish_context)
+        return self.progression
 
     def forecast(self) -> Any:
         return WishForecastService().plan(self.state, self.room.world,

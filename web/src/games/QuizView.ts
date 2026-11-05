@@ -1,15 +1,32 @@
-import { button,element } from '../ui/dom';
+import { button, element } from '../ui/dom';
 import type { Command } from '../ui/dom';
-import { GameFrame,record,values } from './GameView';
+import { GameFrame, record, values } from './GameView';
 import type { GameView } from './GameView';
 
 export class QuizView extends GameFrame implements GameView {
-  private question=element('h3');private answers=element('div','quiz-answers');private explanation=element('p','quiz-explanation');private nextButton=button('Weiter',()=>this.action('next'));
-  constructor(command:Command){super(command);this.content.append(this.question,this.answers,this.explanation,this.nextButton);}
-  update(data:Record<string,unknown>):void {
-    this.score.textContent=`Frage ${Number(data.index??0)+1} von 10 · ${data.score??0} richtig`;
-    this.question.textContent=String(data.question??'');this.answers.replaceChildren();
-    for(const raw of values(data.answers)){const answer=record(raw),control=button(String(answer.text),()=>this.action('answer',answer.id));control.disabled=!!data.busy||data.selected!==null;control.classList.toggle('correct',data.correct===answer.id);control.classList.toggle('chosen',data.selected===answer.id);this.answers.append(control);}
-    this.explanation.textContent=String(data.explanation??'');this.nextButton.hidden=!data.revealed;this.nextButton.disabled=!!data.busy;this.nextButton.textContent=data.finished?'Neue Fragerunde':'Weiter';
+  private question = element('h3');
+  private answers = element('div', 'quiz-answers');
+  private explanation = element('p', 'quiz-explanation');
+  private nextButton = button('Weiter', () => this.action('next'));
+  constructor(command: Command) {
+    super(command);
+    this.content.append(this.question, this.answers, this.explanation, this.nextButton);
+  }
+  update(data: Record<string, unknown>): void {
+    this.score.textContent = `Frage ${Number(data.index ?? 0) + 1} von 10 · ${data.score ?? 0} richtig`;
+    this.question.textContent = String(data.question ?? '');
+    this.answers.replaceChildren();
+    for (const raw of values(data.answers)) {
+      const answer = record(raw),
+        control = button(String(answer.text), () => this.action('answer', answer.id));
+      control.disabled = !!data.busy || data.selected !== null;
+      control.classList.toggle('correct', data.correct === answer.id);
+      control.classList.toggle('chosen', data.selected === answer.id);
+      this.answers.append(control);
+    }
+    this.explanation.textContent = String(data.explanation ?? '');
+    this.nextButton.hidden = !data.revealed;
+    this.nextButton.disabled = !!data.busy;
+    this.nextButton.textContent = data.finished ? 'Neue Fragerunde' : 'Weiter';
   }
 }

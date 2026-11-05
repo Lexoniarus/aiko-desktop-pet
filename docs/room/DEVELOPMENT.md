@@ -16,6 +16,26 @@ Implementation commits precede test execution. Automated local verification
 must be headless; device acceptance stays explicitly pending until observed on
 the user's iPad. A Windows browser pass cannot supply that evidence.
 
+The actual shared host composition lives under `presentation/room_session.py`,
+`presentation/room_runtime.py`, `presentation/room_content.py` and
+`presentation/games/session.py`. This preserves the existing rule that the
+application layer cannot import presentation modules. Existing rules stay in
+`application/`, `pet/`, `world/` and `games/`. The browser root only supplies
+fetch, filesystem publication and transport adapters. Native callers use the
+same extracted playback, game timelines and immutable projections.
+
+The browser SQLite migration is schema 6. Optional room location/depth belongs
+to World; observed depth belongs to ObjectMemory. Native snapshots use compatible
+defaults. First browser publication uses exclusive file creation under the
+browser's lifetime writer lock; successful UI acknowledgement follows IDBFS
+flush. Desktop hard-link publication remains the default adapter.
+
+The supplied device is an iPad of the ninth generation on iPadOS 26.6. Follow
+[the device acceptance sheet](IPAD_ACCEPTANCE.md); later OS releases remain
+compatibility targets rather than an assumed proven result. Automated browser
+QA uses headless Playwright: the Browser plugin/skill is unavailable in this
+session, and the owner explicitly prohibits visible test windows.
+
 Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `npm ci`, `npm run build`, then the repository Python interpreter to run
 `../scripts/build_room_package.py`. Generated downloads and distributions stay

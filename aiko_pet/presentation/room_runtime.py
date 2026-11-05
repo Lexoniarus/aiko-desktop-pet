@@ -21,7 +21,7 @@ from .view_models.object_reactions import format_object_reaction
 from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
-from ..application.active_time import ActiveSessionClock, SessionInputs
+from ..application.active_time import ActiveSessionClock, SessionInputs, TimeProgression
 from ..application.object_awareness import ObjectAwareness, held_type_conflicts_with_memory
 from ..application.object_behavior import (
     Approach,
@@ -46,6 +46,7 @@ class RoomRuntime:
         game_open: Callable[[], bool],
         items: ItemCatalog,
         night: Callable[[], bool],
+        time_progression: Callable[[SessionTimeProgression], TimeProgression],
     ) -> None:
         self.world, self.state, self.mind = world, state, mind
         self.playback, self.inputs, self.game_open = playback, inputs, game_open
@@ -53,8 +54,9 @@ class RoomRuntime:
         self.awareness = ObjectAwareness(memory)
         self.awareness.reconcile_books(world.snapshot())
         self.progression = SessionTimeProgression(world, self.awareness.memory)
+        admitted_time = time_progression(self.progression)
         self.consumption = ObjectConsumption(
-            state, mind, routine, clock=clock, progression=self.progression,
+            state, mind, routine, clock=clock, progression=admitted_time,
             memory=self.awareness.memory,
         )
         self.now = 0.0

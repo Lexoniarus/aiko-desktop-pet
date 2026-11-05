@@ -1,6 +1,7 @@
 # Shared Aiko room and local iPad PWA — overall implementation plan
 
-Status: phase 0 in progress. Room/PWA implementation has not started.
+Status: phase 0 complete. Shared-room implementation is in progress on
+`feature/shared-room-pwa`; final automatic and actual-device acceptance are pending.
 
 Planning baseline: 2026-11-04, `feature/social-optimization` at `54c6e46`,
 including the currently uncommitted desktop/UI work as work to finish in phase 0.
@@ -649,9 +650,9 @@ forking the core or prematurely implementing a native shell.
 
 | Milestone | Status |
 | --- | --- |
-| Phase 0: green desktop branch, merge, green main, fresh room branch | In progress: current feature-branch validation; merge and new room branch remain pending. |
+| Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
-| T1: complete Tamagotchi core in the shared room PWA | Pending. |
+| T1: complete Tamagotchi core in the shared room PWA | Implementation present; final verification and actual-device parity acceptance pending. |
 | T2: notification-enabled iPad candidate | Pending. |
 | D1: shared room hosted by the desktop application | Later work; pending. |
 | Multi-day acceptance and final review | Pending. |
