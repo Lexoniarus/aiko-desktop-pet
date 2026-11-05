@@ -25,10 +25,6 @@ from aiko_pet.application.social_history import (
     SocialContentReceipt,
 )
 from aiko_pet.application.social_requests import REQUEST_CAPS, SocialRequestHistory
-from aiko_pet.presentation.social import (
-    SocialConversationRuntime,
-    SocialRuntimePorts,
-)
 from aiko_pet.infrastructure.local_jokes import REVIEW_PATH, load_local_jokes
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.social_api import (
@@ -40,6 +36,10 @@ from aiko_pet.infrastructure.social_history_codec import (
     encode_social_history,
 )
 from aiko_pet.pet.state import PetState
+from aiko_pet.presentation.social import (
+    SocialConversationRuntime,
+    SocialRuntimePorts,
+)
 from aiko_pet.presentation.view_models.credits import project_credits
 from tools.persistence_test_support import save_test_session
 

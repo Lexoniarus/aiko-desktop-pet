@@ -18,7 +18,9 @@ class DeferredSearchExecutor(Executor):
         self._closed = False
         self._pending: list[Future[object]] = []
 
-    def submit(self, fn: Callable[P, T], /, *args: P.args, **kwargs: P.kwargs) -> Future[T]:
+    def submit(
+        self, fn: Callable[P, T], /, *args: P.args, **kwargs: P.kwargs
+    ) -> Future[T]:
         if self._closed:
             raise RuntimeError("Search executor is closed")
         future: Future[T] = Future()
@@ -30,6 +32,7 @@ class DeferredSearchExecutor(Executor):
                 future.set_result(fn(*args, **kwargs))
             except Exception as error:
                 future.set_exception(error)
+
         self._schedule(1, run)
         return future
 

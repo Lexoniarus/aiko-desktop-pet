@@ -15,7 +15,6 @@ from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.pet.wishes import ActiveWish, WishContext, WishId, WishState
-from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.presentation.view_models.contracts import (
     HoverAnchor,
 )
@@ -34,6 +33,7 @@ from aiko_pet.presentation.view_models.text_de import (
     format_status_hint,
     status_hint_text,
 )
+from aiko_pet.telemetry import ComputerSnapshot
 from tools.pet_test_support import set_test_pet_values
 
 

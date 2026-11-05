@@ -8,9 +8,9 @@ from uuid import uuid4
 from ...games.blackjack import Blackjack, Phase, Table, hand_total
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.playing_cards import Card
-from .pacing import GAME_PACING
 from ..view_models.game_models import HandView
 from .blackjack_commentary import BlackjackCommentary
+from .pacing import GAME_PACING
 from .rock_paper_scissors_dialogue import GameDialogue
 
 Motion = Callable[[str, Card | None, int, Callable[[], None]], None]

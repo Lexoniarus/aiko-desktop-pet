@@ -5,8 +5,8 @@ from collections.abc import Callable
 from ...application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ...pet.animation.item_assets import ItemCatalog
 from ...pet.mind.catalog import Reaction
-from ...presentation.view_models.object_reactions import format_object_reaction
 from ...presentation.playback import ReactionPlayer
+from ...presentation.view_models.object_reactions import format_object_reaction
 
 
 class ObjectFeedbackPresenter:

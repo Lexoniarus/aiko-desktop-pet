@@ -5,10 +5,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
-from ..common.mastermind_images import MastermindImages
-from ..common.playing_card_images import PlayingCardImages
 from ...presentation.view_models.game_models import HandView
 from ...presentation.view_models.mastermind_models import CodeView
+from ..common.mastermind_images import MastermindImages
+from ..common.playing_card_images import PlayingCardImages
 
 
 @dataclass(frozen=True, slots=True)

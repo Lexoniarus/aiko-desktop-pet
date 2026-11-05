@@ -14,7 +14,7 @@ export interface Clip {
 }
 export class AikoView extends Container {
   private sprite = new AnimatedSprite([Texture.EMPTY]);
-  private name = '';
+  private clipName = '';
   private generation = 0;
   private actionId = -1;
   private held = new Sprite(Texture.EMPTY);
@@ -37,9 +37,9 @@ export class AikoView extends Container {
   }
   async show(name: string, actionId = 0): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
-    if (name === this.name && actionId === this.actionId) return;
+    if (name === this.clipName && actionId === this.actionId) return;
     this.actionId = actionId;
-    this.name = name;
+    this.clipName = name;
     const generation = ++this.generation;
     const clip = this.clips[name]!;
     let frames = this.loaded.get(name);
@@ -83,7 +83,7 @@ export class AikoView extends Container {
     this.placeHeld();
   }
   private placeHeld(): void {
-    const clip = this.clips[this.name];
+    const clip = this.clips[this.clipName];
     if (!clip) return;
     const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
     const anchor = clip.frames[index]?.foodAnchor;

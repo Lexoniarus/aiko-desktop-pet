@@ -5,12 +5,11 @@ from __future__ import annotations
 import json
 import sqlite3
 import sys
-from importlib.metadata import version
 from collections import OrderedDict
+from importlib.metadata import version
 from typing import Any
 
-from ..application.room_contracts import PROTOCOL_VERSION, ROOM_COMMANDS
-from ..application.room_contracts import json_value
+from ..application.room_contracts import PROTOCOL_VERSION, ROOM_COMMANDS, json_value
 from ..presentation.room_session import RoomSession
 
 
@@ -25,11 +24,15 @@ class BrowserEndpoint:
             if len(message) > 65536:
                 raise ValueError("Zimmernachricht ist zu groß.")
             request = json.loads(message)
-            if not isinstance(request, dict) or request.get("protocol") != PROTOCOL_VERSION:
+            if (
+                not isinstance(request, dict)
+                or request.get("protocol") != PROTOCOL_VERSION
+            ):
                 raise ValueError("Unpassendes Zimmerprotokoll.")
-            request_id = request.get("requestId")
-            if type(request_id) is not int or not 0 < request_id < 2**53:
+            incoming_id = request.get("requestId")
+            if type(incoming_id) is not int or not 0 < incoming_id < 2**53:
                 raise ValueError("Ungültige Aktionskennung.")
+            request_id = incoming_id
             if request_id in self._replies:
                 return self._replies[request_id]
             name, args = request.get("name"), request.get("args", {})
@@ -37,19 +40,27 @@ class BrowserEndpoint:
                 raise ValueError("Unbekannte Zimmeraktion.")
             self.session.execute(name, args)
             reply: dict[str, Any] = {
-                "protocol": PROTOCOL_VERSION, "requestId": request_id,
-                "ok": True, "snapshot": self.session.snapshot(),
+                "protocol": PROTOCOL_VERSION,
+                "requestId": request_id,
+                "ok": True,
+                "snapshot": self.session.snapshot(),
             }
             if name == "forecast":
                 reply["forecast"] = json_value(self.session.forecast())
             if name == "snapshot":
-                reply["runtime"] = {"python": sys.version.split()[0],
-                                    "sqlite": sqlite3.sqlite_version,
-                                    "astronomy-engine": version("astronomy-engine"),
-                                    "pyjokes": version("pyjokes")}
+                reply["runtime"] = {
+                    "python": sys.version.split()[0],
+                    "sqlite": sqlite3.sqlite_version,
+                    "astronomy-engine": version("astronomy-engine"),
+                    "pyjokes": version("pyjokes"),
+                }
         except (ValueError, KeyError, TypeError, RuntimeError) as error:
-            reply = {"protocol": PROTOCOL_VERSION, "requestId": request_id,
-                     "ok": False, "error": str(error)[:300]}
+            reply = {
+                "protocol": PROTOCOL_VERSION,
+                "requestId": request_id,
+                "ok": False,
+                "error": str(error)[:300],
+            }
         encoded = json.dumps(reply, ensure_ascii=False, allow_nan=False)
         if request_id:
             self._replies[request_id] = encoded

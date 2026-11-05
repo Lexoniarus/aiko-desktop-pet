@@ -8,6 +8,13 @@ from functools import partial
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
+from ...presentation.geometry import BoundsAt
+from ...presentation.view_models.contracts import (
+    HoverAnchor,
+    HoverSnapshot,
+    StatusSnapshot,
+)
+from ...presentation.view_models.food_models import FoodChoice
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
@@ -15,9 +22,6 @@ from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..common.status_readout import StatusReadout
 from ..common.window_drag import WindowDrag, bounded_position
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.contracts import HoverAnchor, HoverSnapshot, StatusSnapshot
-from ...presentation.view_models.food_models import FoodChoice
 from .hover_contracts import HoverActions, SelectorCloseReason
 from .hover_geometry import HoverGeometry, Rect
 from .moodlet_strip import MoodletStrip

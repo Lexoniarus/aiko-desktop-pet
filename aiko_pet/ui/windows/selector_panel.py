@@ -6,9 +6,9 @@ import sys
 import tkinter as tk
 from typing import Callable
 
+from ...presentation.geometry import BoundsAt, WindowBounds
 from ..common import scaled_widgets as scaled
 from ..common.skin import AikoSkin
-from ...presentation.geometry import BoundsAt, WindowBounds
 from .hover_contracts import SelectorCloseReason
 
 

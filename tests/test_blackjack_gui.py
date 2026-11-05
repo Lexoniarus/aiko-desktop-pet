@@ -24,7 +24,7 @@ class BlackjackGuiTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.pet = create_test_desktop(
-            store=StateStore(Path(folder.name) / 'save.json'),
+            store=StateStore(Path(folder.name) / "save.json"),
         )
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
@@ -32,7 +32,8 @@ class BlackjackGuiTests(unittest.TestCase):
 
     def open_game(self, game):
         with patch(
-            'aiko_pet.presentation.games.blackjack_sequence.Blackjack', return_value=game,
+            "aiko_pet.presentation.games.blackjack_sequence.Blackjack",
+            return_value=game,
         ):
             self.pet._hover.open_game(GameId.BLACKJACK)
         window = self.pet._hover.game_window
@@ -43,7 +44,7 @@ class BlackjackGuiTests(unittest.TestCase):
         for _ in range(limit * 10):
             if predicate():
                 return
-            self.timing.advance(.1)
+            self.timing.advance(0.1)
         self.fail("Native choreography did not reach its boundary")
 
     def ready(self, game):
@@ -52,17 +53,18 @@ class BlackjackGuiTests(unittest.TestCase):
     def test_long_welcome_and_stand_comment_never_hold_deal_flip_or_restart(self):
         self.pet._hover._ports = replace(
             self.pet._hover._ports,
-            game_dialogue=lambda event: event + ': ' + 'A' * 110,
+            game_dialogue=lambda event: event + ": " + "A" * 110,
         )
         start = self.timing.monotonic()
-        game = self.open_game(arranged_game(
-            card('10'), card('9'), card('8'), card('8', 'hearts')))
+        game = self.open_game(
+            arranged_game(card("10"), card("9"), card("8"), card("8", "hearts"))
+        )
         bubble = self.pet._speech.bubble
         assert bubble is not None
         self.ready(game)
         self.assertLessEqual(self.timing.monotonic() - start, 2.3)
         self.assertIs(self.pet._speech.bubble, bubble)
-        self.assertEqual(game.stand_button.cget('state'), 'normal')
+        self.assertEqual(game.stand_button.cget("state"), "normal")
         game.stand_button.invoke()
         stand_bubble = self.pet._speech.bubble
         self.assertIsNot(stand_bubble, bubble)
@@ -87,8 +89,9 @@ class BlackjackGuiTests(unittest.TestCase):
         self.pet._place_x(10000)
         self.pet.root.update_idletasks()
         started = self.timing.monotonic()
-        game = self.open_game(arranged_game(
-            card('10'), card('9'), card('8'), card('7'), card('K')))
+        game = self.open_game(
+            arranged_game(card("10"), card("9"), card("8"), card("7"), card("K"))
+        )
         self.assertEqual(game._visible.player, ())
         game.hit()
         self.assertEqual(len(game._sequence.game.table.player), 2)
@@ -98,19 +101,20 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertIsNone(hand._hand.cards[1])
         assert hand.canvas is not None
         for item in hand.canvas.find_all():
-            if hand.canvas.type(item) != 'image':
+            if hand.canvas.type(item) != "image":
                 continue
-            image = hand.canvas.itemcget(item, 'image')
-            self.assertEqual(self.pet.root.tk.call('image', 'width', image), 128)
+            image = hand.canvas.itemcget(item, "image")
+            self.assertEqual(self.pet.root.tk.call("image", "width", image), 128)
         assert game._motion is not None
-        self.assertIn('deck', game._motion.effects._windows)
-        self.assertEqual(game.hit_button.cget('image'), '')
+        self.assertIn("deck", game._motion.effects._windows)
+        self.assertEqual(game.hit_button.cget("image"), "")
         before = self.pet.state.fun
         game.stand()
         self.wait_for(lambda: game._sequence.game.score.games == 1)
         self.assertIsNone(game._panel.next_button)
-        self.assertLess(game.window.winfo_x() + game.window.winfo_width(),
-                        self.pet.root.winfo_x())
+        self.assertLess(
+            game.window.winfo_x() + game.window.winfo_width(), self.pet.root.winfo_x()
+        )
         game.close()
         self.assertGreater(self.pet.state.fun, before)
         self.assertEqual(hand.windows, ())
@@ -119,8 +123,9 @@ class BlackjackGuiTests(unittest.TestCase):
     def test_close_at_shuffle_flight_flip_and_result_cancels_all_owners(self):
         for seconds in (1, 5, 6, 10, 16):
             with self.subTest(seconds=seconds):
-                game = self.open_game(arranged_game(
-                    card('A'), card('8'), card('K'), card('9')))
+                game = self.open_game(
+                    arranged_game(card("A"), card("8"), card("K"), card("9"))
+                )
                 self.timing.advance(seconds)
                 game.close()
                 after_close = self.pet.state.fun
@@ -135,13 +140,12 @@ class BlackjackGuiTests(unittest.TestCase):
                 self.assertFalse(self.pet._animated.game_mode)
 
     def test_long_player_hand_stays_inside_the_card_area(self):
-        game = self.open_game(arranged_game(
-            card('2'), card('9'), card('3'), card('7')))
+        game = self.open_game(arranged_game(card("2"), card("9"), card("3"), card("7")))
         table = Table(STANDARD_DECK[:11], (None,), 20, Phase.PLAYER, None)
         game._present(table, game._sequence.game.score)
         game.window.update()
         for item in game.player_cards.find_all():
-            if game.player_cards.type(item) != 'image':
+            if game.player_cards.type(item) != "image":
                 continue
             bounds = game.player_cards.bbox(item)
             assert bounds is not None
@@ -151,8 +155,9 @@ class BlackjackGuiTests(unittest.TestCase):
             self.assertLessEqual(bounds[3], game.player_cards.winfo_height())
 
     def test_scale_move_keeps_panel_fixed_and_cards_at_128(self):
-        game = self.open_game(arranged_game(
-            card('10'), card('9'), card('8'), card('7')))
+        game = self.open_game(
+            arranged_game(card("10"), card("9"), card("8"), card("7"))
+        )
         self.ready(game)
         self.pet.root.update()
         panel_geometry = game.window.winfo_geometry()
@@ -165,16 +170,18 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertEqual(game.window.winfo_geometry(), panel_geometry)
         self.assertNotEqual(hand.window.winfo_geometry(), geometry)
         assert hand.canvas is not None
-        image = hand.canvas.itemcget('card_0', 'image')
-        self.assertEqual(self.pet.root.tk.call('image', 'width', image), 128)
-        with patch.object(hand.window, 'wm_attributes',
-                          wraps=hand.window.wm_attributes) as attrs:
+        image = hand.canvas.itemcget("card_0", "image")
+        self.assertEqual(self.pet.root.tk.call("image", "width", image), 128)
+        with patch.object(
+            hand.window, "wm_attributes", wraps=hand.window.wm_attributes
+        ) as attrs:
             self.pet._preferences.set_topmost(False)
-        attrs.assert_called_once_with('-topmost', False)
+        attrs.assert_called_once_with("-topmost", False)
 
     def test_result_finish_then_auto_gather_keeps_one_completed_receipt(self):
-        game = self.open_game(arranged_game(
-            card('10'), card('9'), card('8'), card('7'), card('K')))
+        game = self.open_game(
+            arranged_game(card("10"), card("9"), card("8"), card("7"), card("K"))
+        )
         self.ready(game)
         game.stand()
         self.wait_for(lambda: game._sequence.game.score.games == 1)
@@ -186,15 +193,16 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._game_visuals.hand._hand.cards[1])
 
     def test_moving_panel_during_flight_and_shutdown_clear_effects(self):
-        game = self.open_game(arranged_game(
-            card('2'), card('9'), card('3'), card('7'), card('4')))
+        game = self.open_game(
+            arranged_game(card("2"), card("9"), card("3"), card("7"), card("4"))
+        )
         self.ready(game)
         game.hit()
-        self.timing.advance(.3)
-        game.window.geometry('+300+100')
-        self.timing.advance(.4)
+        self.timing.advance(0.3)
+        game.window.geometry("+300+100")
+        self.timing.advance(0.4)
         self.assertEqual(len(game._visible.player), 3)
-        self.assertEqual(game.hit_button.cget('state'), 'normal')
+        self.assertEqual(game.hit_button.cget("state"), "normal")
         self.pet.quit()
         self.assertEqual(self.pet._game_visuals.hand._hand, HandView())
         assert game._motion is not None

@@ -8,10 +8,10 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
-from ..common.mastermind_images import MastermindImages
 from ...presentation.geometry import WindowBounds
 from ...presentation.view_models.game_models import HandAnchor
 from ...presentation.view_models.mastermind_models import CodeView
+from ..common.mastermind_images import MastermindImages
 
 
 class MastermindSafePresenter:

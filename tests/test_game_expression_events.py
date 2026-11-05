@@ -22,11 +22,13 @@ from aiko_pet.pet.moodlets import (
 from aiko_pet.pet.routine import context_at
 from aiko_pet.presentation.games.blackjack_sequence import BlackjackSequence
 from aiko_pet.presentation.games.connect_four_sequence import ConnectFourSequence
-from aiko_pet.ui.windows.game_speech import GameSpeech
 from aiko_pet.presentation.games.mastermind_sequence import MastermindSequence
 from aiko_pet.presentation.games.quiz_sequence import QuizSequence
-from aiko_pet.presentation.games.rock_paper_scissors_sequence import RockPaperScissorsSequence
+from aiko_pet.presentation.games.rock_paper_scissors_sequence import (
+    RockPaperScissorsSequence,
+)
 from aiko_pet.presentation.games.tic_tac_toe_sequence import TicTacToeSequence
+from aiko_pet.ui.windows.game_speech import GameSpeech
 from tools.reaction_test_support import FakeScheduler
 
 

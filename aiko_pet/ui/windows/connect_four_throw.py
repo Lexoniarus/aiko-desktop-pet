@@ -7,11 +7,20 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
+from ...presentation.games.ports import GamePresentation
+from ...presentation.view_models.chip_flight import (
+    ChipTarget,
+    flight_height,
+    flight_point,
+)
+from ...presentation.view_models.connect_four_geometry import (
+    CELL,
+    CHIP,
+    MARGIN,
+    PREVIEW,
+)
 from ..common.scaled_widgets import Canvas
 from ..pet_view.game_effects import GameEffects
-from ...presentation.view_models.chip_flight import ChipTarget, flight_height, flight_point
-from ...presentation.view_models.connect_four_geometry import CELL, CHIP, MARGIN, PREVIEW
-from ...presentation.games.ports import GamePresentation
 
 
 class ConnectFourThrow:

@@ -8,10 +8,10 @@ from collections.abc import Callable
 from ...games.blackjack import Table
 from ...games.playing_cards import Card
 from ...presentation.games.pacing import GAME_PACING
-from ..pet_view.game_effects import GameEffects
-from ...presentation.view_models.game_models import HandView
-from .game_contracts import GameCardPorts
 from ...presentation.games.ports import GamePresentation
+from ...presentation.view_models.game_models import HandView
+from ..pet_view.game_effects import GameEffects
+from .game_contracts import GameCardPorts
 
 
 class BlackjackMotion:

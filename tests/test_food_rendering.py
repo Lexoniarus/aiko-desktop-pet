@@ -13,8 +13,8 @@ from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.presentation.view_models.food_models import food_choices
+from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.ui.world_view import WorldView
 from tools.desktop_test_support import destroy_test_root
 

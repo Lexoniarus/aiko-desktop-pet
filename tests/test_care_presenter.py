@@ -9,8 +9,8 @@ from aiko_pet.pet.care_result import CareAction, CareEffect, CareResult
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.routine import context_at
-from aiko_pet.ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from aiko_pet.presentation.view_models.care_text import format_care_response
+from aiko_pet.ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 
 
 class CarePresenterTests(unittest.TestCase):

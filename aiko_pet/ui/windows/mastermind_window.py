@@ -9,18 +9,18 @@ from functools import partial
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import ATTEMPTS, COLORS, PLACES, RoundView
 from ...pet.content import GERMAN_TEXT
+from ...presentation.games.mastermind_sequence import MastermindSequence
+from ...presentation.games.ports import GamePresentation
+from ...presentation.geometry import BoundsAt
+from ...presentation.view_models.mastermind_models import CodeView
 from ..common import scaled_widgets as scaled
 from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.mastermind_models import CodeView
 from .game_contracts import GameCodePorts
 from .game_panel import GamePanel
-from ...presentation.games.ports import GamePresentation
 from .mastermind_code_strip import MastermindCodeStrip
 from .mastermind_drag import MastermindDrag
 from .mastermind_finale import MastermindFinale
-from ...presentation.games.mastermind_sequence import MastermindSequence
 
 ROW_HEIGHT = 48
 HEADER_HEIGHT = 24

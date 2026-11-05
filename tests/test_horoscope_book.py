@@ -9,13 +9,13 @@ from support.horoscope import NOW, coordinator
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
-from aiko_pet.presentation.book import HoroscopePlayback
 from aiko_pet.infrastructure.world_codec import decode_world, encode_world
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.presentation.book import HoroscopePlayback
 from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.world.contracts import (
     ObjectDefinition,

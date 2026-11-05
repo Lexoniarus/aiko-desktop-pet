@@ -11,16 +11,16 @@ from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...pet.content import GERMAN_TEXT
+from ...presentation.games.ports import GamePresentation
+from ...presentation.games.quiz_sequence import QuizSequence
+from ...presentation.geometry import BoundsAt
 from ..common import scaled_widgets as scaled
 from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel
 from ..common.skin import AikoSkin
-from ...presentation.geometry import BoundsAt
 from ..pet_view.game_effects import GameEffects
 from .game_panel import GamePanel
-from ...presentation.games.ports import GamePresentation
 from .game_waiting import GameWaiting
-from ...presentation.games.quiz_sequence import QuizSequence
 
 
 class QuizWindow:

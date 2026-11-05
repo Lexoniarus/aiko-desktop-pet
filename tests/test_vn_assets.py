@@ -7,8 +7,8 @@ from PIL import Image
 
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.pet.catalog_validation import load_json
-from aiko_pet.ui.common.icon_images import IconImages
 from aiko_pet.presentation.view_models.emotional_text import MOODLET_ICONS
+from aiko_pet.ui.common.icon_images import IconImages
 
 
 class VnAssetTests(unittest.TestCase):

@@ -3,8 +3,8 @@
 import json
 import tempfile
 import unittest
-from datetime import datetime
 from dataclasses import replace
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -24,9 +24,16 @@ class RoomSessionTests(unittest.TestCase):
 
     def command(self, name: str, **args: object) -> dict:
         self.sequence += 1
-        result = json.loads(self.endpoint.dispatch_json(json.dumps({
-            "protocol": 1, "requestId": self.sequence, "name": name, "args": args,
-        })))
+        result = json.loads(
+            self.endpoint.dispatch_json(
+                json.dumps({
+                    "protocol": 1,
+                    "requestId": self.sequence,
+                    "name": name,
+                    "args": args,
+                })
+            )
+        )
         self.assertTrue(result["ok"], result.get("error"))
         return result
 
@@ -34,11 +41,13 @@ class RoomSessionTests(unittest.TestCase):
         before = self.endpoint.session.room.position
         self.command("call", x=900, depth=1.2)
         for _ in range(4):
-            self.wall += .25
+            self.wall += 0.25
             self.command("tick")
         position = self.endpoint.session.room.position
-        self.assertLess(RoomGeometry.distance(position, RoomPoint(900, 1.2)),
-                        RoomGeometry.distance(before, RoomPoint(900, 1.2)))
+        self.assertLess(
+            RoomGeometry.distance(position, RoomPoint(900, 1.2)),
+            RoomGeometry.distance(before, RoomPoint(900, 1.2)),
+        )
         self.command("suspend")
         reopened = create_browser_session(str(self.path))
         self.assertEqual(reopened.session.room.position, position)
@@ -46,8 +55,12 @@ class RoomSessionTests(unittest.TestCase):
         self.assertFalse(reopened.session.settings.observe_computer)
 
     def test_duplicate_request_cannot_create_a_second_portion(self) -> None:
-        message = json.dumps({"protocol": 1, "requestId": 900,
-                              "name": "place", "args": {"definition": "apple", "x": 800, "depth": 1.2}})
+        message = json.dumps({
+            "protocol": 1,
+            "requestId": 900,
+            "name": "place",
+            "args": {"definition": "apple", "x": 800, "depth": 1.2},
+        })
         first = self.endpoint.dispatch_json(message)
         self.assertTrue(json.loads(first)["ok"])
         self.assertEqual(self.endpoint.dispatch_json(message), first)
@@ -55,29 +68,51 @@ class RoomSessionTests(unittest.TestCase):
 
     def test_unknown_transport_command_is_rejected_without_changing_state(self) -> None:
         before = self.endpoint.session.state.capture_checkpoint()
-        reply = self.endpoint.dispatch_json(json.dumps({
-            "protocol": 1, "requestId": 12, "name": "eval", "args": {},
-        }))
+        reply = self.endpoint.dispatch_json(
+            json.dumps({
+                "protocol": 1,
+                "requestId": 12,
+                "name": "eval",
+                "args": {},
+            })
+        )
         self.assertFalse(json.loads(reply)["ok"])
         self.assertEqual(self.endpoint.session.state.capture_checkpoint(), before)
 
     def test_search_forecast_uses_copies_of_all_live_owners(self) -> None:
         session = self.endpoint.session
-        self.command("place", definition="onigiri", x=800, depth=.9)
-        before = (session.state.capture_checkpoint(), session.room.world.snapshot(),
-                  session.room.awareness.memory.snapshot())
+        self.command("place", definition="onigiri", x=800, depth=0.9)
+        before = (
+            session.state.capture_checkpoint(),
+            session.room.world.snapshot(),
+            session.room.awareness.memory.snapshot(),
+        )
         result = session.forecast()
         self.assertLessEqual(len(result), 3)
-        self.assertEqual((session.state.capture_checkpoint(), session.room.world.snapshot(),
-                          session.room.awareness.memory.snapshot()), before)
+        self.assertEqual(
+            (
+                session.state.capture_checkpoint(),
+                session.room.world.snapshot(),
+                session.room.awareness.memory.snapshot(),
+            ),
+            before,
+        )
 
     def test_closing_unplayed_games_grants_no_completion_reward(self) -> None:
-        for game in ("rock_paper_scissors", "tic_tac_toe", "blackjack",
-                     "connect_four", "mastermind", "quiz"):
+        for game in (
+            "rock_paper_scissors",
+            "tic_tac_toe",
+            "blackjack",
+            "connect_four",
+            "mastermind",
+            "quiz",
+        ):
             with self.subTest(game=game):
                 before = self.endpoint.session.state.fun
                 self.command("game_open", id=game)
-                self.assertEqual(self.command("snapshot")["snapshot"]["game"]["id"], game)
+                self.assertEqual(
+                    self.command("snapshot")["snapshot"]["game"]["id"], game
+                )
                 self.command("game_close")
                 self.assertEqual(self.endpoint.session.state.fun, before)
                 self.assertIsNone(self.command("snapshot")["snapshot"]["game"])
@@ -95,18 +130,28 @@ class RoomSessionTests(unittest.TestCase):
 
     def test_offered_food_uses_real_handover_and_consumes_one_portion(self) -> None:
         session = self.endpoint.session
-        session.state.restore_checkpoint(replace(session.state.capture_checkpoint(), satiety=30))
+        session.state.restore_checkpoint(
+            replace(session.state.capture_checkpoint(), satiety=30)
+        )
         self.command("offer", definition="onigiri")
         shown = -1
         for _ in range(180):
-            self.wall += .25
+            self.wall += 0.25
             reply = self.command("tick")["snapshot"]
             speech = reply["speech"]
             if speech["text"] and speech["id"] != shown:
                 shown = speech["id"]
                 self.command("speech_ack", id=shown)
-            if any(item.state.value == "consumed" for item in session.room.world.snapshot().objects):
+            if any(
+                item.state.value == "consumed"
+                for item in session.room.world.snapshot().objects
+            ):
                 break
         self.assertGreater(session.state.satiety, 30)
-        self.assertEqual(sum(item.state.value == "consumed"
-                             for item in session.room.world.snapshot().objects), 1)
+        self.assertEqual(
+            sum(
+                item.state.value == "consumed"
+                for item in session.room.world.snapshot().objects
+            ),
+            1,
+        )

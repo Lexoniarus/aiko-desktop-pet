@@ -6,11 +6,6 @@ from pathlib import Path
 from typing import Callable, Mapping, cast
 
 from ...pet.content import GERMAN_TEXT
-from ..common import scaled_widgets as scaled
-from ..common.content_region import ContentRegion
-from ..common.description_tip import DescriptionTip
-from ..common.panel_surface import PanelSurface
-from ..common.skin import AikoSkin
 from ...presentation.view_models.contracts import WishView
 from ...presentation.view_models.emotional_text import (
     GAME_FILES,
@@ -20,6 +15,11 @@ from ...presentation.view_models.emotional_text import (
     wish_icon,
     wish_progress,
 )
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
+from ..common.description_tip import DescriptionTip
+from ..common.panel_surface import PanelSurface
+from ..common.skin import AikoSkin
 
 
 class WishPanel:

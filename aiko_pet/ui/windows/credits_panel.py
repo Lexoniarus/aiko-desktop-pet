@@ -9,9 +9,9 @@ from typing import Callable
 
 from ...asset_paths import ASSET_ROOT
 from ...pet.content import GERMAN_TEXT
+from ...presentation.view_models.credits import ContentCredit, CreditsSnapshot
 from ..common import scaled_widgets as scaled
 from ..common.skin import AikoSkin
-from ...presentation.view_models.credits import ContentCredit, CreditsSnapshot
 
 
 class CreditsPanel:

@@ -14,8 +14,8 @@ from ...desktop.taskbar import locate_primary_taskbar
 from ...desktop.work_area import work_area_at
 from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH
 from ...pet.content import GERMAN_TEXT
-from ..common.skin import AikoSkin
 from ...presentation.geometry import WindowBounds
+from ..common.skin import AikoSkin
 
 MAGENTA = "#ff00ff"
 

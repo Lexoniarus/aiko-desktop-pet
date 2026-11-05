@@ -11,9 +11,9 @@ from unittest.mock import Mock, patch
 from aiko_pet.desktop.work_area import work_area_at
 from aiko_pet.games.contracts import SessionSummary
 from aiko_pet.games.tic_tac_toe import Board
+from aiko_pet.presentation.geometry import BoundsAt, WindowBounds, beside_character
 from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 from aiko_pet.ui.common.skin import AikoSkin
-from aiko_pet.presentation.geometry import BoundsAt, WindowBounds, beside_character
 from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
 from aiko_pet.ui.windows.game_contracts import GameCardPorts, GameWindow
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow

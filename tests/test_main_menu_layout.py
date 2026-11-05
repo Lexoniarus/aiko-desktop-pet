@@ -14,10 +14,10 @@ from aiko_pet.pet.moodlets import MoodletEpisode, MoodletState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
-from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.presentation.view_models.contracts import HoverAnchor
 from aiko_pet.presentation.view_models.projections import project_hover, project_status
+from aiko_pet.telemetry import ComputerSnapshot
+from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.game_menu import GameMenu
 from aiko_pet.ui.windows.hover_contracts import HoverActions

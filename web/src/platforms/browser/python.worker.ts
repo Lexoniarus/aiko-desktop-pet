@@ -7,7 +7,7 @@ let session: { dispatch_json: (message: string) => string } | undefined;
 let dirty = false;
 function sync(populate: boolean): Promise<void> {
   return new Promise((resolve, reject) =>
-    python.FS.syncfs(populate, (error) => (error ? reject(error) : resolve())),
+    python.FS.syncfs(populate, (error: Error | null) => (error ? reject(error) : resolve())),
   );
 }
 async function initialize(root: string): Promise<void> {

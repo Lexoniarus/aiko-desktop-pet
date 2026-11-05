@@ -28,8 +28,11 @@ class BrowserSocialWorker:
         self._closed = False
 
     def start(
-        self, category: SocialCategory, token: object,
-        provider: SocialProvider | None = None, *,
+        self,
+        category: SocialCategory,
+        token: object,
+        provider: SocialProvider | None = None,
+        *,
         request: SocialFetchRequest | None = None,
     ) -> None:
         if self._closed:
@@ -39,29 +42,53 @@ class BrowserSocialWorker:
         task.add_done_callback(self._tasks.discard)
 
     async def _fetch(
-        self, category: SocialCategory, token: object,
-        provider: SocialProvider | None, request: SocialFetchRequest | None,
+        self,
+        category: SocialCategory,
+        token: object,
+        provider: SocialProvider | None,
+        request: SocialFetchRequest | None,
     ) -> None:
         selected = provider or default_provider(category)
         try:
             fetch = importlib.import_module("pyodide.http").pyfetch
-            url = "https://v2.jokeapi.dev/info" if request and request.metadata else social_endpoint(
-                category, selected, request=request,
+            url = (
+                "https://v2.jokeapi.dev/info"
+                if request and request.metadata
+                else social_endpoint(
+                    category,
+                    selected,
+                    request=request,
+                )
             )
-            response = await asyncio.wait_for(fetch(
-                url, redirect="error", credentials="omit", headers={"Accept": "application/json"},
-            ), 8)
+            response = await asyncio.wait_for(
+                fetch(
+                    url,
+                    redirect="error",
+                    credentials="omit",
+                    headers={"Accept": "application/json"},
+                ),
+                8,
+            )
             if response.status == 429:
-                self._results.append(SocialFetchResult(token, category, failure="rate",
-                                                        retry_at=time.time() + 60))
+                self._results.append(
+                    SocialFetchResult(
+                        token, category, failure="rate", retry_at=time.time() + 60
+                    )
+                )
                 return
             if not response.ok:
-                self._results.append(SocialFetchResult(
-                    token, category,
-                    failure="empty" if response.status == 400 else "access"
-                    if response.status in (401, 403, 404, 410) else "temporary",
-                    retry_at=time.time() + 60,
-                ))
+                self._results.append(
+                    SocialFetchResult(
+                        token,
+                        category,
+                        failure="empty"
+                        if response.status == 400
+                        else "access"
+                        if response.status in (401, 403, 404, 410)
+                        else "temporary",
+                        retry_at=time.time() + 60,
+                    )
+                )
                 return
             body = await response.bytes()
             if len(body) > MAX_RESPONSE_BYTES:
@@ -69,8 +96,12 @@ class BrowserSocialWorker:
             payload: Any = json.loads(body)
             if request and request.metadata:
                 bounds = payload["jokes"]["idRange"]["de"]
-                catalog = JokeCatalog(bounds[0], bounds[1], time.time() + JOKE_METADATA_SECONDS)
-                self._results.append(SocialFetchResult(token, category, catalog=catalog))
+                catalog = JokeCatalog(
+                    bounds[0], bounds[1], time.time() + JOKE_METADATA_SECONDS
+                )
+                self._results.append(
+                    SocialFetchResult(token, category, catalog=catalog)
+                )
                 return
             if selected == SocialProvider.WITZAPI:
                 if not isinstance(payload, list) or len(payload) != 1:
@@ -78,22 +109,36 @@ class BrowserSocialWorker:
                 payload = payload[0]
             if request and request.id_range:
                 identity = payload.get("id")
-                if type(identity) is not int or not request.id_range[0] <= identity <= request.id_range[1]:
+                if (
+                    type(identity) is not int
+                    or not request.id_range[0] <= identity <= request.id_range[1]
+                ):
                     raise ValueError("Unrequested joke identity")
             try:
                 content = prepare_social_content(category, payload, provider=selected)
             except SocialContentRejectionError as error:
-                self._results.append(SocialFetchResult(
-                    token, category, failure="rejected", reason=error.reason,
-                    rejected_id=payload.get("id") if isinstance(payload, dict) else None,
-                ))
+                self._results.append(
+                    SocialFetchResult(
+                        token,
+                        category,
+                        failure="rejected",
+                        reason=error.reason,
+                        rejected_id=payload.get("id")
+                        if isinstance(payload, dict)
+                        else None,
+                    )
+                )
                 return
             self._results.append(SocialFetchResult(token, category, content))
         except asyncio.CancelledError:
             return
-        except (ImportError, ValueError, KeyError, TypeError, OSError, TimeoutError):
-            self._results.append(SocialFetchResult(token, category, failure="temporary",
-                                                    retry_at=time.time() + 60))
+        # Browser fetch failures include foreign JavaScript exception classes.
+        except Exception:
+            self._results.append(
+                SocialFetchResult(
+                    token, category, failure="temporary", retry_at=time.time() + 60
+                )
+            )
 
     def poll(self) -> SocialFetchResult | None:
         return self._results.popleft() if self._results else None

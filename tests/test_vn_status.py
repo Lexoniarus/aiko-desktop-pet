@@ -11,6 +11,12 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
+from aiko_pet.presentation.view_models.contracts import HoverAnchor
+from aiko_pet.presentation.view_models.emotional_text import (
+    MOODLET_ICONS,
+    wish_description,
+)
+from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import tip_position
 from aiko_pet.ui.common.status_readout import (
@@ -18,9 +24,6 @@ from aiko_pet.ui.common.status_readout import (
     fill_geometry,
     readout_color,
 )
-from aiko_pet.presentation.view_models.contracts import HoverAnchor
-from aiko_pet.presentation.view_models.emotional_text import MOODLET_ICONS, wish_description
-from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
 from tools.headless_widgets import Skin, Widget, widgets

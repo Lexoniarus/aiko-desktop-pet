@@ -4,12 +4,15 @@ import tkinter as tk
 from functools import partial
 
 from ...pet.content import GERMAN_TEXT
+from ...presentation.view_models.contracts import MoodletView
+from ...presentation.view_models.emotional_text import (
+    MOODLET_ICONS,
+    moodlet_description,
+)
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
 from ..common.skin import AikoSkin
-from ...presentation.view_models.contracts import MoodletView
-from ...presentation.view_models.emotional_text import MOODLET_ICONS, moodlet_description
 
 
 class MoodletStrip:

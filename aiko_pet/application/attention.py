@@ -17,12 +17,9 @@ from ..pet.animation.idle_behaviour import (
 )
 from ..pet.animation.idle_gesture import IdleGestureChoice
 from ..pet.balance import BALANCE
-from ..pet.interaction_rules import petting_is_welcome
 from ..pet.mind import PetMind
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
-from ..pet.moodlet_catalog import MOODLET_CATALOG
-from ..pet.moodlets import MoodletId
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
 from ..pet.wish_catalog import WISH_CATALOG

@@ -23,11 +23,11 @@ from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
 )
+from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.presentation.social import (
     SocialConversationRuntime,
     SocialRuntimePorts,
 )
-from aiko_pet.pet.mind.catalog import Reaction
 
 
 class SocialRuntimeTests(unittest.TestCase):

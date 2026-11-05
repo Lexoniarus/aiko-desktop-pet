@@ -21,7 +21,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from aiko_pet.asset_paths import ASSET_ROOT  # noqa: E402
-from aiko_pet.infrastructure.character_assets import load_character_catalog  # noqa: E402
+from aiko_pet.infrastructure.character_assets import (  # noqa: E402
+    load_character_catalog,
+)
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
 from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
 
@@ -40,8 +42,9 @@ ROOM_IMAGES = {
 
 
 def encoded(value: Any) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True,
-                      separators=(",", ":")).encode("utf8")
+    return json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf8")
 
 
 def archive(path: Path, files: dict[str, bytes]) -> None:
@@ -69,18 +72,26 @@ def download(url: str, target: Path, digest: str) -> bytes:
 
 
 def python_wheel(project: str, version: str, cache: Path) -> tuple[str, bytes]:
-    with urllib.request.urlopen(f"https://pypi.org/pypi/{project}/{version}/json", timeout=30) as response:
+    with urllib.request.urlopen(
+        f"https://pypi.org/pypi/{project}/{version}/json", timeout=30
+    ) as response:
         metadata = json.load(response)
-    wheel = next(item for item in metadata["urls"]
-                 if item["filename"].endswith("-py3-none-any.whl"))
-    return wheel["filename"], download(wheel["url"], cache / wheel["filename"],
-                                       wheel["digests"]["sha256"])
+    wheel = next(
+        item
+        for item in metadata["urls"]
+        if item["filename"].endswith("-py3-none-any.whl")
+    )
+    return wheel["filename"], download(
+        wheel["url"], cache / wheel["filename"], wheel["digests"]["sha256"]
+    )
 
 
 def runtime_assets() -> dict[str, Any]:
     catalog = load_character_catalog()
     clips = {}
-    for name in set(catalog.clips) | set(catalog.body_clips) | set(catalog.expression_clips):
+    for name in (
+        set(catalog.clips) | set(catalog.body_clips) | set(catalog.expression_clips)
+    ):
         clip = catalog.clip_for(name, 2)
         frames = []
         for frame in clip.frames:
@@ -92,22 +103,43 @@ def runtime_assets() -> dict[str, Any]:
                     file = hd
             frames.append({
                 "file": "assets/" + file.relative_to(ASSET_ROOT).as_posix(),
-                "duration": frame.duration_ms, "foodAnchor": frame.food_anchor,
-                "foreground": ("assets/" + frame.hand_foreground.relative_to(ASSET_ROOT).as_posix())
-                if frame.hand_foreground else None,
+                "duration": frame.duration_ms,
+                "foodAnchor": frame.food_anchor,
+                "foreground": (
+                    "assets/" + frame.hand_foreground.relative_to(ASSET_ROOT).as_posix()
+                )
+                if frame.hand_foreground
+                else None,
             })
-        clips[name] = dict(frames=frames, order=list(clip.playback_order),
-                           loop=clip.loop, anchor=clip.anchor,
-                           duration=clip.duration_seconds)
+        clips[name] = dict(
+            frames=frames,
+            order=list(clip.playback_order),
+            loop=clip.loop,
+            anchor=clip.anchor,
+            duration=clip.duration_seconds,
+        )
     items = load_item_catalog()
-    item_files = {key: {"file": "assets/" + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
-                         "label": item.label, "pivot": item.sprites[2].pivot}
-                  for key, item in items.foods.items()}
+    item_files = {
+        key: {
+            "file": "assets/"
+            + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
+            "label": item.label,
+            "pivot": item.sprites[2].pivot,
+        }
+        for key, item in items.foods.items()
+    }
     for key, item in items.readables.items():
-        item_files[key] = {"file": "assets/" + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
-                           "label": item.label, "pivot": item.sprites[2].pivot,
-                           "states": {name: "assets/" + variants[2].render_path.relative_to(ASSET_ROOT).as_posix()
-                                      for name, variants in item.states.items()}}
+        item_files[key] = {
+            "file": "assets/"
+            + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
+            "label": item.label,
+            "pivot": item.sprites[2].pivot,
+            "states": {
+                name: "assets/"
+                + variants[2].render_path.relative_to(ASSET_ROOT).as_posix()
+                for name, variants in item.states.items()
+            },
+        }
     return {"clips": clips, "items": item_files, "room": ROOM_IMAGES}
 
 
@@ -120,15 +152,26 @@ def main() -> None:
     output.mkdir(parents=True, exist_ok=True)
     cache = web / ".runtime"
     package = json.loads((web / "package.json").read_text("utf8"))
-    sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    sha = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
     version = f"{package['version']}-{sha[:12]}"
-    files = {"app/" + path.relative_to(web / "dist-runtime").as_posix(): path.read_bytes()
-             for path in sorted((web / "dist-runtime").rglob("*")) if path.is_file()}
+    files = {
+        "app/" + path.relative_to(web / "dist-runtime").as_posix(): path.read_bytes()
+        for path in sorted((web / "dist-runtime").rglob("*"))
+        if path.is_file()
+    }
     if "app/app.js" not in files:
         raise ValueError("Build the web runtime first")
     runtime = web / "node_modules/pyodide"
-    for name in ("pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm",
-                 "python_stdlib.zip", "pyodide-lock.json", "package.json"):
+    for name in (
+        "pyodide.mjs",
+        "pyodide.asm.mjs",
+        "pyodide.asm.wasm",
+        "python_stdlib.zip",
+        "pyodide-lock.json",
+        "package.json",
+    ):
         files["runtime/" + name] = (runtime / name).read_bytes()
     lock = json.loads((runtime / "pyodide-lock.json").read_text("utf8"))
     pending = ["sqlite3"] if "sqlite3" in lock["packages"] else []
@@ -161,33 +204,52 @@ def main() -> None:
         elif "assets" in relative.parts and path.suffix in (".png", ".json"):
             python_files[relative.as_posix()] = path.read_bytes()
         if "assets" in relative.parts and path.suffix == ".png":
-            files["assets/" + path.relative_to(ASSET_ROOT).as_posix()] = path.read_bytes()
+            files["assets/" + path.relative_to(ASSET_ROOT).as_posix()] = (
+                path.read_bytes()
+            )
     code_archive = cache / "aiko.zip"
     archive(code_archive, python_files)
     files["python/aiko.zip"] = code_archive.read_bytes()
     files["runtime-assets.json"] = encoded(runtime_assets())
     with ZipFile(args.prototype) as reference:
         for filename in ROOM_IMAGES.values():
-            files["room/" + filename] = reference.read("aiko-360-prototype/assets/" + filename)
+            files["room/" + filename] = reference.read(
+                "aiko-360-prototype/assets/" + filename
+            )
     for path in sorted((ROOT / "LICENSES").glob("*.txt")):
         files["licenses/" + path.name] = path.read_bytes()
     files["licenses/ASSETS.md"] = (ROOT / "ASSETS.md").read_bytes()
     manifest = dict(
-        format=1, protocol=1, saveSchema=SCHEMA_VERSION, version=version, entry="app/app.js",
-        sourceCommit=sha, pyodide=package["dependencies"]["pyodide"],
+        format=1,
+        protocol=1,
+        saveSchema=SCHEMA_VERSION,
+        version=version,
+        entry="app/app.js",
+        sourceCommit=sha,
+        pyodide=package["dependencies"]["pyodide"],
         prototypeSHA256=hashlib.sha256(args.prototype.read_bytes()).hexdigest(),
-        files={name: dict(size=len(content), sha256=hashlib.sha256(content).hexdigest())
-               for name, content in sorted(files.items())},
+        files={
+            name: dict(size=len(content), sha256=hashlib.sha256(content).hexdigest())
+            for name, content in sorted(files.items())
+        },
     )
     zip_path = output / f"aiko-room-{version}.zip"
-    archive(zip_path, {"manifest.json": encoded(manifest), **dict(sorted(files.items()))})
+    archive(
+        zip_path, {"manifest.json": encoded(manifest), **dict(sorted(files.items()))}
+    )
     starter = output / "starter"
     shutil.copytree(web / "dist-starter", starter, dirs_exist_ok=True)
-    (output / "BUILD.json").write_bytes(encoded(dict(
-        version=version, sourceCommit=sha, package=zip_path.name,
-        sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
-        device="iPad 9th generation, iPadOS 26.6; device verification pending",
-    )))
+    (output / "BUILD.json").write_bytes(
+        encoded(
+            dict(
+                version=version,
+                sourceCommit=sha,
+                package=zip_path.name,
+                sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
+                device="iPad 9th generation, iPadOS 26.6; device verification pending",
+            )
+        )
+    )
     print(f"Built {zip_path.name}: {zip_path.stat().st_size / 1024 / 1024:.1f} MiB")
 
 

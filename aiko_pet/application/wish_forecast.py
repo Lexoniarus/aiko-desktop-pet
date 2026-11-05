@@ -15,16 +15,27 @@ from .session_time import SessionTimeProgression
 
 
 class RoomTimeProgression:
-    def __init__(self, progression: SessionTimeProgression,
-                 context: Callable[[PetState], WishContext]) -> None:
+    def __init__(
+        self,
+        progression: SessionTimeProgression,
+        context: Callable[[PetState], WishContext],
+    ) -> None:
         self.progression, self.context = progression, context
 
     def _evaluate(self, state: PetState) -> None:
         deadline = state.wishes.refresh_at
-        state.evaluate_wishes(self.context(state), rng=random.Random(f"room-wishes:{deadline}"))
+        state.evaluate_wishes(
+            self.context(state), rng=random.Random(f"room-wishes:{deadline}")
+        )
 
-    def advance(self, state: PetState, inputs: SessionInputs, elapsed: float,
-                *, reconstruct: bool = False) -> None:
+    def advance(
+        self,
+        state: PetState,
+        inputs: SessionInputs,
+        elapsed: float,
+        *,
+        reconstruct: bool = False,
+    ) -> None:
         checkpoint = state.capture_checkpoint()
         world, memory = self.progression.world, self.progression.memory
         physical, cognitive = world.snapshot(), memory.snapshot()
@@ -37,14 +48,20 @@ class RoomTimeProgression:
                 if remaining <= 0:
                     break
                 deadline = state.wishes.refresh_at
-                until = max(1.0, deadline - state.lived_seconds) if deadline is not None else remaining
+                until = (
+                    max(1.0, deadline - state.lived_seconds)
+                    if deadline is not None
+                    else remaining
+                )
                 step = min(remaining, until)
                 remaining -= step
                 endpoint = replace(inputs, wall_time=inputs.wall_time - remaining)
                 self.progression.advance(state, endpoint, step, reconstruct=reconstruct)
                 self._evaluate(state)
             if remaining:
-                self.progression.advance(state, inputs, remaining, reconstruct=reconstruct)
+                self.progression.advance(
+                    state, inputs, remaining, reconstruct=reconstruct
+                )
                 self._evaluate(state)
         except Exception:
             state.restore_checkpoint(checkpoint)
@@ -61,9 +78,16 @@ class ForecastMessage:
 
 
 class WishForecastService:
-    def plan(self, state: PetState, world: WorldState, memory: ObjectMemory,
-             inputs: SessionInputs, context: Callable[[PetState], WishContext],
-             *, hours: int = 24) -> tuple[ForecastMessage, ...]:
+    def plan(
+        self,
+        state: PetState,
+        world: WorldState,
+        memory: ObjectMemory,
+        inputs: SessionInputs,
+        context: Callable[[PetState], WishContext],
+        *,
+        hours: int = 24,
+    ) -> tuple[ForecastMessage, ...]:
         if not 1 <= hours <= 48:
             raise ValueError("Forecast horizon must be between one and 48 hours")
         preview = PetState(updated_at=state.updated_at)
@@ -73,7 +97,9 @@ class WishForecastService:
         other.restore_snapshot(physical)
         knowledge = ObjectMemory()
         knowledge.restore_snapshot(memory.snapshot())
-        progression = RoomTimeProgression(SessionTimeProgression(other, knowledge), context)
+        progression = RoomTimeProgression(
+            SessionTimeProgression(other, knowledge), context
+        )
         result: list[ForecastMessage] = []
         emitted: set[str] = set()
         for index in range(hours * 4):

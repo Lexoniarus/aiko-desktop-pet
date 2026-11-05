@@ -10,6 +10,7 @@ host.innerHTML = `<section class="installer"><h1>Aikos Zimmer</h1>
   Du kannst sie vorher aus Dropbox oder GitHub herunterladen.</p>
   <label class="button">Aiko-Paket auswählen<input id="package" type="file" accept=".zip,application/zip"></label>
   <button id="start" hidden>Zimmer öffnen</button></section>`;
+const installer = host.firstElementChild!;
 const status = document.querySelector<HTMLElement>('#install-status')!;
 const input = document.querySelector<HTMLInputElement>('#package')!;
 const start = document.querySelector<HTMLButtonElement>('#start')!;
@@ -25,6 +26,7 @@ async function launch(): Promise<void> {
     const module = await import(/* @vite-ignore */ new URL(installed.entry, root).href);
     await module.startRoom(host, root.href);
   } catch (error) {
+    host.replaceChildren(installer);
     start.disabled = false;
     report(
       `Aiko konnte nicht starten: ${error instanceof Error ? error.message : String(error)}`,

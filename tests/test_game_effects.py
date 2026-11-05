@@ -42,9 +42,9 @@ class GameEffectsTests(unittest.TestCase):
 
 class MastermindFinaleTests(unittest.TestCase):
     def test_snack_uses_the_supplied_hand_anchor_and_finishes_after_the_action(self):
+        from aiko_pet.presentation.games.ports import GamePresentation
         from aiko_pet.ui.common.mastermind_images import MastermindImages
         from aiko_pet.ui.windows.game_contracts import GameCodePorts
-        from aiko_pet.presentation.games.ports import GamePresentation
         from aiko_pet.ui.windows.mastermind_finale import MastermindFinale
         from tools.tk_test_time import ControlledTkTime
 

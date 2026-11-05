@@ -30,7 +30,6 @@ from .desktop.persistence import DesktopPersistence
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
-from .desktop.social_runtime import SocialConversationRuntime
 from .desktop.startup import run_desktop
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
@@ -46,14 +45,15 @@ from .pet.content import GERMAN_TEXT
 from .pet.food import FoodId
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
+from .presentation.playback import ReactionPlayer
+from .presentation.social import SocialConversationRuntime
+from .presentation.view_models.food_models import food_choices
+from .presentation.view_models.read_models import DesktopPresentation
 from .ui.pet_view.action_playback import ActionPlayback
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
 from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
 from .ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
-from .presentation.playback import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
-from .presentation.view_models.food_models import food_choices
-from .presentation.view_models.read_models import DesktopPresentation
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from functools import partial
 
 from ..pet.animation.character import CharacterCatalog, PlaybackEvent
 from ..pet.interaction_events import SocialCompletion
@@ -47,7 +48,7 @@ class RoomPlayback:
         self.player = ReactionPlayer(
             schedule=self.schedule, cancel_timer=self.cancel_timer,
             display_emote=self._display_emote, display_text=self._display_text,
-            start_action=lambda clip, _duration: self.play_animation(clip),
+            start_action=self.start_action,
             mark_spoken=mark_spoken, is_closed=lambda: False,
             hide_speech=self._hide, social_completed=social_completed,
             on_text=lambda event: setattr(self, "_pending_event", event),
@@ -144,6 +145,9 @@ class RoomPlayback:
         self._action_timers.clear()
         self.animation = "idle"
 
+    def start_action(self, name: str, _duration: float) -> None:
+        self.play_animation(name)
+
     def play_animation(self, name: str) -> int:
         self.stop_animation()
         self.animation = "pick_up" if name == "hold_item" else name
@@ -160,7 +164,7 @@ class RoomPlayback:
                 events = ("detach_object",) if source == 2 else ()
             event = PlaybackEvent(action_id, self.animation, source, events, False)
             self._action_timers.append(self.schedule(
-                elapsed, lambda event=event: self.receive(event),
+                elapsed, partial(self.receive, event),
             ))
             elapsed += clip.timings[index]
         final = PlaybackEvent(action_id, self.animation,

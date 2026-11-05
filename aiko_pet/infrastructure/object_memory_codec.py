@@ -17,16 +17,21 @@ from ..pet.mind.object_perception import ConsumableKind
 
 
 def encode_object_memory(
-    snapshot: ObjectMemorySnapshot, *, world_next_id: int = 1,
+    snapshot: ObjectMemorySnapshot,
+    *,
+    world_next_id: int = 1,
 ) -> dict[str, Any]:
     entries = []
     for item in snapshot.entries:
         row = asdict(item)
         row["possible_sources"] = list(item.possible_sources)
         entries.append(row)
-    return {"version": 3, "entries": entries,
-            "next_record_id": snapshot.next_record_id,
-            "world_next_id": world_next_id}
+    return {
+        "version": 3,
+        "entries": entries,
+        "next_record_id": snapshot.next_record_id,
+        "world_next_id": world_next_id,
+    }
 
 
 def _number(raw: Any) -> float:
@@ -42,7 +47,9 @@ def _counter(raw: Any) -> int:
 
 
 def decode_object_memory(
-    raw: Any, identities: dict[str, ConsumableKind], *,
+    raw: Any,
+    identities: dict[str, ConsumableKind],
+    *,
     allocated_until: int | None = None,
 ) -> ObjectMemorySnapshot:
     """Read history and acquired references without observing current World state."""
@@ -67,36 +74,68 @@ def decode_object_memory(
     tokens: set[str] = set()
     instances: set[str] = set()
     for entry in data["entries"]:
-        names = ("token", "identity", "kind", "x", "height", "resting",
-                 "age_seconds", "disposition") + (
-            ("assessed", "place_status", "possible_sources") if version >= 2
-            else ("examined",)
-        ) + (("instance_id",) if version == 3 else ())
-        row = object_fields(entry, names, optional=("depth",), context="remembered object")
+        names = (
+            (
+                "token",
+                "identity",
+                "kind",
+                "x",
+                "height",
+                "resting",
+                "age_seconds",
+                "disposition",
+            )
+            + (
+                ("assessed", "place_status", "possible_sources")
+                if version >= 2
+                else ("examined",)
+            )
+            + (("instance_id",) if version == 3 else ())
+        )
+        row = object_fields(
+            entry, names, optional=("depth",), context="remembered object"
+        )
         token, identity, kind = row["token"], row["identity"], row["kind"]
-        if (not isinstance(token, str) or not re.fullmatch(
-            r"(?:object|memory)_[1-9][0-9]*" if version >= 2
-            else r"object_[1-9][0-9]*", token,
-        ) or token in tokens):
+        if (
+            not isinstance(token, str)
+            or not re.fullmatch(
+                r"(?:object|memory)_[1-9][0-9]*"
+                if version >= 2
+                else r"object_[1-9][0-9]*",
+                token,
+            )
+            or token in tokens
+        ):
             raise ValueError("Invalid subjective record ID")
-        if (version == 1 and allocated_until is not None
-                and int(token.removeprefix("object_")) >= allocated_until):
+        if (
+            version == 1
+            and allocated_until is not None
+            and int(token.removeprefix("object_")) >= allocated_until
+        ):
             raise ValueError("Unallocated legacy memory ID")
-        if (token.startswith("memory_")
-                and int(token.removeprefix("memory_")) >= next_id):
+        if (
+            token.startswith("memory_")
+            and int(token.removeprefix("memory_")) >= next_id
+        ):
             raise ValueError("Memory record ID would be reused")
         if identity is None:
             if kind is not None:
                 raise ValueError("Unknown identity cannot have a known kind")
-        elif (not isinstance(identity, str) or identity not in identities
-              or kind != identities[identity]):
+        elif (
+            not isinstance(identity, str)
+            or identity not in identities
+            or kind != identities[identity]
+        ):
             raise ValueError("Invalid remembered catalog identity")
         instance = row["instance_id"] if version == 3 else None
         if instance is not None:
-            if (not isinstance(instance, str)
-                    or not re.fullmatch(r"object_[1-9][0-9]*", instance)
-                    or identity is None or instance in instances
-                    or int(instance.removeprefix("object_")) >= watermark):
+            if (
+                not isinstance(instance, str)
+                or not re.fullmatch(r"object_[1-9][0-9]*", instance)
+                or identity is None
+                or instance in instances
+                or int(instance.removeprefix("object_")) >= watermark
+            ):
                 raise ValueError("Invalid or duplicate learned physical reference")
             instances.add(instance)
         assessed = row["assessed" if version >= 2 else "examined"]
@@ -105,23 +144,36 @@ def decode_object_memory(
         disposition = row["disposition"]
         if disposition not in (None, "deferred", "interrupted"):
             raise ValueError("Invalid remembered disposition")
-        if (assessed and identity is None
-                or disposition == "deferred" and not assessed):
+        if assessed and identity is None or disposition == "deferred" and not assessed:
             raise ValueError("Remembered experience requires learned identity")
         status = row["place_status"] if version >= 2 else "remembered"
         sources = row["possible_sources"] if version >= 2 else []
         if status not in ("remembered", "missing", "superseded"):
             raise ValueError("Invalid remembered place status")
-        if (not isinstance(sources, list)
-                or any(not isinstance(source, str) for source in sources)
-                or len(set(sources)) != len(sources) or token in sources):
+        if (
+            not isinstance(sources, list)
+            or any(not isinstance(source, str) for source in sources)
+            or len(set(sources)) != len(sources)
+            or token in sources
+        ):
             raise ValueError("Invalid subjective association")
-        entries.append(SavedObjectKnowledge(
-            token, identity, kind, _number(row["x"]), _number(row["height"]),
-            row["resting"], _number(row["age_seconds"]), assessed, disposition,
-            cast(PlaceStatus, status), tuple(sources), instance,
-            _number(row.get("depth", 0.9)),
-        ))
+        entries.append(
+            SavedObjectKnowledge(
+                token,
+                identity,
+                kind,
+                _number(row["x"]),
+                _number(row["height"]),
+                row["resting"],
+                _number(row["age_seconds"]),
+                assessed,
+                disposition,
+                cast(PlaceStatus, status),
+                tuple(sources),
+                instance,
+                _number(row.get("depth", 0.9)),
+            )
+        )
         tokens.add(token)
     by_token = {item.token: item for item in entries}
     resolved: set[str] = set()
@@ -129,12 +181,18 @@ def decode_object_memory(
     for item in entries:
         for source in item.possible_sources:
             other = by_token.get(source)
-            if (other is None or item.identity is None
-                    or (other.identity, other.kind) != (item.identity, item.kind)):
+            if (
+                other is None
+                or item.identity is None
+                or (other.identity, other.kind) != (item.identity, item.kind)
+            ):
                 raise ValueError("Invalid association reference/type")
     while pending:
-        ready = [key for key, item in pending.items()
-                 if set(item.possible_sources) <= resolved]
+        ready = [
+            key
+            for key, item in pending.items()
+            if set(item.possible_sources) <= resolved
+        ]
         if not ready:
             raise ValueError("Cyclic subjective associations")
         for key in ready:

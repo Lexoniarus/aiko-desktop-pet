@@ -6,10 +6,10 @@ import tkinter as tk
 
 from ...games.mastermind import COLORS
 from ...pet.content import GERMAN_TEXT
+from ...presentation.view_models.mastermind_models import CodeView
 from ..common import scaled_widgets as scaled
 from ..common.mastermind_images import MastermindImages
 from ..common.skin import AikoSkin
-from ...presentation.view_models.mastermind_models import CodeView
 
 
 class MastermindCodeStrip:

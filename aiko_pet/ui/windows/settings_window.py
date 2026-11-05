@@ -10,13 +10,13 @@ from typing import Callable
 from ...application.horoscope_models import ZODIAC_SIGNS
 from ...application.settings import SettingKey
 from ...pet.content import GERMAN_TEXT
+from ...presentation.view_models.contracts import SettingsSnapshot
+from ...presentation.view_models.credits import CreditsSnapshot
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
-from ...presentation.view_models.contracts import SettingsSnapshot
-from ...presentation.view_models.credits import CreditsSnapshot
 from .credits_panel import CreditsPanel
 from .settings_contracts import SettingsActions
 

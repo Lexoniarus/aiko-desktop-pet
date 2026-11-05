@@ -6,10 +6,10 @@ import tkinter as tk
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
+from ...presentation.view_models.contracts import StatusSnapshot
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
-from ...presentation.view_models.contracts import StatusSnapshot
 
 
 class ToolbarDetails:

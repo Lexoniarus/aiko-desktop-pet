@@ -14,9 +14,12 @@ def main() -> None:
         for size in (192, 512):
             icon = Image.new("RGBA", (size, size), "#f7f2f3")
             figure = original.copy()
-            figure.thumbnail((int(size * .85), int(size * .92)), Image.Resampling.LANCZOS)
-            icon.alpha_composite(figure, ((size - figure.width) // 2,
-                                         (size - figure.height) // 2))
+            figure.thumbnail(
+                (int(size * 0.85), int(size * 0.92)), Image.Resampling.LANCZOS
+            )
+            icon.alpha_composite(
+                figure, ((size - figure.width) // 2, (size - figure.height) // 2)
+            )
             icon.convert("RGB").save(ROOT / f"web/public/icon-{size}.png")
 
 

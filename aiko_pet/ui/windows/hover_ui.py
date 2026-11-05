@@ -10,7 +10,6 @@ from typing import Callable
 from ...application.settings import SettingKey
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
-from ..common.skin import AikoSkin
 from ...presentation.geometry import BoundsAt
 from ...presentation.view_models.contracts import (
     HoverAnchor,
@@ -20,6 +19,7 @@ from ...presentation.view_models.contracts import (
 )
 from ...presentation.view_models.credits import project_credits
 from ...presentation.view_models.food_models import FoodChoice, FoodChoiceId
+from ..common.skin import AikoSkin
 from .action_toolbar import ActionToolbar
 from .blackjack_window import BlackjackWindow
 from .connect_four_window import ConnectFourWindow

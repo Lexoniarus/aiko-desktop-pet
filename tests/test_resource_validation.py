@@ -22,9 +22,9 @@ from aiko_pet.pet.mind.catalog import DialogueBook, Line
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.routine_catalog import parse_routine_catalog
 from aiko_pet.pet.state import PetState
-from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.presentation.view_models.food_models import food_choices
 from aiko_pet.presentation.view_models.projections import project_hover
+from aiko_pet.telemetry import ComputerSnapshot
 from tools.dialogue_test_support import dialogue_source_fixture
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
