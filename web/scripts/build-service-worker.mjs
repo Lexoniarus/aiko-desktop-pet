@@ -4,6 +4,7 @@ import { injectManifest } from 'workbox-build';
 await build({
   configFile: false,
   publicDir: false,
+  define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   build: {
     target: 'safari17',
     outDir: 'dist-sw',

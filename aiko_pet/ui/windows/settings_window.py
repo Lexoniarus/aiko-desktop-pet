@@ -9,9 +9,9 @@ from typing import Callable
 
 from ...application.horoscope_models import ZODIAC_SIGNS
 from ...application.settings import SettingKey
+from ...frontend.view_models.contracts import SettingsSnapshot
+from ...frontend.view_models.credits import CreditsSnapshot
 from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.contracts import SettingsSnapshot
-from ...presentation.view_models.credits import CreditsSnapshot
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton

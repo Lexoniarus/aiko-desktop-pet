@@ -5,9 +5,8 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, Mapping, cast
 
-from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.contracts import WishView
-from ...presentation.view_models.emotional_text import (
+from ...frontend.view_models.contracts import WishView
+from ...frontend.view_models.emotional_text import (
     GAME_FILES,
     duration_text,
     wish_badge,
@@ -15,6 +14,7 @@ from ...presentation.view_models.emotional_text import (
     wish_icon,
     wish_progress,
 )
+from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip

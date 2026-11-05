@@ -23,12 +23,12 @@ from aiko_pet.application.social_history import (
 )
 from aiko_pet.desktop.care_runtime import DesktopCareRuntime
 from aiko_pet.desktop.persistence import DesktopPersistence
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.persistence_test_support import save_test_session
 from tools.reaction_test_support import FakeScheduler
 

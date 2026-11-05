@@ -5,6 +5,8 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
+from ..frontend.room_content import RoomContent
+from ..frontend.room_session import RoomSession
 from ..infrastructure.astronomy import AstronomyEngineCalculator
 from ..infrastructure.browser.persistence import publish_browser_database
 from ..infrastructure.browser.social_fetch import BrowserSocialWorker
@@ -16,8 +18,6 @@ from ..infrastructure.local_jokes import load_local_jokes
 from ..infrastructure.sqlite.store import SqliteStateStore
 from ..infrastructure.world_catalog import build_world_definitions
 from ..pet.food_catalog import DEFAULT_CATALOG
-from ..presentation.room_content import RoomContent
-from ..presentation.room_session import RoomSession
 from ..world.contracts import WorldSurface
 from ..world.state import WorldState
 from .endpoint import BrowserEndpoint

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import unittest
 
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.pet.animation.idle_emote import choose_idle_emote
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.reaction_test_support import FakeScheduler
 
 

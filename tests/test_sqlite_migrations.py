@@ -118,6 +118,7 @@ class SqliteMigrationTests(unittest.TestCase):
             with (
                 patch.object(session_rows, "write_settings", write_v1_settings),
                 patch.object(session_rows, "write_social_history"),
+                patch.object(session_rows, "write_room"),
                 patch.object(
                     session_rows,
                     "write_horoscope",

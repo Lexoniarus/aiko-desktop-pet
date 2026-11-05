@@ -8,11 +8,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..application.settings import PetSettings
+from ..frontend.games.ports import GamePresentation
+from ..frontend.geometry import WindowBounds
+from ..frontend.playback import ReactionPlayer
+from ..frontend.view_models.game_models import HandAnchor
 from ..pet.animation.expression import Expression
-from ..presentation.games.ports import GamePresentation
-from ..presentation.geometry import WindowBounds
-from ..presentation.playback import ReactionPlayer
-from ..presentation.view_models.game_models import HandAnchor
 from ..ui.common.mastermind_images import MastermindImages
 from ..ui.common.playing_card_images import PlayingCardImages
 from ..ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter

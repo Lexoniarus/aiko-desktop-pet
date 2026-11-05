@@ -7,19 +7,19 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_ART_DIR
-from ...games.connect_four import COLUMNS, ROWS, Board, Move, landing_cell
-from ...games.contracts import GameId, GameRoundEvent, SessionSummary
-from ...pet.content import GERMAN_TEXT
-from ...presentation.games.connect_four_sequence import ConnectFourSequence, Drop
-from ...presentation.games.ports import GamePresentation
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.connect_four_geometry import (
+from ...frontend.games.connect_four_sequence import ConnectFourSequence, Drop
+from ...frontend.games.ports import GamePresentation
+from ...frontend.geometry import BoundsAt
+from ...frontend.view_models.connect_four_geometry import (
     CELL,
     HEIGHT,
     MARGIN,
     PREVIEW,
     WIDTH,
 )
+from ...games.connect_four import COLUMNS, ROWS, Board, Move, landing_cell
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
+from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin

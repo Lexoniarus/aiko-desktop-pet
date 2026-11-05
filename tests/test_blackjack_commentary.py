@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import Mock
 
-from aiko_pet.presentation.games.blackjack_commentary import BlackjackCommentary
+from aiko_pet.frontend.games.blackjack_commentary import BlackjackCommentary
 from tools.reaction_test_support import FakeScheduler
 
 

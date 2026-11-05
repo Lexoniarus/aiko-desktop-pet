@@ -9,6 +9,8 @@ from aiko_pet.application.controller import CareController
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.desktop.care_runtime import DesktopCareRuntime
+from aiko_pet.frontend.view_models.emotional_text import wish_description
+from aiko_pet.frontend.view_models.projections import project_hover
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
@@ -16,8 +18,6 @@ from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.presentation.view_models.emotional_text import wish_description
-from aiko_pet.presentation.view_models.projections import project_hover
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import DescriptionTip
 from aiko_pet.ui.windows.wish_panel import WishPanel

@@ -8,6 +8,7 @@ from datetime import datetime
 from unittest.mock import Mock, patch
 
 from aiko_pet.application.contact import ContactCoordinator, ContactPorts
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import Reaction
@@ -15,7 +16,6 @@ from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.pet_test_support import set_test_pet_values
 from tools.reaction_test_support import FakeScheduler
 

@@ -8,11 +8,11 @@ from unittest.mock import patch
 
 from support.games import arranged_game, card
 
+from aiko_pet.frontend.view_models.game_models import HandView
 from aiko_pet.games.blackjack import Phase, Table
 from aiko_pet.games.contracts import GameId
 from aiko_pet.games.playing_cards import STANDARD_DECK
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.view_models.game_models import HandView
 from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
 from tools.desktop_test_support import create_test_desktop
 from tools.tk_test_time import ControlledTkTime
@@ -32,7 +32,7 @@ class BlackjackGuiTests(unittest.TestCase):
 
     def open_game(self, game):
         with patch(
-            "aiko_pet.presentation.games.blackjack_sequence.Blackjack",
+            "aiko_pet.frontend.games.blackjack_sequence.Blackjack",
             return_value=game,
         ):
             self.pet._hover.open_game(GameId.BLACKJACK)

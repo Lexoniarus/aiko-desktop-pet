@@ -3,12 +3,12 @@
 import tkinter as tk
 from functools import partial
 
-from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.contracts import MoodletView
-from ...presentation.view_models.emotional_text import (
+from ...frontend.view_models.contracts import MoodletView
+from ...frontend.view_models.emotional_text import (
     MOODLET_ICONS,
     moodlet_description,
 )
+from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip

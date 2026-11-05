@@ -18,6 +18,8 @@ export class AikoView extends Container {
   private generation = 0;
   private actionId = -1;
   private held = new Sprite(Texture.EMPTY);
+  private foreground = new Sprite(Texture.EMPTY);
+  private foregroundFrames = new Map<string, Array<Texture | null>>();
   private heldKey = '';
   private loaded = new Map<string, Array<{ texture: Texture; time: number }>>();
   constructor(
@@ -29,8 +31,9 @@ export class AikoView extends Container {
     >,
   ) {
     super();
-    this.addChild(this.sprite, this.held);
+    this.addChild(this.sprite, this.held, this.foreground);
     this.held.visible = false;
+    this.foreground.visible = false;
     this.sprite.onFrameChange = () => this.placeHeld();
     this.eventMode = 'static';
     this.cursor = 'pointer';
@@ -56,6 +59,16 @@ export class AikoView extends Container {
         time: clip.frames[index]!.duration,
       }));
       this.loaded.set(name, frames);
+      this.foregroundFrames.set(
+        name,
+        await Promise.all(
+          clip.frames.map((frame) =>
+            frame.foreground
+              ? Assets.load<Texture>(new URL(frame.foreground, this.root).href)
+              : Promise.resolve(null),
+          ),
+        ),
+      );
     }
     if (generation !== this.generation) return;
     this.sprite.textures = frames;
@@ -88,6 +101,14 @@ export class AikoView extends Container {
     const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
     const anchor = clip.frames[index]?.foodAnchor;
     this.held.visible = !!anchor && !!this.heldKey;
+    const foreground = this.foregroundFrames.get(this.clipName)?.[index];
+    this.foreground.visible = this.held.visible && !!foreground;
+    if (foreground) {
+      this.foreground.texture = foreground;
+      this.foreground.anchor.copyFrom(this.sprite.anchor);
+      this.foreground.width = this.sprite.texture.width;
+      this.foreground.height = this.sprite.texture.height;
+    }
     if (anchor)
       this.held.position.set(
         (anchor[0] - clip.anchor[0]) * 2,

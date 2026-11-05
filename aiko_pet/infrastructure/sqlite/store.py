@@ -43,7 +43,7 @@ class SqliteStateStore:
         path: Path,
         *,
         definitions: tuple[ObjectDefinition, ...] | None = None,
-        publish: Callable[[Path, Path], None] = publish_database,
+        publish: Callable[[Path, Path], None] | None = None,
     ) -> None:
         self.path = path
         self._definitions = definitions
@@ -201,5 +201,5 @@ class SqliteStateStore:
                     transaction="write",
                 ) as connection:
                     commit_snapshot(connection, initial=True)
-                self._publish(temporary, self.path)
+                (self._publish or publish_database)(temporary, self.path)
             return revision

@@ -8,8 +8,8 @@ from functools import partial
 from typing import Callable
 
 from ...asset_paths import ASSET_ROOT
+from ...frontend.view_models.credits import ContentCredit, CreditsSnapshot
 from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.credits import ContentCredit, CreditsSnapshot
 from ..common import scaled_widgets as scaled
 from ..common.skin import AikoSkin
 

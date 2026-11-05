@@ -10,9 +10,9 @@ from dataclasses import dataclass, replace
 from typing import Callable
 
 from ...application.controller import CareOutcome
+from ...frontend.view_models.care_text import format_care_response
 from ...pet.care_result import CareEffect
 from ...pet.mind.catalog import Reaction
-from ...presentation.view_models.care_text import format_care_response
 
 
 @dataclass(frozen=True, slots=True)

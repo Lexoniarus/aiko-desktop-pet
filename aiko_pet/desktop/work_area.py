@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 
-from ..presentation.geometry import WindowBounds
+from ..frontend.geometry import WindowBounds
 
 
 def work_area_at(x: int, y: int, fallback: WindowBounds) -> WindowBounds:

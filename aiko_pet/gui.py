@@ -34,6 +34,10 @@ from .desktop.startup import run_desktop
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
+from .frontend.playback import ReactionPlayer
+from .frontend.social import SocialConversationRuntime
+from .frontend.view_models.food_models import food_choices
+from .frontend.view_models.read_models import DesktopPresentation
 from .infrastructure.active_time import elapsed_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
@@ -45,10 +49,6 @@ from .pet.content import GERMAN_TEXT
 from .pet.food import FoodId
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
-from .presentation.playback import ReactionPlayer
-from .presentation.social import SocialConversationRuntime
-from .presentation.view_models.food_models import food_choices
-from .presentation.view_models.read_models import DesktopPresentation
 from .ui.pet_view.action_playback import ActionPlayback
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
 from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow

@@ -11,6 +11,7 @@ from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.contact import acknowledge_interaction_text
 from aiko_pet.application.controller import CareController
+from aiko_pet.frontend.view_models.care_text import format_care_response
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
@@ -18,7 +19,6 @@ from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.food import FOOD_BALANCE, FOOD_CATALOG, FoodState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.view_models.care_text import format_care_response
 
 STAMP = datetime(2026, 10, 12, 16).astimezone().timestamp()
 

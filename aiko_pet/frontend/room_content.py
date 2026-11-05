@@ -5,7 +5,6 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import replace
-from typing import TYPE_CHECKING
 
 from ..application.commands import CareCommand
 from ..application.horoscope_coordinator import HoroscopeCoordinator
@@ -19,16 +18,14 @@ from ..pet.needs import NeedCondition
 from ..pet.routine import context_at
 from ..world.contracts import ObjectState
 from .book import HoroscopePlayback
+from .room_content_ports import RoomContentHost
 from .social import SocialConversationRuntime, SocialRuntimePorts
-
-if TYPE_CHECKING:
-    from .room_session import RoomSession
 
 
 class RoomContent:
     def __init__(
         self,
-        session: RoomSession,
+        session: RoomContentHost,
         worker: SocialContentWorker,
         local: tuple[PreparedSocialContent, ...],
         catalogue: HoroscopeCatalogue,

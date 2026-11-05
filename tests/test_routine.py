@@ -3,10 +3,10 @@
 import unittest
 from datetime import datetime
 
+from aiko_pet.frontend.view_models.text_de import format_day_label
 from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.view_models.text_de import format_day_label
 
 
 def local_time(day, hour, minute=0):

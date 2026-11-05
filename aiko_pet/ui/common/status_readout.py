@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import tkinter as tk
 
+from ...frontend.view_models.text_de import format_status_amount
 from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.text_de import format_status_amount
 from . import scaled_widgets as scaled
 from .skin import AikoSkin
 

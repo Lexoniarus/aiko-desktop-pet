@@ -7,12 +7,12 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_ART_DIR
+from ...frontend.games.ports import GamePresentation
+from ...frontend.games.tic_tac_toe_sequence import TicTacToeSequence
+from ...frontend.geometry import BoundsAt
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.tic_tac_toe import Board
 from ...pet.content import GERMAN_TEXT
-from ...presentation.games.ports import GamePresentation
-from ...presentation.games.tic_tac_toe_sequence import TicTacToeSequence
-from ...presentation.geometry import BoundsAt
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin

@@ -7,13 +7,13 @@ import unittest
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.desktop.geometry import FOOT_BASELINE
+from aiko_pet.frontend.view_models.food_models import food_choices
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.animation.ambient import AmbientDirector
 from aiko_pet.pet.animation.animation import SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.view_models.food_models import food_choices
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.ui.world_view import WorldView
 from tools.desktop_test_support import destroy_test_root

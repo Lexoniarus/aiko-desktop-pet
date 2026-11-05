@@ -4,8 +4,8 @@ import unittest
 
 from support.games import arranged_game, card
 
+from aiko_pet.frontend.games.blackjack_sequence import BlackjackSequence
 from aiko_pet.games.contracts import BlackjackDecisionReason, BlackjackDetails
-from aiko_pet.presentation.games.blackjack_sequence import BlackjackSequence
 from tools.reaction_test_support import FakeScheduler
 
 

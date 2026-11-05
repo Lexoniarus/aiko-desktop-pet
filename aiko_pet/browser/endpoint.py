@@ -10,7 +10,7 @@ from importlib.metadata import version
 from typing import Any
 
 from ..application.room_contracts import PROTOCOL_VERSION, ROOM_COMMANDS, json_value
-from ..presentation.room_session import RoomSession
+from ..frontend.room_session import RoomSession
 
 
 class BrowserEndpoint:

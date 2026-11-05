@@ -5,8 +5,8 @@ from concurrent.futures import Executor, Future
 from typing import cast
 from unittest.mock import Mock
 
+from aiko_pet.frontend.games.connect_four_sequence import ConnectFourSequence
 from aiko_pet.games.connect_four import ConnectFourSession
-from aiko_pet.presentation.games.connect_four_sequence import ConnectFourSequence
 from tools.reaction_test_support import FakeScheduler
 
 

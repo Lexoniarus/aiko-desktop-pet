@@ -7,11 +7,11 @@ from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt, ObjectFeedback
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
-from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState

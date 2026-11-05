@@ -12,6 +12,7 @@ from unittest.mock import Mock
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.game_experience import GameExperienceCoordinator
+from aiko_pet.frontend.games.quiz_sequence import QuizSequence
 from aiko_pet.games.contracts import GameId, GameRoundEvent, SessionSummary
 from aiko_pet.games.quiz import QuizSession
 from aiko_pet.games.quiz_catalogue import QuizCatalogue
@@ -30,7 +31,6 @@ from aiko_pet.pet.wishes import (
     WishId,
     WishState,
 )
-from aiko_pet.presentation.games.quiz_sequence import QuizSequence
 
 ROOT = Path(__file__).resolve().parents[1]
 WALL = 1800000000.0

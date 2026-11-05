@@ -1,10 +1,10 @@
 name: Shared room web
 on:
   pull_request:
-    paths: ['web/**', 'scripts/**', 'aiko_pet/browser/**', 'aiko_pet/presentation/**', '.github/workflows/room-web.yml']
+    paths: ['web/**', 'scripts/**', 'aiko_pet/browser/**', 'aiko_pet/frontend/**', '.github/workflows/room-web.yml']
   push:
     branches: [main, feature/shared-room-pwa]
-    paths: ['web/**', 'scripts/**', 'aiko_pet/browser/**', 'aiko_pet/presentation/**', '.github/workflows/room-web.yml']
+    paths: ['web/**', 'scripts/**', 'aiko_pet/browser/**', 'aiko_pet/frontend/**', '.github/workflows/room-web.yml']
   workflow_dispatch:
 permissions:
   contents: read

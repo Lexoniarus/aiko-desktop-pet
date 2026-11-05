@@ -6,13 +6,13 @@ from typing import get_args
 from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackKey, ObjectFeedback
+from aiko_pet.frontend.playback import ReactionPlayer
+from aiko_pet.frontend.view_models.object_reactions import format_object_reaction
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.object_events import ObjectEvent
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from aiko_pet.presentation.playback import ReactionPlayer
-from aiko_pet.presentation.view_models.object_reactions import format_object_reaction
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from tools.dialogue_test_support import balance_source_fixture
 

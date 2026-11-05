@@ -7,9 +7,9 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR, PLAYING_CARDS_DIR
+from ...frontend.geometry import BoundsAt, WindowBounds, beside_character
 from ...games.contracts import GameId, SessionSummary
 from ...pet.content import GERMAN_TEXT
-from ...presentation.geometry import BoundsAt, WindowBounds, beside_character
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton, update_button_state

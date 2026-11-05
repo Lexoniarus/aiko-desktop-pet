@@ -9,22 +9,16 @@ from datetime import datetime
 from aiko_pet.application.object_status import ObjectStatusSnapshot
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
-from aiko_pet.pet.routine import MEAL_NAMES, context_at
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.pet.wishes import ActiveWish, WishContext, WishId, WishState
-from aiko_pet.presentation.view_models.contracts import (
+from aiko_pet.frontend.view_models.contracts import (
     HoverAnchor,
 )
-from aiko_pet.presentation.view_models.projections import (
+from aiko_pet.frontend.view_models.projections import (
     project_hover,
     project_settings,
     project_status,
 )
-from aiko_pet.presentation.view_models.read_models import DesktopPresentation
-from aiko_pet.presentation.view_models.text_de import (
+from aiko_pet.frontend.view_models.read_models import DesktopPresentation
+from aiko_pet.frontend.view_models.text_de import (
     describe_workload,
     format_day_label,
     format_feed_label,
@@ -33,6 +27,12 @@ from aiko_pet.presentation.view_models.text_de import (
     format_status_hint,
     status_hint_text,
 )
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.routine import MEAL_NAMES, context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.status_hints import StatusHint
+from aiko_pet.pet.wishes import ActiveWish, WishContext, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from tools.pet_test_support import set_test_pet_values
 

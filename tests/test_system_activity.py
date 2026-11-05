@@ -7,6 +7,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from aiko_pet.frontend.view_models.text_de import describe_workload, format_percent
 from aiko_pet.infrastructure.hardware import os_sensors as activity
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
 from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
@@ -14,7 +15,6 @@ from aiko_pet.infrastructure.hardware.os_sensors import load_percent
 from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
 from aiko_pet.pet.mind.catalog import DialogueBook
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
-from aiko_pet.presentation.view_models.text_de import describe_workload, format_percent
 from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
 
 

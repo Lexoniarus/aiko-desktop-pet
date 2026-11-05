@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import Mock
 
-from aiko_pet.presentation.games.game_commentary import GameCommentary
+from aiko_pet.frontend.games.game_commentary import GameCommentary
 from tools.reaction_test_support import FakeScheduler
 
 

@@ -11,13 +11,13 @@ from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.reaction_test_support import FakeScheduler
 
 WALL = 1800000000.0

@@ -11,6 +11,8 @@ export class BrowserRoomClient implements RoomClient {
     { resolve: (value: RoomReply) => void; reject: (error: Error) => void }
   >();
   private unlock: (() => void) | undefined;
+  private initialized = false;
+  private failure: Error | undefined;
 
   constructor() {
     this.worker.onmessage = (event) => {
@@ -22,8 +24,8 @@ export class BrowserRoomClient implements RoomClient {
       else pending.reject(new Error(reply.error ?? 'Aiko meldet einen Fehler.'));
     };
     this.worker.onerror = (event) => {
-      for (const pending of this.pending.values())
-        pending.reject(new Error(event.message));
+      this.failure = new Error(event.message);
+      for (const pending of this.pending.values()) pending.reject(this.failure);
       this.pending.clear();
     };
   }
@@ -43,10 +45,13 @@ export class BrowserRoomClient implements RoomClient {
         })
         .catch(reject);
     });
-    return this.request({ name: 'initialize', root });
+    const reply = await this.request({ name: 'initialize', root });
+    this.initialized = true;
+    return reply;
   }
 
   private request(message: Record<string, unknown>): Promise<RoomReply> {
+    if (this.failure) return Promise.reject(this.failure);
     const requestId = ++this.sequence;
     return new Promise((resolve, reject) => {
       this.pending.set(requestId, { resolve, reject });
@@ -63,7 +68,7 @@ export class BrowserRoomClient implements RoomClient {
 
   async close(): Promise<void> {
     try {
-      await this.command('suspend');
+      if (this.initialized && !this.failure) await this.command('suspend');
     } finally {
       this.worker.terminate();
       this.unlock?.();

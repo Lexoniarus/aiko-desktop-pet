@@ -9,12 +9,12 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.asset_paths import MASTERMIND_DIR
+from aiko_pet.frontend.geometry import WindowBounds
+from aiko_pet.frontend.view_models.game_models import HandAnchor
+from aiko_pet.frontend.view_models.mastermind_models import place_code
 from aiko_pet.games.contracts import GameId
 from aiko_pet.games.mastermind import COLORS, MastermindSession
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.geometry import WindowBounds
-from aiko_pet.presentation.view_models.game_models import HandAnchor
-from aiko_pet.presentation.view_models.mastermind_models import place_code
 from aiko_pet.ui.windows.mastermind_window import (
     BOARD_HEIGHT,
     MastermindWindow,
@@ -104,7 +104,7 @@ class MastermindGuiTests(unittest.TestCase):
         self.secret_factory = Mock(return_value=SECRET)
         self.enterContext(
             patch(
-                "aiko_pet.presentation.games.mastermind_sequence.MastermindSession",
+                "aiko_pet.frontend.games.mastermind_sequence.MastermindSession",
                 side_effect=lambda: MastermindSession(self.secret_factory),
             )
         )

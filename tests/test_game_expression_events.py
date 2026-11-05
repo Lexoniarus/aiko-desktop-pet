@@ -5,6 +5,14 @@ from dataclasses import replace
 from typing import Any
 from unittest.mock import MagicMock
 
+from aiko_pet.frontend.games.blackjack_sequence import BlackjackSequence
+from aiko_pet.frontend.games.connect_four_sequence import ConnectFourSequence
+from aiko_pet.frontend.games.mastermind_sequence import MastermindSequence
+from aiko_pet.frontend.games.quiz_sequence import QuizSequence
+from aiko_pet.frontend.games.rock_paper_scissors_sequence import (
+    RockPaperScissorsSequence,
+)
+from aiko_pet.frontend.games.tic_tac_toe_sequence import TicTacToeSequence
 from aiko_pet.games.quiz import QuizSession
 from aiko_pet.games.quiz_catalogue import QuizCatalogue
 from aiko_pet.pet.animation.expression import Expression, event_expression
@@ -20,14 +28,6 @@ from aiko_pet.pet.moodlets import (
     MoodletOutcome,
 )
 from aiko_pet.pet.routine import context_at
-from aiko_pet.presentation.games.blackjack_sequence import BlackjackSequence
-from aiko_pet.presentation.games.connect_four_sequence import ConnectFourSequence
-from aiko_pet.presentation.games.mastermind_sequence import MastermindSequence
-from aiko_pet.presentation.games.quiz_sequence import QuizSequence
-from aiko_pet.presentation.games.rock_paper_scissors_sequence import (
-    RockPaperScissorsSequence,
-)
-from aiko_pet.presentation.games.tic_tac_toe_sequence import TicTacToeSequence
 from aiko_pet.ui.windows.game_speech import GameSpeech
 from tools.reaction_test_support import FakeScheduler
 

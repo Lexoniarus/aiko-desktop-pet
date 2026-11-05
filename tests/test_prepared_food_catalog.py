@@ -7,10 +7,10 @@ import struct
 import unittest
 from pathlib import Path
 
+from aiko_pet.frontend.view_models.food_models import food_choices
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER
-from aiko_pet.presentation.view_models.food_models import food_choices
 
 
 class PreparedFoodCatalogTests(unittest.TestCase):

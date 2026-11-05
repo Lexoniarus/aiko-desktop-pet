@@ -5,6 +5,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime
 
+from aiko_pet.frontend.view_models.care_text import format_care_response
 from aiko_pet.infrastructure.pet_codec import (
     decode_food_state,
     decode_pet_state,
@@ -22,7 +23,6 @@ from aiko_pet.pet.food import (
     is_repeated_food,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.view_models.care_text import format_care_response
 
 
 def clock(hour: int = 8) -> float:

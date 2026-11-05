@@ -8,14 +8,14 @@ from dataclasses import replace
 from unittest.mock import Mock
 
 from aiko_pet.application.read_snapshot import snapshot_pet
+from aiko_pet.frontend.view_models.contracts import HoverAnchor
+from aiko_pet.frontend.view_models.projections import project_hover, project_status
 from aiko_pet.games.contracts import GameId
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
-from aiko_pet.presentation.view_models.contracts import HoverAnchor
-from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
@@ -27,8 +27,8 @@ from tools.pet_test_support import set_test_pet_values
 
 class MainMenuLayoutTests(unittest.TestCase):
     def test_back_click_closes_docked_panel_without_changing_toolbar(self):
+        from aiko_pet.frontend.view_models.food_models import food_choices
         from aiko_pet.infrastructure.item_assets import load_item_catalog
-        from aiko_pet.presentation.view_models.food_models import food_choices
         from aiko_pet.ui.windows.food_menu import FoodMenu
 
         before = self.toolbar.window.winfo_geometry()

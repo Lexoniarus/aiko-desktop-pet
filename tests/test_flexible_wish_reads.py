@@ -8,14 +8,14 @@ from unittest.mock import Mock, patch
 from support.wishes import wish
 
 from aiko_pet.application.read_snapshot import snapshot_pet
+from aiko_pet.frontend.view_models.emotional_text import wish_description, wish_icon
+from aiko_pet.frontend.view_models.food_models import food_choices
+from aiko_pet.frontend.view_models.projections import project_hover, project_status
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import WishId, WishState
-from aiko_pet.presentation.view_models.emotional_text import wish_description, wish_icon
-from aiko_pet.presentation.view_models.food_models import food_choices
-from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import DescriptionTip
 from aiko_pet.ui.common.icon_images import IconImages

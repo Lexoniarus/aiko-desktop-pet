@@ -8,10 +8,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import replace
 
+from ...frontend.games.ports import GamePresentation
+from ...frontend.playback import ReactionPlayer
 from ...games.rock_paper_scissors import Move
 from ...pet.animation.expression import EXPRESSION_CLIPS, Expression, event_expression
-from ...presentation.games.ports import GamePresentation
-from ...presentation.playback import ReactionPlayer
 from ..pet_view.speech_presenter import SpeechPresenter
 
 

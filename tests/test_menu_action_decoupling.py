@@ -12,6 +12,7 @@ from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.cursor_item_gesture import CursorItemGesture, CursorItemPorts
 from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
@@ -23,7 +24,6 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar

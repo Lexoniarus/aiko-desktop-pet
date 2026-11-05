@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 from aiko_pet.application.active_time import ActiveSessionClock
 from aiko_pet.application.activity import ActivityCallbacks, ActivityCoordinator
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.pet.animation.expression import Expression
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.mind import PetMind
@@ -22,7 +23,6 @@ from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.telemetry import ComputerSnapshot
 from tools.reaction_test_support import FakeScheduler
 

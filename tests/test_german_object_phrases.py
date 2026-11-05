@@ -7,6 +7,8 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import cast
 
+from aiko_pet.frontend.view_models.german_object_phrases import object_phrases
+from aiko_pet.frontend.view_models.object_reactions import format_object_reaction
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.pet.content import (
@@ -20,8 +22,6 @@ from aiko_pet.pet.object_text_contract import (
     ObjectGrammar,
     ObjectGrammarCatalog,
 )
-from aiko_pet.presentation.view_models.german_object_phrases import object_phrases
-from aiko_pet.presentation.view_models.object_reactions import format_object_reaction
 
 
 class GermanObjectPhraseTests(unittest.TestCase):

@@ -6,7 +6,9 @@ import { packageCachePrefix } from './PackageStore';
 declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ url: string; revision: string }>;
 };
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST, {
+  ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^install$/, /^diagnostics$/],
+});
 cleanupOutdatedCaches();
 registerRoute(
   ({ url }) =>

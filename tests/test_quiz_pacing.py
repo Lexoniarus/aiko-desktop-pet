@@ -2,10 +2,10 @@
 import unittest
 from unittest.mock import Mock
 
+from aiko_pet.frontend.games.pacing import GAME_PACING
+from aiko_pet.frontend.games.quiz_sequence import QuizSequence
 from aiko_pet.games.quiz import QuizSession
 from aiko_pet.games.quiz_catalogue import QuizCatalogue
-from aiko_pet.presentation.games.pacing import GAME_PACING
-from aiko_pet.presentation.games.quiz_sequence import QuizSequence
 from tools.reaction_test_support import FakeScheduler
 
 

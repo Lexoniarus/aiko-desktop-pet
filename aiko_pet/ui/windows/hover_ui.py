@@ -9,16 +9,16 @@ from typing import Callable
 
 from ...application.settings import SettingKey
 from ...application.social_content import PreparedSocialContent, SocialCategory
-from ...games.contracts import GameId, GameRoundEvent, SessionSummary
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.contracts import (
+from ...frontend.geometry import BoundsAt
+from ...frontend.view_models.contracts import (
     HoverAnchor,
     HoverSnapshot,
     SettingsSnapshot,
     StatusSnapshot,
 )
-from ...presentation.view_models.credits import project_credits
-from ...presentation.view_models.food_models import FoodChoice, FoodChoiceId
+from ...frontend.view_models.credits import project_credits
+from ...frontend.view_models.food_models import FoodChoice, FoodChoiceId
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ..common.skin import AikoSkin
 from .action_toolbar import ActionToolbar
 from .blackjack_window import BlackjackWindow

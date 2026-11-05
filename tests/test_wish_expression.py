@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.catalog import Reaction
@@ -17,7 +18,6 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG, WishCatalog
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.pet_test_support import set_test_pet_values
 from tools.reaction_test_support import FakeScheduler
 

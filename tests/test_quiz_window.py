@@ -4,8 +4,8 @@ import tkinter as tk
 import unittest
 from unittest.mock import Mock, patch
 
+from aiko_pet.frontend.geometry import WindowBounds
 from aiko_pet.games.quiz_catalogue import QuizCatalogue
-from aiko_pet.presentation.geometry import WindowBounds
 from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.windows.quiz_window import QuizWindow

@@ -2,10 +2,10 @@
 
 import unittest
 
-from aiko_pet.games.rock_paper_scissors import Move
-from aiko_pet.presentation.games.rock_paper_scissors_sequence import (
+from aiko_pet.frontend.games.rock_paper_scissors_sequence import (
     RockPaperScissorsSequence,
 )
+from aiko_pet.games.rock_paper_scissors import Move
 from tools.reaction_test_support import FakeScheduler
 
 

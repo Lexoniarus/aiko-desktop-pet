@@ -7,13 +7,13 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_ART_DIR
+from ...frontend.games.ports import GamePresentation
+from ...frontend.games.quiz_sequence import QuizSequence
+from ...frontend.geometry import BoundsAt
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...pet.content import GERMAN_TEXT
-from ...presentation.games.ports import GamePresentation
-from ...presentation.games.quiz_sequence import QuizSequence
-from ...presentation.geometry import BoundsAt
 from ..common import scaled_widgets as scaled
 from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel

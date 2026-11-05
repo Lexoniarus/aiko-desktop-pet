@@ -3,11 +3,11 @@
 import unittest
 from dataclasses import FrozenInstanceError
 
-from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
-from aiko_pet.presentation.view_models.contracts import (
+from aiko_pet.frontend.view_models.contracts import (
     EmotionalSnapshot,
     StatusSnapshot,
 )
+from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 
 
 class ReadContractTests(unittest.TestCase):

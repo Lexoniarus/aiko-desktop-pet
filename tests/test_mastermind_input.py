@@ -5,8 +5,8 @@ import unittest
 from typing import Any, cast
 from unittest.mock import Mock, patch
 
+from aiko_pet.frontend.geometry import WindowBounds
 from aiko_pet.games.mastermind import Feedback, Guess, RoundView
-from aiko_pet.presentation.geometry import WindowBounds
 from aiko_pet.ui.windows.game_panel import GamePanel
 from aiko_pet.ui.windows.mastermind_drag import MastermindDrag
 from aiko_pet.ui.windows.mastermind_window import MastermindWindow

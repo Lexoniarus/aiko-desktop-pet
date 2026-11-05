@@ -8,9 +8,9 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
-from ...presentation.geometry import WindowBounds
-from ...presentation.view_models.game_models import HandAnchor
-from ...presentation.view_models.mastermind_models import CodeView
+from ...frontend.geometry import WindowBounds
+from ...frontend.view_models.game_models import HandAnchor
+from ...frontend.view_models.mastermind_models import CodeView
 from ..common.mastermind_images import MastermindImages
 
 

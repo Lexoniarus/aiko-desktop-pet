@@ -7,14 +7,14 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ...pet.content import GERMAN_TEXT
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.contracts import (
+from ...frontend.geometry import BoundsAt
+from ...frontend.view_models.contracts import (
     HoverAnchor,
     HoverSnapshot,
     StatusSnapshot,
 )
-from ...presentation.view_models.food_models import FoodChoice
+from ...frontend.view_models.food_models import FoodChoice
+from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip

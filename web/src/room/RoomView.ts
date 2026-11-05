@@ -29,8 +29,13 @@ const cutouts: Record<string, { crop: number[]; width: number; x: number; y: num
     plant: { crop: [94, 84, 943, 1245], width: 204, x: 3750, y: 810 },
     table: { crop: [216, 138, 1741, 489], width: 527, x: 2450, y: 880 },
     fridge: { crop: [140, 130, 760, 1350], width: 244, x: 1425, y: 802 },
-    door: { crop: [163, 107, 698, 1319], width: 230, x: 315, y: 784 },
-    kitchenUnit: { crop: [115, 85, 1810, 1415], width: 760, x: 930, y: 820 },
+    door: { crop: [163, 107, 698, 1319], width: 255, x: 315, y: 784 },
+    kitchenUnit: {
+      crop: [115, 85, 964, 1183],
+      width: (475 * 964) / 1183,
+      x: 930,
+      y: 820,
+    },
   };
 
 export class RoomView {

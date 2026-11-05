@@ -7,13 +7,13 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
-from ...presentation.games.ports import GamePresentation
-from ...presentation.view_models.chip_flight import (
+from ...frontend.games.ports import GamePresentation
+from ...frontend.view_models.chip_flight import (
     ChipTarget,
     flight_height,
     flight_point,
 )
-from ...presentation.view_models.connect_four_geometry import (
+from ...frontend.view_models.connect_four_geometry import (
     CELL,
     CHIP,
     MARGIN,

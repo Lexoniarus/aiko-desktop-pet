@@ -12,8 +12,8 @@ from aiko_pet.desktop.input import DesktopInput
 from aiko_pet.desktop.lifecycle import DesktopLifecycle
 from aiko_pet.desktop.runtime import DesktopRuntime
 from aiko_pet.desktop.window_stack import WindowStack
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
-from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.pet_view.speech_presenter import SpeechPresenter
 from aiko_pet.ui.windows.hover_ui import HoverUi
 

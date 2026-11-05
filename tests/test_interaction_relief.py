@@ -4,6 +4,7 @@ import unittest
 from copy import deepcopy
 from dataclasses import replace
 
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.interaction_events import (
@@ -15,7 +16,6 @@ from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.playback import ReactionPlayer
 from tools.reaction_test_support import FakeScheduler
 
 

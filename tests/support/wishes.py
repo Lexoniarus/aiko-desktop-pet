@@ -9,6 +9,7 @@ from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
@@ -21,7 +22,6 @@ from aiko_pet.pet.wishes import (
     WishId,
     WishState,
 )
-from aiko_pet.presentation.playback import ReactionPlayer
 from support.payloads import fact_payload, joke_payload
 from tools.reaction_test_support import FakeScheduler
 

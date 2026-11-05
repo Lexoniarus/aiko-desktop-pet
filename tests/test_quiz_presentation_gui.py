@@ -4,9 +4,9 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
+from aiko_pet.frontend.games.pacing import GAME_PACING
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.games.pacing import GAME_PACING
 from aiko_pet.ui.windows.quiz_window import QuizWindow
 from tools.desktop_test_support import create_test_desktop
 from tools.tk_test_time import ControlledTkTime

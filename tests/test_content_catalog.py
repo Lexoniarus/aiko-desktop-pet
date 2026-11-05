@@ -6,6 +6,12 @@ import json
 import unittest
 from pathlib import Path
 
+from aiko_pet.frontend.view_models.care_text import format_care_response
+from aiko_pet.frontend.view_models.text_de import (
+    format_emotional_state,
+    format_sleep_label,
+    observation_disabled_text,
+)
 from aiko_pet.pet.care_result import CareEffect, CareResult
 from aiko_pet.pet.content import (
     GERMAN_TEXT,
@@ -14,12 +20,6 @@ from aiko_pet.pet.content import (
 )
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.presentation.view_models.care_text import format_care_response
-from aiko_pet.presentation.view_models.text_de import (
-    format_emotional_state,
-    format_sleep_label,
-    observation_disabled_text,
-)
 
 
 class TextCatalogTests(unittest.TestCase):
@@ -90,7 +90,7 @@ class TextCatalogTests(unittest.TestCase):
         )
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
-        from aiko_pet.presentation.games.rock_paper_scissors_dialogue import (
+        from aiko_pet.frontend.games.rock_paper_scissors_dialogue import (
             GameDialogue,
             countdown_line,
         )

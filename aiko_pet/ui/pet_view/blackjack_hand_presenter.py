@@ -6,14 +6,14 @@ import sys
 import tkinter as tk
 from collections.abc import Callable
 
-from ...games.blackjack import hand_total
-from ...presentation.games.pacing import GAME_PACING
-from ...presentation.view_models.game_models import (
+from ...frontend.games.pacing import GAME_PACING
+from ...frontend.view_models.game_models import (
     HandAnchor,
     HandLayout,
     HandView,
     place_hand,
 )
+from ...games.blackjack import hand_total
 from ..common.playing_card_images import PlayingCardImages
 
 

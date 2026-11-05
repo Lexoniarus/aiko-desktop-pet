@@ -2,10 +2,10 @@
 
 import unittest
 
+from aiko_pet.frontend.games.rock_paper_scissors_dialogue import GameDialogue
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
 from aiko_pet.pet.routine import context_at
-from aiko_pet.presentation.games.rock_paper_scissors_dialogue import GameDialogue
 
 
 class QuizDialogueTests(unittest.TestCase):

@@ -4,9 +4,9 @@ from __future__ import annotations
 import math
 import tkinter as tk
 
+from ...frontend.view_models.mastermind_models import CodeView
 from ...games.mastermind import COLORS
 from ...pet.content import GERMAN_TEXT
-from ...presentation.view_models.mastermind_models import CodeView
 from ..common import scaled_widgets as scaled
 from ..common.mastermind_images import MastermindImages
 from ..common.skin import AikoSkin

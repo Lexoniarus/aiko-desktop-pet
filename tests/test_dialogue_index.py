@@ -11,9 +11,9 @@ import unittest
 from pathlib import Path
 from typing import Any
 
+from aiko_pet.frontend.games.rock_paper_scissors_dialogue import GameDialogue
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
 from aiko_pet.pet.routine import context_at
-from aiko_pet.presentation.games.rock_paper_scissors_dialogue import GameDialogue
 from tools.dialogue_test_support import dialogue_context, dialogue_source_fixture
 
 

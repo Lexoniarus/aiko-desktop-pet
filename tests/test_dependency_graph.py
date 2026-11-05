@@ -62,7 +62,7 @@ def internal_dependencies(
 class PackageDependencyTests(unittest.TestCase):
     def test_layers_only_import_allowed_dependencies(self) -> None:
         outer = tuple(f"aiko_pet.{name}" for name in (
-            "ui", "presentation", "desktop", "infrastructure", "storage",
+            "ui", "frontend", "presentation", "desktop", "infrastructure", "storage",
             "system_activity", "gui", "personality", "adaptive", "dialogue",
             "adaptive_models",
         ))
@@ -73,7 +73,7 @@ class PackageDependencyTests(unittest.TestCase):
             "world": (*outer, "aiko_pet.application", "aiko_pet.pet",
                       "aiko_pet.games", "aiko_pet.telemetry", "aiko_pet.config",
                       "aiko_pet.asset_paths", "tkinter", "ctypes", "subprocess"),
-            "presentation/view_models": (
+            "frontend/view_models": (
                 "tkinter", "ctypes", "aiko_pet.infrastructure",
                 "aiko_pet.desktop", "aiko_pet.storage",
                 "aiko_pet.system_activity", "aiko_pet.gui",

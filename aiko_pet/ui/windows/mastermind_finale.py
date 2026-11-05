@@ -4,7 +4,7 @@ import tkinter as tk
 from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
-from ...presentation.games.ports import GamePresentation
+from ...frontend.games.ports import GamePresentation
 from ..pet_view.game_effects import GameEffects
 from .game_contracts import GameCodePorts
 

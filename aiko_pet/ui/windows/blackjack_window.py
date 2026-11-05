@@ -7,12 +7,12 @@ from collections.abc import Callable
 from typing import Literal
 
 from ...asset_paths import GAME_ART_DIR
+from ...frontend.games.blackjack_sequence import BlackjackSequence
+from ...frontend.games.ports import GamePresentation
+from ...frontend.geometry import BoundsAt
 from ...games.blackjack import Phase, Table
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...pet.content import GERMAN_TEXT
-from ...presentation.games.blackjack_sequence import BlackjackSequence
-from ...presentation.games.ports import GamePresentation
-from ...presentation.geometry import BoundsAt
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin

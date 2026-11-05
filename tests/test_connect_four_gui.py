@@ -9,9 +9,9 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.asset_paths import CONNECT_FOUR_DIR
+from aiko_pet.frontend.geometry import WindowBounds
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.geometry import WindowBounds
 from aiko_pet.ui.windows.connect_four_window import CELL, MARGIN, ConnectFourWindow
 from tools.desktop_test_support import create_test_desktop, destroy_test_root
 from tools.tk_test_time import ControlledTkTime
@@ -91,7 +91,7 @@ class ConnectFourGuiTests(unittest.TestCase):
         self.executor = Mock(spec=Executor)
         self.executor.submit.side_effect = self.bot_move
         self.enterContext(patch(
-            "aiko_pet.presentation.games.connect_four_sequence.ThreadPoolExecutor",
+            "aiko_pet.frontend.games.connect_four_sequence.ThreadPoolExecutor",
             return_value=self.executor,
         ))
         self.pet._hover.open_game(GameId.CONNECT_FOUR)

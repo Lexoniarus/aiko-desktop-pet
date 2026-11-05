@@ -5,12 +5,12 @@ from dataclasses import replace
 from unittest.mock import Mock
 
 from aiko_pet.application.contact import acknowledge_interaction_text
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.interaction_events import Poked
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.playback import ReactionPlayer
 
 
 class NegativeInteractionTests(unittest.TestCase):

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ...presentation.view_models.contracts import HoverAnchor
+from ...frontend.view_models.contracts import HoverAnchor
 
 
 @dataclass(frozen=True, slots=True)

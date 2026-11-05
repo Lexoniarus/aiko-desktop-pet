@@ -36,7 +36,7 @@ class OtherGameInputTests(unittest.TestCase):
         ))
         self.enterContext(patch("tkinter.PhotoImage", return_value=Mock()))
         self.enterContext(patch(
-            "aiko_pet.presentation.games.connect_four_sequence.ThreadPoolExecutor",
+            "aiko_pet.frontend.games.connect_four_sequence.ThreadPoolExecutor",
             return_value=Mock(),
         ))
         self.root, self.skin = cast(Any, GameWidget()), cast(Any, Skin())
@@ -53,7 +53,7 @@ class OtherGameInputTests(unittest.TestCase):
     def test_blackjack_first_decision_counts_and_dealer_turn_is_protected(self):
         for action in ("hit", "stand"):
             with self.subTest(action=action), patch(
-                "aiko_pet.presentation.games.blackjack_sequence.Blackjack",
+                "aiko_pet.frontend.games.blackjack_sequence.Blackjack",
                 side_effect=lambda: arranged_game(
                     card("5"), card("9"), card("6"), card("7"), card("2"),
                 ),

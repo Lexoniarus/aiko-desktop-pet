@@ -5,8 +5,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
-from ...presentation.view_models.game_models import HandView
-from ...presentation.view_models.mastermind_models import CodeView
+from ...frontend.view_models.game_models import HandView
+from ...frontend.view_models.mastermind_models import CodeView
 from ..common.mastermind_images import MastermindImages
 from ..common.playing_card_images import PlayingCardImages
 

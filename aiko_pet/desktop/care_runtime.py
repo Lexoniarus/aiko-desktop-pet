@@ -19,6 +19,9 @@ from ..application.social_coordinator import SocialContentCoordinator
 from ..application.social_fetch import SocialContentWorker
 from ..application.social_history import SocialContentHistory
 from ..application.storage_contracts import StorageError
+from ..frontend.book import HoroscopePlayback
+from ..frontend.playback import ReactionPlayer
+from ..frontend.social import SocialConversationRuntime, SocialRuntimePorts
 from ..games.contracts import GameRoundEvent, SessionSummary
 from ..infrastructure.astronomy import AstronomyEngineCalculator
 from ..infrastructure.horoscope_catalogue import load_horoscope_catalogue
@@ -32,9 +35,6 @@ from ..pet.mind.catalog import Reaction
 from ..pet.needs import NeedCondition
 from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
-from ..presentation.book import HoroscopePlayback
-from ..presentation.playback import ReactionPlayer
-from ..presentation.social import SocialConversationRuntime, SocialRuntimePorts
 from ..ui.pet_view.animated_pet import AnimatedPet
 from ..ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from ..ui.pet_view.speech_presenter import SpeechPresenter

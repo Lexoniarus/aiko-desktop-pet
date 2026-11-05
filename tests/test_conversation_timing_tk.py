@@ -11,9 +11,9 @@ from aiko_pet.application.social_content import (
     SocialCategory,
     prepare_social_content,
 )
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 from tests.test_social_content import fact_payload, joke_payload
 from tools.desktop_test_support import destroy_test_root

@@ -6,11 +6,11 @@ import tkinter as tk
 import unittest
 from dataclasses import replace
 
-from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
-from aiko_pet.presentation.view_models.contracts import (
+from aiko_pet.frontend.view_models.contracts import (
     EmotionalSnapshot,
     StatusSnapshot,
 )
+from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.windows.toolbar_details import ToolbarDetails
 from tools.desktop_test_support import destroy_test_root

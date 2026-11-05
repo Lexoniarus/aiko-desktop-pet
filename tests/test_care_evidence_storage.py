@@ -12,6 +12,7 @@ from support.care import CARE_EVIDENCE_STORAGE_WALL as WALL
 from support.care import emotional_state
 
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.frontend.view_models.moodlet_causes import cause_description
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
@@ -21,7 +22,6 @@ from aiko_pet.pet.moodlets import (
     MoodletState,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.presentation.view_models.moodlet_causes import cause_description
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
 

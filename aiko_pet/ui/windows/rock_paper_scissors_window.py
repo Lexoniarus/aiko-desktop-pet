@@ -7,12 +7,12 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_ART_DIR
+from ...frontend.games.ports import GamePresentation
+from ...frontend.games.rock_paper_scissors_sequence import RockPaperScissorsSequence
+from ...frontend.geometry import BoundsAt
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
-from ...presentation.games.ports import GamePresentation
-from ...presentation.games.rock_paper_scissors_sequence import RockPaperScissorsSequence
-from ...presentation.geometry import BoundsAt
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton, update_button_state

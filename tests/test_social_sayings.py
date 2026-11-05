@@ -23,7 +23,7 @@ from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
 )
-from aiko_pet.presentation.view_models.credits import project_credits
+from aiko_pet.frontend.view_models.credits import project_credits
 
 
 class SayingPreparationTests(unittest.TestCase):

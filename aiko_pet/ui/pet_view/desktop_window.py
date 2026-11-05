@@ -12,9 +12,9 @@ from typing import Protocol
 
 from ...desktop.taskbar import locate_primary_taskbar
 from ...desktop.work_area import work_area_at
+from ...frontend.geometry import WindowBounds
 from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH
 from ...pet.content import GERMAN_TEXT
-from ...presentation.geometry import WindowBounds
 from ..common.skin import AikoSkin
 
 MAGENTA = "#ff00ff"

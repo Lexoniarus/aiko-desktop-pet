@@ -13,12 +13,12 @@ from aiko_pet.application.social_content import (
     SocialCategory,
     prepare_social_content,
 )
+from aiko_pet.frontend.playback import ReactionPlayer
 from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.pet.interaction_events import SocialCompletion
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from aiko_pet.presentation.playback import ReactionPlayer
 from tests.test_social_content import fact_payload, joke_payload
 from tools.reaction_test_support import FakeScheduler
 

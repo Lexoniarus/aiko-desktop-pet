@@ -6,13 +6,13 @@ import tkinter as tk
 from collections.abc import Callable
 from functools import partial
 
+from ...frontend.games.mastermind_sequence import MastermindSequence
+from ...frontend.games.ports import GamePresentation
+from ...frontend.geometry import BoundsAt
+from ...frontend.view_models.mastermind_models import CodeView
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import ATTEMPTS, COLORS, PLACES, RoundView
 from ...pet.content import GERMAN_TEXT
-from ...presentation.games.mastermind_sequence import MastermindSequence
-from ...presentation.games.ports import GamePresentation
-from ...presentation.geometry import BoundsAt
-from ...presentation.view_models.mastermind_models import CodeView
 from ..common import scaled_widgets as scaled
 from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
