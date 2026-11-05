@@ -17,9 +17,12 @@ npm --prefix web run build
 ```
 
 `dist-room/starter/` is the small HTTPS-hosted starter.
+The same starter is supplied as `aiko-starter-<version>.zip`.
 `dist-room/aiko-room-<version>.zip` is the offline runtime to transfer through
 Dropbox or a GitHub download. `BUILD.json` records the package hash and commit.
 A source archive downloaded from a branch is not the built runtime ZIP.
+See [the German quick start](INSTALLATION_DE.md) and
+[completed automated checks](VERIFICATION.md).
 No private save, fonts, source-art authoring jobs or prototype review captures
 are included. The selected runtime artwork retains its existing asset terms.
 

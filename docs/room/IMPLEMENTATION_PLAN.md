@@ -649,7 +649,7 @@ forking the core or prematurely implementing a native shell.
 | --- | --- |
 | Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
-| T1: complete Tamagotchi core in the shared room PWA | Implementation present; final verification and actual-device parity acceptance pending. |
+| T1: complete Tamagotchi core in the shared room PWA | Implementation and local automated checks complete; GitHub and actual-device parity acceptance pending. See [verification](VERIFICATION.md). |
 | T2: notification-enabled iPad candidate | Pending. |
 | D1: shared room hosted by the desktop application | Later work; pending. |
 | Multi-day acceptance and final review | Pending. |
