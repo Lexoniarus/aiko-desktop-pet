@@ -1,23 +1,25 @@
 import type { FederatedPointerEvent } from 'pixi.js';
 import type { RoomSnapshot } from '../bridge/RoomClient';
+import type { RoomCommandName } from '../bridge/commands';
 import type { RoomView } from '../room/RoomView';
-import { delta } from '../room/RoomProjection';
 import type { Command } from '../ui/dom';
+import { PointerDrag } from './PointerDrag';
+import type { DragPointer } from './PointerDrag';
 
 export class ObjectDragController {
   onDragBegin: () => void = () => {};
-  private cancelDrag: (() => void) | undefined;
+  onError: (error: unknown) => void = () => {};
+  private gesture = new PointerDrag();
+  private settling = false;
   constructor(
     private room: RoomView,
     private command: Command,
+    private request: (
+      name: RoomCommandName,
+      args?: Record<string, unknown>,
+    ) => Promise<void>,
   ) {
     room.onObjectDown = (item, event) => this.existing(item, event);
-  }
-  private nearAiko(point: { x: number; depth: number }): boolean {
-    const pet = this.room.petPosition;
-    return (
-      !!pet && Math.hypot(delta(pet.x, point.x), (pet.depth - point.depth) * 475) < 180
-    );
   }
   private existing(
     item: RoomSnapshot['objects'][number],
@@ -25,90 +27,98 @@ export class ObjectDragController {
   ): void {
     if (item.state !== 'resting') return;
     event.stopPropagation();
-    this.begin(event.clientX, event.clientY, async (x, y) => {
-      const point = this.room.pointAt(x, y);
-      if (this.nearAiko(point))
-        await this.command('offer', {
-          instance: item.instance_id,
-          revision: item.revision,
-        });
-      else
-        await this.command('move', {
-          instance: item.instance_id,
-          revision: item.revision,
-          ...point,
-        });
-    });
+    this.begin(event, item.definition_id, item);
   }
   bindSupply(control: HTMLElement, definition: string): void {
     control.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0) return;
-      this.begin(
-        event.clientX,
-        event.clientY,
-        async (x, y) => {
-          const point = this.room.pointAt(x, y);
-          await this.command(this.nearAiko(point) ? 'offer' : 'place', {
-            definition,
-            ...point,
-          });
-        },
-        definition,
-      );
+      if (event.button === 0 && event.isPrimary) {
+        event.preventDefault();
+        this.begin(event, definition);
+      }
     });
   }
   private begin(
-    x: number,
-    y: number,
-    drop: (x: number, y: number) => Promise<void>,
-    definition?: string,
+    event: DragPointer,
+    definition: string,
+    item?: RoomSnapshot['objects'][number],
   ): void {
-    this.cancelDrag?.();
-    this.room.camera.hold(true);
-    let moved = false;
+    if (this.settling) return;
+    let reservation = Promise.resolve(true);
     const ghost = document.createElement('img');
     ghost.className = 'drag-portion';
-    const asset = definition && this.room.assets.items[definition];
+    ghost.draggable = false;
+    ghost.alt = '';
+    const asset = this.room.assets.items[definition];
     if (asset) ghost.src = new URL(asset.file, this.room.root).href;
-    const move = (event: PointerEvent) => {
-      if (!moved && Math.hypot(event.clientX - x, event.clientY - y) > 8) {
-        moved = true;
+    const accepted = this.gesture.begin(event, {
+      start: () => {
         this.onDragBegin();
-      }
-      if (moved && asset) {
-        if (!ghost.isConnected) document.body.append(ghost);
-        ghost.style.transform = `translate(${event.clientX}px,${event.clientY}px)`;
-      }
-    };
-    const clear = () => {
-      ghost.remove();
-      this.room.camera.hold(false);
-      this.cancelDrag = undefined;
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-      window.removeEventListener('pointercancel', cancel);
-    };
-    const up = (event: PointerEvent) => {
-      clear();
-      const rect = this.room.app.canvas.getBoundingClientRect();
-      if (
-        moved &&
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom
-      ) {
-        event.preventDefault();
-        void drop(event.clientX, event.clientY);
-      }
-    };
-    const cancel = () => clear();
-    this.cancelDrag = cancel;
-    window.addEventListener('pointermove', move);
-    window.addEventListener('pointerup', up);
-    window.addEventListener('pointercancel', cancel);
+        this.room.suppressPetTap();
+        if (item) {
+          this.room.draggingInstance = item.instance_id;
+          reservation = this.request('object_drag_start', {
+            instance: item.instance_id,
+            revision: item.revision,
+          }).then(
+            () => true,
+            (error) => {
+              this.onError(error);
+              return false;
+            },
+          );
+        }
+        document.body.append(ghost);
+      },
+      move: (x, y) => {
+        ghost.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%)`;
+        ghost.classList.toggle('invalid-drop', !this.dropTarget(x, y));
+      },
+      finish: (x, y, dragged, cancelled) => {
+        ghost.remove();
+        this.room.camera.hold(false);
+        if (dragged) this.room.suppressPetTap();
+        this.settling = true;
+        void (async () => {
+          try {
+            if (!(await reservation)) return;
+            const target = !cancelled && dragged ? this.dropTarget(x, y) : undefined;
+            if (item && dragged) {
+              if (target) await this.request('object_drag_drop', target);
+              else await this.request('object_drag_cancel');
+            } else if (target)
+              await this.command(target.offer ? 'offer' : 'place', {
+                definition,
+                x: target.x,
+                depth: target.depth,
+              });
+          } catch (error) {
+            if (item) await this.request('object_drag_cancel').catch(() => {});
+            this.onError(error);
+          } finally {
+            this.room.draggingInstance = undefined;
+            this.settling = false;
+          }
+        })();
+      },
+    });
+    if (accepted) this.room.camera.hold(true);
+  }
+  private dropTarget(
+    x: number,
+    y: number,
+  ): { x: number; depth: number; offer: boolean } | undefined {
+    const overlay = document
+      .elementFromPoint(x, y)
+      ?.closest('button,input,select,dialog,a');
+    if (overlay) return;
+    if (this.room.petContains(x, y)) {
+      const pet = this.room.petPosition!;
+      return { ...pet, offer: true };
+    }
+    const point = this.room.floorPoint(x, y);
+    return point ? { ...point, offer: false } : undefined;
   }
   cancel(): void {
-    this.cancelDrag?.();
+    this.gesture.cancel();
   }
 }

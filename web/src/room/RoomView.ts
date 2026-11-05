@@ -57,6 +57,8 @@ export class RoomView {
   private objects = new Map<string, { sprite: Sprite; item: WorldItem }>();
   private snapshot?: RoomSnapshot;
   private motion = new RoomMotion();
+  draggingInstance?: string;
+  private petTapBlockedUntil = 0;
   onPetScreenChange: (bounds: {
     x: number;
     y: number;
@@ -169,7 +171,9 @@ export class RoomView {
       }
     }
     this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
-    this.aiko.on('pointertap', () => this.onPetTap());
+    this.aiko.on('pointertap', () => {
+      if (performance.now() > this.petTapBlockedUntil) this.onPetTap();
+    });
     this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
     this.resizeObserver = new ResizeObserver(() =>
@@ -247,7 +251,10 @@ export class RoomView {
     const depths = new Map(snapshot.room.object_depths);
     for (const { sprite, item } of this.objects.values()) {
       const position = item.position;
-      sprite.visible = position !== null && item.state !== 'pet_held';
+      sprite.visible =
+        position !== null &&
+        item.state !== 'pet_held' &&
+        item.instance_id !== this.draggingInstance;
       if (!position) continue;
       const depth = depths.get(item.instance_id) ?? 0.9;
       sprite.position.set(
@@ -275,6 +282,9 @@ export class RoomView {
       y >= bounds.y &&
       y <= bounds.y + bounds.height
     );
+  }
+  suppressPetTap(): void {
+    this.petTapBlockedUntil = performance.now() + 350;
   }
   floorPoint(
     clientX: number,
