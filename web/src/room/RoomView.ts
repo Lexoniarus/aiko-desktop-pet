@@ -12,7 +12,7 @@ import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
 
 export interface AssetManifest {
   characterHeight: number;
-  obstacles: [number, number, number, number][];
+  foregroundDepth: [number, number];
   ui: {
     icons: Record<string, Record<string, string>>;
     surfaces: Record<string, string>;
@@ -47,7 +47,7 @@ const cutouts: Record<string, { crop: number[]; width: number; x: number; y: num
     desk: { crop: [44, 178, 1265, 821], width: 386, x: 4240, y: 820 },
     shelf: { crop: [124, 122, 1121, 923], width: 270, x: 3920, y: 540 },
     plant: { crop: [94, 84, 943, 1245], width: 204, x: 3750, y: 810 },
-    table: { crop: [216, 138, 1741, 489], width: 527, x: 2450, y: 880 },
+    table: { crop: [216, 138, 1741, 489], width: 527, x: 2450, y: 840 },
     fridge: { crop: [140, 130, 760, 1350], width: 244, x: 1425, y: 802 },
     door: { crop: [163, 107, 698, 1319], width: 255, x: 315, y: 784 },
     kitchenUnit: {
@@ -137,17 +137,6 @@ export class RoomView {
       1500,
       900,
     );
-    ctx.fillStyle = 'rgba(255,243,252,.33)';
-    for (const [x, y, w, h] of [
-      [0, 0, 1800, 38],
-      [20, 65, 185, 690],
-      [1125, 65, 675, 240],
-      [1125, 305, 310, 170],
-      [1580, 305, 220, 170],
-      [1125, 475, 675, 280],
-    ]) {
-      ctx.fillRect(1800 + x!, y!, w!, h!);
-    }
     // The v16 reference uses narrow architectural pillars at every panel join,
     // including both ends of the 360-degree loop. Keep art coordinates intact.
     paintRoomFloor(ctx, wall);
@@ -181,7 +170,7 @@ export class RoomView {
         furniture.width = definition.width;
         furniture.height = (h / w) * definition.width;
         furniture.position.set(offset + definition.x, definition.y);
-        furniture.zIndex = name === 'table' ? definition.y : -1000;
+        furniture.zIndex = -1000;
         this.world.addChild(furniture);
       }
     }
@@ -385,6 +374,10 @@ export class RoomView {
       depth = this.petPosition.depth;
     else if (groundY >= feetY(0.2) && groundY <= feetY(1.55))
       depth = unproject(world.x, groundY, this.viewport.center.x).depth;
+    depth = Math.max(
+      this.assets.foregroundDepth[0],
+      Math.min(this.assets.foregroundDepth[1], depth),
+    );
     const point = unproject(world.x, feetY(depth), this.viewport.center.x);
     const height = Math.max(0, Math.min(900, feetY(depth) - groundY));
     const pet = this.aiko.screenBounds();
@@ -393,10 +386,7 @@ export class RoomView {
       clientX >= box.left &&
       clientX <= box.right &&
       clientY >= box.top &&
-      clientY <= box.bottom &&
-      !this.assets.obstacles.some(
-        ([l, r, b, f]) => point.x >= l && point.x <= r && depth >= b && depth <= f,
-      );
+      clientY <= box.bottom;
     return {
       ...point,
       depth,
@@ -442,17 +432,13 @@ export class RoomView {
     const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
     if (world.y < feetY(0.2) || world.y > feetY(1.55)) return;
     const point = this.pointAt(clientX, clientY);
-    if (
-      this.assets.obstacles.some(
-        ([left, right, back, front]) =>
-          point.x >= left &&
-          point.x <= right &&
-          point.depth >= back &&
-          point.depth <= front,
-      )
-    )
-      return;
-    return point;
+    return {
+      ...point,
+      depth: Math.max(
+        this.assets.foregroundDepth[0],
+        Math.min(this.assets.foregroundDepth[1], point.depth),
+      ),
+    };
   }
   callPoint(): { x: number; depth: number } {
     return { x: wrap(this.viewport.center.x), depth: 1.1 };
