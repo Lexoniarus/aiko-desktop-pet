@@ -16,10 +16,12 @@ Implementation commits precede test execution. Automated local verification
 must be headless; device acceptance stays explicitly pending until observed on
 the user's iPad. A Windows browser pass cannot supply that evidence.
 
-The actual shared host composition lives under `presentation/room_session.py`,
-`presentation/room_runtime.py`, `presentation/room_content.py` and
-`presentation/games/session.py`. This preserves the existing rule that the
-application layer cannot import presentation modules. Existing rules stay in
+The actual shared host composition lives under `frontend/room_session.py`,
+`frontend/room_runtime.py`, `frontend/room_content.py` and
+`frontend/games/session.py`. This preserves the existing rule that the
+application layer cannot import frontend modules. The former retired
+`presentation` namespace remains prohibited by the canonical import audit.
+Existing rules stay in
 `application/`, `pet/`, `world/` and `games/`. The browser root only supplies
 fetch, filesystem publication and transport adapters. Native callers use the
 same extracted playback, game timelines and immutable projections.

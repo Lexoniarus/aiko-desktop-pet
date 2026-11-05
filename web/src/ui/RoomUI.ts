@@ -95,6 +95,7 @@ export class RoomUI {
     });
     drag.onDragBegin = () => {
       this.panel.close();
+      this.host.append(this.dialogue);
       this.panelName = '';
       this.activePanel = undefined;
     };
@@ -108,6 +109,7 @@ export class RoomUI {
       return;
     }
     this.panelName = name;
+    this.panel.insertBefore(this.dialogue, this.panelBody);
     this.activePanel = undefined;
     this.panelBody.replaceChildren();
     const titles: Record<string, string> = {
@@ -156,8 +158,6 @@ export class RoomUI {
     if (name === 'credits')
       this.panelBody.append(new CreditsPanel(snapshot, this.room.root).element);
     if (name === 'games') {
-      if (this.game) this.panel.insertBefore(this.dialogue, this.panelBody);
-      else this.host.append(this.dialogue);
       if (this.game) this.panelBody.append(this.game.element);
       else
         for (const [id, label] of [
@@ -179,6 +179,7 @@ export class RoomUI {
   private close(): void {
     if (this.gameId) void this.command('game_close');
     this.panel.close();
+    this.host.append(this.dialogue);
     this.panelName = '';
     this.activePanel = undefined;
   }
@@ -218,7 +219,7 @@ export class RoomUI {
         this.game = types[id]!();
         this.open('games');
       } else {
-        this.host.append(this.dialogue);
+        if (!this.panel.open) this.host.append(this.dialogue);
         if (this.panelName === 'games') this.open('games');
       }
     }
