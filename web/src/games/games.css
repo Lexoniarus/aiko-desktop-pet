@@ -9,6 +9,12 @@
     width: calc((100vw - 32px) / var(--ui-scale, 1));
     max-height: calc(52dvh / var(--ui-scale, 1));
   }
+  .game-panel .rps-player-hand {
+    width: min(340px, 100%);
+  }
+  .game-panel .c4-board {
+    max-width: min(100%, calc((52dvh - 220px) / var(--ui-scale, 1)));
+  }
 }
 .game-score,
 .game-state {
@@ -96,7 +102,8 @@
 }
 .rps-player-hand {
   position: relative;
-  width: 100%;
+  width: min(440px, 100%);
+  margin: auto;
   aspect-ratio: 440 / 300;
   background-size: contain;
   background-repeat: no-repeat;
@@ -151,7 +158,8 @@
 }
 .blackjack-table {
   position: relative;
-  width: 100%;
+  width: min(480px, 100%);
+  margin: auto;
   aspect-ratio: 480 / 280;
   background-size: 100% 100%;
 }
@@ -207,6 +215,8 @@
 .c4-board {
   position: relative;
   width: 100%;
+  max-width: min(100%, calc((100dvh - 380px) / var(--ui-scale, 1)));
+  margin: auto;
   aspect-ratio: 1;
   background-size: 100% 100%;
 }
