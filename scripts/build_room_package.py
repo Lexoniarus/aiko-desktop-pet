@@ -26,6 +26,11 @@ from aiko_pet.infrastructure.character_assets import (  # noqa: E402
 )
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
 from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
+from scripts.room_installer import (  # noqa: E402
+    installation_instructions,
+    installation_profile,
+    starter_address,
+)
 
 ROOM_IMAGES = {
     "kitchen": "anime-architecture-empty-v4.png",
@@ -147,6 +152,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--prototype", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=ROOT / "dist-room")
+    parser.add_argument("--starter-url", type=starter_address)
     args = parser.parse_args()
     web, output = ROOT / "web", args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -257,6 +263,38 @@ def main() -> None:
     )
     starter = output / "starter"
     shutil.copytree(web / "dist-starter", starter, dirs_exist_ok=True)
+    installer_metadata = {}
+    if args.starter_url:
+        manifest_hash = hashlib.sha256(encoded(manifest)).hexdigest()
+        (starter / "install.json").write_bytes(
+            encoded({
+                "format": 1,
+                "version": version,
+                "package": "packages/" + zip_path.name,
+                "size": zip_path.stat().st_size,
+                "manifestSHA256": manifest_hash,
+            })
+        )
+        packages = starter / "packages"
+        packages.mkdir(exist_ok=True)
+        shutil.copyfile(zip_path, packages / zip_path.name)
+        profile = installation_profile(
+            args.starter_url, (web / "dist-starter/icon-192.png").read_bytes()
+        )
+        installer_zip = output / f"Aiko-iPad-Installation-{version}.zip"
+        archive(
+            installer_zip,
+            {
+                "Aiko-installieren.mobileconfig": profile,
+                "LIES_MICH.txt": installation_instructions(version),
+            },
+        )
+        installer_metadata = dict(
+            installer=installer_zip.name,
+            starterURL=args.starter_url,
+            installation="profile-and-first-online-download",
+            deviceVerified=False,
+        )
     starter_zip = output / f"aiko-starter-{version}.zip"
     archive(
         starter_zip,
@@ -276,6 +314,7 @@ def main() -> None:
                 starter=starter_zip.name,
                 sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
                 device="iPad 9th generation, iPadOS 26.6; device verification pending",
+                **installer_metadata,
             )
         )
     )
