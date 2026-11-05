@@ -5,6 +5,7 @@ import { delta } from '../room/RoomProjection';
 import type { Command } from '../ui/dom';
 
 export class ObjectDragController {
+  onDragBegin:()=>void=()=>{};
   private cancelDrag: (() => void) | undefined;
   constructor(private room: RoomView, private command: Command) {
     room.onObjectDown = (item,event) => this.existing(item,event);
@@ -39,7 +40,7 @@ export class ObjectDragController {
     const asset=definition&&this.room.assets.items[definition];
     if(asset) ghost.src=new URL(asset.file,this.room.root).href;
     const move=(event:PointerEvent)=>{
-      moved ||= Math.hypot(event.clientX-x,event.clientY-y)>8;
+      if(!moved&&Math.hypot(event.clientX-x,event.clientY-y)>8){moved=true;this.onDragBegin();}
       if(moved&&asset){if(!ghost.isConnected)document.body.append(ghost);ghost.style.transform=`translate(${event.clientX}px,${event.clientY}px)`;}
     };
     const clear=()=>{

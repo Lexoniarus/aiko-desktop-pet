@@ -8,8 +8,10 @@ import { ObjectDragController } from './input/ObjectDragController';
 import { RoomUI } from './ui/RoomUI';
 import { element } from './ui/dom';
 import type { Command } from './ui/dom';
+import { downloadDeviceReport } from './platforms/browser/DeviceReport';
 
 export async function startRoom(host:HTMLElement,root:string):Promise<void>{
+  const startedAt=performance.now();
   const styles=document.createElement('link');styles.rel='stylesheet';styles.href=new URL('app/room.css',root).href;document.head.append(styles);
   const loading=element('p','runtime-loading','Aiko wird wach …');host.replaceChildren(loading);
   const client=new BrowserRoomClient();
@@ -30,6 +32,9 @@ export async function startRoom(host:HTMLElement,root:string):Promise<void>{
     const drag=new ObjectDragController(room,command);ui=new RoomUI(host,room,drag,command);
     room.onPetTap=()=>{void command('contact');};
     await receive(first);
+    if(new URL(location.href).searchParams.has('diagnostics')){
+      const report=document.createElement('button');report.className='diagnostic-report';report.textContent='Gerätebericht';report.addEventListener('click',()=>downloadDeviceReport(first.runtime,startedAt));host.append(report);
+    }
     const lifecycle=new BrowserLifecycle(client,receive,error=>ui.message(error));lifecycle.start();
     window.addEventListener('pagehide',()=>drag.cancel());
   }catch(error){await client.close().catch(()=>{});throw error;}

@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import json
+import sqlite3
+import sys
+from importlib.metadata import version
 from collections import OrderedDict
 from typing import Any
 
@@ -39,6 +42,11 @@ class BrowserEndpoint:
             }
             if name == "forecast":
                 reply["forecast"] = json_value(self.session.forecast())
+            if name == "snapshot":
+                reply["runtime"] = {"python": sys.version.split()[0],
+                                    "sqlite": sqlite3.sqlite_version,
+                                    "astronomy-engine": version("astronomy-engine"),
+                                    "pyjokes": version("pyjokes")}
         except (ValueError, KeyError, TypeError, RuntimeError) as error:
             reply = {"protocol": PROTOCOL_VERSION, "requestId": request_id,
                      "ok": False, "error": str(error)[:300]}

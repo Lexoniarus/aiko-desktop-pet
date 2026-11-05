@@ -7,6 +7,8 @@
 .room-speech { position:absolute; z-index:4; left:50%; transform:translateX(-50%); bottom:max(82px,calc(env(safe-area-inset-bottom) + 66px)); width:min(520px,calc(100% - 32px)); background:#fffdf8; border:2px solid #243451; border-radius:18px; padding:16px 20px; box-shadow:0 4px 12px #24345120; }
 .room-speech p { margin:0; font-size:17px; line-height:1.5; white-space:pre-line; }
 .room-speech button { margin-top:12px; }
+.room-panel .room-speech { position:relative; left:auto; bottom:auto; transform:none; width:auto; margin:8px 12px 0; padding:10px 12px; flex-shrink:0; box-shadow:none; border-color:#d2d8ef; }
+.room-panel .room-speech p { font-size:15px; }
 .speech-emote { font-size:18px; }
 .room-panel { position:absolute; z-index:5; inset:auto 16px 72px auto; margin:0; width:min(480px,calc(100vw - 32px)); max-height:calc(100dvh - 160px); padding:0; color:#243451; background:#fffdf8; border:1px solid #9aa9bc; border-radius:16px; box-shadow:0 8px 32px #2434512e; }
 .room-panel[open] { display:flex; flex-direction:column; }

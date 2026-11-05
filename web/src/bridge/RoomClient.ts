@@ -1,6 +1,7 @@
 export interface RoomReply {
   protocol: 1; requestId: number; ok: boolean;
   snapshot?: RoomSnapshot; error?: string; saved?: boolean;
+  runtime?:Record<string,string>;
 }
 export interface RoomSnapshot {
   revision: number;

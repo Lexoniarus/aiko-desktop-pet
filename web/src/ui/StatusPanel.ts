@@ -4,6 +4,7 @@ import { element,line } from './dom';
 export class StatusPanel {
   readonly element=element('section');
   update(snapshot:RoomSnapshot):void {
+    const open=new Set(Array.from(this.element.querySelectorAll('details[open]')).map(node=>node.querySelector('summary')?.textContent));
     this.element.replaceChildren();
     const status=snapshot.catalog.status as Record<string,unknown> | undefined;
     const values=status?.status_values as Array<[string,number]> | undefined;
@@ -18,7 +19,7 @@ export class StatusPanel {
       }
       const emotional=status.emotional as {state_label:string;moodlets:Array<{label:string;description:string}>};
       this.element.append(element('h3','',emotional.state_label));
-      for(const moodlet of emotional.moodlets){const detail=element('details');detail.append(element('summary','',moodlet.label),line(moodlet.description));this.element.append(detail);}
+      for(const moodlet of emotional.moodlets){const detail=element('details');detail.open=open.has(moodlet.label);detail.append(element('summary','',moodlet.label),line(moodlet.description));this.element.append(detail);}
     }
   }
 }
