@@ -25,6 +25,9 @@ async function launch(): Promise<void> {
     const root = packageRoot(installed.id);
     const module = await import(/* @vite-ignore */ new URL(installed.entry, root).href);
     await module.startRoom(host, root.href);
+    const locationURL = new URL(location.href);
+    locationURL.searchParams.delete('install');
+    history.replaceState(null, '', locationURL);
   } catch (error) {
     host.replaceChildren(installer);
     start.disabled = false;
