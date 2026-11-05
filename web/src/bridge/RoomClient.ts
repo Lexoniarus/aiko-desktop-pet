@@ -1,3 +1,4 @@
+import type { RoomCommandName } from './commands';
 export interface RoomReply {
   protocol: 1; requestId: number; ok: boolean;
   snapshot?: RoomSnapshot; error?: string; saved?: boolean;
@@ -21,6 +22,6 @@ export interface RoomSnapshot {
   error: string | null;
 }
 export interface RoomClient {
-  command(name: string, args?: Record<string, unknown>): Promise<RoomReply>;
+  command(name: RoomCommandName, args?: Record<string, unknown>): Promise<RoomReply>;
   close(): Promise<void>;
 }

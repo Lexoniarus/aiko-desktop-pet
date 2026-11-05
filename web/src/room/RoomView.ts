@@ -64,14 +64,19 @@ export class RoomView {
       ctx.fillRect(1800+x!, y!, w!, h!);
     }
     const texture = Texture.from(background);
+    const furnitureTextures=new Map<string,Texture>();
+    for(const [name,definition] of Object.entries(cutouts)){
+      const source=images[name]!;
+      const [x,y,w,h]=definition.crop as [number,number,number,number];
+      const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      canvas.getContext('2d')!.drawImage(source,x,y,w,h,0,0,w,h);
+      furnitureTextures.set(name,Texture.from(canvas));
+    }
     for (const offset of [-5100, 0, 5100]) {
       const tile = new Sprite(texture); tile.x = offset; tile.zIndex = -10000; this.world.addChild(tile);
       for (const [name, definition] of Object.entries(cutouts)) {
-        const source = images[name]!;
         const [x,y,w,h] = definition.crop as [number,number,number,number];
-        const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
-        canvas.getContext('2d')!.drawImage(source,x,y,w,h,0,0,w,h);
-        const furniture = new Sprite(Texture.from(canvas)); furniture.anchor.set(.5,1);
+        const furniture = new Sprite(furnitureTextures.get(name)!); furniture.anchor.set(.5,1);
         furniture.width = definition.width; furniture.height = h / w * definition.width;
         furniture.position.set(offset+definition.x,definition.y);
         furniture.zIndex = name === 'table' ? definition.y : -1000;
@@ -105,6 +110,7 @@ export class RoomView {
       const asset = this.assets.items[item.definition_id]; if (!asset) continue;
       const texture = await Assets.load<Texture>(new URL(asset.file,this.root).href);
       if (this.objects.has(item.instance_id)) continue;
+      if(!this.snapshot?.objects.some(current=>current.instance_id===item.instance_id&&!['consumed','removed'].includes(current.state)))continue;
       const sprite = new Sprite(texture); sprite.anchor.set(.5,1); sprite.eventMode = 'static'; sprite.cursor = 'grab';
       sprite.on('pointerdown', event => { const current=this.objects.get(item.instance_id); if (current) this.onObjectDown(current.item,event); });
       this.world.addChild(sprite); this.objects.set(item.instance_id,{sprite,item});

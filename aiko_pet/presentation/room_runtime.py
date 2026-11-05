@@ -152,7 +152,9 @@ class RoomRuntime:
         self.moving = False
 
     def place(self, definition: str, point: RoomPoint) -> str:
-        item = self.world.place_resting(definition, point.x, ObjectFootprint(24, 24))
+        footprint = ObjectFootprint(24, 24)
+        x = self.world.snapshot().surface.ground_x(point.x, footprint)
+        item = self.world.place_resting(definition, x, footprint)
         self._depth(item.instance_id, point.depth)
         self.behavior.refresh_after_placement()
         return item.instance_id
@@ -166,14 +168,16 @@ class RoomRuntime:
         item = self.world.get(instance)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
-        self.world.move_resting(instance, point.x, expected_revision=revision)
+        x = self.world.snapshot().surface.ground_x(point.x, item.footprint)
+        self.world.move_resting(instance, x, expected_revision=revision)
         self._depth(instance, point.depth)
         self.behavior.refresh_after_placement()
 
     def offer(self, definition: str) -> None:
         if self._offered is not None or self.game_open() or self.state.sleeping:
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
-        position = WorldPosition(self.position.x, 80)
+        x = self.world.snapshot().surface.ground_x(self.position.x, ObjectFootprint(24, 24))
+        position = WorldPosition(x, 80)
         item = self.world.create_held(definition, position, ObjectFootprint(24, 24))
         self._depth(item.instance_id, self.position.depth)
         self._offered = item.instance_id, self.now, f"offer_{item.instance_id}"
@@ -182,7 +186,8 @@ class RoomRuntime:
         if self._offered is not None or self.game_open() or self.state.sleeping:
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
         item = self.world.take_resting(instance, expected_revision=revision)
-        item = self.world.move_held(instance, WorldPosition(self.position.x, 80),
+        x = self.world.snapshot().surface.ground_x(self.position.x, item.footprint)
+        item = self.world.move_held(instance, WorldPosition(x, 80),
                                     expected_revision=item.revision)
         self._depth(instance, self.position.depth)
         self._offered = instance, self.now, f"offer_{instance}_{item.revision}"

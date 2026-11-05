@@ -1,4 +1,5 @@
-export type Command = (name: string, args?: Record<string, unknown>) => Promise<void>;
+import type { RoomCommandName } from '../bridge/commands';
+export type Command = (name: RoomCommandName, args?: Record<string, unknown>) => Promise<void>;
 export function element<K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text = ''): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag); node.className = className; node.textContent = text; return node;
 }

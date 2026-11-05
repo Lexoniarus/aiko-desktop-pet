@@ -1,5 +1,5 @@
 import { Unzip, UnzipInflate } from 'fflate';
-import { activatePackage, packageCachePrefix, packageRoot } from './PackageStore';
+import { activatePackage, packageCachePrefix, packageRoot } from './PackageStore.ts';
 import type { InstalledPackage } from './PackageStore';
 
 export interface PackageManifest {

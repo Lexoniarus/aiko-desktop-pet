@@ -1,4 +1,5 @@
 import type { RoomClient, RoomReply } from '../../bridge/RoomClient';
+import type { RoomCommandName } from '../../bridge/commands';
 
 export class BrowserRoomClient implements RoomClient {
   private worker = new Worker(new URL('./python.worker.ts', import.meta.url), { type: 'module' });
@@ -39,7 +40,7 @@ export class BrowserRoomClient implements RoomClient {
     });
   }
 
-  command(name: string, args: Record<string, unknown> = {}): Promise<RoomReply> {
+  command(name: RoomCommandName, args: Record<string, unknown> = {}): Promise<RoomReply> {
     return this.request({ name, args });
   }
 
