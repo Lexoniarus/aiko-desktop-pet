@@ -3,7 +3,6 @@ import type { PyodideInterface } from 'pyodide';
 
 declare const self: DedicatedWorkerGlobalScope;
 let python: PyodideInterface;
-let dispatch: { callKwargs: (message: string) => string } | undefined;
 let session: { dispatch_json: (message: string) => string } | undefined;
 let dirty = false;
 function sync(populate: boolean): Promise<void> {
@@ -12,7 +11,7 @@ function sync(populate: boolean): Promise<void> {
 async function initialize(root: string): Promise<void> {
   const { loadPyodide } = await import(/* @vite-ignore */ new URL('runtime/pyodide.mjs', root).href);
   python = await loadPyodide({ indexURL: new URL('runtime/', root).href });
-  await python.loadPackage(['sqlite3']);
+  // Current pinned Pyodide includes sqlite3 in the core standard library.
   python.FS.mkdirTree('/aiko-save');
   python.FS.mount(python.FS.filesystems.IDBFS, {}, '/aiko-save');
   await sync(true);
