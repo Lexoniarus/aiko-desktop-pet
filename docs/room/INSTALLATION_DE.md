@@ -72,6 +72,11 @@ einen durchgehenden Boden und die Desktop-Abläufe beim Vorhalten, Erkennen,
 dann zu ihren Händen führen und loslassen. Nicht angenommene Portionen fallen
 auf den Boden und lassen sich dort wieder aufheben. Erneut über dieselben
 Update-Einstellungen laden; die normale Figurengröße bleibt erhalten.
+Mit **0.1.0-e0fbaec47ab4** liegt die Spielebene vor den Möbeln: Portionen dürfen
+auch über sichtbaren Möbeln oder anderen Portionen losgelassen werden und landen
+davor. Aiko kommt zum Aufheben bis an die Portion heran. Seitliches Gehen nutzt
+jetzt den Profilkopf, Umschauen die Dreiviertelkörper. Auch dieser Stand wird
+über das bestehende Symbol und die Update-Einstellungen geladen.
 Die vollständige Abnahmeliste steht im Repository unter
 `docs/room/IPAD_ACCEPTANCE.md`.
 

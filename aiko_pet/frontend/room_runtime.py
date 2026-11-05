@@ -138,8 +138,13 @@ class RoomRuntime:
         if world.snapshot().room is None:
             world.locate_in_room(RoomSpatialState())
         safe_position = RoomGeometry.accessible(self.position)
-        if safe_position != self.position:
-            world.locate_in_room(replace(self.spatial, pet=safe_position))
+        safe_depths = tuple(
+            (key, RoomGeometry.accessible(RoomPoint(0, depth)).depth)
+            for key, depth in self.spatial.object_depths
+        )
+        world.locate_in_room(
+            replace(self.spatial, pet=safe_position, object_depths=safe_depths)
+        )
 
     @property
     def spatial(self) -> RoomSpatialState:
@@ -205,7 +210,11 @@ class RoomRuntime:
             object_state=item.state,
             reachable=(
                 RoomGeometry.distance(self.position, point)
-                <= (150 if item.state == ObjectState.USER_HELD else 32)
+                <= (
+                    150
+                    if item.state == ObjectState.USER_HELD
+                    else RoomGeometry.ground_reach
+                )
                 and (
                     item.state != ObjectState.USER_HELD
                     or 15 <= item.position.height <= 450
@@ -229,8 +238,7 @@ class RoomRuntime:
         self.moving = False
 
     def place(self, definition: str, point: RoomPoint) -> str:
-        if RoomGeometry.accessible(point) != point:
-            raise ValueError("Bitte die Portion auf dem freien Boden ablegen.")
+        point = RoomGeometry.accessible(point)
         footprint = ObjectFootprint(24, 24)
         x = self.world.snapshot().surface.ground_x(point.x, footprint)
         item = self.world.place_resting(definition, x, footprint)
@@ -246,8 +254,7 @@ class RoomRuntime:
         )
 
     def relocate(self, instance: str, revision: int, point: RoomPoint) -> None:
-        if RoomGeometry.accessible(point) != point:
-            raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
+        point = RoomGeometry.accessible(point)
         item = self.world.get(instance)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
@@ -346,6 +353,7 @@ class RoomRuntime:
             raise ValueError("Kein Gegenstand wird gezogen.")
         item = self.world.get(drag.instance)
         surface = self.world.snapshot().surface
+        point = RoomGeometry.accessible(point)
         self.world.move_held(
             drag.instance,
             WorldPosition(surface.ground_x(point.x, item.footprint), height),
@@ -375,8 +383,7 @@ class RoomRuntime:
     def drop_drag(self, point: RoomPoint, *, offer: bool, height: float = 0) -> None:
         if self._dragged is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
-        if RoomGeometry.accessible(point) != point:
-            raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
+        point = RoomGeometry.accessible(point)
         instance = self._dragged.instance
         item = self.world.get(instance)
         destination = point
@@ -554,7 +561,10 @@ class RoomRuntime:
             or self.state.energy < 15
         ):
             self.locomotion.rest(
-                self.now, (direction[0], -direction[1]) if drag else None
+                self.now,
+                (direction[0], -direction[1])
+                if drag or side is not None or point is not None
+                else None,
             )
             return
         previous = self.position

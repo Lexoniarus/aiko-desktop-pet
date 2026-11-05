@@ -21,31 +21,26 @@ class RoomLocomotion:
     def walk(self, now: float, start: RoomPoint, end: RoomPoint) -> bool:
         dx = RoomGeometry.delta(start.x, end.x)
         dy = (end.depth - start.depth) * 475
-        side = 1 if dx >= 0 else -1
-        # These are the existing compatible three-quarter head/step variants;
-        # no new back-facing artwork or mirrored character is fabricated.
-        slope = dy / max(1, abs(dx))
-        gaze = (
-            2
-            if slope < -0.7
-            else 3
-            if slope < -0.12
-            else 6
-            if slope > 0.7
-            else 5
-            if slope > 0.12
-            else 4
-        )
-        if side < 0:
-            gaze = 16 - gaze
+        side = (1 if dx > 0 else -1) if abs(dx) > 1 else (self.orientation.side or 1)
         if self.orientation.side not in (0, side):
             self.orientation.reset()
-        turn = self.orientation.orient_for_gaze_motion(now, gaze)
+        label = "right" if side > 0 else "left"
+        if dy > max(1, abs(dx) * 1.5):
+            # The approved forward-facing quarter body is a stance/turn pose,
+            # not a baked forward step cycle. Keep that distinction explicit.
+            gaze = 4 if side > 0 else 12
+            self.selection = self.orientation.select_gaze_stance(
+                now,
+                SpriteSelection("look", gaze),
+                intent="three_quarter",
+                side=side,
+            )
+            return True
+        turn = self.orientation.orient_for_motion(now, side, responsive=True)
         if not self.orientation.motion_ready:
             self.selection = turn
             return False
-        label = "right" if side > 0 else "left"
-        self.selection = SpriteSelection(f"body-step-{label}-{gaze:02}")
+        self.selection = SpriteSelection(f"body-step-{label}-profil")
         return True
 
     def rest(self, now: float, look: tuple[float, float] | None = None) -> None:
@@ -53,6 +48,14 @@ class RoomLocomotion:
         if look is not None and math.hypot(*look) > 0.1:
             sector = round(math.degrees(math.atan2(look[0], -look[1])) / 22.5) % 16
             choice = SpriteSelection("look", sector)
-        self.selection = self.orientation.select(now, choice)
+            side = 1 if look[0] > 0.1 else -1 if look[0] < -0.1 else 0
+            self.selection = self.orientation.select_gaze_stance(
+                now,
+                choice,
+                intent="three_quarter" if side else "front",
+                side=side,
+            )
+        else:
+            self.selection = self.orientation.select(now, choice)
         if self.selection.animation == "idle":
             self.selection = SpriteSelection("rest-neutral")

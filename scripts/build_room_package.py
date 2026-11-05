@@ -178,7 +178,7 @@ def runtime_assets() -> dict[str, Any]:
         "items": item_files,
         "room": ROOM_IMAGES,
         "characterHeight": character_height,
-        "obstacles": RoomGeometry.obstacles,
+        "foregroundDepth": RoomGeometry.foreground_depth,
         "ui": ui,
     }
 
