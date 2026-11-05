@@ -1,4 +1,4 @@
-import { element } from '../ui/dom';
+import { button, element } from '../ui/dom';
 import type { Command } from '../ui/dom';
 import { GameFrame } from './GameView';
 import type { GameView } from './GameView';
@@ -24,10 +24,9 @@ export class RockPaperScissorsView extends GameFrame implements GameView {
       ['paper', 'Papier'],
       ['scissors', 'Schere'],
     ]) {
-      const control = element('button', '', label!);
+      const control = button(label!, () => this.action('choose', id));
       const image = art.image(art.icon(`play_rps_${id}`, 64));
       control.prepend(image);
-      control.addEventListener('click', () => this.action('choose', id));
       choices.append(control);
       this.choices.push(control);
     }
