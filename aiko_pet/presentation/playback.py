@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Callable
 
-from ...pet.animation.expression import Expression
-from ...pet.interaction_events import SocialCompletion
-from ...pet.mind.catalog import Reaction
-from ...pet.mind.reaction_sequence import Cue
+from ..pet.animation.expression import Expression
+from ..pet.interaction_events import SocialCompletion
+from ..pet.mind.catalog import Reaction
+from ..pet.mind.reaction_sequence import Cue
 
 TimerCallback = Callable[[], None]
 ScheduleTimer = Callable[[int, TimerCallback], str]

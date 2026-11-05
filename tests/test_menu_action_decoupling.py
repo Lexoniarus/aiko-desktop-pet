@@ -25,7 +25,7 @@ from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
 from aiko_pet.ui.windows.hover_ui import HoverUi, HoverUiPorts

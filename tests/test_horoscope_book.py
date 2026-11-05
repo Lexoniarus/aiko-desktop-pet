@@ -16,7 +16,7 @@ from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,

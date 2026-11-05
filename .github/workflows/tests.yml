@@ -33,7 +33,7 @@ jobs:
         run: |
           python -m mypy --strict --follow-imports=silent \
             aiko_pet/pet/mind/adaptive_policy.py aiko_pet/pet/mind/click_policy.py \
-            aiko_pet/pet/movement/controller.py aiko_pet/ui/pet_view/reaction_player.py
+            aiko_pet/pet/movement/controller.py aiko_pet/presentation/playback.py
       - name: Install whole-application typing dependencies
         run: python -m pip install mypy==1.18.2 pyright==1.1.414 Pillow==11.3.0
       - name: Enforce strict typing across the entire application

@@ -15,7 +15,7 @@ from ..ui.common.window_geometry import WindowBounds
 from ..ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter
 from ..ui.pet_view.desktop_window import DesktopWindow
 from ..ui.pet_view.mastermind_safe_presenter import MastermindSafePresenter
-from ..ui.pet_view.reaction_player import ReactionPlayer
+from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.view_models.game_models import HandAnchor
 from ..ui.windows.game_contracts import GameCardPorts, GameCodePorts

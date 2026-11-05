@@ -82,7 +82,7 @@ Sources: [catalogue](../aiko_pet/pet/mind/catalog.py),
 [attention](../aiko_pet/application/attention.py),
 [desktop guards](../aiko_pet/desktop/attention_runtime.py),
 [balance](../aiko_pet/data/balance.json) and
-[reaction player](../aiko_pet/ui/pet_view/reaction_player.py).
+[reaction player](../aiko_pet/presentation/playback.py).
 
 ### Emotional context
 

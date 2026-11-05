@@ -28,7 +28,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from tools.persistence_test_support import save_test_session
 from tools.reaction_test_support import FakeScheduler
 

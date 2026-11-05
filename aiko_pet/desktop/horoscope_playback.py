@@ -5,7 +5,7 @@ from dataclasses import replace
 from typing import Callable
 
 from ..application.horoscope_coordinator import HoroscopeCoordinator
-from ..ui.pet_view.reaction_player import ReactionPlayer
+from ..presentation.playback import ReactionPlayer
 
 
 class HoroscopePlayback:

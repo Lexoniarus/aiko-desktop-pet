@@ -17,7 +17,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG, WishCatalog
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from tools.pet_test_support import set_test_pet_values
 from tools.reaction_test_support import FakeScheduler
 

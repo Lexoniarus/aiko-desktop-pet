@@ -285,7 +285,7 @@ betroffenen Cursor-/Bewegungs-/GUI-/Spielmodule sowie die Repository-Gates aus
 
 ```text
 python -m ruff check aiko_pet tests main.py tools
-python -m mypy --strict --follow-imports=silent aiko_pet/pet/mind/adaptive_policy.py aiko_pet/pet/mind/click_policy.py aiko_pet/pet/movement/controller.py aiko_pet/ui/pet_view/reaction_player.py
+python -m mypy --strict --follow-imports=silent aiko_pet/pet/mind/adaptive_policy.py aiko_pet/pet/mind/click_policy.py aiko_pet/pet/movement/controller.py aiko_pet/presentation/playback.py
 python -m mypy --strict --no-incremental aiko_pet main.py tools
 python -m pyright --project pyrightconfig.json
 python -m unittest discover -s tests -q

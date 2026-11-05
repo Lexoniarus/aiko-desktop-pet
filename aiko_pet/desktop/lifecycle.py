@@ -11,7 +11,7 @@ from typing import Callable
 
 from ..application.router import ApplicationRouter
 from ..infrastructure.hardware.monitor import ActivityMonitor
-from ..ui.pet_view.reaction_player import ReactionPlayer
+from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.windows.hover_ui import HoverUi
 from .input import DesktopInput

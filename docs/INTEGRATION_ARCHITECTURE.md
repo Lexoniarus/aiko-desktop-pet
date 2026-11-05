@@ -134,7 +134,7 @@ and work-session context now have explicit canonical modules in
 `aiko_pet/pet/mind/`. The detector's descriptive English name is
 `WorkloadEventDetector`; the old `ComputerVoice` alias has been removed.
 Presentation-owned cue scheduling lives in
-`ui/pet_view/reaction_player.py`. Neither the API contract nor any
+`presentation/playback.py`. Neither the API contract nor any
 German authored responses have changed.
 
 ## Platform and visual-policy ownership

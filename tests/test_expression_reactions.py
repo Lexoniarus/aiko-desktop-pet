@@ -7,7 +7,7 @@ from aiko_pet.application.social_content import SocialCategory, prepare_social_c
 from aiko_pet.pet.animation.expression import Expression
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from aiko_pet.ui.windows.game_speech import GameSpeech
 from tools.reaction_test_support import FakeScheduler
 

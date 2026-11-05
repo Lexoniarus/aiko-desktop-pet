@@ -767,7 +767,7 @@ Python code imports the removed paths; such callers need the mappings below.
 | `dialogue` | `pet.mind.mind.PetMind` and `pet.mind.catalog` types |
 | `dialogue_catalog`, `dialogue_events` | `pet.mind.catalog`, `pet.mind.click_policy` |
 | `computer_voice`; `ComputerVoice` alias | `pet.mind.workload_events.WorkloadEventDetector` |
-| `animation`, `gaze`, `movement`, `reaction_playback` | `pet.animation`, `pet.movement`, `ui.pet_view.reaction_player` |
+| `animation`, `gaze`, `movement`, `reaction_playback` | `pet.animation`, `pet.movement`, `presentation.playback` |
 | `desktop_input` | `desktop.global_input` |
 | `taskbar` | `desktop.taskbar` and `desktop.geometry.TaskbarTrack` |
 | `window_stack` | `desktop.window_stack` |

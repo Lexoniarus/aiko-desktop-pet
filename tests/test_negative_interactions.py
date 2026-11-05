@@ -10,7 +10,7 @@ from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.interaction_events import Poked
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 
 
 class NegativeInteractionTests(unittest.TestCase):

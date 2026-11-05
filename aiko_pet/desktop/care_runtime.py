@@ -34,7 +34,7 @@ from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet
 from ..ui.pet_view.care_presenter import CarePresenter, CareViewPorts
-from ..ui.pet_view.reaction_player import ReactionPlayer
+from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.windows.hover_ui import HoverUi
 from ..world.contracts import ObjectState

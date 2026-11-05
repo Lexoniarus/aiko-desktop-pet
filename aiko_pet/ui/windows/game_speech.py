@@ -10,7 +10,7 @@ from dataclasses import replace
 
 from ...games.rock_paper_scissors import Move
 from ...pet.animation.expression import EXPRESSION_CLIPS, Expression, event_expression
-from ..pet_view.reaction_player import ReactionPlayer
+from ...presentation.playback import ReactionPlayer
 from ..pet_view.speech_presenter import SpeechPresenter
 from .game_presentation import GamePresentation
 

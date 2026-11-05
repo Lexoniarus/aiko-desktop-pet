@@ -21,7 +21,7 @@ from aiko_pet.pet.wishes import (
     WishId,
     WishState,
 )
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.presentation.playback import ReactionPlayer
 from support.payloads import fact_payload, joke_payload
 from tools.reaction_test_support import FakeScheduler
 
