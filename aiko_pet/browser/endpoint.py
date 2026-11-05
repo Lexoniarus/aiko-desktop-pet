@@ -7,6 +7,7 @@ from collections import OrderedDict
 from typing import Any
 
 from ..application.room_contracts import PROTOCOL_VERSION, ROOM_COMMANDS
+from ..application.room_contracts import json_value
 from ..application.room_session import RoomSession
 
 
@@ -36,6 +37,8 @@ class BrowserEndpoint:
                 "protocol": PROTOCOL_VERSION, "requestId": request_id,
                 "ok": True, "snapshot": self.session.snapshot(),
             }
+            if name == "forecast":
+                reply["forecast"] = json_value(self.session.forecast())
         except (ValueError, KeyError, TypeError, RuntimeError) as error:
             reply = {"protocol": PROTOCOL_VERSION, "requestId": request_id,
                      "ok": False, "error": str(error)[:300]}

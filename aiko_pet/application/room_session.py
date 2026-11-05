@@ -12,6 +12,10 @@ from ..pet.interaction_events import SocialCompletion
 from ..pet.mind import PetMind
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wishes import wish_to_express
+from ..pet.routine import context_at
+from ..telemetry import ComputerSnapshot
+from ..ui.view_models.projections import project_status
 from ..presentation.room_playback import RoomPlayback
 from ..world.contracts import WorldSurface
 from ..world.room import RoomPoint
@@ -28,6 +32,9 @@ from .room_routine import RoomRoutine
 from .router import ApplicationRouter
 from .session import LoadedPetData, SavedPetStore
 from .settings import PetSettings
+from .read_snapshot import snapshot_pet
+from .wish_context import wish_context_for
+from .wish_forecast import RoomTimeProgression, WishForecastService
 
 
 class RoomSession:
@@ -52,6 +59,7 @@ class RoomSession:
         self._suspended = False
         self._last_tick = time.time()
         self._last_saved = self._last_tick
+        self._next_comment = time.monotonic() + 35
         self.playback = RoomPlayback(
             animations, social_completed=self._social_completed,
             mark_spoken=lambda: self.mind.record_care_contact(time.monotonic()),
@@ -64,24 +72,37 @@ class RoomSession:
             memory=loaded.object_memory, inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,
         )
+        self.progression = RoomTimeProgression(self.room.progression, self.wish_context)
         self.router = ApplicationRouter(
             CareController(self.state, mind, self.routine, clock=self.clock,
-                           progression=self.room.progression),
+                           progression=self.progression),
             game_experience=GameExperienceCoordinator(
                 self.state, mind, self.routine, clock=self.clock,
-                progression=self.room.progression,
+                progression=self.progression,
                 arrangement_ready=lambda: not self.room.interaction.search_active,
             ),
         )
         self.games = GameSessionCoordinator(self.router, self.state, mind,
                                             self.playback, self.inputs)
         if loaded.restored_from_save:
-            self.room.progression.advance(
+            self.progression.advance(
                 self.state, self.inputs(), max(0, time.time() - self.state.updated_at),
                 reconstruct=True,
             )
         self.state.anchor_live_session(time.time())
         self.clock.consume(wall_time=time.time())
+
+    def wish_context(self, state: Any = None) -> Any:
+        return wish_context_for(
+            self.state if state is None else state,
+            online_social=self.settings.online_social,
+            prepared_social=self.content.runtime.prepared_categories if self.content else frozenset(),
+        )
+
+    def forecast(self) -> Any:
+        return WishForecastService().plan(self.state, self.room.world,
+                                           self.room.awareness.memory, self.inputs(),
+                                           self.wish_context)
 
     def inputs(self) -> SessionInputs:
         return SessionInputs(
@@ -116,6 +137,19 @@ class RoomSession:
         self.room.update(min(elapsed, 0.5))
         if self.content is not None:
             self.content.update()
+        if (self.settings.spontaneous_talk and not self.state.sleeping
+                and self.games.sequence is None and not self.room.interaction.active
+                and not self.playback.player.active and time.monotonic() >= self._next_comment):
+            wish = wish_to_express(
+                self.state.wishes, elapsed=self.state.lived_seconds,
+                sleeping=False, friendship_level=self.state.friendship_level,
+                mood=self.state.mood, context=self.wish_context(), definitions=WISH_CATALOG.definitions,
+            )
+            reaction = self.mind.wish_reaction(wish) if wish else self.mind.select_spontaneous_reaction(
+                self.state, context_at(now), time.monotonic(),
+            )
+            self.playback.speak(reaction)
+            self._next_comment = time.monotonic() + self.mind.rng.uniform(60, 140)
         if now - self._last_saved >= 5:
             self.save()
 
@@ -134,7 +168,7 @@ class RoomSession:
         if not self._suspended:
             return
         now = time.time()
-        self.room.progression.advance(
+        self.progression.advance(
             self.state, self.inputs(), max(0, now - self.state.updated_at),
             reconstruct=True,
         )
@@ -203,20 +237,25 @@ class RoomSession:
             self.suspend()
         elif name == "resume":
             self.resume()
-        elif name not in ("tick", "snapshot"):
+        elif name not in ("tick", "snapshot", "forecast"):
             raise ValueError("Diese Zimmeraktion ist nicht verfügbar.")
-        if name not in ("tick", "snapshot", "speech_ack", "suspend", "resume"):
+        if name not in ("tick", "snapshot", "speech_ack", "suspend", "resume", "forecast"):
             self.save()
 
     def snapshot(self) -> dict[str, Any]:
         world = self.room.world.snapshot()
         self.game_snapshot = self.games.snapshot()
+        status = project_status(snapshot_pet(self.state, wish_context=self.wish_context()),
+                                context_at(time.time()), None, ComputerSnapshot(),
+                                observe_computer=False)
         return {
             "revision": self.revision.value,
             "pet": json_value(self.state.capture_checkpoint()),
             "room": json_value(world.room), "objects": json_value(world.objects),
             "speech": json_value(self.playback.snapshot()),
-            "animation": self.playback.animation,
+            "animation": ("sleep" if self.state.sleeping else
+                          "running-right" if self.room.moving and self.room.facing > 0 else
+                          "running-left" if self.room.moving else self.playback.animation),
             "moving": self.room.moving, "facing": self.room.facing,
             "held_item": self.room.held_item, "game": self.game_snapshot,
             "social": json_value(self.content.runtime.snapshot()) if self.content else None,
@@ -227,6 +266,7 @@ class RoomSession:
                 "wishes": [json_value(item) for item in WISH_CATALOG.definitions.values()],
                 "moodlets": [json_value(item) for item in MOODLET_CATALOG.definitions.values()],
                 "settings": self.settings.to_dict(),
+                "status": json_value(status),
             },
             "error": self.error,
         }

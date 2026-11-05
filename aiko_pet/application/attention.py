@@ -33,6 +33,7 @@ from .ports import ComputerReadings
 from .read_snapshot import snapshot_pet
 from .router import ApplicationRouter
 from .settings import PetSettings
+from .wish_context import wish_context_for
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,24 +92,9 @@ class AttentionCoordinator:
 
     def wish_context(self) -> WishContext:
         """Read existing capabilities and care admission without executing care."""
-        active = {e.definition_id for e in self.state.moodlets.active}
-        return WishContext(
-            online_social=self.settings.online_social,
+        return wish_context_for(
+            self.state, online_social=self.settings.online_social,
             prepared_social=self._prepared_social(),
-            petting_welcome=petting_is_welcome(
-                self.state.moodlets, affection=self.state.affection,
-                friendship_level=self.state.friendship_level,
-                elapsed=self.state.lived_seconds,
-                definitions=MOODLET_CATALOG.definitions,
-            ),
-            games_ready=self.state.energy >= BALANCE.integer(
-                "care", "play_minimum_energy",
-            ),
-            crowded=MoodletId.CROWDED in active,
-            petting_refused=(self.state.lived_seconds
-                             < self.state.moodlets.interactions.petting_refused_until),
-            repetitive_food=(self.state.moodlets.interactions.food.food_id
-                             if MoodletId.FOOD_MONOTONY in active else None),
         )
 
     def evaluate_wishes(self) -> None:
