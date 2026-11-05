@@ -77,6 +77,12 @@ auch über sichtbaren Möbeln oder anderen Portionen losgelassen werden und land
 davor. Aiko kommt zum Aufheben bis an die Portion heran. Seitliches Gehen nutzt
 jetzt den Profilkopf, Umschauen die Dreiviertelkörper. Auch dieser Stand wird
 über das bestehende Symbol und die Update-Einstellungen geladen.
+**0.1.0-6515ed307321** ergänzt die Streichelanimation und den einfachen
+Raum-Alltag mit kurzen Wegen, Umsehen und Ruhepausen. Einmalige Animationen
+enden wieder regulär; ungelesene Sprechblasen halten ihre Darstellung nicht
+mehr fest. Bitte besonders Streicheln, anschließendes Gehen und längeres
+selbstständiges Umhergehen prüfen. Auch dieses Update verwendet das bestehende
+Symbol und behält den Spielstand.
 Die vollständige Abnahmeliste steht im Repository unter
 `docs/room/IPAD_ACCEPTANCE.md`.
 

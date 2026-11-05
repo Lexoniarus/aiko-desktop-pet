@@ -321,3 +321,55 @@ immediately before restart. Published RPS still accepted exactly one touch
 choice; offline reload retained the new version and preference without page
 errors. No profile/storage recreation was used. Main and the resident desktop
 app/save remain untouched.
+
+## Petting, finite animations and a simple room day (2026-11-05)
+
+The owner clarified that the requested daily movement belongs to the room/iPad,
+and also reported a held pose sliding/changing direction without a visible walk.
+Build **0.1.0-6515ed307321** fixes the room presentation boundaries:
+
+- Accepted petting uses the same care-result-to-animation mapping as the native
+  presenter. The room had omitted the native presenter's explicit `petting`
+  override. Refusal keeps the existing care decision and does not start petting.
+- Normal one-shot reactions now clear their animation at the authored clip end.
+  Previously their completion was sent only to the object coordinator, which
+  cannot finish an unrelated care pose. Physical animation/effect timers now
+  run independently of the unread-text clock. Hidden text still cannot earn
+  presentation/completion, while a pose cannot remain frozen waiting for it.
+- An active one-shot yields no walking display. Once it ends, actual movement
+  selects the walking bank again. Already reached destinations settle before
+  another turn is selected, avoiding turn attempts at a zero-length goal.
+- `RoomLeisure` reuses the existing `AmbientDirector` for quiet look/quarter
+  poses and head changes. Occasional outings are bounded to 650 room units,
+  with 25–50 seconds of quiet between completed outings. Longer gaps between
+  furnishings use intermediate stops. Quarter holds begin after the body has
+  reached the pose; care/call/drag interrupt cosmetic routing. Actual object
+  interactions retain their existing owners and take priority.
+- No procedural pixel/head sway is applied. Leisure does not feed, read, play,
+  change quantities, identify objects directly or grant care/friendship credit.
+  The desktop pet's movement policy is unchanged; the native presenter only
+  shares its previously inline visual mapping with the room.
+
+Tests ran after implementation without visible windows: 20 portable room tests
+passed, including three focused regressions for unseen petting completion,
+visible post-care walking/arrival, and quarter holds yielding to care. Sixty-nine
+existing pure care-presentation, ambient, game/reaction/architecture tests passed.
+Three Node checks, production build, Ruff, strict application Mypy (390 files)
+and repository Pyright passed. No full native GUI suite was run.
+
+The browser flow is: touch petting -> native frames -> passive return -> call
+and visible profile walk -> stop -> autonomous outing -> held quarter pose and
+head change -> care interruption. Actual Pyodide/SQLite and isolated storage in
+headless Chromium exercised it with real touch input. The off-camera petting
+case ended its pose while its unseen text remained pending. Recorded moving
+snapshots did not retain a prior one-shot animation; a finished route retained
+its position. Screenshots show the petting hand, changed walk phases, quarter
+hold and second head direction. RPS arm/reveal, Blackjack dealing/result and
+portrait Connect Four pickup/flight remained functional. Drag/fall yielded
+correctly; complete offline browser restart retained preference and portion.
+No page errors or unexpected console errors occurred. Offline fetching produced
+the expected browser resource error. Browser plugin unavailable; headless
+Playwright fallback retained. Actual iPad animation/motion acceptance stays open.
+
+The source [web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42055055538)
+passed for the final runtime source.

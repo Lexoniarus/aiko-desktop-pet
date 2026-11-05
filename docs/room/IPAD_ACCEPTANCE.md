@@ -77,6 +77,13 @@ ground pickup, lateral profile walking, quarter-body survey and the window base.
 Forward quarter posing uses existing stance/turn artwork; a full forward step
 cycle is not included in the current asset pack. Device acceptance stays open.
 
+Build **0.1.0-6515ed307321** adds the shared petting visual, finite one-shot
+completion independent of unread dialogue, and a simple room-only daily motion
+sequence. Recheck petting -> rest -> walking, reached goals without direction
+flicker, short autonomous outings followed by quarter-body/head holds, and
+interruption by care/call/drag. The pixel-sway effect is not used. Actual iPad
+smoothness and long-running animation stability remain device checks.
+
 Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
 
