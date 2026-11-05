@@ -36,8 +36,10 @@ class RoomPlayback:
     ) -> None:
         self._catalog = catalog
         self._timers: dict[str, tuple[float, Callable[[], None]]] = {}
+        self._speech_timers: dict[str, tuple[float, Callable[[], None]]] = {}
         self._sequence = 0
         self._now = 0.0
+        self._speech_now = 0.0
         self._text = self._emote = ""
         self._text_id = 0
         self._unshown = False
@@ -56,7 +58,7 @@ class RoomPlayback:
         self._action_timers: list[str] = []
         self.receive: Callable[[PlaybackEvent], None] = lambda _event: None
         self.player = ReactionPlayer(
-            schedule=self.schedule,
+            schedule=self.schedule_speech,
             cancel_timer=self.cancel_timer,
             display_emote=self._display_emote,
             display_text=self._display_text,
@@ -78,10 +80,15 @@ class RoomPlayback:
 
     def cancel_timer(self, token: str) -> None:
         self._timers.pop(token, None)
+        self._speech_timers.pop(token, None)
+
+    def schedule_speech(self, milliseconds: int, callback: Callable[[], None]) -> str:
+        self._sequence += 1
+        token = str(self._sequence)
+        self._speech_timers[token] = self._speech_now + milliseconds / 1000, callback
+        return token
 
     def advance(self, seconds: float) -> None:
-        if self._unshown:
-            return
         end = self._now + max(0, seconds)
         for _ in range(512):
             due = [
@@ -95,9 +102,27 @@ class RoomPlayback:
             self._timers.pop(token, None)
             self._now = deadline
             callback()
+        self._now = end
+        # A hidden text must not earn completion, but it must not freeze a
+        # physical one-shot pose, object markers or game effects either.
+        if self._unshown:
+            return
+        speech_end = self._speech_now + max(0, seconds)
+        for _ in range(512):
+            due = [
+                (token, value)
+                for token, value in self._speech_timers.items()
+                if value[0] <= speech_end
+            ]
+            if not due:
+                break
+            token, (deadline, callback) = min(due, key=lambda item: item[1][0])
+            self._speech_timers.pop(token, None)
+            self._speech_now = deadline
+            callback()
             if self._unshown:
                 return
-        self._now = end
+        self._speech_now = speech_end
 
     def _display_text(self, text: str, _milliseconds: int) -> None:
         self._emote_id += 1
@@ -215,6 +240,10 @@ class RoomPlayback:
     def now(self) -> float:
         return self._now
 
+    @property
+    def rest_cycle(self) -> float:
+        return self._catalog.clip_for("rest-neutral", 2).duration_seconds
+
     def game_action(
         self,
         name: str,
@@ -256,7 +285,14 @@ class RoomPlayback:
         self._action_timers.append(self.schedule(elapsed, complete))
 
     def start_action(self, name: str, _duration: float) -> None:
-        self.play_animation(name)
+        action = self.play_animation(name)
+        duration = self._catalog.clip_for(name, 2).duration_seconds
+        self._action_timers.append(
+            self.schedule(
+                round(duration * 1000),
+                lambda: self.stop_animation() if self.action_id == action else None,
+            )
+        )
 
     def play_animation(self, name: str) -> int:
         self.stop_animation()
@@ -296,4 +332,5 @@ class RoomPlayback:
         self.player.cancel()
         self.stop_animation()
         self._timers.clear()
+        self._speech_timers.clear()
         self._hide()

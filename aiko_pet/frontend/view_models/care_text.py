@@ -22,6 +22,17 @@ _MESSAGES = {
 }
 
 
+def care_animation(result: CareResult, *, sleeping: bool) -> str | None:
+    """The same accepted-care visual for native and room presentation."""
+    if sleeping or result.affection_refused:
+        return None
+    if result.action == "pet":
+        return "petting"
+    if result.food_consumed or result.effect == CareEffect.DRINK_CONSUMED:
+        return "eat"
+    return None
+
+
 def format_care_response(result: CareResult) -> str:
     """Keep wording and placeholders outside nutrition and care policies."""
     if result.effect == CareEffect.FOOD_MEAL and result.meal_id is None:

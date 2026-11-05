@@ -369,6 +369,93 @@ class RoomSessionTests(unittest.TestCase):
         assert game is not None
         self.assertIsNone(game["props"]["motion"]["card"])
 
+    def test_petting_finishes_its_pose_even_when_the_dialogue_was_not_seen(
+        self,
+    ) -> None:
+        self.command(
+            "settings", auto_walk=False, spontaneous_talk=False, auto_routine=False
+        )
+        first = self.command("care", action="pet")["snapshot"]
+        self.assertEqual(first["animation"], "petting")
+        self.assertTrue(first["speech"]["text"] or first["speech"]["emote"])
+        current = first
+        for _ in range(40):
+            if current["speech"]["text"]:
+                break
+            self.wall += 0.25
+            current = self.command("tick")["snapshot"]
+        self.assertTrue(current["speech"]["text"])
+        unseen = current["speech"]["id"]
+        for _ in range(50):
+            self.wall += 0.2
+            current = self.command("tick")["snapshot"]
+        self.assertNotEqual(current["animation"], "petting")
+        self.assertEqual(self.endpoint.session.playback.animation, "idle")
+        self.assertTrue(self.endpoint.session.playback.player.active)
+        self.assertEqual(current["speech"]["id"], unseen)
+
+    def test_petting_returns_to_a_visible_walk_and_the_finished_route_stays_put(
+        self,
+    ) -> None:
+        self.command(
+            "settings", auto_walk=False, spontaneous_talk=False, auto_routine=False
+        )
+        self.command("care", action="pet")
+        self.advance_until(
+            lambda: self.endpoint.session.playback.animation == "idle"
+            and not self.endpoint.session.playback.player.active
+        )
+        current = self.command("call", x=750, depth=1.1)["snapshot"]
+        saw_walk = False
+        for _ in range(80):
+            self.wall += 0.1
+            current = self.command("tick")["snapshot"]
+            if current["moving"]:
+                saw_walk = True
+                self.assertEqual(current["animation"], "body-step-right-profil")
+        self.assertTrue(saw_walk)
+        self.assertLess(
+            RoomGeometry.distance(
+                self.endpoint.session.room.position, RoomPoint(750, 1.1)
+            ),
+            0.01,
+        )
+        self.assertFalse(current["moving"])
+        current = self.command("call", x=750, depth=1.1)["snapshot"]
+        self.wall += 0.2
+        current = self.command("tick")["snapshot"]
+        self.assertFalse(current["moving"])
+        self.assertFalse(current["animation"].startswith("body-orient-"))
+
+    def test_room_outing_holds_a_quarter_pose_then_yields_to_care(self) -> None:
+        session = self.endpoint.session
+        self.command(
+            "settings", auto_walk=True, spontaneous_talk=False, auto_routine=False
+        )
+        session.mind.rng.seed(7)
+        session.room.leisure.next_outing = session.room.now
+        friendship = session.state.friendship
+        self.advance_until(lambda: session.room.moving)
+        self.advance_until(
+            lambda: session.room.locomotion.selection.animation.startswith("body-look-")
+        )
+        position = session.room.position
+        first_frame = session.room.locomotion.selection.fixed_frame
+        self.advance_until(
+            lambda: session.room.locomotion.selection.fixed_frame != first_frame
+        )
+        self.assertEqual(session.room.position, position)
+        self.assertTrue(
+            session.room.locomotion.selection.animation.startswith("body-look-")
+        )
+        self.assertEqual(session.state.friendship, friendship)
+        self.assertFalse(session.room.world.snapshot().objects)
+        self.assertEqual(
+            self.command("care", action="pet")["snapshot"]["animation"], "petting"
+        )
+        self.assertFalse(session.room.moving)
+        self.assertGreater(session.room.leisure.next_outing, session.room.now)
+
     def test_cosmetic_snack_has_no_food_effects_and_cancels_cleanly(
         self,
     ) -> None:

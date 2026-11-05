@@ -37,6 +37,7 @@ from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
 from .room_drag import RoomDrag
+from .room_leisure import RoomLeisure
 from .room_locomotion import RoomLocomotion
 from .room_playback import RoomPlayback
 from .view_models.object_reactions import format_object_reaction
@@ -81,12 +82,12 @@ class RoomRuntime:
         self.now = 0.0
         self.moving = False
         self.locomotion = RoomLocomotion()
+        self.leisure = RoomLeisure(mind.rng, rest_cycle=playback.rest_cycle)
         self.facing = 1
         self.held_item: str | None = None
         self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
         self._wander: RoomPoint | None = None
-        self._next_wander = 10.0
         self._offered: tuple[str, float, str] | None = None
         self._dragged: RoomDrag | None = None
         self._gesture_serial = 0
@@ -228,14 +229,18 @@ class RoomRuntime:
     def call(self, point: RoomPoint) -> None:
         if self.state.sleeping:
             raise ValueError("Aiko schläft gerade.")
-        self.interaction.interrupt(
-            lambda: setattr(self, "_called", RoomGeometry.accessible(point))
-        )
+
+        def start() -> None:
+            self.pause_route()
+            self._called = RoomGeometry.accessible(point)
+
+        self.interaction.interrupt(start)
         self.awareness.intentions.cancel(self.now)
 
     def pause_route(self) -> None:
         self._called = self._wander = None
         self.moving = False
+        self.leisure.suspend(self.now, cancel_outing=True)
 
     def place(self, definition: str, point: RoomPoint) -> str:
         point = RoomGeometry.accessible(point)
@@ -306,6 +311,7 @@ class RoomRuntime:
     ) -> None:
         if self._dragged is not None or self._offered is not None:
             raise ValueError("Ein Gegenstand wird bereits gehalten.")
+        self.pause_route()
 
         if instance is None:
             if definition is None:
@@ -415,7 +421,7 @@ class RoomRuntime:
             else (
                 ((point.x - self.position.x) / 490, (point.height - 240) / 490)
                 if point is not None
-                else (self.facing, -0.1)
+                else self.locomotion.gaze or (self.facing, -0.1)
             )
         )
         mode: AttentionMode = (
@@ -526,7 +532,6 @@ class RoomRuntime:
             and self.state.lived_seconds >= self.state.sleep_episode.protect_until
         ):
             self._wander = RoomGeometry.accessible(RoomGeometry.anchors[-1].position)
-            self._next_wander = self.now + 3600
         if isinstance(motion, SearchMotion):
             destination = RoomPoint(motion.center % 5100, 0.9)
         elif isinstance(motion, Approach):
@@ -538,17 +543,19 @@ class RoomRuntime:
             if focused_instance is not None and self._can_acquire(focused_instance):
                 self.interaction.arrive()
                 destination = None
-        if not self.interaction.active and not self.playback.player.active:
+        if (
+            not self.interaction.active
+            and not self.playback.player.active
+            and self.playback.animation == "idle"
+        ):
             destination = self._called or destination
             if (
                 destination is None
                 and self.wandering()
-                and self.now >= self._next_wander
+                and self._wander is None
+                and self._called is None
             ):
-                self._wander = RoomGeometry.accessible(
-                    self.mind.rng.choice(RoomGeometry.anchors).position
-                )
-                self._next_wander = self.now + self.mind.rng.uniform(20, 55)
+                self._wander = self.leisure.destination(self.now, self.position)
             destination = destination or (
                 self._wander if self.wandering() or self.night() else None
             )
@@ -559,16 +566,35 @@ class RoomRuntime:
             or self.game_open()
             or self.state.sleeping
             or self.state.energy < 15
+            or self.playback.animation != "idle"
         ):
-            self.locomotion.rest(
-                self.now,
-                (direction[0], -direction[1])
-                if drag or side is not None or point is not None
-                else None,
-            )
+            has_focus = bool(drag or side is not None or point is not None)
+            if (
+                not has_focus
+                and not self.interaction.active
+                and not self.playback.player.active
+                and self.playback.animation == "idle"
+                and not self.game_open()
+                and not self.state.sleeping
+            ):
+                self.leisure.pose(self.now, self.state, self.locomotion)
+            else:
+                self.leisure.suspend(self.now)
+                self.locomotion.rest(
+                    self.now,
+                    (direction[0], -direction[1]) if has_focus else None,
+                )
             return
+        self.leisure.suspend(self.now)
         previous = self.position
-        route = RoomGeometry.route(previous, RoomGeometry.accessible(destination))
+        destination = RoomGeometry.accessible(destination)
+        if RoomGeometry.distance(previous, destination) < 1:
+            if self._wander is not None and not self.night():
+                self.leisure.arrived(self.now, self.facing)
+            self._called = self._wander = None
+            self.locomotion.rest(self.now)
+            return
+        route = RoomGeometry.route(previous, destination)
         if not self.locomotion.walk(self.now, previous, route[0]):
             return
         current = RoomGeometry.approach(
@@ -582,6 +608,8 @@ class RoomRuntime:
             self.facing = 1 if RoomGeometry.delta(previous.x, current.x) >= 0 else -1
             self.world.locate_in_room(replace(self.spatial, pet=current))
         if RoomGeometry.distance(current, RoomGeometry.accessible(destination)) < 1:
+            if self._wander is not None and not self.night():
+                self.leisure.arrived(self.now, self.facing)
             self._called = self._wander = None
 
     def suspend(self) -> None:
@@ -595,5 +623,4 @@ class RoomRuntime:
                 )
                 self.world.land(item.instance_id, expected_revision=item.revision)
             self._offered = None
-        self._called = self._wander = None
-        self.moving = False
+        self.pause_route()
