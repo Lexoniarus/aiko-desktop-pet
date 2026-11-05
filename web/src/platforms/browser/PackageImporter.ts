@@ -166,8 +166,14 @@ export async function importPackage(
         entry: manifest.entry,
         installedAt: Date.now(),
       };
+      // Storage persistence is a best-effort browser capability. Commit the
+      // active pointer last so a refusal cannot delete an activated package.
+      try {
+        await navigator.storage.persist?.();
+      } catch {
+        /* Safari may deny persistence; ordinary local storage remains. */
+      }
       await activatePackage(installed);
-      await navigator.storage.persist();
       return installed;
     } catch (error) {
       await caches.delete(cacheName);

@@ -267,45 +267,45 @@ new frontend. Preserve the desktop requirements separately.
 8. A per-device Aiko remains local. Sharing code does not imply cross-device save
    synchronisation. Later desktop room/taskbar views use the same desktop pet.
 
-### 5.2 Proposed Python changes
+### 5.2 Implemented Python boundaries
 
-| Path | Class/contract | Responsibility |
+| Path | Owner | Responsibility |
 | --- | --- | --- |
-| `world/room.py` | RoomLayout, RoomAnchor, RoomGeometry | Immutable layout/reach geometry and stable places. |
-| `world/contracts.py`, `world/state.py` (existing) | Spatial contracts and WorldState | Extend canonical locations/occupant position; preserve one authoritative World. |
-| `pet/movement/room.py` | RoomRoutePlanner | Pure spatial route decisions, using the extended existing movement path. |
-| `pet/routine.py`, `routine_catalog.py` (existing) | Existing TimeContext and schedule data with injected profile | Fixed room schedule; keep current desktop expectations separate. |
-| `application/room_contracts.py` | RoomCommand, RoomSnapshot, RoomEvent | Versioned logical actions, read data and acknowledgement contracts; no Pixi/DOM types. |
-| `application/room.py` | RoomCoordinator | Call, approach and spatial interactions through existing owners. |
-| `application/room_session.py` | RoomSession | Ordered tick/action/lifecycle delegation and immutable output. |
-| `application/game_sessions.py` | GameSessionCoordinator | One game lifecycle and actual round/session completion. |
-| `presentation/playback.py` | ReactionPlayer, moved with its existing name | Reuse Tk-independent sequence playback and injected timer/display ports. |
-| `presentation/games/` | Existing named game sequences where portable | Reuse presentation flow; isolate executor/platform dependencies. |
-| `browser/bootstrap.py` | create_browser_session | Browser composition root: resources, services, adapters and presentation. |
-| `browser/endpoint.py` | BrowserEndpoint | Validate/dispatch named transport messages; serialise outcomes. |
-| `infrastructure/browser/persistence.py` | Browser persistence adapter/coordinator | Implement existing save contracts and durable flush acknowledgements; exact layering depends on feasibility. |
-| `infrastructure/browser/social_fetch.py` | BrowserSocialWorker | Implement current SocialContentWorker using browser networking. |
-| `application/wish_forecast.py` | WishForecastService (later phase) | Preview on a checkpoint copy using the same wish/time rules as catch-up. |
-| `application/notification_plan.py` | NotificationPlan (later phase) | Small, revisioned list of future messages derived from forecast. |
+| `world/room.py`, `world/state.py` | RoomGeometry, RoomSpatialState, WorldState | One authoritative spatial state; camera-independent wrap/depth and places. |
+| `application/room_contracts.py` | Finite protocol vocabulary and serialization | Named commands and immutable output, no browser types. |
+| `application/room_routine.py` | RoomRoutine | Initial fixed 23:00–08:00 profile; no learned computer rhythm. |
+| `application/wish_context.py`, `wish_forecast.py` | Shared capability context, RoomTimeProgression, WishForecastService | One admitted time path; isolated preview without live mutation. |
+| `frontend/room_session.py`, `room_runtime.py` | RoomSession, RoomRuntime | Portable composition, existing object owners, call/offer/reach and lifecycle. |
+| `frontend/room_content.py`, `room_content_ports.py` | RoomContent, RoomContentHost | Existing social and horoscope owners behind an acyclic host interface. |
+| `frontend/games/session.py`, `frontend/games/` | GameSessionCoordinator, extracted original sequences | All six original games, rewards and cancellable presentation; bounded deferred search. |
+| `frontend/playback.py`, `room_playback.py` | ReactionPlayer, RoomPlayback | Original cues plus explicit timer, display and animation acknowledgement adapters. |
+| `frontend/view_models/`, `geometry.py` | Existing immutable projections and pure geometry | Shared German presentation, readouts and game views; no Tk imports. |
+| `browser/bootstrap.py`, `endpoint.py` | Factory, BrowserEndpoint | Browser adapter composition and finite JSON dispatch. |
+| `infrastructure/browser/` | Filesystem publication and browser fetch adapters | Existing SQLite and content contracts under Pyodide. |
+| `infrastructure/sqlite/room_rows.py` | Optional room mapping | Schema 6 inside the existing complete save transaction. |
 
-Extract only genuinely shared code. Preserve canonical imports/callers and their
-tests during each move; update architecture gates rather than bypassing them.
-Application/domain modules must not import browser infrastructure, Tk, Pixi or
-native platform providers. Browser/desktop roots supply concrete adapters.
-
-The current assemble_application still creates desktop-related coordinators.
-Refine its composition boundary as needed; do not make room startup depend on
-fake CPU readings or on constructing unused desktop observers.
+Native Tk callers use the extracted frontend owners too. Domain/application
+modules cannot import this frontend. The previously retired `presentation`
+namespace remains retired; its canonical-import guard has not been relaxed.
+`ObjectInteractionCoordinator.suspend` settles custody on host suspension
+without manufacturing animation receipts, care completion or game rewards.
+Notification subscription/sender and the native desktop host remain later phases.
 
 ### 5.3 Target directory layout
 
 ```text
 aiko_pet/
-  pet/                         existing domain; movement/room.py added
+  pet/                         existing domain and movement rules
   world/                       existing owner; room.py added
   games/                       existing game rules
   application/                 existing use cases plus room/session contracts
-  presentation/
+  frontend/
+    room_session.py
+    room_runtime.py
+    room_content.py
+    room_content_ports.py
+    room_playback.py
+    view_models/               shared immutable projections
     playback.py
     games/                     extracted reusable sequence controllers
   browser/
@@ -316,32 +316,29 @@ aiko_pet/
       persistence.py
       social_fetch.py
   desktop/                     existing native runtime; later room host
-  ui/                          existing Tk views and reusable projections
+  ui/                          existing native Tk views
   data/
-    rooms/aiko_room.json        canonical logical layout
-    room_routine.de.json       fixed room schedule profile
+    ...                        existing authored catalogues
 web/
   package.json
   tsconfig.json
-  vite.config.ts
+  vite.starter.config.ts
+  vite.runtime.config.ts
   index.html
   public/manifest.webmanifest
   src/
     main.ts                    composition only
     bridge/
       RoomClient.ts
-      contracts.ts             generated from the versioned contract
+      commands.ts              generated finite command vocabulary
     room/
       RoomView.ts
       RoomProjection.ts
       RoomCamera.ts
       AikoView.ts
-      ObjectLayer.ts
     input/
-      RoomInputController.ts
       ObjectDragController.ts
     ui/
-      CarePanel.ts
       FoodPanel.ts
       SocialPanel.ts
       StatusPanel.ts
@@ -657,9 +654,9 @@ forking the core or prematurely implementing a native shell.
 | D1: shared room hosted by the desktop application | Later work; pending. |
 | Multi-day acceptance and final review | Pending. |
 
-Current scope of the planning change: this document and its documentation-index
-entry only. No product code, dependencies, Git branch, CI run, merge, hosting,
-Dropbox upload or GitHub release is created by this change.
+Implementation is committed locally on the room branch. No room-branch push,
+merge, starter deployment, Dropbox upload or GitHub release has been performed.
+Generated runtime/starter ZIPs and build metadata stay outside Git.
 
 ## References
 

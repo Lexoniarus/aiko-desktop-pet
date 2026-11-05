@@ -216,8 +216,26 @@ def main() -> None:
             files["room/" + filename] = reference.read(
                 "aiko-360-prototype/assets/" + filename
             )
-    for path in sorted((ROOT / "LICENSES").glob("*.txt")):
-        files["licenses/" + path.name] = path.read_bytes()
+    for path in sorted((ROOT / "LICENSES").iterdir()):
+        if path.suffix in (".txt", ".md"):
+            files["licenses/" + path.name] = path.read_bytes()
+    for dependency in (
+        "pixi.js",
+        "pixi-viewport",
+        "fflate",
+        "workbox-core",
+        "workbox-precaching",
+        "workbox-routing",
+        "workbox-strategies",
+        "earcut",
+        "eventemitter3",
+        "@pixi/colord",
+    ):
+        for path in (web / "node_modules" / dependency).glob("LICENSE*"):
+            if path.is_file():
+                files[f"licenses/{dependency.replace('/', '-')}-{path.name}"] = (
+                    path.read_bytes()
+                )
     files["licenses/ASSETS.md"] = (ROOT / "ASSETS.md").read_bytes()
     manifest = dict(
         format=1,
@@ -239,12 +257,23 @@ def main() -> None:
     )
     starter = output / "starter"
     shutil.copytree(web / "dist-starter", starter, dirs_exist_ok=True)
+    starter_zip = output / f"aiko-starter-{version}.zip"
+    archive(
+        starter_zip,
+        {
+            path.relative_to(starter).as_posix(): path.read_bytes()
+            for path in sorted(starter.rglob("*"))
+            if path.is_file()
+        },
+    )
+    shutil.copyfile(ROOT / "docs/room/INSTALLATION_DE.md", output / "START_HIER.md")
     (output / "BUILD.json").write_bytes(
         encoded(
             dict(
                 version=version,
                 sourceCommit=sha,
                 package=zip_path.name,
+                starter=starter_zip.name,
                 sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
                 device="iPad 9th generation, iPadOS 26.6; device verification pending",
             )

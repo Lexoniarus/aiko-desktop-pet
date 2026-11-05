@@ -32,7 +32,7 @@ flowchart TB
     Shell["gui.py — DesktopPet (composition root)"]
     App["application/ — care, attention, activity and commands"]
     Pet["pet/ — PetState, PetMind, animation and movement policies"]
-    View["ui/view_models/ — immutable UI projections"]
+    View["frontend/view_models/ — immutable UI projections"]
     Sprite["ui/pet_view/ — sprite, overlays and reaction playback"]
     Windows["ui/windows/ and ui/common/ — controls and reusable Tk helpers"]
     Desktop["desktop/ — timer, pointer/input and native Windows adapters"]
@@ -95,7 +95,7 @@ satiety or energy thresholds. `application/active_time.py` owns the immutable
 once and forwards the same schedule, workload and nutrition context. The mind
 captures pre-care conversation context before mutation, then
 interprets the committed effect.
-German fallback wording is selected only by `ui/view_models/care_text.py`.
+German fallback wording is selected only by `frontend/view_models/care_text.py`.
 
 - `care_actions.py`: `CareTransition` for care effects and accepted-contact evidence.
 - `needs.py`: frozen `NeedLevels` contains exactly satiety, energy, fun, social
@@ -123,7 +123,7 @@ game-message copy; `data/routine.de.json` holds day schedules;
 `data/object_grammar.de.json` holds grammatical metadata only, validated and
 loaded by the existing `pet/content.py` owner. Immutable contracts and the
 finite placeholder set live in `pet/object_text_contract.py`; the pure
-`ui/view_models/german_object_phrases.py` inflects articles and pronouns for
+`frontend/view_models/german_object_phrases.py` inflects articles and pronouns for
 object reactions and care fallbacks. It makes no recognition, custody or
 search decisions and does not duplicate canonical food/menu names.
 `assets/items/items.json` holds only item paths, dimensions, pivots and
@@ -164,12 +164,12 @@ No extra need integrator, clock, search, movement writer or pet store is added.
 
 `PetState.status_hint()` returns a typed `StatusHint` key from
 `pet/status_hints.py`. The exact same pure policy works on the immutable
-`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German status
+`PetReadSnapshot`; only `frontend/view_models/text_de.py` selects German status
 wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
 whether to display a meal name or "Snack". Historical localized helpers
 `TimeContext.label`, `TimeContext.schedule_line` and
 `TimeContext.greeting()` have been removed; localized weekday/status display
-belongs to `ui/view_models/text_de.py`.
+belongs to `frontend/view_models/text_de.py`.
 
 `pet/moodlet_types.py` owns immutable Moodlet identity/outcome vocabulary;
 `pet/moodlet_models.py` owns frozen definitions, episodes, causes and state.
@@ -562,7 +562,7 @@ and consumed item directly instead of accepting a second copy of that action.
 `ui/windows/` owns `HoverUi`, the pinnable `ActionToolbar`, `FoodMenu`,
 `SettingsWindow`, the game selector and three game windows. Controls are
 independently movable where applicable. `ui/common/` owns reusable skin and
-window-dragging helpers; `ui/view_models/` owns `DesktopPresentation`,
+window-dragging helpers; `frontend/view_models/` owns `DesktopPresentation`,
 immutable status/hover/settings contracts, projections and localized UI copy.
 
 No user-facing window owns PetState transitions. Actions are sent to the
@@ -773,9 +773,9 @@ Python code imports the removed paths; such callers need the mappings below.
 | `window_stack` | `desktop.window_stack` |
 | `storage` | `infrastructure.persistence.StateStore`; settings in `application.settings` |
 | `system_activity` | Providers in `infrastructure.hardware`; shared snapshots/effort in `telemetry` |
-| `application.view_models` | `ui.view_models.contracts` |
-| `application.hover_projection`, `status_projection`, `settings_projection` | `ui.view_models.projections` |
-| `application.read_models`; `presentation.legacy.DesktopViewSource` | `ui.view_models.read_models.DesktopPresentation` |
+| `application.view_models` | `frontend.view_models.contracts` |
+| `application.hover_projection`, `status_projection`, `settings_projection` | `frontend.view_models.projections` |
+| `application.read_models`; `presentation.legacy.DesktopViewSource` | `frontend.view_models.read_models.DesktopPresentation` |
 | `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
 
 Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`

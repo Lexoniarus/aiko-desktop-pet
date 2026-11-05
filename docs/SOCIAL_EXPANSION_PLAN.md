@@ -510,7 +510,7 @@ delivery of the new social actions.
   8,000 ms. At the 125-character limit the length term reaches 7,250 ms.
 - Examples: 40 characters = 2.8 s; 80 = 4.64 s; 125 = 7.25 s. There is no
   additional fixed orientation-time term above that clamped calculation.
-- `presentation/playback.py` passes cue duration to display and schedules
+- `frontend/playback.py` passes cue duration to display and schedules
   the next beat; `speech_presenter.py` owns the visible bubble/hide timer.
   Reading clicks may deliberately advance a story.
 

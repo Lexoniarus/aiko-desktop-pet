@@ -84,7 +84,7 @@ contract, but must preserve the non-interrupting default and bounded queue.
 The live desktop constructs an immutable, language-neutral
 `PetReadSnapshot` in `application/read_snapshot.py`. This is distinct from
 the existing German `HoverSnapshot` and `StatusSnapshot`, now owned by
-`ui/view_models/contracts.py` and composed by `DesktopPresentation`.
+`frontend/view_models/contracts.py` and composed by `DesktopPresentation`.
 A future external adapter should expose only an authorized subset of the
 semantic snapshot rather than returning German desktop strings, local
 window geometry or unapproved computer-activity details.
@@ -134,7 +134,7 @@ and work-session context now have explicit canonical modules in
 `aiko_pet/pet/mind/`. The detector's descriptive English name is
 `WorkloadEventDetector`; the old `ComputerVoice` alias has been removed.
 Presentation-owned cue scheduling lives in
-`presentation/playback.py`. Neither the API contract nor any
+`frontend/playback.py`. Neither the API contract nor any
 German authored responses have changed.
 
 ## Platform and visual-policy ownership
