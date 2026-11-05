@@ -1,19 +1,26 @@
 import './styles.css';
 import { activePackage, packageRoot } from './platforms/browser/PackageStore';
 import { importPackage } from './platforms/browser/PackageImporter';
+import {
+  publishedPackage,
+  installPublishedPackage,
+} from './platforms/browser/PublishedPackage';
 
 const host = document.querySelector<HTMLElement>('#app')!;
 host.innerHTML = `<section class="installer"><h1>Aikos Zimmer</h1>
   <p id="install-status" role="status">Installation vorbereiten …</p>
-  <p id="install-help">Öffne diesen Starter in Safari und wähle „Zum Home-Bildschirm“.
-  Starte Aiko anschließend über ihr Symbol und wähle die ZIP-Datei aus „Dateien“.
-  Du kannst sie vorher aus Dropbox oder GitHub herunterladen.</p>
-  <label class="button">Aiko-Paket auswählen<input id="package" type="file" accept=".zip,application/zip"></label>
+  <p id="install-help">Aiko prüft, ob ihr Paket schon auf diesem iPad eingerichtet ist.</p>
+  <button id="retry" hidden>Einrichtung erneut versuchen</button>
+  <label id="manual" class="button" hidden>Aiko-Paket auswählen<input id="package" type="file" accept=".zip,application/zip"></label>
   <button id="start" hidden>Zimmer öffnen</button></section>`;
 const installer = host.firstElementChild!;
 const status = document.querySelector<HTMLElement>('#install-status')!;
 const input = document.querySelector<HTMLInputElement>('#package')!;
 const start = document.querySelector<HTMLButtonElement>('#start')!;
+const retry = document.querySelector<HTMLButtonElement>('#retry')!;
+const manual = document.querySelector<HTMLElement>('#manual')!;
+const help = document.querySelector<HTMLElement>('#install-help')!;
+let installing = false;
 const report = (text: string) => {
   status.textContent = text;
 };
@@ -38,7 +45,9 @@ async function launch(): Promise<void> {
 }
 async function prepare(): Promise<void> {
   if (!isSecureContext || !('serviceWorker' in navigator) || !navigator.locks) {
-    throw new Error('Bitte den HTTPS-Starter in einem aktuellen Safari öffnen.');
+    throw new Error(
+      'Die geschützte App-Umgebung mit lokalem Speicher ist nicht verfügbar.',
+    );
   }
   await navigator.serviceWorker.register('./sw.js', { scope: './' });
   await navigator.serviceWorker.ready;
@@ -54,7 +63,33 @@ async function prepare(): Promise<void> {
   report(
     installed ? `Aiko ${installed.version} ist bereit.` : 'Wähle dein Aiko-Paket.',
   );
-  if (installed && !new URL(location.href).searchParams.has('install')) await launch();
+  if (installed && !new URL(location.href).searchParams.has('install')) {
+    await launch();
+    return;
+  }
+  if (!installed) {
+    const published = await publishedPackage();
+    if (published) {
+      if (installing) return;
+      installing = true;
+      retry.hidden = true;
+      manual.hidden = true;
+      help.textContent =
+        'Die erste Einrichtung braucht Internet. Danach bleiben Aiko und ihr Spielstand auf diesem iPad verfügbar.';
+      try {
+        await installPublishedPackage(published, report);
+        report('Aiko ist eingerichtet und wird gestartet …');
+        start.hidden = false;
+        await launch();
+      } finally {
+        installing = false;
+      }
+      return;
+    }
+  }
+  manual.hidden = false;
+  help.textContent =
+    'Wähle für diese Installation das Aiko-Paket aus Dateien. Auf dem iPad kannst du es vorher aus Dropbox oder GitHub herunterladen.';
 }
 input.addEventListener('change', async () => {
   const file = input.files?.[0];
@@ -78,6 +113,13 @@ input.addEventListener('change', async () => {
 start.addEventListener('click', () => {
   void launch();
 });
-void prepare().catch((error) =>
-  report(error instanceof Error ? error.message : String(error)),
-);
+function setup(): void {
+  void prepare().catch((error) => {
+    retry.hidden = false;
+    report(
+      `Einrichtung nicht abgeschlossen: ${error instanceof Error ? error.message : String(error)} Bitte die Internetverbindung prüfen und erneut versuchen.`,
+    );
+  });
+}
+retry.addEventListener('click', setup);
+setup();

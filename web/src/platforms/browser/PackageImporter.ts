@@ -10,6 +10,14 @@ export interface PackageManifest {
   entry: string;
   files: Record<string, { size: number; sha256: string }>;
 }
+export interface PackageSource {
+  size: number;
+  stream(): ReadableStream<Uint8Array>;
+}
+export interface PackageExpectation {
+  version: string;
+  manifestSHA256: string;
+}
 export function validPackagePath(path: string): boolean {
   return (
     /^[a-zA-Z0-9_.\-/]+$/.test(path) &&
@@ -68,10 +76,16 @@ const mime = (name: string): string =>
             : 'application/octet-stream';
 
 export async function importPackage(
-  file: File,
+  file: PackageSource,
   report: (message: string) => void,
+  expectation?: PackageExpectation,
 ): Promise<InstalledPackage> {
-  if (file.size > 300 * 1024 * 1024) throw new Error('Die ZIP-Datei ist zu groß.');
+  if (
+    !Number.isSafeInteger(file.size) ||
+    file.size <= 0 ||
+    file.size > 300 * 1024 * 1024
+  )
+    throw new Error('Die ZIP-Datei hat eine ungültige Größe.');
   return navigator.locks.request('aiko-package-install', async () => {
     const id = crypto.randomUUID();
     const cacheName = packageCachePrefix + id;
@@ -82,6 +96,9 @@ export async function importPackage(
     let failure: unknown;
     const received = new Set<string>();
     let total = 0;
+    let compressed = 0;
+    let percent = -1;
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     const unzip = new Unzip((entry) => {
       if (
         !validPackagePath(entry.name) ||
@@ -118,7 +135,21 @@ export async function importPackage(
           }
           chunks.length = 0;
           if (entry.name === 'manifest.json') {
+            if (expectation) {
+              const digest = await crypto.subtle.digest('SHA-256', bytes);
+              const hash = Array.from(new Uint8Array(digest), (value) =>
+                value.toString(16).padStart(2, '0'),
+              ).join('');
+              if (hash !== expectation.manifestSHA256)
+                throw new Error(
+                  'Das geladene Paket passt nicht zu dieser Einrichtung.',
+                );
+            }
             manifest = validateManifest(JSON.parse(new TextDecoder().decode(bytes)));
+            if (expectation && manifest.version !== expectation.version)
+              throw new Error(
+                'Die Paketversion stimmt nicht mit der Einrichtung überein.',
+              );
             report(`Installiere Aiko ${manifest.version} …`);
             return;
           }
@@ -143,12 +174,20 @@ export async function importPackage(
     });
     unzip.register(UnzipInflate);
     try {
-      const reader = file.stream().getReader();
+      reader = file.stream().getReader();
       for (;;) {
         const part = await reader.read();
         if (part.done) break;
+        compressed += part.value.byteLength;
+        if (compressed > file.size)
+          throw new Error('Der Paketdownload ist größer als angekündigt.');
         unzip.push(part.value, false);
         await chain;
+        const progress = Math.floor((compressed / file.size) * 100);
+        if (manifest && progress !== percent) {
+          percent = progress;
+          report(`Aiko wird eingerichtet: ${progress} %`);
+        }
         if (failure) {
           await reader.cancel();
           throw failure;
@@ -157,6 +196,8 @@ export async function importPackage(
       unzip.push(new Uint8Array(), true);
       await chain;
       if (failure) throw failure;
+      if (compressed !== file.size)
+        throw new Error('Der Paketdownload wurde unterbrochen.');
       if (!manifest || received.size !== Object.keys(manifest.files).length + 1) {
         throw new Error('ZIP-Dateien fehlen. Die bisherige Installation bleibt aktiv.');
       }
@@ -176,6 +217,7 @@ export async function importPackage(
       await activatePackage(installed);
       return installed;
     } catch (error) {
+      await reader?.cancel().catch(() => {});
       await caches.delete(cacheName);
       throw error;
     }

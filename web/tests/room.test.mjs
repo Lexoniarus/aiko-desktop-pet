@@ -11,6 +11,7 @@ import {
   validPackagePath,
   validateManifest,
 } from '../src/platforms/browser/PackageImporter.ts';
+import { validatePublishedPackage } from '../src/platforms/browser/PublishedPackage.ts';
 
 test('room projection round-trips depth at the wrap boundary', () => {
   for (const [x, depth, center] of [
@@ -45,4 +46,19 @@ test('installer refuses traversal paths and incompatible package protocols', () 
       files: {},
     }),
   );
+  const published = {
+    format: 1,
+    version: '0.1.0-test',
+    package: 'packages/aiko.zip',
+    size: 1024,
+    manifestSHA256: 'a'.repeat(64),
+  };
+  assert.equal(validatePublishedPackage(published).version, published.version);
+  for (const invalid of [
+    { ...published, package: 'https://elsewhere/package.zip' },
+    { ...published, package: 'packages/../outside.zip' },
+    { ...published, size: Infinity },
+    { ...published, manifestSHA256: 'missing' },
+  ])
+    assert.throws(() => validatePublishedPackage(invalid));
 });
