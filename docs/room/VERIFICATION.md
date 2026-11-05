@@ -100,6 +100,12 @@ produced the expected browser resource error. Landscape 1080x810 and portrait
 810x1080 were inspected. The Browser plugin was unavailable; Playwright used
 the installed headless shell with software WebGL, without visible test windows.
 
+A deliberately injected failed `suspend` response additionally checked the save
+boundary: activation was refused, active/pending IDs stayed unchanged, and the
+original runtime resumed ticking. The subsequent real suspend/flush and restart
+succeeded. The final portrait inspection confirmed the notice no longer overlays
+open menus.
+
 The starter/runtime/worker production build and both existing Node boundary
 checks passed. No Python behavior or native UI was changed, so the full native
 suite was not rerun for this update. Actual iPad update lifecycle and Safari
