@@ -250,3 +250,15 @@ errors occurred; offline fetch failure was the expected browser resource error.
 These checks do not establish Safari frame rate or close the actual-device
 findings. Recheck floor transitions, movement, positioning and feeding on the
 owner's iPad using this version. Normal character size was retained.
+
+The follow-up is published as
+[`room-test-0.1.0-3351f6ec864a`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-3351f6ec864a).
+Deployment commit `643c0e44` pins site SHA-256
+`972faab85d0d636809e84b2d7c9c0bfd8032bb10baf0d86daf60d9dd292d42d2`;
+the [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42046215574)
+passed. The retained HTTPS browser profile upgraded from ff6d to 3351 using
+the existing update/restart controls. The same World object IDs and a setting
+changed immediately before restart survived. Published RPS accepted exactly one
+touch choice and rendered its hand prop; the app reopened offline with the new
+version and preference, without page errors. No new ZIP/profile or origin change
+was used. Main and the resident desktop process/save were untouched.
