@@ -19,6 +19,7 @@ from .contracts import (
     WorldSurface,
 )
 from .motion import ItemMotion, MotionParameters, advance_motion
+from .room import RoomSpatialState
 
 
 class WorldFailure(StrEnum):
@@ -63,6 +64,7 @@ class WorldState:
         self._revision = 0
         self._next_id = 1
         self._owner_thread = get_ident()
+        self._room: RoomSpatialState | None = None
 
     def _require_owner(self) -> None:
         if get_ident() != self._owner_thread:
@@ -74,7 +76,17 @@ class WorldState:
             self._surface, self._revision, tuple(self._definitions.values()),
             tuple(self._objects.values()),
             self._next_id,
+            self._room,
         )
+
+    def locate_in_room(self, spatial: RoomSpatialState) -> None:
+        """Commit room locations on this same World owner, never in the view."""
+        self._require_owner()
+        if any(key not in self._objects for key, _depth in spatial.object_depths):
+            raise ValueError("Room depth references an unknown World object")
+        if spatial != self._room:
+            self._room = spatial
+            self._revision += 1
 
     def set_book_expiry(self, instance_id: str, expires_at: float) -> None:
         """Set the first deadline once; replay and custody changes never renew it."""
@@ -157,6 +169,7 @@ class WorldState:
                 raise ValueError("Invalid restored book deadline")
             objects[item.instance_id] = item
         self._surface = snapshot.surface
+        self._room = snapshot.room
         self._objects = objects
         self._revision = snapshot.revision
         self._next_id = max(

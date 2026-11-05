@@ -12,7 +12,7 @@ export function validPackagePath(path: string): boolean {
 }
 export function validateManifest(input: unknown): PackageManifest {
   const m = input as Partial<PackageManifest> | null;
-  if (!m || m.format !== 1 || m.protocol !== 1 || m.saveSchema !== 5 ||
+  if (!m || m.format !== 1 || m.protocol !== 1 || m.saveSchema !== 6 ||
       typeof m.version !== 'string' || !/^[\w.-]{1,80}$/.test(m.version) ||
       typeof m.entry !== 'string' || !validPackagePath(m.entry) ||
       !m.entry.endsWith('.js') || !m.files || typeof m.files !== 'object') {

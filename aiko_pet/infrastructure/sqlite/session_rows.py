@@ -24,6 +24,7 @@ from .horoscope_rows import read_horoscope, write_horoscope
 from .moodlet_rows import read_moodlets, write_moodlets
 from .pet_rows import read_pet_core, write_pet_core
 from .relationship_rows import read_friendship, write_friendship
+from .room_rows import read_room, write_room
 from .rows import singleton
 from .settings_rows import read_settings, write_settings
 from .social_rows import read_social_history, write_social_history
@@ -51,6 +52,7 @@ def write_session_rows(
     write_moodlets(connection, values.moodlets)
     write_wishes(connection, values.wishes)
     write_world_memory(connection, world, object_memory, recovery_x=world_recovery_x)
+    write_room(connection, world)
     write_adaptive(connection, adaptive)
     write_social_history(connection, social_history)
     write_horoscope(connection, horoscope)
@@ -77,6 +79,8 @@ def read_session_rows(
         )
     )
     world, memory = read_world_memory(connection, definitions)
+    if world is not None:
+        world = read_room(connection, world)
     horoscope = read_horoscope(connection)
     validate_book_bindings(horoscope, world)
     return LoadedPetData(

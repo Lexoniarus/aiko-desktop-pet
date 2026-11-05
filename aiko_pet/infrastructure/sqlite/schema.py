@@ -23,12 +23,13 @@ from .interaction_schema import INTERACTION_SCHEMA
 from .moodlet_schema import MOODLET_SCHEMA
 from .pet_schema import PET_SCHEMA
 from .relationship_schema import RELATIONSHIP_SCHEMA
+from .room_rows import ROOM_SCHEMA
 from .social_schema import SOCIAL_SCHEMA
 from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -139,6 +140,7 @@ MIGRATIONS = (
          "DEFAULT 100 CHECK(typeof(ui_scale_percent) = 'integer' AND "
          "ui_scale_percent IN (75,100,125,150,175,200))",),
     ),
+    SchemaMigration(6, "shared_room_spatial_state", ROOM_SCHEMA),
 )
 
 

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from .motion import ItemMotion
+from .room import RoomSpatialState
 
 
 def _finite_nonnegative(value: float, name: str) -> None:
@@ -139,3 +140,4 @@ class WorldSnapshot:
     definitions: tuple[ObjectDefinition, ...]
     objects: tuple[WorldObjectSnapshot, ...]
     next_instance_id: int = 1
+    room: RoomSpatialState | None = None
