@@ -2,6 +2,8 @@
 
 import unittest
 from dataclasses import dataclass, replace
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
@@ -131,6 +133,64 @@ class WalkDriverTests(unittest.TestCase):
         )
         self.assertGreater(self.settings.x or 0, 100)
         self.assertEqual(self.driver.movement.goal_x, 112)
+
+    def test_committed_goal_advances_during_observed_computer_load(self) -> None:
+        for observed in (None, SimpleNamespace(focused=True, quiet=False)):
+            with (
+                self.subTest(adaptive=observed is not None),
+                patch.object(FocusReadings, "current", observed),
+                patch.object(BusyState, "is_busy", return_value=True),
+            ):
+                self.create_walk_fixture()
+                self.settings.observe_computer = True
+                self.driver.ports = replace(
+                    self.driver.ports, committed_goal=lambda: True,
+                )
+                self.driver.set_world_goal(112)
+                self.assertIsNotNone(
+                    self.driver.step(100, 0.5, game_mode=False, attention_active=True),
+                )
+                self.assertEqual(self.settings.x, 112)
+
+    def test_workload_still_blocks_motion_without_a_committed_goal(self) -> None:
+        for target, committed in ((None, False), (112, False), (None, True)):
+            with (
+                self.subTest(target=target, committed=committed),
+                patch.object(BusyState, "is_busy", return_value=True),
+            ):
+                self.create_walk_fixture()
+                self.settings.observe_computer = True
+                self.driver.ports = replace(
+                    self.driver.ports, committed_goal=lambda: committed,
+                )
+                self.driver.movement.remaining_distance = 12
+                self.driver.set_world_goal(target)
+                self.assertIsNone(
+                    self.driver.step(100, 0.5, game_mode=False, attention_active=False),
+                )
+                self.assertEqual(self.settings.x, 100)
+
+    def test_committed_goal_still_respects_sleep_energy_and_game_mode(self) -> None:
+        for needs, game in (
+            (WalkNeeds(sleeping=True), False),
+            (WalkNeeds(energy=10), False),
+            (WalkNeeds(), True),
+        ):
+            with (
+                self.subTest(needs=needs, game=game),
+                patch.object(BusyState, "is_busy", return_value=True),
+            ):
+                self.create_walk_fixture()
+                self.settings.observe_computer = True
+                self.driver.state = needs
+                self.driver.ports = replace(
+                    self.driver.ports, committed_goal=lambda: True,
+                )
+                self.driver.set_world_goal(112)
+                self.assertIsNone(
+                    self.driver.step(100, 0.5, game_mode=game, attention_active=False),
+                )
+                self.assertEqual(self.settings.x, 100)
 
     def test_sleep_still_holds_incidental_wandering(self) -> None:
         self.driver.state = WalkNeeds(sleeping=True)

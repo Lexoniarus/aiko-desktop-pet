@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Keep accepted object approaches and search routes moving under high computer
+  load. Ordinary wandering still pauses; sleep, low energy and game mode retain
+  their movement restrictions.
+
 - Consolidate repeated test contracts, retire obsolete refactor guards and
   reduce desktop fixture replays. Separate exporter/media checks and long
   balance references from application runs, with explicit local groups and

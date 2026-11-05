@@ -290,7 +290,8 @@ class WalkDriver:
                 auto_walk=self.settings.auto_walk,
                 sleeping=self.state.sleeping,
                 attention_active=attention_active and not committed,
-                observing_computer=self.settings.observe_computer,
+                # Workload pauses wandering, not an accepted object/search route.
+                observing_computer=self.settings.observe_computer and not committed,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),
                 small_idle_steps=self.ports.idle_steps(),
