@@ -13,8 +13,10 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+from functools import cache
 from pathlib import Path
 from typing import Any
+from PIL import Image
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +28,7 @@ from aiko_pet.infrastructure.character_assets import (  # noqa: E402
 )
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
 from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
+from aiko_pet.world.room import RoomGeometry  # noqa: E402
 from scripts.room_installer import (  # noqa: E402
     installation_instructions,
     installation_profile,
@@ -91,6 +94,12 @@ def python_wheel(project: str, version: str, cache: Path) -> tuple[str, bytes]:
     )
 
 
+@cache
+def image_bounds(path: Path) -> tuple[int, int, int, int] | None:
+    with Image.open(path) as image:
+        return image.convert("RGBA").getbbox()
+
+
 def runtime_assets() -> dict[str, Any]:
     catalog = load_character_catalog()
     clips = {}
@@ -110,6 +119,7 @@ def runtime_assets() -> dict[str, Any]:
                 "file": "assets/" + file.relative_to(ASSET_ROOT).as_posix(),
                 "duration": frame.duration_ms,
                 "foodAnchor": frame.food_anchor,
+                "bounds": image_bounds(file),
                 "foreground": (
                     "assets/" + frame.hand_foreground.relative_to(ASSET_ROOT).as_posix()
                 )
@@ -145,7 +155,19 @@ def runtime_assets() -> dict[str, Any]:
                 for name, variants in item.states.items()
             },
         }
-    return {"clips": clips, "items": item_files, "room": ROOM_IMAGES}
+    with Image.open(ASSET_ROOT / "frames_2x/idle/00.png") as reference:
+        bounds = reference.getbbox()
+        assert bounds is not None
+        character_height = bounds[3] - bounds[1]
+    ui = json.loads((ASSET_ROOT / "ui/catalog.json").read_text("utf8"))
+    return {
+        "clips": clips,
+        "items": item_files,
+        "room": ROOM_IMAGES,
+        "characterHeight": character_height,
+        "obstacles": RoomGeometry.obstacles,
+        "ui": ui,
+    }
 
 
 def main() -> None:

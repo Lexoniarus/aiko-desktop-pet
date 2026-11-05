@@ -1,13 +1,20 @@
-import { Application, Assets, Container, Sprite, Texture } from 'pixi.js';
+import { Application, Assets, Container, Sprite, Texture, Graphics } from 'pixi.js';
 import type { FederatedPointerEvent } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import { AikoView } from './AikoView';
 import type { Clip } from './AikoView';
 import { RoomCamera } from './RoomCamera';
+import { RoomMotion } from './RoomMotion';
 import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
 
 export interface AssetManifest {
+  characterHeight: number;
+  obstacles: [number, number, number, number][];
+  ui: {
+    icons: Record<string, Record<string, string>>;
+    surfaces: Record<string, string>;
+  };
   clips: Record<string, Clip>;
   items: Record<
     string,
@@ -43,9 +50,19 @@ export class RoomView {
   camera!: RoomCamera;
   private world = new Container();
   private aiko!: AikoView;
+  private shadow = new Graphics()
+    .ellipse(0, -3, 60, 8)
+    .fill({ color: 0x1b3a5d, alpha: 0.2 });
   private viewport!: Viewport;
   private objects = new Map<string, { sprite: Sprite; item: WorldItem }>();
   private snapshot?: RoomSnapshot;
+  private motion = new RoomMotion();
+  onPetScreenChange: (bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => void = () => {};
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   private resizeObserver?: ResizeObserver;
@@ -115,6 +132,15 @@ export class RoomView {
     ]) {
       ctx.fillRect(1800 + x!, y!, w!, h!);
     }
+    // The v16 reference uses narrow architectural pillars at every panel join,
+    // including both ends of the 360-degree loop. Keep art coordinates intact.
+    for (const x of [0, 1800, 3600, 5100]) {
+      ctx.fillStyle = '#e7e3f0';
+      ctx.strokeStyle = '#a1abc6';
+      ctx.lineWidth = 2;
+      ctx.fillRect(x - 18, 53, 36, 749);
+      ctx.strokeRect(x - 18, 53, 36, 749);
+    }
     const texture = Texture.from(background);
     const furnitureTextures = new Map<string, Texture>();
     for (const [name, definition] of Object.entries(cutouts)) {
@@ -144,7 +170,7 @@ export class RoomView {
     }
     this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
     this.aiko.on('pointertap', () => this.onPetTap());
-    this.world.addChild(this.aiko);
+    this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
     this.resizeObserver = new ResizeObserver(() =>
       this.camera.resize(this.host.clientWidth, this.host.clientHeight),
@@ -157,6 +183,7 @@ export class RoomView {
 
   async update(snapshot: RoomSnapshot): Promise<void> {
     this.snapshot = snapshot;
+    this.motion.receive(snapshot.room.pet);
     void this.aiko.show(snapshot.animation, snapshot.animation_id);
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
     const live = new Set(
@@ -205,12 +232,18 @@ export class RoomView {
     const snapshot = this.snapshot;
     if (!snapshot) return;
     const center = this.viewport.center.x;
-    const point = snapshot.room.pet;
+    const point = this.motion.position() ?? snapshot.room.pet;
     this.aiko.position.set(projectX(point.x, point.depth, center), feetY(point.depth));
     const settings = snapshot.catalog.settings as Record<string, unknown>;
     const size = settings.scale === 2 ? 1.25 : 1;
-    this.aiko.scale.set((400 / 416) * depthScale(point.depth) * size);
+    this.aiko.scale.set(
+      (400 / this.assets.characterHeight) * depthScale(point.depth) * size,
+    );
     this.aiko.zIndex = feetY(point.depth);
+    this.shadow.position.copyFrom(this.aiko.position);
+    this.shadow.scale.set(depthScale(point.depth) * size);
+    this.shadow.zIndex = this.aiko.zIndex - 0.1;
+    this.onPetScreenChange(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
     for (const { sprite, item } of this.objects.values()) {
       const position = item.position;
@@ -230,6 +263,45 @@ export class RoomView {
     const box = this.app.canvas.getBoundingClientRect();
     const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
     return unproject(world.x, world.y, this.viewport.center.x);
+  }
+  petContains(clientX: number, clientY: number): boolean {
+    const box = this.app.canvas.getBoundingClientRect();
+    const bounds = this.aiko.screenBounds();
+    const x = clientX - box.left,
+      y = clientY - box.top;
+    return (
+      x >= bounds.x &&
+      x <= bounds.x + bounds.width &&
+      y >= bounds.y &&
+      y <= bounds.y + bounds.height
+    );
+  }
+  floorPoint(
+    clientX: number,
+    clientY: number,
+  ): { x: number; depth: number } | undefined {
+    const box = this.app.canvas.getBoundingClientRect();
+    if (
+      clientX < box.left ||
+      clientX > box.right ||
+      clientY < box.top ||
+      clientY > box.bottom
+    )
+      return;
+    const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
+    if (world.y < feetY(0.2) || world.y > feetY(1.55)) return;
+    const point = this.pointAt(clientX, clientY);
+    if (
+      this.assets.obstacles.some(
+        ([left, right, back, front]) =>
+          point.x >= left &&
+          point.x <= right &&
+          point.depth >= back &&
+          point.depth <= front,
+      )
+    )
+      return;
+    return point;
   }
   callPoint(): { x: number; depth: number } {
     return { x: wrap(this.viewport.center.x), depth: 1.1 };

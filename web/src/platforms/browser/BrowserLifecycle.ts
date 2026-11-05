@@ -28,7 +28,7 @@ export class BrowserLifecycle {
     if (!this.stopped && !this.paused)
       this.timer = setTimeout(() => {
         void this.tick();
-      }, 250);
+      }, 50);
   };
   private visibility = (): void => {
     if (document.hidden) this.hide();

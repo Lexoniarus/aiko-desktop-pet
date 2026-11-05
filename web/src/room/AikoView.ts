@@ -1,4 +1,4 @@
-import { AnimatedSprite, Assets, Container, Texture, Sprite } from 'pixi.js';
+import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 
 export interface Clip {
   frames: Array<{
@@ -6,6 +6,7 @@ export interface Clip {
     duration: number;
     foodAnchor: [number, number] | null;
     foreground: string | null;
+    bounds: [number, number, number, number];
   }>;
   order: number[];
   loop: boolean;
@@ -21,6 +22,8 @@ export class AikoView extends Container {
   private foreground = new Sprite(Texture.EMPTY);
   private foregroundFrames = new Map<string, Array<Texture | null>>();
   private heldKey = '';
+  private disposed = false;
+  private frameBounds = new Rectangle();
   private loaded = new Map<string, Array<{ texture: Texture; time: number }>>();
   constructor(
     private root: string,
@@ -34,13 +37,20 @@ export class AikoView extends Container {
     this.addChild(this.sprite, this.held, this.foreground);
     this.held.visible = false;
     this.foreground.visible = false;
-    this.sprite.onFrameChange = () => this.placeHeld();
+    this.sprite.onFrameChange = () => {
+      this.placeHeld();
+      this.updateBounds();
+    };
     this.eventMode = 'static';
     this.cursor = 'pointer';
   }
   async show(name: string, actionId = 0): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
-    if (name === this.clipName && actionId === this.actionId) return;
+    if (
+      name === this.clipName &&
+      (actionId === this.actionId || this.clips[name]!.loop)
+    )
+      return;
     this.actionId = actionId;
     this.clipName = name;
     const generation = ++this.generation;
@@ -70,12 +80,13 @@ export class AikoView extends Container {
         ),
       );
     }
-    if (generation !== this.generation) return;
+    if (this.disposed || generation !== this.generation) return;
     this.sprite.textures = frames;
     this.sprite.anchor.set(clip.anchor[0] / 192, clip.anchor[1] / 208);
     this.sprite.loop = clip.loop;
     this.sprite.gotoAndPlay(0);
     this.placeHeld();
+    this.updateBounds();
   }
   async hold(item: string | null, pose = 'closed_world'): Promise<void> {
     const definition = item ? this.items[item] : undefined;
@@ -87,13 +98,40 @@ export class AikoView extends Container {
       return;
     }
     const texture = await Assets.load<Texture>(new URL(file, this.root).href);
-    if (file !== this.heldKey) return;
+    if (this.disposed || file !== this.heldKey) return;
     this.held.texture = texture;
     this.held.anchor.set(
       definition.pivot[0] / texture.width,
       definition.pivot[1] / texture.height,
     );
     this.placeHeld();
+  }
+  private updateBounds(): void {
+    const clip = this.clips[this.clipName];
+    if (!clip) return;
+    const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
+    const bounds = clip.frames[index]?.bounds;
+    if (!bounds) return;
+    this.frameBounds = new Rectangle(
+      bounds[0] - clip.anchor[0] * 2,
+      bounds[1] - clip.anchor[1] * 2,
+      bounds[2] - bounds[0],
+      bounds[3] - bounds[1],
+    );
+    this.hitArea = this.frameBounds;
+  }
+  screenBounds(): { x: number; y: number; width: number; height: number } {
+    const top = this.toGlobal({ x: this.frameBounds.x, y: this.frameBounds.y });
+    const bottom = this.toGlobal({
+      x: this.frameBounds.right,
+      y: this.frameBounds.bottom,
+    });
+    return { x: top.x, y: top.y, width: bottom.x - top.x, height: bottom.y - top.y };
+  }
+  override destroy(): void {
+    this.disposed = true;
+    this.generation++;
+    super.destroy({ children: true });
   }
   private placeHeld(): void {
     const clip = this.clips[this.clipName];

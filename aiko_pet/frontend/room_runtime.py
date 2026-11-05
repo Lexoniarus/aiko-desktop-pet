@@ -130,6 +130,9 @@ class RoomRuntime:
         playback.receive = self.interaction.receive
         if world.snapshot().room is None:
             world.locate_in_room(RoomSpatialState())
+        safe_position = RoomGeometry.accessible(self.position)
+        if safe_position != self.position:
+            world.locate_in_room(replace(self.spatial, pet=safe_position))
 
     @property
     def spatial(self) -> RoomSpatialState:
@@ -193,7 +196,9 @@ class RoomRuntime:
     def call(self, point: RoomPoint) -> None:
         if self.state.sleeping:
             raise ValueError("Aiko schläft gerade.")
-        self.interaction.interrupt(lambda: setattr(self, "_called", point))
+        self.interaction.interrupt(
+            lambda: setattr(self, "_called", RoomGeometry.accessible(point))
+        )
         self.awareness.intentions.cancel(self.now)
 
     def pause_route(self) -> None:
@@ -201,6 +206,8 @@ class RoomRuntime:
         self.moving = False
 
     def place(self, definition: str, point: RoomPoint) -> str:
+        if RoomGeometry.accessible(point) != point:
+            raise ValueError("Bitte die Portion auf dem freien Boden ablegen.")
         footprint = ObjectFootprint(24, 24)
         x = self.world.snapshot().surface.ground_x(point.x, footprint)
         item = self.world.place_resting(definition, x, footprint)
@@ -216,6 +223,8 @@ class RoomRuntime:
         )
 
     def relocate(self, instance: str, revision: int, point: RoomPoint) -> None:
+        if RoomGeometry.accessible(point) != point:
+            raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
         item = self.world.get(instance)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
@@ -320,7 +329,7 @@ class RoomRuntime:
             and not self.interaction.active
             and self.state.lived_seconds >= self.state.sleep_episode.protect_until
         ):
-            self._wander = RoomGeometry.anchors[-1].position
+            self._wander = RoomGeometry.accessible(RoomGeometry.anchors[-1].position)
             self._next_wander = self.now + 3600
         if isinstance(motion, SearchMotion):
             destination = RoomPoint(motion.center % 5100, 0.9)
@@ -340,7 +349,9 @@ class RoomRuntime:
                 and self.wandering()
                 and self.now >= self._next_wander
             ):
-                self._wander = self.mind.rng.choice(RoomGeometry.anchors).position
+                self._wander = RoomGeometry.accessible(
+                    self.mind.rng.choice(RoomGeometry.anchors).position
+                )
                 self._next_wander = self.now + self.mind.rng.uniform(20, 55)
             destination = destination or (
                 self._wander if self.wandering() or self.night() else None
@@ -359,7 +370,7 @@ class RoomRuntime:
         if self.moving:
             self.facing = 1 if RoomGeometry.delta(previous.x, current.x) >= 0 else -1
             self.world.locate_in_room(replace(self.spatial, pet=current))
-        if RoomGeometry.distance(current, destination) < 1:
+        if RoomGeometry.distance(current, RoomGeometry.accessible(destination)) < 1:
             self._called = self._wander = None
 
     def suspend(self) -> None:
