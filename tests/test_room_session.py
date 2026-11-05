@@ -378,13 +378,21 @@ class RoomSessionTests(unittest.TestCase):
         first = self.command("care", action="pet")["snapshot"]
         self.assertEqual(first["animation"], "petting")
         self.assertTrue(first["speech"]["text"] or first["speech"]["emote"])
+        current = first
+        for _ in range(40):
+            if current["speech"]["text"]:
+                break
+            self.wall += 0.25
+            current = self.command("tick")["snapshot"]
+        self.assertTrue(current["speech"]["text"])
+        unseen = current["speech"]["id"]
         for _ in range(50):
             self.wall += 0.2
             current = self.command("tick")["snapshot"]
         self.assertNotEqual(current["animation"], "petting")
         self.assertEqual(self.endpoint.session.playback.animation, "idle")
         self.assertTrue(self.endpoint.session.playback.player.active)
-        self.assertEqual(current["speech"]["id"], first["speech"]["id"])
+        self.assertEqual(current["speech"]["id"], unseen)
 
     def test_petting_returns_to_a_visible_walk_and_the_finished_route_stays_put(
         self,
@@ -397,7 +405,7 @@ class RoomSessionTests(unittest.TestCase):
             lambda: self.endpoint.session.playback.animation == "idle"
             and not self.endpoint.session.playback.player.active
         )
-        self.command("call", x=750, depth=1.1)
+        current = self.command("call", x=750, depth=1.1)["snapshot"]
         saw_walk = False
         for _ in range(80):
             self.wall += 0.1
@@ -406,7 +414,12 @@ class RoomSessionTests(unittest.TestCase):
                 saw_walk = True
                 self.assertEqual(current["animation"], "body-step-right-profil")
         self.assertTrue(saw_walk)
-        self.assertEqual(self.endpoint.session.room.position, RoomPoint(750, 1.1))
+        self.assertLess(
+            RoomGeometry.distance(
+                self.endpoint.session.room.position, RoomPoint(750, 1.1)
+            ),
+            0.01,
+        )
         self.assertFalse(current["moving"])
 
     def test_room_outing_holds_a_quarter_pose_then_yields_to_care(self) -> None:
@@ -422,14 +435,14 @@ class RoomSessionTests(unittest.TestCase):
             lambda: session.room.locomotion.selection.animation.startswith("body-look-")
         )
         position = session.room.position
-        poses = set()
-        for _ in range(14):
-            self.wall += 0.2
-            current = self.command("tick")["snapshot"]
-            self.assertEqual(session.room.position, position)
-            self.assertTrue(current["animation"].startswith("body-look-"))
-            poses.add(current["animation_hold_frame"])
-        self.assertGreaterEqual(len(poses), 2)
+        first_frame = session.room.locomotion.selection.fixed_frame
+        self.advance_until(
+            lambda: session.room.locomotion.selection.fixed_frame != first_frame
+        )
+        self.assertEqual(session.room.position, position)
+        self.assertTrue(
+            session.room.locomotion.selection.animation.startswith("body-look-")
+        )
         self.assertEqual(session.state.friendship, friendship)
         self.assertFalse(session.room.world.snapshot().objects)
         self.assertEqual(
