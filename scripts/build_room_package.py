@@ -291,6 +291,7 @@ def main() -> None:
         )
         installer_metadata = dict(
             installer=installer_zip.name,
+            installerSHA256=hashlib.sha256(installer_zip.read_bytes()).hexdigest(),
             starterURL=args.starter_url,
             installation="profile-and-first-online-download",
             deviceVerified=False,
@@ -312,6 +313,7 @@ def main() -> None:
                 sourceCommit=sha,
                 package=zip_path.name,
                 starter=starter_zip.name,
+                starterSHA256=hashlib.sha256(starter_zip.read_bytes()).hexdigest(),
                 sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
                 device="iPad 9th generation, iPadOS 26.6; device verification pending",
                 **installer_metadata,
