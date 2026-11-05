@@ -16,8 +16,8 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.skin import AikoSkin
-from aiko_pet.ui.view_models.contracts import HoverAnchor
-from aiko_pet.ui.view_models.projections import project_hover, project_status
+from aiko_pet.presentation.view_models.contracts import HoverAnchor
+from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.game_menu import GameMenu
 from aiko_pet.ui.windows.hover_contracts import HoverActions
@@ -28,7 +28,7 @@ from tools.pet_test_support import set_test_pet_values
 class MainMenuLayoutTests(unittest.TestCase):
     def test_back_click_closes_docked_panel_without_changing_toolbar(self):
         from aiko_pet.infrastructure.item_assets import load_item_catalog
-        from aiko_pet.ui.view_models.food_models import food_choices
+        from aiko_pet.presentation.view_models.food_models import food_choices
         from aiko_pet.ui.windows.food_menu import FoodMenu
 
         before = self.toolbar.window.winfo_geometry()

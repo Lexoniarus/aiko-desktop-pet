@@ -22,7 +22,7 @@ from aiko_pet.pet.food import (
     is_repeated_food,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.care_text import format_care_response
+from aiko_pet.presentation.view_models.care_text import format_care_response
 
 
 def clock(hour: int = 8) -> float:

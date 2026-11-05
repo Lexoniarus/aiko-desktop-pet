@@ -6,7 +6,7 @@ from uuid import uuid4
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.mastermind import Code, MastermindSession, RoundView
 from .pacing import GAME_PACING
-from ...ui.view_models.mastermind_models import CodeView
+from ..view_models.mastermind_models import CodeView
 from .game_commentary import GameCommentary
 from .rock_paper_scissors_dialogue import GameDialogue
 

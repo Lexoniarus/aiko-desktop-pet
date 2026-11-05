@@ -14,7 +14,7 @@ from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
+from ...presentation.geometry import BoundsAt
 from .game_panel import GamePanel
 from ...presentation.games.ports import GamePresentation
 from ...presentation.games.rock_paper_scissors_sequence import RockPaperScissorsSequence

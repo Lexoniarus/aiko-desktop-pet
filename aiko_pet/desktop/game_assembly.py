@@ -11,13 +11,13 @@ from ..application.settings import PetSettings
 from ..pet.animation.expression import Expression
 from ..ui.common.mastermind_images import MastermindImages
 from ..ui.common.playing_card_images import PlayingCardImages
-from ..ui.common.window_geometry import WindowBounds
+from ..presentation.geometry import WindowBounds
 from ..ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter
 from ..ui.pet_view.desktop_window import DesktopWindow
 from ..ui.pet_view.mastermind_safe_presenter import MastermindSafePresenter
 from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
-from ..ui.view_models.game_models import HandAnchor
+from ..presentation.view_models.game_models import HandAnchor
 from ..ui.windows.game_contracts import GameCardPorts, GameCodePorts
 from ..presentation.games.ports import GamePresentation
 from ..ui.windows.game_speech import GameSpeech

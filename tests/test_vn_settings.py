@@ -12,8 +12,8 @@ from aiko_pet.application.social_content import (
     SocialProvider,
 )
 from aiko_pet.pet.mind.catalog import Reaction
-from aiko_pet.ui.view_models.credits import project_credits
-from aiko_pet.ui.view_models.projections import project_settings
+from aiko_pet.presentation.view_models.credits import project_credits
+from aiko_pet.presentation.view_models.projections import project_settings
 from aiko_pet.ui.windows.settings_contracts import SettingsActions
 from aiko_pet.ui.windows.settings_window import SettingsWindow
 from tools.headless_widgets import Skin, Widget, widgets

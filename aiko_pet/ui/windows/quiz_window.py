@@ -15,7 +15,7 @@ from ..common import scaled_widgets as scaled
 from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
+from ...presentation.geometry import BoundsAt
 from ..pet_view.game_effects import GameEffects
 from .game_panel import GamePanel
 from ...presentation.games.ports import GamePresentation

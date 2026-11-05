@@ -20,8 +20,8 @@ from aiko_pet.pet.object_text_contract import (
     ObjectGrammar,
     ObjectGrammarCatalog,
 )
-from aiko_pet.ui.view_models.german_object_phrases import object_phrases
-from aiko_pet.ui.view_models.object_reactions import format_object_reaction
+from aiko_pet.presentation.view_models.german_object_phrases import object_phrases
+from aiko_pet.presentation.view_models.object_reactions import format_object_reaction
 
 
 class GermanObjectPhraseTests(unittest.TestCase):

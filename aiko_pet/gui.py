@@ -52,8 +52,8 @@ from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
 from .ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from .presentation.playback import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.view_models.food_models import food_choices
-from .ui.view_models.read_models import DesktopPresentation
+from .presentation.view_models.food_models import food_choices
+from .presentation.view_models.read_models import DesktopPresentation
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 

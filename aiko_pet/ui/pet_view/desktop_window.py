@@ -15,7 +15,7 @@ from ...desktop.work_area import work_area_at
 from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
-from ..common.window_geometry import WindowBounds
+from ...presentation.geometry import WindowBounds
 
 MAGENTA = "#ff00ff"
 

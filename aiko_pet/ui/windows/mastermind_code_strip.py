@@ -9,7 +9,7 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.mastermind_images import MastermindImages
 from ..common.skin import AikoSkin
-from ..view_models.mastermind_models import CodeView
+from ...presentation.view_models.mastermind_models import CodeView
 
 
 class MastermindCodeStrip:

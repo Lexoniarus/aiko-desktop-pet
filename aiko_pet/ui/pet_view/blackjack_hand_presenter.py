@@ -9,7 +9,7 @@ from collections.abc import Callable
 from ...games.blackjack import hand_total
 from ..common.game_pacing import GAME_PACING
 from ..common.playing_card_images import PlayingCardImages
-from ..view_models.game_models import HandAnchor, HandLayout, HandView, place_hand
+from ...presentation.view_models.game_models import HandAnchor, HandLayout, HandView, place_hand
 
 
 class BlackjackHandPresenter:

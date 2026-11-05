@@ -40,7 +40,7 @@ from aiko_pet.infrastructure.social_history_codec import (
     encode_social_history,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.credits import project_credits
+from aiko_pet.presentation.view_models.credits import project_credits
 from tools.persistence_test_support import save_test_session
 
 SINGLE, TWO = SocialCategory.SINGLE, SocialCategory.TWO_PARTS

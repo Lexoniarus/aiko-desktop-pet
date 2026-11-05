@@ -11,15 +11,15 @@ from ...application.settings import SettingKey
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
-from ..view_models.contracts import (
+from ...presentation.geometry import BoundsAt
+from ...presentation.view_models.contracts import (
     HoverAnchor,
     HoverSnapshot,
     SettingsSnapshot,
     StatusSnapshot,
 )
-from ..view_models.credits import project_credits
-from ..view_models.food_models import FoodChoice, FoodChoiceId
+from ...presentation.view_models.credits import project_credits
+from ...presentation.view_models.food_models import FoodChoice, FoodChoiceId
 from .action_toolbar import ActionToolbar
 from .blackjack_window import BlackjackWindow
 from .connect_four_window import ConnectFourWindow

@@ -12,8 +12,8 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
-from ..view_models.mastermind_models import CodeView
+from ...presentation.geometry import BoundsAt
+from ...presentation.view_models.mastermind_models import CodeView
 from .game_contracts import GameCodePorts
 from .game_panel import GamePanel
 from ...presentation.games.ports import GamePresentation

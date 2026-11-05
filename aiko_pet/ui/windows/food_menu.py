@@ -9,7 +9,7 @@ from typing import Callable
 from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
-from ..view_models.food_models import FoodChoice, FoodChoiceId
+from ...presentation.view_models.food_models import FoodChoice, FoodChoiceId
 from .embedded_selector import EmbeddedSelector
 from .hover_contracts import SelectorCloseReason
 

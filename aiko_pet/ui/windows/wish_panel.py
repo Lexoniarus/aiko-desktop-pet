@@ -11,8 +11,8 @@ from ..common.content_region import ContentRegion
 from ..common.description_tip import DescriptionTip
 from ..common.panel_surface import PanelSurface
 from ..common.skin import AikoSkin
-from ..view_models.contracts import WishView
-from ..view_models.emotional_text import (
+from ...presentation.view_models.contracts import WishView
+from ...presentation.view_models.emotional_text import (
     GAME_FILES,
     duration_text,
     wish_badge,

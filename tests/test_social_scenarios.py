@@ -22,7 +22,7 @@ from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalConditio
 from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.text_de import format_emotional_state
+from aiko_pet.presentation.view_models.text_de import format_emotional_state
 from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 

@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 from aiko_pet.asset_paths import CONNECT_FOUR_DIR
 from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.ui.common.window_geometry import WindowBounds
+from aiko_pet.presentation.geometry import WindowBounds
 from aiko_pet.ui.windows.connect_four_window import CELL, MARGIN, ConnectFourWindow
 from tools.desktop_test_support import create_test_desktop, destroy_test_root
 from tools.tk_test_time import ControlledTkTime

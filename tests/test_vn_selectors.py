@@ -13,9 +13,9 @@ from aiko_pet.games.contracts import GameId, SessionSummary
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.contracts import HoverAnchor
-from aiko_pet.ui.view_models.food_models import FoodChoice
-from aiko_pet.ui.view_models.projections import (
+from aiko_pet.presentation.view_models.contracts import HoverAnchor
+from aiko_pet.presentation.view_models.food_models import FoodChoice
+from aiko_pet.presentation.view_models.projections import (
     project_hover,
     project_settings,
     project_status,

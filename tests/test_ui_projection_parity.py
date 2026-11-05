@@ -16,16 +16,16 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.pet.wishes import ActiveWish, WishContext, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.contracts import (
+from aiko_pet.presentation.view_models.contracts import (
     HoverAnchor,
 )
-from aiko_pet.ui.view_models.projections import (
+from aiko_pet.presentation.view_models.projections import (
     project_hover,
     project_settings,
     project_status,
 )
-from aiko_pet.ui.view_models.read_models import DesktopPresentation
-from aiko_pet.ui.view_models.text_de import (
+from aiko_pet.presentation.view_models.read_models import DesktopPresentation
+from aiko_pet.presentation.view_models.text_de import (
     describe_workload,
     format_day_label,
     format_feed_label,

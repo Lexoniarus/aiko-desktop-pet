@@ -6,7 +6,7 @@ from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.projections import project_hover
+from aiko_pet.presentation.view_models.projections import project_hover
 from tools.pet_test_support import set_test_pet_values
 
 

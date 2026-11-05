@@ -9,7 +9,7 @@ from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.ui.view_models.text_de import status_hint_text
+from aiko_pet.presentation.view_models.text_de import status_hint_text
 
 
 def stamp(day: str = "2026-10-12", hour: int = 12) -> float:

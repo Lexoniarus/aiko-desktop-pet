@@ -13,7 +13,7 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
+from ...presentation.geometry import BoundsAt
 from .game_panel import GamePanel
 from ...presentation.games.ports import GamePresentation
 from ...presentation.games.tic_tac_toe_sequence import TicTacToeSequence

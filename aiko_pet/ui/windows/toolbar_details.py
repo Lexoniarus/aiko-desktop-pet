@@ -9,7 +9,7 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
-from ..view_models.contracts import StatusSnapshot
+from ...presentation.view_models.contracts import StatusSnapshot
 
 
 class ToolbarDetails:

@@ -12,7 +12,7 @@ from aiko_pet.games.blackjack import Phase, Table
 from aiko_pet.games.contracts import GameId
 from aiko_pet.games.playing_cards import STANDARD_DECK
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.ui.view_models.game_models import HandView
+from aiko_pet.presentation.view_models.game_models import HandView
 from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
 from tools.desktop_test_support import create_test_desktop
 from tools.tk_test_time import ControlledTkTime

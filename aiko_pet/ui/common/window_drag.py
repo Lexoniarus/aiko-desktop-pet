@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
-from .window_geometry import BoundsAt
+from ...presentation.geometry import BoundsAt
 
 
 def bounded_position(

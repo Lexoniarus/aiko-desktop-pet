@@ -12,7 +12,7 @@ from typing import Callable
 from ...application.controller import CareOutcome
 from ...pet.care_result import CareEffect
 from ...pet.mind.catalog import Reaction
-from ..view_models.care_text import format_care_response
+from ...presentation.view_models.care_text import format_care_response
 
 
 @dataclass(frozen=True, slots=True)

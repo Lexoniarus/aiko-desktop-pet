@@ -4,7 +4,7 @@ import unittest
 from dataclasses import FrozenInstanceError
 
 from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
-from aiko_pet.ui.view_models.contracts import (
+from aiko_pet.presentation.view_models.contracts import (
     EmotionalSnapshot,
     StatusSnapshot,
 )

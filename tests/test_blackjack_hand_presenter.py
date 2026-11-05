@@ -8,7 +8,7 @@ from unittest.mock import patch
 from aiko_pet.games.playing_cards import Card
 from aiko_pet.ui.common.playing_card_images import PlayingCardImages
 from aiko_pet.ui.pet_view.blackjack_hand_presenter import BlackjackHandPresenter
-from aiko_pet.ui.view_models.game_models import HandAnchor, HandView
+from aiko_pet.presentation.view_models.game_models import HandAnchor, HandView
 from tools.desktop_test_support import destroy_test_root
 
 

@@ -7,8 +7,8 @@ from typing import Protocol
 
 from ..common.mastermind_images import MastermindImages
 from ..common.playing_card_images import PlayingCardImages
-from ..view_models.game_models import HandView
-from ..view_models.mastermind_models import CodeView
+from ...presentation.view_models.game_models import HandView
+from ...presentation.view_models.mastermind_models import CodeView
 
 
 @dataclass(frozen=True, slots=True)

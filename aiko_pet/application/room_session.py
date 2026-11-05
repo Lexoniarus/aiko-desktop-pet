@@ -16,7 +16,7 @@ from ..pet.wish_catalog import WISH_CATALOG
 from ..pet.wishes import wish_to_express
 from ..pet.routine import context_at
 from ..telemetry import ComputerSnapshot
-from ..ui.view_models.projections import project_status
+from ..presentation.view_models.projections import project_status
 from ..presentation.room_playback import RoomPlayback
 from ..world.contracts import WorldSurface
 from ..world.room import RoomPoint, RoomGeometry

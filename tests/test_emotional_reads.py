@@ -32,13 +32,13 @@ from aiko_pet.pet.wishes import (
     WishState,
 )
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.emotional_text import (
+from aiko_pet.presentation.view_models.emotional_text import (
     MOODLET_ICONS,
     moodlet_description,
     wish_progress,
 )
-from aiko_pet.ui.view_models.moodlet_causes import cause_description
-from aiko_pet.ui.view_models.projections import project_hover, project_status
+from aiko_pet.presentation.view_models.moodlet_causes import cause_description
+from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from tools.pet_test_support import set_test_pet_values
 
 

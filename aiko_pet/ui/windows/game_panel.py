@@ -15,7 +15,7 @@ from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag
-from ..common.window_geometry import BoundsAt, WindowBounds, beside_character
+from ...presentation.geometry import BoundsAt, WindowBounds, beside_character
 
 
 class GamePanel:

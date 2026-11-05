@@ -13,7 +13,7 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
+from ...presentation.geometry import BoundsAt
 from .blackjack_motion import BlackjackMotion
 from ...presentation.games.blackjack_sequence import BlackjackSequence
 from .game_contracts import GameCardPorts

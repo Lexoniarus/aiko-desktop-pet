@@ -5,7 +5,7 @@ import unittest
 
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.ui.common.skin import AikoSkin
-from aiko_pet.ui.view_models.food_models import food_choices
+from aiko_pet.presentation.view_models.food_models import food_choices
 from aiko_pet.ui.windows.food_menu import FoodMenu
 from tools.desktop_test_support import destroy_test_root
 

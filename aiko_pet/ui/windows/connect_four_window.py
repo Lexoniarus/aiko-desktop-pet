@@ -13,8 +13,8 @@ from ...pet.content import GERMAN_TEXT
 from ..common import scaled_widgets as scaled
 from ..common.content_region import ContentRegion
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt
-from ..view_models.connect_four_geometry import CELL, HEIGHT, MARGIN, PREVIEW, WIDTH
+from ...presentation.geometry import BoundsAt
+from ...presentation.view_models.connect_four_geometry import CELL, HEIGHT, MARGIN, PREVIEW, WIDTH
 from ...presentation.games.connect_four_sequence import ConnectFourSequence, Drop
 from .connect_four_throw import ConnectFourThrow
 from .game_panel import GamePanel

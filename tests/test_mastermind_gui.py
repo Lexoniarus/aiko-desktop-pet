@@ -12,9 +12,9 @@ from aiko_pet.asset_paths import MASTERMIND_DIR
 from aiko_pet.games.contracts import GameId
 from aiko_pet.games.mastermind import COLORS, MastermindSession
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.ui.common.window_geometry import WindowBounds
-from aiko_pet.ui.view_models.game_models import HandAnchor
-from aiko_pet.ui.view_models.mastermind_models import place_code
+from aiko_pet.presentation.geometry import WindowBounds
+from aiko_pet.presentation.view_models.game_models import HandAnchor
+from aiko_pet.presentation.view_models.mastermind_models import place_code
 from aiko_pet.ui.windows.mastermind_window import (
     BOARD_HEIGHT,
     MastermindWindow,

@@ -18,8 +18,8 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import DescriptionTip
-from aiko_pet.ui.view_models.emotional_text import wish_description
-from aiko_pet.ui.view_models.projections import project_hover
+from aiko_pet.presentation.view_models.emotional_text import wish_description
+from aiko_pet.presentation.view_models.projections import project_hover
 from aiko_pet.ui.windows.wish_panel import WishPanel
 from tools.headless_widgets import Skin, Widget, widgets
 

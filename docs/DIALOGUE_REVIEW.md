@@ -2224,12 +2224,12 @@ a normal catalogue sequence. The countdown is reviewed as one complete flow.
 | `world.outside` | <strong>Bubble 1:</strong> Hier kann ich das gerade nicht ablegen. | Cursor-item placement cannot produce a valid reachable placement; World feedback, 2,450 ms. | No |  |
 | `notification.title-message` | <strong>Bubble 1:</strong> {title}: {message} | Validated incoming notification; awake, >=3 s since speech, no protected action/game/playback, visible speech, active toolbar or engaged settings. Display: 3,500 ms. External title/message have no finite authored wording; review this template only. No external transport is implemented. | No |  |
 
-Sources: [care fallback mapping](../aiko_pet/ui/view_models/care_text.py),
+Sources: [care fallback mapping](../aiko_pet/presentation/view_models/care_text.py),
 [care presenter](../aiko_pet/ui/pet_view/care_presenter.py),
 [RPS sequence](../aiko_pet/ui/windows/rock_paper_scissors_sequence.py),
 [farewell sequence](../aiko_pet/desktop/farewell.py),
 [World runtime](../aiko_pet/desktop/world_runtime.py),
-[object formatting](../aiko_pet/ui/view_models/object_reactions.py),
+[object formatting](../aiko_pet/presentation/view_models/object_reactions.py),
 [object phases](../aiko_pet/application/object_interaction.py),
 [workload events](../aiko_pet/pet/mind/workload_events.py),
 [work episodes](../aiko_pet/pet/mind/work_episode.py) and

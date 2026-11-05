@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 
 from ...pet.content import GERMAN_TEXT
-from ..view_models.text_de import format_status_amount
+from ...presentation.view_models.text_de import format_status_amount
 from . import scaled_widgets as scaled
 from .skin import AikoSkin
 

@@ -2,7 +2,7 @@
 
 import unittest
 
-from aiko_pet.ui.view_models.chip_flight import ChipTarget, flight_point
+from aiko_pet.presentation.view_models.chip_flight import ChipTarget, flight_point
 
 
 class ChipFlightTests(unittest.TestCase):

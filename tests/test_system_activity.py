@@ -15,7 +15,7 @@ from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
 from aiko_pet.pet.mind.catalog import DialogueBook
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
-from aiko_pet.ui.view_models.text_de import describe_workload, format_percent
+from aiko_pet.presentation.view_models.text_de import describe_workload, format_percent
 
 
 def reading(**kwargs):

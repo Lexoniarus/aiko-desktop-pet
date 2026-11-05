@@ -4,7 +4,7 @@ import unittest
 from dataclasses import fields
 
 from aiko_pet.games.blackjack import Blackjack
-from aiko_pet.ui.view_models.game_models import (
+from aiko_pet.presentation.view_models.game_models import (
     HandAnchor,
     place_hand,
     project_dealer_hand,

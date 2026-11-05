@@ -18,7 +18,7 @@ from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.food import FOOD_BALANCE, FOOD_CATALOG, FoodState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.care_text import format_care_response
+from aiko_pet.presentation.view_models.care_text import format_care_response
 
 STAMP = datetime(2026, 10, 12, 16).astimezone().timestamp()
 

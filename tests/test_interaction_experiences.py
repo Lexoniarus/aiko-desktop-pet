@@ -15,7 +15,7 @@ from aiko_pet.pet.interaction_events import (
 from aiko_pet.pet.moodlets import MoodletCauseKind, MoodletId
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishId, WishState
-from aiko_pet.ui.view_models.moodlet_causes import cause_description
+from aiko_pet.presentation.view_models.moodlet_causes import cause_description
 from tools.pet_test_support import require_test_value
 
 WALL = 1800000000

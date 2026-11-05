@@ -8,7 +8,7 @@ from typing import Callable
 
 from ..common import scaled_widgets as scaled
 from ..common.skin import AikoSkin
-from ..common.window_geometry import BoundsAt, WindowBounds
+from ...presentation.geometry import BoundsAt, WindowBounds
 from .hover_contracts import SelectorCloseReason
 
 

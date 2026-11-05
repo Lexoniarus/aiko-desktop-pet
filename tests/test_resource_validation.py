@@ -23,8 +23,8 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.routine_catalog import parse_routine_catalog
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.food_models import food_choices
-from aiko_pet.ui.view_models.projections import project_hover
+from aiko_pet.presentation.view_models.food_models import food_choices
+from aiko_pet.presentation.view_models.projections import project_hover
 from tools.dialogue_test_support import dialogue_source_fixture
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
@@ -102,7 +102,7 @@ class ResourceValidationTests(unittest.TestCase):
         with patch("aiko_pet.pet.care_actions.BALANCE", balance):
             state = PetState(energy=30)
             state.interact("energy_drink", now=1_760_000_000)
-        with patch("aiko_pet.ui.view_models.food_models.BALANCE", balance):
+        with patch("aiko_pet.presentation.view_models.food_models.BALANCE", balance):
             choices = food_choices(load_item_catalog())
         drink = next(item for item in choices if item.id == "energy_drink")
         self.assertEqual(state.energy, 45)

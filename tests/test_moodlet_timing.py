@@ -176,7 +176,7 @@ class PositiveMoodletTimingTests(unittest.TestCase):
 class CursorMoodletProfileTests(unittest.TestCase):
     def test_exact_tiers_expire_and_round_trip_without_extending_old_wish_stages(self):
         from aiko_pet.pet.moodlet_timing import initial_stage_seconds
-        from aiko_pet.ui.view_models.emotional_text import duration_text
+        from aiko_pet.presentation.view_models.emotional_text import duration_text
         for key, totals in ((MoodletId.CURSOR_CURIOSITY, (30, 60, 90)),
                             (MoodletId.CURSOR_FEAR, (15, 30, 60))):
             for level, total in enumerate(totals, 1):

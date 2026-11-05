@@ -21,7 +21,7 @@ from aiko_pet.pet.moodlets import (
     MoodletState,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.ui.view_models.moodlet_causes import cause_description
+from aiko_pet.presentation.view_models.moodlet_causes import cause_description
 from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
 

@@ -18,9 +18,9 @@ from aiko_pet.ui.common.status_readout import (
     fill_geometry,
     readout_color,
 )
-from aiko_pet.ui.view_models.contracts import HoverAnchor
-from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS, wish_description
-from aiko_pet.ui.view_models.projections import project_hover, project_status
+from aiko_pet.presentation.view_models.contracts import HoverAnchor
+from aiko_pet.presentation.view_models.emotional_text import MOODLET_ICONS, wish_description
+from aiko_pet.presentation.view_models.projections import project_hover, project_status
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
 from tools.headless_widgets import Skin, Widget, widgets

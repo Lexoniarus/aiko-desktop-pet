@@ -14,8 +14,8 @@ from aiko_pet.pet.content import (
 )
 from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.ui.view_models.care_text import format_care_response
-from aiko_pet.ui.view_models.text_de import (
+from aiko_pet.presentation.view_models.care_text import format_care_response
+from aiko_pet.presentation.view_models.text_de import (
     format_emotional_state,
     format_sleep_label,
     observation_disabled_text,

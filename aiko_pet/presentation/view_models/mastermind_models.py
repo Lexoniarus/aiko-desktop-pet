@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from ..common.window_geometry import WindowBounds
+from ..geometry import WindowBounds
 from .game_models import HandAnchor
 
 

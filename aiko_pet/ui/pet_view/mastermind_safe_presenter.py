@@ -9,9 +9,9 @@ from collections.abc import Callable
 
 from ...asset_paths import GAME_ART_DIR
 from ..common.mastermind_images import MastermindImages
-from ..common.window_geometry import WindowBounds
-from ..view_models.game_models import HandAnchor
-from ..view_models.mastermind_models import CodeView
+from ...presentation.geometry import WindowBounds
+from ...presentation.view_models.game_models import HandAnchor
+from ...presentation.view_models.mastermind_models import CodeView
 
 
 class MastermindSafePresenter:
