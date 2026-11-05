@@ -40,7 +40,7 @@
 .room-toolbar button,
 .quick-care button {
   pointer-events: auto;
-  min-height: 44px;
+  min-height: max(44px, calc(44px / var(--ui-scale, 1)));
   background: #fffdf8f2;
   border-color: #9ba8c5;
   font-size: 14px;
