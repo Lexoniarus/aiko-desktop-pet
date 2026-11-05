@@ -179,3 +179,23 @@ The source [web check](https://github.com/Lexoniarus/aiko-desktop-pet/actions/ru
 passed. The browser evidence establishes the exercised interactions, not Safari
 frame rate or final visual acceptance on the iPad. The owner must recheck the
 reported findings on the correction build; the device checklist remains open.
+
+### Published correction and retained-save upgrade
+
+The correction is live at the existing HTTPS origin/path. The
+[`room-test-0.1.0-ff6d7142a7cc` release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-ff6d7142a7cc)
+contains the reviewed site artifact; deployment commit `fcf579ca` pins its
+SHA-256 `a1718030866466bad02e90cd76855f4ffa10509b1889be3b5363a6c87dd9e3eb`.
+The [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42037507463)
+completed successfully.
+
+A separate existing browser profile with the actual published a8 package and
+durable state upgraded through the real HTTPS app's **Jetzt neu starten** flow.
+The old runtime remained active while the complete correction package staged.
+Restart retained the same World object identity and the zodiac preference
+changed immediately before activation. The installed version was confirmed as
+`0.1.0-ff6d7142a7cc`. A touch RPS choice produced exactly one game command,
+revealed the original hand artwork and kept hand/commentary separate. Offline
+reload reopened the published app with that preference and version, without
+page errors. The existing Dropbox ZIP/profile needs no replacement. These are
+browser results, not completion of the owner's actual-iPad acceptance.
