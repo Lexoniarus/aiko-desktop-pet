@@ -9,7 +9,7 @@ import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
 
 export interface AssetManifest {
   clips: Record<string, Clip>;
-  items: Record<string, { file: string; label: string }>;
+  items: Record<string, { file: string; label: string; pivot: [number,number]; states?:Record<string,string> }>;
   room: Record<string, string>;
 }
 type WorldItem = RoomSnapshot['objects'][number];
@@ -78,7 +78,7 @@ export class RoomView {
         this.world.addChild(furniture);
       }
     }
-    this.aiko = new AikoView(this.root, this.assets.clips);
+    this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
     this.aiko.on('pointertap', () => this.onPetTap());
     this.world.addChild(this.aiko);
     await this.aiko.show('idle');
@@ -91,7 +91,8 @@ export class RoomView {
 
   async update(snapshot: RoomSnapshot): Promise<void> {
     this.snapshot = snapshot;
-    void this.aiko.show(snapshot.animation);
+    void this.aiko.show(snapshot.animation,snapshot.animation_id);
+    void this.aiko.hold(snapshot.held_item??null,snapshot.held_pose);
     const live = new Set(snapshot.objects.filter(item => !['consumed','removed'].includes(item.state)).map(item => item.instance_id));
     for (const [id, current] of this.objects) if (!live.has(id)) {
       current.sprite.destroy(); this.objects.delete(id);

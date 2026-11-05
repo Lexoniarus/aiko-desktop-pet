@@ -101,11 +101,13 @@ def runtime_assets() -> dict[str, Any]:
                            duration=clip.duration_seconds)
     items = load_item_catalog()
     item_files = {key: {"file": "assets/" + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
-                         "label": item.label}
+                         "label": item.label, "pivot": item.sprites[2].pivot}
                   for key, item in items.foods.items()}
     for key, item in items.readables.items():
         item_files[key] = {"file": "assets/" + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
-                           "label": item.label}
+                           "label": item.label, "pivot": item.sprites[2].pivot,
+                           "states": {name: "assets/" + variants[2].render_path.relative_to(ASSET_ROOT).as_posix()
+                                      for name, variants in item.states.items()}}
     return {"clips": clips, "items": item_files, "room": ROOM_IMAGES}
 
 

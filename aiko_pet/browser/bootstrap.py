@@ -24,13 +24,14 @@ from .endpoint import BrowserEndpoint
 
 
 def create_browser_session(path: str) -> BrowserEndpoint:
-    definitions = build_world_definitions(DEFAULT_CATALOG, load_item_catalog())
+    items = load_item_catalog()
+    definitions = build_world_definitions(DEFAULT_CATALOG, items)
     store = SqliteStateStore(Path(path), definitions=definitions,
                              publish=publish_browser_database)
     loaded = store.load_session()
     session = RoomSession(
         store, loaded, make_aiko_mind(started_at=time.monotonic()),
-        WorldState(WorldSurface(5100, 900, 24), definitions), load_character_catalog(),
+        WorldState(WorldSurface(5100, 900, 24), definitions), load_character_catalog(), items,
     )
     session.content = RoomContent(session, BrowserSocialWorker(), load_local_jokes(),
                                   load_horoscope_catalogue(), AstronomyEngineCalculator())

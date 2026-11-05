@@ -9,6 +9,9 @@ export interface RoomSnapshot {
   objects: Array<{ instance_id: string; definition_id: string; revision: number; state: string; position: { x: number; height: number } | null }>;
   speech: { text: string; emote: string; id: number; active: boolean; story: boolean };
   animation: string;
+  animation_id: number;
+  held_item?: string | null;
+  held_pose?: string;
   moving: boolean;
   facing: number;
   game: Record<string, unknown> | null;

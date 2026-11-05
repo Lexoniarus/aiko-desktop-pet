@@ -7,6 +7,7 @@ from typing import Any
 from dataclasses import replace
 
 from ..pet.animation.character import CharacterCatalog
+from ..pet.animation.item_assets import ItemCatalog
 from ..pet.care_result import CareEffect
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import SocialCompletion
@@ -44,7 +45,7 @@ class RoomSession:
 
     def __init__(
         self, store: SavedPetStore, loaded: LoadedPetData, mind: PetMind,
-        world: WorldState, animations: CharacterCatalog,
+        world: WorldState, animations: CharacterCatalog, items: ItemCatalog,
     ) -> None:
         self.store, self.state, self.settings = store, loaded.state, loaded.settings
         self.mind = mind
@@ -75,6 +76,7 @@ class RoomSession:
             world, self.state, mind, self.routine, self.clock, self.playback,
             memory=loaded.object_memory, inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,
+            items=items, night=lambda: self.routine.sleep_context().window(time.time())[0],
         )
         self.progression = RoomTimeProgression(self.room.progression, self.wish_context)
         self.router = ApplicationRouter(
@@ -297,6 +299,7 @@ class RoomSession:
             "moving": self.room.moving, "facing": self.room.facing,
             "held_item": self.room.held_item, "game": self.game_snapshot,
             "held_pose": self.room.held_pose,
+            "animation_id": self.playback.action_id,
             "social": json_value(self.content.runtime.snapshot()) if self.content else None,
             "horoscope": self.content.horoscope.availability() if self.content else None,
             "catalog": {

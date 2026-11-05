@@ -7,6 +7,7 @@ from collections.abc import Callable
 from dataclasses import replace
 
 from ..pet.balance import BALANCE
+from ..pet.animation.item_assets import ItemCatalog
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
@@ -16,6 +17,7 @@ from ..pet.mind.object_perception import ItemPresentation
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..presentation.room_playback import RoomPlayback
+from ..presentation.view_models.object_reactions import format_object_reaction
 from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
@@ -42,9 +44,12 @@ class RoomCoordinator:
         routine: AdaptiveRoutine, clock: ActiveSessionClock, playback: RoomPlayback,
         *, memory: ObjectMemorySnapshot | None, inputs: Callable[[], SessionInputs],
         game_open: Callable[[], bool],
+        items: ItemCatalog,
+        night: Callable[[], bool],
     ) -> None:
         self.world, self.state, self.mind = world, state, mind
         self.playback, self.inputs, self.game_open = playback, inputs, game_open
+        self.items, self.night = items, night
         self.awareness = ObjectAwareness(memory)
         self.awareness.reconcile_books(world.snapshot())
         self.progression = SessionTimeProgression(world, self.awareness.memory)
@@ -116,7 +121,8 @@ class RoomCoordinator:
         reaction = self.mind.select_reaction(cue.event, self.state,
                                              context_at(time.time()), self.now)
         self.playback.speak(
-            reaction, subject=cue.record_id,
+            format_object_reaction(reaction, cue.identity, self.items) if reaction else None,
+            subject=cue.record_id,
             completed=lambda done: self.interaction.receive_feedback(
                 FeedbackReceipt(cue.key, done),
             ),
@@ -228,8 +234,7 @@ class RoomCoordinator:
             search_position=SearchPosition(96, 5004, self.position.x),
         )
         destination = None
-        night = time.localtime().tm_hour >= 23 or time.localtime().tm_hour < 8
-        if (night and not self.state.sleeping and not self.interaction.active
+        if (self.night() and not self.state.sleeping and not self.interaction.active
                 and self.state.lived_seconds >= self.state.sleep_episode.protect_until):
             self._wander = RoomGeometry.anchors[-1].position
             self._next_wander = self.now + 3600
