@@ -22,6 +22,8 @@ export class AikoView extends Container {
   private foreground = new Sprite(Texture.EMPTY);
   private foregroundFrames = new Map<string, Array<Texture | null>>();
   private heldKey = '';
+  private heldItem = '';
+  private chipHands?: Texture[];
   private disposed = false;
   private frameBounds = new Rectangle();
   private loaded = new Map<string, Array<{ texture: Texture; time: number }>>();
@@ -30,7 +32,12 @@ export class AikoView extends Container {
     private clips: Record<string, Clip>,
     private items: Record<
       string,
-      { file: string; pivot: [number, number]; states?: Record<string, string> }
+      {
+        file: string;
+        pivot: [number, number];
+        states?: Record<string, string>;
+        size?: number;
+      }
     >,
   ) {
     super();
@@ -44,7 +51,12 @@ export class AikoView extends Container {
     this.eventMode = 'static';
     this.cursor = 'pointer';
   }
-  async show(name: string, actionId = 0): Promise<void> {
+  async show(
+    name: string,
+    actionId = 0,
+    timings?: number[] | null,
+    holdFrame?: number | null,
+  ): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
     if (
       name === this.clipName &&
@@ -81,10 +93,19 @@ export class AikoView extends Container {
       );
     }
     if (this.disposed || generation !== this.generation) return;
-    this.sprite.textures = frames;
+    this.sprite.textures = timings
+      ? frames.map((frame, index) => ({
+          texture: frame.texture,
+          time: timings[index] ?? frame.time,
+        }))
+      : frames;
     this.sprite.anchor.set(clip.anchor[0] / 192, clip.anchor[1] / 208);
     this.sprite.loop = clip.loop;
-    this.sprite.gotoAndPlay(0);
+    if (holdFrame !== null && holdFrame !== undefined)
+      this.sprite.gotoAndStop(
+        Math.max(0, clip.order.length ? clip.order.indexOf(holdFrame) : holdFrame),
+      );
+    else this.sprite.gotoAndPlay(0);
     this.placeHeld();
     this.updateBounds();
   }
@@ -93,6 +114,7 @@ export class AikoView extends Container {
     const file = definition?.states?.[pose] ?? definition?.file ?? '';
     if (file === this.heldKey) return;
     this.heldKey = file;
+    this.heldItem = item ?? '';
     if (!definition) {
       this.held.visible = false;
       return;
@@ -100,11 +122,25 @@ export class AikoView extends Container {
     const texture = await Assets.load<Texture>(new URL(file, this.root).href);
     if (this.disposed || file !== this.heldKey) return;
     this.held.texture = texture;
+    this.held.scale.set(definition.size ? definition.size / texture.width : 1);
     this.held.anchor.set(
       definition.pivot[0] / texture.width,
       definition.pivot[1] / texture.height,
     );
     this.placeHeld();
+    if (item === 'c4-red' && !this.chipHands) {
+      const hands = await Promise.all(
+        [3, 4, 5].map((index) =>
+          Assets.load<Texture>(
+            new URL(`assets/game_frontends/c4-hands/0${index}.png`, this.root).href,
+          ),
+        ),
+      );
+      if (!this.disposed) {
+        this.chipHands = hands;
+        this.placeHeld();
+      }
+    }
   }
   private updateBounds(): void {
     const clip = this.clips[this.clipName];
@@ -139,7 +175,10 @@ export class AikoView extends Container {
     const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
     const anchor = clip.frames[index]?.foodAnchor;
     this.held.visible = !!anchor && !!this.heldKey;
-    const foreground = this.foregroundFrames.get(this.clipName)?.[index];
+    const foreground =
+      this.heldItem === 'c4-red' && this.clipName === 'pick_up'
+        ? this.chipHands?.[index - 3]
+        : this.foregroundFrames.get(this.clipName)?.[index];
     this.foreground.visible = this.held.visible && !!foreground;
     if (foreground) {
       this.foreground.texture = foreground;

@@ -23,6 +23,7 @@ export interface AssetManifest {
       label: string;
       pivot: [number, number];
       states?: Record<string, string>;
+      size?: number;
     }
   >;
   room: Record<string, string>;
@@ -188,7 +189,12 @@ export class RoomView {
   async update(snapshot: RoomSnapshot): Promise<void> {
     this.snapshot = snapshot;
     this.motion.receive(snapshot.room.pet);
-    void this.aiko.show(snapshot.animation, snapshot.animation_id);
+    void this.aiko.show(
+      snapshot.animation,
+      snapshot.animation_id,
+      snapshot.animation_timings,
+      snapshot.animation_hold_frame,
+    );
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
     const live = new Set(
       snapshot.objects

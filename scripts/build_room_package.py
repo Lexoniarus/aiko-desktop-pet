@@ -155,6 +155,14 @@ def runtime_assets() -> dict[str, Any]:
                 for name, variants in item.states.items()
             },
         }
+    for key, size in (("mm-donut", 36), ("c4-red", 64)):
+        with Image.open(ASSET_ROOT / "game_frontends" / f"{key}.png") as image:
+            item_files[key] = dict(
+                file=f"assets/game_frontends/{key}.png",
+                label="",
+                pivot=(image.width // 2, image.height // 2),
+                size=size,
+            )
     with Image.open(ASSET_ROOT / "frames_2x/idle/00.png") as reference:
         bounds = reference.getbbox()
         assert bounds is not None

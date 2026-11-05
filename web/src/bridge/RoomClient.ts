@@ -22,6 +22,8 @@ export interface RoomSnapshot {
   speech: { text: string; emote: string; id: number; active: boolean; story: boolean };
   animation: string;
   animation_id: number;
+  animation_timings?: number[] | null;
+  animation_hold_frame?: number | null;
   held_item?: string | null;
   held_pose?: string;
   moving: boolean;

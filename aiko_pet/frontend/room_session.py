@@ -444,10 +444,16 @@ class RoomSession:
             ),
             "moving": self.room.moving,
             "facing": self.room.facing,
-            "held_item": self.room.held_item,
+            "held_item": (
+                self.games.effects.held_item
+                if self.games.effects and self.games.effects.held_item
+                else self.room.held_item
+            ),
             "game": self.game_snapshot,
             "held_pose": self.room.held_pose,
             "animation_id": self.playback.action_id,
+            "animation_timings": self.playback.action_timings,
+            "animation_hold_frame": self.playback.hold_frame,
             "social": json_value(self.content.runtime.snapshot())
             if self.content
             else None,

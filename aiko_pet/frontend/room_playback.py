@@ -50,6 +50,8 @@ class RoomPlayback:
         self._emote_id = 0
         self.can_express: Callable[[], bool] = lambda: False
         self.action_id = 0
+        self.action_timings: tuple[int, ...] | None = None
+        self.hold_frame: int | None = None
         self._action_timers: list[str] = []
         self.receive: Callable[[PlaybackEvent], None] = lambda _event: None
         self.player = ReactionPlayer(
@@ -97,11 +99,14 @@ class RoomPlayback:
         self._now = end
 
     def _display_text(self, text: str, _milliseconds: int) -> None:
+        self._emote_id += 1
         self._text, self._emote = text, ""
         self._text_id += 1
         self._unshown = True
 
     def _display_emote(self, emote: str, milliseconds: int) -> None:
+        self._text_id += 1
+        self._unshown = False
         self._emote, self._text = emote, ""
         self._emote_id += 1
         current = self._emote_id
@@ -165,6 +170,9 @@ class RoomPlayback:
     def emote(self, name: str, milliseconds: int) -> None:
         self._display_emote(name, milliseconds)
 
+    def silence(self) -> None:
+        self._hide()
+
     def snapshot(self) -> SpeechSnapshot:
         return SpeechSnapshot(
             self._text,
@@ -197,6 +205,52 @@ class RoomPlayback:
             self.cancel_timer(token)
         self._action_timers.clear()
         self.animation = "idle"
+        self.action_timings = None
+        self.hold_frame = None
+
+    @property
+    def now(self) -> float:
+        return self._now
+
+    def game_action(
+        self,
+        name: str,
+        duration: int | tuple[int, ...] | None,
+        marker: Callable[[int], None],
+        done: Callable[[], None],
+    ) -> None:
+        """Render the existing game marker contract without object/care effects."""
+        self.stop_animation()
+        self.express(None)
+        self.animation = name
+        clip = self._catalog.clip_for(name, 2)
+        timings = clip.timings
+        if isinstance(duration, tuple):
+            if len(duration) != len(timings):
+                raise ValueError("Game animation timing does not match the clip")
+            timings = duration
+        elif isinstance(duration, int):
+            total = sum(timings)
+            boundaries = [
+                round(sum(timings[:i]) * duration / total)
+                for i in range(len(timings) + 1)
+            ]
+            timings = tuple(b - a for a, b in zip(boundaries, boundaries[1:]))
+        self.action_timings = timings
+        elapsed = 0
+        for index, milliseconds in enumerate(timings):
+            self._action_timers.append(
+                self.schedule(elapsed, partial(marker, clip.sprite_index(index)))
+            )
+            elapsed += milliseconds
+        action = self.action_id
+
+        def complete() -> None:
+            if self.action_id == action:
+                self.stop_animation()
+                done()
+
+        self._action_timers.append(self.schedule(elapsed, complete))
 
     def start_action(self, name: str, _duration: float) -> None:
         self.play_animation(name)
@@ -210,6 +264,7 @@ class RoomPlayback:
         indices = list(range(len(clip.timings)))
         if name == "hold_item":
             indices = [len(clip.timings) - 1]
+            self.hold_frame = clip.sprite_index(indices[0])
         for index in indices:
             source = clip.sprite_index(index)
             events = clip.frames[source].events
