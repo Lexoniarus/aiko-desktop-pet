@@ -16,27 +16,27 @@ from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.mind.object_perception import ItemPresentation
 from ..pet.routine import context_at
 from ..pet.state import PetState
-from ..presentation.room_playback import RoomPlayback
-from ..presentation.view_models.object_reactions import format_object_reaction
+from .room_playback import RoomPlayback
+from .view_models.object_reactions import format_object_reaction
 from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
-from .active_time import ActiveSessionClock, SessionInputs
-from .object_awareness import ObjectAwareness, held_type_conflicts_with_memory
-from .object_behavior import (
+from ..application.active_time import ActiveSessionClock, SessionInputs
+from ..application.object_awareness import ObjectAwareness, held_type_conflicts_with_memory
+from ..application.object_behavior import (
     Approach,
     BehaviorFacts,
     ObjectBehaviorCoordinator,
     SearchMotion,
 )
-from .object_consumption import ObjectConsumption
-from .object_feedback import FeedbackReceipt, ObjectFeedback
-from .object_interaction import ObjectInteractionCoordinator
-from .object_interaction_state import SearchPosition
-from .session_time import SessionTimeProgression
+from ..application.object_consumption import ObjectConsumption
+from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
+from ..application.object_interaction import ObjectInteractionCoordinator
+from ..application.object_interaction_state import SearchPosition
+from ..application.session_time import SessionTimeProgression
 
 
-class RoomCoordinator:
+class RoomRuntime:
     """Map spatial reach and movement onto the one existing interaction owner."""
 
     def __init__(

@@ -11,7 +11,7 @@ from typing import Any
 
 from ..application.room_contracts import PROTOCOL_VERSION, ROOM_COMMANDS
 from ..application.room_contracts import json_value
-from ..application.room_session import RoomSession
+from ..presentation.room_session import RoomSession
 
 
 class BrowserEndpoint:

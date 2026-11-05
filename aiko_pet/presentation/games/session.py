@@ -6,26 +6,26 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from ..games.contracts import GameId, GameRoundEvent
-from ..games.quiz import QuizSession
-from ..games.quiz_catalogue import QuizCatalogue
-from ..games.rock_paper_scissors import Move
-from ..games.mastermind import COLORS
-from ..pet.mind import PetMind
-from ..pet.routine import context_at
-from ..pet.state import PetState
-from ..presentation.games.blackjack_sequence import BlackjackSequence
-from ..presentation.games.connect_four_sequence import ConnectFourSequence
-from ..presentation.games.deferred_executor import DeferredSearchExecutor
-from ..presentation.games.mastermind_sequence import MastermindSequence
-from ..presentation.games.quiz_sequence import QuizSequence
-from ..presentation.games.rock_paper_scissors_sequence import RockPaperScissorsSequence
-from ..presentation.games.tic_tac_toe_sequence import TicTacToeSequence
-from ..presentation.room_playback import RoomPlayback
-from .active_time import SessionInputs
-from .game_experience import experience_from_rock_paper_scissors, experience_from_session
-from .room_contracts import json_value
-from .router import ApplicationRouter
+from ...games.contracts import GameId, GameRoundEvent
+from ...games.quiz import QuizSession
+from ...games.quiz_catalogue import QuizCatalogue
+from ...games.rock_paper_scissors import Move
+from ...games.mastermind import COLORS
+from ...pet.mind import PetMind
+from ...pet.routine import context_at
+from ...pet.state import PetState
+from .blackjack_sequence import BlackjackSequence
+from .connect_four_sequence import ConnectFourSequence
+from .deferred_executor import DeferredSearchExecutor
+from .mastermind_sequence import MastermindSequence
+from .quiz_sequence import QuizSequence
+from .rock_paper_scissors_sequence import RockPaperScissorsSequence
+from .tic_tac_toe_sequence import TicTacToeSequence
+from ..room_playback import RoomPlayback
+from ...application.active_time import SessionInputs
+from ...application.game_experience import experience_from_rock_paper_scissors, experience_from_session
+from ...application.room_contracts import json_value
+from ...application.router import ApplicationRouter
 
 
 class GameSessionCoordinator:

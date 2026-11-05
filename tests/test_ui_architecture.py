@@ -151,9 +151,9 @@ class UiDependencyRules(unittest.TestCase):
 
     def test_production_text_is_not_read_from_pet_legacy_methods(self) -> None:
         files = (
-            "ui/view_models/projections.py",
-            "ui/view_models/read_models.py",
-            "ui/view_models/text_de.py",
+            "presentation/view_models/projections.py",
+            "presentation/view_models/read_models.py",
+            "presentation/view_models/text_de.py",
         )
         for relative in files:
             with self.subTest(module=relative):

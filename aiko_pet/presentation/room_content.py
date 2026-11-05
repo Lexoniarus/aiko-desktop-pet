@@ -11,15 +11,15 @@ from ..pet.horoscope import HoroscopeCatalogue, HoroscopeEntry
 from ..pet.mind.catalog import Reaction
 from ..pet.needs import NeedCondition
 from ..pet.routine import context_at
-from ..presentation.book import HoroscopePlayback
-from ..presentation.social import SocialConversationRuntime, SocialRuntimePorts
+from .book import HoroscopePlayback
+from .social import SocialConversationRuntime, SocialRuntimePorts
 from ..world.contracts import ObjectState
-from .commands import CareCommand
-from .horoscope_coordinator import HoroscopeCoordinator
-from .horoscope_models import HoroscopeDay, SkyCalculator
-from .social_content import PreparedSocialContent, SocialCategory
-from .social_coordinator import SocialContentCoordinator
-from .social_fetch import SocialContentWorker
+from ..application.commands import CareCommand
+from ..application.horoscope_coordinator import HoroscopeCoordinator
+from ..application.horoscope_models import HoroscopeDay, SkyCalculator
+from ..application.social_content import PreparedSocialContent, SocialCategory
+from ..application.social_coordinator import SocialContentCoordinator
+from ..application.social_fetch import SocialContentWorker
 
 if TYPE_CHECKING:
     from .room_session import RoomSession

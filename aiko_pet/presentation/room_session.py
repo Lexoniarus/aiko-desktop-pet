@@ -17,27 +17,27 @@ from ..pet.wish_catalog import WISH_CATALOG
 from ..pet.wishes import wish_to_express
 from ..pet.routine import context_at
 from ..telemetry import ComputerSnapshot
-from ..presentation.view_models.projections import project_status
-from ..presentation.room_playback import RoomPlayback
+from .view_models.projections import project_status
+from .room_playback import RoomPlayback
 from ..world.contracts import WorldSurface
 from ..world.room import RoomPoint, RoomGeometry
 from ..world.state import WorldState
-from .active_time import ActiveSessionClock, SessionInputs
-from .commands import CareCommand
-from .contact import ContactCoordinator, ContactPorts, acknowledge_interaction_text
-from .controller import CareController
-from .game_experience import GameExperienceCoordinator
-from .game_sessions import GameSessionCoordinator
-from .room import RoomCoordinator
-from .room_contracts import json_value
+from ..application.active_time import ActiveSessionClock, SessionInputs
+from ..application.commands import CareCommand
+from ..application.contact import ContactCoordinator, ContactPorts, acknowledge_interaction_text
+from ..application.controller import CareController
+from ..application.game_experience import GameExperienceCoordinator
+from .games.session import GameSessionCoordinator
+from .room_runtime import RoomRuntime
+from ..application.room_contracts import json_value
 from .room_content import RoomContent
-from .room_routine import RoomRoutine
-from .router import ApplicationRouter
-from .session import LoadedPetData, SavedPetStore
-from .settings import PetSettings
-from .read_snapshot import snapshot_pet
-from .wish_context import wish_context_for
-from .wish_forecast import RoomTimeProgression, WishForecastService
+from ..application.room_routine import RoomRoutine
+from ..application.router import ApplicationRouter
+from ..application.session import LoadedPetData, SavedPetStore
+from ..application.settings import PetSettings
+from ..application.read_snapshot import snapshot_pet
+from ..application.wish_context import wish_context_for
+from ..application.wish_forecast import RoomTimeProgression, WishForecastService
 
 
 class RoomSession:
@@ -72,7 +72,7 @@ class RoomSession:
         if loaded.world is not None:
             world.restore_snapshot(loaded.world)
         world.change_surface(WorldSurface(5100, 900, 24), recovering=True)
-        self.room = RoomCoordinator(
+        self.room = RoomRuntime(
             world, self.state, mind, self.routine, self.clock, self.playback,
             memory=loaded.object_memory, inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,

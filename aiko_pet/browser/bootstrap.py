@@ -5,8 +5,8 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from ..application.room_session import RoomSession
-from ..application.room_content import RoomContent
+from ..presentation.room_session import RoomSession
+from ..presentation.room_content import RoomContent
 from ..infrastructure.astronomy import AstronomyEngineCalculator
 from ..infrastructure.horoscope_catalogue import load_horoscope_catalogue
 from ..infrastructure.local_jokes import load_local_jokes
