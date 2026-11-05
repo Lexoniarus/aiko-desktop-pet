@@ -293,9 +293,22 @@
   background: #b5c3d4;
 }
 .mm-history {
+  max-height: 180px;
+  overflow-y: auto;
   padding: 8px;
   background: #e6e1f2;
   border: 1px solid #aea1c6;
+}
+.mm-active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.mm-active > span {
+  color: #65758a;
+  font-size: 13px;
 }
 .mm-guess {
   display: flex;

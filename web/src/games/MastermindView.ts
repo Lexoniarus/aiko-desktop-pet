@@ -18,6 +18,8 @@ export class MastermindView extends GameFrame implements GameView {
   private history = element('div', 'mm-history');
   private code = element('div', 'mm-code');
   private slots = element('div', 'mm-slots');
+  private activeRow = element('div', 'mm-active');
+  private attempt = element('span');
   private palette = element('div', 'mm-palette');
   private selected: (string | null)[] = [null, null, null, null];
   private active = 0;
@@ -44,6 +46,7 @@ export class MastermindView extends GameFrame implements GameView {
   ) {
     super(command);
     this.element.dataset.game = 'mastermind';
+    this.activeRow.append(this.attempt, this.slots);
     this.content.append(
       element(
         'p',
@@ -57,6 +60,7 @@ export class MastermindView extends GameFrame implements GameView {
         'mm-help',
         'Farbe wählen und eine Position antippen – oder einen Stein hineinziehen. Steine der aktiven Reihe lassen sich vertauschen.',
       ),
+      this.activeRow,
       this.submit,
       this.clear,
       this.nextButton,
@@ -187,18 +191,17 @@ export class MastermindView extends GameFrame implements GameView {
       this.code.append(slot);
     }
     this.history.replaceChildren();
-    for (let index = 0; index < 10; index++) {
+    this.history.hidden = !guesses.length;
+    this.activeRow.hidden = !!view.result;
+    this.attempt.textContent = `Versuch ${guesses.length + 1}`;
+    for (let index = 0; index < guesses.length; index++) {
       const row = element('div', 'mm-guess');
       row.append(element('span', 'mm-row-number', String(index + 1)));
       const guess = record(guesses[index]);
-      if (index === guesses.length && !view.result) row.append(this.slots);
-      else {
-        const pins = element('div', 'mm-row-pins');
-        const colors = values(guess.colors);
-        for (let i = 0; i < 4; i++)
-          pins.append(this.piece(colors[i] ? String(colors[i]) : null));
-        row.append(pins);
-      }
+      const pins = element('div', 'mm-row-pins');
+      const colors = values(guess.colors);
+      for (let i = 0; i < 4; i++) pins.append(this.piece(String(colors[i])));
+      row.append(pins);
       const feedback = record(guess.feedback),
         count = index === guesses.length - 1 ? Number(data.feedback_count ?? 0) : 4;
       const pegs = element('span', 'mm-feedback');

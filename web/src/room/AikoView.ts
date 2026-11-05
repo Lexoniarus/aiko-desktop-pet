@@ -194,12 +194,17 @@ export class AikoView extends Container {
     const clip = this.clips[this.clipName];
     if (!clip) return;
     const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
-    const anchor = clip.frames[index]?.foodAnchor;
+    const chip = this.heldItem === 'c4-red' && this.clipName === 'pick_up';
+    const chipAnchors: Record<number, [number, number]> = {
+      3: [96, 181],
+      4: [96, 171],
+      5: [96, 143],
+    };
+    const anchor = chip ? chipAnchors[index] : clip.frames[index]?.foodAnchor;
     this.held.visible = !!anchor && !!this.heldKey;
-    const foreground =
-      this.heldItem === 'c4-red' && this.clipName === 'pick_up'
-        ? this.chipHands?.[index - 3]
-        : this.foregroundFrames.get(this.clipName)?.[index];
+    const foreground = chip
+      ? this.chipHands?.[index - 3]
+      : this.foregroundFrames.get(this.clipName)?.[index];
     this.foreground.visible = this.held.visible && !!foreground;
     if (foreground) {
       this.foreground.texture = foreground;
