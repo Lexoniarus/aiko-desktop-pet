@@ -41,7 +41,7 @@ async function prepare(): Promise<void> {
   const installed = await activePackage();
   start.hidden = !installed;
   report(installed ? `Aiko ${installed.version} ist bereit.` : 'Wähle dein Aiko-Paket.');
-  if (installed) await launch();
+  if (installed && !new URL(location.href).searchParams.has('install')) await launch();
 }
 input.addEventListener('change', async () => {
   const file = input.files?.[0]; if (!file) return;
