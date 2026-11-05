@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from typing import Any
+from dataclasses import replace
 
 from ..pet.animation.character import CharacterCatalog
 from ..pet.care_result import CareEffect
@@ -18,10 +19,11 @@ from ..telemetry import ComputerSnapshot
 from ..ui.view_models.projections import project_status
 from ..presentation.room_playback import RoomPlayback
 from ..world.contracts import WorldSurface
-from ..world.room import RoomPoint
+from ..world.room import RoomPoint, RoomGeometry
 from ..world.state import WorldState
 from .active_time import ActiveSessionClock, SessionInputs
 from .commands import CareCommand
+from .contact import ContactCoordinator, ContactPorts, acknowledge_interaction_text
 from .controller import CareController
 from .game_experience import GameExperienceCoordinator
 from .game_sessions import GameSessionCoordinator
@@ -63,6 +65,8 @@ class RoomSession:
         self.playback = RoomPlayback(
             animations, social_completed=self._social_completed,
             mark_spoken=lambda: self.mind.record_care_contact(time.monotonic()),
+            text_presented=lambda event: acknowledge_interaction_text(self.state, event),
+            wish_presented=self.state.note_wish_expression,
         )
         if loaded.world is not None:
             world.restore_snapshot(loaded.world)
@@ -84,6 +88,26 @@ class RoomSession:
         )
         self.games = GameSessionCoordinator(self.router, self.state, mind,
                                             self.playback, self.inputs)
+        self.contact = ContactCoordinator(
+            state=self.state, mind=mind, adaptive=self.routine,
+            ports=ContactPorts(
+                context=lambda: context_at(time.time()), mark_hover=lambda _now: None,
+                interrupt_walk=self.room.pause_route, show_toolbar=lambda: None,
+                game_open=lambda: self.games.sequence is not None,
+                cancel_followup=self.playback.player.cancel,
+                hide_speech=self.playback.player.cancel,
+                react=lambda reaction, _duration: self.playback.speak(reaction),
+                should_greet=lambda _now: True,
+                story_active=lambda: self.playback.player.story_active,
+                advance_story=self.playback.advance_story,
+                foreground_active=lambda: self.room.interaction.active,
+                playback_active=lambda: self.playback.player.active,
+                interruptible_playback=lambda: self.playback.player.interruptible,
+                reaction_event=lambda: self.playback.player.event,
+                advance_time=lambda: self.router.advance_time(self.inputs()),
+                wake_from_clicks=self._wake_from_clicks,
+            ),
+        )
         if loaded.restored_from_save:
             self.progression.advance(
                 self.state, self.inputs(), max(0, time.time() - self.state.updated_at),
@@ -105,10 +129,19 @@ class RoomSession:
                                            self.wish_context)
 
     def inputs(self) -> SessionInputs:
+        sleep = self.routine.sleep_context()
+        if (not self.state.sleeping and sleep.window(time.time())[0]
+                and RoomGeometry.distance(self.room.position, RoomGeometry.anchors[-1].position) > 160):
+            sleep = replace(sleep, blocked=True)
         return SessionInputs(
             time.time(), time.monotonic(), self.settings.auto_routine,
-            None, False, False, None, sleep_context=self.routine.sleep_context(),
+            None, False, False, None, sleep_context=sleep,
         )
+
+    def _wake_from_clicks(self) -> None:
+        outcome = self.router.dispatch(CareCommand("sleep", wake_from_clicks=True),
+                                       inputs=self.inputs())
+        self.playback.speak(outcome.reaction)
 
     def _social_completed(self, completion: SocialCompletion) -> None:
         self.router.complete_social(
@@ -188,6 +221,8 @@ class RoomSession:
             self.tick()
         if name == "care":
             self.care(str(args["action"]))
+        elif name == "contact":
+            self.contact.click("left")
         elif name == "call":
             self.room.call(RoomPoint(float(args["x"]) % 5100, float(args.get("depth", 1.1))))
         elif name == "place":

@@ -140,6 +140,10 @@ class RoomCoordinator:
         self.interaction.interrupt(lambda: setattr(self, "_called", point))
         self.awareness.intentions.cancel(self.now)
 
+    def pause_route(self) -> None:
+        self._called = self._wander = None
+        self.moving = False
+
     def place(self, definition: str, point: RoomPoint) -> str:
         item = self.world.place_resting(definition, point.x, ObjectFootprint(24, 24))
         self._depth(item.instance_id, point.depth)
@@ -224,6 +228,11 @@ class RoomCoordinator:
             search_position=SearchPosition(96, 5004, self.position.x),
         )
         destination = None
+        night = time.localtime().tm_hour >= 23 or time.localtime().tm_hour < 8
+        if (night and not self.state.sleeping and not self.interaction.active
+                and self.state.lived_seconds >= self.state.sleep_episode.protect_until):
+            self._wander = RoomGeometry.anchors[-1].position
+            self._next_wander = self.now + 3600
         if isinstance(motion, SearchMotion):
             destination = RoomPoint(motion.center % 5100, 0.9)
         elif isinstance(motion, Approach):

@@ -27,7 +27,7 @@ export async function startRoom(host:HTMLElement,root:string):Promise<void>{
       catch(error){ui.message(error);}
     };
     const drag=new ObjectDragController(room,command);ui=new RoomUI(host,room,drag,command);
-    room.onPetTap=()=>{void command('care',{action:'pet'});};
+    room.onPetTap=()=>{void command('contact');};
     await receive(first);
     const lifecycle=new BrowserLifecycle(client,receive,error=>ui.message(error));lifecycle.start();
     window.addEventListener('pagehide',()=>drag.cancel());

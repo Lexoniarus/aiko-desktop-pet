@@ -11,7 +11,7 @@ PROTOCOL_VERSION = 1
 ROOM_COMMANDS = frozenset({
     "snapshot", "tick", "suspend", "resume", "care", "call", "place", "move",
     "offer", "speech_next", "speech_ack", "game_open", "game_action", "game_close",
-    "wish_pin", "wish_dismiss", "settings", "social", "horoscope", "forecast",
+    "wish_pin", "wish_dismiss", "settings", "social", "horoscope", "forecast", "contact",
 })
 
 

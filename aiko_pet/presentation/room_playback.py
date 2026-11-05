@@ -27,6 +27,8 @@ class RoomPlayback:
         self, catalog: CharacterCatalog, *,
         social_completed: Callable[[SocialCompletion], None],
         mark_spoken: Callable[[], None],
+        text_presented: Callable[[str], None] = lambda _event: None,
+        wish_presented: Callable[[int], None] = lambda _wish: None,
     ) -> None:
         self._catalog = catalog
         self._timers: dict[str, tuple[float, Callable[[], None]]] = {}
@@ -35,6 +37,9 @@ class RoomPlayback:
         self._text = self._emote = ""
         self._text_id = 0
         self._unshown = False
+        self._pending_event: str | None = None
+        self._pending_wish: int | None = None
+        self._text_presented, self._wish_presented = text_presented, wish_presented
         self.animation = "idle"
         self.action_id = 0
         self._action_timers: list[str] = []
@@ -45,6 +50,8 @@ class RoomPlayback:
             start_action=lambda clip, _duration: self.play_animation(clip),
             mark_spoken=mark_spoken, is_closed=lambda: False,
             hide_speech=self._hide, social_completed=social_completed,
+            on_text=lambda event: setattr(self, "_pending_event", event),
+            on_wish_text=lambda wish: setattr(self, "_pending_wish", wish),
         )
 
     def schedule(self, milliseconds: int, callback: Callable[[], None]) -> str:
@@ -88,10 +95,19 @@ class RoomPlayback:
     def acknowledge(self, text_id: int) -> None:
         if text_id == self._text_id:
             self._unshown = False
+            if self._pending_event is not None:
+                self._text_presented(self._pending_event)
+                self._pending_event = None
+            if self._pending_wish is not None:
+                self._wish_presented(self._pending_wish)
+                self._pending_wish = None
 
     def next_text(self) -> None:
         if not self._unshown:
             self.player.advance_story()
+
+    def advance_story(self) -> bool:
+        return False if self._unshown else self.player.advance_story()
 
     def comment(self, text: str, milliseconds: int) -> None:
         """Game commentary has its own expiry and never owns gameplay input."""
