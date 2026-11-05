@@ -10,7 +10,7 @@ from dataclasses import dataclass, replace
 from typing import Callable
 
 from ...application.controller import CareOutcome
-from ...frontend.view_models.care_text import format_care_response
+from ...frontend.view_models.care_text import care_animation, format_care_response
 from ...pet.care_result import CareEffect
 from ...pet.mind.catalog import Reaction
 
@@ -37,8 +37,11 @@ class CarePresenter:
         self._ports = ports
 
     def present(
-        self, outcome: CareOutcome, *,
-        now: float, sleeping: bool,
+        self,
+        outcome: CareOutcome,
+        *,
+        now: float,
+        sleeping: bool,
     ) -> None:
         ports = self._ports
         action = outcome.result.action
@@ -46,15 +49,7 @@ class CarePresenter:
             ports.set_item(outcome.consumed_item_id)
         if action == "sleep":
             ports.cancel_action(now)
-        visual = {
-            "feed": "eat",
-            "energy_drink": "eat",
-            "pet": "petting",
-        }.get(action)
-        if visual == "eat" and outcome.consumed_item_id is None:
-            visual = None
-        if outcome.result.affection_refused:
-            visual = None
+        visual = care_animation(outcome.result, sleeping=sleeping)
         reaction = outcome.reaction
         if visual is not None and not sleeping:
             if reaction is not None:

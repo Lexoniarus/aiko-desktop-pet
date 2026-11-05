@@ -31,6 +31,7 @@ from ..pet.care_result import CareEffect
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import SocialCompletion
 from ..pet.mind import PetMind
+from ..pet.mind.catalog import Reaction
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.routine import context_at
 from ..pet.wish_catalog import WISH_CATALOG
@@ -43,6 +44,7 @@ from .games.session import GameSessionCoordinator
 from .room_content import RoomContent
 from .room_playback import RoomPlayback
 from .room_runtime import RoomRuntime
+from .view_models.care_text import care_animation, format_care_response
 from .view_models.emotional_text import moodlet_description, wish_description
 from .view_models.projections import project_status
 
@@ -305,10 +307,24 @@ class RoomSession:
 
     def care(self, action: str) -> None:
         def perform() -> None:
+            self.room.pause_route()
+            self.playback.stop_animation()
+            self.room.awareness.intentions.cancel(self.room.now)
             outcome = self.router.dispatch(
                 CareCommand.from_action(action), inputs=self.inputs()
             )
-            self.playback.speak(outcome.reaction)
+            visual = care_animation(outcome.result, sleeping=self.state.sleeping)
+            reaction = outcome.reaction
+            if reaction is not None and visual is not None:
+                reaction = replace(reaction, animation=visual)
+            elif reaction is None:
+                reaction = Reaction.spoken(
+                    "care_fallback",
+                    format_care_response(outcome.result),
+                    visual or "idle",
+                    "pet_refused" if outcome.result.affection_refused else action,
+                )
+            self.playback.speak(reaction)
 
         self.room.interaction.interrupt(perform)
 

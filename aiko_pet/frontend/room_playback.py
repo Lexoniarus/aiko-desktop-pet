@@ -215,6 +215,10 @@ class RoomPlayback:
     def now(self) -> float:
         return self._now
 
+    @property
+    def rest_cycle(self) -> float:
+        return self._catalog.clip_for("rest-neutral", 2).duration_seconds
+
     def game_action(
         self,
         name: str,
@@ -256,7 +260,14 @@ class RoomPlayback:
         self._action_timers.append(self.schedule(elapsed, complete))
 
     def start_action(self, name: str, _duration: float) -> None:
-        self.play_animation(name)
+        action = self.play_animation(name)
+        duration = self._catalog.clip_for(name, 2).duration_seconds
+        self._action_timers.append(
+            self.schedule(
+                round(duration * 1000),
+                lambda: self.stop_animation() if self.action_id == action else None,
+            )
+        )
 
     def play_animation(self, name: str) -> int:
         self.stop_animation()
