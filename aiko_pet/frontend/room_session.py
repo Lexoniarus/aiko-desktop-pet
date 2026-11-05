@@ -432,13 +432,9 @@ class RoomSession:
             "animation": (
                 "sleep"
                 if self.state.sleeping
-                else "running-right"
-                if self.room.moving and self.room.facing > 0
-                else "running-left"
-                if self.room.moving
                 else EXPRESSION_CLIPS[self.playback.expression]
-                if self.playback.expression is not None
-                else "rest-neutral"
+                if self.playback.expression is not None and not self.room.moving
+                else self.room.locomotion.selection.animation
                 if self.playback.animation == "idle"
                 else self.playback.animation
             ),
@@ -453,7 +449,12 @@ class RoomSession:
             "held_pose": self.room.held_pose,
             "animation_id": self.playback.action_id,
             "animation_timings": self.playback.action_timings,
-            "animation_hold_frame": self.playback.hold_frame,
+            "animation_hold_frame": (
+                self.room.locomotion.selection.fixed_frame
+                if self.playback.animation == "idle"
+                and self.playback.expression is None and not self.state.sleeping
+                else self.playback.hold_frame
+            ),
             "social": json_value(self.content.runtime.snapshot())
             if self.content
             else None,

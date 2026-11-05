@@ -36,6 +36,7 @@ from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
 from .room_playback import RoomPlayback
+from .room_locomotion import RoomLocomotion
 from .view_models.object_reactions import format_object_reaction
 
 
@@ -77,6 +78,7 @@ class RoomRuntime:
         )
         self.now = 0.0
         self.moving = False
+        self.locomotion = RoomLocomotion()
         self.facing = 1
         self.held_item: str | None = None
         self.held_pose = "closed_world"
@@ -432,9 +434,15 @@ class RoomRuntime:
             or self.state.sleeping
             or self.state.energy < 15
         ):
+            self.locomotion.rest(self.now)
             return
         previous = self.position
-        current = RoomGeometry.approach(previous, destination, min(seconds, 0.5))
+        route = RoomGeometry.route(previous, RoomGeometry.accessible(destination))
+        if not self.locomotion.walk(self.now, previous, route[0]):
+            return
+        current = RoomGeometry.approach(
+            previous, destination, min(seconds, 0.5), speed=self.locomotion.speed,
+        )
         self.moving = current != previous
         if self.moving:
             self.facing = 1 if RoomGeometry.delta(previous.x, current.x) >= 0 else -1

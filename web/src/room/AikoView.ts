@@ -12,6 +12,7 @@ export interface Clip {
   loop: boolean;
   anchor: [number, number];
   duration: number;
+  family?: string;
 }
 export interface PetScreenBounds {
   x: number;
@@ -27,6 +28,7 @@ export class AikoView extends Container {
   private clipName = '';
   private generation = 0;
   private actionId = -1;
+  private holdFrame: number | null = null;
   private held = new Sprite(Texture.EMPTY);
   private foreground = new Sprite(Texture.EMPTY);
   private foregroundFrames = new Map<string, Array<Texture | null>>();
@@ -67,12 +69,18 @@ export class AikoView extends Container {
     holdFrame?: number | null,
   ): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
+    const fixed = holdFrame ?? null;
     if (
       name === this.clipName &&
-      (actionId === this.actionId || this.clips[name]!.loop)
+      (actionId === this.actionId || this.clips[name]!.loop) &&
+      fixed === this.holdFrame
     )
       return;
+    const previous = this.clips[this.clipName];
+    const phase = previous?.family && previous.family === this.clips[name]?.family
+      ? this.sprite.currentFrame : 0;
     this.actionId = actionId;
+    this.holdFrame = fixed;
     this.clipName = name;
     const generation = ++this.generation;
     const clip = this.clips[name]!;
@@ -114,9 +122,15 @@ export class AikoView extends Container {
       this.sprite.gotoAndStop(
         Math.max(0, clip.order.length ? clip.order.indexOf(holdFrame) : holdFrame),
       );
-    else this.sprite.gotoAndPlay(0);
+    else this.sprite.gotoAndPlay(Math.min(phase, frames.length - 1));
     this.placeHeld();
     this.updateBounds();
+  }
+  async warmWalking(): Promise<void> {
+    const names = ['body-step-right-04', 'body-step-left-12',
+      'body-look-right', 'body-look-left'];
+    await Promise.all(names.flatMap(name => this.clips[name]?.frames.map(frame =>
+      Assets.load<Texture>(new URL(frame.file, this.root).href)) ?? []));
   }
   async hold(item: string | null, pose = 'closed_world'): Promise<void> {
     const definition = item ? this.items[item] : undefined;

@@ -7,6 +7,7 @@ import type { Clip } from './AikoView';
 import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
+import { paintRoomFloor } from './RoomFloor';
 import { depthScale, feetY, projectX, unproject, wrap } from './RoomProjection';
 
 export interface AssetManifest {
@@ -135,6 +136,7 @@ export class RoomView {
     }
     // The v16 reference uses narrow architectural pillars at every panel join,
     // including both ends of the 360-degree loop. Keep art coordinates intact.
+    paintRoomFloor(ctx, wall);
     for (const x of [0, 1800, 3600, 5100]) {
       ctx.fillStyle = '#e7e3f0';
       ctx.strokeStyle = '#a1abc6';
@@ -175,6 +177,7 @@ export class RoomView {
     });
     this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
+    await this.aiko.warmWalking();
     this.resizeObserver = new ResizeObserver(() =>
       this.camera.resize(this.host.clientWidth, this.host.clientHeight),
     );
