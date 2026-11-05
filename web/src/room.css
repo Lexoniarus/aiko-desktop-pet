@@ -6,6 +6,10 @@
   color: #243451;
   font-family: system-ui, sans-serif;
 }
+.aiko-room button {
+  min-width: max(44px, calc(44px / var(--ui-scale, 1)));
+  min-height: max(44px, calc(44px / var(--ui-scale, 1)));
+}
 .room-stage {
   position: absolute;
   inset: 0;
