@@ -10,6 +10,9 @@ precacheAndRoute(self.__WB_MANIFEST, {
   ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^install$/, /^diagnostics$/],
 });
 cleanupOutdatedCaches();
+// Shell-only takeover: never reload clients. Each running app continues using
+// its immutable package UUID; the new shell is used on the next navigation.
+self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()));
 registerRoute(
   ({ url }) =>
     url.origin === self.location.origin && url.pathname.includes('/__packages__/'),
