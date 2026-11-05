@@ -25,6 +25,7 @@ from ..application.settings import PetSettings
 from ..application.wish_context import wish_context_for
 from ..application.wish_forecast import RoomTimeProgression, WishForecastService
 from ..pet.animation.character import CharacterCatalog
+from ..pet.animation.expression import EXPRESSION_CLIPS
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.care_result import CareEffect
 from ..pet.food_catalog import DEFAULT_CATALOG
@@ -42,6 +43,7 @@ from .games.session import GameSessionCoordinator
 from .room_content import RoomContent
 from .room_playback import RoomPlayback
 from .room_runtime import RoomRuntime
+from .view_models.emotional_text import moodlet_description, wish_description
 from .view_models.projections import project_status
 
 
@@ -96,8 +98,14 @@ class RoomSession:
             inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,
             items=items,
-            night=lambda: self.routine.sleep_context().window(time.time())[0],
+            night=lambda: self.settings.auto_routine
+            and self.routine.sleep_context().window(time.time())[0],
+            wandering=lambda: self.settings.auto_walk,
             time_progression=self._make_progression,
+        )
+        self.playback.can_express = lambda: (
+            not self.room.moving and not self.state.sleeping
+            and self.playback.animation == "idle"
         )
         self.router = ApplicationRouter(
             CareController(
@@ -233,6 +241,8 @@ class RoomSession:
         self._last_tick = now
         self.playback.advance(min(elapsed, 1))
         self.room.update(min(elapsed, 0.5))
+        if not self.playback.can_express():
+            self.playback.express(None)
         if self.content is not None:
             self.content.update()
         if (
@@ -367,6 +377,9 @@ class RoomSession:
                 "online_social",
                 "auto_routine",
                 "spontaneous_talk",
+                "auto_walk",
+                "scale",
+                "ui_scale_percent",
             }
             if set(args) - allowed:
                 raise ValueError("Unbekannte Zimmereinstellung.")
@@ -413,6 +426,10 @@ class RoomSession:
                 if self.room.moving and self.room.facing > 0
                 else "running-left"
                 if self.room.moving
+                else EXPRESSION_CLIPS[self.playback.expression]
+                if self.playback.expression is not None
+                else "rest-neutral"
+                if self.playback.animation == "idle"
                 else self.playback.animation
             ),
             "moving": self.room.moving,
@@ -428,6 +445,14 @@ class RoomSession:
             if self.content
             else None,
             "catalog": {
+                "moodlet_descriptions": {
+                    str(view.value.instance_id): moodlet_description(view)
+                    for view in status.emotional.moodlets
+                },
+                "wish_descriptions": {
+                    str(view.value.instance_id): wish_description(view)
+                    for view in status.emotional.wishes
+                },
                 "foods": [
                     json_value(DEFAULT_CATALOG.foods[key])
                     for key in DEFAULT_CATALOG.menu_order

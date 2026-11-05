@@ -207,7 +207,9 @@ export class RoomView {
     const center = this.viewport.center.x;
     const point = snapshot.room.pet;
     this.aiko.position.set(projectX(point.x, point.depth, center), feetY(point.depth));
-    this.aiko.scale.set((400 / 416) * depthScale(point.depth));
+    const settings = snapshot.catalog.settings as Record<string, unknown>;
+    const size = settings.scale === 2 ? 1.25 : 1;
+    this.aiko.scale.set((400 / 416) * depthScale(point.depth) * size);
     this.aiko.zIndex = feetY(point.depth);
     const depths = new Map(snapshot.room.object_depths);
     for (const { sprite, item } of this.objects.values()) {

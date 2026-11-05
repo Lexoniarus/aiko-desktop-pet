@@ -1,65 +1,96 @@
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import { element, line } from './dom';
 
+const labels: Record<string, string> = {
+  satiety: 'Sättigung',
+  energy: 'Energie',
+  fun: 'Spaß',
+  social: 'Geselligkeit',
+  affection: 'Zuneigung',
+  mood: 'Stimmung',
+  friendship: 'Freundschaft',
+};
+const fields = [
+  'relationship_line',
+  'wellbeing_line',
+  'sleep_context_line',
+  'contact_line',
+  'hint',
+  'objects_line',
+  'today',
+  'next_event',
+];
 export class StatusPanel {
   readonly element = element('section');
-  update(snapshot: RoomSnapshot): void {
-    const open = new Set(
-      Array.from(this.element.querySelectorAll('details[open]')).map(
-        (node) => node.querySelector('summary')?.textContent,
-      ),
-    );
-    this.element.replaceChildren();
-    const status = snapshot.catalog.status as Record<string, unknown> | undefined;
-    const values = status?.status_values as Array<[string, number]> | undefined;
-    const labels: Record<string, string> = {
-      satiety: 'Sättigung',
-      energy: 'Energie',
-      fun: 'Spaß',
-      social: 'Geselligkeit',
-      affection: 'Zuneigung',
-      mood: 'Stimmung',
-      friendship: 'Freundschaft',
-    };
-    for (const [key, value] of values ??
-      Object.entries(snapshot.pet).filter(
-        (entry): entry is [string, number] =>
-          entry[0] in labels && typeof entry[1] === 'number',
-      )) {
-      const row = element(
-        'label',
-        'need-row',
-        `${labels[key] ?? key} ${Math.round(value)}`,
-      );
-      const meter = element('meter');
+  private needs = new Map<string, { label: Text; meter: HTMLMeterElement }>();
+  private lines = new Map<string, HTMLElement>();
+  private emotion = element('h3');
+  private moodlets = new Map<
+    number,
+    { detail: HTMLDetailsElement; text: HTMLElement }
+  >();
+  constructor() {
+    for (const [key, name] of Object.entries(labels)) {
+      const row = element('label', 'need-row'),
+        label = document.createTextNode(name),
+        meter = element('meter');
       meter.min = 0;
       meter.max = 100;
-      meter.value = value;
-      row.append(meter);
+      row.append(label, meter);
       this.element.append(row);
+      this.needs.set(key, { label, meter });
     }
-    if (status) {
-      for (const field of [
-        'relationship_line',
-        'wellbeing_line',
-        'sleep_context_line',
-        'contact_line',
-        'hint',
-        'objects_line',
-      ]) {
-        if (status[field]) this.element.append(line(String(status[field])));
+    for (const key of fields) {
+      const text = line('');
+      this.lines.set(key, text);
+      this.element.append(text);
+    }
+    this.element.append(this.emotion);
+  }
+  update(snapshot: RoomSnapshot): void {
+    const status = snapshot.catalog.status as Record<string, unknown>;
+    const values = status.status_values as Array<[string, number]>;
+    for (const [key, value] of values) {
+      const node = this.needs.get(key);
+      if (!node) continue;
+      node.label.textContent = labels[key] + ' ' + Math.round(value);
+      node.meter.value = value;
+    }
+    for (const [key, node] of this.lines) {
+      node.textContent = String(status[key] ?? '');
+      node.hidden = !status[key];
+    }
+    const emotional = status.emotional as {
+      state_label: string;
+      moodlets: Array<{
+        label: string;
+        description: string;
+        value: { instance_id: number };
+      }>;
+    };
+    this.emotion.textContent = emotional.state_label;
+    const descriptions = snapshot.catalog.moodlet_descriptions as Record<
+      string,
+      string
+    >;
+    const ids = new Set(emotional.moodlets.map((m) => m.value.instance_id));
+    for (const [id, node] of this.moodlets)
+      if (!ids.has(id)) {
+        node.detail.remove();
+        this.moodlets.delete(id);
       }
-      const emotional = status.emotional as {
-        state_label: string;
-        moodlets: Array<{ label: string; description: string }>;
-      };
-      this.element.append(element('h3', '', emotional.state_label));
-      for (const moodlet of emotional.moodlets) {
-        const detail = element('details');
-        detail.open = open.has(moodlet.label);
-        detail.append(element('summary', '', moodlet.label), line(moodlet.description));
+    for (const moodlet of emotional.moodlets) {
+      const id = moodlet.value.instance_id;
+      let node = this.moodlets.get(id);
+      if (!node) {
+        const detail = element('details'),
+          text = line('');
+        detail.append(element('summary', '', moodlet.label), text);
         this.element.append(detail);
+        node = { detail, text };
+        this.moodlets.set(id, node);
       }
+      node.text.textContent = descriptions?.[String(id)] ?? moodlet.description;
     }
   }
 }

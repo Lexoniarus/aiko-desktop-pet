@@ -21,7 +21,7 @@ export class RoomUI {
   private toolbar = element('nav', 'room-toolbar');
   private dialogue = element('div', 'room-speech');
   private text = element('p');
-  private emote = element('span', 'speech-emote');
+  private emote = element('img', 'speech-emote');
   private next = button('Weiter', () => {
     void this.command('speech_next');
   });
@@ -129,8 +129,7 @@ export class RoomUI {
     if (name === 'social')
       this.panelBody.append(
         new SocialPanel(async (action, args) => {
-          this.panel.close();
-          this.panelName = '';
+          this.close();
           await this.command(action, args);
         }).element,
       );
@@ -185,18 +184,32 @@ export class RoomUI {
   }
   update(snapshot: RoomSnapshot): void {
     this.snapshot = snapshot;
+    const settings = snapshot.catalog.settings as Record<string, unknown>;
+    this.host.style.setProperty(
+      '--ui-scale',
+      String((Number(settings.ui_scale_percent) || 100) / 100),
+    );
     this.sleep.textContent = snapshot.pet.sleeping ? 'Aufwecken' : 'Schlafen';
     this.pet.disabled = !!snapshot.game;
     this.sleep.disabled = !!snapshot.game;
     const speech = snapshot.speech;
     this.text.textContent = speech.text;
-    this.emote.textContent = speech.emote;
+    this.emote.hidden = !speech.emote;
+    if (speech.emote) {
+      this.emote.src = new URL(
+        `assets/emotes/emote_${speech.emote}.png`,
+        this.room.root,
+      ).href;
+      this.emote.alt = 'Aikos Reaktion';
+    }
     this.dialogue.hidden = !speech.text && !speech.emote;
     this.next.hidden = !speech.story;
     if (speech.text && speech.id !== this.speechId && !document.hidden) {
-      this.speechId = speech.id;
       requestAnimationFrame(() => {
-        void this.command('speech_ack', { id: speech.id });
+        if (this.dialogue.getClientRects().length) {
+          this.speechId = speech.id;
+          void this.command('speech_ack', { id: speech.id });
+        }
       });
     }
     if (this.activePanel) this.activePanel.update(snapshot);

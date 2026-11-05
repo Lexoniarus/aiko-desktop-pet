@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from functools import partial
 
 from ..pet.animation.character import CharacterCatalog, PlaybackEvent
+from ..pet.animation.expression import EXPRESSION_CLIPS, Expression
 from ..pet.interaction_events import SocialCompletion
 from ..pet.mind.catalog import Reaction
 from .playback import ReactionPlayer
@@ -42,6 +43,10 @@ class RoomPlayback:
         self._pending_wish: int | None = None
         self._text_presented, self._wish_presented = text_presented, wish_presented
         self.animation = "idle"
+        self.expression: Expression | None = None
+        self._expression_id = 0
+        self._emote_id = 0
+        self.can_express: Callable[[], bool] = lambda: False
         self.action_id = 0
         self._action_timers: list[str] = []
         self.receive: Callable[[PlaybackEvent], None] = lambda _event: None
@@ -53,6 +58,7 @@ class RoomPlayback:
             hide_speech=self._hide, social_completed=social_completed,
             on_text=lambda event: setattr(self, "_pending_event", event),
             on_wish_text=lambda wish: setattr(self, "_pending_wish", wish),
+            express=self.express,
         )
 
     def schedule(self, milliseconds: int, callback: Callable[[], None]) -> str:
@@ -86,8 +92,30 @@ class RoomPlayback:
         self._text_id += 1
         self._unshown = True
 
-    def _display_emote(self, emote: str, _milliseconds: int) -> None:
+    def _display_emote(self, emote: str, milliseconds: int) -> None:
         self._emote, self._text = emote, ""
+        self._emote_id += 1
+        current = self._emote_id
+
+        def clear() -> None:
+            if current == self._emote_id:
+                self._emote = ""
+
+        self.schedule(milliseconds, clear)
+
+    def express(self, value: Expression | None) -> None:
+        self._expression_id += 1
+        self.expression = value if self.can_express() else None
+        if self.expression is None:
+            return
+        current = self._expression_id
+        clip = self._catalog.clip_for(EXPRESSION_CLIPS[self.expression], 2)
+
+        def clear() -> None:
+            if current == self._expression_id:
+                self.expression = None
+
+        self.schedule(round(clip.duration_seconds * 1000), clear)
 
     def _hide(self) -> None:
         self._text = self._emote = ""

@@ -56,11 +56,13 @@ class RoomRuntime:
         game_open: Callable[[], bool],
         items: ItemCatalog,
         night: Callable[[], bool],
+        wandering: Callable[[], bool],
         time_progression: Callable[[SessionTimeProgression], TimeProgression],
     ) -> None:
         self.world, self.state, self.mind = world, state, mind
         self.playback, self.inputs, self.game_open = playback, inputs, game_open
         self.items, self.night = items, night
+        self.wandering = wandering
         self.awareness = ObjectAwareness(memory)
         self.awareness.reconcile_books(world.snapshot())
         self.progression = SessionTimeProgression(world, self.awareness.memory)
@@ -331,10 +333,13 @@ class RoomRuntime:
                 destination = None
         if not self.interaction.active and not self.playback.player.active:
             destination = self._called or destination
-            if destination is None and self.now >= self._next_wander:
+            if (destination is None and self.wandering()
+                    and self.now >= self._next_wander):
                 self._wander = self.mind.rng.choice(RoomGeometry.anchors).position
                 self._next_wander = self.now + self.mind.rng.uniform(20, 55)
-            destination = destination or self._wander
+            destination = destination or (
+                self._wander if self.wandering() or self.night() else None
+            )
         if (
             destination is None
             or self.game_open()
