@@ -25,7 +25,7 @@ from aiko_pet.application.social_history import (
     SocialContentReceipt,
 )
 from aiko_pet.application.social_requests import REQUEST_CAPS, SocialRequestHistory
-from aiko_pet.desktop.social_runtime import (
+from aiko_pet.presentation.social import (
     SocialConversationRuntime,
     SocialRuntimePorts,
 )

@@ -9,7 +9,7 @@ from support.horoscope import NOW, coordinator
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
-from aiko_pet.desktop.horoscope_playback import HoroscopePlayback
+from aiko_pet.presentation.book import HoroscopePlayback
 from aiko_pet.infrastructure.world_codec import decode_world, encode_world
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
@@ -172,7 +172,7 @@ class HoroscopeBookTests(unittest.TestCase):
             cancel_timer=scheduler.cancel,
             unavailable=unavailable,
         )
-        with self.assertLogs("aiko_pet.desktop.horoscope_playback", level="WARNING"):
+        with self.assertLogs("aiko_pet.presentation.book", level="WARNING"):
             self.assertFalse(reading.start("object_1", Mock()))
         self.assertFalse(reading.active)
         self.assertFalse(player.active)

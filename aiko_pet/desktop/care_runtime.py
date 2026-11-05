@@ -38,8 +38,8 @@ from ..presentation.playback import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.windows.hover_ui import HoverUi
 from ..world.contracts import ObjectState
-from .horoscope_playback import HoroscopePlayback
-from .social_runtime import SocialConversationRuntime, SocialRuntimePorts
+from ..presentation.book import HoroscopePlayback
+from ..presentation.social import SocialConversationRuntime, SocialRuntimePorts
 from .world_runtime import DesktopWorldRuntime
 
 

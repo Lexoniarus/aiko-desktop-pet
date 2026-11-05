@@ -23,6 +23,7 @@ from .game_experience import GameExperienceCoordinator
 from .game_sessions import GameSessionCoordinator
 from .room import RoomCoordinator
 from .room_contracts import json_value
+from .room_content import RoomContent
 from .room_routine import RoomRoutine
 from .router import ApplicationRouter
 from .session import LoadedPetData, SavedPetStore
@@ -46,6 +47,7 @@ class RoomSession:
         self.social_history = loaded.social_history
         self.horoscope_history = loaded.horoscope
         self.error: str | None = None
+        self.content: RoomContent | None = None
         self.game_snapshot: dict[str, Any] | None = None
         self._suspended = False
         self._last_tick = time.time()
@@ -112,11 +114,15 @@ class RoomSession:
         self._last_tick = now
         self.playback.advance(min(elapsed, 1))
         self.room.update(min(elapsed, 0.5))
+        if self.content is not None:
+            self.content.update()
         if now - self._last_saved >= 5:
             self.save()
 
     def suspend(self) -> None:
         self.tick()
+        if self.content is not None:
+            self.content.suspend()
         self.games.close()
         self.game_snapshot = None
         self.room.suspend()
@@ -179,6 +185,9 @@ class RoomSession:
             self.game_snapshot = None
         elif name == "wish_pin":
             self.router.set_wish_pinned(int(args["id"]), bool(args["pinned"]), inputs=self.inputs())
+        elif name in ("social", "horoscope"):
+            if self.content is not None:
+                self.content.select("horoscope" if name == "horoscope" else str(args["category"]))
         elif name == "wish_dismiss":
             self.router.dismiss_wish(int(args["id"]), inputs=self.inputs())
         elif name == "settings":
@@ -188,6 +197,8 @@ class RoomSession:
                 raise ValueError("Unbekannte Zimmereinstellung.")
             raw.update(args)
             self.settings = PetSettings.from_dict(raw)
+            if self.content is not None:
+                self.content.runtime.set_enabled(self.settings.online_social)
         elif name == "suspend":
             self.suspend()
         elif name == "resume":
@@ -208,6 +219,8 @@ class RoomSession:
             "animation": self.playback.animation,
             "moving": self.room.moving, "facing": self.room.facing,
             "held_item": self.room.held_item, "game": self.game_snapshot,
+            "social": json_value(self.content.runtime.snapshot()) if self.content else None,
+            "horoscope": self.content.horoscope.availability() if self.content else None,
             "catalog": {
                 "foods": [json_value(DEFAULT_CATALOG.foods[key]) for key in DEFAULT_CATALOG.menu_order
                           if key in DEFAULT_CATALOG.foods],

@@ -6,6 +6,11 @@ import time
 from pathlib import Path
 
 from ..application.room_session import RoomSession
+from ..application.room_content import RoomContent
+from ..infrastructure.astronomy import AstronomyEngineCalculator
+from ..infrastructure.horoscope_catalogue import load_horoscope_catalogue
+from ..infrastructure.local_jokes import load_local_jokes
+from ..infrastructure.browser.social_fetch import BrowserSocialWorker
 from ..infrastructure.browser.persistence import publish_browser_database
 from ..infrastructure.character_assets import load_character_catalog
 from ..infrastructure.character_mind import make_aiko_mind
@@ -27,5 +32,8 @@ def create_browser_session(path: str) -> BrowserEndpoint:
         store, loaded, make_aiko_mind(started_at=time.monotonic()),
         WorldState(WorldSurface(5100, 900, 24), definitions), load_character_catalog(),
     )
+    session.content = RoomContent(session, BrowserSocialWorker(), load_local_jokes(),
+                                  load_horoscope_catalogue(), AstronomyEngineCalculator())
+    session.content.runtime.set_enabled(session.settings.online_social)
     session.save()
     return BrowserEndpoint(session)

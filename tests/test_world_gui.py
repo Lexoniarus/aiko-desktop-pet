@@ -2611,7 +2611,7 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting("horoscope_book", world._body_x(),
                                         ObjectFootprint(64, 64))
         before = self.app.state.social
-        with self.assertLogs("aiko_pet.desktop.horoscope_playback", level="WARNING"):
+        with self.assertLogs("aiko_pet.presentation.book", level="WARNING"):
             self.observe_and_acknowledge()
             self.finish_pickup()
             self.finish_inspection()
