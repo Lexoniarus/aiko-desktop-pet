@@ -31,7 +31,6 @@ export class AikoView extends Container {
   private holdFrame: number | null = null;
   private held = new Sprite(Texture.EMPTY);
   private foreground = new Sprite(Texture.EMPTY);
-  private foregroundFrames = new Map<string, Array<Texture | null>>();
   private heldKey = '';
   private heldItem = '';
   private contact?: { x: number; y: number; at: number };
@@ -101,16 +100,6 @@ export class AikoView extends Container {
         time: clip.frames[index]!.duration,
       }));
       this.loaded.set(name, frames);
-      this.foregroundFrames.set(
-        name,
-        await Promise.all(
-          clip.frames.map((frame) =>
-            frame.foreground
-              ? Assets.load<Texture>(new URL(frame.foreground, this.root).href)
-              : Promise.resolve(null),
-          ),
-        ),
-      );
     }
     if (this.disposed || generation !== this.generation) return;
     this.sprite.textures = timings

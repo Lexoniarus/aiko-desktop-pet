@@ -24,10 +24,17 @@ export function paintRoomFloor(
     );
     ctx.restore();
   }
-  ctx.fillStyle = '#eee4e6';
-  ctx.fillRect(0, 782, 5100, 16);
-  ctx.fillStyle = '#8a6059';
-  ctx.fillRect(0, 782, 5100, 4);
-  ctx.fillStyle = '#a87868';
-  ctx.fillRect(0, 798, 5100, 4);
+  // Replace both original skirting lines as well; painting only the lower one
+  // leaves their different heights visible. Preserve the balcony/curtain foot.
+  for (const [left, right] of [
+    [0, 2014],
+    [2960, 5100],
+  ]) {
+    ctx.fillStyle = '#eee4e6';
+    ctx.fillRect(left!, 760, right! - left!, 42);
+    ctx.fillStyle = '#8a6059';
+    ctx.fillRect(left!, 766, right! - left!, 4);
+    ctx.fillStyle = '#a87868';
+    ctx.fillRect(left!, 798, right! - left!, 4);
+  }
 }

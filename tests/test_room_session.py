@@ -55,6 +55,7 @@ class RoomSessionTests(unittest.TestCase):
     def test_accepted_call_moves_the_world_and_persists_across_reopen(self) -> None:
         before = self.endpoint.session.room.position
         self.command("call", x=900, depth=1.2)
+        snapshot = self.command("snapshot")["snapshot"]
         for _ in range(4):
             self.wall += 0.25
             snapshot = self.command("tick")["snapshot"]
@@ -278,6 +279,7 @@ class RoomSessionTests(unittest.TestCase):
         self.command("settings", spontaneous_talk=False, auto_walk=False)
         self.command("object_drag_start", definition="onigiri")
         token = session.room.drag_instance
+        assert token is not None
         self.command(
             "object_drag_move",
             x=600,
@@ -289,8 +291,8 @@ class RoomSessionTests(unittest.TestCase):
         )
         self.advance_until(
             lambda: bool(
-                session.room.awareness.known_instance(token)
-                and session.room.awareness.known_instance(token).recognized
+                (known := session.room.awareness.known_instance(token)) is not None
+                and known.recognized
             )
         )
         self.assertEqual(session.room.world.get(token).state.value, "user_held")
