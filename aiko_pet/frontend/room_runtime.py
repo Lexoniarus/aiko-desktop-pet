@@ -587,7 +587,14 @@ class RoomRuntime:
             return
         self.leisure.suspend(self.now)
         previous = self.position
-        route = RoomGeometry.route(previous, RoomGeometry.accessible(destination))
+        destination = RoomGeometry.accessible(destination)
+        if RoomGeometry.distance(previous, destination) < 1:
+            if self._wander is not None and not self.night():
+                self.leisure.arrived(self.now, self.facing)
+            self._called = self._wander = None
+            self.locomotion.rest(self.now)
+            return
+        route = RoomGeometry.route(previous, destination)
         if not self.locomotion.walk(self.now, previous, route[0]):
             return
         current = RoomGeometry.approach(

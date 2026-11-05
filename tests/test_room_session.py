@@ -421,6 +421,11 @@ class RoomSessionTests(unittest.TestCase):
             0.01,
         )
         self.assertFalse(current["moving"])
+        current = self.command("call", x=750, depth=1.1)["snapshot"]
+        self.wall += 0.2
+        current = self.command("tick")["snapshot"]
+        self.assertFalse(current["moving"])
+        self.assertFalse(current["animation"].startswith("body-orient-"))
 
     def test_room_outing_holds_a_quarter_pose_then_yields_to_care(self) -> None:
         session = self.endpoint.session
