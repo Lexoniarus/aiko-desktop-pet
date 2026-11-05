@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sqlite3
 import time
+from collections.abc import Callable
 from copy import deepcopy
 from pathlib import Path
 
@@ -42,9 +43,11 @@ class SqliteStateStore:
         path: Path,
         *,
         definitions: tuple[ObjectDefinition, ...] | None = None,
+        publish: Callable[[Path, Path], None] = publish_database,
     ) -> None:
         self.path = path
         self._definitions = definitions
+        self._publish = publish
 
     def _world_definitions(self) -> tuple[ObjectDefinition, ...]:
         return (
@@ -198,5 +201,5 @@ class SqliteStateStore:
                     transaction="write",
                 ) as connection:
                     commit_snapshot(connection, initial=True)
-                publish_database(temporary, self.path)
+                self._publish(temporary, self.path)
             return revision
