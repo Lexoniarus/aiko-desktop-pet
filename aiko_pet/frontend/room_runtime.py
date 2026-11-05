@@ -22,6 +22,7 @@ from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.object_interaction_state import SearchPosition
 from ..application.session_time import SessionTimeProgression
+from ..infrastructure.world_motion import motion_parameters
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
@@ -35,8 +36,9 @@ from ..pet.state import PetState
 from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.state import WorldState
-from .room_playback import RoomPlayback
+from .room_drag import RoomDrag
 from .room_locomotion import RoomLocomotion
+from .room_playback import RoomPlayback
 from .view_models.object_reactions import format_object_reaction
 
 
@@ -86,7 +88,9 @@ class RoomRuntime:
         self._wander: RoomPoint | None = None
         self._next_wander = 10.0
         self._offered: tuple[str, float, str] | None = None
-        self._dragged: tuple[str, WorldPosition, float] | None = None
+        self._dragged: RoomDrag | None = None
+        self._gesture_serial = 0
+        self._motion_parameters = motion_parameters()
         self.interaction = ObjectInteractionCoordinator(
             world,
             play=playback.play_animation,
@@ -150,6 +154,14 @@ class RoomRuntime:
     def _select_item(self, item: str | None) -> None:
         self.held_item = item
 
+    @property
+    def drag_ready(self) -> bool:
+        return bool(self._dragged and self._dragged.ready)
+
+    @property
+    def drag_instance(self) -> str | None:
+        return self._dragged.instance if self._dragged else None
+
     def _completed(self, record: str, consumed: bool) -> None:
         self.awareness.intentions.complete(record, self.now, consumed=consumed)
         self.behavior.request_orientation()
@@ -184,8 +196,6 @@ class RoomRuntime:
         )
 
     def _can_acquire(self, instance: str) -> bool:
-        if self._dragged is not None and self._dragged[0] == instance:
-            return False
         item = self.world.get(instance)
         if item.position is None:
             return False
@@ -193,8 +203,15 @@ class RoomRuntime:
         return self.behavior.can_acquire(
             instance,
             object_state=item.state,
-            reachable=RoomGeometry.distance(self.position, point) <= 180,
-            offer_ready=True,
+            reachable=(
+                RoomGeometry.distance(self.position, point)
+                <= (150 if item.state == ObjectState.USER_HELD else 32)
+                and (
+                    item.state != ObjectState.USER_HELD
+                    or 15 <= item.position.height <= 450
+                )
+            ),
+            offer_ready=self._dragged.ready if self._dragged else True,
             now=self.now,
             facts=BehaviorFacts(game_open=self.game_open()),
         )
@@ -251,7 +268,7 @@ class RoomRuntime:
         x = self.world.snapshot().surface.ground_x(
             self.position.x, ObjectFootprint(24, 24)
         )
-        position = WorldPosition(x, 80)
+        position = WorldPosition(x, 240)
         item = self.world.create_held(definition, position, ObjectFootprint(24, 24))
         self._depth(item.instance_id, self.position.depth)
         self._offered = item.instance_id, self.now, f"offer_{item.instance_id}"
@@ -268,69 +285,118 @@ class RoomRuntime:
         item = self.world.take_resting(instance, expected_revision=revision)
         x = self.world.snapshot().surface.ground_x(self.position.x, item.footprint)
         item = self.world.move_held(
-            instance, WorldPosition(x, 80), expected_revision=item.revision
+            instance, WorldPosition(x, 240), expected_revision=item.revision
         )
         self._depth(instance, self.position.depth)
         self._offered = instance, self.now, f"offer_{instance}_{item.revision}"
 
-    def begin_drag(self, instance: str, revision: int) -> None:
+    def begin_drag(
+        self,
+        instance: str | None = None,
+        revision: int = 0,
+        *,
+        definition: str | None = None,
+    ) -> None:
         if self._dragged is not None or self._offered is not None:
             raise ValueError("Ein Gegenstand wird bereits gehalten.")
 
-        item = self.world.get(instance)
-        if item.position is None:
-            raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
-        original = item.position
-        self.world.take_resting(instance, expected_revision=revision)
-        self._dragged = instance, original, self.spatial.depth_for(instance)
-        if self.interaction.instance_id == instance:
-            self.interaction.interrupt(lambda: None)
+        if instance is None:
+            if definition is None:
+                raise ValueError("Kein Gegenstand ausgewählt.")
+            item = self.world.create_held(
+                definition,
+                WorldPosition(self.position.x, 0),
+                ObjectFootprint(24, 24),
+            )
+            original, depth = None, self.position.depth
+            self._depth(item.instance_id, depth)
+        else:
+            item = self.world.get(instance)
+            if item.position is None:
+                raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
+            original, depth = item.position, self.spatial.depth_for(instance)
+            self.world.take_resting(instance, expected_revision=revision)
+            record = self.awareness.witness_take(
+                instance,
+                position=(original.x, original.height),
+                now=self.now,
+                attention=ObjectAttention(
+                    "survey", (self.facing, 0), (self.position.x, 240), 490
+                ),
+                committed=self.interaction.focus_record,
+            )
+            if record is not None:
+                self.interaction.target_taken(record)
+        self._gesture_serial += 1
+        self._dragged = RoomDrag(
+            item.instance_id, original, depth, f"room_drag_{self._gesture_serial}"
+        )
         self.behavior.refresh_after_placement()
+
+    def move_drag(
+        self,
+        point: RoomPoint,
+        height: float,
+        *,
+        inside: bool,
+        face: tuple[float, float] | None = None,
+    ) -> None:
+        drag = self._dragged
+        if drag is None:
+            raise ValueError("Kein Gegenstand wird gezogen.")
+        item = self.world.get(drag.instance)
+        surface = self.world.snapshot().surface
+        self.world.move_held(
+            drag.instance,
+            WorldPosition(surface.ground_x(point.x, item.footprint), height),
+            expected_revision=item.revision,
+        )
+        self._depth(drag.instance, point.depth)
+        drag.inside = inside
+        drag.presentation = (
+            ItemPresentation(drag.gesture, *face) if inside and face else None
+        )
 
     def cancel_drag(self) -> None:
         if self._dragged is None:
             return
-        instance, position, depth = self._dragged
-        item = self.world.get(instance)
-        self.world.return_user_held(
-            instance, position.x, expected_revision=item.revision
-        )
-        self._depth(instance, depth)
+        drag = self._dragged
+        item = self.world.get(drag.instance)
+        if drag.original is None:
+            self.world.remove(drag.instance, expected_revision=item.revision)
+        else:
+            self.world.return_user_held(
+                drag.instance, drag.original.x, expected_revision=item.revision
+            )
+            self._depth(drag.instance, drag.depth)
         self._dragged = None
         self.behavior.refresh_after_placement()
 
-    def drop_drag(self, point: RoomPoint, *, offer: bool) -> None:
+    def drop_drag(self, point: RoomPoint, *, offer: bool, height: float = 0) -> None:
         if self._dragged is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
-        if offer and (
-            self._offered is not None or self.game_open() or self.state.sleeping
-        ):
-            raise ValueError("Aiko kann gerade nichts entgegennehmen.")
-        if not offer and RoomGeometry.accessible(point) != point:
+        if RoomGeometry.accessible(point) != point:
             raise ValueError("Bitte den Gegenstand auf dem freien Boden ablegen.")
-        instance = self._dragged[0]
+        instance = self._dragged.instance
         item = self.world.get(instance)
-        destination = self.position if offer else point
+        destination = point
         x = self.world.snapshot().surface.ground_x(destination.x, item.footprint)
         item = self.world.move_held(
             instance,
-            WorldPosition(x, 80 if offer else 0),
+            WorldPosition(x, height),
             expected_revision=item.revision,
         )
         self._depth(instance, destination.depth)
-        if offer:
-            self.pause_route()
-            self._offered = instance, self.now, f"offer_{instance}_{item.revision}"
-        else:
+        accepted = offer and self.interaction.offer_on_release(instance)
+        if not accepted:
             self.world.release(instance, expected_revision=item.revision)
-            item = self.world.get(instance)
-            self.world.land(instance, expected_revision=item.revision)
-            self.behavior.refresh_after_placement()
         self._dragged = None
+        self.behavior.refresh_after_placement()
 
     def update(self, seconds: float) -> None:
         self.now += seconds
         self.moving = False
+        self.world.advance_motion(seconds, self._motion_parameters)
         self.interaction.update()
         target = self.awareness.intentions.goal
         focused = self.awareness.memory.get(self.interaction.focus_record or "")
@@ -340,7 +406,7 @@ class RoomRuntime:
             (side, 0.0)
             if side is not None
             else (
-                ((point.x - self.position.x) / 192, (point.height - 80) / 192)
+                ((point.x - self.position.x) / 490, (point.height - 240) / 490)
                 if point is not None
                 else (self.facing, -0.1)
             )
@@ -353,24 +419,78 @@ class RoomRuntime:
         if side is not None and not self.interaction.active:
             mode = "survey"
         attention = ObjectAttention(
-            mode, direction, (self.position.x, 80), 192, focused_place=point is not None
+            mode,
+            direction,
+            (self.position.x, 240),
+            490,
+            focused_place=point is not None,
         )
         presentation = None
         if self._offered is not None and self.behavior.orientation_side is None:
             instance, started, gesture = self._offered
             presentation = instance, ItemPresentation(gesture, 0, 0)
-            attention = ObjectAttention("cursor", (0, 0), (self.position.x, 80), 192)
+            attention = ObjectAttention("cursor", (0, 0), (self.position.x, 240), 490)
+        drag = self._dragged
+        if drag is not None and drag.presentation is not None and side is None:
+            presentation = drag.instance, drag.presentation
+            direction = (drag.presentation.x, -drag.presentation.y)
+            attention = ObjectAttention(
+                "cursor", direction, (self.position.x, 240), 490
+            )
+        previewing = drag is not None and self.playback.player.subject == drag.gesture
+        facts = BehaviorFacts(
+            game_open=self.game_open(),
+            carrying=drag is not None,
+            playback_busy=self.playback.player.active and not previewing,
+        )
         observation = self.behavior.observe(
             self.world.snapshot(),
             now=self.now,
             x=self.position.x,
-            width=192,
+            width=490,
             presentation=presentation,
             attention=attention,
-            facts=BehaviorFacts(
-                game_open=self.game_open(), playback_busy=self.playback.player.active
-            ),
+            facts=facts,
         )
+        if drag is not None:
+            decision = (
+                self.behavior.assess_offer(drag.instance, facts=facts)
+                if observation.observe_offer and drag.inside
+                else None
+            )
+            item = self.world.get(drag.instance)
+            near = (
+                item.position is not None
+                and RoomGeometry.distance(
+                    self.position,
+                    RoomPoint(item.position.x, self.spatial.depth_for(drag.instance)),
+                )
+                < 110
+                and abs(item.position.height - 100) < 65
+            )
+            drag.ready = bool(decision and decision.use and near)
+            record = self.awareness.record_for_instance(drag.instance)
+            if decision is not None and record is not None:
+                cue = record, decision.use
+                if drag.feedback != cue and not self.interaction.active:
+                    drag.feedback = cue
+                    known = self.awareness.memory.get(record)
+                    reaction = self.mind.select_reaction(
+                        "object_offer" if decision.use else "object_refuse",
+                        self.state,
+                        context_at(time.time()),
+                        self.now,
+                    )
+                    self.playback.speak(
+                        format_object_reaction(
+                            reaction, known.identity if known else None, self.items
+                        )
+                        if reaction
+                        else None,
+                        subject=drag.gesture,
+                        animate=False,
+                        require_presentation=False,
+                    )
         for seen in self.awareness.observations:
             observed_instance = self.awareness.instance_for_record(seen.token)
             if observed_instance is not None and attention.sees(seen.x, seen.height):
@@ -385,8 +505,6 @@ class RoomRuntime:
                 elif self.now - started > 8:
                     item = self.world.get(instance)
                     self.world.release(instance, expected_revision=item.revision)
-                    item = self.world.get(instance)
-                    self.world.land(instance, expected_revision=item.revision)
                     self._offered = None
         motion = self.behavior.advance(
             observation.goal,
@@ -430,18 +548,24 @@ class RoomRuntime:
         if (
             destination is None
             or self._offered is not None
+            or self._dragged is not None
             or self.game_open()
             or self.state.sleeping
             or self.state.energy < 15
         ):
-            self.locomotion.rest(self.now)
+            self.locomotion.rest(
+                self.now, (direction[0], -direction[1]) if drag else None
+            )
             return
         previous = self.position
         route = RoomGeometry.route(previous, RoomGeometry.accessible(destination))
         if not self.locomotion.walk(self.now, previous, route[0]):
             return
         current = RoomGeometry.approach(
-            previous, destination, min(seconds, 0.5), speed=self.locomotion.speed,
+            previous,
+            destination,
+            min(seconds, 0.5),
+            speed=self.locomotion.speed,
         )
         self.moving = current != previous
         if self.moving:

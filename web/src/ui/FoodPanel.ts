@@ -13,7 +13,9 @@ export class FoodPanel {
     command: Command,
   ) {
     this.element.append(
-      line('Ziehe eine Portion ins Zimmer oder biete sie Aiko direkt an.'),
+      line(
+        'Ziehe eine Portion ins Zimmer. Halte sie kurz vor Aikos Gesicht, damit sie sie erkennen kann. Beim Loslassen nimmt sie sie an oder die Portion fällt auf den Boden.',
+      ),
     );
     const foods = snapshot.catalog.foods as Array<{ id: string; display_name: string }>;
     const grid = element('div', 'food-choices');

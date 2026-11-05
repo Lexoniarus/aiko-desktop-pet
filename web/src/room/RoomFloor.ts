@@ -1,5 +1,8 @@
 /** One continuous floor across all wall panels, including the panorama wrap. */
-export function paintRoomFloor(ctx: CanvasRenderingContext2D, source: HTMLImageElement): void {
+export function paintRoomFloor(
+  ctx: CanvasRenderingContext2D,
+  source: HTMLImageElement,
+): void {
   // The two reference backgrounds have different skirting heights/plank grids.
   // Reuse the kitchen floor, rather than joining those unrelated perspective
   // grids at room boundaries. Mirrored repeats share their exact border pixels.
@@ -8,8 +11,17 @@ export function paintRoomFloor(ctx: CanvasRenderingContext2D, source: HTMLImageE
     ctx.save();
     ctx.translate((index + (index % 2)) * strip, 0);
     ctx.scale(index % 2 ? -1 : 1, 1);
-    ctx.drawImage(source, 0, source.height * 802 / 900,
-      source.width, source.height * 98 / 900, 0, 802, strip, 98);
+    ctx.drawImage(
+      source,
+      0,
+      (source.height * 802) / 900,
+      source.width,
+      (source.height * 98) / 900,
+      0,
+      802,
+      strip,
+      98,
+    );
     ctx.restore();
   }
   ctx.fillStyle = '#eee4e6';

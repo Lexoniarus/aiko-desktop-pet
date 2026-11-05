@@ -56,7 +56,7 @@ export async function startRoom(
         ui.message(error);
       }
     };
-    const drag = new ObjectDragController(room, command, async (name, args = {}) => {
+    const drag = new ObjectDragController(room, async (name, args = {}) => {
       if (closing) return;
       await receive(await client.command(name, args));
     });

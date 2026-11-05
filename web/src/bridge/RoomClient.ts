@@ -20,6 +20,7 @@ export interface RoomSnapshot {
     position: { x: number; height: number } | null;
   }>;
   speech: { text: string; emote: string; id: number; active: boolean; story: boolean };
+  drag?: { instance_id: string | null; ready: boolean };
   animation: string;
   animation_id: number;
   animation_timings?: number[] | null;

@@ -32,6 +32,15 @@ export interface AssetManifest {
   room: Record<string, string>;
 }
 type WorldItem = RoomSnapshot['objects'][number];
+export interface DragPlacement {
+  x: number;
+  depth: number;
+  height: number;
+  inside: boolean;
+  offer: boolean;
+  face_x: number;
+  face_y: number;
+}
 const cutouts: Record<string, { crop: number[]; width: number; x: number; y: number }> =
   {
     bed: { crop: [56, 126, 1659, 665], width: 680, x: 4780, y: 820 },
@@ -58,12 +67,17 @@ export class RoomView {
     .ellipse(0, -3, 60, 8)
     .fill({ color: 0x1b3a5d, alpha: 0.2 });
   private viewport!: Viewport;
-  private objects = new Map<string, { sprite: Sprite; item: WorldItem }>();
+  private objects = new Map<
+    string,
+    { sprite: Sprite; item: WorldItem; motion: RoomMotion }
+  >();
   private snapshot?: RoomSnapshot;
   private motion = new RoomMotion();
   private disposed = false;
   private followers = new Set<(bounds: PetScreenBounds) => void>();
   draggingInstance?: string;
+  dragging = false;
+  dragVisual?: { x: number; y: number };
   private petTapBlockedUntil = 0;
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
@@ -188,6 +202,32 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
+    let contact: { x: number; y: number } | undefined;
+    if (snapshot.held_item && snapshot.held_item !== this.snapshot?.held_item) {
+      if (this.dragVisual) {
+        const box = this.app.canvas.getBoundingClientRect();
+        contact = this.aiko.toLocal({
+          x: this.dragVisual.x - box.left,
+          y: this.dragVisual.y - box.top,
+        });
+      } else {
+        const incoming = snapshot.objects.find((item) => item.state === 'pet_held');
+        const previous = incoming && this.objects.get(incoming.instance_id);
+        if (previous) {
+          const asset = this.assets.items[incoming!.definition_id]!;
+          contact = this.aiko.toLocal(
+            this.world.toGlobal({
+              x:
+                previous.sprite.x +
+                (asset.pivot[0] - asset.dimensions[0] / 2) * previous.sprite.scale.x,
+              y:
+                previous.sprite.y -
+                (asset.dimensions[1] - asset.pivot[1]) * previous.sprite.scale.y,
+            }),
+          );
+        }
+      }
+    }
     this.snapshot = snapshot;
     this.motion.receive(snapshot.room.pet);
     void this.aiko.show(
@@ -196,7 +236,7 @@ export class RoomView {
       snapshot.animation_timings,
       snapshot.animation_hold_frame,
     );
-    void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
+    void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose, contact);
     const live = new Set(
       snapshot.objects
         .filter((item) => !['consumed', 'removed'].includes(item.state))
@@ -210,7 +250,15 @@ export class RoomView {
     for (const item of snapshot.objects) {
       if (!live.has(item.instance_id) || this.objects.has(item.instance_id)) {
         const known = this.objects.get(item.instance_id);
-        if (known) known.item = item;
+        if (known) {
+          if (known.item.state !== item.state) known.motion = new RoomMotion();
+          known.item = item;
+          if (item.position)
+            known.motion.receive({
+              ...item.position,
+              depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 0.9,
+            });
+        }
         continue;
       }
       const asset = this.assets.items[item.definition_id];
@@ -235,7 +283,13 @@ export class RoomView {
         if (current) this.onObjectDown(current.item, event);
       });
       this.world.addChild(sprite);
-      this.objects.set(item.instance_id, { sprite, item });
+      const motion = new RoomMotion();
+      if (item.position)
+        motion.receive({
+          ...item.position,
+          depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 0.9,
+        });
+      this.objects.set(item.instance_id, { sprite, item, motion });
     }
     this.draw();
   }
@@ -252,24 +306,30 @@ export class RoomView {
       (400 / this.assets.characterHeight) * depthScale(point.depth) * size,
     );
     this.aiko.zIndex = feetY(point.depth);
+    this.aiko.renderHeld();
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.scale.set(depthScale(point.depth) * size);
     this.shadow.zIndex = this.aiko.zIndex - 0.1;
     for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
-    for (const { sprite, item } of this.objects.values()) {
+    for (const { sprite, item, motion } of this.objects.values()) {
       const position = item.position;
       sprite.visible =
         position !== null &&
         item.state !== 'pet_held' &&
+        !(this.dragging && item.state === 'user_held') &&
         item.instance_id !== this.draggingInstance;
       if (!position) continue;
-      const depth = depths.get(item.instance_id) ?? 0.9;
+      const display = motion.position() ?? {
+        ...position,
+        depth: depths.get(item.instance_id) ?? 0.9,
+      };
+      const depth = display.depth;
       sprite.position.set(
-        projectX(position.x, depth, center),
-        feetY(depth) - position.height,
+        projectX(display.x, depth, center),
+        feetY(depth) - (display.height ?? position.height),
       );
-      sprite.scale.set(depthScale(depth));
+      sprite.scale.set((depthScale(depth) * 400) / this.assets.characterHeight);
       sprite.zIndex = feetY(depth);
     }
   }
@@ -295,11 +355,57 @@ export class RoomView {
     this.petTapBlockedUntil = performance.now() + 350;
   }
   portionSize(definition: string, x: number, y: number): [number, number] {
+    return this.portionSizeAt(
+      definition,
+      this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 0.9,
+    );
+  }
+  portionSizeAt(definition: string, depth: number): [number, number] {
     const dimensions = this.assets.items[definition]?.dimensions ?? [72, 72];
     const factor =
-      this.viewport.scale.x *
-      depthScale(this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 0.9);
+      this.viewport.scale.x * (400 / this.assets.characterHeight) * depthScale(depth);
     return [dimensions[0]! * factor, dimensions[1]! * factor];
+  }
+  objectDepth(instance: string): number {
+    return new Map(this.snapshot?.room.object_depths).get(instance) ?? 0.9;
+  }
+  dragPoint(
+    clientX: number,
+    clientY: number,
+    depth: number,
+    definition: string,
+  ): DragPlacement {
+    const box = this.app.canvas.getBoundingClientRect();
+    const world = this.viewport.toWorld(clientX - box.left, clientY - box.top);
+    const asset = this.assets.items[definition]!;
+    const scale = (depthScale(depth) * 400) / this.assets.characterHeight;
+    const support = (asset.dimensions[1] - asset.pivot[1]) * scale;
+    const groundY = world.y + support;
+    if (this.petContains(clientX, clientY) && this.petPosition)
+      depth = this.petPosition.depth;
+    else if (groundY >= feetY(0.2) && groundY <= feetY(1.55))
+      depth = unproject(world.x, groundY, this.viewport.center.x).depth;
+    const point = unproject(world.x, feetY(depth), this.viewport.center.x);
+    const height = Math.max(0, Math.min(900, feetY(depth) - groundY));
+    const pet = this.aiko.screenBounds();
+    const width = pet.scale * 192;
+    const inside =
+      clientX >= box.left &&
+      clientX <= box.right &&
+      clientY >= box.top &&
+      clientY <= box.bottom &&
+      !this.assets.obstacles.some(
+        ([l, r, b, f]) => point.x >= l && point.x <= r && depth >= b && depth <= f,
+      );
+    return {
+      ...point,
+      depth,
+      height,
+      inside,
+      offer: inside && this.petContains(clientX, clientY),
+      face_x: (clientX - box.left - pet.originX - pet.scale * 96) / width,
+      face_y: (clientY - box.top - pet.originY - pet.scale * 100) / width,
+    };
   }
   followPet(callback: (bounds: PetScreenBounds) => void): () => void {
     this.followers.add(callback);

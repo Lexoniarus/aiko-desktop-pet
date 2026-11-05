@@ -20,13 +20,17 @@ export class RoomMotion {
     let from = this.samples[0]!;
     for (const to of this.samples.slice(1)) {
       if (to.time >= time) {
-        const fraction = Math.min(1, Math.max(0, (time - from.time) / (to.time - from.time)));
+        const fraction = Math.min(
+          1,
+          Math.max(0, (time - from.time) / (to.time - from.time)),
+        );
         const point: Point = {
           x: wrap(from.point.x + delta(from.point.x, to.point.x) * fraction),
           depth: from.point.depth + (to.point.depth - from.point.depth) * fraction,
         };
         if (from.point.height !== undefined && to.point.height !== undefined)
-          point.height = from.point.height + (to.point.height - from.point.height) * fraction;
+          point.height =
+            from.point.height + (to.point.height - from.point.height) * fraction;
         return point;
       }
       from = to;

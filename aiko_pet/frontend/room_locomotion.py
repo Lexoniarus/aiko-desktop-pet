@@ -25,8 +25,17 @@ class RoomLocomotion:
         # These are the existing compatible three-quarter head/step variants;
         # no new back-facing artwork or mirrored character is fabricated.
         slope = dy / max(1, abs(dx))
-        gaze = (2 if slope < -0.7 else 3 if slope < -0.12 else
-                6 if slope > 0.7 else 5 if slope > 0.12 else 4)
+        gaze = (
+            2
+            if slope < -0.7
+            else 3
+            if slope < -0.12
+            else 6
+            if slope > 0.7
+            else 5
+            if slope > 0.12
+            else 4
+        )
         if side < 0:
             gaze = 16 - gaze
         if self.orientation.side not in (0, side):
