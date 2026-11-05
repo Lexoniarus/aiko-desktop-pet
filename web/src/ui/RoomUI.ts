@@ -234,6 +234,7 @@ export class RoomUI {
         this.game = types[id]!();
         this.open('games');
       } else {
+        this.room.camera.setGame(false);
         if (this.panelName === 'games') this.open('games');
       }
     }

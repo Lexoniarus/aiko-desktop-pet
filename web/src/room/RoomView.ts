@@ -303,12 +303,15 @@ export class RoomView {
     return () => this.followers.delete(callback);
   }
   frameForGame(): void {
+    this.camera.setGame(true);
     const point = this.petPosition;
     if (!point) return;
-    const desired = Math.min(
-      this.host.clientWidth * 0.35,
-      Math.max(160, this.host.clientWidth - 560) * 0.7,
-    );
+    const desired = this.camera.portraitGame
+      ? this.host.clientWidth * 0.5
+      : Math.min(
+          this.host.clientWidth * 0.35,
+          Math.max(160, this.host.clientWidth - 560) * 0.7,
+        );
     const offset =
       (((this.host.clientWidth / 2 - desired) / this.viewport.scale.x) *
         depthScale(0.9)) /

@@ -155,7 +155,10 @@ export class GameProps {
     const right = bounds.x + bounds.width,
       bottom = bounds.y + bounds.height;
     const panel = this.host.querySelector('.room-panel[open]')?.getBoundingClientRect();
-    const limit = panel?.left ?? this.host.clientWidth;
+    const limit =
+      panel && panel.top < bounds.y + bounds.height / 2
+        ? panel.left
+        : this.host.clientWidth;
     const speech = this.host
       .querySelector<HTMLElement>('.room-speech:not([hidden])')
       ?.getBoundingClientRect();

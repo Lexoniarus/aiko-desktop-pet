@@ -1,6 +1,15 @@
 .game-panel {
   width: min(520px, calc((100vw - 32px) / var(--ui-scale, 1)));
 }
+@media (orientation: portrait) {
+  .room-panel.game-panel {
+    left: calc(16px / var(--ui-scale, 1));
+    right: auto;
+    bottom: calc(72px / var(--ui-scale, 1));
+    width: calc((100vw - 32px) / var(--ui-scale, 1));
+    max-height: calc(52dvh / var(--ui-scale, 1));
+  }
+}
 .game-score,
 .game-state {
   text-align: center;

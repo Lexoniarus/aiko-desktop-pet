@@ -62,6 +62,17 @@ export class SpeechBubbles {
     this.element.hidden = !content || !visible;
     this.find.hidden = !content || visible;
     if (!content || !visible) return;
+    const panel = this.host
+      .querySelector<HTMLDialogElement>('.room-panel[open]')
+      ?.getBoundingClientRect();
+    const hand = this.host.querySelector<HTMLElement>('.pet-rps-hand:not([hidden])');
+    const sidePanel = panel && panel.top < bounds.y + bounds.height / 2;
+    const reserve = hand ? hand.getBoundingClientRect().width + 12 : 0;
+    const available =
+      panel && sidePanel ? panel.left - reserve - 24 : this.host.clientWidth - 16;
+    if (!this.element.classList.contains('emote-only'))
+      this.element.style.width = `${Math.max(96, Math.min(280, available / this.scale))}px`;
+    else this.element.style.removeProperty('width');
     const rect = this.element.getBoundingClientRect();
     const center = bounds.x + bounds.width / 2;
     let x = center - rect.width / 2;
@@ -73,9 +84,8 @@ export class SpeechBubbles {
       x = bounds.x + bounds.width + 8;
       if (x + rect.width > this.host.clientWidth - 8) x = bounds.x - rect.width - 8;
     }
-    const panel = this.host
-      .querySelector<HTMLDialogElement>('.room-panel[open]')
-      ?.getBoundingClientRect();
+    if (panel && sidePanel && reserve && x + rect.width + reserve > panel.left - 12)
+      x = panel.left - rect.width - reserve - 12;
     if (
       panel &&
       x + rect.width > panel.left &&
