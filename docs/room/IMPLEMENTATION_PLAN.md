@@ -654,9 +654,11 @@ forking the core or prematurely implementing a native shell.
 | D1: shared room hosted by the desktop application | Later work; pending. |
 | Multi-day acceptance and final review | Pending. |
 
-Implementation is committed locally on the room branch. No room-branch push,
-merge, starter deployment, Dropbox upload or GitHub release has been performed.
-Generated runtime/starter ZIPs and build metadata stay outside Git.
+The room branch is pushed. The owner-approved first-download site and test
+prerelease `room-test-0.1.0-d073fc2958cf` are published; the single installation
+ZIP has been copied to the owner's Dropbox and confirmed downloadable there.
+No merge into main has been performed. Generated program/installation ZIPs stay
+outside source Git; the deployment branch pins only their release metadata.
 
 ## References
 

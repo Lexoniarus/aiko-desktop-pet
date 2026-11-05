@@ -56,3 +56,12 @@ The deployment workflow reads `.room-release.json` only on the dedicated
 GitHub release asset by SHA-256. The release artifact contains the prebuilt site,
 including the runtime; private prototype originals are never required in CI or
 added to source Git. Actual publication is a separate external action.
+
+The owner approved publication on 2026-11-05. The first test installation is
+live at `https://lexoniarus.github.io/aiko-desktop-pet/room/`, backed by the
+prerelease `room-test-0.1.0-d073fc2958cf`. The source build is `d073fc29`;
+deployment branch `deploy/room-pwa` pins its release artifact at `ab4863d7`.
+Both the shared-web check and deployment completed successfully. The actual
+HTTPS installation and subsequent offline reopening were checked with the
+real Python runtime in a headless browser. The Web Clip's system confirmation
+and first-run behavior on the owner's iPad still require device acceptance.
