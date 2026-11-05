@@ -139,7 +139,7 @@ export class RoomView {
     );
     // The v16 reference uses narrow architectural pillars at every panel join,
     // including both ends of the 360-degree loop. Keep art coordinates intact.
-    paintRoomFloor(ctx, wall);
+    paintRoomFloor(ctx, wall, images.living!);
     for (const x of [0, 1800, 3600, 5100]) {
       ctx.fillStyle = '#e7e3f0';
       ctx.strokeStyle = '#a1abc6';
