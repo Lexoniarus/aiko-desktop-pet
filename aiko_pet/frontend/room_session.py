@@ -272,7 +272,7 @@ class RoomSession:
                     time.monotonic(),
                 )
             )
-            self.playback.speak(reaction)
+            self.playback.speak(reaction, require_presentation=False)
             self._next_comment = time.monotonic() + self.mind.rng.uniform(60, 140)
         if now - self._last_saved >= 5:
             self.save()

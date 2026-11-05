@@ -41,6 +41,7 @@ class RoomPlayback:
         self._text = self._emote = ""
         self._text_id = 0
         self._unshown = False
+        self._require_text_ack = True
         self._pending_event: str | None = None
         self._pending_wish: int | None = None
         self._text_presented, self._wish_presented = text_presented, wish_presented
@@ -102,7 +103,7 @@ class RoomPlayback:
         self._emote_id += 1
         self._text, self._emote = text, ""
         self._text_id += 1
-        self._unshown = True
+        self._unshown = self._require_text_ack
 
     def _display_emote(self, emote: str, milliseconds: int) -> None:
         self._text_id += 1
@@ -190,7 +191,9 @@ class RoomPlayback:
         subject: str | None = None,
         progress: Callable[[int], bool] | None = None,
         animate: bool = True,
+        require_presentation: bool = True,
     ) -> None:
+        self._require_text_ack = require_presentation
         self.player.play(
             reaction,
             on_complete=completed,

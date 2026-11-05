@@ -70,7 +70,10 @@ export class ObjectDragController {
         document.body.append(ghost);
       },
       move: (x, y) => {
-        ghost.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%)`;
+        const [width, height] = this.room.portionSize(definition, x, y);
+        ghost.style.width = `${width}px`;
+        ghost.style.height = `${height}px`;
+        ghost.style.transform = `translate(${x}px,${y}px) translate(-50%,${this.room.floorPoint(x, y) ? '-100%' : '-50%'})`;
         ghost.classList.toggle('invalid-drop', !this.dropTarget(x, y));
       },
       finish: (x, y, dragged, cancelled) => {

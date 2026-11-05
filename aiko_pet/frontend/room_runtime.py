@@ -175,6 +175,7 @@ class RoomRuntime:
             else None,
             subject=cue.record_id,
             animate=False,
+            require_presentation=False,
             completed=lambda done: self.interaction.receive_feedback(
                 FeedbackReceipt(cue.key, done),
             ),
@@ -288,10 +289,9 @@ class RoomRuntime:
             return
         instance, position, depth = self._dragged
         item = self.world.get(instance)
-        item = self.world.move_held(instance, position, expected_revision=item.revision)
-        self.world.release(instance, expected_revision=item.revision)
-        item = self.world.get(instance)
-        self.world.land(instance, expected_revision=item.revision)
+        self.world.return_user_held(
+            instance, position.x, expected_revision=item.revision
+        )
         self._depth(instance, depth)
         self._dragged = None
         self.behavior.refresh_after_placement()

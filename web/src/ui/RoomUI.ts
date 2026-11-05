@@ -161,21 +161,37 @@ export class RoomUI {
     if (name === 'credits')
       this.panelBody.append(new CreditsPanel(snapshot, this.room.root).element);
     if (name === 'games') {
-      if (this.game) this.panelBody.append(this.game.element);
-      else
-        for (const [id, label] of [
-          ['rock_paper_scissors', 'Schere–Stein–Papier'],
-          ['tic_tac_toe', 'Tic-Tac-Toe'],
-          ['blackjack', 'Blackjack'],
-          ['connect_four', 'Vier gewinnt'],
-          ['mastermind', 'Mastermind'],
-          ['quiz', 'Quiz'],
-        ])
-          this.panelBody.append(
-            button(label!, () => {
-              void this.command('game_open', { id });
-            }),
-          );
+      const games = [
+        ['rock_paper_scissors', 'Schere–Stein–Papier'],
+        ['tic_tac_toe', 'Tic-Tac-Toe'],
+        ['blackjack', 'Blackjack'],
+        ['connect_four', 'Vier gewinnt'],
+        ['mastermind', 'Mastermind'],
+        ['quiz', 'Quiz'],
+      ];
+      if (this.game) {
+        this.title.textContent =
+          games.find(([id]) => id === this.gameId)?.[1] ?? 'Spielen';
+        this.panelBody.append(this.game.element);
+      } else {
+        const menu = element('div', 'game-menu');
+        const icons: Record<string, string> = {
+          rock_paper_scissors: this.artwork.icon('game_rps', 64),
+          tic_tac_toe: this.artwork.icon('game_tic_tac_toe', 64),
+          blackjack: this.artwork.game('blackjack-table'),
+          connect_four: this.artwork.game('c4-board'),
+          mastermind: this.artwork.game('mm-blue'),
+          quiz: this.artwork.game('quiz-emblem'),
+        };
+        for (const [id, label] of games) {
+          const control = button(label!, () => {
+            void this.command('game_open', { id });
+          });
+          control.prepend(this.artwork.image(icons[id!]!));
+          menu.append(control);
+        }
+        this.panelBody.append(menu);
+      }
     }
     if (!this.panel.open) this.panel.show();
   }

@@ -25,6 +25,7 @@ export interface AssetManifest {
       pivot: [number, number];
       states?: Record<string, string>;
       size?: number;
+      dimensions: [number, number];
     }
   >;
   room: Record<string, string>;
@@ -289,6 +290,13 @@ export class RoomView {
   }
   suppressPetTap(): void {
     this.petTapBlockedUntil = performance.now() + 350;
+  }
+  portionSize(definition: string, x: number, y: number): [number, number] {
+    const dimensions = this.assets.items[definition]?.dimensions ?? [72, 72];
+    const factor =
+      this.viewport.scale.x *
+      depthScale(this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 0.9);
+    return [dimensions[0]! * factor, dimensions[1]! * factor];
   }
   followPet(callback: (bounds: PetScreenBounds) => void): () => void {
     this.followers.add(callback);

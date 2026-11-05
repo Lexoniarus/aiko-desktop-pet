@@ -168,6 +168,9 @@ def runtime_assets() -> dict[str, Any]:
         assert bounds is not None
         character_height = bounds[3] - bounds[1]
     ui = json.loads((ASSET_ROOT / "ui/catalog.json").read_text("utf8"))
+    for item in item_files.values():
+        with Image.open(ROOT / "aiko_pet" / item["file"]) as image:
+            item["dimensions"] = (image.width, image.height)
     return {
         "clips": clips,
         "items": item_files,

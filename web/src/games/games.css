@@ -10,6 +10,22 @@
 .game-score {
   color: #65758a;
 }
+.game-menu {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.game-menu button {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+}
+.game-menu img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
 .game-state {
   min-height: 24px;
   color: #3e4c61;
