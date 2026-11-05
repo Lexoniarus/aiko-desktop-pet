@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 
+from ..pet.animation.ambient import AmbientIntent
 from ..pet.animation.animation import SpriteSelection
 from ..pet.animation.body_orientation import BodyOrientation
 from ..world.room import RoomGeometry, RoomPoint
@@ -59,3 +60,26 @@ class RoomLocomotion:
             self.selection = self.orientation.select(now, choice)
         if self.selection.animation == "idle":
             self.selection = SpriteSelection("rest-neutral")
+
+    def idle(self, now: float, intent: AmbientIntent) -> None:
+        self.selection = self.orientation.select(
+            now,
+            intent.sprite,
+            intent=intent.body,
+            side=intent.side,
+        )
+        if self.selection.animation == "idle":
+            self.selection = SpriteSelection("rest-neutral", intent.sprite.fixed_frame)
+
+    @property
+    def gaze(self) -> tuple[float, float] | None:
+        selection = self.selection
+        sector = selection.fixed_frame
+        if sector is None:
+            return None
+        if selection.animation == "body-look-left":
+            sector = sector + 7 if sector else 0
+        elif selection.animation not in ("look", "body-look-right"):
+            return None
+        angle = sector * math.pi / 8
+        return math.sin(angle), math.cos(angle)
