@@ -69,6 +69,14 @@ release acceptance versus falling, lifting existing portions, cancellation and
 the three-bite meal. Automated evidence is recorded in verification; actual
 Safari performance and visual acceptance remain open.
 
+The following report clarified foreground staging and real profile heads.
+Build **0.1.0-e0fbaec47ab4** moves Aiko/portable items onto the foreground strip,
+keeps furniture behind them and accepts drops over furniture or other portions.
+Existing object IDs survive depth normalization. Recheck these drops, close
+ground pickup, lateral profile walking, quarter-body survey and the window base.
+Forward quarter posing uses existing stance/turn artwork; a full forward step
+cycle is not included in the current asset pack. Device acceptance stays open.
+
 Record version/hash, model, OS and the observed result of each item. Windows or
 headless-browser results do not mark these as passed.
 

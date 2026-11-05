@@ -262,3 +262,50 @@ changed immediately before restart survived. Published RPS accepted exactly one
 touch choice and rendered its hand prop; the app reopened offline with the new
 version and preference, without page errors. No new ZIP/profile or origin change
 was used. Main and the resident desktop process/save were untouched.
+
+## Foreground play area and pose correction (2026-11-05)
+
+The next device report clarified the intended staging: Aiko and portable
+objects should stay in front of the furniture, drops must remain possible at
+the same horizontal position as furniture/other portions, and side walking
+must use the real profile head. Build **0.1.0-e0fbaec47ab4** implements this:
+
+- One shared foreground strip (`1.05`–`1.13` in canonical room depth) replaces
+  the earlier furniture-footprint route graph. The backdrop no longer blocks
+  placement or travel; all furniture is drawn behind Aiko/portable objects.
+  The table sits further back. Old room depths are normalized on load, retaining
+  object IDs, quantities and horizontal positions; subjective identity is not
+  manufactured by this relocation.
+- Ground pickup requires a distance of at most 18 room units. In an isolated
+  real-session probe Aiko walked to a portion and acquired it at 13.83 units;
+  this uses actual World custody and the normal interaction coordinator.
+- Lateral travel selects `body-step-*-profil`, after the existing turn sequence.
+  Survey/following uses the quarter-body look bank. Predominantly forward
+  facing uses the existing quarter stance. The package contains no complete
+  quarter-body forward step cycle, so this is directional posing, not a newly
+  authored forward walking animation. Existing PNG assets are unchanged.
+- Rectangular window brightening is removed. Continuous skirting now preserves
+  original balcony/curtain contours instead of leaving a guessed rectangular
+  opening beside the window.
+
+Final checks ran without visible windows and after implementation: 17 portable
+room tests, 43 existing pure game/reaction/architecture tests, three Node checks,
+production build, Ruff, strict application Mypy and repository Pyright passed.
+The source [web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42049343599)
+passed. No full native GUI suite was rerun.
+
+The browser flow is: room -> drag over visible furniture -> release -> portion
+falls to the foreground -> place another portion on an occupied position ->
+normal pickup/feeding and game use. Headless Chromium/Playwright with actual
+Pyodide/SQLite and isolated storage confirmed drops in front of the kitchen
+unit, fridge, table, desk and bed at their actual horizontal coordinates.
+Overlapping portions were accepted; cancellation retained the same identity.
+Face presentation, ready hands, release handover, the native three-bite meal,
+true profile walking, original RPS hands and portrait Connect Four props passed.
+The final window/room screenshots were inspected. Full browser restart offline
+retained the package, preference and objects. No page errors or unexpected
+console errors occurred; deliberate offline fetching produced the expected
+browser resource error. Browser plugin unavailable; headless fallback retained.
+
+Actual iPad visual/motion acceptance remains open, particularly foreground
+spacing, profile versus quarter posing, and the revised window transition.
