@@ -373,3 +373,15 @@ Playwright fallback retained. Actual iPad animation/motion acceptance stays open
 
 The source [web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42055055538)
 passed for the final runtime source.
+
+Published as
+[`room-test-0.1.0-6515ed307321`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-6515ed307321).
+Deployment commit `ecf61395` pins site SHA-256
+`45bea898ac26408cc62feccb95f6005773706ace711c7a3b80b6bfcb8dbc6e64`;
+the [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42055681589)
+passed. A retained real HTTPS installation upgraded from e0fb to 6515 using the
+existing update controls. Object IDs and an immediately changed setting survived
+restart. The published app showed petting and completed its pose, then accepted
+one RPS touch choice. Offline reload retained the version and preference without
+page errors. No profile/storage recreation was used. Main and the resident
+desktop app/save were untouched.
