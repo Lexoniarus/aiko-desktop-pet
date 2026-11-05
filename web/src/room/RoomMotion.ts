@@ -1,4 +1,4 @@
-import { delta, wrap } from './RoomProjection';
+import { delta, wrap } from './RoomProjection.ts';
 
 type Point = { x: number; depth: number };
 

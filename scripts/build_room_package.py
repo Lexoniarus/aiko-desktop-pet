@@ -16,8 +16,9 @@ import urllib.request
 from functools import cache
 from pathlib import Path
 from typing import Any
-from PIL import Image
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
+
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))

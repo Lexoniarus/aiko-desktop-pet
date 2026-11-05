@@ -182,6 +182,8 @@ class RoomRuntime:
         )
 
     def _can_acquire(self, instance: str) -> bool:
+        if self._dragged is not None and self._dragged[0] == instance:
+            return False
         item = self.world.get(instance)
         if item.position is None:
             return False
@@ -273,16 +275,15 @@ class RoomRuntime:
         if self._dragged is not None or self._offered is not None:
             raise ValueError("Ein Gegenstand wird bereits gehalten.")
 
-        def take() -> None:
-            item = self.world.get(instance)
-            if item.position is None:
-                raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
-            original = item.position
-            self.world.take_resting(instance, expected_revision=revision)
-            self._dragged = instance, original, self.spatial.depth_for(instance)
-            self.behavior.refresh_after_placement()
-
-        self.interaction.interrupt(take)
+        item = self.world.get(instance)
+        if item.position is None:
+            raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
+        original = item.position
+        self.world.take_resting(instance, expected_revision=revision)
+        self._dragged = instance, original, self.spatial.depth_for(instance)
+        if self.interaction.instance_id == instance:
+            self.interaction.interrupt(lambda: None)
+        self.behavior.refresh_after_placement()
 
     def cancel_drag(self) -> None:
         if self._dragged is None:

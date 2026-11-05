@@ -15,12 +15,12 @@ from ...application.room_contracts import json_value
 from ...application.router import ApplicationRouter
 from ...games.contracts import GameId, GameRoundEvent
 from ...games.mastermind import COLORS
+from ...games.playing_cards import Card
 from ...games.quiz import QuizSession
 from ...games.quiz_catalogue import QuizCatalogue
 from ...games.rock_paper_scissors import Move
-from ...games.playing_cards import Card
-from ...pet.mind import PetMind
 from ...pet.animation.expression import event_expression
+from ...pet.mind import PetMind
 from ...pet.routine import context_at
 from ...pet.state import PetState
 from ..room_playback import RoomPlayback
@@ -31,8 +31,8 @@ from .deferred_executor import DeferredSearchExecutor
 from .mastermind_sequence import MastermindSequence
 from .quiz_sequence import QuizSequence
 from .rock_paper_scissors_sequence import RockPaperScissorsSequence
-from .tic_tac_toe_sequence import TicTacToeSequence
 from .room_effects import RoomGameEffects
+from .tic_tac_toe_sequence import TicTacToeSequence
 
 
 class GameSessionCoordinator:
@@ -157,10 +157,7 @@ class GameSessionCoordinator:
     ) -> None:
         assert self.effects is not None
         # Never send a hole-card face to the renderer during its dealing flight.
-        table = self.visible.get("table", {})
-        visible = (
-            kind != "dealer" or index == 0 or table.get("phase") in ("dealer", "result")
-        )
+        visible = kind != "dealer" or index == 0 or self.sequence.dealer_revealed
         self.effects.card(kind, card if visible else None, index, done)
 
     def _set_busy(self, busy: bool) -> None:
