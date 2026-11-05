@@ -309,3 +309,15 @@ browser resource error. Browser plugin unavailable; headless fallback retained.
 
 Actual iPad visual/motion acceptance remains open, particularly foreground
 spacing, profile versus quarter posing, and the revised window transition.
+
+Published as
+[`room-test-0.1.0-e0fbaec47ab4`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-e0fbaec47ab4).
+Deployment commit `7108f7a9` pins site SHA-256
+`8591ad4b85f56ee17dc5e85b4fa1697dbd5cff6992a72d63c2407820a3246056`;
+the [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42049822073)
+passed. The retained real HTTPS profile upgraded from 3351 to e0fb using the
+existing update/restart controls, preserving object IDs and a setting changed
+immediately before restart. Published RPS still accepted exactly one touch
+choice; offline reload retained the new version and preference without page
+errors. No profile/storage recreation was used. Main and the resident desktop
+app/save remain untouched.
