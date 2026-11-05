@@ -18,6 +18,7 @@ ROOM_COMMANDS = frozenset({
     "place",
     "move",
     "object_drag_start",
+    "object_drag_move",
     "object_drag_drop",
     "object_drag_cancel",
     "offer",

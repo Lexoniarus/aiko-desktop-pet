@@ -12,6 +12,7 @@ export interface Clip {
   loop: boolean;
   anchor: [number, number];
   duration: number;
+  family?: string;
 }
 export interface PetScreenBounds {
   x: number;
@@ -27,11 +28,12 @@ export class AikoView extends Container {
   private clipName = '';
   private generation = 0;
   private actionId = -1;
+  private holdFrame: number | null = null;
   private held = new Sprite(Texture.EMPTY);
   private foreground = new Sprite(Texture.EMPTY);
-  private foregroundFrames = new Map<string, Array<Texture | null>>();
   private heldKey = '';
   private heldItem = '';
+  private contact?: { x: number; y: number; at: number };
   private chipHands?: Texture[];
   private disposed = false;
   private frameBounds = new Rectangle();
@@ -67,12 +69,20 @@ export class AikoView extends Container {
     holdFrame?: number | null,
   ): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
+    const fixed = holdFrame ?? null;
     if (
       name === this.clipName &&
-      (actionId === this.actionId || this.clips[name]!.loop)
+      (actionId === this.actionId || this.clips[name]!.loop) &&
+      fixed === this.holdFrame
     )
       return;
+    const previous = this.clips[this.clipName];
+    const phase =
+      previous?.family && previous.family === this.clips[name]?.family
+        ? this.sprite.currentFrame
+        : 0;
     this.actionId = actionId;
+    this.holdFrame = fixed;
     this.clipName = name;
     const generation = ++this.generation;
     const clip = this.clips[name]!;
@@ -90,16 +100,6 @@ export class AikoView extends Container {
         time: clip.frames[index]!.duration,
       }));
       this.loaded.set(name, frames);
-      this.foregroundFrames.set(
-        name,
-        await Promise.all(
-          clip.frames.map((frame) =>
-            frame.foreground
-              ? Assets.load<Texture>(new URL(frame.foreground, this.root).href)
-              : Promise.resolve(null),
-          ),
-        ),
-      );
     }
     if (this.disposed || generation !== this.generation) return;
     this.sprite.textures = timings
@@ -114,16 +114,37 @@ export class AikoView extends Container {
       this.sprite.gotoAndStop(
         Math.max(0, clip.order.length ? clip.order.indexOf(holdFrame) : holdFrame),
       );
-    else this.sprite.gotoAndPlay(0);
+    else this.sprite.gotoAndPlay(Math.min(phase, frames.length - 1));
     this.placeHeld();
     this.updateBounds();
   }
-  async hold(item: string | null, pose = 'closed_world'): Promise<void> {
+  async warmWalking(): Promise<void> {
+    const names = [
+      'body-step-right-04',
+      'body-step-left-12',
+      'body-look-right',
+      'body-look-left',
+    ];
+    await Promise.all(
+      names.flatMap(
+        (name) =>
+          this.clips[name]?.frames.map((frame) =>
+            Assets.load<Texture>(new URL(frame.file, this.root).href),
+          ) ?? [],
+      ),
+    );
+  }
+  async hold(
+    item: string | null,
+    pose = 'closed_world',
+    contact?: { x: number; y: number },
+  ): Promise<void> {
     const definition = item ? this.items[item] : undefined;
     const file = definition?.states?.[pose] ?? definition?.file ?? '';
     if (file === this.heldKey) return;
     this.heldKey = file;
     this.heldItem = item ?? '';
+    this.contact = contact ? { ...contact, at: performance.now() } : undefined;
     if (!definition) {
       this.held.visible = false;
       return;
@@ -150,6 +171,9 @@ export class AikoView extends Container {
         this.placeHeld();
       }
     }
+  }
+  renderHeld(): void {
+    this.placeHeld();
   }
   private updateBounds(): void {
     const clip = this.clips[this.clipName];
@@ -202,9 +226,9 @@ export class AikoView extends Container {
     };
     const anchor = chip ? chipAnchors[index] : clip.frames[index]?.foodAnchor;
     this.held.visible = !!anchor && !!this.heldKey;
-    const foreground = chip
-      ? this.chipHands?.[index - 3]
-      : this.foregroundFrames.get(this.clipName)?.[index];
+    // Desktop FoodOverlay raises ordinary food/books over the character.
+    // Only the game's chip pickup deliberately uses a foreground hand mask.
+    const foreground = chip ? this.chipHands?.[index - 3] : undefined;
     this.foreground.visible = this.held.visible && !!foreground;
     if (foreground) {
       this.foreground.texture = foreground;
@@ -212,10 +236,15 @@ export class AikoView extends Container {
       this.foreground.width = this.sprite.texture.width;
       this.foreground.height = this.sprite.texture.height;
     }
-    if (anchor)
-      this.held.position.set(
-        (anchor[0] - clip.anchor[0]) * 2,
-        (anchor[1] - clip.anchor[1]) * 2,
-      );
+    if (anchor) {
+      let x = (anchor[0] - clip.anchor[0]) * 2;
+      let y = (anchor[1] - clip.anchor[1]) * 2;
+      if (this.contact && this.clipName !== 'put_down') {
+        const blend = Math.min(1, (performance.now() - this.contact.at) / 130);
+        x = this.contact.x * (1 - blend) + x * blend;
+        y = this.contact.y * (1 - blend) + y * blend;
+      }
+      this.held.position.set(x, y);
+    }
   }
 }

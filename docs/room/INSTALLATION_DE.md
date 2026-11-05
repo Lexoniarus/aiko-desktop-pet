@@ -61,6 +61,17 @@ hat offene Abweichungen bei Raumübergängen, Blasen, Drag-and-drop, Bewegung,
 Figurengröße/Tiefe, Möbelüberdeckung und Spieloberflächen gezeigt. Die
 Desktop-Parität ist damit noch nicht abgenommen. Neuere iPadOS-Versionen bleiben
 ebenfalls Zielplattformen.
+Der Korrekturbuild **0.1.0-ff6d7142a7cc** behebt diese gemeldeten Punkte und
+wurde ohne sichtbare Fenster mit Touch-Eingaben, allen sechs Spielen sowie
+Offline-Neustart geprüft. Bitte denselben Ablauf auf dem iPad erneut ansehen;
+die Geräteabnahme bleibt bis dahin offen. Das Update kommt über das vorhandene
+Symbol und die oben beschriebenen Update-Einstellungen.
+Der anschließende Build **0.1.0-3351f6ec864a** ergänzt die vorhandene Gehfolge,
+einen durchgehenden Boden und die Desktop-Abläufe beim Vorhalten, Erkennen,
+Übernehmen und Essen. Zum Anbieten eine Portion kurz vor Aikos Gesicht halten,
+dann zu ihren Händen führen und loslassen. Nicht angenommene Portionen fallen
+auf den Boden und lassen sich dort wieder aufheben. Erneut über dieselben
+Update-Einstellungen laden; die normale Figurengröße bleibt erhalten.
 Die vollständige Abnahmeliste steht im Repository unter
 `docs/room/IPAD_ACCEPTANCE.md`.
 

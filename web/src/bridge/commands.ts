@@ -12,6 +12,7 @@ export const roomCommands = [
   'move',
   'object_drag_cancel',
   'object_drag_drop',
+  'object_drag_move',
   'object_drag_start',
   'offer',
   'place',

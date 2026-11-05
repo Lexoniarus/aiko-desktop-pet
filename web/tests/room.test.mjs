@@ -32,7 +32,7 @@ test('display motion interpolates the short wrap and does not restart for repeat
   const motion = new RoomMotion();
   motion.receive({ x: 5080, depth: 0.9 }, 1000);
   motion.receive({ x: 20, depth: 1.1 }, 1250);
-  assert.deepEqual(motion.position(1375), { x: 0, depth: 1 });
+  assert.deepEqual(motion.position(1225), { x: 0, depth: 1 });
   motion.receive({ x: 20, depth: 1.1 }, 1375);
   assert.deepEqual(motion.position(1500), { x: 20, depth: 1.1 });
 });

@@ -179,3 +179,74 @@ The source [web check](https://github.com/Lexoniarus/aiko-desktop-pet/actions/ru
 passed. The browser evidence establishes the exercised interactions, not Safari
 frame rate or final visual acceptance on the iPad. The owner must recheck the
 reported findings on the correction build; the device checklist remains open.
+
+### Published correction and retained-save upgrade
+
+The correction is live at the existing HTTPS origin/path. The
+[`room-test-0.1.0-ff6d7142a7cc` release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-ff6d7142a7cc)
+contains the reviewed site artifact; deployment commit `fcf579ca` pins its
+SHA-256 `a1718030866466bad02e90cd76855f4ffa10509b1889be3b5363a6c87dd9e3eb`.
+The [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42037507463)
+completed successfully.
+
+A separate existing browser profile with the actual published a8 package and
+durable state upgraded through the real HTTPS app's **Jetzt neu starten** flow.
+The old runtime remained active while the complete correction package staged.
+Restart retained the same World object identity and the zodiac preference
+changed immediately before activation. The installed version was confirmed as
+`0.1.0-ff6d7142a7cc`. A touch RPS choice produced exactly one game command,
+revealed the original hand artwork and kept hand/commentary separate. Offline
+reload reopened the published app with that preference and version, without
+page errors. The existing Dropbox ZIP/profile needs no replacement. These are
+browser results, not completion of the owner's actual-iPad acceptance.
+
+## Walking, floor and feeding follow-up (2026-11-05)
+
+The owner confirmed a clear improvement and acceptable normal character size,
+but reported remaining floor joins, intermittent motion and feeding differences.
+Runtime **0.1.0-3351f6ec864a**, source `3351f6ec864a`, addresses these findings:
+
+- `RoomLocomotion` selects the existing body/step and compatible head banks,
+  including quarter poses before travel. Step speed follows the native
+  16-logical-pixel/620-ms cycle at room scale. Running clips are no longer used.
+  Compatible walking variants retain their cycle phase; a short display buffer
+  interpolates consecutive snapshots instead of restarting a movement ramp.
+- All wall panels share one continuous floor and aligned skirting lines, with
+  the balcony/curtain base preserved. Original PNG files are unchanged.
+- A real World-owned user-held portion now exists during a drag. Finite move
+  commands feed actual face-relative presentation into the existing perception,
+  offer assessment and release-handover owners. Holding near the face can
+  identify food before release; ready hands do not grant custody or intake.
+- Unaccepted releases use the existing World fall/bounce/settle lifecycle,
+  rather than immediate scripted landing. Cancel returns the same existing
+  portion to its original location; a cancelled new portion supplies no food.
+- Hand contact blends to the authored anchor over the same 130 ms used on
+  desktop. Ordinary food stays in front of the character as in FoodOverlay;
+  only the Connect Four pickup uses its deliberate hand mask. The original
+  85-phase, three-bite meal and nutrition owner remain unchanged.
+
+Checks ran only after implementation and without visible windows. Fifteen
+portable room tests passed, including two new regressions for airborne release
+and pre-release identification/handover. Forty-three existing pure
+game/reaction/architecture tests and three Node checks passed. Production
+starter/runtime/Service Worker build, Ruff and strict application Mypy passed;
+repository Pyright reported zero errors/warnings. The native GUI suite was not
+rerun. The source [web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42045839035)
+passed.
+
+The target browser flow is: installed room -> touch-drag food into the air ->
+release and fall -> pick up/cancel the same item -> hold another portion near
+Aiko's face -> lower to her hands -> release -> original meal. Headless
+Playwright exercised this with the actual production ZIP, Python/SQLite and
+isolated storage; no synthetic offer command or pet-state mutation was used.
+The Browser plugin was unavailable. Independent camera pans and native walking
+were checked, including the absence of running clips and the observed step
+speed. Screenshots cover airborne food, face presentation, ready hands, meal,
+walking and the panorama joins. RPS hand/speech and portrait Connect Four
+pickup/flight still worked. Full browser close/relaunch offline retained the
+package, preference and item identity. No page errors or unexpected console
+errors occurred; offline fetch failure was the expected browser resource error.
+
+These checks do not establish Safari frame rate or close the actual-device
+findings. Recheck floor transitions, movement, positioning and feeding on the
+owner's iPad using this version. Normal character size was retained.

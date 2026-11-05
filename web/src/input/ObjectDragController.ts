@@ -1,8 +1,7 @@
 import type { FederatedPointerEvent } from 'pixi.js';
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import type { RoomCommandName } from '../bridge/commands';
-import type { RoomView } from '../room/RoomView';
-import type { Command } from '../ui/dom';
+import type { DragPlacement, RoomView } from '../room/RoomView';
 import { PointerDrag } from './PointerDrag';
 import type { DragPointer } from './PointerDrag';
 
@@ -13,7 +12,6 @@ export class ObjectDragController {
   private settling = false;
   constructor(
     private room: RoomView,
-    private command: Command,
     private request: (
       name: RoomCommandName,
       args?: Record<string, unknown>,
@@ -44,6 +42,32 @@ export class ObjectDragController {
   ): void {
     if (this.settling) return;
     let reservation = Promise.resolve(true);
+    let depth = item
+      ? this.room.objectDepth(item.instance_id)
+      : (this.room.petPosition?.depth ?? 0.9);
+    let pending: DragPlacement | undefined;
+    let sending: Promise<void> | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let finished = false;
+    const send = (): void => {
+      if (sending || timer || !pending || finished) return;
+      timer = setTimeout(() => {
+        timer = undefined;
+        sending = (async () => {
+          if (!(await reservation)) return;
+          if (pending && !finished) {
+            const pose = pending;
+            pending = undefined;
+            await this.request('object_drag_move', { ...pose });
+          }
+        })()
+          .catch(this.onError)
+          .finally(() => {
+            sending = undefined;
+            send();
+          });
+      }, 75);
+    };
     const ghost = document.createElement('img');
     ghost.className = 'drag-portion';
     ghost.draggable = false;
@@ -54,51 +78,63 @@ export class ObjectDragController {
       start: () => {
         this.onDragBegin();
         this.room.suppressPetTap();
-        if (item) {
-          this.room.draggingInstance = item.instance_id;
-          reservation = this.request('object_drag_start', {
-            instance: item.instance_id,
-            revision: item.revision,
-          }).then(
-            () => true,
-            (error) => {
-              this.onError(error);
-              return false;
-            },
-          );
-        }
+        this.room.dragging = true;
+        this.room.draggingInstance = item?.instance_id;
+        reservation = this.request(
+          'object_drag_start',
+          item
+            ? {
+                instance: item.instance_id,
+                revision: item.revision,
+              }
+            : { definition },
+        ).then(
+          () => true,
+          (error) => {
+            this.onError(error);
+            return false;
+          },
+        );
         document.body.append(ghost);
       },
       move: (x, y) => {
-        const [width, height] = this.room.portionSize(definition, x, y);
+        const target = this.dropTarget(x, y, depth, definition);
+        depth = target.depth;
+        pending = target;
+        send();
+        const [width, height] = this.room.portionSizeAt(definition, depth);
         ghost.style.width = `${width}px`;
         ghost.style.height = `${height}px`;
-        ghost.style.transform = `translate(${x}px,${y}px) translate(-50%,${this.room.floorPoint(x, y) ? '-100%' : '-50%'})`;
-        ghost.classList.toggle('invalid-drop', !this.dropTarget(x, y));
+        ghost.style.transform = `translate(${x}px,${y}px) translate(${(-100 * asset!.pivot[0]) / asset!.dimensions[0]}%,${(-100 * asset!.pivot[1]) / asset!.dimensions[1]}%)`;
+        ghost.classList.toggle('invalid-drop', !target.inside);
+        this.room.dragVisual = { x, y };
       },
       finish: (x, y, dragged, cancelled) => {
-        ghost.remove();
+        finished = true;
+        clearTimeout(timer);
+        pending = undefined;
         this.room.camera.hold(false);
         if (dragged) this.room.suppressPetTap();
         this.settling = true;
         void (async () => {
           try {
             if (!(await reservation)) return;
-            const target = !cancelled && dragged ? this.dropTarget(x, y) : undefined;
-            if (item && dragged) {
-              if (target) await this.request('object_drag_drop', target);
-              else await this.request('object_drag_cancel');
-            } else if (target)
-              await this.command(target.offer ? 'offer' : 'place', {
-                definition,
-                x: target.x,
-                depth: target.depth,
-              });
+            await sending;
+            if (!dragged) return;
+            const target = this.dropTarget(x, y, depth, definition);
+            if (cancelled || !target.inside) await this.request('object_drag_cancel');
+            else {
+              await this.request('object_drag_move', { ...target });
+              await this.request('object_drag_drop', { ...target });
+            }
           } catch (error) {
-            if (item) await this.request('object_drag_cancel').catch(() => {});
+            if (dragged) await this.request('object_drag_cancel').catch(() => {});
             this.onError(error);
           } finally {
             this.room.draggingInstance = undefined;
+            this.room.dragging = false;
+            this.room.dragVisual = undefined;
+            ghost.remove();
             this.settling = false;
           }
         })();
@@ -109,17 +145,14 @@ export class ObjectDragController {
   private dropTarget(
     x: number,
     y: number,
-  ): { x: number; depth: number; offer: boolean } | undefined {
+    depth: number,
+    definition: string,
+  ): DragPlacement {
     const overlay = document
       .elementFromPoint(x, y)
       ?.closest('button,input,select,dialog,a');
-    if (overlay) return;
-    if (this.room.petContains(x, y)) {
-      const pet = this.room.petPosition!;
-      return { ...pet, offer: true };
-    }
-    const point = this.room.floorPoint(x, y);
-    return point ? { ...point, offer: false } : undefined;
+    const point = this.room.dragPoint(x, y, depth, definition);
+    return overlay ? { ...point, inside: false, offer: false } : point;
   }
   cancel(): void {
     this.gesture.cancel();

@@ -133,6 +133,7 @@ def runtime_assets() -> dict[str, Any]:
             loop=clip.loop,
             anchor=clip.anchor,
             duration=clip.duration_seconds,
+            family=clip.family,
         )
     items = load_item_catalog()
     item_files = {

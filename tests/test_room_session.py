@@ -55,9 +55,11 @@ class RoomSessionTests(unittest.TestCase):
     def test_accepted_call_moves_the_world_and_persists_across_reopen(self) -> None:
         before = self.endpoint.session.room.position
         self.command("call", x=900, depth=1.2)
+        snapshot = self.command("snapshot")["snapshot"]
         for _ in range(4):
             self.wall += 0.25
-            self.command("tick")
+            snapshot = self.command("tick")["snapshot"]
+        self.assertTrue(snapshot["animation"].startswith("body-step-right-"))
         position = self.endpoint.session.room.position
         self.assertLess(
             RoomGeometry.distance(position, RoomPoint(900, 1.2)),
@@ -218,6 +220,14 @@ class RoomSessionTests(unittest.TestCase):
         ]["objects"][0]
         self.assertEqual(moved["instance_id"], item["instance_id"])
         self.assertEqual(moved["position"]["x"], 1100)
+        self.assertEqual(moved["state"], "falling")
+        self.advance_until(
+            lambda: self.endpoint.session.room.world.get(
+                item["instance_id"]
+            ).state.value
+            == "resting"
+        )
+        moved = self.command("snapshot")["snapshot"]["objects"][0]
         self.command(
             "object_drag_start",
             instance=moved["instance_id"],
@@ -227,6 +237,87 @@ class RoomSessionTests(unittest.TestCase):
         reopened = create_browser_session(str(self.path)).session.room
         self.assertEqual(reopened.world.get(item["instance_id"]).state.value, "resting")
         self.assertEqual(reopened.spatial.depth_for(item["instance_id"]), 1.1)
+
+    def test_air_release_uses_world_fall_and_cancel_creates_no_supply(self) -> None:
+        self.command("object_drag_start", definition="apple")
+        self.command("object_drag_move", x=950, depth=1.2, height=280, inside=True)
+        released = self.command(
+            "object_drag_drop", x=950, depth=1.2, height=280, offer=False
+        )["snapshot"]["objects"][0]
+        self.assertEqual(
+            (released["state"], released["position"]["height"]), ("falling", 280)
+        )
+        self.wall += 0.1
+        falling = self.command("tick")["snapshot"]["objects"][0]
+        self.assertGreater(falling["position"]["height"], 0)
+        self.assertLess(falling["position"]["height"], 280)
+        self.advance_until(
+            lambda: self.endpoint.session.room.world.get(
+                released["instance_id"]
+            ).state.value
+            == "resting"
+        )
+        self.command("object_drag_start", definition="onigiri")
+        self.command("object_drag_cancel")
+        objects = self.command("snapshot")["snapshot"]["objects"]
+        self.assertEqual(
+            [
+                o["instance_id"]
+                for o in objects
+                if o["state"] not in ("removed", "consumed")
+            ],
+            [released["instance_id"]],
+        )
+
+    def test_face_presentation_recognizes_before_release_and_eats_only_after_handover(
+        self,
+    ) -> None:
+        session = self.endpoint.session
+        session.state.restore_checkpoint(
+            replace(session.state.capture_checkpoint(), satiety=30)
+        )
+        self.command("settings", spontaneous_talk=False, auto_walk=False)
+        self.command("object_drag_start", definition="onigiri")
+        token = session.room.drag_instance
+        assert token is not None
+        self.command(
+            "object_drag_move",
+            x=600,
+            depth=0.9,
+            height=240,
+            inside=True,
+            face_x=0,
+            face_y=0,
+        )
+        self.advance_until(
+            lambda: bool(
+                (known := session.room.awareness.known_instance(token)) is not None
+                and known.recognized
+            )
+        )
+        self.assertEqual(session.room.world.get(token).state.value, "user_held")
+        self.assertLess(session.state.satiety, 31)
+        self.command(
+            "object_drag_move",
+            x=600,
+            depth=0.9,
+            height=100,
+            inside=True,
+            face_x=0,
+            face_y=0.28,
+        )
+        self.wall += 0.1
+        ready = self.command("tick")["snapshot"]
+        self.assertTrue(ready["drag"]["ready"])
+        self.assertEqual(
+            (ready["animation"], ready["animation_hold_frame"]), ("pick_up", 7)
+        )
+        self.command("object_drag_drop", x=600, depth=0.9, height=100, offer=True)
+        self.assertEqual(session.room.world.get(token).state.value, "pet_held")
+        self.advance_until(
+            lambda: session.room.world.get(token).state.value == "consumed"
+        )
+        self.assertGreater(session.state.satiety, 30)
 
     def test_room_effects_never_expose_a_dealt_hole_card(self) -> None:
         self.command("game_open", id="blackjack")

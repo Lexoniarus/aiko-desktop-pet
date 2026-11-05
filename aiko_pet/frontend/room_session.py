@@ -340,11 +340,25 @@ class RoomSession:
             else:
                 self.room.offer(str(args["definition"]))
         elif name == "object_drag_start":
-            self.room.begin_drag(str(args["instance"]), int(args["revision"]))
+            self.room.begin_drag(
+                str(args["instance"]) if "instance" in args else None,
+                int(args.get("revision", 0)),
+                definition=str(args["definition"]) if "definition" in args else None,
+            )
+        elif name == "object_drag_move":
+            self.room.move_drag(
+                RoomPoint(float(args["x"]) % 5100, float(args["depth"])),
+                float(args["height"]),
+                inside=args.get("inside") is True,
+                face=(float(args["face_x"]), float(args["face_y"]))
+                if "face_x" in args and "face_y" in args
+                else None,
+            )
         elif name == "object_drag_drop":
             self.room.drop_drag(
                 RoomPoint(float(args["x"]) % 5100, float(args["depth"])),
                 offer=args.get("offer") is True,
+                height=float(args.get("height", 0)),
             )
         elif name == "object_drag_cancel":
             self.room.cancel_drag()
@@ -410,6 +424,7 @@ class RoomSession:
             "suspend",
             "resume",
             "forecast",
+            "object_drag_move",
         ):
             self.save()
 
@@ -429,16 +444,18 @@ class RoomSession:
             "room": json_value(world.room),
             "objects": json_value(world.objects),
             "speech": json_value(self.playback.snapshot()),
+            "drag": {
+                "instance_id": self.room.drag_instance,
+                "ready": self.room.drag_ready,
+            },
             "animation": (
                 "sleep"
                 if self.state.sleeping
-                else "running-right"
-                if self.room.moving and self.room.facing > 0
-                else "running-left"
-                if self.room.moving
+                else "pick_up"
+                if self.room.drag_ready and self.playback.animation == "idle"
                 else EXPRESSION_CLIPS[self.playback.expression]
-                if self.playback.expression is not None
-                else "rest-neutral"
+                if self.playback.expression is not None and not self.room.moving
+                else self.room.locomotion.selection.animation
                 if self.playback.animation == "idle"
                 else self.playback.animation
             ),
@@ -453,7 +470,15 @@ class RoomSession:
             "held_pose": self.room.held_pose,
             "animation_id": self.playback.action_id,
             "animation_timings": self.playback.action_timings,
-            "animation_hold_frame": self.playback.hold_frame,
+            "animation_hold_frame": (
+                7
+                if self.room.drag_ready and self.playback.animation == "idle"
+                else self.room.locomotion.selection.fixed_frame
+                if self.playback.animation == "idle"
+                and self.playback.expression is None
+                and not self.state.sleeping
+                else self.playback.hold_frame
+            ),
             "social": json_value(self.content.runtime.snapshot())
             if self.content
             else None,

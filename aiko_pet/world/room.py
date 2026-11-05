@@ -85,11 +85,13 @@ class RoomGeometry:
         return math.hypot(cls.delta(start.x, end.x), (end.depth - start.depth) * 475)
 
     @classmethod
-    def approach(cls, start: RoomPoint, end: RoomPoint, seconds: float) -> RoomPoint:
+    def approach(
+        cls, start: RoomPoint, end: RoomPoint, seconds: float, *, speed: float = 310,
+    ) -> RoomPoint:
         if not math.isfinite(seconds) or seconds < 0:
             raise ValueError("Invalid movement interval")
         start, end = cls.accessible(start), cls.accessible(end)
-        budget = seconds * 310
+        budget = seconds * speed
         for point in cls.route(start, end):
             distance = cls.distance(start, point)
             fraction = min(1.0, budget / max(0.0001, distance))
