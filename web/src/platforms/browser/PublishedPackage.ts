@@ -33,6 +33,7 @@ export function validatePublishedPackage(value: unknown): PublishedPackage {
 export async function publishedPackage(): Promise<PublishedPackage | undefined> {
   const response = await fetch(new URL('install.json', new URL('./', location.href)), {
     cache: 'no-store',
+    signal: AbortSignal.timeout(10000),
   });
   if (response.status === 404) return undefined;
   if (!response.ok) throw new Error('Die Einrichtung konnte nicht geladen werden.');
@@ -52,6 +53,7 @@ export async function publishedPackage(): Promise<PublishedPackage | undefined> 
 export async function installPublishedPackage(
   item: PublishedPackage,
   report: (message: string) => void,
+  destination: 'active' | 'pending' = 'active',
 ): Promise<InstalledPackage> {
   const address = new URL(item.package, new URL('./', location.href));
   report('Aiko wird heruntergeladen. Bitte für die erste Einrichtung online bleiben …');
@@ -59,6 +61,7 @@ export async function installPublishedPackage(
     credentials: 'omit',
     redirect: 'error',
     cache: 'no-store',
+    signal: AbortSignal.timeout(10 * 60 * 1000),
   });
   if (!response.ok || !response.body)
     throw new Error('Der Aiko-Download ist nicht erreichbar.');
@@ -68,5 +71,10 @@ export async function installPublishedPackage(
     throw new Error('Der Aiko-Download ist unvollständig bereitgestellt.');
   }
   const stream = response.body;
-  return importPackage({ size: item.size, stream: () => stream }, report, item);
+  return importPackage(
+    { size: item.size, stream: () => stream },
+    report,
+    item,
+    destination,
+  );
 }

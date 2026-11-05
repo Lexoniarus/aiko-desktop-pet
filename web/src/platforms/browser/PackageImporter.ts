@@ -1,5 +1,10 @@
 import { Unzip, UnzipInflate } from 'fflate';
-import { activatePackage, packageCachePrefix, packageRoot } from './PackageStore.ts';
+import {
+  activatePackage,
+  stagePackage,
+  packageCachePrefix,
+  packageRoot,
+} from './PackageStore.ts';
 import type { InstalledPackage } from './PackageStore';
 
 export interface PackageManifest {
@@ -79,6 +84,7 @@ export async function importPackage(
   file: PackageSource,
   report: (message: string) => void,
   expectation?: PackageExpectation,
+  destination: 'active' | 'pending' = 'active',
 ): Promise<InstalledPackage> {
   if (
     !Number.isSafeInteger(file.size) ||
@@ -214,7 +220,7 @@ export async function importPackage(
       } catch {
         /* Safari may deny persistence; ordinary local storage remains. */
       }
-      await activatePackage(installed);
+      await (destination === 'pending' ? stagePackage : activatePackage)(installed);
       return installed;
     } catch (error) {
       await reader?.cancel().catch(() => {});
