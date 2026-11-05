@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Literal
+
+SelectorCloseReason = Literal["automatic", "navigation", "explicit", "shutdown"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,4 +18,7 @@ class HoverActions:
     save_position: Callable[[int | None, int | None], None]
     move_speech: Callable[[], None]
     restore_stack: Callable[[], bool]
+    pin_wish: Callable[[int, bool], None] = lambda _id, _pinned: None
+    dismiss_wish: Callable[[int], None] = lambda _id: None
     can_interact: Callable[[str], bool] = lambda _action: True
+    can_place_item: Callable[[], bool] = lambda: True

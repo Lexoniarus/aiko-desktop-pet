@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from ..pet.balance import BALANCE
+from ..pet.care_result import CareResult
+from ..pet.moodlet_catalog import MOODLET_CATALOG
+from ..pet.moodlets import FoodMonotonyParameters, MoodletId
 from ..pet.state import PetState
 
 
@@ -22,3 +25,19 @@ def choose_care_request(state: PetState) -> str | None:
     return (
         event if value <= BALANCE.integer("care_requests", "need_threshold") else None
     )
+
+
+def food_variety_event(state: PetState, result: CareResult) -> str | None:
+    """A committed personal meal may voice a request, without claiming delivery."""
+    if not result.food_consumed:
+        return None
+    memory = state.moodlets.interactions.food
+    if memory.request_pending:
+        return "feed_variety_request"
+    parameters = MOODLET_CATALOG.definitions[MoodletId.FOOD_MONOTONY].parameters
+    assert isinstance(parameters, FoodMonotonyParameters)
+    if (memory.requested_at is not None and memory.ignored_portions
+            and state.lived_seconds - memory.requested_at
+            < parameters.request_lifetime_seconds):
+        return "feed_variety_reminder"
+    return None

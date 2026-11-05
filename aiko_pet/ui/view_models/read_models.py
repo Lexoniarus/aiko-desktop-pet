@@ -6,17 +6,16 @@ actual language and geometry belong to the presentation boundary.
 
 from __future__ import annotations
 
-import time
 from typing import Callable
 
 from ...application.object_status import ObjectStatusSnapshot
 from ...application.ports import ComputerReadings
 from ...application.read_snapshot import snapshot_pet
 from ...application.settings import PetSettings
-from ...pet.mind import PetMind
 from ...pet.mind.adaptive import AdaptiveRoutine
 from ...pet.routine import TimeContext
 from ...pet.state import PetState
+from ...pet.wishes import WishContext
 from ...telemetry import ComputerSnapshot
 from .contracts import (
     HoverAnchor,
@@ -31,38 +30,45 @@ class DesktopPresentation:
     """Map domain snapshots to the three desktop windows on the owner thread."""
 
     def __init__(
-        self, state: PetState, settings: PetSettings, mind: PetMind,
-        adaptive: AdaptiveRoutine, monitor: ComputerReadings,
-        *, context: Callable[[], TimeContext],
+        self,
+        state: PetState,
+        settings: PetSettings,
+        adaptive: AdaptiveRoutine,
+        monitor: ComputerReadings,
+        *,
+        context: Callable[[], TimeContext],
         sprite_size: Callable[[], tuple[int, int]],
+        wish_context: Callable[[], WishContext],
         object_status: Callable[[], ObjectStatusSnapshot] = ObjectStatusSnapshot,
     ) -> None:
         self._state = state
         self._settings = settings
-        self._mind = mind
         self._adaptive = adaptive
         self._monitor = monitor
         self._context = context
         self._sprite_size = sprite_size
         self._object_status = object_status
+        self._wish_context = wish_context
 
     def hover(self) -> HoverSnapshot:
         return project_hover(
-            snapshot_pet(self._state),
-            self._context(), self._monitor.latest(),
+            snapshot_pet(self._state, wish_context=self._wish_context()),
+            self._context(),
+            self._monitor.latest(),
             observe_computer=self._settings.observe_computer,
         )
 
     def status(self) -> StatusSnapshot:
         computer = (
             self._monitor.latest()
-            if self._settings.observe_computer else ComputerSnapshot()
+            if self._settings.observe_computer
+            else ComputerSnapshot()
         )
-        now = time.monotonic()
         return project_status(
-            snapshot_pet(self._state), self._context(),
-            self._mind.emotion(self._state, now),
-            self._adaptive.current, computer,
+            snapshot_pet(self._state, wish_context=self._wish_context()),
+            self._context(),
+            self._adaptive.current,
+            computer,
             observe_computer=self._settings.observe_computer,
             objects=self._object_status(),
         )
@@ -73,8 +79,10 @@ class DesktopPresentation:
     def anchor(self) -> HoverAnchor:
         width, height = self._sprite_size()
         return HoverAnchor(
-            x=self._settings.x or 0, y=self._settings.y or 0,
-            width=width, height=height,
+            x=self._settings.x or 0,
+            y=self._settings.y or 0,
+            width=width,
+            height=height,
             pinned_x=self._settings.toolbar_x,
             pinned_y=self._settings.toolbar_y,
         )

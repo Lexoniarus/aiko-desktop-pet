@@ -22,3 +22,10 @@ class FakeScheduler:
     def fire(self, token: str) -> None:
         _, callback = self.callbacks.pop(token)
         callback()
+
+    def drain(self, maximum_callbacks: int = 256) -> None:
+        for _ in range(maximum_callbacks):
+            if not self.callbacks:
+                return
+            self.fire(next(iter(self.callbacks)))
+        raise RuntimeError("Callback sequence did not finish within its bound")

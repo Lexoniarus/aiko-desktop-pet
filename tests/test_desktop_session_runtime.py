@@ -62,6 +62,22 @@ class DesktopSessionRuntimeTests(unittest.TestCase):
         )
         self.assertEqual(self.events, ["context"])
 
+    def test_only_measured_suspension_is_reported_as_unavailability(self) -> None:
+        self.runtime._uptime_pair = (1000, 500)
+        with patch("aiko_pet.desktop.session_runtime.elapsed_uptime_seconds",
+                   return_value=29801), patch(
+                       "aiko_pet.desktop.session_runtime.active_uptime_seconds",
+                       return_value=501):
+            self.runtime.advance_lifecycle(29801, 1_781_003_600)
+        self.activity.note_unavailable.assert_called_once_with(28800)
+        self.activity.note_unavailable.reset_mock()
+        with patch("aiko_pet.desktop.session_runtime.elapsed_uptime_seconds",
+                   return_value=29861), patch(
+                       "aiko_pet.desktop.session_runtime.active_uptime_seconds",
+                       return_value=561):
+            self.runtime.advance_lifecycle(29861, 1_781_003_660)
+        self.activity.note_unavailable.assert_not_called()
+
     def test_refresh_keeps_ui_order_and_autosave_cadence(self) -> None:
         self.persistence.due.return_value = True
         self.runtime.refresh(100.0)

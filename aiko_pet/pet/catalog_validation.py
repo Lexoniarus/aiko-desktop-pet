@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import json
 import math
+from enum import Enum
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, TypeVar
+
+EnumValue = TypeVar("EnumValue", bound=Enum)
 
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -31,14 +34,17 @@ def _finite_float(value: str) -> float:
 def load_json(path: Path) -> Any:
     """Report the resource path and reject silent key/number corruption."""
     try:
-        return json.loads(
-            path.read_text(encoding="utf-8"),
-            object_pairs_hook=_unique_object,
-            parse_constant=_reject_constant,
-            parse_float=_finite_float,
-        )
+        return decode_json(path.read_text(encoding="utf-8"))
     except (ValueError, OSError, UnicodeError) as error:
         raise ValueError(f"{path}: {error}") from error
+
+
+def decode_json(text: str) -> Any:
+    """Decode already-read JSON without silently replacing keys or numbers."""
+    return json.loads(
+        text, object_pairs_hook=_unique_object,
+        parse_constant=_reject_constant, parse_float=_finite_float,
+    )
 
 
 def object_fields(
@@ -59,3 +65,32 @@ def object_fields(
             f"unknown fields {sorted(unknown)}"
         )
     return raw
+
+
+def integer_value(
+    raw: Any, *, minimum: int, maximum: int, context: str,
+) -> int:
+    """Keep booleans and fractional values out of counts and elapsed seconds."""
+    if type(raw) is not int or not minimum <= raw <= maximum:
+        raise ValueError(f"{context}: expected integer in {minimum}..{maximum}")
+    return int(raw)
+
+
+def number_value(
+    raw: Any, *, minimum: float, maximum: float, context: str,
+) -> float:
+    if (
+        type(raw) not in (int, float) or not minimum <= raw <= maximum
+        or not math.isfinite(raw)
+    ):
+        raise ValueError(f"{context}: expected number in {minimum}..{maximum}")
+    return float(raw)
+
+
+def enum_value(raw: Any, kind: type[EnumValue], *, context: str) -> EnumValue:
+    if not isinstance(raw, str):
+        raise ValueError(f"{context}: expected a {kind.__name__} string")
+    try:
+        return kind(raw)
+    except ValueError as error:
+        raise ValueError(f"{context}: unknown {kind.__name__} {raw!r}") from error

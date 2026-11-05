@@ -1,0 +1,717 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-affection-welcome-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln hat sich angenehm angefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem guten Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-welcome-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln hat mir gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Ich denke noch gern an diesen ruhigen Moment zurück."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-welcome-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, das Streicheln war schön."
+        },
+        {
+          "kind": "text",
+          "content": "So eine liebe Nähe bleibt mir noch ein bisschen im Herzen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-welcome-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln hat sich richtig schön angefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir offen sagen, dass mir diese Nähe noch ein gutes Gefühl gibt."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-welcome-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln hat sich schön angefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "Dieser Moment bleibt schön, auch wenn ich gerade mehr Ruhe brauche."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-welcome-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln hat mir gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Diese schöne Nähe bleibt mir im Herzen. Auch wenn gerade noch anderes in mir los ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte mir gewünscht, gestreichelt zu werden."
+        },
+        {
+          "kind": "text",
+          "content": "Das ist passiert und hat sich angenehm angefühlt. Ein wenig freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln war genau die Nähe, die ich mir gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich sie bekommen habe, tut mir noch gut."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, genau dieses Streicheln hatte ich mir gewünscht."
+        },
+        {
+          "kind": "text",
+          "content": "Das war schön. Die kleine Wärme davon ist immer noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte gestreichelt werden, und das ist auch passiert."
+        },
+        {
+          "kind": "text",
+          "content": "Diese Nähe hat mir gutgetan. Ich mag dir zeigen, wie sehr mich das noch freut."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln war die Nähe, die ich mir gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich noch darüber. Gerade nur etwas stiller."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-wanted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Genau diese Nähe beim Streicheln hatte ich mir gewünscht."
+        },
+        {
+          "kind": "text",
+          "content": "Diese Nähe war schön. Gerade fühle ich aber nicht nur diese kleine Wärme."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte mir gewünscht, gestreichelt zu werden, und du hast mich gestreichelt."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat sich angenehm angefühlt. Danke, darüber freue ich mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dein Streicheln war genau die Nähe, die ich mir gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Danke. Von diesem schönen Moment ist noch ein bisschen Wärme da."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich gestreichelt. Genau diese Nähe hatte ich mir gewünscht."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, das war schön. Diese kleine Wärme bleibt mir noch im Herzen."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte deine Nähe beim Streicheln, und du hast sie mir gegeben."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, das war schön bei dir. Wie sehr mich das noch freut, sage ich dir gern direkt."
+        },
+        {
+          "kind": "emote",
+          "content": "heart"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte mir gewünscht, gestreichelt zu werden, und du hast mich gestreichelt."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mir gutgetan. Gerade freue ich mich darüber eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-affection-personal-wish-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "affection"
+          ],
+          "sleeping": false,
+          "conversation_wishes": [
+            "pet"
+          ],
+          "conversation_causes": [
+            "wish_fulfilled"
+          ],
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich gestreichelt, als ich mir diese Nähe gewünscht hatte."
+        },
+        {
+          "kind": "text",
+          "content": "Das war schön mit dir. Dieses gute Gefühl bleibt, auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    }
+  ]
+}

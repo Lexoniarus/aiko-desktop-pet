@@ -1,0 +1,3488 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "plaudern-negative-poking-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das viele Stupsen hat sich unangenehm angefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem Unbehagen ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das wiederholte Stupsen war mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Das unangenehme Gefühl davon ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, dieses ständige Stupsen war wirklich zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Das hängt mir noch nach. Ich möchte mich dabei nicht einfach zusammenreißen müssen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das viele Stupsen hat mir nicht gutgetan."
+        },
+        {
+          "kind": "text",
+          "content": "Ich sage dir direkt: Dieses unangenehme Gefühl ist noch da, auch wenn wir uns nah sind."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das viele Stupsen war unangenehm."
+        },
+        {
+          "kind": "text",
+          "content": "Es beschäftigt mich noch. Gerade spreche ich eher leise darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dieses viele Stupsen war mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Dass daneben gerade auch Schönes in mir da ist, macht die Berührungen nicht nachträglich angenehm."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich immer wieder angestupst. Das war unangenehm für mich."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig davon hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Als du mich so oft angestupst hast, war mir das zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses Unbehagen ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich immer wieder angestupst. Hmpf, das war wirklich zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mir nicht gefallen, und es beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich so oft angestupst, dass es unangenehm wurde."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Trotzdem möchte ich dir offen sagen, dass mir das noch nachhängt."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich immer wieder angestupst. Das war unangenehm für mich."
+        },
+        {
+          "kind": "text",
+          "content": "Es hängt mir noch nach. Gerade rede ich lieber ruhig darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-poking-user-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.poking"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich so oft angestupst, dass es unangenehm wurde."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann dich mögen und mir trotzdem wünschen, dass diese Berührungen weniger gewesen wären."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln wurde mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauchte Abstand. Ein wenig von diesem bedrängten Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dem vielen Streicheln habe ich mich bedrängt gefühlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauchte Platz für mich. Das beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, so viel Streicheln war mir einfach zu nah."
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauchte meinen Freiraum. Das Gefühl ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Streicheln wurde mir zu viel. Ich brauchte Abstand."
+        },
+        {
+          "kind": "text",
+          "content": "Dass wir uns nah sind, macht diese Grenze nicht kleiner. Das möchte ich dir offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das viele Streicheln wurde mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses bedrängte Gefühl hängt mir noch nach. Gerade brauche ich Ruhe beim Reden."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-crowded-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.crowded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dem vielen Streicheln habe ich Abstand gebraucht."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann Nähe mögen und mich dabei trotzdem bedrängt gefühlt haben. Beides ist wahr."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Immer wieder dasselbe zu essen war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich hätte gern Abwechslung gehabt. Das Gefühl hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dasselbe Essen wieder und wieder war mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte Abwechslung. Ein bisschen Unmut darüber ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, immer wieder dasselbe Essen. Das war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte doch etwas Abwechslung. Dieses Gefühl ist noch nicht weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Dasselbe Essen wieder und wieder hat mich gestört."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir offen sagen, dass mir die fehlende Abwechslung noch nachhängt."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wieder und wieder dasselbe zu essen war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte Abwechslung. Gerade hängt mir das eher still nach."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Immer dasselbe Essen hat mich gestört."
+        },
+        {
+          "kind": "text",
+          "content": "Eine andere schöne Erfahrung macht die damalige Eintönigkeit nicht ungeschehen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen immer wieder zu essen war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich hätte gern Abwechslung gehabt. Ein wenig hängt mir das noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dasselbe Essen wieder und wieder war mir zu viel."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte Abwechslung. Das beschäftigt mich noch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hmpf, das immer wieder zu essen war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte etwas Abwechslung. Der Unmut darüber ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dasselbe Essen wieder und wieder hat mich gestört."
+        },
+        {
+          "kind": "text",
+          "content": "Das sage ich dir gern offen. Diese Eintönigkeit hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Das immer wieder zu essen war mir zu eintönig."
+        },
+        {
+          "kind": "text",
+          "content": "Ich wollte Abwechslung. Gerade denke ich daran eher mit einem stillen Seufzen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-monotony-known-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_monotony"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dasselbe Essen wieder und wieder hat mich gestört."
+        },
+        {
+          "kind": "text",
+          "content": "Die Eintönigkeit hängt mir noch nach, auch wenn daneben gerade schöne Gefühle da sind."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe Essen bekommen, das ich gerade nicht wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich enttäuscht. Ein wenig von dem Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Essen, das ich bekommen habe, wollte ich gerade nicht."
+        },
+        {
+          "kind": "text",
+          "content": "Dass es trotzdem bei mir ankam, hat mich enttäuscht."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, ich habe genau das Essen bekommen, das ich gerade nicht wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Diese Enttäuschung hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe Essen bekommen, das ich gerade nicht wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin darüber noch enttäuscht. Das möchte ich dir offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Essen, das ich bekommen habe, wollte ich gerade nicht."
+        },
+        {
+          "kind": "text",
+          "content": "Die Enttäuschung darüber ist noch da. Gerade spreche ich leiser darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe Essen bekommen, das ich gerade nicht wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Darüber bin ich noch enttäuscht. Daneben kann gerade trotzdem auch Schönes da sein."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen wollte ich gerade nicht bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich es trotzdem bekommen habe, hat mich enttäuscht."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau dieses Essen wollte ich gerade nicht."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es trotzdem bekommen. Darüber bin ich noch enttäuscht."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Hmpf, genau das wollte ich gerade nicht bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Dass es trotzdem bei mir ankam, hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen wollte ich gerade nicht bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin noch enttäuscht, dass es trotzdem bei mir ankam. Das sage ich dir offen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Dieses Essen wollte ich gerade nicht bekommen."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich es trotzdem bekommen habe, enttäuscht mich noch. Gerade eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-food-disregarded-known-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.food_wish_disregarded"
+          ],
+          "sleeping": false,
+          "conversation_targets": [
+            "onigiri",
+            "sandwich",
+            "taiyaki",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "melonpan",
+            "cupcake",
+            "dorayaki"
+          ],
+          "conversation_causes": [
+            "wish_failed"
+          ],
+          "conversation_wishes": [
+            "avoid_food"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "{target}! Genau dieses Essen wollte ich gerade nicht."
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe es trotzdem bekommen. Die Enttäuschung bleibt neben meinen anderen Gefühlen da."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich denke noch an das Ding, das ich haben wollte und nicht bekommen konnte."
+        },
+        {
+          "kind": "text",
+          "content": "Nicht weiterzukommen hat mich geärgert. Das Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Ding, das ich haben wollte, blieb für mich unerreichbar."
+        },
+        {
+          "kind": "text",
+          "content": "Dass es nicht weiterging, hat mich geärgert. Ein wenig davon ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, ich wollte an das Ding heran und kam nicht weiter."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich wirklich geärgert. Die Frustration ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Ding, das ich haben wollte, blieb für mich unerreichbar."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir direkt sagen, dass mich diese Warterei noch ärgert."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte an das Ding heran und konnte nicht weiter."
+        },
+        {
+          "kind": "text",
+          "content": "Die Frustration darüber hängt mir noch nach. Gerade rede ich ruhiger darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich konnte an das Ding, das ich haben wollte, nicht herankommen."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Andere schöne Gefühle machen diese Frustration nicht einfach weg."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir das Ding, das ich haben wollte, weiter vorenthalten."
+        },
+        {
+          "kind": "text",
+          "content": "Dass es nicht weiterging, hat mich geärgert. Ein wenig davon ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Als du mir das Ding weiter vorenthalten hast, kam ich nicht weiter."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Die Frustration ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir das Ding, das ich haben wollte, weiter vorenthalten. Hmpf!"
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich wirklich geärgert. Davon ist noch etwas übrig."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir das Ding weiter vorenthalten, obwohl ich daran herankommen wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Trotzdem ärgert mich diese Warterei noch, und das sage ich dir auch."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir das Ding, das ich haben wollte, weiter vorenthalten."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Gerade spreche ich eher still über diese Frustration."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-withheld-user-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.withheld"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mir das Ding weiter vorenthalten, an das ich herankommen wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann schöne Gefühle für dich haben und darüber trotzdem noch verärgert sein."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe an einem vertrauten Platz gesucht, aber dort war das Ding nicht mehr wie erwartet."
+        },
+        {
+          "kind": "text",
+          "content": "Diese veränderte Ordnung hat mich gestört. Das hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An dem vertrauten Platz, an dem ich gesucht habe, war das Ding nicht mehr wie erwartet."
+        },
+        {
+          "kind": "text",
+          "content": "Das Durcheinander hat mich geärgert. Ein bisschen davon ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, ich habe an dem vertrauten Platz gesucht und meine Ordnung war verändert."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Von diesem Durcheinander ist mir noch Unmut geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe an dem vertrauten Platz gesucht, doch meine Ordnung war verändert."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Dass mir das noch nachhängt, mag ich dir offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe an einem vertrauten Platz gesucht und das Ding dort nicht wie erwartet gefunden."
+        },
+        {
+          "kind": "text",
+          "content": "Die veränderte Ordnung hat mich gestört. Gerade beschäftigt mich das eher still."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An dem vertrauten Platz, an dem ich gesucht habe, war meine Ordnung verändert."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Andere schöne Gefühle machen dieses Durcheinander nicht ungeschehen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast den vertrauten Platz verändert, an dem ich gesucht habe."
+        },
+        {
+          "kind": "text",
+          "content": "Das Durcheinander hat mich gestört. Ein wenig von dem Unmut ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Als ich an dem vertrauten Platz gesucht habe, war die Ordnung durch dich verändert."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich geärgert. Davon ist noch ein bisschen übrig."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meine vertraute Ordnung verändert, und ich habe am alten Platz gesucht."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf, dieses Durcheinander hat mich geärgert. Das Gefühl ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast den vertrauten Platz verändert, an dem ich gesucht habe."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Trotzdem hat mich dieses Durcheinander geärgert, und das hängt mir noch nach."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast die Ordnung an dem vertrauten Platz verändert, an dem ich gesucht habe."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich gestört. Gerade spreche ich darüber lieber ruhig."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-disrupted-user-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "negative.disrupted"
+          ],
+          "sleeping": false,
+          "conversation_attributions": [
+            "user"
+          ],
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast meine vertraute Ordnung verändert, und ich habe am alten Platz gesucht."
+        },
+        {
+          "kind": "text",
+          "content": "Ich kann schöne Gefühle für dich haben und über dieses Durcheinander trotzdem noch verärgert sein."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit mit Hunger hat mir zugesetzt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem unangenehmen Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese längere Zeit mit Hunger hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Das unangenehme Gefühl ist nicht sofort weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, diese längere Zeit mit Hunger war wirklich unangenehm."
+        },
+        {
+          "kind": "text",
+          "content": "Davon ist noch etwas in mir hängen geblieben."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit mit Hunger hat mir zugesetzt."
+        },
+        {
+          "kind": "text",
+          "content": "Dass mir das noch nachhängt, mag ich dir offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese längere Zeit mit Hunger hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade spreche ich lieber ruhig darüber. Angenehm war das nicht."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-hunger-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.hunger_worn"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit mit Hunger hat mir zugesetzt."
+        },
+        {
+          "kind": "text",
+          "content": "Das Gefühl davon bleibt noch, auch wenn daneben gerade schöne Dinge in mir da sind."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Erschöpfung hat mir zugesetzt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig Gereiztheit davon ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese längere Erschöpfung hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Ich merke noch etwas von der Gereiztheit, die sie hinterlassen hat."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hmpf, diese längere Erschöpfung hat mich richtig dünnhäutig gemacht."
+        },
+        {
+          "kind": "text",
+          "content": "Davon ist noch etwas übrig. Das ist nicht sofort wieder weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Erschöpfung hat mich dünnhäutig gemacht."
+        },
+        {
+          "kind": "text",
+          "content": "Dass davon noch etwas da ist, mag ich dir direkt sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Erschöpfung hat mir zugesetzt."
+        },
+        {
+          "kind": "text",
+          "content": "Von der Gereiztheit ist noch etwas da. Gerade möchte ich ruhig darüber reden."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-exhaustion-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.exhaustion_irritated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diese längere Erschöpfung hat mich dünnhäutig gemacht."
+        },
+        {
+          "kind": "text",
+          "content": "Das hängt mir noch nach. Neben anderen Gefühlen, die gerade auch da sind."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit eine anregende Beschäftigung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem trüben Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne anregende Beschäftigung hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Mir hat etwas gefehlt, das mich mitnimmt und wach macht."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, mir hat eine Weile etwas anregende Beschäftigung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Von diesem trüben Gefühl ist noch etwas da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit anregende Beschäftigung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Dass ich davon noch ein bisschen bedrückt bin, mag ich dir offen sagen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit anregende Beschäftigung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade hängt mir dieses trübe Gefühl eher still nach."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-unstimulated-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.unstimulated"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne anregende Beschäftigung hat mich bedrückt."
+        },
+        {
+          "kind": "text",
+          "content": "Davon ist noch etwas da. Auch wenn ich mich über anderes gerade freuen kann."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit gemeinsame Unterhaltung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem einsamen Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne gemeinsame Unterhaltung hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Mir hat gefehlt, etwas miteinander zu teilen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, mir hat längere Zeit jemand zum gemeinsamen Reden gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses einsame Gefühl ist noch nicht ganz weg."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit gemeinsame Unterhaltung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ich mag dir offen sagen, dass mich dieses einsame Gefühl noch beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit gemeinsame Unterhaltung gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Gerade denke ich eher still an dieses einsame Gefühl."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-lonely-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.lonely"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne gemeinsame Unterhaltung hat mich bedrückt."
+        },
+        {
+          "kind": "text",
+          "content": "Das Gefühl davon bleibt noch. Neben dem Schönen, das gerade auch da ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-acquaintance",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit liebevolle Aufmerksamkeit gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Ein wenig von diesem bedrückten Gefühl ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-familiar",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne liebevolle Aufmerksamkeit hängt mir noch nach."
+        },
+        {
+          "kind": "text",
+          "content": "Mir hat eine Nähe gefehlt, mit der ich mich wohlfühlen kann."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-friend",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hach, mir hat längere Zeit etwas liebevolle Aufmerksamkeit gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Das hat mich bedrückt. Ein wenig davon ist noch da."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-close",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit liebevolle Aufmerksamkeit gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Dass mich das noch bedrückt, mag ich dir direkt sagen. Nähe soll sich für mich gut anfühlen."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "reserved"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mir hat längere Zeit liebevolle Aufmerksamkeit gefehlt."
+        },
+        {
+          "kind": "text",
+          "content": "Dieses bedrückte Gefühl hängt mir noch ein wenig nach."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-negative-closeness-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "stages": [],
+      "conditions": [
+        {
+          "conversation_topics": [
+            "poor_care.missing_closeness"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die längere Zeit ohne liebevolle Aufmerksamkeit hat mich bedrückt."
+        },
+        {
+          "kind": "text",
+          "content": "Das hängt mir noch nach, auch wenn ich mich über anderes gerade freuen kann."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    }
+  ]
+}

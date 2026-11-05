@@ -12,9 +12,17 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 
 from ..pet.animation.character import FRAME_WIDTH
+from ..pet.animation.idle_behaviour import IdleBehaviourProfile
 from ..pet.balance import BALANCE
+from ..pet.mind.cursor_behaviour import CursorIntent
 from ..pet.movement import WalkConditions, WalkController
-from ..pet.movement.contracts import HorizontalTrack
+from ..pet.movement.contracts import (
+    HorizontalTrack,
+    MotionCompletion,
+    MotionRequest,
+    MotionStopReason,
+    WalkStep,
+)
 
 
 class BusyReading(Protocol):
@@ -79,10 +87,12 @@ class WalkDriverPorts:
     """Host capabilities granted to the pet's walking adapter."""
 
     track: Callable[[], HorizontalTrack]
-    toolbar_visible: Callable[[], bool]
     place_x: Callable[[float], None]
-    walk_finished: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
+    cursor_allowed: Callable[[], bool] = lambda: False
+    cursor_finished: Callable[[MotionCompletion], None] = lambda _result: None
+    idle_steps: Callable[[], bool] = lambda: False
+    idle_heading: Callable[[], int] = lambda: 0
 
 
 class WalkDriver:
@@ -99,16 +109,18 @@ class WalkDriver:
         walk_cycle_seconds: float,
     ) -> None:
         self.state = state
+        self.idle_profile = IdleBehaviourProfile()
         self.settings = settings
         self.adaptive = adaptive
         self.monitor = monitor
         self.ports = ports
         self.walk_cycle_seconds = walk_cycle_seconds
+        self.last_placement_at = -1000.0
         self.movement = WalkController(
             next_walk_at=time.monotonic()
             + random.uniform(
-                BALANCE.number("walk", "pause_min_seconds"),
-                BALANCE.number("walk", "pause_max_seconds"),
+                BALANCE.number("cursor_behaviour", "idle_step_minimum_seconds"),
+                BALANCE.number("cursor_behaviour", "idle_step_maximum_seconds"),
             ),
         )
 
@@ -117,6 +129,133 @@ class WalkDriver:
         self.movement.interrupt()
         self.movement.pause(now)
 
+    def set_world_goal(self, x: float | None) -> None:
+        self.movement.set_goal(x)
+
+    def clear_cursor_request(
+        self,
+        now: float | None = None,
+        *,
+        reason: MotionStopReason = "cancelled",
+    ) -> None:
+        old = self.movement.request("cursor")
+        self.movement.release_request("cursor")
+        if old is not None:
+            self.ports.cursor_finished(
+                MotionCompletion(
+                    "cursor",
+                    old.token,
+                    time.monotonic() if now is None else now,
+                    reason,
+                )
+            )
+
+    def apply_cursor_intent(self, intent: CursorIntent | None, now: float) -> None:
+        if intent is None:
+            self.clear_cursor_request(now)
+            return
+        old = self.movement.request("cursor")
+        if old is not None and old.token == intent.token:
+            if intent.reaction == "approach" and intent.target is not None:
+                self.movement.retarget(
+                    "cursor", intent.token, self._cursor_target(intent),
+                )
+            return
+        if old is not None:
+            self.clear_cursor_request(now)
+        steps = intent.steps if intent.reaction == "approach" else 1
+        amount = steps * BALANCE.number(
+            "cursor_behaviour",
+            "flight_width_multiplier"
+            if intent.reaction == "flee"
+            else "step_width_fraction",
+        )
+        width = FRAME_WIDTH * self.settings.scale
+        x = self.settings.x or 0
+        track = self.ports.track()
+        target: float = max(
+            track.left,
+            min(
+                round(x + intent.side * width * amount),
+                max(track.left, track.right - width),
+            ),
+        )
+        if intent.reaction == "approach" and intent.target is not None:
+            target = self._cursor_target(intent)
+        if (target - x) * intent.side <= 0 and intent.reaction != "approach":
+            self.ports.cursor_finished(
+                MotionCompletion("cursor", intent.token, now, "blocked")
+            )
+            return
+        running = intent.reaction == "flee" or (
+            intent.reaction == "approach" and abs(target - x)
+            >= width * BALANCE.number("cursor_behaviour", "run_distance")
+        )
+        distance_budget = width * amount
+        if running:
+            distance_budget = max(
+                distance_budget, BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                * self.settings.scale,
+            )
+        self.submit_cursor_intent(
+            MotionRequest(
+                "cursor",
+                intent.token,
+                target,
+                "run" if running else "step",
+                intent.until,
+                movement_seconds=BALANCE.number("cursor_behaviour", "flight_seconds")
+                if intent.reaction == "flee"
+                else float("inf"),
+                distance_pixels=distance_budget
+                if intent.reaction != "flee" else float("inf"),
+                step_pixels=width
+                * BALANCE.number("cursor_behaviour", "step_width_fraction")
+                if intent.reaction != "flee"
+                else 0,
+            )
+        )
+
+    def align_cursor_pace(self, gaze: int | None) -> None:
+        """Use the real run only where its baked side head matches current gaze."""
+        request = self.movement.request("cursor")
+        if request is None:
+            return
+        width = FRAME_WIDTH * self.settings.scale
+        remaining = abs(request.target_x - (self.settings.x or 0))
+        threshold = BALANCE.number(
+            "cursor_behaviour", "run_release_distance" if request.kind == "run"
+            else "run_distance",
+        ) * width
+        running = gaze in (4, 12) and (
+            request.movement_seconds != float("inf") or remaining >= threshold
+        )
+        self.movement.retarget("cursor", request.token, request.target_x,
+                               kind="run" if running else "step")
+
+    def _cursor_target(self, intent: CursorIntent) -> float:
+        """Project the pointer onto the track, keeping a horizontal stopping gap."""
+        assert intent.target is not None
+        width = FRAME_WIDTH * self.settings.scale
+        x = self.settings.x or 0
+        desired = intent.target[0] - width / 2 - intent.side * width * (
+            BALANCE.number("cursor_behaviour", "stop_distance")
+        )
+        target = (max(x, desired) if intent.side > 0 else min(x, desired)
+                  if intent.side < 0 else x)
+        track = self.ports.track()
+        return max(track.left, min(target, max(track.left, track.right - width)))
+
+    @property
+    def speed_pixels_per_second(self) -> float:
+        speed = (16 / 0.62 if self.movement.kind == "step" else
+                 BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                 / self.walk_cycle_seconds)
+        return speed * self.settings.scale
+
+    def submit_cursor_intent(self, request: MotionRequest) -> None:
+        self.movement.replace_request("cursor", request)
+
     def step(
         self,
         now: float,
@@ -124,10 +263,12 @@ class WalkDriver:
         *,
         game_mode: bool,
         attention_active: bool,
-    ) -> str | None:
+    ) -> WalkStep | None:
         """Plan motion and apply only actual bounded desktop displacement."""
         if game_mode:
             return None
+        if not self.ports.cursor_allowed():
+            self.clear_cursor_request(now)
         observed = self.adaptive.current
         committed = self.movement.goal_x is not None and self.ports.committed_goal()
         busy = (
@@ -139,11 +280,7 @@ class WalkDriver:
             WalkConditions(
                 now=now,
                 elapsed_seconds=elapsed,
-                speed_pixels_per_second=(
-                    BALANCE.integer("walk", "stride_pixels_at_scale_one")
-                    * self.settings.scale
-                    / self.walk_cycle_seconds
-                ),
+                speed_pixels_per_second=self.speed_pixels_per_second,
                 stride_pixels=BALANCE.integer("walk", "stride_pixels_at_scale_one")
                 * self.settings.scale,
                 x=self.settings.x or 0,
@@ -153,19 +290,24 @@ class WalkDriver:
                 auto_walk=self.settings.auto_walk,
                 sleeping=self.state.sleeping,
                 attention_active=attention_active and not committed,
-                toolbar_visible=self.ports.toolbar_visible() and not committed,
                 observing_computer=self.settings.observe_computer,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),
+                small_idle_steps=self.ports.idle_steps(),
+                idle_profile=self.idle_profile,
+                idle_heading=self.ports.idle_heading(),
             )
         )
         if step is None:
             return None
         if step.pixels == 0:
-            return step.animation
+            return step
+        source = self.movement.source
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
+        if delta:
+            self.last_placement_at = now
         track = self.ports.track()
         blocked = (step.pixels < 0 and (self.settings.x or 0) <= track.left) or (
             step.pixels > 0
@@ -173,6 +315,7 @@ class WalkDriver:
             >= track.right - FRAME_WIDTH * self.settings.scale
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
-            if self.movement.goal_x is None:
-                self.ports.walk_finished(now)
-        return step.animation
+            if source == "cursor":
+                self.clear_cursor_request(now, reason=self.movement.completion_reason)
+            # Autonomous and cursor steps deliberately carry no spoken completion.
+        return step

@@ -31,6 +31,10 @@ class ObjectAbsencePerception:
     def checking(self) -> bool:
         return any(not place.confirmed for place in self._places.values())
 
+    def discard(self, record: str) -> None:
+        """Withdraw invalidated local evidence; a later check must start afresh."""
+        self._places.pop(record, None)
+
     def observe(
         self, known: tuple[ObjectKnowledge, ...],
         occupants: tuple[ObjectCandidate, ...],
@@ -52,7 +56,8 @@ class ObjectAbsencePerception:
                 item.x, attention=attention, ground_bounds=ground_bounds,
             ) if known_coverage is not None and item.recognized
                 else attention.sees(item.x, item.height))
-            if (not item.resting or item.place_status != "remembered"
+            if (item.kind == "book" or not item.resting
+                    or item.place_status != "remembered"
                     or not ground_bounds[0] <= item.x <= ground_bounds[1]
                     or not visible
                     or any(math.hypot(candidate.x - item.x,

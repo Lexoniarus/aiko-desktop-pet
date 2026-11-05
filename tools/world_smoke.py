@@ -8,8 +8,12 @@ import time
 from pathlib import Path
 
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.application.social_history import SocialContentHistory
+from aiko_pet.application.storage_contracts import SaveRevision
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore, default_save_path
+from aiko_pet.infrastructure.save_paths import resolve_save_paths
+from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint
 from aiko_pet.world.state import WorldState
@@ -34,22 +38,30 @@ def prepare_session(
     path: Path, *, scenario: str, needs: str | None = None,
 ) -> StateStore:
     """Explicit restart paths reuse existing data instead of silently resetting."""
-    if path.resolve() == default_save_path().resolve():
+    selected = resolve_save_paths(path)
+    normal = resolve_save_paths(default_save_path())
+    if ({selected.database.resolve(), selected.legacy_json.resolve()}
+            & {normal.database.resolve(), normal.legacy_json.resolve()}):
         raise ValueError("The smoke test must not use the normal save path")
     store = StateStore(path)
-    if not path.exists():
+    loaded = store.load_session()
+    if not loaded.restored_from_save:
         satiety, energy = SCENARIOS[scenario]
         store.save(
             PetState(satiety=satiety, energy=energy),
             PetSettings(auto_walk=False, auto_routine=False, observe_computer=False,
                         learn_rhythm=False, spontaneous_talk=False),
+            expected_revision=SaveRevision(), adaptive=AdaptiveMemory(),
+            social_history=SocialContentHistory(),
         )
     if needs is not None:
         loaded = store.load_session()
         satiety, energy = SCENARIOS[needs]
         set_test_pet_values(loaded.state, satiety=satiety, energy=energy,
                             updated_at=time.time())
-        store.save(loaded.state, loaded.settings, adaptive=loaded.adaptive_memory,
+        store.save(loaded.state, loaded.settings, expected_revision=loaded.revision,
+                   adaptive=loaded.adaptive_memory,
+                   social_history=loaded.social_history,
                    world=loaded.world, object_memory=loaded.object_memory)
     return store
 
@@ -67,12 +79,13 @@ def main() -> None:
     parser.add_argument("--auto-close-ms", type=int, default=0, help=argparse.SUPPRESS)
     args = parser.parse_args()
     path = args.save_path or (
-        Path(tempfile.mkdtemp(prefix="aiko-world-smoke-")) / "state.json"
+        Path(tempfile.mkdtemp(prefix="aiko-world-smoke-")) / "state.sqlite3"
     )
-    if args.stock is not None and path.exists():
+    if args.stock is not None and (resolve_save_paths(path).database.exists()
+                                   or resolve_save_paths(path).legacy_json.exists()):
         parser.error("--stock requires a fresh test save; "
                      "existing stock is not reseeded")
-    print(f"Isolated World test save: {path}", flush=True)
+    print(f"Isolated World test save: {resolve_save_paths(path).database}", flush=True)
     print(f'Restart: python -m tools.world_smoke --save-path "{path}"', flush=True)
     if args.needs is not None:
         print(f"Explicit test need override: {args.needs}", flush=True)

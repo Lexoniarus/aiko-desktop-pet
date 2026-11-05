@@ -44,15 +44,6 @@ class FoodBalance:
     maximum_combined_activity_bonus: float = BALANCE.number(
         "food", "maximum_combined_activity_bonus"
     )
-    awake_hours_before_hunger_accelerates: float = BALANCE.number(
-        "food", "awake_hours_before_hunger_accelerates"
-    )
-    additional_hunger_fraction_per_hour_without_food: float = BALANCE.number(
-        "food", "additional_hunger_fraction_per_hour_without_food"
-    )
-    maximum_long_fast_hunger_bonus: float = BALANCE.number(
-        "food", "maximum_long_fast_hunger_bonus"
-    )
     maximum_digest_hunger_reduction: float = BALANCE.number(
         "food", "maximum_digest_hunger_reduction"
     )
@@ -62,20 +53,11 @@ class FoodBalance:
     maximum_digest_reserve_minutes: float = BALANCE.number(
         "food", "maximum_digest_reserve_minutes"
     )
-    digestion_speedup_from_activity: float = BALANCE.number(
-        "food", "digestion_speedup_from_activity"
-    )
     digestion_speed_during_sleep: float = BALANCE.number(
         "food", "digestion_speed_during_sleep"
     )
-    internal_simulation_step_minutes: float = BALANCE.number(
-        "food", "internal_simulation_step_minutes"
-    )
     consecutive_repeats_before_dislike: int = BALANCE.integer(
         "food", "consecutive_repeats_before_dislike"
-    )
-    repeated_food_mood_penalty: float = BALANCE.number(
-        "food", "repeated_food_mood_penalty"
     )
     maximum_recent_foods: int = BALANCE.integer("food", "maximum_recent_foods")
     too_full_to_eat_threshold: float = BALANCE.number(
@@ -119,7 +101,6 @@ class FoodIntake:
 
     accepted: bool
     satiety: float
-    mood_change: float
     food: FoodState
     repetitive: bool
 
@@ -144,11 +125,12 @@ def eat_food(
     food: FoodState,
     current_satiety: float,
     food_id: FoodId,
+    *, requested: bool = False,
 ) -> FoodIntake:
     """Add satiety and digest reserve; a snack does not count as a full meal."""
     profile = FOOD_CATALOG[food_id]
-    if current_satiety >= FOOD_BALANCE.too_full_to_eat_threshold:
-        return FoodIntake(False, current_satiety, 0.0, food, False)
+    if not requested and current_satiety >= FOOD_BALANCE.too_full_to_eat_threshold:
+        return FoodIntake(False, current_satiety, food, False)
     repetitive = is_repeated_food(food, food_id)
     history = (*food.recent_food_ids, food_id)
     updated = replace(
@@ -163,23 +145,26 @@ def eat_food(
         ),
         recent_food_ids=history[-FOOD_BALANCE.maximum_recent_foods :],
     )
-    mood_change = profile.normal_mood_bonus - (
-        FOOD_BALANCE.repeated_food_mood_penalty if repetitive else 0.0
-    )
     return FoodIntake(
         accepted=True,
         satiety=clamp_need_value(
             current_satiety + profile.instant_satiety_points,
         ),
-        mood_change=mood_change,
         food=updated,
         repetitive=repetitive,
     )
 
 
+def hardware_consumption_fraction(load: float) -> float:
+    """Map smoothed CPU/GPU utilization above the common threshold to 0..1."""
+    baseline = BALANCE.number("needs", "hardware_intensity_baseline")
+    span = BALANCE.number("needs", "hardware_intensity_span")
+    return max(0.0, min(1.0, (bounded_number(load, 0.0, 1.0) - baseline) / span))
+
+
 def hunger_activity_multiplier(activity: FoodActivity) -> float:
-    """CPU/GPU/RAM work and real user inputs each add bounded hunger."""
-    hardware = bounded_number(activity.hardware_load, 0.0, 1.0)
+    """Base hunger always applies; CPU/GPU and actual input add bounded costs."""
+    hardware = hardware_consumption_fraction(activity.hardware_load)
     user = bounded_number(activity.user_input_activity, 0.0, 1.0)
     bonus = min(
         FOOD_BALANCE.maximum_combined_activity_bonus,
@@ -187,28 +172,6 @@ def hunger_activity_multiplier(activity: FoodActivity) -> float:
         + user * FOOD_BALANCE.maximum_user_input_hunger_bonus,
     )
     return 1.0 + bonus
-
-
-def hunger_after_long_food_break(awake_hours_since_food: float) -> float:
-    """Late hunger increases gently and stops increasing at a fixed cap."""
-    overdue = max(
-        0.0,
-        awake_hours_since_food - FOOD_BALANCE.awake_hours_before_hunger_accelerates,
-    )
-    return 1.0 + min(
-        FOOD_BALANCE.maximum_long_fast_hunger_bonus,
-        overdue * FOOD_BALANCE.additional_hunger_fraction_per_hour_without_food,
-    )
-
-
-def digestion_hunger_multiplier(remaining_minutes: float) -> float:
-    """Nutrition slows decay progressively until the reserve is exhausted."""
-    fullness = min(
-        1.0,
-        max(0.0, remaining_minutes)
-        / FOOD_BALANCE.digest_minutes_for_full_hunger_reduction,
-    )
-    return 1.0 - FOOD_BALANCE.maximum_digest_hunger_reduction * fullness
 
 
 def advance_food(
@@ -219,54 +182,39 @@ def advance_food(
     sleeping: bool,
     activity: FoodActivity | None = None,
 ) -> FoodProgress:
-    """Integrate digestion and hunger in five-minute steps, not once per tick.
+    """Integrate the linear reserve fade exactly, independent of tick length.
 
-    All input time comes from the host's *active session clock*. This method
-    never computes the gap from wall timestamps after a program restart.
+    The aggregate supplies elapsed life time, including closed/standby time.
+    This method never reads clocks or reconstructs observations itself.
     """
     if not math.isfinite(hours) or hours <= 0.0:
         return FoodProgress(satiety, food)
     observed = activity if activity is not None else FoodActivity()
-    activity_multiplier = hunger_activity_multiplier(observed)
-    remainder = hours
-    result = food
-    hunger = satiety
-    step_limit = FOOD_BALANCE.internal_simulation_step_minutes / 60.0
-    while remainder > 1e-9:
-        step = min(step_limit, remainder)
-        if sleeping:
-            rate = FOOD_BALANCE.sleeping_hunger_points_per_hour
-            digestion_speed = FOOD_BALANCE.digestion_speed_during_sleep
-            result = replace(
-                result,
-                remaining_digest_minutes=max(
-                    0.0,
-                    result.remaining_digest_minutes - step * 60.0 * digestion_speed,
-                ),
-            )
-        else:
-            rate = (
-                FOOD_BALANCE.awake_hunger_points_per_hour
-                * activity_multiplier
-                * hunger_after_long_food_break(
-                    result.awake_hours_since_last_food,
-                )
-                * digestion_hunger_multiplier(
-                    result.remaining_digest_minutes,
-                )
-            )
-            digestion_speed = 1.0 + FOOD_BALANCE.digestion_speedup_from_activity * (
-                activity_multiplier - 1.0
-            )
-            result = replace(
-                result,
-                remaining_digest_minutes=max(
-                    0.0,
-                    result.remaining_digest_minutes - step * 60.0 * digestion_speed,
-                ),
-                awake_hours_since_last_food=(result.awake_hours_since_last_food + step),
-                awake_hours_since_main_meal=(result.awake_hours_since_main_meal + step),
-            )
-        hunger = clamp_need_value(hunger - step * rate)
-        remainder -= step
-    return FoodProgress(hunger, result)
+    minutes = hours * 60.0
+    reserve = max(0.0, food.remaining_digest_minutes)
+    if sleeping:
+        loss = hours * FOOD_BALANCE.sleeping_hunger_points_per_hour
+        result = replace(food, remaining_digest_minutes=max(
+            0.0, reserve - minutes * FOOD_BALANCE.digestion_speed_during_sleep,
+        ))
+    else:
+        anchor = FOOD_BALANCE.digest_minutes_for_full_hunger_reduction
+        full_minutes = min(minutes, max(0.0, reserve - anchor))
+        fade_reserve = min(reserve, anchor)
+        fade_minutes = min(minutes - full_minutes, fade_reserve)
+        protected_minutes = full_minutes + (
+            fade_reserve * fade_minutes - fade_minutes * fade_minutes / 2
+        ) / anchor
+        effective_hours = (
+            minutes - FOOD_BALANCE.maximum_digest_hunger_reduction * protected_minutes
+        ) / 60.0
+        loss = (
+            FOOD_BALANCE.awake_hunger_points_per_hour
+            * hunger_activity_multiplier(observed) * effective_hours
+        )
+        result = replace(
+            food, remaining_digest_minutes=max(0.0, reserve - minutes),
+            awake_hours_since_last_food=food.awake_hours_since_last_food + hours,
+            awake_hours_since_main_meal=food.awake_hours_since_main_meal + hours,
+        )
+    return FoodProgress(clamp_need_value(satiety - loss), result)

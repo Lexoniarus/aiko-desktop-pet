@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import os
 import shutil
@@ -10,12 +11,18 @@ import sys
 import tempfile
 import time
 import unittest
+import venv
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 @unittest.skipUnless(sys.platform == "win32", "Windows setup integration")
+@unittest.skipIf(
+    os.environ.get("AIKO_TEST_NO_NATIVE_TK") == "1",
+    "Installer probes create native Tk in child processes",
+)
 class WindowsSetupTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="Aiko setup & space ")
@@ -41,6 +48,29 @@ class WindowsSetupTests(unittest.TestCase):
         self.save = self.folder / "preserved-state.json"
         self.save.write_text('{"existing": "progress"}', encoding="utf-8")
         self.environment["AIKO_SAVE_PATH"] = str(self.save)
+
+    def prepare_offline_dependencies(self) -> None:
+        # Package installed dependencies for offline setup checks, preserving
+        # native Pillow wheel tags instead of claiming a pure-Python wheel.
+        wheels = self.folder / "wheels"
+        wheels.mkdir()
+        for name in ("astronomy-engine", "pyjokes", "Pillow"):
+            package = importlib.metadata.distribution(name)
+            metadata = package.read_text("WHEEL") or ""
+            tag = next(
+                line.removeprefix("Tag: ").strip()
+                for line in metadata.splitlines()
+                if line.startswith("Tag: ")
+            )
+            wheel_name = f"{name.lower().replace('-', '_')}-{package.version}-{tag}.whl"
+            with zipfile.ZipFile(wheels / wheel_name, "w") as archive:
+                for member in package.files or ():
+                    if ".." not in member.parts and "__pycache__" not in member.parts:
+                        archive.write(
+                            str(package.locate_file(member)),
+                            member.as_posix(),
+                        )
+        self.environment["PIP_FIND_LINKS"] = wheels.as_uri()
         self.environment["PIP_NO_INDEX"] = "1"
         self.environment["PIP_CONFIG_FILE"] = os.devnull
 
@@ -70,13 +100,14 @@ class WindowsSetupTests(unittest.TestCase):
             self.fail(f"Setup exceeded 180 seconds. "
                       f"stdout={error.stdout!r}; stderr={error.stderr!r}")
 
-    def test_install_repeat_and_both_launchers_use_isolated_runtime(self) -> None:
+    def test_install_repeat_and_batch_entry_preserve_runtime_and_save(self) -> None:
         shutil.copytree(
             ROOT / "aiko_pet",
             self.folder / "aiko_pet",
             dirs_exist_ok=True,
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
         )
+        self.prepare_offline_dependencies()
         for _ in range(2):
             setup = self.run_setup()
             self.assertEqual(setup.returncode, 0, setup.stdout + setup.stderr)
@@ -144,6 +175,9 @@ class WindowsSetupTests(unittest.TestCase):
             '{"existing": "progress"}',
         )
 
+    def test_launchers_select_python_and_propagate_debug_exit(self) -> None:
+        venv.EnvBuilder().create(self.folder / ".venv")
+        python = self.folder / ".venv/Scripts/python.exe"
         # Exercise the batch files without launching a pet or touching a save.
         marker = self.folder / "launched.json"
         entry = (
@@ -170,6 +204,30 @@ class WindowsSetupTests(unittest.TestCase):
                 python.with_name("pythonw.exe")
             ),
         )
+
+    def test_bad_joke_review_stops_setup_before_shortcuts_or_save_access(self) -> None:
+        shutil.copytree(
+            ROOT / "aiko_pet",
+            self.folder / "aiko_pet",
+            dirs_exist_ok=True,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+        self.prepare_offline_dependencies()
+        review = self.folder / "aiko_pet/data/pyjokes.de.review.json"
+        before = self.save.read_bytes()
+        for body in (None, "{"):
+            with self.subTest(body=body):
+                if body is None:
+                    review.unlink()
+                else:
+                    review.write_text(body, encoding="utf-8")
+                result = self.run_setup()
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("Freigabeliste", result.stdout + result.stderr)
+                self.assertEqual(self.save.read_bytes(), before)
+                self.assertFalse(self.save.with_suffix(".sqlite3").exists())
+                shortcut = self.folder / "shortcuts/Aiko Desktop Pet.lnk"
+                self.assertFalse(shortcut.exists())
 
     def run_batch(
         self,
@@ -199,6 +257,7 @@ class WindowsSetupTests(unittest.TestCase):
             dirs_exist_ok=True,
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
         )
+        self.prepare_offline_dependencies()
         environment = self.folder / ".venv"
         environment.mkdir()
         marker = environment / "keep.txt"
@@ -227,146 +286,79 @@ class WindowsSetupTests(unittest.TestCase):
         harness.write_text(source, encoding="utf-8")
         return self.run_powershell(["-File", str(harness), *arguments])
 
-    def test_runtime_download_install_repair_and_failure_paths(self) -> None:
-        shutil.copytree(
-            ROOT / "aiko_pet",
-            self.folder / "aiko_pet",
-            dirs_exist_ok=True,
-            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    def download_scenario(
+        self,
+        scenario: str,
+        *,
+        installs: int,
+        error: str | None = None,
+    ) -> None:
+        if scenario == "success":
+            shutil.copytree(
+                ROOT / "aiko_pet",
+                self.folder / "aiko_pet",
+                dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            self.prepare_offline_dependencies()
+        source = (ROOT / "tests/fixtures/windows_download.ps1").read_text("utf-8")
+        result = self.run_harness(source, sys.executable, scenario)
+        output = result.stdout + result.stderr
+        if error is None:
+            self.assertEqual(result.returncode, 0, output)
+        else:
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn(error, output)
+        self.assertEqual(
+            (self.folder / ".venv/Scripts/python.exe").is_file(),
+            scenario == "success",
         )
-        source = r"""param([string]$Python, [string]$Scenario)
-$script:TestPythonExecutable = $Python
-. "$PSScriptRoot\tools\install_windows.ps1" -NoShortcuts
-$script:discoveryCount = 0
-$script:installCount = 0
-$script:downloadFile = $null
-$script:protocolBefore = [Net.ServicePointManager]::SecurityProtocol
-$env:PROCESSOR_ARCHITECTURE = 'x86'
-$env:PROCESSOR_ARCHITEW6432 = 'AMD64'
-function Find-CompatiblePython {
-    $script:discoveryCount++
-    if ($Scenario -eq 'unusable') { return $null }
-    if ($Scenario -eq 'repair' -and $script:installCount -lt 2) { return $null }
-    if ($script:installCount -gt 0) { return $script:TestPythonExecutable }
-    return $null
-}
-function Get-Command {
-    throw 'No launcher, PATH Python or WinGet available in this scenario'
-}
-function Invoke-WebRequest {
-    param($Uri, $OutFile, [switch]$UseBasicParsing, $TimeoutSec)
-    $script:downloadFile = $OutFile
-    if (-not $UseBasicParsing) { throw 'Missing PS 5.1 compatibility' }
-    if (-not (
-        [Net.ServicePointManager]::SecurityProtocol -band
-        [Net.SecurityProtocolType]::Tls12
-    )) {
-        throw 'TLS 1.2 not enabled'
-    }
-    $Uri | Set-Content "$PSScriptRoot\url.txt"
-    if ($Scenario -eq 'offline') { throw 'Test: Netzwerk nicht erreichbar' }
-    'Fake installer; never executed' | Set-Content -LiteralPath $OutFile
-}
-function Get-FileHash {
-    param($LiteralPath, $Algorithm)
-    if ($LiteralPath -ne $script:downloadFile -or $Algorithm -ne 'SHA256') {
-        throw 'Unexpected checksum request'
-    }
-    $checksum = (Get-PythonDownload 'AMD64').Sha256
-    if ($Scenario -eq 'bad-hash') { $checksum = '0000' }
-    return [pscustomobject]@{ Hash = $checksum }
-}
-function Start-Process {
-    param($FilePath, $ArgumentList, $WindowStyle, [switch]$Wait, [switch]$PassThru)
-    if (
-        $FilePath -ne $script:downloadFile -or -not $Wait -or
-        -not $PassThru -or $WindowStyle -ne 'Hidden'
-    ) {
-        throw 'Unexpected process parameters'
-    }
-    $script:installCount++
-    ConvertTo-Json -InputObject @($ArgumentList) |
-        Set-Content "$PSScriptRoot\install-$script:installCount.json"
-    $code = 0
-    if ($Scenario -eq 'failed') { $code = 42 }
-    if ($Scenario -eq 'reboot') { $code = 3010 }
-    return [pscustomobject]@{ ExitCode = $code }
-}
-try {
-    if ($Scenario -eq 'no-install') { $script:NoPythonInstall = $true }
-    Invoke-AikoSetup
-    exit 0
-} catch {
-    Write-Host $_.Exception.Message
-    exit 1
-} finally {
-    if ([Net.ServicePointManager]::SecurityProtocol -ne $script:protocolBefore) {
-        throw 'Network security protocol was not restored'
-    }
-    if (
-        $script:downloadFile -and
-        (Test-Path -LiteralPath (Split-Path -Parent $script:downloadFile))
-    ) {
-        throw 'Temporary download was not removed'
-    }
-}
-"""
-        for scenario, error in (
-            ("no-install", "Kein Python"),
-            ("offline", "Netzwerk nicht erreichbar"),
-            ("bad-hash", "Pruefsumme"),
-            ("failed", "Code 42"),
-            ("unusable", "nicht startbar"),
-            ("repair", None),
-            ("reboot", None),
-            ("success", None),
-        ):
-            with self.subTest(scenario=scenario):
-                for old in self.folder.glob("install-*.json"):
-                    old.unlink()
-                result = self.run_harness(source, sys.executable, scenario)
-                if error:
-                    self.assertNotEqual(result.returncode, 0, result.stdout)
-                    self.assertIn(error, result.stdout + result.stderr)
-                    self.assertFalse((self.folder / ".venv").exists())
-                else:
-                    self.assertEqual(
-                        result.returncode,
-                        0,
-                        result.stdout + result.stderr,
-                    )
-                    shutil.rmtree(self.folder / ".venv")
-                installs = sorted(self.folder.glob("install-*.json"))
-                if scenario in ("no-install", "offline", "bad-hash"):
-                    self.assertEqual(installs, [])
-                else:
-                    self.assertEqual(
-                        len(installs),
-                        2
-                        if scenario
-                        in (
-                            "repair",
-                            "unusable",
-                        )
-                        else 1,
-                    )
-                    arguments = json.loads(installs[0].read_text())
-                    for flag in (
-                        "/quiet",
-                        "/norestart",
-                        "InstallAllUsers=0",
-                        "Include_tcltk=1",
-                        "Include_pip=1",
-                    ):
-                        self.assertIn(flag, arguments)
-                    if len(installs) == 2:
-                        self.assertIn("/repair", json.loads(installs[1].read_text()))
-                if scenario != "no-install":
-                    self.assertEqual(
-                        (self.folder / "url.txt").read_text().strip(),
-                        "https://www.python.org/ftp/python/3.13.16/"
-                        "python-3.13.16-amd64.exe",
-                    )
+        records = sorted(self.folder.glob("install-*.json"))
+        self.assertEqual(len(records), installs)
+        if records:
+            arguments = json.loads(records[0].read_text())
+            for flag in (
+                "/quiet",
+                "/norestart",
+                "InstallAllUsers=0",
+                "Include_tcltk=1",
+                "Include_pip=1",
+            ):
+                self.assertIn(flag, arguments)
+            if installs == 2:
+                self.assertIn("/repair", json.loads(records[1].read_text()))
+        url = self.folder / "url.txt"
+        if scenario == "no-install":
+            self.assertFalse(url.exists())
+        else:
+            self.assertEqual(
+                url.read_text().strip(),
+                "https://www.python.org/ftp/python/3.13.16/python-3.13.16-amd64.exe",
+            )
+
+    def test_disabled_install_never_downloads(self) -> None:
+        self.download_scenario("no-install", installs=0, error="Kein Python")
+
+    def test_offline_download_never_starts_installer(self) -> None:
+        self.download_scenario("offline", installs=0, error="Netzwerk nicht erreichbar")
+
+    def test_bad_checksum_never_starts_installer(self) -> None:
+        self.download_scenario("bad-hash", installs=0, error="Pruefsumme")
+
+    def test_installer_failure_preserves_exit_code(self) -> None:
+        self.download_scenario("failed", installs=1, error="Code 42")
+
+    def test_unusable_runtime_is_rejected_after_repair(self) -> None:
+        self.download_scenario("unusable", installs=2, error="nicht startbar")
+
+    def test_runtime_discovery_retries_after_repair(self) -> None:
+        self.download_scenario("repair", installs=2)
+
+    def test_reboot_code_is_accepted(self) -> None:
+        self.download_scenario("reboot", installs=1)
+
+    def test_automatic_install_connects_download_to_application_setup(self) -> None:
+        self.download_scenario("success", installs=1)
 
     def test_importable_but_broken_tk_is_rejected(self) -> None:
         # Import succeeds, but creating a Tk window fails: a real runtime defect.

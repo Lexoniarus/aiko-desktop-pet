@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.home.begin.a",
+      "revision": 1,
+      "theme": "home",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute entsteht der Wunsch nach einem Platz, an dem du dich ungestört sammeln kannst. Schon eine kleine Ecke kann genügen."
+        },
+        {
+          "id": "p2",
+          "text": "Eine vertraute Sache in neuer Ordnung bringt mehr Behaglichkeit als ein großer Umbau. Folge dabei deinem eigenen Gefühl."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst dir etwas angenehm machen, auch wenn es nur dir auffällt. Geborgenheit braucht keine Zuschauer.",
+          "comment_key": "horoscope.familiar_quiet"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.begin.b",
+      "revision": 1,
+      "theme": "home",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wächst die Lust, deine Umgebung einladender zu machen. Eine kleine Änderung kann sich überraschend vertraut anfühlen."
+        },
+        {
+          "id": "p2",
+          "text": "Lass dich von dem leiten, was dir angenehm ist, statt von einem perfekten Bild. Ein eigener Platz darf Eigenheiten haben."
+        },
+        {
+          "id": "p3",
+          "text": "Ein kleiner passender Ort wirkt heute stärker als ein perfektes Bild. Wohlfühlen braucht nicht überall dieselbe Form.",
+          "comment_key": "horoscope.familiar_quiet"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.develop.a",
+      "revision": 1,
+      "theme": "home",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bekommt ein vertrautes Ritual neuen Wert. Wenn du ihm bewusst Zeit gibst, trägt es dich leichter durch den Tag."
+        },
+        {
+          "id": "p2",
+          "text": "Eine Kleinigkeit in deiner Umgebung lässt sich so verändern, dass sie besser zu deinem Rhythmus passt."
+        },
+        {
+          "id": "p3",
+          "text": "Bleib bei dem, was dir Ruhe gibt. Eine gute Gewohnheit muss nicht spektakulär sein, um dir zu helfen.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.develop.b",
+      "revision": 1,
+      "theme": "home",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute tut es gut, etwas Vertrautem bewusst Zeit zu geben. Ein Ritual oder eine kleine Gewohnheit bekommt dadurch mehr Halt."
+        },
+        {
+          "id": "p2",
+          "text": "Du spürst eher, was deiner Umgebung fehlt, wenn du nicht sofort alles verändern willst. Ergänze nur, was wirklich hilft."
+        },
+        {
+          "id": "p3",
+          "text": "Behaglichkeit wächst durch Aufmerksamkeit. Ein vertrauter kleiner Moment braucht keine aufwendige Vorbereitung.",
+          "comment_key": "horoscope.care_for_what_is_there"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.reflect.a",
+      "revision": 1,
+      "theme": "home",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute berührt dich etwas Vertrautes stärker als sonst. Ein Gegenstand oder Geruch kann eine angenehme Erinnerung wecken."
+        },
+        {
+          "id": "p2",
+          "text": "Dabei wird dir klarer, welche kleinen Dinge einen Ort für dich wohnlich machen. Dein eigener Geschmack zählt."
+        },
+        {
+          "id": "p3",
+          "text": "Würdige das Vertraute, ohne alles festhalten zu müssen. Ein schöner Moment darf einfach schön gewesen sein.",
+          "comment_key": "horoscope.value_small_things"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.reflect.b",
+      "revision": 1,
+      "theme": "home",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute gibt eine Erinnerung deinem Tag einen warmen Ton. Ein vertrauter Geschmack oder Gegenstand ruft etwas Angenehmes wach."
+        },
+        {
+          "id": "p2",
+          "text": "Du erkennst, wie sehr kleine Rituale dein Gefühl von Zuhause prägen. Nicht alles daran muss praktisch oder vernünftig sein."
+        },
+        {
+          "id": "p3",
+          "text": "Eine schöne Erinnerung darf ihren Platz behalten. Du musst sie nicht genau wiederholen, um dich daran zu freuen.",
+          "comment_key": "horoscope.value_small_things"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.conclude.a",
+      "revision": 1,
+      "theme": "home",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute zieht es dich zum Vertrauten. Ein ruhiger Platz und ein kleines Ritual geben dem Tag einen angenehmen Abschluss."
+        },
+        {
+          "id": "p2",
+          "text": "Etwas, das noch auf deine Entscheidung wartet, darf einen festen Platz bekommen. Es muss nicht gleich alles geordnet sein."
+        },
+        {
+          "id": "p3",
+          "text": "Je weniger du den Abend mit neuen Vorhaben füllst, desto deutlicher spürst du, was dir Geborgenheit gibt."
+        },
+        {
+          "id": "p4",
+          "text": "Lass für heute etwas gut sein. Ein vertrauter kleiner Abschluss kann mehr tragen als ein perfekter Plan für morgen.",
+          "comment_key": "horoscope.familiar_quiet"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.home.conclude.b",
+      "revision": 1,
+      "theme": "home",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute darf dein Rückzugsort wieder dir gehören. Nach vielen Eindrücken wirkt etwas Vertrautes besonders beruhigend."
+        },
+        {
+          "id": "p2",
+          "text": "Räume nur das aus dem Weg, was dich gerade stört. Ein ruhiger Abend muss nicht mit einer großen Aufräumaktion beginnen."
+        },
+        {
+          "id": "p3",
+          "text": "Für heute genügt ein Platz, an dem du ankommen kannst. Auch Unfertiges darf dabei friedlich neben dir liegen.",
+          "comment_key": "horoscope.familiar_quiet"
+        }
+      ]
+    }
+  ]
+}

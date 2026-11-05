@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import math
 import struct
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping
 
 from ..asset_paths import ASSET_ROOT
-from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
+from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite, ReadableItem
 from ..pet.catalog_validation import load_json, object_fields
 from ..pet.content import GERMAN_TEXT
 from ..pet.food_catalog import DEFAULT_CATALOG
@@ -77,8 +78,12 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             spec = variants[str(scale)]
             if not isinstance(spec, dict):
                 raise ValueError("Malformed item variant")
-            object_fields(spec, ("path", "pivot"), optional=("display_path",),
-                          context=f"item {key} {scale}x")
+            object_fields(
+                spec,
+                ("path", "pivot"),
+                optional=("display_path",),
+                context=f"item {key} {scale}x",
+            )
             path, (width, height) = _png(root, spec.get("path"))
             display_path = None
             if "display_path" in spec:
@@ -94,8 +99,9 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
                 or not 0 <= pivot[1] <= height
             ):
                 raise ValueError(f"Invalid grip point for {key} at {scale}x")
-            sprites[scale] = ItemSprite(path, (float(pivot[0]), float(pivot[1])),
-                                        display_path)
+            sprites[scale] = ItemSprite(
+                path, (float(pivot[0]), float(pivot[1])), display_path
+            )
         items[key] = HandItem(
             key,
             label,
@@ -108,9 +114,12 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
 def load_item_catalog(root: Path = ASSET_ROOT / "items") -> ItemCatalog:
     """Read the prebuilt sprites without Pillow or a runtime network request."""
     data = object_fields(
-        load_json(root / "items.json"), ("version", "foods", "weapons"), context="items"
+        load_json(root / "items.json"),
+        ("version", "foods", "weapons"),
+        optional=("readables",),
+        context="items",
     )
-    if type(data["version"]) is not int or data.get("version") != 1:
+    if type(data["version"]) is not int or data.get("version") not in (1, 2):
         raise ValueError("Unsupported item catalog version")
     foods = _items(root, data.get("foods"), food=True)
     weapons = _items(root, data.get("weapons"), food=False)
@@ -118,4 +127,81 @@ def load_item_catalog(root: Path = ASSET_ROOT / "items") -> ItemCatalog:
         raise ValueError("Food assets and nutrition menu must have the same IDs")
     if set(foods).intersection(weapons):
         raise ValueError("Item IDs must be unique across categories")
-    return ItemCatalog(foods, weapons)
+    return ItemCatalog(foods, weapons, _readables(data.get("readables", [])))
+
+
+def _readables(records: object) -> Mapping[str, ReadableItem]:
+    if not isinstance(records, list):
+        raise ValueError("Invalid readable asset list")
+    result: dict[str, ReadableItem] = {}
+    for value in records:
+        row = object_fields(
+            value, ("id", "label_key", "state_manifest"), context="readable"
+        )
+        if any(not isinstance(row[k], str) for k in row):
+            raise ValueError("Invalid readable metadata")
+        path = (ASSET_ROOT / row["state_manifest"]).resolve()
+        if not path.is_relative_to(ASSET_ROOT.resolve()):
+            raise ValueError("Readable manifest escapes assets")
+        data = load_json(path)
+        if (
+            not isinstance(data, dict)
+            or data.get("version") != 1
+            or set(data.get("states", {}))
+            != {"closed_world", "carry_closed", "half_open", "open_reading"}
+        ):
+            raise ValueError("Invalid readable state manifest")
+        states: dict[str, Mapping[int, ItemSprite]] = {}
+        for name, state in data["states"].items():
+            variants: dict[int, ItemSprite] = {}
+            for scale in (1, 2):
+                spec = state["variants"][str(scale)]
+                image, size = _png(path.parent, spec["path"])
+                display, display_size = _png(path.parent, spec["display_path"])
+                pivot = spec["pivot"]
+                if (
+                    size != display_size
+                    or list(size) != spec["size"]
+                    or len(pivot) != 2
+                    or any(type(v) not in (int, float) for v in pivot)
+                    or not 0 <= pivot[0] <= size[0]
+                    or not 0 <= pivot[1] <= size[1]
+                ):
+                    raise ValueError("Invalid readable geometry")
+                variants[scale] = ItemSprite(
+                    image, (float(pivot[0]), float(pivot[1])), display
+                )
+            states[name] = MappingProxyType(variants)
+        icon = _png(path.parent, data["icons"]["32"])[0]
+        key = row["id"]
+        if not key.isidentifier() or key in result:
+            raise ValueError("Invalid or duplicate readable id")
+        registration = data.get("held_registration", {})
+        offset = _readable_offset(registration.get("attachment_offset_1x", [0, 0]))
+        state_offsets = registration.get("state_offsets_1x", {})
+        if not isinstance(state_offsets, dict) or not set(state_offsets) <= set(states):
+            raise ValueError("Invalid readable state attachments")
+        world_zoom = data.get("world_registration", {}).get("zoom", 1)
+        if type(world_zoom) is not int or not 1 <= world_zoom <= 3:
+            raise ValueError("Invalid readable World size")
+        result[key] = ReadableItem(
+            key,
+            GERMAN_TEXT.format(row["label_key"]),
+            icon,
+            MappingProxyType(states),
+            offset,
+            world_zoom,
+            MappingProxyType({name: _readable_offset(value)
+                              for name, value in state_offsets.items()}),
+        )
+    return MappingProxyType(result)
+
+
+def _readable_offset(value: object) -> tuple[float, float]:
+    if (
+        not isinstance(value, list) or len(value) != 2
+        or any(type(v) not in (int, float) or not math.isfinite(v) or abs(v) > 96
+               for v in value)
+    ):
+        raise ValueError("Invalid readable hand attachment")
+    return float(value[0]), float(value[1])

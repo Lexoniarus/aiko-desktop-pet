@@ -22,7 +22,6 @@ def scene(
         expected_effort=expectation, expectation_confident=confidence,
         present=True, uptime_hours=24.0,
         prolonged_work_seconds=duration, rest_seconds=0.0,
-        can_sleep=False, should_wake=False, can_nap=False,
     )
 
 

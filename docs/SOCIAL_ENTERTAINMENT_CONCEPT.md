@@ -18,6 +18,50 @@ Related references: [current architecture](ARCHITECTURE.md),
 [adaptive cursor concept](ADAPTIVE_CURSOR_CONCEPT.md) and
 [integration boundaries](INTEGRATION_ARCHITECTURE.md).
 
+The owner selected jokes and facts for the next social-content delivery. The
+[jokes and facts implementation plan](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md)
+records the **Unterhalten** menu, shared conversation effects,
+separate Single and Two Parts choices, fact introductions and two individually
+prepared API items per category. The selected delivery uses API entertainment
+content exclusively, without an authored local catalogue or local fallback;
+existing **Plaudern** remains available. These later decisions supersede earlier
+fallback assumptions for the new choices; the broader concept below remains
+preserved. Implementation was subsequently authorized and delivered on the
+feature branch; [current social behavior](SOCIAL_CONTENT.md) describes the
+runtime, and the plan records actual verification. Broader translation,
+horoscope and spontaneous-content ideas below remain future work.
+
+The later [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) supersedes
+this exploratory source list for selected features. Sprüche with genuine
+one-liners/quotations and shared bubble timing are implemented. The horoscope
+API prototype is **rejected and fully replaced**, without an online
+alternative or fallback. Its [local book replacement plan](horoscope/LOCAL_HOROSCOPE_IMPLEMENTATION_PLAN.md)
+and [approved content reference](horoscope/book-reading-reference.de.md) now
+govern that work: a placed and picked-up book supplies the text, Aiko remains
+herself and may comment. Hat gating and a floating-book performance are not
+part of its first version. The local replacement contains 96 complete readings
+with a persistent physical book and a fixed one-hour replay deadline.
+Tarot remains separate future work; older source/role/translation suggestions
+below are historical possibilities, not current implementation instructions.
+
+The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
+existing sequences and their conditions for individual editorial review before
+any wording changes. Its review status and proposals do not change runtime copy.
+
+The later [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) records
+candidate relationship gains/losses and real-time absence consequences. It is
+separate from this preserved content-provider concept and is not implemented.
+
+The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) separately records need
+contributions, critical-deficit penalties and real-time decline/recovery timings.
+It also preserves discussion values only, without implementing Moodlets or
+changing runtime balance.
+
+The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) connects
+care effects and real-time need rates to an example day with normal sleep.
+The friendship proposal also records progressive upkeep and sustained neglect;
+these remain unimplemented balance candidates, separate from content providers.
+
 ## Product direction
 
 Aiko should offer small, varied moments of entertainment on her own initiative,

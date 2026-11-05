@@ -8,16 +8,29 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
+from typing import Callable
 
+from ..pet.animation.idle_behaviour import (
+    IdleBehaviourContext,
+    IdleBehaviourProfile,
+    derive_idle_profile,
+)
+from ..pet.animation.idle_gesture import IdleGestureChoice
 from ..pet.balance import BALANCE
+from ..pet.interaction_rules import petting_is_welcome
 from ..pet.mind import PetMind
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
+from ..pet.moodlet_catalog import MOODLET_CATALOG
+from ..pet.moodlets import MoodletId
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
+from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wishes import WishContext, WishId, wish_to_express
 from .care_requests import choose_care_request
 from .events import IncomingNotification
 from .ports import ComputerReadings
+from .read_snapshot import snapshot_pet
 from .router import ApplicationRouter
 from .settings import PetSettings
 
@@ -43,6 +56,7 @@ class AttentionCoordinator:
         router: ApplicationRouter,
         *,
         started_at: float,
+        prepared_social: Callable[[], frozenset[str]] = frozenset,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -50,6 +64,7 @@ class AttentionCoordinator:
         self.workload_events = workload_events
         self.monitor = monitor
         self.router = router
+        self._prepared_social = prepared_social
         self.last_spoken = -1000.0
         self.next_care_request = started_at
         self.next_comment = started_at + random.uniform(
@@ -67,6 +82,41 @@ class AttentionCoordinator:
 
     def mark_spoken(self, now: float) -> None:
         self.last_spoken = now
+
+    def idle_profile(self) -> IdleBehaviourProfile:
+        read = snapshot_pet(self.state, wish_context=self.wish_context())
+        return derive_idle_profile(IdleBehaviourContext(
+            read.energy, read.emotions.primary, read.need_conditions, read.sleeping,
+        ))
+
+    def wish_context(self) -> WishContext:
+        """Read existing capabilities and care admission without executing care."""
+        active = {e.definition_id for e in self.state.moodlets.active}
+        return WishContext(
+            online_social=self.settings.online_social,
+            prepared_social=self._prepared_social(),
+            petting_welcome=petting_is_welcome(
+                self.state.moodlets, affection=self.state.affection,
+                friendship_level=self.state.friendship_level,
+                elapsed=self.state.lived_seconds,
+                definitions=MOODLET_CATALOG.definitions,
+            ),
+            games_ready=self.state.energy >= BALANCE.integer(
+                "care", "play_minimum_energy",
+            ),
+            crowded=MoodletId.CROWDED in active,
+            petting_refused=(self.state.lived_seconds
+                             < self.state.moodlets.interactions.petting_refused_until),
+            repetitive_food=(self.state.moodlets.interactions.food.food_id
+                             if MoodletId.FOOD_MONOTONY in active else None),
+        )
+
+    def evaluate_wishes(self) -> None:
+        """Replenish inner stock at a live endpoint, independent of presentation."""
+        self.state.evaluate_wishes(self.wish_context(), rng=self.mind.rng)
+
+    def note_wish_text(self, instance_id: int) -> None:
+        self.state.note_wish_expression(instance_id)
 
     def reschedule_comment(self, now: float) -> None:
         self.next_comment = now + random.uniform(
@@ -90,8 +140,6 @@ class AttentionCoordinator:
         distance: float,
         screen_width: int,
         now: float,
-        *,
-        toolbar_visible: bool,
     ) -> str | None:
         """Choose a rare cursor remark from an observed movement."""
         if (
@@ -100,7 +148,6 @@ class AttentionCoordinator:
             or now < self.next_cursor_line
             or now - self.last_spoken <= 100
             or self.state.sleeping
-            or toolbar_visible
         ):
             return None
         if random.random() >= BALANCE.number("attention", "cursor_comment_probability"):
@@ -132,15 +179,12 @@ class AttentionCoordinator:
         screen_width: int,
         now: float,
         context: TimeContext,
-        *,
-        toolbar_visible: bool,
     ) -> Reaction | None:
         """Interpret existing cursor event keys before entering the UI."""
         event = self.select_cursor_comment_event(
             distance,
             screen_width,
             now,
-            toolbar_visible=toolbar_visible,
         )
         if event is None:
             return None
@@ -173,36 +217,46 @@ class AttentionCoordinator:
         *,
         action_until: float,
         walking: bool,
-        toolbar_visible: bool,
-    ) -> str | None:
-        """Return one gesture only when Aiko is free to express herself."""
+    ) -> IdleGestureChoice | None:
+        """Use the existing expression clock for an actual request, or silence."""
         if now < self.next_idle_emote:
             return None
         self.next_idle_emote = now + random.uniform(
             BALANCE.number("attention", "idle_repeat_minimum_seconds"),
             BALANCE.number("attention", "idle_repeat_maximum_seconds"),
         )
-        if self.state.sleeping or now < action_until or walking or toolbar_visible:
+        if self.state.sleeping or now < action_until or walking:
             return None
-        return random.choice(("waiting", "review", "idle"))
+        return self.idle_gesture_choice()
+
+    def idle_gesture_choice(self) -> IdleGestureChoice | None:
+        """Read disclosure and restrictions without creating or acknowledging wishes."""
+        wish = wish_to_express(
+            self.state.wishes, elapsed=self.state.lived_seconds,
+            sleeping=self.state.sleeping, friendship_level=self.state.friendship_level,
+            mood=self.state.mood, context=self.wish_context(),
+            definitions=WISH_CATALOG.definitions,
+        )
+        if wish is None or wish.definition_id not in (
+            WishId.FOOD, WishId.PET, WishId.SOCIAL_ANY, WishId.CHAT,
+            WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT,
+        ):
+            return None
+        return IdleGestureChoice(wish.instance_id)
 
     def spontaneous(
         self,
         now: float,
         context: TimeContext,
         *,
-        toolbar_visible: bool,
         action_until: float = 0.0,
         bubble_visible: bool = False,
-        popup_visible: bool = False,
     ) -> SpontaneousChoice:
         """Select measured-effort or personal dialogue when allowed."""
         if (
             not self.settings.spontaneous_talk
             or self.state.sleeping
-            or toolbar_visible
             or bubble_visible
-            or popup_visible
             or now < action_until
             or now - self.last_spoken
             < BALANCE.integer("attention", "comment_minimum_quiet_seconds")
@@ -220,6 +274,19 @@ class AttentionCoordinator:
                     "care_requests", "interval_seconds"
                 )
                 return SpontaneousChoice(True, reaction)
+        if min(self.state.satiety, self.state.energy, self.state.fun,
+               self.state.social, self.state.affection) > BALANCE.number(
+                   "friendship", "critical_need",
+               ):
+            wish = wish_to_express(
+                self.state.wishes, elapsed=self.state.lived_seconds,
+                sleeping=self.state.sleeping,
+                friendship_level=self.state.friendship_level,
+                mood=self.state.mood, context=self.wish_context(),
+                definitions=WISH_CATALOG.definitions,
+            )
+            if wish is not None:
+                return SpontaneousChoice(True, self.mind.wish_reaction(wish))
         if now < self.next_comment:
             return SpontaneousChoice(False)
         self.next_comment = now + random.uniform(
@@ -240,8 +307,6 @@ class AttentionCoordinator:
         *,
         action_until: float,
         bubble_visible: bool,
-        popup_visible: bool,
-        toolbar_visible: bool,
     ) -> IncomingNotification | None:
         """Consume at most one event without interrupting any visible UI."""
         if (
@@ -250,8 +315,6 @@ class AttentionCoordinator:
             or now - self.last_spoken
             < BALANCE.integer("attention", "notification_quiet_seconds")
             or bubble_visible
-            or popup_visible
-            or toolbar_visible
         ):
             return None
         return self.router.next_notification()

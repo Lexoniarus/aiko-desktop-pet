@@ -20,80 +20,70 @@
       "display_name": "Onigiri",
       "category": "meal",
       "instant_satiety_points": 30,
-      "digest_reserve_minutes": 105,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 105
     },
     {
       "id": "sandwich",
       "display_name": "Sandwich",
       "category": "meal",
       "instant_satiety_points": 38,
-      "digest_reserve_minutes": 145,
-      "normal_mood_bonus": 5
+      "digest_reserve_minutes": 145
     },
     {
       "id": "taiyaki",
       "display_name": "Taiyaki",
       "category": "snack",
       "instant_satiety_points": 20,
-      "digest_reserve_minutes": 55,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 55
     },
     {
       "id": "apple",
       "display_name": "Apfel",
       "category": "snack",
       "instant_satiety_points": 14,
-      "digest_reserve_minutes": 38,
-      "normal_mood_bonus": 3
+      "digest_reserve_minutes": 38
     },
     {
       "id": "dango",
       "display_name": "Dango",
       "category": "snack",
       "instant_satiety_points": 10,
-      "digest_reserve_minutes": 20,
-      "normal_mood_bonus": 2
+      "digest_reserve_minutes": 20
     },
     {
       "id": "donut",
       "display_name": "Donut",
       "category": "snack",
       "instant_satiety_points": 18,
-      "digest_reserve_minutes": 42,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 42
     },
     {
       "id": "cookie",
       "display_name": "Cookie",
       "category": "snack",
       "instant_satiety_points": 12,
-      "digest_reserve_minutes": 30,
-      "normal_mood_bonus": 3
+      "digest_reserve_minutes": 30
     },
     {
       "id": "melonpan",
       "display_name": "Melonpan",
       "category": "snack",
       "instant_satiety_points": 29,
-      "digest_reserve_minutes": 85,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 85
     },
     {
       "id": "cupcake",
       "display_name": "Cupcake",
       "category": "snack",
       "instant_satiety_points": 17,
-      "digest_reserve_minutes": 46,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 46
     },
     {
       "id": "dorayaki",
       "display_name": "Dorayaki",
       "category": "snack",
       "instant_satiety_points": 21,
-      "digest_reserve_minutes": 60,
-      "normal_mood_bonus": 4
+      "digest_reserve_minutes": 60
     }
   ]
 }

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" fill="none">
+<defs><pattern id="weave" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M1 0v3M0 6h3" stroke="#d8b9b9" stroke-opacity=".2" stroke-width=".7"/></pattern><radialGradient id="paper"><stop stop-color="#fffdf4"/><stop offset="1" stop-color="#faf2e3"/></radialGradient></defs>
+<path d="M18 8Q12 5 8 16L4 276q0 14 16 15l400 3q16-1 15-17l-3-255q0-15-16-14Z" fill="#e7cbd1" stroke="#a98d9f" stroke-width="2"/>
+<path d="m22 17 390-1q12 0 12 12l2 244q0 12-12 12l-390-2q-12 0-11-13l2-238q-1-14 7-14Z" fill="#f5e5e4"/>
+<path d="m22 17 390-1q12 0 12 12l2 244q0 12-12 12l-390-2q-12 0-11-13l2-238q-1-14 7-14Z" fill="url(#weave)"/>
+<path d="m25 22 385-1q9 0 9 9l2 237q0 10-10 10l-382-2q-10 0-10-10l2-232q-1-11 4-11Z" stroke="#c2a5b0" stroke-width="1.1" stroke-dasharray="3 4"/>
+<ellipse cx="220" cy="155" rx="114" ry="108" fill="#d9c9cf" opacity=".45"/>
+<path d="M334 147c1 62-49 108-114 108S106 209 106 148s49-109 114-109 114 46 114 108Z" fill="#dde9ec" stroke="#8194a5" stroke-width="2"/>
+<path d="M326 147c1 57-45 100-106 100S114 204 114 148s45-101 106-101 106 43 106 100Z" fill="url(#paper)" stroke="#c3b9ac" stroke-width="1.4"/>
+<path d="M318 146c0 53-41 93-98 93s-98-40-98-91 42-93 98-93 98 40 98 91Z" stroke="#d4c2b6" stroke-dasharray="2 5" stroke-width="1"/>
+<path d="m26 30 23-1-1 22-22 1Z" fill="#e1eaf0" stroke="#a0a9b5" stroke-width="1.4"/>
+<path d="m34 31 1 18m8-19 1 18m-16-9 18-1" stroke="#c1c9ce" stroke-width="1"/>
+<path d="m391 249 25 1-2 21-24-1Z" fill="#e7dff0" stroke="#ad9abb" stroke-width="1.4"/>
+<path d="m395 256 15 1m-15 5 15 1" stroke="#c3b2ce" stroke-width="1"/>
+<g fill="#b9929e" stroke="#a1808e" stroke-width=".7" stroke-linejoin="round"><path d="m64 97 3 8 9 1-7 6 2 9-8-5-8 4 3-9-7-6 9 0Z"/><path d="m371 178 2 6 7 1-5 4 1 7-6-4-6 3 2-6-5-5 7 0Z"/></g>
+<g stroke="#bca8ac" stroke-width="1.5" stroke-linecap="round"><path d="m61 199 4-5m8 12 5-1m-7-17 1-6M369 75l-4-5m-7 12-5-1m7-17-1-6"/></g>
+<path d="M46 253q11-7 17 1t17-1M357 39q10-6 15 1t15-1" stroke="#c4aeb3" stroke-width="1.3" stroke-linecap="round"/>
+</svg>

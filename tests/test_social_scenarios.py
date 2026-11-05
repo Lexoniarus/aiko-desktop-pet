@@ -5,18 +5,25 @@ speak follows observations, that silence is real, and that no unobserved
 program/user activity can be invented.
 """
 
-import json
+from __future__ import annotations
+
 import random
 import re
 import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.care_actions import plan_care_action
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.adaptive_policy import ActivityMode
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.view_models.text_de import format_emotional_state
+from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -53,9 +60,6 @@ def scene(
         uptime_hours=uptime,
         prolonged_work_seconds=duration,
         rest_seconds=rest,
-        can_sleep=False,
-        should_wake=False,
-        can_nap=False,
     )
 
 
@@ -86,14 +90,16 @@ class ClickStoryTests(unittest.TestCase):
                 None,
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 30), "irritated")
+        self.assertEqual(self.mind.reaction_tone(30), ReactionTone.IRRITATED)
         self.assertEqual(
             require_reaction(
                 self.mind.click("right", self.state, self.context, 50)
             ).event,
             "click_right",
         )
-        self.assertEqual(self.mind.emotion(self.state, 50), "calm")
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_good_mood_turns_provocation_into_playful_teasing(self):
         set_test_pet_values(self.state, mood=94)
@@ -115,7 +121,12 @@ class ClickStoryTests(unittest.TestCase):
                 "click_last_word",
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 58), "playful")
+        self.assertIn(
+            SituationalCondition.PLAYFUL,
+            self.mind.dialogue_context(
+                self.state, context_at(1800000000), 58
+            ).situational_conditions,
+        )
 
     def test_low_energy_and_recent_care_change_early_clicks(self):
         set_test_pet_values(self.state, energy=19)
@@ -126,7 +137,7 @@ class ClickStoryTests(unittest.TestCase):
             "click_sleepy",
         )
         new_mind = make_aiko_mind(started_at=0.0, rng=random.Random(1))
-        new_mind.after_care("pet", 30)
+        new_mind.record_accepted_care("pet", 30)
         self.assertEqual(
             require_reaction(
                 new_mind.click("left", PetState(), self.context, 35)
@@ -173,14 +184,18 @@ class ClickStoryTests(unittest.TestCase):
             all("CPU" not in r.text and "GPU" not in r.text for r in reactions)
         )
 
-    def test_sleep_does_not_wake_and_is_not_click_spam(self):
+    def test_sleep_requests_quiet_before_requesting_a_wake_transition(self):
         set_test_pet_values(self.state, sleeping=True)
-        for i in range(12):
+        for i in range(3):
             r = self.mind.click("left", self.state, self.context, 30 + i)
             assert r is not None
             self.assertEqual(r.event, "sleep_click")
+            self.assertFalse(self.mind.click_wakes)
+        self.assertIsNone(self.mind.click("left", self.state, self.context, 33))
+        self.assertTrue(self.mind.click_wakes)
+        # The application commits waking; dialogue selection cannot mutate her.
         self.assertTrue(self.state.sleeping)
-        self.assertEqual(self.mind.irritated_until, -1)
+        self.assertEqual(self.mind.irritation_reaction_until, -1)
 
     def test_work_interruption_and_recovery_payoff(self):
         self.mind.set_situation(scene(duration=150), now=20)
@@ -249,17 +264,11 @@ class ClickStoryTests(unittest.TestCase):
             ).event,
             "after_work_thought",
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 770)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 770),
         )
-        self.assertNotEqual(
-            require_reaction(
-                self.mind.select_spontaneous_reaction(self.state, self.context, 1500)
-            ).event,
-            "after_work_thought",
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 1500),
         )
 
     def test_no_fake_work_recovery_after_short_spike(self):
@@ -360,23 +369,14 @@ class ClickStoryTests(unittest.TestCase):
 
     def test_unavailable_situation_does_not_invent_usage(self):
         self.mind.set_situation(None)
-        reaction = self.mind.select_spontaneous_reaction(self.state, self.context, 100)
-        assert reaction is not None
-        self.assertNotIn(
-            reaction.event,
-            (
-                "work_concentrating",
-                "work_late",
-                "work_long_thought",
-                "work_finished_long",
-                "return_working",
-            ),
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(self.state, self.context, 100),
         )
 
 
 class CatalogueContractTests(unittest.TestCase):
     def test_followup_schema_and_nonexistent_animation_rejected(self):
-        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw = dialogue_source_fixture()["lines"][0]
         for key, bad in [
             ("followup_text", ""),
             ("followup_delay_ms", 200),
@@ -389,19 +389,25 @@ class CatalogueContractTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     Line.parse(data)
 
-    def test_all_sequence_text_is_short_and_no_fiction_or_hardware(self):
+    def test_sequence_copy_is_short_and_hardware_has_observation_context(self):
         for line in DialogueBook.from_file().lines:
             for beat in line.beats:
                 if beat.kind != "text":
                     continue
                 self.assertLessEqual(len(beat.content), 125)
-                for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
+                for forbidden in ("Academy", "Kobe"):
                     self.assertIsNone(
                         re.search(
                             r"\b" + re.escape(forbidden) + r"\b",
                             beat.content,
                             flags=re.IGNORECASE,
                         )
+                    )
+                if re.search(r"\b(CPU|GPU|RAM)\b", beat.content, re.IGNORECASE):
+                    self.assertTrue(
+                        line.event.startswith("computer_")
+                        or line.event in {"work_long_thought", "pet_during_work"},
+                        line.id,
                     )
 
     def test_all_new_events_have_actual_authored_lines(self):
@@ -443,6 +449,175 @@ class CatalogueContractTests(unittest.TestCase):
             with self.subTest(event=event):
                 self.assertIn(event, event_set)
                 self.assertGreaterEqual(sum(x.event == event for x in book.lines), 3)
+
+
+def care_stamp(day: str = "2026-10-12", hour: int = 12) -> float:
+    return datetime.fromisoformat(f"{day}T{hour:02d}:00:00").astimezone().timestamp()
+
+
+def care_dialogue(seed):
+    return (
+        make_aiko_mind(started_at=0.0, rng=random.Random(seed)),
+        context_at(care_stamp()),
+    )
+
+
+class SocialDialogueTests(unittest.TestCase):
+    def setUp(self):
+        self.mind, self.context = care_dialogue(57)
+
+    def test_social_deficit_is_distinct_emotion_and_dialogue(self):
+        state = PetState(social=15)
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 50)
+            ).event,
+            "social_low",
+        )
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 55),
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 55 + 20 * 60)
+            ).event,
+            "social_low",
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 60)).event,
+            "click_lonely",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "talk",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 62),
+            ),
+            "talk",
+        )
+
+    def test_energy_drink_has_grounded_line_even_when_full(self):
+        state = PetState(energy=100)
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "energy_drink",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 90),
+            ),
+            "energy_drink_full",
+        )
+        set_test_pet_values(state, energy=70)
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "energy_drink",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 91),
+            ),
+            "energy_drink",
+        )
+
+
+class AffectionDialogueTests(unittest.TestCase):
+    def setUp(self):
+        self.mind, self.context = care_dialogue(12)
+
+    def test_low_affection_is_not_social_loneliness(self):
+        state = PetState(social=70, affection=12)
+        self.assertIn(
+            NeedCondition.LOW_AFFECTION,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            format_emotional_state(EmotionalState.SATISFIED),
+            "Stimmung: Zufrieden",
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_affection_low",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "pet",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "pet_needs_affection",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "talk",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "talk",
+        )
+
+    def test_existing_social_shortage_still_has_own_priority(self):
+        state = PetState(social=10, affection=10)
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_lonely",
+        )
+
+    def test_feeling_cared_for_can_make_aiko_more_at_ease(self):
+        state = PetState(affection=95, friendship=55, mood=73, social=78)
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_at_ease",
+        )
+        reserved = make_aiko_mind(started_at=0.0, rng=random.Random(12))
+        set_test_pet_values(state, affection=50)
+        self.assertEqual(
+            require_reaction(reserved.click("left", state, self.context, 50)).event,
+            "click_left",
+        )
+
+    def test_affection_spontaneous_hint_has_long_cooldown(self):
+        state = PetState(affection=8)
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60)
+            ).event,
+            "affection_low",
+        )
+        self.assertIsNone(
+            self.mind.select_spontaneous_reaction(state, self.context, 61),
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60 + 26 * 60)
+            ).event,
+            "affection_low",
+        )
 
 
 if __name__ == "__main__":

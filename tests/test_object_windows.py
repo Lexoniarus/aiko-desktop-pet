@@ -15,6 +15,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.desktop_test_support import destroy_test_root
 
 
 class ObjectWindowTests(unittest.TestCase):
@@ -22,7 +23,7 @@ class ObjectWindowTests(unittest.TestCase):
         if sys.platform != "win32":
             self.skipTest("Windows layered-window hit testing")
         root = tk.Tk()
-        self.addCleanup(root.destroy)
+        self.addCleanup(destroy_test_root, root)
         root.geometry("240x220+100+100")
         root.configure(bg="blue")
         root.update()

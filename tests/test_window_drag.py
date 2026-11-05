@@ -6,6 +6,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.ui.common.window_drag import WindowDrag, bounded_position
+from tools.desktop_test_support import destroy_test_root
 
 
 class WindowPositionTests(unittest.TestCase):
@@ -24,7 +25,7 @@ class WindowDragTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             raise unittest.SkipTest("No Tk display") from error
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.window = tk.Toplevel(self.root)
         self.window.overrideredirect(True)

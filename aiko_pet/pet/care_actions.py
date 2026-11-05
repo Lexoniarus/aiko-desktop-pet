@@ -20,10 +20,17 @@ from .food import (
     FoodState,
     eat_food,
 )
-from .friendship import CARE_PRIMARY_NEED
-from .need_decay import NeedLevels
+from .food_wishes import FoodWishPermission, food_wish_permission
+from .interaction_events import PettingAttempted
+from .interaction_rules import InteractionConsequences, apply_interaction_event
+from .moodlet_catalog import MOODLET_CATALOG
+from .moodlets import MoodletState
+from .needs import NeedLevels
 from .routine import context_at
 from .value_rules import clamp_need_value
+from .wish_catalog import WISH_CATALOG
+from .wish_matching import assign_activity_wish
+from .wishes import WishArea, WishState
 
 
 class CareValues(Protocol):
@@ -48,7 +55,7 @@ class CareValues(Protocol):
     def satiety(self) -> float: ...
 
     @property
-    def mood(self) -> float: ...
+    def fun(self) -> float: ...
 
     @property
     def social(self) -> float: ...
@@ -65,10 +72,22 @@ class CareValues(Protocol):
     @property
     def food(self) -> FoodState: ...
 
+    @property
+    def moodlets(self) -> MoodletState: ...
+
+    @property
+    def friendship_level(self) -> int: ...
+
+    @property
+    def lived_seconds(self) -> float: ...
+
+    @property
+    def wishes(self) -> WishState: ...
+
 
 @dataclass(frozen=True, slots=True)
 class CareTransition:
-    """A validated full snapshot of one care action's intended changes."""
+    """A validated value describing one care action's intended changes."""
 
     result: CareResult
     changed: bool
@@ -79,10 +98,10 @@ class CareTransition:
     nap_until: float
     meals_date: str
     meals_today: tuple[str, ...]
-    reward_action: str | None = None
-    need_before: float = 0.0
+    contact_action: str | None = None
     food: FoodState | None = None
-    mood_experience: float = 0.0
+    interaction: InteractionConsequences | None = None
+    wish_instance_id: int | None = None
 
 
 def plan_care_action(
@@ -91,6 +110,7 @@ def plan_care_action(
     *,
     now: float,
     food_id: FoodId | None = None,
+    food_permission: FoodWishPermission | None = None,
 ) -> CareTransition:
     """Decide care effects and rejection once, without writes or display text."""
     if action not in CARE_ACTIONS:
@@ -102,8 +122,8 @@ def plan_care_action(
         changed=False,
         needs=NeedLevels(
             state.satiety,
-            state.mood,
             state.energy,
+            state.fun,
             state.social,
             state.affection,
         ),
@@ -114,6 +134,23 @@ def plan_care_action(
         meals_date=state.meals_date,
         meals_today=tuple(state.meals_today),
     )
+    if action == "pet":
+        wish = assign_activity_wish(
+            state.wishes, WishArea.AFFECTION, "pet", elapsed=state.lived_seconds,
+            definitions=WISH_CATALOG.definitions,
+        )
+        interaction = apply_interaction_event(
+            state.moodlets, PettingAttempted(
+                state.affection, state.friendship_level, wished_for=wish is not None,
+            ),
+            elapsed=state.lived_seconds, definitions=MOODLET_CATALOG.definitions,
+        )
+        unchanged = replace(unchanged, interaction=interaction,
+                            wish_instance_id=wish.instance_id if wish else None)
+        if interaction.refused:
+            assert interaction.petting_effect is not None
+            return replace(unchanged,
+                           result=CareResult("pet", interaction.petting_effect))
     if action == "sleep":
         sleeping = not state.sleeping
         night_key = state.auto_sleep_night
@@ -170,8 +207,8 @@ def plan_care_action(
                 ),
             ),
             result=CareResult("energy_drink", CareEffect.DRINK_CONSUMED),
+            contact_action="energy_drink",
         )
-    need_before = float(getattr(state, CARE_PRIMARY_NEED[action]))
     result = replace(
         unchanged,
         changed=True,
@@ -179,8 +216,7 @@ def plan_care_action(
         sleep_origin=sleep_origin,
         nap_until=nap_until,
         auto_sleep_night=night_key,
-        reward_action=action,
-        need_before=need_before,
+        contact_action=action,
     )
     if action == "talk":
         return replace(
@@ -197,6 +233,8 @@ def plan_care_action(
             result=CareResult("talk", CareEffect.CONVERSATION),
         )
     if action == "pet":
+        assert result.interaction is not None
+        assert result.interaction.petting_effect is not None
         return replace(
             result,
             needs=replace(
@@ -208,11 +246,18 @@ def plan_care_action(
                     state.social + BALANCE.integer("care", "pet_social_gain")
                 ),
             ),
-            result=CareResult("pet", CareEffect.AFFECTION),
+            result=CareResult("pet", result.interaction.petting_effect),
         )
     selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
     profile = FOOD_CATALOG[selected_food]
-    intake = eat_food(state.food, state.satiety, selected_food)
+    permission = food_permission or food_wish_permission(
+        state.wishes, selected_food, elapsed=state.lived_seconds,
+        definitions=WISH_CATALOG.definitions,
+    )
+    if permission.excluded:
+        return replace(unchanged, result=CareResult("feed", CareEffect.FOOD_SATISFIED))
+    intake = eat_food(state.food, state.satiety, selected_food,
+                      requested=permission.requested)
     if not intake.accepted:
         return replace(
             unchanged,
@@ -242,7 +287,7 @@ def plan_care_action(
         meals_date=meals_date,
         meals_today=tuple(meals),
         food=intake.food,
-        mood_experience=intake.mood_change,
+        wish_instance_id=permission.wish_instance_id,
         needs=replace(
             result.needs,
             satiety=intake.satiety,

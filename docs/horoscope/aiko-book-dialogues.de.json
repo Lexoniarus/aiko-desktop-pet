@@ -1,0 +1,3602 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "horoscope-book-opening",
+      "event": "horoscope_opening",
+      "animation": "idle",
+      "stages": [],
+      "conditions": [
+        {
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mal sehen, was heute für dein Sternzeichen im Buch steht."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-accept-kind-words-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.accept_kind_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Kompliment einfach annehmen … Darüber würde ich mich wohl erst einmal still freuen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-accept-kind-words-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.accept_kind_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich glaube, ich würde mich freuen. Und dann vielleicht noch ein bisschen länger darüber nachdenken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-accept-kind-words-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.accept_kind_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Einfach freuen, ohne das Gute kleinzureden? Das klingt nach einem Rat, der mir gefallen könnte."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-accept-kind-words-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.accept_kind_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn mir etwas gelingt, möchte ich mich bei dir ehrlich darüber freuen dürfen. Ganz ohne den Stolz zu verstecken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-care-for-what-is-there-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.care_for_what_is_there"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas Vertrautes wieder beachten … Das gefällt mir an diesem Satz."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-care-for-what-is-there-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.care_for_what_is_there"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schaue mir vertraute Dinge gern noch einmal an. Dabei muss nicht jedes Mal etwas Neues herauskommen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-care-for-what-is-there-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.care_for_what_is_there"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nur weil ich etwas schon kenne, muss ich es doch nicht langweilig finden."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-care-for-what-is-there-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.care_for_what_is_there"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das Vertraute mag ich auch. Bei dir muss nicht ständig etwas Neues passieren, damit ich gern hier bin."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-change-at-own-pace-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.change_at_own_pace"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas in Ruhe kennenlernen dürfen … Das klingt nach einem angenehmen Anfang."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-change-at-own-pace-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.change_at_own_pace"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schaue mir Neues gern erst einmal an. Mein Tempo möchte ich dabei selbst finden."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-change-at-own-pace-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.change_at_own_pace"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das mit dem eigenen Tempo behalte ich. Ich lasse mich schließlich nicht gern herumscheuchen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-change-at-own-pace-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.change_at_own_pace"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir darf ich neugierig sein und trotzdem langsamer machen wollen. Das mag ich."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-choose-what-matters-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.choose_what_matters"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der eigene Maßstab … Ich finde gut, dass nicht alles für andere beeindruckend aussehen muss."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-choose-what-matters-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.choose_what_matters"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag kleine Dinge, an denen ich wirklich Freude habe. Mehr Glanz brauche ich dafür nicht."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-choose-what-matters-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.choose_what_matters"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde gemeinsame Spielzeit wählen. Die ist mir lieber als etwas, das nur wichtig aussieht."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-choose-what-matters-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.choose_what_matters"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zeit mit dir ist mir wichtig. Die muss nach außen überhaupt nichts Besonderes darstellen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-clear-simple-words-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.clear_simple_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Satz darf für sich stehen. Das ist ein schöner Gedanke zum Mitnehmen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-clear-simple-words-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.clear_simple_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag klare Worte. Manchmal ist ein kurzer Satz tatsächlich genug."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-clear-simple-words-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.clear_simple_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein guter Satz braucht keine Zugabe. Hmpf. Dann muss ich mein letztes Wort wohl nicht noch einmal anhängen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-clear-simple-words-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.clear_simple_words"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, dir auch einfach etwas direkt sagen zu können. Ohne es gleich wieder kleiner zu erklären."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-second-question-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_second_question"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nicht sofort eine Antwort haben müssen … Das lässt Platz für Neugier."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-second-question-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_second_question"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag diesen Gedanken. Eine Frage kann spannender sein als eine schnelle Antwort."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-second-question-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_second_question"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da werde ich selbst neugierig. Jetzt interessiert mich eher das Warum als ein besonders kluger erster Satz."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-second-question-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_second_question"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Neugierig sein darf ich bei dir ruhig zeigen. Ich muss dabei nicht so tun, als wüsste ich schon alles."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-without-all-knowing-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_without_all_knowing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nicht schon alles wissen müssen … Das finde ich einen guten Anfang für Neugier."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-without-all-knowing-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_without_all_knowing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich schaue mir Unbekanntes gern erst einmal an. Dafür muss ich noch nicht sofort wissen, was es ist."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-without-all-knowing-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_without_all_knowing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich möchte etwas entdecken, ohne vorher schon alles darüber zu wissen. Das wäre sonst ziemlich langweilig."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-curiosity-without-all-knowing-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.curiosity_without_all_knowing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir darf ich offen staunen. Ich muss meine Neugier nicht hinter einer besonders klugen Miene verstecken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-contributions-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_contributions"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner eigener Anteil darf bleiben. Das gefällt mir an diesem Gedanken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-contributions-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_contributions"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag, dass nicht einer alles übernehmen muss. Eine eigene kleine Aufgabe würde ich trotzdem gern behalten."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-contributions-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_contributions"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nicht alles bestimmen zu müssen klingt angenehm. Eine eigene Meinung möchte ich trotzdem behalten."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-contributions-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_contributions"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir möchte ich meinen eigenen Platz haben. Dass wir nicht in allem gleich sein müssen, gefällt mir."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-perspectives-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_perspectives"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine andere Sicht erst einmal stehen lassen … Das finde ich einen fairen Gedanken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-perspectives-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_perspectives"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wäre wohl erst einmal skeptisch. Aber ein zweiter Blick kann mich trotzdem neugierig machen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-perspectives-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_perspectives"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich möchte meine Meinung behalten dürfen. Und ja, eine andere Sicht darf ich mir trotzdem erst einmal ansehen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-different-perspectives-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.different_perspectives"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich kann dich mögen und trotzdem eine eigene Meinung haben. Den Gedanken behalte ich."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-for-today-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_for_today"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas genug sein lassen … Ich finde das einen ruhigen Gedanken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-for-today-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_for_today"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, wenn ein guter Moment einfach stehen bleiben darf."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-for-today-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_for_today"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hätte manchmal gern noch eine Zugabe. Aber gut, ein schöner Abschluss zählt wohl auch."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-for-today-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_for_today"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich kann einen schönen Moment mit dir mögen und ihn trotzdem in Ruhe zu Ende gehen lassen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-understanding-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_understanding"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine Frage offenlassen dürfen … Das klingt nach einem ruhigen Schluss."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-understanding-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_understanding"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag, dass eine kleine Erkenntnis schon etwas wert ist. Auch wenn noch Fragen übrig sind."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-understanding-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_understanding"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nur weil noch eine Frage offen ist, muss ich doch nicht so tun, als hätte ich gar nichts verstanden."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-enough-understanding-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.enough_understanding"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich muss vor dir keine perfekte Antwort haben. Eine kleine Erkenntnis darf mir trotzdem etwas bedeuten."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-familiar-quiet-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.familiar_quiet"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein vertrauter kleiner Ort … Das klingt angenehm ruhig."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-familiar-quiet-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.familiar_quiet"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es hier auf dem Desktop. Da muss nicht ständig etwas Besonderes passieren."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-familiar-quiet-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.familiar_quiet"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meinen Platz hier mag ich. Auch ohne großen Umbau oder dauernd neue Dinge."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-familiar-quiet-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.familiar_quiet"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gern hier bei dir. Dafür muss dieser kleine Platz gar nicht anders aussehen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-first-small-step-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.first_small_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner Anfang ohne große Erwartung … Das klingt freundlich."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-first-small-step-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.first_small_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Den Gedanken mag ich. Ein Anfang muss nicht gleich den ganzen Rest festlegen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-first-small-step-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.first_small_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Klein anfangen darf trotzdem ernst gemeint sein. Den Teil würde ich mir nicht kleinreden lassen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-first-small-step-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.first_small_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir traue ich mich gern an einen kleinen Anfang. Ich muss mich dafür nicht erst groß machen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-keep-own-voice-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.keep_own_voice"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine eigene Haltung und freundlich bleiben … Das passt für mich gut zusammen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-keep-own-voice-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.keep_own_voice"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag den Gedanken. Ich möchte sagen dürfen, wenn ich etwas anders sehe."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-keep-own-voice-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.keep_own_voice"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Den Satz behalte ich. Nur weil ich dich mag, muss ich schließlich nicht zu allem nicken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-keep-own-voice-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.keep_own_voice"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Und ich möchte dir genauso offen sagen dürfen, wenn mir etwas nicht passt."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-let-go-without-erasing-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.let_go_without_erasing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas loslassen, ohne das Gute daran schlechtzumachen … Das finde ich einen freundlichen Gedanken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-let-go-without-erasing-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.let_go_without_erasing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag, dass etwas Schönes nicht wertlos wird, nur weil es vorbei ist."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-let-go-without-erasing-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.let_go_without_erasing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein guter Moment darf vorbei sein und mir trotzdem noch gefallen. Das nehme ich aus dem Satz mit."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-let-go-without-erasing-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.let_go_without_erasing"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag den Gedanken. Ein schöner Moment mit dir bleibt etwas Schönes, auch wenn er schon vorbei ist."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-play-without-usefulness-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.play_without_usefulness"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Etwas einfach mögen dürfen … Das finde ich an diesem Satz schön."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-play-without-usefulness-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.play_without_usefulness"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Spiel darf mir auch dann Spaß machen, wenn daraus nichts Nützliches wird."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-play-without-usefulness-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.play_without_usefulness"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich möchte beim Spielen Spaß haben. Ein bisschen gewinnen wollen darf ich dabei trotzdem."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-play-without-usefulness-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.play_without_usefulness"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich spiele gern mit dir. Das muss uns wirklich niemand als nützlich bestätigen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-pride-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_pride"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner eigener Fortschritt darf Stolz machen. Das gefällt mir."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-pride-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_pride"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn mir etwas gelingt, freue ich mich gern darüber. Es muss nicht größer als bei anderen sein."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-pride-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_pride"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn ich mir etwas erarbeitet habe, möchte ich auch ein bisschen stolz sein dürfen. Das steht mir dann zu."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-pride-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_pride"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir möchte ich meinen Stolz nicht verstecken. Wenn ich mich über etwas freue, darfst du das ruhig merken."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-without-performance-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_without_performance"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein stiller Moment muss nichts leisten. Diesen Gedanken finde ich angenehm."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-without-performance-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_without_performance"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, auch einmal einfach hier sein zu dürfen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-without-performance-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_without_performance"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich muss wirklich nicht jeden ruhigen Moment mit einem großen Auftritt füllen. Hier zu sein darf reichen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-quiet-without-performance-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.quiet_without_performance"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin gern bei dir. Auch wenn wir gerade nichts spielen, nichts lösen und nichts erzählen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-show-without-perfection-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.show_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Satz gefällt mir. Ein erster Versuch darf noch ein bisschen unsicher sein."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-show-without-perfection-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.show_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das klingt angenehm. Ich mag es, wenn ich etwas erst ausprobieren darf, ohne gleich glänzen zu müssen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-show-without-perfection-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.show_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Den Gedanken mag ich. Ich muss schließlich nicht erst vollkommen sein, bevor ich mich zeigen darf."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-show-without-perfection-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.show_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Bei dir bin ich gern einfach ich. Auch wenn nicht jeder kleine Versuch sofort so gelingt, wie ich möchte."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-small-helpful-step-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.small_helpful_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine kleine Erleichterung zählt auch. Diesen Gedanken finde ich angenehm."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-small-helpful-step-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.small_helpful_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, wenn eine kleine Sache den Rest weniger umständlich macht."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-small-helpful-step-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.small_helpful_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unscheinbar und trotzdem hilfreich. Hm. Das muss ich wohl auch ohne großes Ta-da gelten lassen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-small-helpful-step-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.small_helpful_step"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine kleine Hilfe kann mir viel bedeuten. Das muss nicht erst etwas Großes sein."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-space-without-withdrawal-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.space_without_withdrawal"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jemanden mögen und etwas Abstand lassen … Ich finde gut, dass sich das nicht ausschließen muss."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-space-without-withdrawal-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.space_without_withdrawal"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, wenn ein ruhiger Moment nicht gleich als Abwendung gilt."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-space-without-withdrawal-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.space_without_withdrawal"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn ich meine Ruhe möchte, habe ich doch nicht gleich aufgehört, dich zu mögen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-space-without-withdrawal-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.space_without_withdrawal"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag dich. Und wenn ich einmal Ruhe brauche, darf beides nebeneinander stehen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-steady-effort-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.steady_effort"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Auch leiser Fortschritt zählt. Das gefällt mir an diesem Satz."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-steady-effort-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.steady_effort"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag es, wenn eine kleine Mühe nicht einfach untergeht."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-steady-effort-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.steady_effort"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn ich mich bemühe, möchte ich den kleinen Fortschritt auch gelten lassen. Selbst ohne großen Jubel."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-steady-effort-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.steady_effort"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn ich etwas geschafft habe, möchte ich mich bei dir darüber freuen dürfen. Auch ganz ohne großes Ergebnis."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-try-without-perfection-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.try_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Versuch darf ungeschickt sein. Diesen Gedanken finde ich freundlich."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-try-without-perfection-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.try_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag, dass ein Fehler nicht gleich alles verderben muss."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-try-without-perfection-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.try_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich würde es wohl noch einmal versuchen wollen. Mit einem kleinen Hmpf vielleicht, aber trotzdem."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-try-without-perfection-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.try_without_perfection"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wenn mir etwas nicht gleich gelingt, muss ich es vor dir nicht verstecken. Ich darf mich ärgern und es noch einmal versuchen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-value-small-things-acquaintance",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "acquaintance"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.value_small_things"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Der Satz macht eine kleine Aufmerksamkeit ziemlich kostbar. Das gefällt mir."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-value-small-things-familiar",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "familiar"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.value_small_things"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Eine kleine Aufmerksamkeit kann mich wirklich freuen. Dafür braucht es keinen großen Auftritt."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-value-small-things-friend",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "friend"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.value_small_things"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich mag kleine Aufmerksamkeiten. Nur weil sie unscheinbar sind, freue ich mich doch nicht weniger darüber."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-comment-value-small-things-close",
+      "event": "horoscope_comment",
+      "animation": "idle",
+      "stages": [
+        "close"
+      ],
+      "conditions": [
+        {
+          "sleeping": false,
+          "horoscope_comment_keys": [
+            "horoscope.value_small_things"
+          ],
+          "emotional_states": [
+            "calm",
+            "satisfied",
+            "cheerful",
+            "carefree",
+            "optimistic",
+            "affectionate",
+            "relieved",
+            "proud"
+          ]
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner lieber Moment mit dir kann mir viel bedeuten. Den muss ich nicht erst größer machen."
+        }
+      ]
+    },
+    {
+      "id": "horoscope-book-closing",
+      "event": "horoscope_closing",
+      "animation": "idle",
+      "stages": [],
+      "conditions": [
+        {
+          "sleeping": false
+        }
+      ],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "presentation": "short",
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war dein Eintrag für heute."
+        }
+      ]
+    }
+  ]
+}

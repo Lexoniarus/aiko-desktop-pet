@@ -21,8 +21,8 @@ class GlobalGazeTests(unittest.TestCase):
 
     def test_zero_distance_stays_stable(self):
         self.assertIsNone(gaze_sector(0, 0, 0, 0))
-        self.assertEqual(gaze_sector(0, 0, 5, 5, previous=4), 4)
-        self.assertEqual(gaze_sector(0, 0, 5, 5, previous=4, scale=2), 4)
+        self.assertIsNone(gaze_sector(0, 0, 5, 5, previous=4))
+        self.assertIsNone(gaze_sector(0, 0, 5, 5, previous=4, scale=2))
 
     def test_hysteresis_stops_unnecessary_flickering(self):
         self.assertEqual(gaze_sector(0, 0, 19, -100, previous=0), 0)

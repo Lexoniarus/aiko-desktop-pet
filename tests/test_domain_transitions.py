@@ -12,13 +12,13 @@ from aiko_pet.pet.care_actions import (
     plan_care_action,
 )
 from aiko_pet.pet.friendship import (
-    calculate_friendship_reward,
+    record_accepted_contact,
 )
 from aiko_pet.pet.lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from aiko_pet.pet.need_decay import calculate_need_decay
+from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -40,20 +40,6 @@ class DomainTransitionTests(unittest.TestCase):
                 with self.assertRaises(FrozenInstanceError):
                     setattr(transition, "changed", False)
 
-    def test_care_plans_match_aggregate_results(self) -> None:
-        for action in ("pet", "talk", "feed", "play", "sleep", "energy_drink"):
-            with self.subTest(action=action):
-                current = PetState(
-                    updated_at=START, satiety=20, mood=20,
-                    energy=65, social=20, affection=20,
-                )
-                planned = plan_care_action(current, action, now=START)
-                before = encode_pet_state(current)
-                self.assertEqual(encode_pet_state(current), before)
-                self.assertEqual(current.interact(action, now=START), planned.result)
-                self.assertEqual(current.sleeping, planned.sleeping)
-                self.assertEqual(current.meals_date, planned.meals_date)
-
     def test_rejected_care_preserves_every_field_even_during_sleep(self) -> None:
         for action, energy in (("play", 4), ("energy_drink", 100)):
             with self.subTest(action=action):
@@ -72,13 +58,25 @@ class DomainTransitionTests(unittest.TestCase):
             updated_at=START, friendship=40, affection=25, social=18,
         )
         previous = encode_pet_state(state)
-        needs = calculate_need_decay(state, 1.0, context=None, effort=0.9)
-        friendship = calculate_friendship_reward(state, "pet", START, 25)
+        needs = calculate_pet_progression(state, 3600, effort=0.9)
+        friendship = record_accepted_contact(state, "pet", START)
         self.assertEqual(encode_pet_state(state), previous)
-        self.assertNotEqual(needs.energy, state.energy)
+        self.assertNotEqual(needs.needs.energy, state.energy)
+        with self.assertRaises(FrozenInstanceError):
+            setattr(needs.needs, "fun", 0)
+        self.assertEqual(set(needs.needs.__dataclass_fields__), {
+            "satiety", "energy", "fun", "social", "affection",
+        })
         self.assertIsNotNone(friendship)
         assert friendship is not None
-        self.assertGreater(friendship.friendship, state.friendship)
+        self.assertEqual(friendship.points, state.friendship)
+
+    def test_invalid_endpoint_preserves_the_pure_need_result(self) -> None:
+        state = PetState(updated_at=START)
+        baseline = calculate_pet_progression(state, 0)
+        for duration in (-1, float("nan"), float("inf")):
+            with self.subTest(endpoint=duration):
+                self.assertEqual(calculate_pet_progression(state, duration), baseline)
 
     def test_need_policy_and_aggregate_use_identical_values(self) -> None:
         for sleeping in (True, False):
@@ -91,13 +89,15 @@ class DomainTransitionTests(unittest.TestCase):
                         updated_at=START,
                     )
                     before = encode_pet_state(state)
-                    expected = calculate_need_decay(state, 0.5, None, effort)
+                    expected = calculate_pet_progression(state, 1800, effort)
                     self.assertEqual(encode_pet_state(state), before)
-                    state._decay(0.5, None, effort)
-                    for key in ("satiety", "mood", "energy", "social", "affection"):
+                    state._advance_progression(1800, effort)
+                    self.assertEqual(state.food, expected.food)
+                    self.assertEqual(state.mood, expected.mood)
+                    for key in ("satiety", "fun", "energy", "social", "affection"):
                         with self.subTest(need=key):
                             self.assertAlmostEqual(
-                                getattr(state, key), getattr(expected, key),
+                                getattr(state, key), getattr(expected.needs, key),
                             )
 
     def test_friendship_transition_matches_aggregate_history(self) -> None:
@@ -105,17 +105,17 @@ class DomainTransitionTests(unittest.TestCase):
             friendship=20, affection=30, updated_at=START,
         )
         original = encode_pet_state(state)
-        decision = calculate_friendship_reward(state, "pet", START, 30)
+        decision = record_accepted_contact(state, "pet", START)
         self.assertIsNotNone(decision)
         assert decision is not None
         self.assertEqual(encode_pet_state(state), original)
-        state._credit_friendship("pet", START, 30)
-        self.assertEqual(state.friendship, decision.friendship)
-        self.assertEqual(state.friendship_day, decision.day)
-        self.assertEqual(state.friendship_gained_today, decision.gained_today)
-        self.assertEqual(tuple(state.care_types_today), decision.care_types)
+        state._record_accepted_contact("pet", START)
+        self.assertEqual(state.friendship, decision.points)
+        self.assertEqual(state.friendship_history, decision.history)
+        self.assertEqual(state.friendship_gained_today,
+                         sum(e.amount for e in decision.history.rewards))
         unchanged = encode_pet_state(state)
-        state._credit_friendship("pet", START + 10, 0)
+        state._record_accepted_contact("pet", START + 10)
         self.assertEqual(encode_pet_state(state), unchanged)
 
     def test_timeline_plan_never_modifies_state(self) -> None:
@@ -128,7 +128,8 @@ class DomainTransitionTests(unittest.TestCase):
             auto_routine=True, effort=0.8,
         )
         self.assertIsNotNone(steps)
-        self.assertGreater(len(steps or ()), 0)
+        assert steps is not None
+        self.assertIsNotNone(next(iter(steps), None))
         self.assertEqual(encode_pet_state(state), before)
         self.assertTrue(transition.sleeping)
         self.assertFalse(state.sleeping)

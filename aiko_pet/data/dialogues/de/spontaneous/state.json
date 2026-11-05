@@ -1,0 +1,390 @@
+{
+  "catalogue_version": 3,
+  "language": "de",
+  "lines": [
+    {
+      "id": "low_mood-01",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Heute fällt mir vieles etwas schwerer."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "low_mood-02",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin gerade nicht besonders gut drauf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "low_mood-03",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich brauche heute etwas länger, bis ich mich auf etwas einlassen mag."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "low_mood-04",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Du, ich habe heute einen knurrigen Kopf. Nimm es mir bitte nicht gleich übel."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-low_mood-friend-close-01",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin gerade nicht gut drauf. Ein bisschen Gesellschaft ohne Drängeln wäre schön."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-low_mood-friend-close-02",
+      "event": "low_mood",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 2,
+      "cooldown_seconds": 360,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "faceSad"
+        },
+        {
+          "kind": "text",
+          "content": "Heute brauche ich es langsam. Ich freue mich trotzdem, wenn du bei mir bist."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "v010-quiet_alone-01",
+      "event": "quiet_alone",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Hier ist gerade wenig los. Ich sehe mich ein bisschen auf meinem Weg um."
+        }
+      ]
+    },
+    {
+      "id": "v010-quiet_alone-02",
+      "event": "quiet_alone",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Ich habe Zeit für eine kleine Runde über meinen Platz."
+        }
+      ]
+    },
+    {
+      "id": "v010-quiet_alone-03",
+      "event": "quiet_alone",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Ein paar Schritte tun gut. Ich schaue mal, was hier liegt."
+        }
+      ]
+    },
+    {
+      "id": "v010-quiet_together-01",
+      "event": "quiet_together",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Gerade ist Zeit, einfach ein bisschen beieinander zu bleiben."
+        }
+      ]
+    },
+    {
+      "id": "v010-quiet_together-02",
+      "event": "quiet_together",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Schön, dass wir gerade ohne Eile zusammen hier sein können."
+        }
+      ]
+    },
+    {
+      "id": "v010-quiet_together-03",
+      "event": "quiet_together",
+      "animation": "waiting",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 3,
+      "cooldown_seconds": 300,
+      "beats": [
+        {
+          "kind": "emote",
+          "content": "cloud"
+        },
+        {
+          "kind": "text",
+          "content": "Ich bleibe hier bei dir stehen. Viel vorhaben müssen wir dafür gar nicht."
+        }
+      ]
+    },
+    {
+      "id": "walk_pause-01",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier bleibe ich etwas stehen und schaue mich um."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "walk_pause-02",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich unterbreche meinen Spaziergang an dieser Stelle."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "walk_pause-03",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein kleiner Halt. Danach gehe ich weiter."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar"
+      ]
+    },
+    {
+      "id": "walk_pause-04",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier gefällt es mir. Ich lasse meine Füße mal Pause machen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "walk_pause-05",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bleibe hier stehen. Von da aus habe ich meinen Weg gut im Blick."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "voice-walk_pause-friend-close-01",
+      "event": "walk_pause",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "waiting",
+      "weight": 2,
+      "cooldown_seconds": 180,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So, einmal stehen bleiben und die Beine ausruhen."
+        }
+      ],
+      "stages": [
+        "friend",
+        "close"
+      ]
+    }
+  ]
+}

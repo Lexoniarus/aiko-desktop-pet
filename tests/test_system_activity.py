@@ -96,18 +96,30 @@ class HardwareTests(unittest.TestCase):
         stub = StubSampler()
         monitor = ActivityMonitor(stub, interval_seconds=0.2)
         monitor.set_enabled(False)
-        monitor.start()
-        time.sleep(0.05)
-        self.assertEqual(stub.count, 0)
-        monitor.set_enabled(True)
-        limit = time.monotonic() + 1.0
-        while stub.count == 0 and time.monotonic() < limit:
-            time.sleep(0.01)
-        self.assertGreater(stub.count, 0)
-        self.assertEqual(monitor.latest().cpu, 85)
-        monitor.set_enabled(False)
-        self.assertIsNone(monitor.latest().cpu)
-        monitor.stop()
+        cycles = []
+
+        def next_cycle(delay):
+            cycles.append(delay)
+            self.assertLessEqual(len(cycles), 2, "Worker did not stop")
+            if len(cycles) == 1:
+                self.assertEqual(delay, 0.5)
+                self.assertEqual(stub.count, 0)
+                self.assertIsNone(monitor.latest().cpu)
+                monitor.set_enabled(True)
+                return False
+            self.assertEqual(delay, 0.2)
+            self.assertEqual(stub.count, 1)
+            self.assertEqual(monitor.latest().cpu, 85)
+            monitor.set_enabled(False)
+            self.assertIsNone(monitor.latest().cpu)
+            return True
+
+        # Drive both worker-loop branches without waiting for its retry interval.
+        # The next test separately verifies the real background-thread boundary.
+        with patch.object(monitor._stop, "wait", side_effect=next_cycle) as wait:
+            monitor._run()
+        self.assertEqual(wait.call_count, 2)
+        self.assertEqual(cycles, [0.5, 0.2])
 
     def test_monitor_never_blocks_gui_thread_on_slow_sampler(self):
         was_called = threading.Event()
@@ -120,6 +132,8 @@ class HardwareTests(unittest.TestCase):
                 return reading(cpu=85)
 
         monitor = ActivityMonitor(SlowSampler(), interval_seconds=20)
+        self.addCleanup(monitor.stop)
+        self.addCleanup(go.set)
         start = time.monotonic()
         monitor.start()
         self.assertTrue(was_called.wait(timeout=1))
@@ -382,7 +396,7 @@ class VoiceTests(unittest.TestCase):
         )
         self.assertIsNone(workload_events.maybe_event(reading(cpu=95), 1200))
 
-    def test_every_computer_line_is_characterful_and_never_names_sensors(self):
+    def test_computer_variants_do_not_claim_unobservable_user_work(self):
         from collections import Counter
 
         book = DialogueBook.from_file()
@@ -402,16 +416,11 @@ class VoiceTests(unittest.TestCase):
             with self.subTest(event=event):
                 self.assertGreaterEqual(counts[event], 5)
         forbidden = (
-            "cpu",
-            "gpu",
-            "ram",
-            "grafikkarte",
-            "prozessor",
-            "vram",
-            "auslastung",
-            "rechenzyklen",
-            "kern",
-            "speicher",
+            "ich sehe deine fenster",
+            "ich lese deine",
+            "deine geöffneten programme",
+            "du arbeitest seit",
+            "ich arbeite seit",
         )
         for line in book.lines:
             if not line.event.startswith("computer_"):

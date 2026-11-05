@@ -28,7 +28,6 @@ class FoodProfile:
     category: FoodCategory
     instant_satiety_points: float
     digest_reserve_minutes: float
-    normal_mood_bonus: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,7 +55,6 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
     fields = (
         "instant_satiety_points",
         "digest_reserve_minutes",
-        "normal_mood_bonus",
     )
     for row in rows:
         if not isinstance(row, dict):
@@ -79,7 +77,7 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
         ):
             raise ValueError("Invalid or duplicate food ID, title or category")
         values: list[float] = []
-        for field, maximum in zip(fields, (100, 175, 20)):
+        for field, maximum in zip(fields, (100, 175)):
             raw = row.get(field)
             if not isinstance(raw, (int, float)) or isinstance(raw, bool):
                 raise ValueError(f"Invalid nutrition parameter {field} for {key}")
@@ -93,7 +91,6 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
             cast(FoodCategory, category),
             values[0],
             values[1],
-            values[2],
         )
     default = data.get("default_food_id")
     if not isinstance(default, str) or default not in profiles:

@@ -21,8 +21,14 @@ The single source of truth is `aiko_pet/assets/animation_timing.json` (version 3
 - Longer last-pose holds in `waiting` and `review` provide quiet intervals
   between gestures. These are repeating ambient behaviors, not frame interpolation.
 
-`idle` is intentionally **unchanged** at eight × 160 ms. Its separate head
-sway, blink gap and spontaneous glances also remain unchanged.
+`idle` is intentionally **unchanged** at eight × 160 ms. Head sway continues
+through all eight blink frames and retains its phase when the blink ends.
+Blink gaps remain 3–8 seconds; spontaneous glance gaps remain 22–46 seconds.
+A pending glance retains its due time during mouse/object attention or other
+foreground activity and runs only when free Idle wins the existing priorities.
+An interrupted active glance is cancelled and starts one fresh glance gap;
+repeated foreground updates do not keep postponing it. These controller changes
+do not modify artwork, frame timing or interaction priorities.
 `attack` remains **unchanged** at eight × 215 ms; the future gameplay core
 will own responsive combat timings independently.
 

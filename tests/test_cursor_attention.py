@@ -1,8 +1,9 @@
 """Cursor attention changes must preserve existing walking deferrals."""
 
 import unittest
+from dataclasses import replace
 
-from aiko_pet.pet.mind.cursor_attention import CursorAttention
+from aiko_pet.pet.mind.cursor_attention import CursorAttention, CursorPerception
 
 
 class CursorAttentionTests(unittest.TestCase):
@@ -34,3 +35,24 @@ class CursorAttentionTests(unittest.TestCase):
         tracker.reset()
         self.assertIsNone(tracker.previous_pointer)
         self.assertEqual(tracker.attention_until, -100.0)
+
+
+class MotionBandTests(unittest.TestCase):
+    def test_exact_band_boundaries_and_stationary_override(self):
+        for speed, band in ((0, "slow"), (.499, "slow"), (.5, "normal"),
+                            (1.499, "normal"), (1.5, "fast"), (2.999, "fast"),
+                            (3, "very_fast"), (9, "very_fast")):
+            p = CursorPerception(speed=speed)
+            self.assertEqual(p.motion_band, band)
+            self.assertEqual(replace(p, stationary_seconds=.3).motion_band, "still")
+
+    def test_filter_is_time_weighted_and_gaps_do_not_make_velocity(self):
+        for dt in (.1, .2):
+            tracker = CursorAttention()
+            tracker.observe((0, 0), 0)
+            tracker.observe((round(100 * dt), 0), dt)
+            import math
+            self.assertAlmostEqual(tracker.velocity[0], 100 * (1 - math.exp(-dt / .3)))
+            tracker.observe((10000, 0), 10)
+            self.assertFalse(tracker.valid)
+            self.assertEqual(tracker.velocity, (0, 0))

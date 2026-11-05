@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 from typing import Callable
 
 from ...application.controller import CareOutcome
+from ...pet.care_result import CareEffect
 from ...pet.mind.catalog import Reaction
 from ..view_models.care_text import format_care_response
 
@@ -26,6 +27,7 @@ class CareViewPorts:
     show_text: Callable[[str, int], None]
     refresh_toolbar: Callable[[], None]
     refresh_status: Callable[[], None]
+    text_presented: Callable[[str], None] = lambda _event: None
 
 
 class CarePresenter:
@@ -51,6 +53,8 @@ class CarePresenter:
         }.get(action)
         if visual == "eat" and outcome.consumed_item_id is None:
             visual = None
+        if outcome.result.affection_refused:
+            visual = None
         reaction = outcome.reaction
         if visual is not None and not sleeping:
             if reaction is not None:
@@ -60,6 +64,8 @@ class CarePresenter:
         if reaction is None:
             ports.cancel_followup()
             ports.show_text(format_care_response(outcome.result), 2450)
+            if outcome.result.effect == CareEffect.AFFECTION_REFUSED:
+                ports.text_presented("pet_refused")
         else:
             ports.react(reaction, 2900)
         ports.refresh_toolbar()

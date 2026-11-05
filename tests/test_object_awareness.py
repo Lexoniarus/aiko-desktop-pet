@@ -19,6 +19,7 @@ from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
     ObjectInteraction,
+    ObjectState,
     WorldPosition,
     WorldSurface,
 )
@@ -27,6 +28,91 @@ from tools.pet_test_support import object_test_attention, set_test_pet_values
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_unseen_carried_food_and_falling_release_cannot_confirm_missing_place(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness, state = ObjectAwareness(), PetState(satiety=30)
+        record = awareness.memory.observe_find(ObjectObservation(
+            "learned", "apple", "food", 100, 0, True, 0,
+        ), now=0, record="learned", claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id)
+        original = awareness.memory.get(record)
+        held = world.take_resting(item.instance_id, expected_revision=0)
+        held = world.move_held(held.instance_id, WorldPosition(1200, 400),
+                               expected_revision=held.revision)
+
+        def observe(now):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attention=object_test_attention(100, width=100),
+                             blocked=True)
+
+        for now in (0, .3, .6, .9):
+            observe(now)
+            self.assertEqual(awareness.absences, ())
+            self.assertFalse(awareness.checking_absence)
+            self.assertEqual(awareness.memory.get(record), original)
+        falling = world.release(held.instance_id, expected_revision=held.revision)
+        for now in (1.2, 1.5, 1.8):
+            observe(now)
+            self.assertEqual(awareness.absences, ())
+        world.land(falling.instance_id, expected_revision=falling.revision)
+        observe(2.1)
+        self.assertTrue(awareness.checking_absence)
+        self.assertEqual(awareness.absences, ())
+        for now in (2.4, 2.7):
+            observe(now)
+        self.assertEqual([entry.token for entry in awareness.absences], [record])
+        remembered = awareness.memory.get(record)
+        assert remembered is not None
+        self.assertEqual(remembered.x, 100)
+
+    def test_custody_withdraws_pending_loss_and_requires_a_fresh_place_check(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness, state = ObjectAwareness(), PetState()
+        record = awareness.memory.observe_find(ObjectObservation(
+            "learned", "apple", "food", 100, 0, True, 0,
+        ), now=0, record="learned", claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id)
+        world.move_resting(item.instance_id, 1200, expected_revision=0)
+
+        def observe(now):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attention=object_test_attention(100, width=100),
+                             blocked=True)
+
+        for now in (0, .3, .6):
+            observe(now)
+        self.assertEqual(len(awareness.absences), 1)
+        held = world.take_resting(item.instance_id,
+                                  expected_revision=world.get(item.instance_id).revision)
+        observe(.9)
+        self.assertFalse(awareness.absences)
+        self.assertFalse(awareness.checking_absence)
+        remembered = awareness.memory.get(record)
+        assert remembered is not None
+        self.assertEqual((remembered.x, remembered.observed_at,
+                          remembered.place_status), (100, 0, "remembered"))
+        falling = world.release(held.instance_id, expected_revision=held.revision)
+        world.land(falling.instance_id, expected_revision=falling.revision)
+        observe(1.2)
+        self.assertEqual(awareness.absences, ())
+        for now in (1.5, 1.8):
+            observe(now)
+        self.assertEqual(len(awareness.absences), 1)
+        awareness.acknowledge_absence(record)
+        held = world.take_resting(item.instance_id,
+                                  expected_revision=world.get(item.instance_id).revision)
+        self.assertEqual(held.state, ObjectState.USER_HELD)
+        observe(2.1)
+        remembered = awareness.memory.get(record)
+        assert remembered is not None
+        self.assertEqual(remembered.place_status, "missing")
+
     @staticmethod
     def focused_attention(x, target, phase: InteractionPhase = "approach"):
         return replace(choose_object_attention(
@@ -509,6 +595,9 @@ class ObjectAwarenessTests(unittest.TestCase):
         self.assertEqual((known.token, known.identity, known.resting),
                          (record, "apple", True))
         self.assertIsNone(awareness.intentions.goal)
+        self.assertEqual(awareness.absences, ())
+        observe(1.4)
+        self.assertEqual(awareness.absences, ())
         # Settling releases the special cursor track. A hidden later move is new.
         awareness.update(world.snapshot(), state, now=1.5, x=100,
                          height=0, width=100,

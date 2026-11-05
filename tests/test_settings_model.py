@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from typing import cast
 
 from aiko_pet.application.settings import PetSettings
 
@@ -16,6 +17,7 @@ class PetSettingsModelTests(unittest.TestCase):
                 "x": None,
                 "y": None,
                 "scale": 1,
+                "ui_scale_percent": 100,
                 "always_on_top": True,
                 "auto_walk": True,
                 "auto_routine": True,
@@ -25,6 +27,8 @@ class PetSettingsModelTests(unittest.TestCase):
                 "learn_rhythm": True,
                 "toolbar_x": None,
                 "toolbar_y": None,
+                "online_social": False,
+                "zodiac_sign": None,
             },
         )
 
@@ -36,7 +40,7 @@ class PetSettingsModelTests(unittest.TestCase):
             "always_on_top": False,
             "auto_routine": False,
             "toolbar_x": 17,
-            "toolbar_y": None,
+            "toolbar_y": 70000,
         }
         settings = PetSettings.from_dict(raw)
         self.assertIsNone(settings.x)
@@ -46,6 +50,31 @@ class PetSettingsModelTests(unittest.TestCase):
         self.assertFalse(settings.auto_routine)
         self.assertEqual(settings.toolbar_x, 17)
         self.assertIsNone(settings.toolbar_y)
+        self.assertIsNone(PetSettings.from_dict({"toolbar_x": True}).toolbar_x)
+        defaults = PetSettings.from_dict({"scale": 1})
+        self.assertTrue(defaults.observe_computer)
+        self.assertIsNone(defaults.toolbar_x)
+        self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
+        for invalid in (True, 99, 201, "125", None):
+            with self.subTest(ui_scale=invalid):
+                self.assertEqual(
+                    PetSettings.from_dict({
+                        "ui_scale_percent": invalid
+                    }).ui_scale_percent,
+                    100,
+                )
+                with self.assertRaises(ValueError):
+                    settings.ui_scale_percent = cast(int, invalid)
+        settings.ui_scale_percent = 150
+        self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
+
+    def test_online_content_requires_explicit_saved_boolean_opt_in(self) -> None:
+        for value in (None, False, 1, "true", {}, []):
+            settings = PetSettings.from_dict({"online_social": value})
+            self.assertFalse(settings.online_social)
+        settings = PetSettings.from_dict({"online_social": True})
+        self.assertTrue(settings.online_social)
+        self.assertTrue(settings.behavior.online_social)
         self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
 
 

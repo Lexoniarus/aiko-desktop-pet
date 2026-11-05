@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.activity import ActivityCoordinator
+from ..application.storage_contracts import StorageError
+from ..infrastructure.active_time import active_uptime_seconds, elapsed_uptime_seconds
 from ..pet.routine import TimeContext
 from .attention_runtime import DesktopAttentionRuntime
 from .maintenance import DesktopMaintenance
@@ -43,9 +45,22 @@ class DesktopSessionRuntime:
         self._maintenance = maintenance
         self._persistence = persistence
         self._ports = ports
+        self._uptime_pair = (elapsed_uptime_seconds(), active_uptime_seconds())
 
     def advance_lifecycle(self, now: float, wall_time: float) -> None:
         """Advance pet time before presentation, with the same prior context."""
+        previous_elapsed, previous_active = self._uptime_pair
+        elapsed, active = elapsed_uptime_seconds(), active_uptime_seconds()
+        self._uptime_pair = elapsed, active
+        if all(value is not None for value in (
+            previous_elapsed, previous_active, elapsed, active,
+        )):
+            assert previous_elapsed is not None and previous_active is not None
+            assert elapsed is not None and active is not None
+            if elapsed >= previous_elapsed and active >= previous_active:
+                unavailable = elapsed - previous_elapsed - (active - previous_active)
+                if unavailable >= 5:
+                    self._activity.note_unavailable(unavailable)
         progress = self._activity.advance_lifecycle(
             now, wall_time, self._ports.context(),
         )
@@ -62,7 +77,7 @@ class DesktopSessionRuntime:
         if self._persistence.due(now):
             self._ports.save()
 
-    def advance_and_save(self) -> OSError | None:
+    def advance_and_save(self) -> StorageError | None:
         """Advance measured state exactly once before the persistence write."""
         self._activity.advance_state(time.time())
         return self._persistence.save()

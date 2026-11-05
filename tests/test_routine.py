@@ -61,10 +61,10 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.sleep_origin, "routine")
         state.advance(local_time("2026-10-13", 7, 45), auto_routine=True)
         self.assertFalse(state.sleeping)
-        self.assertGreater(state.energy, 90)
+        self.assertAlmostEqual(state.energy, 20 + 7.5 * (7 + 40 / 60) - 3 * .75)
         self.assertGreater(state.satiety, 50)
 
-    def test_manual_wake_stays_respected_until_next_night(self):
+    def test_manual_wake_stays_respected_during_its_protection(self):
         state = PetState(updated_at=local_time("2026-10-12", 23, 20))
         state.advance(local_time("2026-10-12", 23, 55), auto_routine=True)
         self.assertTrue(state.sleeping)
@@ -75,12 +75,12 @@ class DailyRoutineTests(unittest.TestCase):
         state.advance(local_time("2026-10-13", 23, 55), auto_routine=True)
         self.assertTrue(state.sleeping)
 
-    def test_manual_nap_is_not_automatically_cancelled(self):
+    def test_manual_nap_reaches_its_75_minute_endpoint(self):
         state = PetState(updated_at=local_time("2026-10-12", 12))
-        state.interact("sleep")
+        state.interact("sleep", now=state.updated_at)
         state.advance(local_time("2026-10-12", 14, 30), auto_routine=True)
-        self.assertTrue(state.sleeping)
-        self.assertEqual(state.sleep_origin, "manual")
+        self.assertFalse(state.sleeping)
+        self.assertEqual(state.sleep_origin, "")
 
     def test_meals_are_only_recorded_once_per_local_day(self):
         morning = local_time("2026-10-17", 9, 20)
@@ -113,7 +113,7 @@ class DailyRoutineTests(unittest.TestCase):
         state = PetState(updated_at=local_time("2026-10-12", 22, 55))
         state.advance(local_time("2026-10-12", 23, 15), auto_routine=False)
         self.assertFalse(state.sleeping)
-        self.assertEqual(state.energy, 75 - 6 / 3)
+        self.assertAlmostEqual(state.energy, 75 - 3 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
         state = decode_pet_state({

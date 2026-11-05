@@ -7,21 +7,18 @@ import unittest
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.ui.pet_view.character_sprite_cache import CharacterSpriteCache
+from tools.desktop_test_support import destroy_test_root, require_tk_display
 
 
 class SpriteCacheTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("Graphical display required") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         self.root = tk.Tk()
         self.root.withdraw()
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.cache = CharacterSpriteCache(self.root, load_character_catalog())
         self.addCleanup(self.cache.close)
 
@@ -38,7 +35,8 @@ class SpriteCacheTests(unittest.TestCase):
         self.assertIs(zoomed, clip[0])
         self.assertIs(sprites_2x, self.cache.for_scale(2))
         self.assertEqual(sprites_1x["idle"][0].width(), 192)
-        self.assertEqual(len(getattr(clip, "_zoomed")), 1)
+        self.assertEqual(len(getattr(clip, "_zoomed")), 2)
+        self.assertIs(sprites_1x["idle"][0], self.cache.for_scale(1)["idle"][0])
 
 
 if __name__ == "__main__":

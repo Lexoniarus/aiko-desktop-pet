@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "asset_id": "horoscope_book_v1",
+  "palette": "enchanted_violet",
+  "states": {
+    "closed_world": {
+      "role": "placement",
+      "pivot_kind": "bottom_center_placement",
+      "variants": {
+        "1": {
+          "path": "rgba/1x/closed_world.png",
+          "display_path": "display/1x/closed_world.png",
+          "size": [
+            64,
+            48
+          ],
+          "pivot": [
+            32,
+            40
+          ],
+          "pivot_rounding_error_px": [
+            0.4852,
+            -0.0292
+          ]
+        },
+        "2": {
+          "path": "rgba/2x/closed_world.png",
+          "display_path": "display/2x/closed_world.png",
+          "size": [
+            128,
+            96
+          ],
+          "pivot": [
+            64,
+            80
+          ],
+          "pivot_rounding_error_px": [
+            0.4708,
+            -0.0585
+          ]
+        }
+      }
+    },
+    "carry_closed": {
+      "role": "held",
+      "pivot_kind": "lower_spine_grip",
+      "variants": {
+        "1": {
+          "path": "rgba/1x/carry_closed.png",
+          "display_path": "display/1x/carry_closed.png",
+          "size": [
+            96,
+            80
+          ],
+          "pivot": [
+            48,
+            64
+          ],
+          "pivot_rounding_error_px": [
+            0.1725,
+            -0.1651
+          ]
+        },
+        "2": {
+          "path": "rgba/2x/carry_closed.png",
+          "display_path": "display/2x/carry_closed.png",
+          "size": [
+            192,
+            160
+          ],
+          "pivot": [
+            96,
+            128
+          ],
+          "pivot_rounding_error_px": [
+            0.1635,
+            -0.3302
+          ]
+        }
+      }
+    },
+    "half_open": {
+      "role": "held",
+      "pivot_kind": "lower_spine_grip",
+      "variants": {
+        "1": {
+          "path": "rgba/1x/half_open.png",
+          "display_path": "display/1x/half_open.png",
+          "size": [
+            96,
+            80
+          ],
+          "pivot": [
+            48,
+            64
+          ],
+          "pivot_rounding_error_px": [
+            -0.1716,
+            0.4902
+          ]
+        },
+        "2": {
+          "path": "rgba/2x/half_open.png",
+          "display_path": "display/2x/half_open.png",
+          "size": [
+            192,
+            160
+          ],
+          "pivot": [
+            96,
+            128
+          ],
+          "pivot_rounding_error_px": [
+            -0.3433,
+            -0.0283
+          ]
+        }
+      }
+    },
+    "open_reading": {
+      "role": "held",
+      "pivot_kind": "lower_spine_grip",
+      "variants": {
+        "1": {
+          "path": "rgba/1x/open_reading.png",
+          "display_path": "display/1x/open_reading.png",
+          "size": [
+            96,
+            80
+          ],
+          "pivot": [
+            48,
+            64
+          ],
+          "pivot_rounding_error_px": [
+            0.3136,
+            0.1289
+          ]
+        },
+        "2": {
+          "path": "rgba/2x/open_reading.png",
+          "display_path": "display/2x/open_reading.png",
+          "size": [
+            192,
+            160
+          ],
+          "pivot": [
+            96,
+            128
+          ],
+          "pivot_rounding_error_px": [
+            0.1363,
+            0.2578
+          ]
+        }
+      }
+    }
+  },
+  "icons": {
+    "32": "icons/32.png",
+    "64": "icons/64.png"
+  },
+  "held_registration": {
+    "cover_outer_edge_length_1x": 42,
+    "pivot_scope": "Book-local pivots preserved; attachment_offset_1x is relative to the existing character hand anchor.",
+    "attachment_offset_1x": [
+      0,
+      12
+    ],
+    "state_offsets_1x": {
+      "carry_closed": [-13.5, 0]
+    }
+  },
+  "lifecycle_direction": "Place, pick up, read, put down; fixed one-hour replay window after first completed put-down, then dissipate. Next day new placement.",
+  "runtime_registered": true,
+  "world_registration": {
+    "zoom": 2,
+    "reason": "Readable closed book matches carried cover height; shared cursor/ground sprite size."
+  }
+}

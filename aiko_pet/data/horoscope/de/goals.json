@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.goals.begin.a",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bekommt ein Vorhaben eine klarere Richtung. Was groß und fern wirkte, lässt sich in einen ersten Schritt übersetzen."
+        },
+        {
+          "id": "p2",
+          "text": "Wähle den Teil, den du tatsächlich angehen kannst. Ein sichtbarer Anfang gibt dir mehr Halt als ein makelloser Gesamtplan."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst klein anfangen und trotzdem etwas ernst meinen. Größe zeigt sich nicht nur im ersten Auftritt.",
+          "comment_key": "horoscope.first_small_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.begin.b",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wächst deine Bereitschaft, Verantwortung zu übernehmen. Eine kleine Gelegenheit macht den ersten Schritt greifbar."
+        },
+        {
+          "id": "p2",
+          "text": "Wähle einen kleinen Teil, statt gleich den ganzen Erfolg zu versprechen. So bekommt dein Vorhaben Boden unter den Füßen."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst etwas ernst nehmen, ohne schon alles zu können. Ein Anfang wird durch Ehrlichkeit nicht kleiner.",
+          "comment_key": "horoscope.show_without_perfection"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.develop.a",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute zahlt sich konzentriertes Dranbleiben aus. Ein Vorhaben bekommt mehr Kraft, wenn du nicht überall zugleich ansetzt."
+        },
+        {
+          "id": "p2",
+          "text": "Ein Zwischenergebnis kann dir zeigen, dass sich deine Mühe lohnt. Vergleiche es mit deinem Anfang, nicht mit fremdem Tempo."
+        },
+        {
+          "id": "p3",
+          "text": "Auch leiser Fortschritt zählt. Du musst nicht jeden Schritt vorzeigen, damit er wirklich deiner ist.",
+          "comment_key": "horoscope.steady_effort"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.develop.b",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute trägt verlässlicher Einsatz weiter als ein schneller Eindruck. Eine Aufgabe zeigt dir, was du schon aufgebaut hast."
+        },
+        {
+          "id": "p2",
+          "text": "Auch ohne sofortige Anerkennung kann dein nächster Schritt sinnvoll sein. Halte dich an das, was du beeinflussen kannst."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht für jeden Fortschritt Beifall bekommen. Deine Mühe verliert dadurch nicht ihren Wert.",
+          "comment_key": "horoscope.steady_effort"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.reflect.a",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dein Blick auf etwas, das bereits gelungen ist. Vielleicht hast du seinen Wert im Weiterplanen übersehen."
+        },
+        {
+          "id": "p2",
+          "text": "Ein freundlicher Hinweis zeigt dir, welche Stärke andere an dir wahrnehmen. Nimm ihn an, ohne ihn gleich kleiner zu machen."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst mit etwas zufrieden sein. Anerkennung anzunehmen ist nicht dasselbe wie anzugeben.",
+          "comment_key": "horoscope.accept_kind_words"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.reflect.b",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute hilft ein Blick zurück auf deinen Anfang. Was dir nun selbstverständlich vorkommt, hat einmal Überwindung gekostet."
+        },
+        {
+          "id": "p2",
+          "text": "Miss deinen Fortschritt nicht nur am nächsten Ziel. Ein kleiner eigener Maßstab zeigt deutlicher, was sich verändert hat."
+        },
+        {
+          "id": "p3",
+          "text": "Heute zählt der eigene zurückgelegte Weg mehr als ein fremder Vorsprung. Ein kleiner Schritt kann ehrlichen Stolz verdienen.",
+          "comment_key": "horoscope.quiet_pride"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.conclude.a",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute erkennst du, wann ein Vorhaben seinen vorläufigen Abschluss erreicht hat. Nicht jedes Detail braucht eine Zugabe."
+        },
+        {
+          "id": "p2",
+          "text": "Ein klarer Schlusspunkt zeigt dir, was bereits gelungen ist. Das wiegt mehr als der Blick auf die nächste offene Aufgabe."
+        },
+        {
+          "id": "p3",
+          "text": "Falls du noch an Kleinigkeiten feilst, prüfe, ob sie das Ergebnis verändern. Manches darf in seiner jetzigen Form bestehen."
+        },
+        {
+          "id": "p4",
+          "text": "Du darfst einen Abschluss würdigen, bevor du weiterplanst. Für einen Moment darf das Erreichte einfach genug sein.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.goals.conclude.b",
+      "revision": 1,
+      "theme": "goals",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute darfst du ein Ergebnis aus der Hand geben, statt weiter daran zu feilen. Ein klarer Abschluss macht den Kopf freier."
+        },
+        {
+          "id": "p2",
+          "text": "Prüfe nur noch, was wirklich nötig ist. Danach gewinnt das Vorhaben eher durch einen Schlusspunkt als eine weitere Runde."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht jede Kleinigkeit verbessern, bevor du etwas als gelungen gelten lässt.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    }
+  ]
+}

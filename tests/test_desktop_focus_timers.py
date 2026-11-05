@@ -26,6 +26,7 @@ class DesktopFocusTimerTests(unittest.TestCase):
         self.callbacks: dict[str, Callable[[], None]] = {}
         self.cancelled: list[str] = []
         self.dismissed: list[tuple[int, int]] = []
+        self.passively_dismissed: list[tuple[int, int]] = []
         self.closed = False
         self.mouse = FakeMouse()
 
@@ -47,6 +48,7 @@ class DesktopFocusTimerTests(unittest.TestCase):
                 right_click=lambda _: None,
                 show_menu=lambda _x, _y: None,
                 dismiss_outside=lambda x, y: self.dismissed.append((x, y)),
+                dismiss_passively=lambda x, y: self.passively_dismissed.append((x, y)),
                 open_status=lambda: None,
                 quit=lambda: None,
                 closed=lambda: self.closed,
@@ -70,7 +72,8 @@ class DesktopFocusTimerTests(unittest.TestCase):
     def test_finished_focus_timer_is_not_cancelled_again(self) -> None:
         self.inputs.on_focus_out(tk.Event())
         self.callbacks["focus-1"]()
-        self.assertEqual(self.dismissed, [(5, 7)])
+        self.assertEqual(self.dismissed, [])
+        self.assertEqual(self.passively_dismissed, [(5, 7)])
         self.inputs.stop()
         self.assertEqual(self.cancelled, [])
 
@@ -83,6 +86,7 @@ class DesktopFocusTimerTests(unittest.TestCase):
         self.inputs.poll_global_click()
         self.assertEqual(self.dismissed, [])
         self.assertEqual(self.mouse.calls, 0)
+        self.assertEqual(self.passively_dismissed, [])
 
     def test_closed_desktop_does_not_schedule_focus_checks(self) -> None:
         self.closed = True

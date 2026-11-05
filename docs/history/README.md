@@ -41,6 +41,13 @@ matrices as new unfinished work or claim every historical matrix was signed off.
 - [Broader test-layer cleanup](TEST_LAYER_CLEANUP_PLAN.md).
 - [Final test ownership cleanup and acceptance](TEST_OWNERSHIP_FOLLOWUP_PLAN.md).
 
+## Social optimization follow-ups
+
+- [B2 subjective object reunion and natural German phrases](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md):
+  delivered as `4757da7` and `b984078`; 1,203 tests, static checks and isolated
+  native real-timer playback passed. Later friendship/sleep stages remain in
+  the [active care/social plan](../CARE_TIME_IMPLEMENTATION_PLAN.md).
+
 ## Pre-consolidation snapshots
 
 These snapshots retain the replaced text so conflicting old assumptions remain

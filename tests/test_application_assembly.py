@@ -34,7 +34,6 @@ class ApplicationAssemblyTests(unittest.TestCase):
             clock=ActiveSessionClock(lambda: 0.0),
             callbacks=ActivityCallbacks(
                 read_idle_seconds=lambda: None,
-                start_review=lambda _now: None,
                 react=lambda _reaction, _duration: None,
                 action_until=lambda: 0.0,
                 last_spoken=lambda: -1000.0,

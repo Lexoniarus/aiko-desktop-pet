@@ -2,6 +2,7 @@
 
 import unittest
 from copy import deepcopy
+from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
@@ -11,7 +12,9 @@ from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -122,6 +125,15 @@ class ObjectConsumptionTests(unittest.TestCase):
 
     def test_failed_handover_recovers_all_pet_values_and_identity(self):
         self.pet.advance(self.inputs.wall_time, elapsed_seconds=0)
+        self.pet.restore_checkpoint(replace(
+            self.pet.capture_checkpoint(),
+            moodlets=MoodletState(0, 2, (
+                MoodletEpisode(1, MoodletId.POKING, 2, 0, 0, 900, (2,)),
+            )),
+            wishes=WishState(2, (
+                ActiveWish(1, WishId.FOOD, "apple", 0, 14400),
+            ), ((WishArea.FOOD, 0),)),
+        ))
         original_pet = self.pet
         before = self.pet.capture_checkpoint()
         world_before = self.world.snapshot()
@@ -131,6 +143,11 @@ class ObjectConsumptionTests(unittest.TestCase):
 
         def fail_after_forget(token):
             forget(token)
+            self.pet.restore_checkpoint(replace(
+                self.pet.capture_checkpoint(),
+                moodlets=replace(self.pet.moodlets, active=()),
+                wishes=replace(self.pet.wishes, active=()),
+            ))
             raise RuntimeError("injected history rollback")
 
         with patch.object(self.memory, "forget", side_effect=fail_after_forget):
@@ -150,7 +167,10 @@ class ObjectConsumptionTests(unittest.TestCase):
             ConsumptionOrigin.HANDOVER, self.inputs,
             memory_id=self.item.instance_id,
         ).accepted)
-        self.assertGreater(self.pet.friendship, before.friendship)
+        self.assertEqual(self.pet.friendship, before.friendship)
+        cause = next(e for e in self.pet.moodlets.active
+                     if e.definition_id == MoodletId.FOOD_FULFILLED).causes[0]
+        self.assertEqual(cause.object_id, self.item.instance_id)
 
     def test_failure_after_world_mutation_restores_both_owners(self):
         before = self.world.snapshot()

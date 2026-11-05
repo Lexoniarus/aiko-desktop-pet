@@ -21,9 +21,20 @@ from aiko_pet.world.state import WorldState
 
 class ObjectOrientationAwarenessTests(unittest.TestCase):
     def setUp(self):
-        self.world = WorldState(WorldSurface(12000, 1000), (ObjectDefinition(
-            "cookie", "cookie", "cookie", frozenset((ObjectInteraction.EAT,)),
-        ),))
+        self.create_orientation_fixture()
+
+    def create_orientation_fixture(self):
+        self.world = WorldState(
+            WorldSurface(12000, 1000),
+            (
+                ObjectDefinition(
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    frozenset((ObjectInteraction.EAT,)),
+                ),
+            ),
+        )
         self.awareness = ObjectAwareness()
         self.state = PetState(satiety=100)
 
@@ -48,22 +59,24 @@ class ObjectOrientationAwarenessTests(unittest.TestCase):
     def test_distant_losses_on_both_sides_do_not_reveal_hidden_new_places(self):
         for width in (192, 384):
             with self.subTest(width=width):
-                self.setUp()
+                self.create_orientation_fixture()
                 left, left_record = self.learned(100)
                 right, right_record = self.learned(11900)
                 self.world.move_resting(left.instance_id, 2000, expected_revision=0)
                 self.world.move_resting(right.instance_id, 10000, expected_revision=0)
-                for now in (0, .3, .6):
+                for now in (0, 0.3, 0.6):
                     self.observe(now, -1, width)
                 remembered_left = self.awareness.memory.get(left_record)
                 remembered_right = self.awareness.memory.get(right_record)
                 assert remembered_left is not None and remembered_right is not None
                 self.assertEqual(remembered_left.place_status, "missing")
                 self.assertEqual(remembered_right.place_status, "remembered")
-                for now in (.7, 1, 1.3):
+                for now in (0.7, 1, 1.3):
                     self.observe(now, 1, width)
-                self.assertEqual({item.token for item in self.awareness.absences},
-                                 {left_record, right_record})
+                self.assertEqual(
+                    {item.token for item in self.awareness.absences},
+                    {left_record, right_record},
+                )
                 self.assertEqual(len(self.awareness.memory.snapshot()), 2)
                 self.assertIsNone(self.awareness.known_instance(left.instance_id))
                 self.assertIsNone(self.awareness.known_instance(right.instance_id))

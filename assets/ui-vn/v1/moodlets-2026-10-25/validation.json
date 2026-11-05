@@ -1,0 +1,250 @@
+{
+  "created": "2026-10-25",
+  "originals_preserved": true,
+  "prior_source_hashes_preserved": 54,
+  "new_sources": 8,
+  "new_exports": 56,
+  "visual_review": "Eight originals inspected; small-size contact sheet reviewed separately. No native application integration or acceptance claimed.",
+  "icons": [
+    {
+      "id": "moodlet_disappointed",
+      "sha256": "8be34c1611293afa58a518408865e3ae4df7d24a439d34ada1c5d353291531ba",
+      "bytes": 762250,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        137,
+        216,
+        1140,
+        1091
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_food_wish_disregarded",
+      "sha256": "11c8117bf122a24212a446660da7597789823107a5177bbf1c546a9870b971c4",
+      "bytes": 853359,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        129,
+        175,
+        1128,
+        1079
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_trusting",
+      "sha256": "a61926b01361dc9f62f7897fa7f77a123a99bcc4035c7da96c1106b479db0a06",
+      "bytes": 682030,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        70,
+        274,
+        1193,
+        948
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_appreciated",
+      "sha256": "fd088ad614ab6adb2378df092160b6928e90f4946d6e95ba6620190823ed80bd",
+      "bytes": 606355,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        163,
+        208,
+        1117,
+        1047
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_optimistic",
+      "sha256": "a39c1feccb63a19102fd50f6d2727473e16113c5036f24576a3d0690ae66293a",
+      "bytes": 432169,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        133,
+        268,
+        1120,
+        990
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_uncertain",
+      "sha256": "1f0f9af6cb4f5cb4b1b9e9db2b9dcfc3bfe60d49ea61bdeaf5ae40c5970bee91",
+      "bytes": 579522,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        221,
+        135,
+        1098,
+        1131
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_overlooked",
+      "sha256": "56089e93c2cd704ec91e2911ddd26521adb050b7007717826529c6dc24ad0446",
+      "bytes": 621131,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        95,
+        255,
+        1197,
+        1025
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    },
+    {
+      "id": "moodlet_guarded",
+      "sha256": "1cca3423172bd5bab853e1090333470d7179d0ca443dd65cb4402a1f685ffd3a",
+      "bytes": 692209,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        189,
+        183,
+        1068,
+        1091
+      ],
+      "unclipped": true,
+      "native_export_sizes": [
+        24,
+        32,
+        40,
+        48,
+        64,
+        96,
+        128
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "version": 2,
+  "status": "approved design intent and prepared source artwork; no application integration",
+  "buttons": {
+    "purpose": "Clickable interaction and utility controls, visually distinct from flat status readouts",
+    "states": {
+      "normal": "button_normal.png",
+      "hover": "button_hover.png",
+      "pressed": "button_pressed.png",
+      "disabled": "button_disabled.png",
+      "active": "button_active.png"
+    },
+    "composition": [
+      "selected blank button surface",
+      "separate runtime icon, label and optional submenu chevron",
+      "independent keyboard-focus outline when applicable"
+    ],
+    "resizing": "Preserve rounded ends/corners and border thickness. Export aligned state canvases and shared caps; stretch only the quiet middle region. Whole-image nonuniform stretching is not the intended integration.",
+    "content": "No text or icon baked into source. Disabled appearance does not implement action admission.",
+    "geometry_status": "Generator source geometry is measured in provenance.json. Shared runtime crop/caps/content insets still require an export/actual-size review.",
+    "persistent_selection": "Active follows authoritative toggle/selection, e.g. Offen halten. Keep a separate pin/label state cue; pressed is momentary. Disabled suppresses enabled hover/press feedback. Preserve selection during hover/press; combined variants need export review."
+  },
+  "status_bar": {
+    "purpose": "Passive continuous numeric readout; not a clickable action control",
+    "layer_order": [
+      {
+        "z": 0,
+        "file": "status_track.png",
+        "role": "empty recessed trough"
+      },
+      {
+        "z": 1,
+        "role": "UI-rendered fill; width follows normalized value, entire filled part has current semantic color"
+      },
+      {
+        "z": 2,
+        "file": "status_frame_overlay.png",
+        "role": "thin rim with transparent broad interior; never bake opaque blue or white over the fill"
+      },
+      {
+        "z": 3,
+        "role": "separate readable label/value if displayed on the bar"
+      }
+    ],
+    "color_behavior": "As the value decreases, the whole fill transitions continuously green -> yellow -> orange -> red. It is not a fixed horizontal rainbow.",
+    "candidate_color_anchors": [
+      {
+        "value": 0,
+        "color": "#D98897",
+        "meaning": "low / red"
+      },
+      {
+        "value": 25,
+        "color": "#E5B080",
+        "meaning": "orange"
+      },
+      {
+        "value": 50,
+        "color": "#E0CD86",
+        "meaning": "yellow"
+      },
+      {
+        "value": 100,
+        "color": "#8EBD9C",
+        "meaning": "high / green"
+      }
+    ],
+    "anchor_status": "Provisional presentation interpolation anchors, not game-balance thresholds, health rules or new domain constants.",
+    "applies_to": [
+      "numeric overall mood",
+      "satiety",
+      "fun",
+      "energy",
+      "social",
+      "affection"
+    ],
+    "exceptions": {
+      "friendship": {
+        "color": "#94B5CF",
+        "behavior": "fixed blue fill; low relationship progress is not a critical-needs warning"
+      }
+    },
+    "rendering": "Clip fill to the actual inner rounded slot; never cover or stretch the frame by value. At zero show the track only, at full value fill the complete inner slot. Preserve full source alpha for compositing; do not apply the character sprite binary-alpha policy.",
+    "accessibility": "Keep numerical/text readouts so state is not communicated by red/green alone.",
+    "geometry_status": "Track and overlay are matching source candidates; export must align their measured rims and inner slot on the same runtime canvas."
+  },
+  "source_policy": {
+    "selected_pngs": 8,
+    "rejected_drafts": 4,
+    "unmodified_generated_masters": true,
+    "existing_icons_and_blackjack": "preserved",
+    "application_code": "unchanged",
+    "rejected_draft_storage": "external local reference bundle only; hashes/prompts retained in versioned provenance"
+  },
+  "panels": {
+    "file": "panel_surface.png",
+    "purpose": [
+      "expanded details",
+      "embedded submenu content",
+      "wish information area",
+      "Moodlet and wish tooltips"
+    ],
+    "appearance": "Opaque near-white blush interior, delicate powder-blue border, transparent exterior; passive rather than raised action control",
+    "composition": "Separate content, separators, padding, optional local shadow and placement-dependent tooltip pointer; keep pure-white title bar",
+    "resizing": "Preserve border and corners via later nine-slice export; choose shared content insets at actual size",
+    "tooltips": "Fit within screen bounds, avoid obscuring the explained interaction, support keyboard access; no separate native submenu window"
+  },
+  "ui_rendered_effects": {
+    "raster_assets_required": false,
+    "focus": {
+      "appearance": "Independent visible blue-gray outline; provisional 2 px with small gap",
+      "behavior": "Orthogonal to hover, press and active; retain visible keyboard focus"
+    },
+    "scrollbars": {
+      "appearance": "Near-white rose track, visible blue-gray thumb, clearer hover/drag",
+      "input": "Wheel, keyboard and thumb dragging; preserve reachability of long content"
+    },
+    "transitions": {
+      "hover_ms_candidate": [
+        80,
+        140
+      ],
+      "press": "immediate feedback",
+      "content_reveal_ms_candidate": [
+        120,
+        180
+      ],
+      "constraints": "No input delay or geometry jump; no bounce, continuous glow or pulsing bars; reduced motion uses immediate changes; instant fallback where fading is unsupported",
+      "status": "Provisional visual tuning intent, native Windows/Tk feasibility pending; no animation-frame asset set"
+    },
+    "global_dimming_overlay": "Not needed for agreed embedded menu flows"
+  }
+}

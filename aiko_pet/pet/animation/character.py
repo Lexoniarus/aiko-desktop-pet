@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from types import MappingProxyType
 from typing import Mapping
 
 FRAME_WIDTH = 192
@@ -28,6 +29,12 @@ class AnimationClip:
     return_to: str = "idle"
     playback_order: tuple[int, ...] = ()
     hold_last: bool = False
+    movement: bool = False
+    family: str = ""
+    heading: int = 0
+    head_direction: int | None = None
+    stride: float = 0.0
+    rest_sway: bool = False
 
     @property
     def timings(self) -> tuple[int, ...]:
@@ -51,6 +58,22 @@ class AnimationClip:
 @dataclass(frozen=True, slots=True)
 class CharacterCatalog:
     clips: Mapping[str, AnimationClip]
+    body_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+    expression_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+    hd_action_clips: Mapping[str, AnimationClip] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+
+    def clip_for(self, name: str, scale: int) -> AnimationClip:
+        """Use the same approved action and timing at either display scale."""
+        if name in self.hd_action_clips:
+            return self.hd_action_clips[name]
+        return (self.expression_clips.get(name) or self.body_clips.get(name)
+                or self.clips[name])
 
 
 @dataclass(frozen=True, slots=True)

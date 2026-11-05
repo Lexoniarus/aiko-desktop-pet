@@ -1,0 +1,221 @@
+"""Legacy import validates present data before any forgiving normalization."""
+
+from __future__ import annotations
+
+import copy
+import json
+import unittest
+from typing import Any
+
+from support.storage import (
+    WALL,
+    definitions,
+    legacy_payload,
+    timestamp,
+)
+
+from aiko_pet.infrastructure.legacy_json_codec import decode_legacy_session
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.infrastructure.social_history_codec import encode_social_history
+from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
+from aiko_pet.pet.value_rules import clamp_need_value
+
+
+class LegacyJsonCodecTests(unittest.TestCase):
+    def decode(self, raw: Any) -> Any:
+        return decode_legacy_session(json.dumps(raw).encode(), definitions(), now=WALL)
+
+    def test_current_snapshot_retains_original_goals_causes_and_time(self) -> None:
+        raw = legacy_payload()
+        loaded = self.decode(raw)
+        self.assertEqual(encode_pet_state(loaded.state), raw["pet"])
+        self.assertEqual(loaded.settings.to_dict(), raw["settings"])
+        self.assertEqual(loaded.adaptive_memory.to_dict(), raw["adaptive"])
+        self.assertEqual(encode_social_history(loaded.social_history),
+                         raw["social_history"])
+        self.assertEqual(loaded.state.updated_at, WALL)
+        self.assertTrue(loaded.restored_from_save)
+        self.assertEqual(loaded.revision.value, 0)
+
+    def test_absent_older_fields_receive_neutral_defaults_without_care_history(
+        self,
+    ) -> None:
+        loaded = self.decode({
+            "version": 1,
+            "pet": {"satiety": 35, "updated_at": WALL},
+            "settings": {"auto_walk": False},
+            "adaptive": {"strain": 10},
+        })
+        self.assertEqual(loaded.state.satiety, 35)
+        self.assertEqual(loaded.state.lived_seconds, 0)
+        self.assertIsNone(loaded.state.friendship_history.baseline)
+        self.assertFalse(loaded.settings.auto_walk)
+        self.assertEqual(loaded.adaptive_memory.strain, 10)
+        self.assertEqual(loaded.state.moodlets.active, ())
+        self.assertEqual(loaded.state.wishes.active, ())
+
+    def test_present_invalid_sections_are_never_defaulted(self) -> None:
+        for section in (
+            "pet",
+            "settings",
+            "adaptive",
+            "world",
+            "object_memory",
+            "social_history",
+        ):
+            for invalid in (None, [], False, {"unknown": 1}):
+                with self.subTest(section=section, invalid=invalid):
+                    raw = legacy_payload()
+                    raw[section] = invalid
+                    with self.assertRaises((ValueError, TypeError)):
+                        self.decode(raw)
+
+    def test_core_values_reject_coercion_clamping_filtering_and_unknown_fields(
+        self,
+    ) -> None:
+        cases = {
+            "satiety": [True, "50", -1, 101, None],
+            "updated_at": [True, "1800000000", -1, 1e100],
+            "sleeping": [1, "false"],
+            "fun": [float("nan")],
+            "nap_until": [4_000_000_001],
+            "friendship_gained_today": [101],
+            "care_types_today": [["unknown"], ["pet", "pet"]],
+            "care_last_rewards": [{"unknown": 1}, {"pet": True}, {"pet": -1}],
+            "meals_today": [["unknown"]],
+            "auto_nap_day": [None],
+            "food": [
+                None,
+                {"recent_food_ids": ["unknown"]},
+                {"remaining_digest_minutes": 1e50},
+                {"awake_hours_since_last_food": True},
+            ],
+            "time": [
+                {"version": True, "lived_seconds": 1},
+                {"version": 1, "lived_seconds": -1},
+                {"version": 1, "lived_seconds": 0, "unknown": 1},
+            ],
+            "unknown": [1],
+        }
+        for key, values in cases.items():
+            for value in values:
+                with self.subTest(key=key, value=value):
+                    with self.assertRaises((ValueError, TypeError, OverflowError)):
+                        self.decode({"version": 1, "pet": {key: value}})
+
+    def test_present_histories_must_pass_their_strict_owner_codecs(self) -> None:
+        for key in ("relationship", "sleep_episode", "moodlets", "wishes"):
+            with self.subTest(key=key):
+                raw = legacy_payload()
+                raw["pet"][key]["version"] = 99
+                with self.assertRaises(ValueError):
+                    self.decode(raw)
+
+    def test_settings_adaptive_and_world_relationships_are_strict(self) -> None:
+        valid = legacy_payload()
+        for section, key, value in (
+            ("settings", "scale", True), ("settings", "auto_walk", 0),
+            ("settings", "zodiac_sign", "unknown"), ("settings", "x", 20001),
+            ("adaptive", "hour_seconds", [1]), ("adaptive", "strain", 101),
+            ("adaptive", "session_seconds", "10"),
+            ("adaptive", "quiet_window", {}),
+            ("world", "next_instance_id", 0),
+        ):
+            with self.subTest(section=section, key=key):
+                raw = copy.deepcopy(valid)
+                raw[section][key] = value
+                with self.assertRaises(ValueError):
+                    self.decode(raw)
+        del valid["world"]
+        with self.assertRaises(ValueError):
+            self.decode(valid)
+
+    def test_json_syntax_duplicate_keys_nonfinite_and_envelope_are_rejected(
+        self,
+    ) -> None:
+        for contents in (
+            b"{}",
+            b"[]",
+            b"{",
+            b"\xff",
+            b'{"version":1,"version":1,"pet":{}}',
+            b'{"version":1,"pet":{"satiety":1e999}}',
+            b'{"version":1,"pet":{"satiety":NaN}}',
+            b'{"version":true,"pet":{}}',
+            b'{"version":2,"pet":{}}',
+            b'{"version":1,"pet":{},"unknown":1}',
+        ):
+            with self.subTest(contents=contents):
+                with self.assertRaises((ValueError, UnicodeError)):
+                    decode_legacy_session(contents, definitions(), now=WALL)
+
+    def test_unrounded_core_numbers_and_zero_reward_anchors_are_not_lost(self) -> None:
+        raw = {
+            "version": 1,
+            "pet": {
+                "friendship_gained_today": 0.123456789,
+                "food": {"awake_hours_since_last_food": 0.123456789},
+                "care_last_rewards": {"pet": 0},
+            },
+        }
+        loaded = self.decode(raw).state
+        self.assertEqual(loaded.friendship_gained_today, 0.123456789)
+        self.assertEqual(loaded.food.awake_hours_since_last_food, 0.123456789)
+        self.assertEqual(loaded.care_last_rewards, {"pet": 0})
+
+    def test_malformed_save_is_safely_normalized(self):
+        state = decode_pet_state(
+            {
+                "satiety": "NaN",
+                "mood": -5,
+                "energy": float("inf"),
+                "sleeping": "yes",
+                "updated_at": "oops",
+            },
+            now=300,
+        )
+        self.assertEqual((state.satiety, state.mood, state.energy), (75, 0, 75))
+        self.assertFalse(state.sleeping)
+        self.assertEqual(state.updated_at, 300)
+        self.assertEqual(clamp_need_value(None), 75)
+
+    def test_migration_from_old_save_keeps_existing_values(self):
+        old = {
+            "satiety": 28,
+            "mood": 34,
+            "energy": 41,
+            "updated_at": timestamp(),
+            "sleeping": False,
+        }
+        state = decode_pet_state(old, now=timestamp())
+        self.assertEqual((state.satiety, state.mood, state.energy), (28, 34, 41))
+        self.assertEqual(state.social, 75)
+        self.assertEqual(state.friendship, 15)
+        self.assertEqual(state.friendship_level, 2)
+
+    def test_corrupt_new_values_and_reward_history_are_bounded(self):
+        state = decode_pet_state(
+            {
+                "social": -20,
+                "friendship": "nan",
+                "updated_at": timestamp(),
+                "care_last_rewards": {
+                    "feed": 9999999999,
+                    "pet": "malformed",
+                    "sleep": timestamp(),
+                    "unknown": 20,
+                },
+            },
+            now=timestamp(),
+        )
+        self.assertEqual((state.social, state.friendship), (0, 15))
+        self.assertEqual(state.care_last_rewards, {"sleep": timestamp()})
+
+    def test_corrupt_daily_action_list_is_sanitized(self):
+        state = decode_pet_state({
+            "care_types_today": ["pet", "pet", "other", 10, "talk"],
+            "affection": 12,
+            "friendship_gained_today": 999,
+        })
+        self.assertEqual(state.care_types_today, ["pet", "talk"])
+        self.assertEqual(state.friendship_gained_today, FRIENDSHIP_DAILY_CAP)

@@ -1,0 +1,76 @@
+"""Manual media tools must not recreate discarded standalone detail images."""
+
+from __future__ import annotations
+
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+from PIL import Image
+
+from aiko_pet.games.contracts import GameId
+from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
+from tools import capture_current_gallery as gallery
+from tools import capture_rock_paper_scissors_media as rps
+from tools.media_crop import CapturedFrame
+
+
+class CaptureMediaOutputTests(unittest.TestCase):
+    def test_capture_tools_write_readable_media_and_release_both_desktops(self) -> None:
+        pet = MagicMock()
+        pet._runtime.scheduled_greeting = None
+        pet._reaction_player.pending_timer = None
+        game = MagicMock(spec=RockPaperScissorsWindow)
+        game.window = MagicMock()
+        game._sequence = MagicMock()
+        pet._hover.game_window = game
+        for window in (pet.root, game.window):
+            window.winfo_width.return_value = 900
+            window.winfo_height.return_value = 550
+            window.winfo_rootx.return_value = 0
+            window.winfo_rooty.return_value = 0
+            window.winfo_name.return_value = "media-test"
+            window.winfo_ismapped.return_value = True
+        game.score.games = 2
+        frame = CapturedFrame(
+            Image.new("RGB", (160, 160), "white"),
+            ((30, 30, 100, 100),),
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder)
+
+            def record_ambient(_pet: object) -> None:
+                # Ambient playback has its own behavioral regressions. Exercise
+                # the unchanged encoder without a real desktop screenshot here.
+                gallery.save_sequence([frame], [420], output / gallery.AMBIENT_GIF)
+
+            with (
+                patch.object(gallery, "PREVIEWS", output),
+                patch.object(gallery, "DesktopPet", return_value=pet),
+                patch.object(gallery, "settle"),
+                patch.object(gallery, "capture_screen", return_value=frame),
+                patch.object(gallery, "capture_ambient_behavior", record_ambient),
+                patch.object(rps, "MEDIA_DIR", output),
+                patch.object(rps, "DesktopPet", return_value=pet),
+                patch.object(rps, "present"),
+                patch.object(rps, "capture_screen", return_value=frame),
+                patch.object(rps, "assert_hand_fits"),
+                patch("builtins.print"),
+            ):
+                gallery.main()
+                rps.record_media()
+            pet._hover.game_menu.choose.assert_called_once_with(
+                GameId.ROCK_PAPER_SCISSORS,
+            )
+            files = list(output.iterdir())
+            self.assertTrue(files)
+            self.assertEqual({path.suffix for path in files}, {".png", ".gif"})
+            for path in files:
+                with self.subTest(output=path.name), Image.open(path) as captured:
+                    captured.verify()
+        self.assertEqual(pet.quit.call_count, 2)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,7 @@
+{
+  "source": "aiko_pet/assets/ui/panel_surface_panel.png",
+  "source_sha256": "ad7a6b274558b7721dc17727c1233ef871c9d7feaec91281fe08f093c6262960",
+  "target": "aiko_pet/assets/ui/game_bubble_panel.png",
+  "sha256": "44d63c75566c0059fa45dbaaad99bc0265f4b65083ac366dc3c1f5a92351f3c4",
+  "method": "Binary alpha for Windows color key; original RGB unchanged"
+}

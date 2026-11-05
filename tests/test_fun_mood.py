@@ -15,9 +15,9 @@ from aiko_pet.pet.fun import (
     completed_unit_reward_fraction,
 )
 from aiko_pet.pet.mood import (
-    MoodFactors,
+    NeedMoodFactors,
     advance_mood,
-    calculate_mood_target,
+    calculate_need_mood_target,
 )
 from aiko_pet.pet.state import PetState
 
@@ -51,7 +51,7 @@ class FunMoodTests(unittest.TestCase):
         )
         self.assertEqual(encode_pet_state(pet), before)
 
-    def test_aiko_wins_a_little_more_but_losses_are_still_fun(self) -> None:
+    def test_winning_and_losing_give_the_same_completed_play_care(self) -> None:
         won = calculate_game_session_fun(
             GameExperience("rock_paper_scissors", 2, successful_units=2),
             30,
@@ -60,8 +60,8 @@ class FunMoodTests(unittest.TestCase):
             GameExperience("rock_paper_scissors", 2, setback_units=2),
             30,
         )
-        self.assertGreater(won.fun_points, lost.fun_points)
-        self.assertGreater(lost.fun_points, 0)
+        self.assertEqual(won.fun_points, lost.fun_points)
+        self.assertEqual(lost.fun_points, 12)
         self.assertEqual(won.energy_cost, 1)
         self.assertGreater(won.social_gain, 0)
 
@@ -77,7 +77,7 @@ class FunMoodTests(unittest.TestCase):
         )
 
     def test_fun_declines_only_with_simulated_awake_time(self) -> None:
-        self.assertAlmostEqual(advance_fun(75, 16, sleeping=False), 33.4)
+        self.assertAlmostEqual(advance_fun(75, 16, sleeping=False), 27)
         self.assertEqual(advance_fun(75, 8, sleeping=True), 75)
         self.assertEqual(advance_fun(75, 0, sleeping=False), 75)
 
@@ -100,9 +100,9 @@ class FunMoodTests(unittest.TestCase):
         self.assertGreater(pet.fun, 60)
         self.assertLess(pet.fun, 90)
 
-    def test_mood_responds_to_all_needs_and_friendship(self) -> None:
-        normal = MoodFactors(75, 75, 75, 75, 75)
-        self.assertAlmostEqual(calculate_mood_target(normal), 75.0)
+    def test_mood_responds_to_all_needs_with_equal_contributions(self) -> None:
+        normal = NeedMoodFactors(75, 75, 75, 75, 75)
+        self.assertAlmostEqual(calculate_need_mood_target(normal), 60.0)
         for key in ("satiety", "energy", "fun", "social", "affection"):
             with self.subTest(need=key):
                 modified = {name: 75.0 for name in (
@@ -110,12 +110,8 @@ class FunMoodTests(unittest.TestCase):
                 )}
                 modified[key] = 10
                 self.assertLess(
-                    calculate_mood_target(MoodFactors(**modified)), 75,
+                    calculate_need_mood_target(NeedMoodFactors(**modified)), 60,
                 )
-        self.assertGreater(
-            calculate_mood_target(MoodFactors(75, 75, 75, 75, 75, 100)),
-            75,
-        )
 
     def test_mood_is_smoothed_and_never_changes_fun(self) -> None:
         start = timestamp()
@@ -131,7 +127,7 @@ class FunMoodTests(unittest.TestCase):
         self.assertGreater(low_mood.mood, 15)
         self.assertLess(high_mood.mood, 90)
         self.assertAlmostEqual(
-            advance_mood(75, 20, 0, sleeping=False), 75,
+            advance_mood(75, 20, 0, lowest_need=0), 75,
         )
 
     def test_old_saves_keep_mood_and_default_fun_safely(self) -> None:

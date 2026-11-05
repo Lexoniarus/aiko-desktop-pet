@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.resources.begin.a",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dir auf, wofür du deine Zeit wirklich einsetzen möchtest. Ein kleiner eigener Wunsch gewinnt an Gewicht."
+        },
+        {
+          "id": "p2",
+          "text": "Du brauchst nichts Neues, um ihm Platz zu geben. Oft genügt es, einer vertrauten Sache mehr Beachtung zu schenken."
+        },
+        {
+          "id": "p3",
+          "text": "Wähle etwas, das dir selbst wichtig ist. Nicht jeder Wunsch muss für andere eindrucksvoll aussehen.",
+          "comment_key": "horoscope.choose_what_matters"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.begin.b",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute zieht etwas Schönes deinen Blick an. Bevor du ihm nachgehst, lohnt sich die Frage, was dir wirklich fehlt."
+        },
+        {
+          "id": "p2",
+          "text": "Vielleicht brauchst du weniger etwas Neues als Zeit, das Vorhandene zu genießen. Ein freier Moment macht den Unterschied."
+        },
+        {
+          "id": "p3",
+          "text": "Dein eigener Maßstab führt dich heute besser als der Glanz für andere. Was dir Freude gibt, braucht keine fremde Bewunderung.",
+          "comment_key": "horoscope.choose_what_matters"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.develop.a",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute kannst du mit dem, was schon da ist, mehr anfangen als gedacht. Dein Gespür für brauchbare Möglichkeiten ist gut."
+        },
+        {
+          "id": "p2",
+          "text": "Eine kleine Ordnung in deinen Dingen oder Plänen erspart dir unnötiges Suchen. Lass sie so einfach wie möglich."
+        },
+        {
+          "id": "p3",
+          "text": "Was sich bewährt, darf bleiben. Du musst nicht ständig etwas Neues hinzufügen, um weiterzukommen.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.develop.b",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute lohnt sich etwas Geduld mit einer Sache, die du schon besitzt. Mit ein wenig Zuwendung zeigt sie einen neuen Reiz."
+        },
+        {
+          "id": "p2",
+          "text": "Du findest eher eine brauchbare Lösung, wenn du vorhandene Möglichkeiten prüfst, bevor du weitere hinzufügst."
+        },
+        {
+          "id": "p3",
+          "text": "Was dir vertraut ist, muss nicht langweilig werden. Aufmerksamkeit kann auch Bekanntem wieder Wert geben.",
+          "comment_key": "horoscope.care_for_what_is_there"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.reflect.a",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Dein Blick für das Wertvolle ist heute geschärft. Eine unscheinbare Kleinigkeit kann dir mehr Freude machen als etwas Neues."
+        },
+        {
+          "id": "p2",
+          "text": "Vielleicht fällt dir auf, wie viel Zeit eine Sache bekommt, die dir eigentlich wenig bedeutet. Das darfst du neu gewichten."
+        },
+        {
+          "id": "p3",
+          "text": "Zwischen Habenwollen und Zufriedensein liegt heute ein ruhiger Moment. Er hilft dir, deinen eigenen Maßstab wiederzufinden."
+        },
+        {
+          "id": "p4",
+          "text": "Was dir wirklich etwas bedeutet, braucht keinen großen Auftritt. Auch kleine Dinge verdienen deine Aufmerksamkeit.",
+          "comment_key": "horoscope.value_small_things"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.reflect.b",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute berührt dich ein Vergleich mit anderen. Was nach außen beeindruckt, muss nicht zu deinen Wünschen passen."
+        },
+        {
+          "id": "p2",
+          "text": "Ein ruhiger Blick auf deine eigenen Möglichkeiten bringt das Maß zurück. Du hast nicht denselben Bedarf wie alle anderen."
+        },
+        {
+          "id": "p3",
+          "text": "Heute zeigt sich Wert auch im Unscheinbaren. Was nur für dich kostbar ist, verliert nichts durch einen fremden Maßstab.",
+          "comment_key": "horoscope.choose_what_matters"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.conclude.a",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute verliert ein Wunsch an Dringlichkeit, sobald du ihn in Ruhe betrachtest. Nicht alles, was lockt, fehlt dir wirklich."
+        },
+        {
+          "id": "p2",
+          "text": "Ein Vorhaben, das nur Zeit und Aufmerksamkeit bindet, darf kleiner werden. Dadurch bekommt etwas anderes wieder Raum."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst zufrieden sein, ohne noch etwas dazuzulegen. Manchmal ist genug ein besonders gutes Ergebnis.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.resources.conclude.b",
+      "revision": 1,
+      "theme": "resources",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute wird eine kleine Auswahl leichter, sobald du dich fragst, was du tatsächlich nutzen möchtest. Der Rest darf warten."
+        },
+        {
+          "id": "p2",
+          "text": "Du gewinnst Aufmerksamkeit zurück, wenn du nicht jeden reizvollen Wunsch weiterverfolgst. Ein klares Genug schafft Luft."
+        },
+        {
+          "id": "p3",
+          "text": "Zufriedenheit muss nicht bis zum nächsten großen Ziel warten. Auch das Vorhandene darf heute reichen.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    }
+  ]
+}

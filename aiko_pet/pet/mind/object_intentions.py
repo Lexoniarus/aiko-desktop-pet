@@ -69,10 +69,17 @@ class ObjectIntentions:
             )
 
     def choose(
-        self, known: tuple[ObjectKnowledge, ...], state: PetState, *,
-        x: float, now: float, blocked: bool = False, changed: bool = False,
+        self,
+        known: tuple[ObjectKnowledge, ...],
+        state: PetState,
+        *,
+        x: float,
+        now: float,
+        blocked: bool = False,
+        changed: bool = False,
         observed: frozenset[str] = frozenset(),
         committed: str | None = None,
+        readable: frozenset[str] = frozenset(),
     ) -> ObjectGoal | None:
         if committed is not None and not state.sleeping:
             if self.goal is None or self.goal.token != committed:
@@ -82,23 +89,34 @@ class ObjectIntentions:
                 self.complete(committed, now)
                 return None
             self.goal = replace(
-                self.goal, identity=subject.identity, kind=subject.kind,
-                x=subject.x, height=subject.height,
+                self.goal,
+                identity=subject.identity,
+                kind=subject.kind,
+                x=subject.x,
+                height=subject.height,
                 observed_at=subject.observed_at,
             )
             return self.goal
         if self.goal is not None and not state.sleeping:
-            subject = next((item for item in known
-                            if item.token == self.goal.token), None)
-            if (self.goal.use_context == ObjectUseContext.CONTINUING_WISH
-                    and subject is not None and subject.place_status == "remembered"
-                    and (subject.resting or subject.token in observed)
-                    and subject.identity == self.goal.identity
-                    and subject.kind == self.goal.kind
-                    and decide_object_use(subject, state,
-                                          self.goal.use_context).consume):
+            subject = next(
+                (item for item in known if item.token == self.goal.token), None
+            )
+            if (
+                self.goal.use_context == ObjectUseContext.CONTINUING_WISH
+                and subject is not None
+                and subject.place_status == "remembered"
+                and (subject.resting or subject.token in observed)
+                and subject.identity == self.goal.identity
+                and subject.kind == self.goal.kind
+                and (
+                    decide_object_use(subject, state, self.goal.use_context).consume
+                    or subject.token in readable
+                )
+            ):
                 self.goal = replace(
-                    self.goal, x=subject.x, height=subject.height,
+                    self.goal,
+                    x=subject.x,
+                    height=subject.height,
                     observed_at=subject.observed_at,
                 )
                 return self.goal
@@ -108,9 +126,14 @@ class ObjectIntentions:
         if not changed and now < self._next_check:
             return self.goal
         self._next_check = now + BALANCE.number("object_behavior", "reevaluate_seconds")
-        available = {item.token for item in known if item.token in observed
-                     and item.resting and item.place_status == "remembered"
-                     and decide_object_use(item, state).consume}
+        available = {
+            item.token
+            for item in known
+            if item.token in observed
+            and item.resting
+            and item.place_status == "remembered"
+            and (decide_object_use(item, state).consume or item.token in readable)
+        }
         options: list[tuple[tuple[bool, float, bool, float, str], ObjectGoal]] = []
         for item in known:
             if not item.resting or item.place_status != "remembered":
@@ -122,7 +145,7 @@ class ObjectIntentions:
             # about a different, unexamined portion remains an independent goal.
             if item.assessed and now < self._pause_until:
                 continue
-            wanted = decide_object_use(item, state).consume
+            wanted = decide_object_use(item, state).consume or item.token in readable
             if item.assessed and not wanted:
                 continue
             threshold = BALANCE.number(
@@ -132,18 +155,34 @@ class ObjectIntentions:
             level = state.satiety if item.kind == "food" else state.energy
             if now < self._retry.get(item.token, 0):
                 continue
-            goal = ObjectGoal(item.token, item.identity, item.kind,
-                              item.x, item.height, item.observed_at,
-                              "consume" if item.assessed else "investigate")
-            if (self.goal is not None and item.token == self.goal.token
-                    and (not available or item.token in available)):
+            goal = ObjectGoal(
+                item.token,
+                item.identity,
+                item.kind,
+                item.x,
+                item.height,
+                item.observed_at,
+                "consume" if item.assessed else "investigate",
+            )
+            if (
+                self.goal is not None
+                and item.token == self.goal.token
+                and (not available or item.token in available)
+            ):
                 self.goal = goal
                 return goal
-            repetitive = (item.identity is not None and item.kind == "food"
-                          and is_repeated_food(state.food, item.identity))
-            rank = (item.token not in available,
-                    -(threshold - level) / threshold if wanted else 0, repetitive,
-                    abs(item.x - x), item.token)
+            repetitive = (
+                item.identity is not None
+                and item.kind == "food"
+                and is_repeated_food(state.food, item.identity)
+            )
+            rank = (
+                item.token not in available,
+                -(threshold - level) / threshold if wanted else 0,
+                repetitive,
+                abs(item.x - x),
+                item.token,
+            )
             options.append((rank, goal))
         self.goal = min(options, key=lambda option: option[0])[1] if options else None
         return self.goal

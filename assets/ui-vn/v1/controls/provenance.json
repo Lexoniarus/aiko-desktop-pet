@@ -1,0 +1,674 @@
+{
+  "date": "2026-10-20",
+  "generator": "OpenAI built-in Imagegen tool",
+  "runtime_integrated": false,
+  "source_pixels_modified": false,
+  "selected": [
+    {
+      "id": "status_track",
+      "type": "track",
+      "label": "Statusleiste · Hintergrund",
+      "file": "status_track.png",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-acafeff4-478d-41fe-80f1-aa7208956c9a.png",
+      "sha256": "1b80fedb7807ba53c2d199414d5ad5c894184c617b6f57cce1f3267dea58838f",
+      "bytes": 295488,
+      "dimensions": [
+        2079,
+        756
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        105,
+        307,
+        1974,
+        446
+      ],
+      "fully_transparent_fraction": 0.8335,
+      "low_alpha_fringe_pixels": 7009,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        220,
+        235,
+        252
+      ],
+      "reference_sha256": {
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png": "eaea7d0b328195abbab5c47ded55dcfcc115b5737738fc13e943b290463cebae"
+      }
+    },
+    {
+      "id": "button_normal",
+      "type": "button",
+      "label": "Button · Normal",
+      "file": "button_normal.png",
+      "references": [
+        "drafts/button_normal_first.png",
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-74dbd39a-ec04-44f0-9b06-051fbcb0b16c.png",
+      "sha256": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631",
+      "bytes": 469133,
+      "dimensions": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        249,
+        217,
+        1924,
+        507
+      ],
+      "fully_transparent_fraction": 0.6893,
+      "low_alpha_fringe_pixels": 6635,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        242,
+        216,
+        223
+      ],
+      "reference_sha256": {
+        "drafts/button_normal_first.png": "9bf91b2bd7a62ecbd0d873043777dfaba86246a2d632fac9363ce43acde88355",
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png": "eaea7d0b328195abbab5c47ded55dcfcc115b5737738fc13e943b290463cebae"
+      },
+      "archived_references": [
+        "drafts/button_normal_first.png"
+      ]
+    },
+    {
+      "id": "button_hover",
+      "type": "button",
+      "label": "Button · Hover",
+      "file": "button_hover.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-31aaf5fb-264b-4a26-9af7-4d291fe9ca08.png",
+      "sha256": "3a104507b3bd993f8fbc8876bfeadf239b802d6111373bf3bf074ffc9385c390",
+      "bytes": 619447,
+      "dimensions": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        240,
+        215,
+        1932,
+        510
+      ],
+      "fully_transparent_fraction": 0.6805,
+      "low_alpha_fringe_pixels": 7629,
+      "center_alpha": 253,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        251,
+        227,
+        234
+      ],
+      "reference_sha256": {
+        "button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631"
+      }
+    },
+    {
+      "id": "button_pressed",
+      "type": "button",
+      "label": "Button · Gedrückt",
+      "file": "button_pressed.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-ca5369ca-147f-45e5-8099-715498da961b.png",
+      "sha256": "2f177eb5feb7af93837621d180afce3ce5cc299aa057a0dab29074183b544cab",
+      "bytes": 555291,
+      "dimensions": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        249,
+        216,
+        1924,
+        508
+      ],
+      "fully_transparent_fraction": 0.6843,
+      "low_alpha_fringe_pixels": 11199,
+      "center_alpha": 253,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        230,
+        191,
+        199
+      ],
+      "reference_sha256": {
+        "button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631"
+      }
+    },
+    {
+      "id": "button_disabled",
+      "type": "button",
+      "label": "Button · Deaktiviert",
+      "file": "button_disabled.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-e08b5136-c7d5-43ae-b74d-3fb1d0538713.png",
+      "sha256": "4e4b0d3f470b2e03a106d40882a58316269c1add86f765d8a0434b100820d20f",
+      "bytes": 600744,
+      "dimensions": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        248,
+        215,
+        1925,
+        509
+      ],
+      "fully_transparent_fraction": 0.6847,
+      "low_alpha_fringe_pixels": 6876,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        217,
+        204,
+        209
+      ],
+      "reference_sha256": {
+        "button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631"
+      }
+    },
+    {
+      "id": "status_frame_overlay",
+      "type": "overlay",
+      "label": "Statusleiste · Transparentes Overlay",
+      "file": "status_frame_overlay.png",
+      "references": [
+        "status_track.png"
+      ],
+      "generator_output_name": "exec-2a5222ae-40bc-4367-97ed-da09e2e4297f.png",
+      "sha256": "ac174fb88e85b103446cc05c4f4e0e7af50cc922b71e618ce594f2c23e24cfac",
+      "bytes": 161463,
+      "dimensions": [
+        2079,
+        756
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        105,
+        300,
+        1975,
+        441
+      ],
+      "fully_transparent_fraction": 0.9438,
+      "low_alpha_fringe_pixels": 15122,
+      "center_alpha": 0,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        0,
+        0,
+        0
+      ],
+      "reference_sha256": {
+        "status_track.png": "1b80fedb7807ba53c2d199414d5ad5c894184c617b6f57cce1f3267dea58838f"
+      }
+    },
+    {
+      "id": "button_active",
+      "type": "button",
+      "label": "Button · Dauerhaft aktiv",
+      "file": "button_active.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-d8d8b9de-7d81-4a63-825d-8c5380b9af26.png",
+      "sha256": "fde555232b7df64aec84cf9adf6d142c531779be5aaffcb35dc46311c245eb97",
+      "bytes": 545575,
+      "dimensions": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        244,
+        208,
+        1928,
+        509
+      ],
+      "fully_transparent_fraction": 0.6757,
+      "low_alpha_fringe_pixels": 7574,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        247,
+        213,
+        217
+      ],
+      "reference_sha256": {
+        "button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631"
+      }
+    },
+    {
+      "id": "panel_surface_flat",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "panel_surface.png",
+      "references": [],
+      "generator_output_name": "exec-08da6556-f22a-44a5-a0fc-6c9dab778a75.png",
+      "sha256": "22b2ff1a18425a1c1ece6715b913e876d965c77d2d6bf87363026ffc811f6a2e",
+      "bytes": 547405,
+      "dimensions": [
+        1704,
+        923
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        128,
+        241,
+        1575,
+        682
+      ],
+      "fully_transparent_fraction": 0.5895,
+      "low_alpha_fringe_pixels": 8591,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        251,
+        244,
+        247
+      ],
+      "reference_sha256": {}
+    }
+  ],
+  "excluded_drafts": [
+    {
+      "id": "button_normal",
+      "file": "drafts/button_normal_first.png",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-89c36c99-e53f-4af7-8a11-bd2c577660fa.png",
+      "reason_not_selected": "Excessive exterior pink bloom and overly wide banner proportions.",
+      "sha256": "9bf91b2bd7a62ecbd0d873043777dfaba86246a2d632fac9363ce43acde88355",
+      "bytes": 1055083,
+      "dimensions": [
+        2048,
+        768
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        254
+      ],
+      "visible_bbox_alpha32": [
+        103,
+        235,
+        1947,
+        543
+      ],
+      "fully_transparent_fraction": 0.5673,
+      "low_alpha_fringe_pixels": 121835,
+      "center_alpha": 253,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        248,
+        218,
+        226
+      ],
+      "reference_sha256": {
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png": "eaea7d0b328195abbab5c47ded55dcfcc115b5737738fc13e943b290463cebae"
+      },
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "status_frame_overlay",
+      "file": "drafts/status_overlay_first.png",
+      "references": [
+        "status_track.png"
+      ],
+      "generator_output_name": "exec-b29769fc-1fe5-417b-81a2-ff1e700cf0e9.png",
+      "reason_not_selected": "Ragged pale cutout edge; replace with a clean quiet contour.",
+      "sha256": "e73e62aeec191502cc0dfeb072becdaae375c4115fe3310cf70448a80682281c",
+      "bytes": 179335,
+      "dimensions": [
+        2079,
+        756
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha32": [
+        81,
+        299,
+        1998,
+        444
+      ],
+      "fully_transparent_fraction": 0.9284,
+      "low_alpha_fringe_pixels": 37939,
+      "center_alpha": 0,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        0,
+        0,
+        0
+      ],
+      "reference_sha256": {
+        "status_track.png": "1b80fedb7807ba53c2d199414d5ad5c894184c617b6f57cce1f3267dea58838f"
+      },
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_first",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_first.png",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "generator_output_name": "exec-fd064208-32b0-404d-94b8-96aa547e2599.png",
+      "reason_not_selected": "Excessive exterior luminous haze/glow.",
+      "sha256": "8bda665adffb115848e9585a859b24a20ce13c94d7b38808a8808bd6f39f2648",
+      "bytes": 970743,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        254
+      ],
+      "visible_bbox_alpha32": [
+        90,
+        144,
+        1445,
+        894
+      ],
+      "fully_transparent_fraction": 0.3109,
+      "low_alpha_fringe_pixels": 72921,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        250,
+        245,
+        248
+      ],
+      "reference_sha256": {
+        "../../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      },
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_clean",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_second.png",
+      "references": [
+        "drafts/panel_surface_first.png"
+      ],
+      "generator_output_name": "exec-2e1c8148-73c2-430b-97ae-b3c9829bea74.png",
+      "reason_not_selected": "Correction retained broad exterior halo; superseded by flat clean source.",
+      "sha256": "3d9e00ef4111ca08d68b57305dfbe8fb21f7d419217965fa8ffe5857f6f0793e",
+      "bytes": 975608,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        254
+      ],
+      "visible_bbox_alpha32": [
+        94,
+        144,
+        1442,
+        880
+      ],
+      "fully_transparent_fraction": 0.3629,
+      "low_alpha_fringe_pixels": 10806,
+      "center_alpha": 254,
+      "visible_content_uncut": true,
+      "center_rgb": [
+        253,
+        247,
+        249
+      ],
+      "reference_sha256": {
+        "drafts/panel_surface_first.png": "8bda665adffb115848e9585a859b24a20ce13c94d7b38808a8808bd6f39f2648"
+      },
+      "storage": "external_local_reference_bundle_only"
+    }
+  ],
+  "retained_baseline_sha256": {
+    "assets/ui-vn/v1/icons/action_pet.png": "ddba7d76299d27d0f14c4a39e3f67a04bff4daedf5d9733b82dbde6587785de3",
+    "assets/ui-vn/v1/icons/action_sleep.png": "0d7605f6a699ab8a87823df3f9a38261a70b09e2ac023df532d47a55e6dbe7c4",
+    "assets/ui-vn/v1/icons/detail_next.png": "f4f8e47958d0efb2848b7b5d449dadb966d3e7b131b60cef048550954080ed9a",
+    "assets/ui-vn/v1/icons/detail_objects.png": "3a6aabfc496bcd637660b3e4563b2c19ab7be23cb585026485199ea4a0a95f15",
+    "assets/ui-vn/v1/icons/detail_rhythm.png": "fc36110546be53780dce6169a38f7705c249a767b629c6873cb5f3260cfaeab2",
+    "assets/ui-vn/v1/icons/detail_wellbeing.png": "10718a1c8e3c81fa6daf1e252180ff7039cdffe393ebe681b0962adc6e24b2a7",
+    "assets/ui-vn/v1/icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a",
+    "assets/ui-vn/v1/icons/game_tic_tac_toe.png": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5",
+    "assets/ui-vn/v1/icons/moodlet_annoyed.png": "87a63b71c6c96229be81c37bf2740ffc4bca447ac3e247f08ce87ba7e49db703",
+    "assets/ui-vn/v1/icons/moodlet_cheerful.png": "80af26d443cb35e8deeded9e50b0684a1b9208407c29da84cc29077c7853ab52",
+    "assets/ui-vn/v1/icons/moodlet_connection.png": "01c524478818e01bdcfa5da539cd3d3bcc92c9da3fce134e13ddbc1a29a132c3",
+    "assets/ui-vn/v1/icons/moodlet_crowded.png": "5b1c091503dc3e24a271c09dc3b764f2415225452fcbbac781eff5145db8e777",
+    "assets/ui-vn/v1/icons/moodlet_disrupted.png": "50cab2e9c01b2baa3023db2824402ee94044a4dee0806f1ba8bc79d07e724818",
+    "assets/ui-vn/v1/icons/moodlet_enthusiastic.png": "bc49717f985f8f1ab63aa744cf2ebb9612d6b68dbb3b176bd453ac7741c37359",
+    "assets/ui-vn/v1/icons/moodlet_exhaustion_irritated.png": "44debe72fb3599995cfdac929bb44f7017406113af0b2e26195c6d42c15d5033",
+    "assets/ui-vn/v1/icons/moodlet_food_fulfilled.png": "cf0a8a64677cd05277c3163a906f401775196b58b6f0b58cf10d3f5155efb108",
+    "assets/ui-vn/v1/icons/moodlet_food_monotony.png": "3da5ff8b90ddc02a7bf7201db73c4f3c0e0a50d2c38328cfe1a280074bdd8acf",
+    "assets/ui-vn/v1/icons/moodlet_hunger_worn.png": "13eda7a3bd11d981d9b302d8ac59be242a0d6804be12f43ee0250447d23c304b",
+    "assets/ui-vn/v1/icons/moodlet_lonely.png": "cc62a9fe33a3dc56513b675f79dfd9c13053eb4257a8260a8e0dcda442245ebc",
+    "assets/ui-vn/v1/icons/moodlet_missing_closeness.png": "b100521cfbaf7f7366d90c1366333c981ceea50b409bb073bd330dfb47fc11d6",
+    "assets/ui-vn/v1/icons/moodlet_pride.png": "6af98a56c0d2f4bc4d6dad9afc913995e839d8ebc4e5251cf3fb511a07d69fb5",
+    "assets/ui-vn/v1/icons/moodlet_relief.png": "8fe1264392669d64d0c98562dbbc593cf532208a0fb7839f99e0eaa249fc734f",
+    "assets/ui-vn/v1/icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97",
+    "assets/ui-vn/v1/icons/moodlet_shared_play.png": "7d5008c4434fbb55722d557cc3854080d7cf107c347abe683feccfe1998e5120",
+    "assets/ui-vn/v1/icons/moodlet_unstimulated.png": "f48e111a7ec17adbaf1e47f2b83ba08c406ea17c04fda36e6627513efd29c6a1",
+    "assets/ui-vn/v1/icons/moodlet_withheld.png": "f50b6eea8859876d40d752eb051a80d0cbcb06dc07d3a349b788a9aefe691858",
+    "assets/ui-vn/v1/icons/play_rps_paper.png": "c6a48c78b9ba8ce3842f74146ff54eb851b103f1d5081f916ac991e1d62f83c1",
+    "assets/ui-vn/v1/icons/play_rps_rock.png": "f7b6cad354f73ca0414b022f98ff41f60d63253705b677b84a1fccd7fd9a5386",
+    "assets/ui-vn/v1/icons/play_rps_scissors.png": "fc3aaa257a44d2d0eee61cb2b68bdfe5c797d95ef9b52b2b0868ad6a725e983c",
+    "assets/ui-vn/v1/icons/play_ttt_o.png": "d63c6ed51c4025e763a75a70206af3dc42ca4cb80c944df859aab191ce90cdda",
+    "assets/ui-vn/v1/icons/play_ttt_x.png": "d00b4809f8ca74919ef09430d9828581d21276e06d35b8dbffc3722bd08a2586",
+    "assets/ui-vn/v1/icons/status_affection.png": "8802011c218d8fc6192a21db468d0405a13f900588073c89ae4cc45cc9e5e068",
+    "assets/ui-vn/v1/icons/status_energy.png": "913732e7de70fa4f336b0b5162c226cb6d20e987924696951b0f5f9a5707417e",
+    "assets/ui-vn/v1/icons/status_friendship.png": "b495d12e080dc2c949cd4838e02788b774a6f9daba700afa32ac7a3edbabda05",
+    "assets/ui-vn/v1/icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+    "assets/ui-vn/v1/icons/status_satiety.png": "7b35ba1719b437f824c40f99dd6abb96045adccd50668219d1958fe1430e4b18",
+    "assets/ui-vn/v1/icons/status_social.png": "bd41d94cb2328ef9e5a3d10f99edf7b6b0171f5ba580f423ddfeada7fe342b6e",
+    "assets/ui-vn/v1/icons/system_computer.png": "490a07e13e23e3373b3d8b5adfee52dba7e485bca74fabd98e88b53db61e059f",
+    "assets/ui-vn/v1/icons/ui_pin.png": "4d06fead770cef01e5a05181b806c6121127bb3cf7339a855e5c63b5572ef929",
+    "assets/ui-vn/v1/icons/ui_settings.png": "905642f62eb63d3f3cfb7c325fb54ebb5e43cb33ba1ef4a3d0bc01aee78a1e28",
+    "assets/ui-vn/v1/icons/ui_sparkle.png": "9d4a327c8d5162bff3cd19cc90408b88d77c0310e8d6b648c7635575bdd8d525",
+    "assets/ui-vn/v1/icons/wish_fact.png": "4932817b4c1f19d922cb2b51e5b777ffdbb9e10c5b778bfe24a9c0c4c480d5e9",
+    "assets/ui-vn/v1/icons/wish_protection_shield.png": "659cadbde6f67030df60f6e29942fb456e33250a95009067a918c9ebd055c1ab",
+    "assets/ui-vn/v1/icons/wish_single.png": "b017e140bea28ee02a789a967e0bf28b84b4f18da18cba23a730b5ef5158961e",
+    "assets/ui-vn/v1/icons/wish_thought_bubble.png": "11c7d3ea5f2852baa4a5fc15ae541f161b544d25e6ce669607e3f21e508fb3c5",
+    "assets/ui-vn/v1/icons/wish_twopart.png": "ca5c0a0dd054e061d2442353254552e33126ec8d817d499267eae55a3ef0f1ad",
+    "aiko_pet/assets/playing_cards/card_back.png": "a2ab56d55cd08b99933f8997d46b6907ea0b62082931e7adb8b31b9e000ae3c8",
+    "aiko_pet/assets/playing_cards/card_clubs_02.png": "47a7122127053a1af1e49ab1a126505301c28f4d28bb788538a1e2491efc173e",
+    "aiko_pet/assets/playing_cards/card_clubs_03.png": "806ba3231e9e7587ae386ff5e2de1b9aef17ed366d5d321b25ae64985fcfb0eb",
+    "aiko_pet/assets/playing_cards/card_clubs_04.png": "484c9b8fd3f29ab3a42e1d7389711d4771fcd4d6782181b1881915f9e3b63697",
+    "aiko_pet/assets/playing_cards/card_clubs_05.png": "07f872b5d9ba0d70bb91484bcec2425ffd27c159d37a7ea2fb39bd0c36cfa68d",
+    "aiko_pet/assets/playing_cards/card_clubs_06.png": "f28332b97dc4c1d565c7dbc776723ffd608e6adf6fe1b6d2a9b56cccb5c2f914",
+    "aiko_pet/assets/playing_cards/card_clubs_07.png": "565d3bd89cfbe0a64107b67435ccbb106018e24b7460399aec05ffad67ff9404",
+    "aiko_pet/assets/playing_cards/card_clubs_08.png": "59e3db8134ef39b7fb556a9e4e3d8b14862b1c820564d25adddd6a8594aa7fc3",
+    "aiko_pet/assets/playing_cards/card_clubs_09.png": "4fbaf8a8b9bb8d3919a82b244aba3ba34a50e81f7a7f0ca168d9142a6c009b8c",
+    "aiko_pet/assets/playing_cards/card_clubs_10.png": "7c9608d669f36fb4d66ca7f41636161e62d74afb3d3b602f7f83b7c10eab26d0",
+    "aiko_pet/assets/playing_cards/card_clubs_A.png": "3e395c988bd0875944a21e1e13ef3ca739a61b5256a773bd2001c04e7afc60e0",
+    "aiko_pet/assets/playing_cards/card_clubs_J.png": "1a41c5d8fbd82386b8595213088df399e8f208ba731a565293c361ace8727d9a",
+    "aiko_pet/assets/playing_cards/card_clubs_K.png": "f4484f4fed7bb7d946194e65d7c317fd4da9e38e102f07922a792257f08870ff",
+    "aiko_pet/assets/playing_cards/card_clubs_Q.png": "dcdd36190bfbf3af0d2695aeb7fba3d6513c38bbfaade9769d126f8e660a9cfb",
+    "aiko_pet/assets/playing_cards/card_diamonds_02.png": "8f347a161520d573e0f7944f8f5c242831ca17a546578b96315dde3ad0f78f79",
+    "aiko_pet/assets/playing_cards/card_diamonds_03.png": "8692d283eaced9c9991866868ce4b56a5e76ebf9bb38228420fcf5cd5f4a616c",
+    "aiko_pet/assets/playing_cards/card_diamonds_04.png": "8cb32ec0ad74bd611e5946e9097837667ef81a31c3de996aad13c08c99d68e49",
+    "aiko_pet/assets/playing_cards/card_diamonds_05.png": "54fe9de3905aae74d4127647f827d5fbb20b33a921aecef58d743a20e6868856",
+    "aiko_pet/assets/playing_cards/card_diamonds_06.png": "597c0323963a5f2c580435d6546d10b72accf9aedcbb16836a363d4b524d3de8",
+    "aiko_pet/assets/playing_cards/card_diamonds_07.png": "d48f046758a6467165a1626726bd0188e74b8e8db39e31252fe9b5430b7af283",
+    "aiko_pet/assets/playing_cards/card_diamonds_08.png": "c84158332ce8b435ca15595044e317755ae0604742faf134c9dfc4a245666fe1",
+    "aiko_pet/assets/playing_cards/card_diamonds_09.png": "2f0b897bd4e7849f0ff7ba981706eb61b3f755785a036d897f8b684f48101cd7",
+    "aiko_pet/assets/playing_cards/card_diamonds_10.png": "df79f3677e06d3b0ba057ee5f1ddddcd7c9a1d6e5fe451a01a279966307695ab",
+    "aiko_pet/assets/playing_cards/card_diamonds_A.png": "b71110fd90516f8be63302137cebd88e90fe81f10e7bf3d0e6761bc2bcc7aac2",
+    "aiko_pet/assets/playing_cards/card_diamonds_J.png": "abfdb7ff6de8716a679c3e3d7f0ad500235b5e7c3252e6945c7bffa0e7f16e00",
+    "aiko_pet/assets/playing_cards/card_diamonds_K.png": "d25b234fe740289e668387635cd744a49f3c4e939824b1caf03236ea4f40228b",
+    "aiko_pet/assets/playing_cards/card_diamonds_Q.png": "e9d4acb20b625140a671b11608bdd5a85334167ca8961cc3fb8eadae9a4c24fc",
+    "aiko_pet/assets/playing_cards/card_hearts_02.png": "bd110f585c73f0eaef0778239868852272d25f8eed4a1ef0d0e0d908fa367c38",
+    "aiko_pet/assets/playing_cards/card_hearts_03.png": "6029fd42159dfbb2f81157aff63e80e32b3f5f347e9f6eec2cde5a4f22cc5aa5",
+    "aiko_pet/assets/playing_cards/card_hearts_04.png": "ca3653bd4a460313016398650d552132c4939c2d6817450cda677617fcd1718f",
+    "aiko_pet/assets/playing_cards/card_hearts_05.png": "eecc7cf3c27b1c926f6ade0cd5564cb2b99f59c45b2d23b9c022620d1406d1a6",
+    "aiko_pet/assets/playing_cards/card_hearts_06.png": "bc2718714093cb5e78cad793cfdc5b139d1aca9884a0409b93040f8ab4747459",
+    "aiko_pet/assets/playing_cards/card_hearts_07.png": "3e1fd590ba1ae65b9f1a292c7bb1925500d556f13d6983eb14a2eedcff23d069",
+    "aiko_pet/assets/playing_cards/card_hearts_08.png": "23c071837c3f34243b1cee4924914bbc3ab42a2affa77039d804aa6996b77045",
+    "aiko_pet/assets/playing_cards/card_hearts_09.png": "144bfc211c58861cd2acb79d7ebda9c72dfc92eff98ec55ce78ab3bd6b904813",
+    "aiko_pet/assets/playing_cards/card_hearts_10.png": "a61b0529df17509eb2acb6b45387edf93b41f7f1ec559cdf967b5c0bd600f0df",
+    "aiko_pet/assets/playing_cards/card_hearts_A.png": "5e3bdbae26950633ebfced363f810fea91a6fe79c439b3d6e5b717871d65f4a7",
+    "aiko_pet/assets/playing_cards/card_hearts_J.png": "ee6672c34a3865d8abb3a8ff1a14b505ec7d76fc31d9edcd84b93d9579c1c86d",
+    "aiko_pet/assets/playing_cards/card_hearts_K.png": "c5a9d68dd748f9824736ee114f145568b3b472484fda8a2824799d5bdc78a956",
+    "aiko_pet/assets/playing_cards/card_hearts_Q.png": "deee8b53bec1d5305ef2405817d1c20602fa77d4a4e0e1038dfdb543cbc2e097",
+    "aiko_pet/assets/playing_cards/card_spades_02.png": "9592a2644b0d273ced6315ca725390b17c0aa7fccb1d9e6bfdb0d950c8ba09ce",
+    "aiko_pet/assets/playing_cards/card_spades_03.png": "f535086ecc5f895da20eba6c7df189bc56b61f9b01b1bc380c9eda0a2728594e",
+    "aiko_pet/assets/playing_cards/card_spades_04.png": "a2897e9f110f4cf84b381a284639fcad2a4580362becfe8646964679ef0c48ef",
+    "aiko_pet/assets/playing_cards/card_spades_05.png": "ca12eb042cff710ba8c2fc05eb6ba4c5de07bcd25e8217a7bb25c5b4048f82fc",
+    "aiko_pet/assets/playing_cards/card_spades_06.png": "eda502f20ce444df3c14c04d29befd72818d1a0e513a1fdcca7c6858b744b515",
+    "aiko_pet/assets/playing_cards/card_spades_07.png": "4fe82114a3a1fdf99c81b0469ebeb153785ade13a0e926c86ad5a3f0d8fe9f3a",
+    "aiko_pet/assets/playing_cards/card_spades_08.png": "8784b88b90144918dad7537135ba6d2cad34c0aa44ad1bf10d1acee0bb73023d",
+    "aiko_pet/assets/playing_cards/card_spades_09.png": "57930c229d66b9d7eafd9a265df8117fa90c76bd645eb8aedb42e01569108de0",
+    "aiko_pet/assets/playing_cards/card_spades_10.png": "3c6d4eb3511715a41e735baa1e6fc1a294d158bc2cacd035a03dd85bf147274a",
+    "aiko_pet/assets/playing_cards/card_spades_A.png": "298bbc4645fc748104fe76e185c87a9a7222491ca0330e932884af33782c192f",
+    "aiko_pet/assets/playing_cards/card_spades_J.png": "0a1035ecd14e3256110ec4b3c20ff6ab194a4ef809880d340b08dabf1d522272",
+    "aiko_pet/assets/playing_cards/card_spades_K.png": "39d5f82fa15389774273a06c4f3267f88a5803ec0d94f69dc079e39ab1553c02",
+    "aiko_pet/assets/playing_cards/card_spades_Q.png": "3e76b64e2be6854a60399dce81ec85b5193da65702b1bcb9de095a6676fc5124",
+    "aiko_pet/assets/playing_cards/provenance.json": "6b6d4f45921d5658ae885c5b6decc91966c05d41585f3f78205dc089322fa15d",
+    "assets/ui-vn/v1/controls/status_track.png": "1b80fedb7807ba53c2d199414d5ad5c894184c617b6f57cce1f3267dea58838f",
+    "assets/ui-vn/v1/controls/button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631",
+    "assets/ui-vn/v1/controls/button_hover.png": "3a104507b3bd993f8fbc8876bfeadf239b802d6111373bf3bf074ffc9385c390",
+    "assets/ui-vn/v1/controls/button_pressed.png": "2f177eb5feb7af93837621d180afce3ce5cc299aa057a0dab29074183b544cab",
+    "assets/ui-vn/v1/controls/button_disabled.png": "4e4b0d3f470b2e03a106d40882a58316269c1add86f765d8a0434b100820d20f",
+    "assets/ui-vn/v1/controls/status_frame_overlay.png": "ac174fb88e85b103446cc05c4f4e0e7af50cc922b71e618ce594f2c23e24cfac",
+    "assets/ui-vn/v1/controls/drafts/button_normal_first.png": "9bf91b2bd7a62ecbd0d873043777dfaba86246a2d632fac9363ce43acde88355",
+    "assets/ui-vn/v1/controls/drafts/status_overlay_first.png": "e73e62aeec191502cc0dfeb072becdaae375c4115fe3310cf70448a80682281c"
+  },
+  "validation": {
+    "status": "passed",
+    "selected_source_count": 8,
+    "excluded_draft_count": 4,
+    "retained_sources_verified": 108,
+    "checks": [
+      "real alpha and visible bounds",
+      "eight unique selected source files",
+      "same button-state canvas dimensions",
+      "overlay center and broad interior transparent",
+      "previous artwork and Blackjack hashes unchanged",
+      "usage and preview file references",
+      "panel interior near-opaque and exterior transparent",
+      "active control and panel prompts retained including excluded panel attempts"
+    ],
+    "failures": [],
+    "scope": "Source/structure checks only. Generated geometry still requires aligned runtime-size export; native Windows/Tk behavior and rendered browser preview have not been verified."
+  },
+  "geometry_review": {
+    "button_canvases_match": true,
+    "button_visible_bounds": {
+      "button_normal": [
+        249,
+        217,
+        1924,
+        507
+      ],
+      "button_hover": [
+        240,
+        215,
+        1932,
+        510
+      ],
+      "button_pressed": [
+        249,
+        216,
+        1924,
+        508
+      ],
+      "button_disabled": [
+        248,
+        215,
+        1925,
+        509
+      ],
+      "button_active": [
+        244,
+        208,
+        1928,
+        509
+      ]
+    },
+    "track_visible_bounds": [
+      105,
+      307,
+      1974,
+      446
+    ],
+    "overlay_visible_bounds": [
+      105,
+      300,
+      1975,
+      441
+    ],
+    "alignment_note": "Raw generated bounds differ slightly; align shared state crops and bar rims during runtime-size export. No production slices or pixel-aligned exports claimed.",
+    "overlay_inner_region_below_alpha32_fraction": 1.0,
+    "panel_visible_bounds": [
+      128,
+      241,
+      1575,
+      682
+    ],
+    "panel_note": "Flat clean selected source. Generated aspect ratio differs from prompt; preserve corners via later nine-slice export for content-driven panel/tooltip sizes. Faint fringe requires actual-size review."
+  },
+  "storage_policy": {
+    "selected_sources": "versioned in this directory",
+    "excluded_drafts": "external local reference bundle, same assets/ui-vn/v1/controls/drafts paths",
+    "composition_preview": "external local reference bundle only",
+    "handoff": "../../../../docs/UI_PREVIEW_HANDOFF.md",
+    "historical_checks": "Original preparation checks below covered selected and rejected sources before archival; excluded draft pixels are intentionally absent from a source checkout."
+  }
+}

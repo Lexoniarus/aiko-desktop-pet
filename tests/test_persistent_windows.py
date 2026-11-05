@@ -12,26 +12,26 @@ from unittest.mock import patch
 
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.events import IncomingNotification
-from aiko_pet.gui import DesktopPet
+from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.desktop_test_support import create_test_desktop, require_tk_display
 from tools.pet_test_support import set_test_pet_values
 
 
 class PersistentWindowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            raise unittest.SkipTest("No Tk display") from error
-        root.destroy()
+        require_tk_display()
 
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "state.json"),
+        )
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.settings.auto_routine = False
@@ -88,14 +88,15 @@ class PersistentWindowTests(unittest.TestCase):
             self.assertTrue(self.pet._input._stopped)
             bubble = self.pet._speech.bubble
             assert bubble is not None
-            labels = [
-                child
-                for frame in bubble.winfo_children()
-                for child in frame.winfo_children()
-                if isinstance(child, tk.Label)
-            ]
+            label = self.pet._speech._game_comment_label
+            assert label is not None
+            farewell_texts = {
+                line.text
+                for line in self.pet.mind.book.lines
+                if line.event == "farewell"
+            }
             self.assertTrue(
-                any("Bis später" in str(label.cget("text")) for label in labels)
+                str(label.cget("text")) in farewell_texts
             )
             self.pet._farewell.begin()
             self.assertEqual(len(scheduled), 1)
@@ -163,6 +164,9 @@ class PersistentWindowTests(unittest.TestCase):
         self.assertFalse(bar.visible)
         self.assertIs(self.pet._hover.settings_window, window)
         self.assertTrue(window.window.winfo_exists())
+        self.pet._hover.show_toolbar()
+        self.assertTrue(bar.visible)
+        self.assertIs(self.pet._hover.settings_window, window)
 
     def test_settings_reopen_focuses_existing_instance(self) -> None:
         window = self.settings()
@@ -170,13 +174,17 @@ class PersistentWindowTests(unittest.TestCase):
             self.pet._hover.open_settings(20, 30)
         focus.assert_called_once()
         self.assertIs(self.pet._hover.settings_window, window)
+        self.assertTrue(window.window.winfo_ismapped())
+        window.values["auto_walk"].set(False)
+        window.checkbuttons["auto_walk"].invoke()
+        self.assertTrue(self.pet.settings.auto_walk)
 
     def test_settings_position_survives_updates_and_close_reopen(self) -> None:
         window = self.settings()
         window.window.geometry("+80+60")
         self.pet.root.update_idletasks()
         self.pet.center()
-        window.scale_button.invoke()
+        window.scale_buttons[2].invoke()
         self.pet._hover.refresh_settings()
         self.pet.root.update_idletasks()
         self.assertEqual(
@@ -187,16 +195,17 @@ class PersistentWindowTests(unittest.TestCase):
         self.assertEqual(replacement.position, (80, 60))
         self.assertIsNot(replacement, window)
 
-    def test_open_idle_windows_do_not_block_attention(self) -> None:
-        self.pet._hover.open_status()
-        self.settings()
-        with self.outside():
-            self.assertFalse(self.pet._hover.interaction_active)
-            self.assertFalse(self.pet._hover.settings_engaged)
-        bar = self.toolbar()
-        with self.outside():
+    def test_opening_and_pinning_windows_do_not_register_contact(self) -> None:
+        before = self.pet.state.capture_checkpoint()
+        contact_at = self.pet.mind.last_contact
+        with patch.object(self.pet._world, "interrupt") as interrupt:
+            self.pet._hover.open_status()
+            self.settings()
+            bar = self.toolbar()
             bar.pin_button.invoke()
-            self.assertTrue(self.pet._hover.interaction_active)
+        interrupt.assert_not_called()
+        self.assertEqual(self.pet.mind.last_contact, contact_at)
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
     def test_notification_is_delivered_with_idle_pinned_windows(self) -> None:
         self.pet._hover.open_status()
@@ -221,9 +230,9 @@ class PersistentWindowTests(unittest.TestCase):
     def test_shared_skin_is_reused_by_all_three_windows(self) -> None:
         bar = self.toolbar()
         settings = self.settings()
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
-        assert game is not None
+        assert isinstance(game, RockPaperScissorsWindow)
         self.assertIs(bar.skin, settings.skin)
         self.assertIs(bar.skin, game.skin)
 

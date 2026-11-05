@@ -1,0 +1,83 @@
+"""Localize actual active-episode receipts without inventing events or tiers."""
+
+from ...pet.content import GERMAN_TEXT
+from ...pet.food import FOOD_CATALOG
+from ...pet.moodlets import MoodletAttribution, MoodletCause, MoodletCauseKind
+from ...pet.wishes import (
+    WishGoal,
+    WishId,
+    WishObjective,
+    WishTargetMode,
+    wish_text_key,
+)
+
+
+def _target_label(target: str) -> str:
+    if target == "cursor":
+        return GERMAN_TEXT.format("vn.cursor_target")
+    for key in (f"need.{target}", f"moodlet.{target}.label"):
+        if key in GERMAN_TEXT.messages:
+            return GERMAN_TEXT.format(key)
+    if target in FOOD_CATALOG:
+        return FOOD_CATALOG[target].display_name
+    game_key = f"game.name.{target}"
+    if game_key in GERMAN_TEXT.messages:
+        return GERMAN_TEXT.format(game_key)
+    social_key = f"social.name.{target}"
+    if social_key in GERMAN_TEXT.messages:
+        return GERMAN_TEXT.format(social_key)
+    if target in ("chat", "pet"):
+        return GERMAN_TEXT.format(f"wish.{target}.label")
+    return GERMAN_TEXT.format("vn.cause_unknown_target")
+
+
+def cause_description(cause: MoodletCause) -> str:
+    """Compact actual goal/result; full evidence stays in the read value."""
+    parts = [GERMAN_TEXT.format(f"vn.cause.{cause.kind}")]
+    wish = cause.wish
+    if wish is not None:
+        goal = WishGoal(WishObjective(wish.objective), wish.required_count)
+        target = _target_label(wish.target_id)
+        if wish.target is not None:
+            if wish.target.mode == WishTargetMode.ANY:
+                target = GERMAN_TEXT.format(f"vn.wish_any.{wish.target.kind}")
+            elif wish.target.mode == WishTargetMode.EXCLUDE:
+                target = GERMAN_TEXT.format("vn.wish_exclude", target=target)
+        parts.append(GERMAN_TEXT.format(
+            "vn.cause_wish",
+            wish=GERMAN_TEXT.format(wish_text_key(
+                WishId(wish.definition_id), goal, "label", target_id=wish.target_id,
+            )),
+            target=target,
+        ))
+        if goal.required_count > 1:
+            parts.append(GERMAN_TEXT.format(
+                "vn.cause_goal_count", count=str(goal.required_count),
+            ))
+    if (cause.target_id is not None
+            and (wish is None or cause.target_id != wish.target_id)):
+        parts.append(GERMAN_TEXT.format(
+            "vn.cause_target", target=_target_label(cause.target_id),
+        ))
+    if (cause.kind not in (MoodletCauseKind.LEGACY, MoodletCauseKind.POOR_CARE,
+                           MoodletCauseKind.LONG_TERM, MoodletCauseKind.CURSOR)
+            and (cause.game is None or cause.game.round_outcome != cause.outcome)):
+        parts.append(GERMAN_TEXT.format(
+            "vn.cause_result",
+            result=GERMAN_TEXT.format(f"vn.outcome.{cause.outcome}"),
+        ))
+    if cause.attribution != MoodletAttribution.UNKNOWN:
+        parts.append(GERMAN_TEXT.format(f"vn.cause_by.{cause.attribution}"))
+    summary = " · ".join(parts)
+    if cause.game is None:
+        return summary
+    game = cause.game
+    if game.round_outcome.value == "completed":
+        return summary + "\n" + GERMAN_TEXT.format(
+            "quiz.shared_completed", rounds=str(game.completed_rounds),
+        )
+    return summary + "\n" + GERMAN_TEXT.format(
+        "vn.cause_game",
+        round=GERMAN_TEXT.format(f"vn.outcome.{game.round_outcome}"),
+        rounds=str(game.completed_rounds), wins=str(game.wins), losses=str(game.losses),
+    )

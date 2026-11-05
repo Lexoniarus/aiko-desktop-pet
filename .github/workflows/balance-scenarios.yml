@@ -1,0 +1,39 @@
+name: Long balance scenarios
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tests_balance/**'
+      - 'aiko_pet/pet/**'
+      - 'aiko_pet/application/**'
+      - 'aiko_pet/data/**'
+      - 'tools/care_balance_scenarios.py'
+      - 'requirements.txt'
+      - '.github/workflows/balance-scenarios.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tests_balance/**'
+      - 'aiko_pet/pet/**'
+      - 'aiko_pet/application/**'
+      - 'aiko_pet/data/**'
+      - 'tools/care_balance_scenarios.py'
+      - 'requirements.txt'
+      - '.github/workflows/balance-scenarios.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  balance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt Pillow==11.3.0
+      - name: Check long reference scenarios
+        run: python -m unittest discover -s tests_balance -q

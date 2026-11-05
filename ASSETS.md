@@ -2,6 +2,12 @@
 
 This repository includes original project content, AI-generated character artwork, and third-party Kenney game assets. Their origins are documented separately.
 
+The new [VN menu icon sources](assets/ui-vn/v1/README.md) are generated
+preparation artwork for the [approved UI direction](docs/UI_VN_DESIGN.md), not
+runtime replacements. Their prompts and file provenance are recorded with the
+sources. Existing playing cards/card frames and their Kenney attribution remain
+unchanged. This preparation pass does not amend existing license terms.
+
 ## 1. Project source code — MIT
 
 Unless a file identifies a different license, the project's own source code is distributed under the [MIT License](LICENSE). MIT permits copying, modification, redistribution, sublicensing, and commercial use, subject to preserving the required copyright and license notices. Public availability is not an additional usage restriction.
@@ -66,6 +72,40 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
+The eight 2x Idle slots now use a modular blink on the unchanged Idle reference.
+Three existing eye phases are reused; all pixels outside the eye masks, body
+and silhouette remain fixed. The source artwork is preserved 2x material,
+not newly generated large originals. Native 1x files and common animation
+timing remain unchanged. See the
+[modular Idle export](docs/HD_CHARACTER_SPRITES.md#v3-modular-idle-blink-at-2x).
+
+The eight 2x `waiting` slots contain the V3 question/request gesture: hands
+rise, meet, hold briefly and lower back to Idle. Three large individual
+arm-pose originals cover the distinct A/B/C poses; matching return phases
+reuse the same artwork. Idle endpoints and existing eye modules are reused.
+The originals are 1205x1305, 1205x1306 and 1205x1305, preserved outside Git.
+Native 1x frames, timing and reaction triggers remain unchanged. See the
+[question/request export](docs/HD_CHARACTER_SPRITES.md#v3-questionrequest-gesture-at-2x).
+
+The eight 2x eating poses now use the V3 sequence, visually accepted by the
+owner on 2026-10-23. Seven large generated individual originals cover eight
+positions; the final holding pose reuses the first. Private originals and
+prompts remain outside Git. Native 1x artwork remains unchanged. See the
+[V3 eating export](docs/HD_CHARACTER_SPRITES.md#v3-eating-replacement-at-2x).
+
+All sixteen 2x gaze directions now use the reviewed modular V3 sequence:
+one shared Idle body, individual head cutouts, corrected heads 00/14/15,
+the final crown/ahoge correction on 15 and subsequent joint head/neck
+calibration against Idle. Native head sources are scaled proportionally;
+jaw/neck placement is set separately, with the unchanged collar in front of
+neck ends. All visible body pixels are preserved, and the body below y260 is
+pixel-identical to Idle throughout; the foot center is x191 and sole baseline y388. The
+head sources, masks and reviewed composition package remain outside Git.
+`tools.character_gaze_modular_export` installs that package without rescaling;
+the superseded full-figure exporter is preserved only in the private archive.
+See the [V3 gaze export](docs/HD_CHARACTER_SPRITES.md#v3-gaze-replacement-at-2x).
+The existing 1x catalogue and accepted V3 eating PNGs remain unchanged.
+
 The prepared eating anchors move six source pixels downward relative to the
 imported overlay hints, allowing native-size Onigiri to overlap the fingers
 instead of ending above them. Preparation records this calibration in runtime
@@ -122,10 +162,36 @@ available in Git history, for example the
 
 ## 3. Kenney game assets — CC0 1.0
 
+The **Playing Cards Pack (1.0)** contributes exactly 52 standard card faces and
+one back from `PNG/Cards (large)`, unmodified 64×64 PNG canvases under
+`aiko_pet/assets/playing_cards/`. The bundled
+[license](LICENSES/KENNEY_PLAYING_CARDS_CC0.txt) states CC0 and voluntary credit.
+`provenance.json` records the source pack, bundle, source subdirectory and
+SHA-256 for each selected original. No runtime Dropbox access is needed.
+The large 64×64 canvases are the largest PNG variant in this pack. Blackjack
+player cards use 2x integer scaling (128×128 canvases); the draw control layers
+the same scaled back at runtime. Aiko's hand retains its own 1x/2x scale.
+No additional asset export or modified source bitmap is distributed.
+
 The project uses artwork from these Kenney asset packs:
 
 - **Kenney Emote Pack (1.0):** pixel emotes under `aiko_pet/assets/emotes/`.
 - **Kenney UI Pack: Sci-fi (2.0):** source and adapted panel/button graphics under `aiko_pet/assets/kenney_ui/`.
+- **Kenney Boardgame Pack (1.0):** unmodified transparent yellow/red pieces for
+  Vier gewinnt under `aiko_pet/assets/connect_four/`. The red source is
+  orange-toned. Pack-relative source paths and SHA-256 hashes are recorded in
+  [provenance.json](aiko_pet/assets/connect_four/provenance.json); the original
+  pack [license](aiko_pet/assets/connect_four/LICENSE.txt) is included. The board
+  and highlights are drawn with Tk; runtime needs no Dropbox access.
+
+Mastermind reuses those red/yellow Boardgame pieces. Five additional unmodified
+64×64 PNGs from the same CC0 pack (blue, green, purple, white and black) are
+packaged under `aiko_pet/assets/mastermind/`, with their source paths and SHA-256
+hashes in [provenance.json](aiko_pet/assets/mastermind/provenance.json) and the
+supplied [license](aiko_pet/assets/mastermind/LICENSE.txt). License text whitespace
+is normalized; its legal wording is unchanged. The board, feedback marks,
+white-piece backing and cover labels are drawn in Tk. No new character artwork,
+paid dependency or online asset fetch is involved.
 
 The creator obtained the assets through a **paid Kenney Game Assets All-in-1 3.4.0 bundle**. The license files supplied with the packs identify the artwork as **Creative Commons Zero (CC0 1.0)**. Purchasing the bundle does not change those CC0 terms.
 
@@ -184,6 +250,36 @@ selected source export. Unused archive material is excluded from the public
 repository. The older source spritesheet was not shipped with the earlier
 73-frame release.
 
-## 6. Language
+## 6. Approved game frontend artwork (2026-10-30)
+
+`aiko_pet/assets/game_frontends/` contains selected project UI artwork from the
+owner-approved local game references. `provenance.json` records source/export
+hashes, sizes and the rasterization method. The retained SVGs are the editable
+sources of the Fingerduell mat and Denkbrett frame. RPS hand icons in `assets/ui/`
+are size exports of the approved illustrated hand signs, including the closed
+fist; character originals and the external HTML preview bundles are not imported.
+These project illustrations are separate from the Kenney card pack. All existing
+Blackjack card faces, backs and their license are preserved.
+
+The Connect Four frame/chips and Mastermind symbol gems/safe follow their
+separate approved references. The safe's 33 prepared door phases are rasterized
+from the accepted continuous source transform, not newly generated artwork.
+For floating Windows color-keyed props only, `tools/prepare_game_prop_alpha.py`
+prepares binary alpha while asserting unchanged RGB; `native-prop-alpha.json`
+records pre/post hashes. Opaque board/control artwork retains antialiased alpha.
+
+Blackjack's felt table and Quizshow's stage, emblem, cue cards and five native
+answer-podium states are exports of their approved SVG/CSS references. Their
+provenance manifests identify the source and runtime files. These exports do not
+include the external HTML previews or private character masters.
+
+Game speech now renders the existing VN panel through
+`aiko_pet/assets/ui/game_bubble_panel.png`. This is a binary-alpha export of
+`panel_surface_panel.png`, with every RGB value retained for Windows color-key
+transparency. `tools/prepare_game_bubble_art.py` reproduces the export and
+`game_frontends/game-bubble-provenance.json` records both hashes. No new artwork
+or character generation was used.
+
+## 7. Language
 
 Documentation is maintained in **English**. UI strings, dialog entries, and runtime labels deliberately remain in **German** for the current game release.

@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-20",
+  "tool": "OpenAI built-in image_gen.imagegen",
+  "purpose": "Original UI control source artwork; documentation/asset preparation only",
+  "runtime_integrated": false,
+  "selected": [
+    {
+      "id": "status_track",
+      "type": "track",
+      "label": "Statusleiste · Hintergrund",
+      "file": "status_track.png",
+      "prompt": "Use case: ui-mockup.\nAsset type: standalone reusable original raster UI control artwork for the approved Aiko anime visual novel/cozy JRPG menu.\nInput image is STYLE REFERENCE ONLY. Use its compact soft rose buttons, delicate powder-blue framing and gentle layered illustration style. Generate only the following isolated control, not the interface.\nONE blank EMPTY horizontal recessed status-bar trough, width-to-height ratio about 8:1. A very pale neutral blue-gray interior, thin powder-blue boundary and gentle inset shading at the upper edge. Smooth rounded ends; an understated shallow groove, not a raised button. Entire track empty with no filled portion, no value, no icons, no text, no colored level or rainbow gradient.\nComposition: front-on and perfectly horizontal. Landscape canvas with ample genuinely transparent padding around the complete control, including its tiny shadow if requested. The control is a modest-height horizontal element occupying about 80 percent of canvas width. Center it with no perspective, rotation or decorative scene. Keep clean consistent contours; not photorealistic, plastic or shiny candy.\nOutput: actual transparent PNG with alpha, not a drawn checkerboard or a colored backdrop. No text, letters, labels, icons, symbols, watermark or extra controls. Do not bake semantic content or green/yellow/red levels into this source. The only object is the requested blank control.",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-acafeff4-478d-41fe-80f1-aa7208956c9a.png"
+    },
+    {
+      "id": "button_normal",
+      "type": "button",
+      "label": "Button · Normal",
+      "file": "button_normal.png",
+      "prompt": "Use case: precise-object-edit. Image 1 is an unsuccessful first button source; image 2 is the approved UI STYLE reference. Produce ONE corrected blank control PNG. Remove ALL exterior glow, bloom, haze and pink fog from image 1. Outside the actual button and a tiny 1–2 pixel-looking bottom shadow, every pixel must be genuinely transparent.\nCorrect the button proportions: a compact rounded rectangle about THREE TIMES AS WIDE AS HIGH, like the short action buttons in image 2, not a very long skinny banner. Small corner radius, around one fifth of its height, NOT a full capsule. Soft flat muted blush fill #F3DAE3, narrow rose #C68FA5 edge, one thin pale upper lip. Quiet blank center. Subtle hand-illustrated VN/JRPG UI, restrained shading. Center the button on a transparent square or modest landscape canvas with 15% padding. No text, icons, symbols, decorative corners, large highlights, neon effects, ground plane or other object. Please keep all surrounding space transparent rather than dark or white.",
+      "references": [
+        "drafts/button_normal_first.png",
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-74dbd39a-ec04-44f0-9b06-051fbcb0b16c.png"
+    },
+    {
+      "id": "button_hover",
+      "type": "button",
+      "label": "Button · Hover",
+      "file": "button_hover.png",
+      "prompt": "Use case: precise-object-edit. Input image 1 is the approved normal BLANK button source, edit target. Create its HOVER state. Preserve EXACTLY the original canvas, button silhouette, corner geometry, screen position, border thickness and dimensions; do not crop, resize, stretch or add padding. Change only the rose surface to slightly lighter blush, make the dusty rose outline a little clearer, and modestly strengthen the narrow upper-edge highlight. Keep a tiny shallow lower shadow; NO glow, fog, bloom or haze. No text/icons. All previously transparent areas stay transparent. Subtle illustrated VN/JRPG control, not glossy candy.",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-31aaf5fb-264b-4a26-9af7-4d291fe9ca08.png"
+    },
+    {
+      "id": "button_pressed",
+      "type": "button",
+      "label": "Button · Gedrückt",
+      "file": "button_pressed.png",
+      "prompt": "Use case: precise-object-edit. Input image 1 is the approved normal BLANK button source, edit target. Create its PRESSED state. Preserve EXACTLY the same canvas, outer silhouette, corner geometry, screen position, width, height and border thickness; no resizing, stretching or new padding. Change only the depth cues: slightly deeper dusty blush surface, suppress the upper raised highlight and remove the lower cast shadow; a gentle narrow inner shadow just under the top edge makes it feel pushed in. NO glow, bloom or haze. No text/icons, no extra frame. Transparent exterior remains genuinely transparent. Keep recognizable as the same button.",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-ca5369ca-147f-45e5-8099-715498da961b.png"
+    },
+    {
+      "id": "button_disabled",
+      "type": "button",
+      "label": "Button · Deaktiviert",
+      "file": "button_disabled.png",
+      "prompt": "Use case: precise-object-edit. Input image 1 is the approved normal BLANK button source, edit target. Create its DISABLED state. Preserve EXACTLY the same canvas, outer silhouette, corner geometry, screen position, width, height and border thickness; no cropping, stretching or resizing. Change only the surface colors/depth to a muted desaturated pale rose-gray, lower the border contrast moderately and flatten the shallow shadow/highlight. The control stays visible and distinguishable from blue passive readouts. Do not make its center transparent. No text/icons, no cross-out symbol. No glow, bloom or haze. Transparent exterior remains transparent.",
+      "references": [
+        "button_normal.png"
+      ],
+      "generator_output_name": "exec-e08b5136-c7d5-43ae-b74d-3fb1d0538713.png"
+    },
+    {
+      "id": "status_frame_overlay",
+      "type": "overlay",
+      "label": "Statusleiste · Transparentes Overlay",
+      "file": "status_frame_overlay.png",
+      "prompt": "Use case: ui-mockup. Input image 1 is ONLY a geometry/style reference for a horizontal status-bar trough. Generate a CLEAN HOLLOW OUTLINE OVERLAY matching its long rounded capsule geometry and placement. One thin uninterrupted smooth powder-blue contour with a narrow slightly darker desaturated blue outer line. Flat clean vector-like edge, no white trim, no bevel, no light streak, no paper texture, NO WHITE FRINGE. Entire broad central hole and the outside canvas must be genuinely transparent. There is NO interior surface or fill at all. Center pixel alpha zero. The source is a quiet passive status-bar rim, not a button. Preserve image 1's approximate canvas dimensions, outer contour position and aspect ratio. No text, icon, progress fill, glow, checkerboard, shadow, extra object or opaque backdrop. Prioritize a smooth clean transparent inner boundary.",
+      "references": [
+        "status_track.png"
+      ],
+      "generator_output_name": "exec-2a5222ae-40bc-4367-97ed-da09e2e4297f.png"
+    },
+    {
+      "id": "button_active",
+      "type": "button",
+      "label": "Button · Dauerhaft aktiv",
+      "file": "button_active.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Create ONE persistent ACTIVE/SELECTED variant of this approved blank rose VN/JRPG UI button. Preserve exactly its canvas size, outer silhouette, placement, corner geometry and quiet middle. All exterior space must remain genuinely transparent. Keep the gentle rose face, but add a clearly stronger dusty-rose outline and a narrow inner rose accent line, with a slightly richer pale blush fill. This is a relaxed latched/toggled-on state (for a keep-open control), visually distinct from a temporary sunken pressed button: retain shallow raised upper lip, no deep inset shadow. No glow, bloom, fog, ground plane, sparkle, text, checkmark, icon, pin or decorative badge. Output only the single blank button with real alpha, preserving original surrounding padding.",
+      "generator_output_name": "exec-d8d8b9de-7d81-4a63-825d-8c5380b9af26.png"
+    },
+    {
+      "id": "panel_surface_flat",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "panel_surface.png",
+      "references": [],
+      "prompt": "ONE flat blank rounded rectangle UI panel on a TRANSPARENT background. Strict clean 2D flat graphic. Very pale blush solid interior color #FCF7F9 and a single thin powder blue outline #B8CDDF. Landscape rectangle, roughly 1.85 times wider than tall, small round corners. Center the complete rectangle with generous transparent margins. Completely uniform solid interior, with no lighting, texture, shading or 3D effects. Absolutely NO glow, NO shadow of any kind, NO gradient outside or inside, NO fog, NO halo, NO illumination, NO dark background, NO vignette, NO bloom. Every pixel outside the slim antialiased blue boundary must have zero alpha. No text, icons, ornament, pointer or other elements. This is an understated passive visual-novel UI panel source, not a lit sign. PNG with actual alpha.",
+      "generator_output_name": "exec-08da6556-f22a-44a5-a0fc-6c9dab778a75.png"
+    }
+  ],
+  "drafts": [
+    {
+      "id": "button_normal",
+      "file": "drafts/button_normal_first.png",
+      "prompt": "Use case: ui-mockup.\nAsset type: standalone reusable original raster UI control artwork for the approved Aiko anime visual novel/cozy JRPG menu.\nInput image is STYLE REFERENCE ONLY. Use its compact soft rose buttons, delicate powder-blue framing and gentle layered illustration style. Generate only the following isolated control, not the interface.\nONE blank horizontal softly rounded rectangular button, width-to-height ratio about 3.2:1. Muted blush pink fill #F3DAE3, defined dusty rose outline #C68FA5, a narrow pale upper-edge highlight and a very shallow soft pink-gray shadow just beneath the bottom edge. The control looks gently raised and pressable. Quiet untextured central area for later text/icon composition. Rounded rectangle, not a capsule or decorative sign. Do not add inset slots, end ornaments, icons or text.\nComposition: front-on and perfectly horizontal. Landscape canvas with ample genuinely transparent padding around the complete control, including its tiny shadow if requested. The control is a modest-height horizontal element occupying about 80 percent of canvas width. Center it with no perspective, rotation or decorative scene. Keep clean consistent contours; not photorealistic, plastic or shiny candy.\nOutput: actual transparent PNG with alpha, not a drawn checkerboard or a colored backdrop. No text, letters, labels, icons, symbols, watermark or extra controls. Do not bake semantic content or green/yellow/red levels into this source. The only object is the requested blank control.",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/compact-buttons.png"
+      ],
+      "generator_output_name": "exec-89c36c99-e53f-4af7-8a11-bd2c577660fa.png",
+      "reason_not_selected": "Excessive exterior pink bloom and overly wide banner proportions.",
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "status_frame_overlay",
+      "file": "drafts/status_overlay_first.png",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, the empty status-track source. Produce its MATCHING OVERLAY LAYER. Preserve exactly its canvas, outer rounded shape, screen position, width, height and perimeter geometry. REMOVE THE INTERIOR FILL COMPLETELY: the entire broad central slot must be genuinely transparent, especially the center and almost all inner region. Retain only the thin subtle powder-blue outline and a narrow pale upper-edge reflection on the rounded perimeter. The outer background remains transparent. The empty slot must reveal a dynamically colored progress fill underneath, so absolutely no solid white/blue/gray interior or colored level may remain. Narrow upper reflection may be translucent white alpha, but keep the broad center fully transparent. No glow, bloom, ground shadow, text, icons, checkerboard, extra frames, segments or background. One very thin quiet rounded status frame only, matching image 1 precisely.",
+      "references": [
+        "status_track.png"
+      ],
+      "generator_output_name": "exec-b29769fc-1fe5-417b-81a2-ff1e700cf0e9.png",
+      "reason_not_selected": "Ragged pale cutout edge; replace with a clean quiet contour.",
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_first",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_first.png",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "prompt": "Use case: ui-mockup. The input is a STYLE REFERENCE ONLY for the approved Aiko anime visual novel/cozy JRPG interface. Generate ONE isolated reusable blank PASSIVE PANEL surface, not the whole interface. It will be used for expanded details, embedded submenu content and Moodlet tooltips. A broad near-white blush-ivory interior (#FCF7F9, almost white), thin delicate desaturated powder-blue outline (#B8CDDF), small gently rounded corners, extremely restrained shallow lower-edge shadow. Flat quiet generous blank center suitable for readable text, no raised button bevel. Front-on landscape rectangle, approximately 3:2 width-to-height, centered with at least 12 percent transparent margins. Consistent thin border on all four sides, corner radius about 5 percent of panel height, no ornate corners. Actual transparent background outside the entire panel. Panel interior opaque. No text, labels, separators, icons, hearts, sparkles, controls, tooltip arrow, other panels, checkerboard, scenery, glow, bloom or haze. Output only the single blank panel PNG. Keep it visually passive and calm, clearly different from a pink clickable button.",
+      "generator_output_name": "exec-fd064208-32b0-404d-94b8-96aa547e2599.png",
+      "reason_not_selected": "Excessive exterior luminous haze/glow.",
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_clean",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_second.png",
+      "references": [
+        "drafts/panel_surface_first.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Correct this single blank UI panel image. Preserve EXACTLY the panel rectangle, near-white blush opaque interior, thin powder-blue border, corner radius, overall size, position and source canvas. REMOVE ALL exterior luminous haze, glow, fog and bloom. Outside the panel silhouette every pixel must be fully transparent alpha zero apart from a tiny narrow antialiased contour and optional extremely small close-contact bottom shadow. There must be no large soft halo of any color, no gray backdrop, no dark vignette. It should be one crisp passive blank near-white panel, not illuminated or backlit. Do not add text, icons, arrows, texture, decorative elements or other objects. Output the same panel on a real transparent background, retaining the source dimensions and padding.",
+      "generator_output_name": "exec-2e1c8148-73c2-430b-97ae-b3c9829bea74.png",
+      "reason_not_selected": "Correction retained broad exterior halo; superseded by flat clean source.",
+      "storage": "external_local_reference_bundle_only"
+    }
+  ],
+  "archival_note": "Rejected draft pixels and review HTML are kept only in the external local reference bundle; see docs/UI_PREVIEW_HANDOFF.md. Relative draft paths below identify archived generation references, not packaged/runtime files."
+}

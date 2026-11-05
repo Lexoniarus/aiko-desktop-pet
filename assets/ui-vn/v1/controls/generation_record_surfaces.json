@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-20",
+  "attempts": [
+    {
+      "id": "button_active",
+      "type": "button",
+      "label": "Button · Dauerhaft aktiv",
+      "file": "button_active.png",
+      "references": [
+        "button_normal.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Create ONE persistent ACTIVE/SELECTED variant of this approved blank rose VN/JRPG UI button. Preserve exactly its canvas size, outer silhouette, placement, corner geometry and quiet middle. All exterior space must remain genuinely transparent. Keep the gentle rose face, but add a clearly stronger dusty-rose outline and a narrow inner rose accent line, with a slightly richer pale blush fill. This is a relaxed latched/toggled-on state (for a keep-open control), visually distinct from a temporary sunken pressed button: retain shallow raised upper lip, no deep inset shadow. No glow, bloom, fog, ground plane, sparkle, text, checkmark, icon, pin or decorative badge. Output only the single blank button with real alpha, preserving original surrounding padding.",
+      "generator_output_name": "exec-d8d8b9de-7d81-4a63-825d-8c5380b9af26.png"
+    },
+    {
+      "id": "panel_surface_first",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_first.png",
+      "references": [
+        "../../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "prompt": "Use case: ui-mockup. The input is a STYLE REFERENCE ONLY for the approved Aiko anime visual novel/cozy JRPG interface. Generate ONE isolated reusable blank PASSIVE PANEL surface, not the whole interface. It will be used for expanded details, embedded submenu content and Moodlet tooltips. A broad near-white blush-ivory interior (#FCF7F9, almost white), thin delicate desaturated powder-blue outline (#B8CDDF), small gently rounded corners, extremely restrained shallow lower-edge shadow. Flat quiet generous blank center suitable for readable text, no raised button bevel. Front-on landscape rectangle, approximately 3:2 width-to-height, centered with at least 12 percent transparent margins. Consistent thin border on all four sides, corner radius about 5 percent of panel height, no ornate corners. Actual transparent background outside the entire panel. Panel interior opaque. No text, labels, separators, icons, hearts, sparkles, controls, tooltip arrow, other panels, checkerboard, scenery, glow, bloom or haze. Output only the single blank panel PNG. Keep it visually passive and calm, clearly different from a pink clickable button.",
+      "generator_output_name": "exec-fd064208-32b0-404d-94b8-96aa547e2599.png",
+      "reason_not_selected": "Excessive exterior luminous haze/glow.",
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_clean",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "drafts/panel_surface_second.png",
+      "references": [
+        "drafts/panel_surface_first.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Correct this single blank UI panel image. Preserve EXACTLY the panel rectangle, near-white blush opaque interior, thin powder-blue border, corner radius, overall size, position and source canvas. REMOVE ALL exterior luminous haze, glow, fog and bloom. Outside the panel silhouette every pixel must be fully transparent alpha zero apart from a tiny narrow antialiased contour and optional extremely small close-contact bottom shadow. There must be no large soft halo of any color, no gray backdrop, no dark vignette. It should be one crisp passive blank near-white panel, not illuminated or backlit. Do not add text, icons, arrows, texture, decorative elements or other objects. Output the same panel on a real transparent background, retaining the source dimensions and padding.",
+      "generator_output_name": "exec-2e1c8148-73c2-430b-97ae-b3c9829bea74.png",
+      "reason_not_selected": "Correction retained broad exterior halo; superseded by flat clean source.",
+      "storage": "external_local_reference_bundle_only"
+    },
+    {
+      "id": "panel_surface_flat",
+      "type": "panel",
+      "label": "Gemeinsame Panel- und Tooltip-Fläche",
+      "file": "panel_surface.png",
+      "references": [],
+      "prompt": "ONE flat blank rounded rectangle UI panel on a TRANSPARENT background. Strict clean 2D flat graphic. Very pale blush solid interior color #FCF7F9 and a single thin powder blue outline #B8CDDF. Landscape rectangle, roughly 1.85 times wider than tall, small round corners. Center the complete rectangle with generous transparent margins. Completely uniform solid interior, with no lighting, texture, shading or 3D effects. Absolutely NO glow, NO shadow of any kind, NO gradient outside or inside, NO fog, NO halo, NO illumination, NO dark background, NO vignette, NO bloom. Every pixel outside the slim antialiased blue boundary must have zero alpha. No text, icons, ornament, pointer or other elements. This is an understated passive visual-novel UI panel source, not a lit sign. PNG with actual alpha.",
+      "generator_output_name": "exec-08da6556-f22a-44a5-a0fc-6c9dab778a75.png"
+    }
+  ],
+  "archival_note": "Rejected draft pixels and review HTML are kept only in the external local reference bundle; see docs/UI_PREVIEW_HANDOFF.md. Relative draft paths below identify archived generation references, not packaged/runtime files."
+}

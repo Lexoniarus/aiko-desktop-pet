@@ -5,9 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Literal
 
+from .horoscope_models import ZODIAC_SIGNS
+
 SettingKey = Literal[
     "always_on_top", "auto_walk", "auto_routine", "follow_cursor",
     "spontaneous_talk", "observe_computer", "learn_rhythm",
+    "online_social",
 ]
 
 
@@ -21,6 +24,8 @@ class PetBehaviorSettings:
     spontaneous_talk: bool = True
     observe_computer: bool = True
     learn_rhythm: bool = True
+    online_social: bool = False
+    zodiac_sign: str | None = None
 
 
 @dataclass
@@ -30,6 +35,7 @@ class DesktopDisplaySettings:
     x: int | None = None
     y: int | None = None
     scale: int = 1
+    ui_scale_percent: int = 100
     always_on_top: bool = True
     toolbar_x: int | None = None
     toolbar_y: int | None = None
@@ -59,11 +65,15 @@ class PetSettings:
         learn_rhythm: bool = True,
         toolbar_x: int | None = None,
         toolbar_y: int | None = None,
+        online_social: bool = False,
+        zodiac_sign: str | None = None,
+        ui_scale_percent: int = 100,
     ) -> None:
         self.desktop = DesktopDisplaySettings(
             x=x,
             y=y,
             scale=scale,
+            ui_scale_percent=ui_scale_percent,
             always_on_top=always_on_top,
             toolbar_x=toolbar_x,
             toolbar_y=toolbar_y,
@@ -75,6 +85,8 @@ class PetSettings:
             spontaneous_talk=spontaneous_talk,
             observe_computer=observe_computer,
             learn_rhythm=learn_rhythm,
+            online_social=online_social,
+            zodiac_sign=zodiac_sign if zodiac_sign in ZODIAC_SIGNS else None,
         )
 
     @property
@@ -100,6 +112,16 @@ class PetSettings:
     @scale.setter
     def scale(self, value: int) -> None:
         self.desktop.scale = value
+
+    @property
+    def ui_scale_percent(self) -> int:
+        return self.desktop.ui_scale_percent
+
+    @ui_scale_percent.setter
+    def ui_scale_percent(self, value: int) -> None:
+        if type(value) is not int or value not in (75, 100, 125, 150, 175, 200):
+            raise ValueError("Unsupported UI size")
+        self.desktop.ui_scale_percent = value
 
     @property
     def always_on_top(self) -> bool:
@@ -158,6 +180,24 @@ class PetSettings:
         self.behavior.learn_rhythm = value
 
     @property
+    def online_social(self) -> bool:
+        return self.behavior.online_social
+
+    @online_social.setter
+    def online_social(self, value: bool) -> None:
+        self.behavior.online_social = value
+
+    @property
+    def zodiac_sign(self) -> str | None:
+        return self.behavior.zodiac_sign
+
+    @zodiac_sign.setter
+    def zodiac_sign(self, value: str | None) -> None:
+        if value is not None and value not in ZODIAC_SIGNS:
+            raise ValueError("Unknown zodiac sign")
+        self.behavior.zodiac_sign = value
+
+    @property
     def toolbar_x(self) -> int | None:
         return self.desktop.toolbar_x
 
@@ -187,6 +227,11 @@ class PetSettings:
             x=coordinate(payload.get("x")),
             y=coordinate(payload.get("y")),
             scale=2 if payload.get("scale") == 2 else 1,
+            ui_scale_percent=(payload.get("ui_scale_percent", 100)
+                if type(payload.get("ui_scale_percent", 100)) is int
+                and payload.get("ui_scale_percent", 100)
+                in (75, 100, 125, 150, 175, 200)
+                else 100),
             always_on_top=payload.get("always_on_top") is not False,
             auto_walk=payload.get("auto_walk") is not False,
             auto_routine=payload.get("auto_routine") is not False,
@@ -196,13 +241,16 @@ class PetSettings:
             learn_rhythm=payload.get("learn_rhythm") is not False,
             toolbar_x=coordinate(payload.get("toolbar_x")),
             toolbar_y=coordinate(payload.get("toolbar_y")),
+            online_social=payload.get("online_social") is True,
+            zodiac_sign=payload.get("zodiac_sign"),
         )
 
-    def to_dict(self) -> dict[str, int | bool | None]:
+    def to_dict(self) -> dict[str, str | int | bool | None]:
         return {
             "x": self.x,
             "y": self.y,
             "scale": self.scale,
+            "ui_scale_percent": self.ui_scale_percent,
             "always_on_top": self.always_on_top,
             "auto_walk": self.auto_walk,
             "auto_routine": self.auto_routine,
@@ -212,4 +260,6 @@ class PetSettings:
             "learn_rhythm": self.learn_rhythm,
             "toolbar_x": self.toolbar_x,
             "toolbar_y": self.toolbar_y,
+            "online_social": self.online_social,
+            "zodiac_sign": self.zodiac_sign,
         }

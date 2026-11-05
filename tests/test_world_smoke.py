@@ -76,7 +76,10 @@ class WorldSmokeTests(unittest.TestCase):
             memory.mark_assessed(item.instance_id)
             memory.note_placement(item.instance_id, x=100, height=0,
                                    now=0, deferred=True)
-            store.save(loaded.state, loaded.settings, world=world.snapshot(),
+            store.save(loaded.state, loaded.settings, expected_revision=loaded.revision,
+                        adaptive=loaded.adaptive_memory,
+                        social_history=loaded.social_history,
+                        world=world.snapshot(),
                         object_memory=memory.export(now=20))
             before = store.load_session()
             prepare_session(path, scenario="full", needs="hungry")

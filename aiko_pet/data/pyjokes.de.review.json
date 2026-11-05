@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "package_version": "0.8.3",
+  "entries": [
+    {
+      "index": 4,
+      "fingerprint": "5887233a992b9cb05e70a4dc453cadf8bda4f24815dc785404ae8313c42f9bff",
+      "category": "single",
+      "delivery_at": null
+    },
+    {
+      "index": 8,
+      "fingerprint": "b3242842383ab9e91e6a549829df7ef23b241931d66d6ea809ba19a70ba2e5f7",
+      "category": "single",
+      "delivery_at": null
+    },
+    {
+      "index": 20,
+      "fingerprint": "b6a1b88436dfe19d09ac053c00f4dd8488f6d6c8a2480bd31ad970b1e7f0a429",
+      "category": "single",
+      "delivery_at": null
+    },
+    {
+      "index": 43,
+      "fingerprint": "1da84b7d167248ebba6cb2151dc53a59625ed27049636a6c87270259d438c7eb",
+      "category": "single",
+      "delivery_at": null
+    },
+    {
+      "index": 6,
+      "fingerprint": "f8aba6ff9c2d2192e5649f0fd57fbea2b6a4177a7a4cecf550974e66bc007953",
+      "category": "twopart",
+      "delivery_at": 58
+    },
+    {
+      "index": 9,
+      "fingerprint": "1d7e65db2609c88658f5a8f4ad929bb3db1893661075d6f5fcfdcbd3e58735ff",
+      "category": "twopart",
+      "delivery_at": 33
+    },
+    {
+      "index": 11,
+      "fingerprint": "cb2a5b6bad9a5b5222c645db488365a60d55feb896507ad67fb8e4ab353c4241",
+      "category": "twopart",
+      "delivery_at": 39
+    },
+    {
+      "index": 18,
+      "fingerprint": "f83c51f789065147025990f8958a11a6e2b791b85245a3691f39630d1ab2c403",
+      "category": "twopart",
+      "delivery_at": 34
+    },
+    {
+      "index": 27,
+      "fingerprint": "49355aca9dc888d120bb2da824e1dc26bf3c75d3b37ddbc56f155897e70b53ba",
+      "category": "twopart",
+      "delivery_at": 47
+    },
+    {
+      "index": 29,
+      "fingerprint": "b24713443808cc61a8504f13bfa6764a58d5ea08714818add393f3cde8162bd2",
+      "category": "twopart",
+      "delivery_at": 85
+    },
+    {
+      "index": 30,
+      "fingerprint": "e3493a3fd86d8dca9685d5fcee1a801e132b8b757e534d398b1e40dc4063fd09",
+      "category": "twopart",
+      "delivery_at": 68
+    },
+    {
+      "index": 33,
+      "fingerprint": "6a9e9e933c2303c00588e012ec0cea3367eda67659e2448461fa164808c7dda6",
+      "category": "twopart",
+      "delivery_at": 50
+    },
+    {
+      "index": 36,
+      "fingerprint": "bf5bd887f5a606273f42876135d1b22004c8368f2370ce936dde9465b6775e7f",
+      "category": "twopart",
+      "delivery_at": 35
+    },
+    {
+      "index": 37,
+      "fingerprint": "da660854db493dc27cc95c54096e5434f1c1a01f9b7d246fd2369edf931d39d6",
+      "category": "twopart",
+      "delivery_at": 49
+    },
+    {
+      "index": 41,
+      "fingerprint": "c9e1a7398a4e8216196ca3860abde66944e23007b25e388726c5b5a6516f6215",
+      "category": "twopart",
+      "delivery_at": 40
+    },
+    {
+      "index": 53,
+      "fingerprint": "4f9f3974ad1b5a6ed41f966f1ee3a3284f20b3f21e840dbb202ffe3f3dbcf0e7",
+      "category": "twopart",
+      "delivery_at": 84
+    },
+    {
+      "index": 58,
+      "fingerprint": "c64d7b0e50326e8f16767fbeee14154ecfb20146e2b6822913e7c4e8400dc03a",
+      "category": "twopart",
+      "delivery_at": 66
+    }
+  ]
+}

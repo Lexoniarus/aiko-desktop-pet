@@ -3,8 +3,8 @@
 from dataclasses import replace
 
 from ...pet.animation.item_assets import ItemCatalog
-from ...pet.content import GERMAN_TEXT
 from ...pet.mind.catalog import Reaction
+from .german_object_phrases import object_phrases
 
 
 def format_object_reaction(
@@ -14,12 +14,9 @@ def format_object_reaction(
 ) -> Reaction:
     if not reaction.event.startswith("object_"):
         return reaction
-    item = items.foods.get(identity) if identity is not None else None
-    values = {
-        "item": item.label
-        if item is not None
-        else GERMAN_TEXT.format("world.unknown_item")
-    }
+    item = (items.foods.get(identity) or items.readables.get(identity)
+            if identity is not None else None)
+    values = object_phrases(identity, item.label if item is not None else None)
     return replace(
         reaction,
         beats=tuple(

@@ -1,0 +1,236 @@
+{
+  "created": "2026-10-20",
+  "generator": "OpenAI built-in Imagegen tool",
+  "runtime_integrated": false,
+  "prompt_set": "generation_prompts_moodlets_wishes.json",
+  "icons": [
+    {
+      "id": "moodlet_food_fulfilled",
+      "group": "moodlets_positive",
+      "label": "Genau das Gewünschte",
+      "semantic_role": "food_wish_fulfillment",
+      "file": "icons/moodlet_food_fulfilled.png",
+      "generator_output_name": "exec-6e924447-731c-4452-98ed-2948c4b846a5.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_shared_play",
+      "group": "moodlets_positive",
+      "label": "Gemeinsame Spielfreude",
+      "semantic_role": "shared_play_enjoyment",
+      "file": "icons/moodlet_shared_play.png",
+      "generator_output_name": "exec-3ec28363-b321-417d-801a-39d317a5fded.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_connection",
+      "group": "moodlets_positive",
+      "label": "Verbundenheit",
+      "semantic_role": "social_connection",
+      "file": "icons/moodlet_connection.png",
+      "generator_output_name": "exec-3a30e6e1-9244-450a-92bf-f397e3a566e4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_cheerful",
+      "group": "moodlets_positive",
+      "label": "Heiterkeit",
+      "semantic_role": "social_cheerfulness",
+      "file": "icons/moodlet_cheerful.png",
+      "generator_output_name": "exec-5ca5971e-907f-45b5-8957-2b8307eddc85.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_enthusiastic",
+      "group": "moodlets_positive",
+      "label": "Begeisterung",
+      "semantic_role": "social_enthusiasm",
+      "file": "icons/moodlet_enthusiastic.png",
+      "generator_output_name": "exec-090ef401-bc63-40a1-b1f4-3064e6aef709.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_crowded",
+      "group": "moodlets_negative",
+      "label": "Zu viel Nähe",
+      "semantic_role": "unwelcome_closeness",
+      "file": "icons/moodlet_crowded.png",
+      "generator_output_name": "exec-ddbf810f-3934-4ee6-96ae-a9cbb6ce609d.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_food_monotony",
+      "group": "moodlets_negative",
+      "label": "Immer dasselbe Essen",
+      "semantic_role": "repetitive_food",
+      "file": "icons/moodlet_food_monotony.png",
+      "generator_output_name": "exec-4a05ace3-e137-4f50-94e6-90049ee6a7d8.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_withheld",
+      "group": "moodlets_negative",
+      "label": "Vorenthalten",
+      "semantic_role": "wanted_object_withheld",
+      "file": "icons/moodlet_withheld.png",
+      "generator_output_name": "exec-1077e987-0031-4cac-bb22-74ce74fe34e6.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_disrupted",
+      "group": "moodlets_negative",
+      "label": "Vertrauter Platz verändert",
+      "semantic_role": "familiar_arrangement_disrupted",
+      "file": "icons/moodlet_disrupted.png",
+      "generator_output_name": "exec-82c43a22-d982-47b1-8449-ab3be84c5f91.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_hunger_worn",
+      "group": "moodlets_negative",
+      "label": "Vom Hunger zermürbt",
+      "semantic_role": "prolonged_hunger_aftereffect",
+      "file": "icons/moodlet_hunger_worn.png",
+      "generator_output_name": "exec-76bb8711-e644-4a6d-8359-04a1236d13e4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_exhaustion_irritated",
+      "group": "moodlets_negative",
+      "label": "Von Erschöpfung gereizt",
+      "semantic_role": "prolonged_exhaustion_aftereffect",
+      "file": "icons/moodlet_exhaustion_irritated.png",
+      "generator_output_name": "exec-1e78dce9-d650-4e42-b28b-6c62f8491448.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_unstimulated",
+      "group": "moodlets_negative",
+      "label": "Lange unterfordert",
+      "semantic_role": "prolonged_lack_of_stimulation",
+      "file": "icons/moodlet_unstimulated.png",
+      "generator_output_name": "exec-43c962a2-9027-45d0-bcd6-11e8a9f46ce9.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_lonely",
+      "group": "moodlets_negative",
+      "label": "Einsam",
+      "semantic_role": "prolonged_lack_of_contact",
+      "file": "icons/moodlet_lonely.png",
+      "generator_output_name": "exec-31580222-e028-4fdb-900f-ac13e9736d5b.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "moodlet_missing_closeness",
+      "group": "moodlets_negative",
+      "label": "Nähe fehlt",
+      "semantic_role": "prolonged_missing_affection",
+      "file": "icons/moodlet_missing_closeness.png",
+      "generator_output_name": "exec-0f7b1623-d704-4a28-922b-07631bed3084.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "wish_thought_bubble",
+      "group": "wishes",
+      "label": "Wunschmarkierung",
+      "semantic_role": "wish_marker",
+      "file": "icons/wish_thought_bubble.png",
+      "generator_output_name": "exec-7892c31f-543d-4f5e-8ebf-6b2875b502c4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "wish_protection_shield",
+      "group": "wishes",
+      "label": "Nicht verlieren",
+      "semantic_role": "game_nonloss_objective",
+      "file": "icons/wish_protection_shield.png",
+      "generator_output_name": "exec-17e4850a-8cb1-4437-891f-f146db07f26c.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "wish_single",
+      "group": "wishes",
+      "label": "Spruch erzählen",
+      "semantic_role": "social_single_objective",
+      "file": "icons/wish_single.png",
+      "generator_output_name": "exec-85e6e923-1f5a-42ec-bbaf-5229d9235263.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "wish_twopart",
+      "group": "wishes",
+      "label": "Witz erzählen",
+      "semantic_role": "social_twopart_objective",
+      "file": "icons/wish_twopart.png",
+      "generator_output_name": "exec-05a7cfa0-68b1-4bbb-aa5d-fb596bbcf38c.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    },
+    {
+      "id": "wish_fact",
+      "group": "wishes",
+      "label": "Fakt teilen",
+      "semantic_role": "social_fact_objective",
+      "file": "icons/wish_fact.png",
+      "generator_output_name": "exec-46996cbf-5749-4fe7-940f-c32287de2c07.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ]
+    }
+  ]
+}

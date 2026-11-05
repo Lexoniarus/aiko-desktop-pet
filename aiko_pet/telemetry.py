@@ -6,6 +6,7 @@ value contract, which never calls an operating-system API.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 
@@ -20,6 +21,16 @@ class ComputerSnapshot:
 
     def is_busy(self) -> bool:
         return (workload_intensity(self) or 0.0) >= 0.70
+
+
+def consumption_load(snapshot: ComputerSnapshot) -> float | None:
+    """Physical CPU/GPU use for needs; allocated RAM/VRAM is not computation."""
+    values = [
+        max(0.0, min(1.0, value / 100.0))
+        for value in (snapshot.cpu, snapshot.gpu)
+        if value is not None and math.isfinite(value)
+    ]
+    return max(values) if values else None
 
 
 def workload_intensity(snapshot: ComputerSnapshot) -> float | None:

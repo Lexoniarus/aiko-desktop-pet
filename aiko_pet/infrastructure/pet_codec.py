@@ -1,22 +1,27 @@
-"""Version-one pet save translation, separate from mutable gameplay rules."""
+"""Legacy v1 pet translation; strict import validates before applying defaults."""
 
 from __future__ import annotations
 
 import math
 import time
+from datetime import datetime
 from typing import Any
 
 from ..pet.balance import BALANCE
 from ..pet.food import FOOD_BALANCE, FOOD_CATALOG, FoodState
 from ..pet.friendship import (
-    CARE_FRIENDSHIP_GAIN,
-    CARE_PRIMARY_NEED,
+    CONTACT_ACTIONS,
     FRIENDSHIP_DAILY_CAP,
     LEGACY_REWARD_ACTIONS,
 )
+from ..pet.friendship_history import FriendshipHistory
 from ..pet.routine import MEAL_NAMES
 from ..pet.state import PetState
 from ..pet.value_rules import bounded_number, clamp_need_value, clamp_saved_time
+from .friendship_codec import decode_friendship, encode_friendship, valid_friendship
+from .moodlet_codec import decode_moodlets, encode_moodlets
+from .sleep_codec import decode_sleep, encode_sleep, valid_sleep
+from .wish_codec import decode_wishes, encode_wishes
 
 
 def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
@@ -31,6 +36,10 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         timestamp = current
     if not math.isfinite(timestamp):
         timestamp = current
+    try:
+        datetime.fromtimestamp(timestamp)
+    except (ValueError, OSError, OverflowError):
+        timestamp = current
     meals = value.get("meals_today")
     if not isinstance(meals, list):
         meals = []
@@ -41,11 +50,27 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         meals_date = ""
     sleeping = value.get("sleeping") is True
     origin = value.get("sleep_origin")
-    if origin not in ("routine", "manual", "nap"):
+    if origin not in ("routine", "manual", "nap", "recovery"):
         origin = "manual" if sleeping else ""
     night_key = value.get("auto_sleep_night")
     if not isinstance(night_key, str) or len(night_key) > 10:
         night_key = ""
+    elapsed = _load_lived_seconds(value.get("time"))
+    relationship = FriendshipHistory()
+    if "relationship" in value and valid_friendship(value["relationship"], elapsed):
+        relationship = decode_friendship(value["relationship"], elapsed)
+    moodlets = None
+    if "moodlets" in value:
+        try:
+            moodlets = decode_moodlets(value["moodlets"], elapsed)
+        except (ValueError, TypeError, OverflowError):
+            pass  # Strict legacy import validates present sections before this decoder.
+    wishes = None
+    if "wishes" in value:
+        try:
+            wishes = decode_wishes(value["wishes"], elapsed)
+        except (ValueError, TypeError, OverflowError):
+            pass
     return PetState(
         satiety=clamp_need_value(
             value.get("satiety"), BALANCE.number("initial", "satiety")
@@ -86,23 +111,34 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         if isinstance(value.get("auto_nap_day"), str)
         and len(value.get("auto_nap_day", "")) == 10
         else "",
+        lived_seconds=elapsed, relationship=relationship,
+        moodlets=moodlets,
+        wishes=wishes,
+        sleep_episode=decode_sleep(value["sleep_episode"], elapsed)
+        if "sleep_episode" in value and valid_sleep(value["sleep_episode"], elapsed)
+        else None,
     )
 
 
 def encode_pet_state(state: PetState) -> dict[str, Any]:
     return {
-        "satiety": round(state.satiety, 4),
-        "mood": round(state.mood, 4),
-        "energy": round(state.energy, 4),
-        "social": round(state.social, 4),
-        "affection": round(state.affection, 4),
-        "friendship": round(state.friendship, 4),
+        "satiety": state.satiety,
+        "mood": state.mood,
+        "energy": state.energy,
+        "social": state.social,
+        "affection": state.affection,
+        "friendship": state.friendship,
         "friendship_day": state.friendship_day,
         "friendship_gained_today": round(state.friendship_gained_today, 4),
         "care_types_today": list(state.care_types_today),
         "care_last_rewards": dict(state.care_last_rewards),
         "sleeping": state.sleeping,
         "updated_at": state.updated_at,
+        "time": {"version": 1, "lived_seconds": state.lived_seconds},
+        "relationship": encode_friendship(state.friendship_history),
+        "sleep_episode": encode_sleep(state.sleep_episode),
+        "moodlets": encode_moodlets(state.moodlets),
+        "wishes": encode_wishes(state.wishes),
         "meals_date": state.meals_date,
         "meals_today": list(state.meals_today),
         "sleep_origin": state.sleep_origin,
@@ -110,14 +146,35 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "nap_until": state.nap_until,
         "auto_nap_day": state.auto_nap_day,
         "food": encode_food_state(state.food),
-        "fun": round(state.fun, 4),
+        "fun": state.fun,
     }
+
+
+def valid_pet_time(raw: Any) -> bool:
+    """Validate the optional elapsed axis without accepting bools or NaNs."""
+    structure_valid = (
+        isinstance(raw, dict)
+        and type(raw.get("version")) is int
+        and raw["version"] == 1
+        and type(raw.get("lived_seconds")) in (int, float)
+    )
+    if not structure_valid:
+        return False
+    try:
+        return math.isfinite(raw["lived_seconds"]) and raw["lived_seconds"] >= 0
+    except OverflowError:
+        return False
+
+
+def _load_lived_seconds(raw: Any) -> float:
+    # Missing/invalid history never claims prior care, activity or neglect.
+    return float(raw["lived_seconds"]) if valid_pet_time(raw) else 0.0
 
 
 def _load_care_types(raw: Any) -> list[str]:
     if not isinstance(raw, list):
         return []
-    return [action for action in CARE_PRIMARY_NEED if action in raw]
+    return [action for action in CONTACT_ACTIONS if action in raw]
 
 
 def _load_reward_times(raw: Any) -> dict[str, float]:
@@ -125,7 +182,7 @@ def _load_reward_times(raw: Any) -> dict[str, float]:
         return {}
     return {
         action: clamp_saved_time(raw[action])
-        for action in (*CARE_FRIENDSHIP_GAIN, *LEGACY_REWARD_ACTIONS)
+        for action in (*CONTACT_ACTIONS, *LEGACY_REWARD_ACTIONS)
         if action in raw and clamp_saved_time(raw[action]) > 0
     }
 

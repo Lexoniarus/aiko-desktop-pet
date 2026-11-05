@@ -22,9 +22,11 @@ class DesktopInputActions:
     right_click: Callable[[tk.Event | None], None]
     show_menu: Callable[[int, int], None]
     dismiss_outside: Callable[[int, int], None]
+    dismiss_passively: Callable[[int, int], None]
     open_status: Callable[[], None]
     quit: Callable[[], None]
     closed: Callable[[], bool]
+    allow_hover: Callable[[], bool] = lambda: True
 
 
 class DesktopInput:
@@ -53,9 +55,9 @@ class DesktopInput:
     def initialize(self) -> None:
         """Baseline global button state before installing interactive handlers."""
         self.mouse.clicked()
-        self.canvas.bind("<Enter>", self.actions.enter)
-        self.canvas.bind("<Button-1>", self.actions.left_click)
-        self.canvas.bind("<Button-3>", self.actions.right_click)
+        self.canvas.bind("<Enter>", self.on_enter)
+        self.canvas.bind("<Button-1>", self.on_left_click)
+        self.canvas.bind("<Button-3>", self.on_right_click)
         self.canvas.bind("<Shift-Button-3>", self.on_menu)
         self.root.bind("<Control-q>", lambda _event: self.actions.quit())
         self.root.bind("<F2>", lambda _event: self.actions.open_status())
@@ -66,6 +68,18 @@ class DesktopInput:
     def on_menu(self, event: tk.Event) -> None:
         if not self._stopped:
             self.actions.show_menu(event.x_root, event.y_root)
+
+    def on_enter(self, event: tk.Event | None = None) -> None:
+        if not self._stopped and self.actions.allow_hover():
+            self.actions.enter(event)
+
+    def on_left_click(self, event: tk.Event | None = None) -> None:
+        if not self._stopped:
+            self.actions.left_click(event)
+
+    def on_right_click(self, event: tk.Event | None = None) -> None:
+        if not self._stopped:
+            self.actions.right_click(event)
 
     def on_tk_press(self, event: tk.Event) -> None:
         """Handle clicks inside Tk windows without losing focus to them."""
@@ -90,7 +104,7 @@ class DesktopInput:
         """Fall back to mouse location if a foreign window gained focus."""
         if self._stopped or self.actions.closed():
             return
-        self.actions.dismiss_outside(
+        self.actions.dismiss_passively(
             self.root.winfo_pointerx(), self.root.winfo_pointery(),
         )
 

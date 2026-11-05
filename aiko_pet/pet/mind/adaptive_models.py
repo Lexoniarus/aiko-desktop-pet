@@ -12,6 +12,7 @@ from typing import Any
 
 from ..balance import BALANCE
 from .adaptive_policy import ActivityMode
+from .quiet_rhythm import QuietWindow
 
 SLOTS = 7 * 24
 MAX_OBSERVATION_SECONDS = BALANCE.number("adaptive_learning", "maximum_sample_seconds")
@@ -73,6 +74,7 @@ class AdaptiveMemory:
     last_work_wall: float = 0.0
     last_contact_wall: float = 0.0
     last_seen_wall: float = 0.0
+    quiet_window: QuietWindow = QuietWindow()
 
     @classmethod
     def from_dict(cls, payload: Any) -> AdaptiveMemory:
@@ -80,7 +82,13 @@ class AdaptiveMemory:
             return cls()
         last_slot = payload.get("last_slot_key", "")
         day = payload.get("profile_day", "")
+        try:
+            quiet = (QuietWindow.from_dict(payload["quiet_window"])
+                     if "quiet_window" in payload else QuietWindow())
+        except (ValueError, TypeError, KeyError, OverflowError):
+            quiet = QuietWindow()
         return cls(
+            quiet_window=quiet,
             hour_seconds=_hours(payload.get("hour_seconds")),
             busy_seconds=_hours(payload.get("busy_seconds")),
             present_seconds=_hours(payload.get("present_seconds")),
@@ -107,6 +115,7 @@ class AdaptiveMemory:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "quiet_window": self.quiet_window.to_dict(),
             "hour_seconds": [round(v, 2) for v in self.hour_seconds],
             "busy_seconds": [round(v, 2) for v in self.busy_seconds],
             "present_seconds": [round(v, 2) for v in self.present_seconds],
@@ -137,9 +146,6 @@ class Behaviour:
     uptime_hours: float | None
     prolonged_work_seconds: float
     rest_seconds: float
-    can_sleep: bool
-    should_wake: bool
-    can_nap: bool
 
     @property
     def focused(self) -> bool:

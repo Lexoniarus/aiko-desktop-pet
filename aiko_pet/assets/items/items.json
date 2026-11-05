@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "foods": [
     {
       "id": "onigiri",
@@ -264,6 +264,13 @@
           ]
         }
       }
+    }
+  ],
+  "readables": [
+    {
+      "id": "horoscope_book",
+      "label_key": "ui.horoscope_book",
+      "state_manifest": "horoscope_book/v1/manifest.json"
     }
   ]
 }

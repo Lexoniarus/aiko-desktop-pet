@@ -161,6 +161,31 @@ class ObjectMemory:
     def get(self, token: str) -> ObjectKnowledge | None:
         return self._known.get(token)
 
+    def reunite_search(
+        self, subject: ObjectKnowledge, found_token: str,
+    ) -> ObjectKnowledge:
+        """Commit one search-authorized subjective reunion, retaining found facts.
+
+        Ordinary recognition still uses observe_find/match_find. Only an active
+        search coordinator may transfer history between different physical items.
+        The retired subject may already have been reconciled by place evidence.
+        """
+        found = self.get(found_token)
+        if (found is None or not found.recognized
+                or found.place_status == "superseded"
+                or (found.identity, found.kind) != (subject.identity, subject.kind)):
+            raise ValueError("Search reunion requires an identified matching find")
+        if found.token == subject.token:
+            return found
+        self.forget(subject.token)
+        reunited = replace(
+            found, assessed=found.assessed or subject.assessed,
+            disposition=subject.disposition or found.disposition,
+            possible_sources=(),
+        )
+        self._known[found.token] = reunited
+        return reunited
+
     def learned_instance(self, instance: str) -> ObjectKnowledge | None:
         """Read durable learning; this alone proves neither visibility nor reunion."""
         return next((item for item in self._known.values()
@@ -226,6 +251,12 @@ class ObjectMemory:
             return
         self._known[token] = replace(known, place_status="missing")
         self._reconcile_sources()
+
+    def retract_missing(self, token: str) -> None:
+        """Withdraw an unadmitted absence without learning a place or identity."""
+        known = self.get(token)
+        if known is not None and known.place_status == "missing":
+            self._known[token] = replace(known, place_status="remembered")
 
     def _reconcile_sources(self) -> None:
         # A unique same-type find may precede the confirmation that its old

@@ -42,6 +42,17 @@ class ActionPlaybackTests(unittest.TestCase):
         self.actions.start("idle", 3.0, started_at=200.0)
         self.assertEqual(self.actions.until, 203.0)
 
+    def test_prepared_action_duration_replaces_the_legacy_atlas_duration(self):
+        meal = AnimationClip("eat", (AnimationFrame(Path("meal.png"), 7420),),
+                             False, (96, 194))
+        actions = ActionPlayback(
+            CharacterCatalog(self.actions._assets.clips, hd_action_clips={"eat": meal}),
+            begin=self.begin, cancel=self.cancel,
+        )
+        actions.start("eat", 0, started_at=100)
+        self.assertAlmostEqual(actions.until, 107.42)
+        self.begin.assert_called_once_with("eat", 100)
+
     def test_cancel_and_extend_keep_the_original_semantics(self) -> None:
         self.actions.start("eat", 0.0, started_at=100.0)
         self.actions.extend(104.0)

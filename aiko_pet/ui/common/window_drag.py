@@ -5,6 +5,8 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
+from .window_geometry import BoundsAt
+
 
 def bounded_position(
     x: int, y: int, width: int, height: int,
@@ -24,23 +26,28 @@ class WindowDrag:
         self, window: tk.Toplevel, handle: tk.Widget, *,
         moved: Callable[[], None] | None = None,
         dropped: Callable[[int, int], None] | None = None,
+        bounds_at: BoundsAt | None = None,
+        handles: tuple[tk.Widget, ...] = (),
     ) -> None:
         self._window = window
         self._handle = handle
         self._moved = moved
         self._dropped = dropped
+        self._bounds_at = bounds_at
         self._origin: tuple[int, int, int, int] | None = None
         self._position: tuple[int, int] | None = None
         self._closed = False
-        self._bindings = {
-            sequence: handle.bind(sequence, callback, add="+")
+        self._bindings = []
+        for widget in (handle, *handles):
             for sequence, callback in (
                 ("<ButtonPress-1>", self.start),
                 ("<B1-Motion>", self.move),
                 ("<ButtonRelease-1>", self.finish),
-            )
-        }
-        handle.configure({"cursor": "fleur"})
+            ):
+                self._bindings.append((
+                    widget, sequence, widget.bind(sequence, callback, add="+"),
+                ))
+            widget.configure({"cursor": "fleur"})
 
     @property
     def dragging(self) -> bool:
@@ -58,13 +65,19 @@ class WindowDrag:
         origin = self._origin
         if origin is None or self._closed:
             return
-        self._position = bounded_position(
-            origin[2] + event.x_root - origin[0],
-            origin[3] + event.y_root - origin[1],
-            self._window.winfo_width(), self._window.winfo_height(),
-            self._window.winfo_screenwidth(), self._window.winfo_screenheight(),
-        )
+        x = origin[2] + event.x_root - origin[0]
+        y = origin[3] + event.y_root - origin[1]
+        if self._bounds_at is None:
+            self._position = bounded_position(
+                x, y, self._window.winfo_width(), self._window.winfo_height(),
+                self._window.winfo_screenwidth(), self._window.winfo_screenheight(),
+            )
+        else:
+            self._position = self._bounds_at(event.x_root, event.y_root).clamp(
+                x, y, self._window.winfo_width(), self._window.winfo_height(),
+            )
         x, y = self._position
+        # Explicit +negative coordinates are absolute Tk positions on left monitors.
         self._window.geometry(f"+{x}+{y}")
         if self._moved is not None:
             self._moved()
@@ -82,7 +95,7 @@ class WindowDrag:
             return
         self._closed = True
         self._origin = None
-        for sequence, identifier in self._bindings.items():
+        for widget, sequence, identifier in self._bindings:
             if identifier:
-                self._handle.unbind(sequence, identifier)
+                widget.unbind(sequence, identifier)
         self._bindings.clear()

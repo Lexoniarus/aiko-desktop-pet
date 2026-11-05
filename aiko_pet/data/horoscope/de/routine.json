@@ -1,0 +1,306 @@
+{
+  "catalogue_version": 1,
+  "language": "de",
+  "entries": [
+    {
+      "id": "horoscope.routine.begin.a",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "begin",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dir eine kleine Erleichterung für deinen Alltag ein. Sie wirkt unscheinbar, könnte dir aber öfter helfen."
+        },
+        {
+          "id": "p2",
+          "text": "Probiere sie an einer überschaubaren Stelle aus. Eine neue Gewohnheit braucht zunächst nur einen verlässlichen Anfang."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht alles auf einmal ändern. Ein hilfreicher kleiner Schritt zählt auch für sich.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.begin.b",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "begin",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute bringt eine kleine Vorbereitung mehr Ruhe in deinen Ablauf. Ein klarer Anfang verhindert unnötiges Hin und Her."
+        },
+        {
+          "id": "p2",
+          "text": "Wähle eine Sache, die du morgen leichter finden oder beginnen möchtest. Schon eine einfache Ordnung kann dafür reichen."
+        },
+        {
+          "id": "p3",
+          "text": "Eine gute Gewohnheit darf klein starten. Sie muss dir helfen und niemanden beeindrucken.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.develop.a",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "develop",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute erkennst du, wo ein kleiner Ablauf zu umständlich geworden ist. Eine einfache Änderung schafft spürbar mehr Luft."
+        },
+        {
+          "id": "p2",
+          "text": "Beginne bei dem Schritt, der dich regelmäßig aufhält. Ein fester Platz oder eine klare Reihenfolge kann schon genügen."
+        },
+        {
+          "id": "p3",
+          "text": "Du kommst besser voran, wenn du eine brauchbare Gewohnheit stärkst, statt den ganzen Tag neu zu ordnen."
+        },
+        {
+          "id": "p4",
+          "text": "Was dir wirklich hilft, darf einfach sein. Eine kleine Erleichterung ist auch ohne großes Ergebnis etwas wert.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.develop.b",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "develop",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute gelingt eine praktische Absprache leichter, wenn du den nächsten Schritt konkret benennst. Große Pläne dürfen warten."
+        },
+        {
+          "id": "p2",
+          "text": "Eine klare Reihenfolge nimmt Druck aus einer Aufgabe. Gib jedem Teil die Aufmerksamkeit, die er tatsächlich braucht."
+        },
+        {
+          "id": "p3",
+          "text": "Du musst nicht alles zugleich im Blick behalten. Ein verständlicher nächster Schritt schafft oft mehr Ruhe.",
+          "comment_key": "horoscope.small_helpful_step"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.reflect.a",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "reflect",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute erkennst du leichter, welche Gewohnheit dir wirklich hilft und welche nur Zeit kostet. Dein Blick für Details ist klar."
+        },
+        {
+          "id": "p2",
+          "text": "Nicht jede Kleinigkeit braucht dieselbe Sorgfalt. Ein brauchbares Ergebnis lässt dir mehr Luft als eine perfekte Ordnung."
+        },
+        {
+          "id": "p3",
+          "text": "Du darfst eine Aufgabe einfacher machen. Sorgfalt heißt nicht, dich an jedem Detail festzuhalten.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.reflect.b",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "reflect",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute fällt dir auf, wie viel eine unscheinbare Gewohnheit für dich erledigt. Ihr Wert zeigt sich im reibungslosen Ablauf."
+        },
+        {
+          "id": "p2",
+          "text": "Prüfe, wo Sorgfalt hilft und wo du nur aus Gewohnheit nachbesserst. Nicht jede zusätzliche Runde macht eine Sache besser."
+        },
+        {
+          "id": "p3",
+          "text": "Das Einfache darf sich bewähren. Du musst eine hilfreiche Gewohnheit nicht ständig neu erfinden.",
+          "comment_key": "horoscope.care_for_what_is_there"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.conclude.a",
+      "revision": 2,
+      "theme": "routine",
+      "direction": "conclude",
+      "variant": "a",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute tut dir ein klarer Abschluss bei einer kleinen Aufgabe gut. Erledige den letzten nötigen Schritt und lass es dabei."
+        },
+        {
+          "id": "p2",
+          "text": "Was noch offen ist, darf seinen Platz für später bekommen. Du musst nicht alles in einem Anlauf aufräumen."
+        },
+        {
+          "id": "p3",
+          "text": "Auch ein ordentlicher Schlusspunkt darf klein sein. Für heute muss nicht jede Liste leer werden.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    },
+    {
+      "id": "horoscope.routine.conclude.b",
+      "revision": 1,
+      "theme": "routine",
+      "direction": "conclude",
+      "variant": "b",
+      "allowed_signs": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ],
+      "eligibility": {},
+      "passages": [
+        {
+          "id": "p1",
+          "text": "Heute darf eine kleine Pflicht ihren endgültigen Haken bekommen. Lass nicht sofort eine neue Aufgabe an ihre Stelle treten."
+        },
+        {
+          "id": "p2",
+          "text": "Ein aufgeräumter Übergang hilft dir mehr als der Versuch, auch noch den Rest des Tages zu perfektionieren."
+        },
+        {
+          "id": "p3",
+          "text": "Eine Pause nach einem erledigten Schritt macht das Geschaffte nicht kleiner. Heute hilft dir ein klarer Übergang.",
+          "comment_key": "horoscope.enough_for_today"
+        }
+      ]
+    }
+  ]
+}

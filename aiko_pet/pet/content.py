@@ -10,9 +10,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from string import Formatter
 from types import MappingProxyType
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
 
 from .catalog_validation import load_json, object_fields
+from .food_catalog import DEFAULT_CATALOG
+from .object_text_contract import (
+    GrammaticalGender,
+    ObjectGrammar,
+    ObjectGrammarCatalog,
+)
 from .text_contract import TEXT_FIELDS
 
 
@@ -78,3 +84,61 @@ def load_packaged_text_catalog(
 
 
 GERMAN_TEXT = load_packaged_text_catalog()
+
+
+def parse_object_grammar(raw: Any) -> ObjectGrammarCatalog:
+    """Validate only grammatical metadata; food names remain catalogue-owned."""
+    data = object_fields(
+        raw,
+        ("version", "locale", "objects"),
+        context="object grammar",
+    )
+    if (
+        type(data["version"]) is not int
+        or data["version"] != 1
+        or data["locale"] != "de"
+    ):
+        raise ValueError("Unsupported object grammar catalogue")
+    rows = object_fields(
+        data["objects"],
+        (*DEFAULT_CATALOG.foods, "energy_drink"),
+        optional=("horoscope_book",),
+        context="object grammar identities",
+    )
+    entries: dict[str, ObjectGrammar] = {}
+    for identity, raw_entry in rows.items():
+        row = object_fields(
+            raw_entry,
+            ("gender",),
+            optional=("spoken_name",),
+            context=f"object grammar {identity}",
+        )
+        gender, name = row["gender"], row.get("spoken_name")
+        if gender not in ("masculine", "feminine", "neuter"):
+            raise ValueError(f"Invalid object gender: {identity}")
+        if "spoken_name" in row and (
+            not isinstance(name, str)
+            or not name
+            or name != name.strip()
+            or len(name) > 80
+            or not name.isprintable()
+            or "{" in name
+            or "}" in name
+        ):
+            raise ValueError(f"Invalid spoken object name: {identity}")
+        entries[identity] = ObjectGrammar(
+            cast(GrammaticalGender, gender),
+            name,
+        )
+    return ObjectGrammarCatalog(MappingProxyType(entries))
+
+
+def load_packaged_object_grammar(
+    path: Path = (
+        Path(__file__).resolve().parents[1] / "data" / "object_grammar.de.json"
+    ),
+) -> ObjectGrammarCatalog:
+    return parse_object_grammar(load_json(path))
+
+
+GERMAN_OBJECT_GRAMMAR = load_packaged_object_grammar()

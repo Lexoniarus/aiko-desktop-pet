@@ -12,16 +12,23 @@ from aiko_pet.desktop.global_input import idle_seconds_windows
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
+from aiko_pet.pet.mind.dialogue_context import SituationalCondition
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.sleep import SleepContext
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 
 def local_stamp(day, hour, minute=0):
-    return datetime.fromisoformat(
-        f"{day}T{hour:02d}:{minute:02d}:00"
-    ).astimezone().timestamp()
+    return (
+        datetime
+        .fromisoformat(f"{day}T{hour:02d}:{minute:02d}:00")
+        .astimezone()
+        .timestamp()
+    )
 
 
 class AdaptiveBehaviourTests(unittest.TestCase):
@@ -34,15 +41,24 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             stamp = start + tick * 30
             hour = context_at(stamp).local.hour
             hard = 10 <= hour < 14
-            view = engine.observe(
-                Observation(stamp, 0.90 if hard else 0.05,
-                            0 if hard else 4000, uptime_hours=tick / 120),
-                tick * 30.0, energy=state.energy, sleeping=state.sleeping,
+            engine.observe(
+                Observation(
+                    stamp,
+                    0.90 if hard else 0.05,
+                    0 if hard else 4000,
+                    uptime_hours=tick / 120,
+                ),
+                tick * 30.0,
+                energy=state.energy,
+                sleeping=state.sleeping,
             )
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep,
-                          allow_nap=view.can_nap,
-                          interrupt_nap=view.should_wake)
+            state.advance(
+                stamp,
+                auto_routine=True,
+                sleep_context=engine.observe_input(
+                    wall=stamp, monotonic=tick * 30.0, idle_seconds=0 if hard else 4000
+                ),
+            )
             if context_at(stamp).night and state.sleeping:
                 observed_night_sleep = True
         self.assertTrue(observed_night_sleep)
@@ -53,62 +69,66 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertGreater(engine.memory.hour_seconds[10], 0)
         self.assertLess(engine.memory.strain, 70)
 
-    def test_idle_pc_sleeps_at_night_but_real_computation_keeps_her_awake(self):
+    def test_background_computation_does_not_prevent_night_sleep(self):
         start = local_stamp("2026-10-12", 23, 40)
-        engine = AdaptiveRoutine()
-        state = PetState(updated_at=start, energy=65)
-        for tick in range(140):
-            stamp = start + tick * 30
-            view = engine.observe(
-                Observation(stamp, 0.98, 5000, uptime_hours=72),
-                tick * 30.0, energy=state.energy, sleeping=state.sleeping,
-            )
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep)
-            self.assertFalse(state.sleeping)
-        for tick in range(140, 170):
-            stamp = start + tick * 30
-            view = engine.observe(
-                Observation(stamp, 0.04, 5000, uptime_hours=73),
-                tick * 30.0, energy=state.energy, sleeping=state.sleeping,
-            )
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep)
-        self.assertTrue(state.sleeping)
-        self.assertEqual(state.sleep_origin, "routine")
-        self.assertGreater(engine.memory.last_session_seconds, 3600)
+        for effort in (0.04, 0.98):
+            engine = AdaptiveRoutine()
+            state = PetState(updated_at=start, energy=65)
+            for tick in range(140):
+                stamp = start + tick * 30
+                engine.observe(
+                    Observation(stamp, effort, 5000),
+                    tick * 30.0,
+                    energy=state.energy,
+                    sleeping=state.sleeping,
+                )
+                state.advance(
+                    stamp,
+                    auto_routine=True,
+                    sleep_context=engine.observe_input(
+                        wall=stamp, monotonic=tick * 30.0, idle_seconds=5000
+                    ),
+                )
+            self.assertTrue(state.sleeping)
+            self.assertEqual(state.sleep_episode.kind, "main")
 
     def test_manual_sleep_is_not_overridden_by_work(self):
         now = local_stamp("2026-10-12", 23, 50)
         pet = PetState(updated_at=now, sleeping=True, sleep_origin="manual")
         pet.advance(now + 100, auto_routine=True, allow_bedtime=False)
         self.assertTrue(pet.sleeping)
-        self.assertEqual(pet.sleep_origin, "manual")
+        self.assertEqual(pet.sleep_episode.kind, "main")
 
     def test_night_activity_alone_is_not_forced_bedtime(self):
         now = local_stamp("2026-10-13", 1)
-        engine = AdaptiveRoutine()
-        view = engine.observe(Observation(now, 0.05, 0, 18), 10,
-                              energy=80, sleeping=False)
-        self.assertFalse(view.can_sleep)
-        low = engine.observe(Observation(now + 30, 0.05, 0, 18), 40,
-                             energy=12, sleeping=False)
-        self.assertTrue(low.can_sleep)
+        state = PetState(updated_at=now, energy=12)
+        state.advance(
+            now,
+            auto_routine=True,
+            sleep_context=SleepContext(idle_seconds=0, observed=True),
+        )
+        self.assertFalse(state.sleeping)
 
     def test_daytime_nap_ends_and_cannot_repeat_indefinitely(self):
         start = local_stamp("2026-10-12", 14)
-        state = PetState(updated_at=start, energy=8)
+        state = PetState(updated_at=start, energy=20)
         engine = AdaptiveRoutine()
         begun, finished = False, False
         for tick in range(160):
             stamp = start + tick * 30
-            view = engine.observe(Observation(stamp, 0.04, 5000, 72),
-                                  tick * 30.0, energy=state.energy,
-                                  sleeping=state.sleeping)
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep,
-                          allow_nap=view.can_nap,
-                          interrupt_nap=view.should_wake)
+            engine.observe(
+                Observation(stamp, 0.04, 5000, 72),
+                tick * 30.0,
+                energy=state.energy,
+                sleeping=state.sleeping,
+            )
+            state.advance(
+                stamp,
+                auto_routine=True,
+                sleep_context=engine.observe_input(
+                    wall=stamp, monotonic=tick * 30.0, idle_seconds=5000
+                ),
+            )
             if state.sleep_origin == "nap":
                 begun = True
             if begun and not state.sleeping:
@@ -122,10 +142,12 @@ class AdaptiveBehaviourTests(unittest.TestCase):
     def test_missing_telemetry_does_not_fabricate_work(self):
         start = local_stamp("2026-10-12", 13)
         engine = AdaptiveRoutine()
-        engine.observe(Observation(start, None, None, 100), 0,
-                       energy=70, sleeping=False)
-        view = engine.observe(Observation(start + 30, None, None, 100), 30,
-                              energy=70, sleeping=False)
+        engine.observe(
+            Observation(start, None, None, 100), 0, energy=70, sleeping=False
+        )
+        view = engine.observe(
+            Observation(start + 30, None, None, 100), 30, energy=70, sleeping=False
+        )
         self.assertIsNone(view.effort)
         self.assertEqual(sum(engine.memory.hour_seconds), 0)
         self.assertEqual(view.strain, 0)
@@ -133,15 +155,17 @@ class AdaptiveBehaviourTests(unittest.TestCase):
     def test_brief_peak_has_less_cost_than_an_hour_of_work(self):
         start = local_stamp("2026-10-12", 16)
         burst = AdaptiveRoutine()
-        burst.observe(Observation(start, 0.97, 0), 0,
-                      energy=70, sleeping=False)
-        result = burst.observe(Observation(start + 6, 0.03, 0), 6,
-                               energy=70, sleeping=False)
+        burst.observe(Observation(start, 0.97, 0), 0, energy=70, sleeping=False)
+        result = burst.observe(
+            Observation(start + 6, 0.03, 0), 6, energy=70, sleeping=False
+        )
         long_job = AdaptiveRoutine()
         for tick in range(121):
             long_job.observe(
-                Observation(start + tick * 30, 0.97, 0), tick * 30,
-                energy=70, sleeping=False,
+                Observation(start + tick * 30, 0.97, 0),
+                tick * 30,
+                energy=70,
+                sleeping=False,
             )
         self.assertLess(result.strain, 1)
         sustained_situation = long_job.current
@@ -152,8 +176,12 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         start = local_stamp("2026-10-12", 20)
         engine = AdaptiveRoutine()
         for tick in range(100):
-            engine.observe(Observation(start + tick * 30, 0.99, 0),
-                                  tick * 30, energy=80, sleeping=False)
+            engine.observe(
+                Observation(start + tick * 30, 0.99, 0),
+                tick * 30,
+                energy=80,
+                sleeping=False,
+            )
         final_situation = engine.current
         assert final_situation is not None
         self.assertFalse(final_situation.expectation_confident)
@@ -167,13 +195,16 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             # Keep the same local weekday/hour across the October DST boundary.
             target = (datetime.fromtimestamp(start) + timedelta(weeks=week)).timestamp()
             # No hidden extrapolation during one week's gap.
-            engine.observe(Observation(target, 0.88, 0), clock,
-                           energy=80, sleeping=False)
+            engine.observe(
+                Observation(target, 0.88, 0), clock, energy=80, sleeping=False
+            )
             clock += 30
             for sample in range(1, 15):
                 reading = engine.observe(
-                    Observation(target + sample * 30, 0.88, 0), clock,
-                    energy=80, sleeping=False,
+                    Observation(target + sample * 30, 0.88, 0),
+                    clock,
+                    energy=80,
+                    sleeping=False,
                 )
                 clock += 30
             clock += 300
@@ -183,52 +214,66 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertTrue(reading.expectation_confident)
         self.assertAlmostEqual(reading.expected_effort, 0.88, places=2)
 
-    def test_learned_quiet_hour_allows_short_daytime_rest(self):
+    def test_learned_low_load_is_not_a_learned_sleep_window(self):
         start = local_stamp("2026-10-12", 14)
         engine = AdaptiveRoutine()
         clock = 0
         for week in range(5):
             base = start + week * 7 * 86400
-            engine.observe(Observation(base, 0.03, 4000), clock,
-                           energy=65, sleeping=False)
+            engine.observe(
+                Observation(base, 0.03, 4000), clock, energy=65, sleeping=False
+            )
             clock += 30
             for tick in range(1, 40):
-                engine.observe(Observation(base + tick * 30, 0.03, 4000),
-                               clock, energy=65, sleeping=False)
+                engine.observe(
+                    Observation(base + tick * 30, 0.03, 4000),
+                    clock,
+                    energy=65,
+                    sleeping=False,
+                )
                 clock += 30
             clock += 500
         next_monday = start + 5 * 7 * 86400
-        engine.observe(Observation(next_monday, 0.04, 4000), clock,
-                       energy=29, sleeping=False)
+        engine.observe(
+            Observation(next_monday, 0.04, 4000), clock, energy=29, sleeping=False
+        )
         clock += 30
         for tick in range(1, 34):
             engine.observe(
-                Observation(next_monday + tick * 30, 0.04, 4000), clock,
-                energy=29, sleeping=False,
+                Observation(next_monday + tick * 30, 0.04, 4000),
+                clock,
+                energy=29,
+                sleeping=False,
             )
             clock += 30
         current = engine.current
         assert current is not None
         assert current.expected_effort is not None
         self.assertTrue(current.expectation_confident)
-        self.assertTrue(current.can_nap)
-        self.assertLess(current.expected_effort, .32)
+        self.assertEqual(engine.memory.quiet_window.phases, ())
+        self.assertLess(current.expected_effort, 0.32)
 
     def test_uptime_is_context_and_never_converted_to_strain(self):
         start = local_stamp("2026-10-12", 13)
         engine = AdaptiveRoutine()
-        reading = engine.observe(Observation(start, 0.05, 4000, uptime_hours=800),
-                                 10, energy=80, sleeping=False)
+        reading = engine.observe(
+            Observation(start, 0.05, 4000, uptime_hours=800),
+            10,
+            energy=80,
+            sleeping=False,
+        )
         self.assertEqual(reading.uptime_hours, 800)
         self.assertEqual(reading.strain, 0)
 
     def test_profile_does_not_learn_when_disabled(self):
         start = local_stamp("2026-10-12", 17)
         engine = AdaptiveRoutine()
-        engine.observe(Observation(start, 0.8, 0), 0,
-                       energy=70, sleeping=False, learn=False)
-        view = engine.observe(Observation(start + 30, 0.9, 0), 30,
-                              energy=70, sleeping=False, learn=False)
+        engine.observe(
+            Observation(start, 0.8, 0), 0, energy=70, sleeping=False, learn=False
+        )
+        view = engine.observe(
+            Observation(start + 30, 0.9, 0), 30, energy=70, sleeping=False, learn=False
+        )
         self.assertEqual(sum(engine.memory.hour_seconds), 0)
         self.assertIsNone(view.expected_effort)
         self.assertGreaterEqual(view.strain, 0)
@@ -244,21 +289,25 @@ class AdaptiveBehaviourTests(unittest.TestCase):
     def test_resume_from_suspend_never_retroactively_counts_as_work(self):
         start = local_stamp("2026-10-12", 12)
         engine = AdaptiveRoutine()
-        engine.observe(Observation(start, 0.97, 0), 0,
-                       energy=70, sleeping=False)
-        result = engine.observe(Observation(start + 36_000, 0.99, 9000), 36_000,
-                                energy=70, sleeping=False)
+        engine.observe(Observation(start, 0.97, 0), 0, energy=70, sleeping=False)
+        result = engine.observe(
+            Observation(start + 36_000, 0.99, 9000), 36_000, energy=70, sleeping=False
+        )
         self.assertEqual(result.strain, 0)
         self.assertEqual(sum(engine.memory.hour_seconds), 0)
 
     def test_restart_after_a_day_does_not_inherit_stale_exhaustion(self):
         start = local_stamp("2026-10-12", 13)
-        memory = AdaptiveMemory(strain=99, session_seconds=20_000,
-                                last_session_seconds=19_000,
-                                last_seen_wall=start - 86400)
+        memory = AdaptiveMemory(
+            strain=99,
+            session_seconds=20_000,
+            last_session_seconds=19_000,
+            last_seen_wall=start - 86400,
+        )
         engine = AdaptiveRoutine(memory)
-        view = engine.observe(Observation(start, 0.04, 5000, 800),
-                              500, energy=75, sleeping=False)
+        view = engine.observe(
+            Observation(start, 0.04, 5000, 800), 500, energy=75, sleeping=False
+        )
         self.assertLessEqual(view.strain, 35)
         self.assertEqual(view.prolonged_work_seconds, 0)
         self.assertEqual(view.rest_seconds, 0)
@@ -282,8 +331,11 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "state.json"
             store = StateStore(path)
-            old = {"version": 1, "pet": {"mood": 47, "updated_at": 123},
-                   "settings": {"x": 55, "scale": 2}}
+            old = {
+                "version": 1,
+                "pet": {"mood": 47, "updated_at": 123},
+                "settings": {"x": 55, "scale": 2},
+            }
             path.write_text(json.dumps(old), encoding="utf-8")
             session_data = store.load_session(now=123)
             pet, config = session_data.state, session_data.settings
@@ -292,7 +344,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             self.assertTrue(config.learn_rhythm)
             memory.hour_seconds[34] = 245.5
             memory.strain = 19
-            store.save(pet, config, adaptive=memory)
+            save_test_session(store, pet, config, adaptive=memory)
             session_data = store.load_session(now=123)
             pet2, config2 = session_data.state, session_data.settings
             memory2 = session_data.adaptive_memory
@@ -304,9 +356,13 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             self.assertNotIn("cpu", path.read_text())
 
     def test_nap_fields_survive_save(self):
-        state = PetState(sleeping=True, sleep_origin="nap",
-                         nap_until=1_800_000_000,
-                         auto_nap_day="2026-10-12", updated_at=42)
+        state = PetState(
+            sleeping=True,
+            sleep_origin="nap",
+            nap_until=1_800_000_000,
+            auto_nap_day="2026-10-12",
+            updated_at=42,
+        )
         restored = decode_pet_state(encode_pet_state(state), now=42)
         self.assertEqual(restored.sleep_origin, "nap")
         self.assertEqual(restored.auto_nap_day, "2026-10-12")
@@ -316,15 +372,19 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         mind = make_aiko_mind(started_at=0.0)
         base = PetState(mood=55, energy=45)
         start = local_stamp("2026-10-12", 13)
-        self.assertEqual(mind.emotion(base, 123), "calm")
+        self.assertEqual(mind.emotional_state(base).primary, EmotionalState.CALM)
         engine = AdaptiveRoutine()
         engine.memory.strain = 80
-        view = engine.observe(Observation(start, 0.98, 0), 0,
-                              energy=45, sleeping=False)
+        view = engine.observe(Observation(start, 0.98, 0), 0, energy=45, sleeping=False)
         mind.set_situation(view)
-        self.assertEqual(mind.emotion(base, 123), "tired")
+        self.assertIn(
+            SituationalCondition.FATIGUED,
+            mind.dialogue_context(
+                base, context_at(1800000000), 123
+            ).situational_conditions,
+        )
         mind.set_situation(None)
-        self.assertEqual(mind.emotion(base, 123), "calm")
+        self.assertEqual(mind.emotional_state(base).primary, EmotionalState.CALM)
 
     def test_win32_last_input_only_returns_idle_duration(self):
         def set_last_input(pointer):
@@ -338,8 +398,10 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         fake = Mock()
         fake.user32.GetLastInputInfo.side_effect = set_last_input
         fake.kernel32.GetTickCount = tick_count
-        with patch("aiko_pet.desktop.global_input.sys.platform", "win32"), \
-             patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True):
+        with (
+            patch("aiko_pet.desktop.global_input.sys.platform", "win32"),
+            patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True),
+        ):
             self.assertEqual(idle_seconds_windows(), 5.0)
 
     def test_win32_idle_wraparound_is_unsigned(self):
@@ -354,8 +416,10 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         fake = Mock()
         fake.user32.GetLastInputInfo.side_effect = set_last_input
         fake.kernel32.GetTickCount = tick_count
-        with patch("aiko_pet.desktop.global_input.sys.platform", "win32"), \
-             patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True):
+        with (
+            patch("aiko_pet.desktop.global_input.sys.platform", "win32"),
+            patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True),
+        ):
             elapsed = idle_seconds_windows()
             assert elapsed is not None
             self.assertAlmostEqual(elapsed, 1.024)

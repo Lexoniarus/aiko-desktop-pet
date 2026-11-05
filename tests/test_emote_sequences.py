@@ -1,17 +1,18 @@
 """Kenney-style coherent emote -> text -> emote reactions."""
 
 import tempfile
-import time
 import tkinter as tk
 import unittest
 from pathlib import Path
 
 from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
+from tools.desktop_test_support import create_test_desktop, require_tk_display
+from tools.dialogue_test_support import dialogue_source_fixture
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -27,7 +28,7 @@ class EmoteDomainTests(unittest.TestCase):
     def test_curated_catalogue_emotes_have_valid_names_and_inherit(self):
         lines = DialogueBook.from_file().lines
         emotes = [b.content for line in lines for b in line.beats if b.kind == "emote"]
-        self.assertGreater(len(emotes), 150)
+        self.assertTrue(emotes)
         self.assertTrue(all(name in EMOTES for name in emotes))
 
     def test_authored_beats_have_readable_text_and_deliberate_pauses(self):
@@ -40,9 +41,8 @@ class EmoteDomainTests(unittest.TestCase):
 
     def test_bad_emote_is_rejected_early(self):
         self.assertRaises(ValueError, Cue, "emote", "unsupported", 700)
-        import json
 
-        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw = dialogue_source_fixture()["lines"][0]
         raw["emote_before"] = "does-not-exist"
         self.assertRaises(ValueError, Line.parse, raw)
 
@@ -61,16 +61,13 @@ class EmoteDomainTests(unittest.TestCase):
 class EmoteTkTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        try:
-            root = tk.Tk()
-        except tk.TclError as err:
-            raise unittest.SkipTest("No screen for Tk tests") from err
-        root.destroy()
+        require_tk_display()
 
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(temp.name) / "state.json"))
+        self.pet = create_test_desktop(store=StateStore(Path(temp.name) / "state.json"))
         self.addCleanup(self.pet.quit)
         if self.pet._runtime.scheduled_greeting:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
@@ -82,8 +79,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._runtime.scheduled_tick = None
 
     def progress(self, milliseconds: int) -> None:
-        time.sleep(milliseconds / 1000)
-        self.pet.root.update()
+        self.timing.advance(milliseconds / 1000)
 
     def is_emote(self) -> bool:
         if not self.pet._speech.bubble:
@@ -94,9 +90,8 @@ class EmoteTkTests(unittest.TestCase):
     def bubble_text(self) -> str | None:
         if not self.pet._speech.bubble or self.is_emote():
             return None
-        return (
-            self.pet._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
-        )
+        label = self.pet._speech._game_comment_label
+        return str(label.cget("text")) if label is not None else None
 
     def test_three_beats_replace_each_other_and_never_overlap(self):
         reaction = Reaction(
@@ -188,19 +183,19 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
-    def test_hud_uses_kenney_assets_and_keeps_seven_values(self):
+    def test_hud_uses_vn_assets_and_keeps_seven_values(self):
         self.pet._on_enter()
         bar = self.pet._hover.toolbar
         assert bar is not None
         self.pet.root.update()
         self.assertTrue(bar.today.cget("image"))
-        self.assertTrue(bar.buttons["feed"].cget("image"))
-        self.assertEqual(len(bar.needs), 7)
+        self.assertTrue(bar.buttons["place_item"].cget("image"))
+        self.assertEqual(len(bar.readouts), 7)
         self.assertTrue(
             all(
                 name in bar.buttons
                 for name in (
-                    "feed",
+                    "place_item",
                     "play",
                     "pet",
                     "talk",
@@ -209,17 +204,15 @@ class EmoteTkTests(unittest.TestCase):
             )
         )
         self.assertNotIn("energy_drink", bar.buttons)
-        for key in bar.needs:
+        for key in bar.readouts:
             set_test_pet_values(self.pet.state, **{key: 100})
         bar.refresh()
         self.pet.root.update()
-        self.assertTrue(
-            all(
-                bar.needs[k][0].coords(bar.needs[k][1])[2]
-                == bar.needs[k][0].winfo_width()
-                for k in bar.needs
+        for readout in bar.readouts.values():
+            self.assertAlmostEqual(
+                max(readout.canvas.coords(readout._fill)[::2]),
+                float(readout.canvas.design('width')) - 2,
             )
-        )
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ from typing import Literal
 
 from ..balance import BALANCE
 
-ConsumableKind = Literal["food", "drink"]
+ConsumableKind = Literal["food", "drink", "book"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,24 +64,28 @@ class _Evidence:
             self.presented = False
         if pose is None or self.presented:
             return
-        inside = (abs(pose.x) <= BALANCE.number(
-            "object_behavior", "presentation_horizontal_widths",
+        inside = abs(pose.x) <= BALANCE.number(
+            "object_behavior",
+            "presentation_horizontal_widths",
         ) and abs(pose.y) <= BALANCE.number(
-            "object_behavior", "presentation_vertical_widths",
-        ))
+            "object_behavior",
+            "presentation_vertical_widths",
+        )
         if not inside:
             self.presentation_anchor = None
             self.presentation_seconds = 0
             return
         if self.presentation_anchor is None or math.hypot(
-            pose.x - self.presentation_anchor[0], pose.y - self.presentation_anchor[1],
+            pose.x - self.presentation_anchor[0],
+            pose.y - self.presentation_anchor[1],
         ) > BALANCE.number("object_behavior", "presentation_jitter_widths"):
             self.presentation_anchor = pose.x, pose.y
             self.presentation_seconds = 0
         else:
             self.presentation_seconds += elapsed
         self.presented = self.presentation_seconds + 1e-9 >= BALANCE.number(
-            "object_behavior", "presentation_seconds",
+            "object_behavior",
+            "presentation_seconds",
         )
 
 
@@ -95,12 +99,19 @@ class ObjectPerception:
     def notice_acquisition(self, token: str) -> None:
         """A qualified observed take is notice evidence, never identification."""
         evidence = self._evidence.setdefault(token, _Evidence())
-        evidence.notice = max(evidence.notice, BALANCE.number(
-            "object_behavior", "notice_seconds",
-        ))
+        evidence.notice = max(
+            evidence.notice,
+            BALANCE.number(
+                "object_behavior",
+                "notice_seconds",
+            ),
+        )
 
     def observe(
-        self, candidates: tuple[ObjectCandidate, ...], *, now: float,
+        self,
+        candidates: tuple[ObjectCandidate, ...],
+        *,
+        now: float,
     ) -> tuple[ObjectObservation, ...]:
         if not math.isfinite(now):
             raise ValueError("Perception requires finite time")
@@ -122,18 +133,32 @@ class ObjectPerception:
             current.recognizable = recognizable
             evidence[item.token] = current
             if current.notice + 1e-9 < BALANCE.number(
-                "object_behavior", "notice_seconds",
+                "object_behavior",
+                "notice_seconds",
             ):
                 continue
-            recognized = current.presented or recognizable and (
-                current.recognize + 1e-9 >= BALANCE.number(
-                    "object_behavior", "recognize_seconds",
+            recognized = (
+                current.presented
+                or recognizable
+                and (
+                    current.recognize + 1e-9
+                    >= BALANCE.number(
+                        "object_behavior",
+                        "recognize_seconds",
+                    )
                 )
             )
-            observations.append(ObjectObservation(
-                item.token, item.identity if recognized else None,
-                item.kind if recognized else None, item.x, item.height,
-                item.resting, now, current.presented,
-            ))
+            observations.append(
+                ObjectObservation(
+                    item.token,
+                    item.identity if recognized else None,
+                    item.kind if recognized else None,
+                    item.x,
+                    item.height,
+                    item.resting,
+                    now,
+                    current.presented,
+                )
+            )
         self._evidence = evidence
         return tuple(observations)

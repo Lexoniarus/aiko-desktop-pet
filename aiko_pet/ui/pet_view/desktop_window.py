@@ -11,8 +11,11 @@ import tkinter as tk
 from typing import Protocol
 
 from ...desktop.taskbar import locate_primary_taskbar
+from ...desktop.work_area import work_area_at
 from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH
 from ...pet.content import GERMAN_TEXT
+from ..common.skin import AikoSkin
+from ..common.window_geometry import WindowBounds
 
 MAGENTA = "#ff00ff"
 
@@ -52,6 +55,7 @@ class DesktopWindow:
         self.settings = settings
         self.root = tk.Tk()
         self.root.withdraw()
+        self.skin = AikoSkin(self.root)
         self.root.title(GERMAN_TEXT.format("ui.window_title"))
         self.root.overrideredirect(True)
         self.background = (
@@ -73,6 +77,12 @@ class DesktopWindow:
             self.root.winfo_screenheight(),
         )
         self.placed = False
+
+    def work_area_at(self, x: int, y: int) -> WindowBounds:
+        """Provide usable monitor bounds in the same coordinates as native Tk."""
+        return work_area_at(x, y, WindowBounds(
+            0, 0, self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
+        ))
 
     def initial_x(self) -> float:
         """Preserve saved location or the original 75% taskbar placement."""

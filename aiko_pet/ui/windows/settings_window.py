@@ -1,23 +1,36 @@
-"""Persistent, independently movable settings in the shared Aiko skin."""
+"""Nonmodal VN settings, immediate preferences and embedded central Credits."""
 
 from __future__ import annotations
 
 import sys
-import time
 import tkinter as tk
 from functools import partial
 from typing import Callable
 
+from ...application.horoscope_models import ZODIAC_SIGNS
 from ...application.settings import SettingKey
 from ...pet.content import GERMAN_TEXT
+from ..common import scaled_widgets as scaled
+from ..common.content_region import ContentRegion
+from ..common.image_button import ImageButton
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
 from ..view_models.contracts import SettingsSnapshot
+from ..view_models.credits import CreditsSnapshot
+from .credits_panel import CreditsPanel
 from .settings_contracts import SettingsActions
 
 
 class SettingsWindow:
-    """Own controls and window geometry, not preference values or effects."""
+    APPEARANCE: tuple[SettingKey, ...] = ("always_on_top", "auto_walk", "follow_cursor")
+    BEHAVIOUR: tuple[SettingKey, ...] = (
+        "auto_routine",
+        "spontaneous_talk",
+        "observe_computer",
+        "learn_rhythm",
+        "online_social",
+    )
+    SECTIONS = ("appearance", "behaviour", "local", "credits")
 
     def __init__(
         self,
@@ -30,11 +43,10 @@ class SettingsWindow:
         always_on_top: bool,
         skin: AikoSkin | None = None,
         position: tuple[int, int] | None = None,
+        credits_snapshot: Callable[[], CreditsSnapshot] = CreditsSnapshot,
     ) -> None:
-        self._snapshot = snapshot
-        self._actions = actions
+        self._snapshot, self._actions = snapshot, actions
         self._closed = False
-        self._last_key = float("-inf")
         self.position = position
         self.skin = skin if skin is not None else AikoSkin(root)
         self.window = tk.Toplevel(root)
@@ -46,72 +58,17 @@ class SettingsWindow:
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
         self.window.protocol("WM_DELETE_WINDOW", self.close)
-        self.window.bind("<Escape>", lambda _event: self.close())
-        self.window.bind("<Control-q>", lambda _event: actions.quit())
-        self.window.bind("<KeyPress>", self._key_pressed, add="+")
+        self.window.bind("<Escape>", lambda _e: self.close())
+        self.window.bind("<Control-q>", lambda _e: actions.quit())
         outer = self.skin.frame(self.window)
-        outer.pack(fill="both", expand=True, padx=3, pady=3)
+        outer.pack(fill="both", expand=True, padx=1, pady=1)
         self.header = self.skin.header(outer, GERMAN_TEXT.format("settings.header"))
         self.header.pack(fill="x")
         self._drag = WindowDrag(
-            self.window,
-            self.header,
-            dropped=self._remember_position,
+            self.window, self.header, dropped=self._remember_position
         )
-        body = tk.Frame(outer, bg=self.skin.background)
-        body.pack(fill="both", expand=True, padx=10, pady=5)
-        self.values: dict[SettingKey, tk.BooleanVar] = {}
-        self.checkbuttons: dict[SettingKey, tk.Checkbutton] = {}
-        self._heading(body, GERMAN_TEXT.format("settings.appearance_heading"))
-        self.scale_button = self.skin.button(
-            body,
-            "",
-            partial(self._invoke, actions.toggle_scale),
-            size="wide",
-        )
-        self.scale_button.pack(anchor="w", pady=2)
-        self._option(
-            body, "always_on_top", GERMAN_TEXT.format("settings.always_on_top")
-        )
-        self._option(body, "auto_walk", GERMAN_TEXT.format("settings.auto_walk"))
-        self._option(
-            body, "follow_cursor", GERMAN_TEXT.format("settings.follow_cursor")
-        )
-        self._heading(body, GERMAN_TEXT.format("settings.behaviour_heading"))
-        self._option(body, "auto_routine", GERMAN_TEXT.format("settings.auto_routine"))
-        self._option(
-            body, "spontaneous_talk", GERMAN_TEXT.format("settings.spontaneous_talk")
-        )
-        self._option(
-            body, "observe_computer", GERMAN_TEXT.format("settings.observe_computer")
-        )
-        self._option(body, "learn_rhythm", GERMAN_TEXT.format("settings.learn_rhythm"))
-        self._heading(body, GERMAN_TEXT.format("settings.local_heading"))
-        self.forget_button = self.skin.button(
-            body,
-            GERMAN_TEXT.format("settings.forget_rhythm"),
-            partial(self._invoke, actions.forget_rhythm),
-            size="wide",
-        )
-        self.forget_button.pack(anchor="w", pady=2)
-        positions = tk.Frame(body, bg=self.skin.background)
-        positions.pack(fill="x", pady=2)
-        self.reset_button = self.skin.button(
-            positions,
-            GERMAN_TEXT.format("settings.reset_toolbar"),
-            partial(self._invoke, actions.reset_toolbar),
-            size="wide",
-        )
-        self.reset_button.pack(side="left", padx=(0, 4))
-        self.center_button = self.skin.button(
-            positions,
-            GERMAN_TEXT.format("settings.center"),
-            partial(self._invoke, actions.center),
-            size="wide",
-        )
-        self.center_button.pack(side="left")
-        footer = tk.Frame(outer, bg=self.skin.background)
-        footer.pack(fill="x", padx=10, pady=(3, 8))
+        footer = scaled.Frame(outer, bg=self.skin.background)
+        footer.pack(side="bottom", fill="x", padx=10, pady=8)
         self.quit_button = self.skin.button(
             footer, GERMAN_TEXT.format("ui.quit"), actions.quit
         )
@@ -120,55 +77,209 @@ class SettingsWindow:
             footer, GERMAN_TEXT.format("ui.close"), self.close
         )
         self.close_button.pack(side="right")
+        body = scaled.Frame(outer, bg=self.skin.background)
+        body.pack(fill="both", expand=True, padx=10, pady=8)
+        navigation = scaled.Frame(body, bg=self.skin.background)
+        navigation.pack(side="left", fill="y", padx=(0, 12))
+        self._content = ContentRegion(
+            body,
+            self.skin,
+        )
+        self._content.frame.pack(side="right", fill="both", expand=True)
+        self._pages = {
+            section: scaled.Frame(self._content.body, bg=self.skin.background)
+            for section in self.SECTIONS
+        }
+        self.navigation: dict[str, ImageButton] = {}
+        for index, section in enumerate(self.SECTIONS):
+            key = (
+                "vn.credits" if section == "credits" else f"settings.{section}_heading"
+            )
+            button = self.skin.button(
+                navigation,
+                GERMAN_TEXT.format(key),
+                partial(self.select_section, section),
+            )
+            button.pack(pady=3)
+            for keypress, nav_index in (
+                ("Down", (index + 1) % 4),
+                ("Right", (index + 1) % 4),
+                ("Up", (index - 1) % 4),
+                ("Left", (index - 1) % 4),
+                ("Home", 0),
+                ("End", 3),
+            ):
+                button.bind(f"<{keypress}>", partial(self._navigate, nav_index))
+            self.navigation[section] = button
+        self.values: dict[SettingKey, tk.BooleanVar] = {}
+        self.checkbuttons: dict[SettingKey, tk.Checkbutton] = {}
+        self._state_labels: dict[SettingKey, tk.Label] = {}
+        self.scale_buttons: dict[int, ImageButton] = {}
+        scaled.Label(
+            self._pages["appearance"],
+            text=GERMAN_TEXT.format("settings.character_size"),
+            bg=self.skin.background,
+            fg=self.skin.text, font=(self.skin.font, 10),
+        ).pack(anchor="w")
+        scales = scaled.Frame(self._pages["appearance"], bg=self.skin.background)
+        scales.pack(fill="x", pady=6)
+        for scale in (1, 2):
+            button = self.skin.button(
+                scales, f"{scale}×", partial(self._choose_scale, scale)
+            )
+            button.pack(side="left", padx=2)
+            self.scale_buttons[scale] = button
+        scaled.Label(
+            self._pages["appearance"], text=GERMAN_TEXT.format("settings.ui_size"),
+            bg=self.skin.background,
+            fg=self.skin.text, font=(self.skin.font, 10),
+        ).pack(anchor="w", pady=(8, 3))
+        self.ui_size = tk.StringVar(master=self.window)
+        self._ui_sizes = (75, 100, 125, 150, 175, 200)
+        self.ui_size_choice = scaled.Combobox(
+            self._pages["appearance"], textvariable=self.ui_size,
+            values=tuple(f"{percent} %" for percent in self._ui_sizes),
+            state="readonly", width=12, font=(self.skin.font, 10),
+        )
+        self.ui_size_choice.pack(anchor="w", pady=(0, 8))
+        self.ui_size_choice.bind("<<ComboboxSelected>>", self._choose_ui_size)
+        for key in self.APPEARANCE:
+            self._option(self._pages["appearance"], key)
+        for key in self.BEHAVIOUR:
+            self._option(self._pages["behaviour"], key)
+        zodiac = self._pages["behaviour"]
+        scaled.Label(
+            zodiac,
+            text=GERMAN_TEXT.format("settings.zodiac_sign"),
+            bg=self.skin.background,
+            fg=self.skin.text,
+            font=(self.skin.font, 10),
+        ).pack(anchor="w", pady=(8, 3))
+        self._signs = (None, *ZODIAC_SIGNS)
+        self._sign_labels = tuple(
+            GERMAN_TEXT.format(f"social.zodiac.{s or 'none'}") for s in self._signs
+        )
+        self.zodiac_value = tk.StringVar(master=self.window)
+        self.zodiac_choice = scaled.Combobox(
+            zodiac,
+            textvariable=self.zodiac_value,
+            values=self._sign_labels,
+            state="readonly",
+            width=28,
+            font=(self.skin.font, 10),
+        )
+        self.zodiac_choice.pack(anchor="w", pady=(0, 8))
+        self.zodiac_choice.bind("<<ComboboxSelected>>", self._choose_zodiac)
+        scaled.Label(
+            zodiac,
+            text=GERMAN_TEXT.format("settings.horoscope_note"),
+            bg=self.skin.background,
+            fg=self.skin.muted,
+            wraplength=340,
+            justify="left",
+            font=(self.skin.font, 8),
+        ).pack(anchor="w", pady=(0, 8))
+        local = self._pages["local"]
+        self.forget_button = self.skin.button(
+            local,
+            GERMAN_TEXT.format("settings.forget_rhythm"),
+            partial(self._invoke, actions.forget_rhythm),
+            size="wide",
+        )
+        self.forget_button.pack(anchor="w", pady=5)
+        self.reset_button = self.skin.button(
+            local,
+            GERMAN_TEXT.format("settings.reset_toolbar"),
+            partial(self._invoke, actions.reset_toolbar),
+            size="wide",
+        )
+        self.reset_button.pack(anchor="w", pady=5)
+        self.center_button = self.skin.button(
+            local,
+            GERMAN_TEXT.format("settings.center"),
+            partial(self._invoke, actions.center),
+            size="wide",
+        )
+        self.center_button.pack(anchor="w", pady=5)
+        self.credits = CreditsPanel(self._pages["credits"], self.skin, credits_snapshot)
+        self.credits.frame.pack(fill="both", expand=True)
+        self._section = "appearance"
+        self.select_section("appearance")
         self.refresh()
         self.window.update_idletasks()
-        width = self.window.winfo_reqwidth()
-        height = self.window.winfo_reqheight()
+        width, height = self.window.winfo_reqwidth(), self.window.winfo_reqheight()
         target = position if position is not None else (x - width, y)
         self.position = bounded_position(
-            *target,
-            width,
-            height,
-            root.winfo_screenwidth(),
-            root.winfo_screenheight(),
+            *target, width, height, root.winfo_screenwidth(), root.winfo_screenheight()
         )
         self.window.geometry(f"+{self.position[0]}+{self.position[1]}")
         self.window.deiconify()
 
-    def _heading(self, parent: tk.Widget, text: str) -> None:
-        tk.Label(
-            parent,
-            text=text,
-            bg=self.skin.background,
-            fg=self.skin.muted,
-            font=(self.skin.font, 9, "bold"),
-            anchor="w",
-        ).pack(fill="x", pady=(7, 2))
+    def select_section(self, section: str) -> None:
+        if section not in self._pages or self._closed:
+            return
+        self._section = section
+        for key, page in self._pages.items():
+            if key == section:
+                page.pack(fill="both", expand=True)
+            else:
+                page.pack_forget()
+            self.navigation[key].set_selected(key == section)
+        self.refresh_credits()
 
-    def _option(self, parent: tk.Widget, key: SettingKey, text: str) -> None:
+    def _navigate(self, index: int, _event: tk.Event) -> str:
+        section = self.SECTIONS[index]
+        self.select_section(section)
+        self.navigation[section].focus_set()
+        return "break"
+
+    def _option(self, parent: tk.Misc, key: SettingKey) -> None:
+        row = scaled.Frame(parent, bg=self.skin.background)
+        row.pack(fill="x", pady=5)
         variable = tk.BooleanVar(master=self.window)
         self.values[key] = variable
-        button = tk.Checkbutton(
-            parent,
-            text=text,
+        self._state_labels[key] = scaled.Label(
+            row,
+            bg=self.skin.background,
+            fg=self.skin.muted,
+            font=(self.skin.font, 9),
+            width=4,
+        )
+        self._state_labels[key].pack(side="right")
+        button = scaled.Checkbutton(
+            row,
+            text=GERMAN_TEXT.format(f"settings.{key}"),
             variable=variable,
             command=partial(self._apply_setting, key, variable),
             bg=self.skin.background,
             fg=self.skin.text,
             activebackground=self.skin.panel,
-            activeforeground=self.skin.text,
             selectcolor=self.skin.panel,
-            font=(self.skin.font, 9),
+            font=(self.skin.font, 10),
             anchor="w",
             bd=0,
-            highlightthickness=1,
-            pady=3,
+            highlightthickness=2,
             highlightbackground=self.skin.background,
             highlightcolor=self.skin.accent,
-            cursor="hand2",
+            wraplength=390,
+            justify="left",
+            takefocus=True,
         )
-        button.pack(fill="x")
+        button.pack(side="left", fill="x", expand=True)
         self.checkbuttons[key] = button
+
+    def _choose_zodiac(self, _event: tk.Event) -> None:
+        index = self._sign_labels.index(self.zodiac_value.get())
+        self._actions.set_zodiac(self._signs[index])
+        self.refresh()
+
+    def _choose_ui_size(self, _event: tk.Event) -> None:
+        self._actions.set_ui_scale(self._ui_sizes[self.ui_size_choice.current()])
+        self.refresh()
+
+    def _choose_scale(self, scale: int) -> None:
+        if self._snapshot().scale != scale:
+            self._invoke(self._actions.toggle_scale)
 
     def _apply_setting(self, name: SettingKey, variable: tk.BooleanVar) -> None:
         self._actions.set_option(name, variable.get())
@@ -178,27 +289,31 @@ class SettingsWindow:
         command()
         self.refresh()
 
+    def refresh_credits(self) -> None:
+        if not self._closed and self._section == "credits":
+            self.credits.refresh()
+
     def refresh(self) -> None:
-        """Reflect authoritative preferences without firing commands."""
         if self._closed:
             return
         view = self._snapshot()
+        self.ui_size.set(f"{view.ui_scale_percent} %")
+        self.zodiac_value.set(self._sign_labels[self._signs.index(view.zodiac_sign)])
         for key, variable in self.values.items():
             value = view.value(key)
             if variable.get() != value:
                 variable.set(value)
-        self.scale_button.configure(
-            text=GERMAN_TEXT.format(
-                "settings.scale",
-                scale=str(view.scale),
+            self._state_labels[key].configure(
+                text=GERMAN_TEXT.format(
+                    "vn.settings.on" if value else "vn.settings.off"
+                )
             )
-        )
+        for scale, button in self.scale_buttons.items():
+            button.set_selected(view.scale == scale)
+        self.refresh_credits()
 
     def _remember_position(self, x: int, y: int) -> None:
         self.position = (x, y)
-
-    def _key_pressed(self, _event: tk.Event) -> None:
-        self._last_key = time.monotonic()
 
     @property
     def dragging(self) -> bool:
@@ -211,11 +326,6 @@ class SettingsWindow:
         return (
             x <= px < x + self.window.winfo_width()
             and y <= py < y + self.window.winfo_height()
-        )
-
-    def interacting(self, px: int, py: int, now: float) -> bool:
-        return not self._closed and (
-            self.dragging or self.contains_pointer(px, py) or now - self._last_key < 2.0
         )
 
     def focus(self) -> None:

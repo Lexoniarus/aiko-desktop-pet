@@ -29,6 +29,7 @@ class DesktopLifecycle:
         hover: HoverUi, reaction: ReactionPlayer,
         speech: SpeechPresenter, place_initially: Callable[[], None],
         save: Callable[[], None], stop_animation: Callable[[], None],
+        stop_social: Callable[[], None] = lambda: None,
     ) -> None:
         self._root = root
         self._inputs = inputs
@@ -42,6 +43,7 @@ class DesktopLifecycle:
         self._place_initially = place_initially
         self._save = save
         self._stop_animation = stop_animation
+        self._stop_social = stop_social
         self._started = False
         self._stopped = False
 
@@ -62,6 +64,7 @@ class DesktopLifecycle:
         """Quiesce input and ambient effects while keeping the sprite alive."""
         if self._stopped:
             return
+        self._stop_social()
         self._runtime.stop()
         self._inputs.stop()
         self._reaction.cancel()
@@ -74,6 +77,7 @@ class DesktopLifecycle:
         if self._stopped:
             return
         self._stopped = True
+        self._stop_social()
         self._runtime.stop()
         self._inputs.stop()
         # Finish any game while its reward router remains open, before saving.

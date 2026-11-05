@@ -35,9 +35,9 @@ in the GitHub UI; a README edit alone does not populate them.
 
 Do not commit local `.env` settings, tokens, activity traces, save files, logs, private data, font binaries or built installers. `.gitignore` provides baseline exclusions but cannot replace review of the staged diff.
 
-Only `AIKO_SAVE_PATH` is currently recognized by `.env.example`; no API credentials or cloud configuration are needed. The default local save file lives at `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
+Only `AIKO_SAVE_PATH` is currently recognized by `.env.example`; no API credentials or cloud configuration are needed. The default local save file lives at `%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3`.
 
-Do not modify the user's existing save as part of a test or cleanup. Tests should use temporary paths. Maintain the current version-one JSON format unless a migration has been explicitly designed.
+Do not modify the user's existing save as part of a test or cleanup. Tests should use temporary paths. Personal progress uses SQLite schema v1; retain strict supported legacy JSON import. Commit schema/migration sources and synthetic tests, never databases, sidecars or private backups.
 
 ## Contracts
 

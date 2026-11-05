@@ -17,3 +17,5 @@ class SettingsActions:
     center: Callable[[], None]
     quit: Callable[[], None]
     closed: Callable[[], None]
+    set_ui_scale: Callable[[int], None] = lambda _percent: None
+    set_zodiac: Callable[[str | None], None] = lambda _sign: None

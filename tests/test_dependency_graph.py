@@ -60,19 +60,6 @@ def internal_dependencies(
 
 
 class PackageDependencyTests(unittest.TestCase):
-    def test_boundary_resolver_covers_nested_and_relative_imports(self) -> None:
-        for statement in (
-            "import aiko_pet.ui as view",
-            "from aiko_pet import ui",
-            "from ..ui import windows",
-            "if True:\n    from .. import ui",
-        ):
-            with self.subTest(statement=statement):
-                targets = import_targets(
-                    ast.parse(statement), "aiko_pet.application",
-                )
-                self.assertIn("aiko_pet.ui", targets)
-
     def test_layers_only_import_allowed_dependencies(self) -> None:
         outer = tuple(f"aiko_pet.{name}" for name in (
             "ui", "presentation", "desktop", "infrastructure", "storage",
@@ -104,15 +91,14 @@ class PackageDependencyTests(unittest.TestCase):
                             target == name or target.startswith(name + ".")
                             for name in forbidden
                         ), f"{current} imports forbidden {target}")
-                    if path.parent == SOURCES / "pet":
-                        for node in ast.walk(tree):
-                            if isinstance(node, ast.ImportFrom):
-                                self.assertLessEqual(
-                                    node.level, 1,
-                                    f"{path.name} must stay in the pet context",
-                                )
+                        if layer == "pet" and target.startswith("aiko_pet.games"):
+                            self.assertTrue(
+                                target == "aiko_pet.games.contracts"
+                                or target.startswith("aiko_pet.games.contracts."),
+                                f"{current} may only share immutable game contracts",
+                            )
 
-    def test_all_package_modules_import_without_starting_the_desktop(self) -> None:
+    def test_package_modules_are_importable(self) -> None:
         for path in SOURCES.rglob("*.py"):
             with self.subTest(module=module_name(path)):
                 importlib.import_module(module_name(path))

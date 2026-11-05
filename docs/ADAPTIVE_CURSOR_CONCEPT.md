@@ -1,10 +1,29 @@
 # Adaptive cursor perception and interaction concept
 
-> **Preserved product concept, not implemented behavior.** Recorded on
+> **Latest agreed direction, 2026-10-27:**
+> [staged attention and warning plan](CURSOR_ATTENTION_STAGES_PLAN.md).
+> Movement builds transient attention; calm reduces it. Feeling qualification
+> follows situational assessment, and a displayed warning precedes new fear.
+> This revision is implemented in the nine planned steps; practical user
+> acceptance is pending. Historical implemented status below applies to the
+> preceding revision only.
+
+> **Current product decision, 2026-10-27:** the
+> [revised behavior and module plan](ADAPTIVE_CURSOR_REWORK_PLAN.md) supersedes
+> conflicting historical assumptions below. Frontal full-direction gaze is the
+> normal posture; body turns express selected intent. Curiosity/fear receive
+> short Moodlets, and reliable pointer access to controls takes precedence over
+> the earlier idea of intentionally making Aiko harder to click. This is a
+> implemented revision with practical visual acceptance still pending.
+
+> **Preserved product concept; implementation covers a subset.** Recorded on
 > 2026-10-19 from the owner's German conceptual draft v1.0 dated 2026-10-15.
 > Current-owner notes were checked against `fd8414a` (main after PR #10).
 > Recording the concept does not enable cursor flight, approach or touch,
-> select the next feature or approve final tuning values.
+> select the next feature or approve final tuning values. The implemented
+> observation, bounded approach/retreat and small Idle steps are recorded in the
+> [implementation ledger](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md); continuous
+> following and autonomous touch remain future work.
 
 This preserves the substance of **“Gesamtkonzept – Aikos adaptive
 Mauswahrnehmung und -interaktion”** in English technical-document form.
@@ -12,6 +31,7 @@ The product intent is retained while older paths, illustrative scales and
 integration assumptions are identified explicitly.
 
 Related references: [current architecture](ARCHITECTURE.md),
+[module ownership and commit plan, 2026-10-27](ADAPTIVE_CURSOR_IMPLEMENTATION_PLAN.md),
 [UI window contract](UI_WINDOW_CONTRACT.md),
 [World behavior](WORLD_OBJECT_CONTRACTS.md),
 [fun and mood](FUN_MOOD_SYSTEM.md) and

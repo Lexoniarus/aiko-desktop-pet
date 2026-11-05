@@ -16,6 +16,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.ui.view_models.food_models import food_choices
 from aiko_pet.ui.world_view import WorldView
+from tools.desktop_test_support import destroy_test_root
 
 
 class FoodRenderingTests(unittest.TestCase):
@@ -24,7 +25,7 @@ class FoodRenderingTests(unittest.TestCase):
             self.root = tk.Tk()
         except tk.TclError as error:
             self.skipTest(str(error))
-        self.addCleanup(self.root.destroy)
+        self.addCleanup(destroy_test_root, self.root)
         self.root.withdraw()
         self.canvas = tk.Canvas(self.root, width=192, height=208)
         self.settings = PetSettings(x=0, y=0)
@@ -45,6 +46,41 @@ class FoodRenderingTests(unittest.TestCase):
         self.addCleanup(self.anim.close)
         self.view = WorldView(self.root, self.items)
         self.addCleanup(self.view.close)
+
+    def test_closed_book_visible_center_matches_open_book_at_both_scales(self):
+        overlay = self.anim.food_overlay
+        overlay.select("horoscope_book")
+        book = self.items.readables["horoscope_book"]
+        for scale in (1, 2):
+            centers = {}
+            for state in ("carry_closed", "half_open", "open_reading"):
+                image = overlay._book_images[("horoscope_book", state, scale)]
+                columns = [x for x in range(image.width())
+                           if any(not image.transparency_get(x, y)
+                                  for y in range(image.height()))]
+                centers[state] = (min(columns) + max(columns) + 1) / 2
+            for name in ("pick_up", "put_down"):
+                clip = self.anim.assets.clips[name]
+                for frame in clip.frames:
+                    if frame.food_anchor is None:
+                        continue
+                    visible_centers = {}
+                    for state in centers:
+                        overlay.readable_state = state
+                        overlay.render(clip, frame, scale=scale)
+                        left, top = self.canvas.coords(overlay.item)
+                        visible_centers[state] = left + centers[state]
+                        if state != "carry_closed":
+                            sprite = book.states[state][scale]
+                            x = (96 - clip.anchor[0] + frame.food_anchor[0]) * scale
+                            y = (FOOT_BASELINE - clip.anchor[1]
+                                 + frame.food_anchor[1] + 12) * scale
+                            self.assertEqual((left, top), (
+                                round(x - sprite.pivot[0]),
+                                round(y - sprite.pivot[1]),
+                            ))
+                    self.assertAlmostEqual(visible_centers["carry_closed"],
+                                           visible_centers["open_reading"], delta=1)
 
     def test_png_assets_are_64_pixels_and_have_alpha(self) -> None:
         choices = food_choices(self.items)
@@ -107,11 +143,10 @@ class FoodRenderingTests(unittest.TestCase):
             )
             self.assertIsNotNone(self.anim._frame_timer)
 
-    def test_hand_overlay_uses_the_eight_authored_frame_anchors(self) -> None:
+    def test_hand_overlay_follows_all_canonical_meal_frames_until_bite_three(self):
         animated = self.anim
-        clip = animated.assets.clips["eat"]
-        self.assertEqual(len(clip.frames), 8)
-        self.assertTrue(all(frame.food_anchor is not None for frame in clip.frames))
+        clip = animated.assets.clip_for("eat", self.settings.scale)
+        self.assertEqual(len(clip.frames), 85)
         animated.set_food_overlay("sandwich")
         animated.begin_action("eat", time.monotonic())
         overlay = animated.food_overlay
@@ -121,8 +156,7 @@ class FoodRenderingTests(unittest.TestCase):
             animated.show_frame("eat", time.monotonic(), fixed=index)
             positions.append(tuple(self.canvas.coords(overlay.item)))
             self.assertEqual(self.canvas.itemcget(overlay.item, "state"),
-                             "normal")
-            self.assertIsNotNone(frame.food_anchor)
+                             "normal" if frame.food_anchor is not None else "hidden")
         self.assertGreater(len(set(positions)), 2)
         animated.show_frame("idle", time.monotonic(), fixed=0)
         self.assertEqual(self.canvas.itemcget(overlay.item, "state"), "hidden")
