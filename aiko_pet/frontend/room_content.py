@@ -171,11 +171,31 @@ class RoomContent:
 
     def select(self, category: str) -> None:
         if category == "horoscope":
-            if self.horoscope.availability() not in ("ready", "resume", "replay"):
+            existing = next(
+                (
+                    item
+                    for item in self.session.room.world.snapshot().objects
+                    if item.definition_id == "horoscope_book"
+                    and item.state not in (ObjectState.CONSUMED, ObjectState.REMOVED)
+                ),
+                None,
+            )
+            if self.horoscope.availability(
+                existing.instance_id if existing else None
+            ) not in ("ready", "resume", "replay"):
                 raise ValueError(
                     "Bitte wähle dein Sternzeichen oder benutze das vorhandene Buch."
                 )
-            self.session.room.offer("horoscope_book")
+            if existing is None:
+                self.session.room.offer("horoscope_book")
+            elif existing.state == ObjectState.RESTING:
+                self.session.room.offer_existing(
+                    existing.instance_id, existing.revision
+                )
+            else:
+                raise ValueError(
+                    "Aiko beschäftigt sich gerade mit dem vorhandenen Buch."
+                )
         else:
             self.runtime.select(SocialCategory(category))
 

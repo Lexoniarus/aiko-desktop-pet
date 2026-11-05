@@ -715,6 +715,23 @@ class ObjectInteractionCoordinator:
             self._stop()
         action()
 
+    def suspend(self) -> None:
+        """Settle custody when the host stops; never synthesize playback receipts."""
+        self.interrupt(lambda: None)
+        token, record = self.instance_id, self.memory_id
+        if token is not None and record is not None:
+            item = self.world.get(token)
+            if item.state == ObjectState.PET_HELD:
+                self._custody.put_down(
+                    token, self._ground_x(token), memory_id=record,
+                    expected_revision=item.revision, now=self._now(), deferred=False,
+                )
+                if self._episode.kind == "book":
+                    self.book_put_down(token)
+        self._finish(False)
+        self._cancel_feedback()
+        self._stop()
+
     def receive(self, event: PlaybackEvent) -> None:
         state = self._phase
         if (

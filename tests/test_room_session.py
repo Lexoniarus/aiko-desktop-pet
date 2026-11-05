@@ -3,6 +3,7 @@
 import json
 import tempfile
 import unittest
+from collections.abc import Callable
 from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +37,19 @@ class RoomSessionTests(unittest.TestCase):
         )
         self.assertTrue(result["ok"], result.get("error"))
         return result
+
+    def advance_until(self, complete: Callable[[], bool]) -> None:
+        shown = -1
+        for _ in range(180):
+            self.wall += 0.25
+            reply = self.command("tick")["snapshot"]
+            speech = reply["speech"]
+            if speech["text"] and speech["id"] != shown:
+                shown = speech["id"]
+                self.command("speech_ack", id=shown)
+            if complete():
+                return
+        self.fail("Room interaction did not reach its semantic boundary")
 
     def test_accepted_call_moves_the_world_and_persists_across_reopen(self) -> None:
         before = self.endpoint.session.room.position
@@ -133,25 +147,41 @@ class RoomSessionTests(unittest.TestCase):
         session.state.restore_checkpoint(
             replace(session.state.capture_checkpoint(), satiety=30)
         )
+        self.command("call", x=4780, depth=0.28)
         self.command("offer", definition="onigiri")
-        shown = -1
-        for _ in range(180):
-            self.wall += 0.25
-            reply = self.command("tick")["snapshot"]
-            speech = reply["speech"]
-            if speech["text"] and speech["id"] != shown:
-                shown = speech["id"]
-                self.command("speech_ack", id=shown)
-            if any(
+        self.advance_until(
+            lambda: any(
                 item.state.value == "consumed"
                 for item in session.room.world.snapshot().objects
-            ):
-                break
+            )
+        )
         self.assertGreater(session.state.satiety, 30)
         self.assertEqual(
             sum(
                 item.state.value == "consumed"
                 for item in session.room.world.snapshot().objects
             ),
+            1,
+        )
+
+    def test_offered_book_starts_local_reading_and_reuses_its_identity(self) -> None:
+        self.command("settings", zodiac_sign="leo", auto_routine=False)
+        self.command("call", x=4780, depth=0.28)
+        self.command("horoscope")
+        session = self.endpoint.session
+        self.advance_until(lambda: session.playback.snapshot().story)
+        self.assertIsNotNone(session.content)
+        assert session.content is not None
+        day = session.content.horoscope.today()
+        self.assertIsNotNone(day)
+        self.command("suspend")
+        self.command("resume")
+        self.command("horoscope")
+        self.assertEqual(
+            len([
+                item
+                for item in session.room.world.snapshot().objects
+                if item.definition_id == "horoscope_book"
+            ]),
             1,
         )

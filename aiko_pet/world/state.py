@@ -316,7 +316,7 @@ class WorldState:
     def put_down(
         self, instance_id: str, x: float, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
-        """Return an acquired item at the confirmed reverse-animation event."""
+        """Return an acquired item after a confirmed detach or host suspension."""
         item = self._expect(instance_id, expected_revision, ObjectState.PET_HELD)
         position = WorldPosition(x, 0)
         self._validate_position(position, item.footprint)

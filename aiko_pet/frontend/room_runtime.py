@@ -227,6 +227,7 @@ class RoomRuntime:
     def offer(self, definition: str) -> None:
         if self._offered is not None or self.game_open() or self.state.sleeping:
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
+        self.pause_route()
         x = self.world.snapshot().surface.ground_x(
             self.position.x, ObjectFootprint(24, 24)
         )
@@ -238,6 +239,7 @@ class RoomRuntime:
     def offer_existing(self, instance: str, revision: int) -> None:
         if self._offered is not None or self.game_open() or self.state.sleeping:
             raise ValueError("Aiko kann gerade nichts entgegennehmen.")
+        self.pause_route()
         item = self.world.take_resting(instance, expected_revision=revision)
         x = self.world.snapshot().surface.ground_x(self.position.x, item.footprint)
         item = self.world.move_held(
@@ -333,8 +335,11 @@ class RoomRuntime:
                 destination = None
         if not self.interaction.active and not self.playback.player.active:
             destination = self._called or destination
-            if (destination is None and self.wandering()
-                    and self.now >= self._next_wander):
+            if (
+                destination is None
+                and self.wandering()
+                and self.now >= self._next_wander
+            ):
                 self._wander = self.mind.rng.choice(RoomGeometry.anchors).position
                 self._next_wander = self.now + self.mind.rng.uniform(20, 55)
             destination = destination or (
@@ -342,6 +347,7 @@ class RoomRuntime:
             )
         if (
             destination is None
+            or self._offered is not None
             or self.game_open()
             or self.state.sleeping
             or self.state.energy < 15
@@ -357,6 +363,14 @@ class RoomRuntime:
             self._called = self._wander = None
 
     def suspend(self) -> None:
-        self.interaction.interrupt(lambda: None)
+        self.interaction.suspend()
+        if self._offered is not None:
+            item = self.world.get(self._offered[0])
+            if item.state == ObjectState.USER_HELD:
+                item = self.world.release(
+                    item.instance_id, expected_revision=item.revision
+                )
+                self.world.land(item.instance_id, expected_revision=item.revision)
+            self._offered = None
         self._called = self._wander = None
         self.moving = False
