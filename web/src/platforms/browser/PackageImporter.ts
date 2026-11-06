@@ -9,7 +9,7 @@ import type { InstalledPackage } from './PackageStore';
 
 export interface PackageManifest {
   format: 1;
-  protocol: 1;
+  protocol: 1 | 2;
   saveSchema: number;
   version: string;
   entry: string;
@@ -35,8 +35,7 @@ export function validateManifest(input: unknown): PackageManifest {
   if (
     !m ||
     m.format !== 1 ||
-    m.protocol !== 1 ||
-    m.saveSchema !== 6 ||
+    !((m.protocol === 1 && m.saveSchema === 6) || (m.protocol === 2 && m.saveSchema === 7)) ||
     typeof m.version !== 'string' ||
     !/^[\w.-]{1,80}$/.test(m.version) ||
     typeof m.entry !== 'string' ||
@@ -211,6 +210,8 @@ export async function importPackage(
         id,
         version: manifest.version,
         entry: manifest.entry,
+        protocol: manifest.protocol,
+        saveSchema: manifest.saveSchema,
         installedAt: Date.now(),
       };
       // Storage persistence is a best-effort browser capability. Commit the

@@ -269,6 +269,7 @@ def main() -> None:
         if path.suffix in (".txt", ".md"):
             files["licenses/" + path.name] = path.read_bytes()
     for dependency in (
+        "gl-matrix",
         "pixi.js",
         "pixi-viewport",
         "fflate",

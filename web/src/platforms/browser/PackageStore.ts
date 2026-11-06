@@ -3,6 +3,8 @@ export interface InstalledPackage {
   version: string;
   entry: string;
   installedAt: number;
+  protocol?: 1 | 2;
+  saveSchema?: number;
 }
 
 const databaseName = 'aiko-room-packages';
@@ -51,6 +53,9 @@ export async function stagePackage(value: InstalledPackage): Promise<void> {
 }
 
 export async function activatePackage(value: InstalledPackage): Promise<void> {
+  const current = await activePackage();
+  if ((value.saveSchema ?? 6) < (current?.saveSchema ?? 6))
+    throw new Error('Diese ältere Version unterstützt den aktualisierten Spielstand nicht.');
   const db = await packageDatabase();
   try {
     await new Promise<void>((resolve, reject) => {
