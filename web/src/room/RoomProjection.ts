@@ -9,7 +9,10 @@ export class RoomProjection {
   width = 1;
   height = 1;
   private yaw = 0;
-  constructor(readonly layout: RoomLayout) {}
+  readonly layout: RoomLayout;
+  constructor(layout: RoomLayout) {
+    this.layout = layout;
+  }
   get fit(): number {
     return this.height / this.designHeight;
   }
