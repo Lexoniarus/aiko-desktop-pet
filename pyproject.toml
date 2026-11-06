@@ -21,3 +21,8 @@ extend-ignore-names = [
     "GetSystemTimes",
     "GlobalMemoryStatusEx",
 ]
+
+# The small navigation dependency ships no typing metadata.
+[[tool.mypy.overrides]]
+module = ["pathfinding.*"]
+ignore_missing_imports = true

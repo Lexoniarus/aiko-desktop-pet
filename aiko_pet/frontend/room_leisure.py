@@ -12,7 +12,9 @@ from .room_locomotion import RoomLocomotion
 
 
 class RoomLeisure:
-    def __init__(self, rng: random.Random, geometry: RoomGeometry, *, rest_cycle: float) -> None:
+    def __init__(
+        self, rng: random.Random, geometry: RoomGeometry, *, rest_cycle: float
+    ) -> None:
         self.geometry = geometry
         self.rng, self.rest_cycle = rng, rest_cycle
         self.director = AmbientDirector(

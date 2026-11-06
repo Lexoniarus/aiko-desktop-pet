@@ -6,6 +6,7 @@ import math
 from dataclasses import replace
 
 from ..infrastructure.world_motion import motion_parameters
+from ..pet.balance import BALANCE
 from ..pet.mind.object_attention import ObjectAttention
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..world.contracts import ObjectState, WorldObjectSnapshot
@@ -27,8 +28,11 @@ class RoomEnvironment:
 
     def object_point(self, instance: str) -> RoomPoint | None:
         item, room = self.world.get(instance), self.world.snapshot().room
-        return (RoomPoint(item.position.x, room.depth_for(instance))
-                if item.position is not None and room is not None else None)
+        return (
+            RoomPoint(item.position.x, room.depth_for(instance))
+            if item.position is not None and room is not None
+            else None
+        )
 
     def distance_to_place(self, known: ObjectKnowledge) -> float:
         return self.geometry.distance(self.position, RoomPoint(known.x, known.depth))
@@ -37,18 +41,27 @@ class RoomEnvironment:
         point = self.object_point(instance)
         return self.geometry.distance(self.position, point) if point else math.inf
 
-    def _sees(self, point: RoomPoint, height: float, attention: ObjectAttention) -> bool:
+    def _sees(
+        self, point: RoomPoint, height: float, attention: ObjectAttention
+    ) -> bool:
         origin = self.position
         dx, dz = point.x - origin.x, point.depth - origin.depth
         distance = math.hypot(dx, dz)
-        if attention.mode == "unavailable" or distance > 400:
+        if (
+            attention.mode == "unavailable"
+            or distance
+            > attention.width * BALANCE.number("object_behavior", "notice_widths")
+        ):
             return False
         heading = self.heading
         if attention.mode == "survey" and attention.direction is not None:
             side = attention.direction[0]
             if abs(side) >= 0.9:
                 heading = math.pi / 2 if side > 0 else -math.pi / 2
-        if distance > 100 and dx * math.sin(heading) - dz * math.cos(heading) < 0:
+        if (
+            distance > attention.width
+            and dx * math.sin(heading) - dz * math.cos(heading) < 0
+        ):
             return False
         for item in self.geometry.layout.furniture:
             if not item.blocking:
@@ -57,8 +70,12 @@ class RoomEnvironment:
             for i in range(1, count):
                 fraction = i / count
                 ray_height = 65 + (height - 65) * fraction
-                if (item.contains(origin.x + dx * fraction, origin.depth + dz * fraction)
-                        and item.elevation <= ray_height <= item.elevation + item.height):
+                if (
+                    item.contains(
+                        origin.x + dx * fraction, origin.depth + dz * fraction
+                    )
+                    and item.elevation <= ray_height <= item.elevation + item.height
+                ):
                     return False
         return True
 
@@ -67,8 +84,11 @@ class RoomEnvironment:
         if item.state == ObjectState.PET_HELD:
             return True
         point = self.object_point(instance)
-        return bool(point is not None and item.position is not None
-                    and self._sees(point, item.position.height, attention))
+        return bool(
+            point is not None
+            and item.position is not None
+            and self._sees(point, item.position.height, attention)
+        )
 
     def sees_place(self, known: ObjectKnowledge, attention: ObjectAttention) -> bool:
         return self._sees(RoomPoint(known.x, known.depth), known.height, attention)
@@ -87,18 +107,20 @@ class RoomEnvironment:
         layout = self.geometry.layout
         radius = max(item.footprint.left, item.footprint.right)
         left, right = self.world.snapshot().surface.ground_interval(item.footprint)
-        blocked = [(entry.x-entry.width/2-radius, entry.x+entry.width/2+radius)
-                   for entry in layout.furniture if entry.blocking
-                   and abs(point.depth-entry.z) <= entry.depth/2+radius]
-        dz = point.depth-layout.depth/2
-        if abs(dz) < layout.camera_clearance+radius:
-            half = math.sqrt((layout.camera_clearance+radius)**2-dz**2)
-            blocked.append((layout.width/2-half, layout.width/2+half))
+        blocked = [
+            (entry.x - entry.width / 2 - radius, entry.x + entry.width / 2 + radius)
+            for entry in layout.furniture
+            if entry.blocking and abs(point.depth - entry.z) <= entry.depth / 2 + radius
+        ]
+        dz = point.depth - layout.depth / 2
+        if abs(dz) < layout.camera_clearance + radius:
+            half = math.sqrt((layout.camera_clearance + radius) ** 2 - dz**2)
+            blocked.append((layout.width / 2 - half, layout.width / 2 + half))
         for lower, upper in blocked:
             if point.x < lower:
-                right = min(right, lower-0.01)
+                right = min(right, lower - 0.01)
             elif point.x > upper:
-                left = max(left, upper+0.01)
+                left = max(left, upper + 0.01)
             else:
                 return point.x, point.x
         return left, right
@@ -106,7 +128,10 @@ class RoomEnvironment:
     @staticmethod
     def motion_parameters() -> MotionParameters:
         native = motion_parameters()
-        return replace(native, gravity=native.gravity / 4,
-                       minimum_bounce_speed=native.minimum_bounce_speed / 4,
-                       settling_speed=native.settling_speed / 4,
-                       inward_factor=native.inward_factor)
+        return replace(
+            native,
+            gravity=native.gravity / 4,
+            minimum_bounce_speed=native.minimum_bounce_speed / 4,
+            settling_speed=native.settling_speed / 4,
+            inward_factor=native.inward_factor,
+        )

@@ -29,6 +29,12 @@ class FurniturePlacement:
 
 
 @dataclass(frozen=True, slots=True)
+class RoomWall:
+    id: str
+    asset: str
+
+
+@dataclass(frozen=True, slots=True)
 class RoomLayout:
     id: str
     revision: int
@@ -41,9 +47,13 @@ class RoomLayout:
     camera_height: float
     camera_clearance: float
     furniture: tuple[FurniturePlacement, ...]
+    walls: tuple[RoomWall, ...]
 
     def wall_to_floor(
-        self, wall: str, along: float, distance: float = 0,
+        self,
+        wall: str,
+        along: float,
+        distance: float = 0,
     ) -> tuple[float, float]:
         if wall == "north":
             return along, distance
@@ -70,10 +80,12 @@ class RoomLayout:
         item = next(item for item in self.furniture if item.id == key)
         margin = self.pet_radius + self.cell_size
         return tuple(
-            (x, z) for x, z in (
+            (x, z)
+            for x, z in (
                 (item.x, item.z + item.depth / 2 + margin),
                 (item.x, item.z - item.depth / 2 - margin),
                 (item.x + item.width / 2 + margin, item.z),
                 (item.x - item.width / 2 - margin, item.z),
-            ) if self.can_place(x, z, self.pet_radius)
+            )
+            if self.can_place(x, z, self.pet_radius)
         )

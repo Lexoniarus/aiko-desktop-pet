@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from ..world.room import RoomPoint
@@ -46,8 +47,10 @@ class RoomMovement:
                 self.index += 1
             else:
                 fraction = budget / distance
-                point = RoomPoint(point.x + (target.x - point.x) * fraction,
-                                  point.depth + (target.depth - point.depth) * fraction)
+                point = RoomPoint(
+                    point.x + (target.x - point.x) * fraction,
+                    point.depth + (target.depth - point.depth) * fraction,
+                )
                 budget = 0
             travelled.append(point)
         self.travelled = tuple(travelled)
@@ -56,6 +59,12 @@ class RoomMovement:
     @property
     def next_point(self) -> RoomPoint | None:
         return self.points[self.index] if self.index < len(self.points) else None
+
+    def heading(self, point: RoomPoint, fallback: float) -> float:
+        target = self.next_point
+        if target is None or target == point:
+            return fallback
+        return math.atan2(target.x - point.x, point.depth - target.depth)
 
     def cancel(self) -> None:
         self.goal = None

@@ -257,7 +257,9 @@ class WorldState:
                             ObjectState.USER_HELD, ObjectState.RESTING)
         if self._room is None or self._room.geometry_version != 2:
             raise ValueError("Room geometry is unavailable")
-        position = WorldPosition(point.x, height if item.state == ObjectState.USER_HELD else 0)
+        position = WorldPosition(
+            point.x, height if item.state == ObjectState.USER_HELD else 0,
+        )
         self._validate_position(position, item.footprint)
         depths = dict(self._room.object_depths)
         depths[instance_id] = point.depth

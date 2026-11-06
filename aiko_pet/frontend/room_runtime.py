@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import time
 from collections.abc import Callable
 from dataclasses import replace
@@ -23,9 +24,6 @@ from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.object_interaction_state import SearchPosition
 from ..application.session_time import SessionTimeProgression
 from ..infrastructure.room_layout import load_room_layout
-from ..world.room_navigation import RoomNavigator
-from .room_environment import RoomEnvironment
-from .room_movement import RoomMovement
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
@@ -38,10 +36,13 @@ from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
+from ..world.room_navigation import RoomNavigator
 from ..world.state import WorldState
 from .room_drag import RoomDrag
+from .room_environment import RoomEnvironment
 from .room_leisure import RoomLeisure
 from .room_locomotion import RoomLocomotion
+from .room_movement import RoomMovement
 from .room_playback import RoomPlayback
 from .view_models.object_reactions import format_object_reaction
 
@@ -89,9 +90,12 @@ class RoomRuntime:
         self.now = 0.0
         self.moving = False
         self.locomotion = RoomLocomotion()
-        self.leisure = RoomLeisure(mind.rng, self.geometry, rest_cycle=playback.rest_cycle)
+        self.leisure = RoomLeisure(
+            mind.rng, self.geometry, rest_cycle=playback.rest_cycle,
+        )
         self.facing = 1
         self.held_item: str | None = None
+        self._held_instance: str | None = None
         self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
         self._wander: RoomPoint | None = None
@@ -145,6 +149,10 @@ class RoomRuntime:
         playback.receive = self.interaction.receive
         if world.snapshot().room is None:
             world.locate_in_room(RoomSpatialState())
+        if (self.spatial.geometry_version != 2
+                or self.spatial.layout_id != self.geometry.layout.id
+                or self.spatial.layout_revision != self.geometry.layout.revision):
+            raise ValueError("Der gespeicherte Raum benötigt eine passende Migration.")
         safe_position = self.geometry.accessible(self.position)
         world.locate_in_room(replace(self.spatial, pet=safe_position))
 
@@ -159,8 +167,25 @@ class RoomRuntime:
         return self.spatial.pet
 
     def _select_item(self, item: str | None) -> None:
+        if item is not None:
+            held = next((obj for obj in self.world.snapshot().objects
+                         if obj.state == ObjectState.PET_HELD
+                         and obj.definition_id == item), None)
+            if held is not None:
+                self._held_instance = held.instance_id
+                self._depth(held.instance_id, self.position.depth)
+        elif self._held_instance is not None:
+            released = self.world.get(self._held_instance)
+            if released.state == ObjectState.RESTING:
+                self._depth(released.instance_id, self.position.depth)
+                record = self.awareness.record_for_instance(released.instance_id)
+                if record is not None:
+                    self.awareness.memory.observe_depth(record, self.position.depth)
+            self._held_instance = None
         self.held_item = item
-        self.held_pose = "carry_closed" if item in self.items.readables else "closed_world"
+        self.held_pose = (
+            "carry_closed" if item in self.items.readables else "closed_world"
+        )
 
     @property
     def drag_ready(self) -> bool:
@@ -329,16 +354,18 @@ class RoomRuntime:
             if item.position is None:
                 raise ValueError("Dieser Gegenstand liegt nicht im Zimmer.")
             original, depth = item.position, self.spatial.depth_for(instance)
+            take_attention = ObjectAttention(
+                "survey", (self.facing, 0), (self.position.x, 60), 122.5,
+            )
+            witnessed = self.environment.sees_instance(instance, take_attention)
             self.world.take_resting(instance, expected_revision=revision)
             record = self.awareness.witness_take(
                 instance,
                 position=(original.x, original.height),
                 now=self.now,
-                attention=ObjectAttention(
-                    "survey", (self.facing, 0), (self.position.x, 60), 122.5
-                ),
+                attention=take_attention,
                 committed=self.interaction.focus_record,
-            )
+            ) if witnessed else None
             if record is not None:
                 self.interaction.target_taken(record)
         self._gesture_serial += 1
@@ -474,7 +501,7 @@ class RoomRuntime:
                     RoomPoint(item.position.x, self.spatial.depth_for(drag.instance)),
                 )
                 < 110
-                and abs(item.position.height - 100) < 65
+                and abs(item.position.height - 25) < 16.25
             )
             drag.ready = bool(decision and decision.use and near)
             record = self.awareness.record_for_instance(drag.instance)
@@ -499,12 +526,6 @@ class RoomRuntime:
                         animate=False,
                         require_presentation=False,
                     )
-        for seen in self.awareness.observations:
-            observed_instance = self.awareness.instance_for_record(seen.token)
-            if observed_instance is not None and attention.sees(seen.x, seen.height):
-                self.awareness.memory.observe_depth(
-                    seen.token, self.spatial.depth_for(observed_instance)
-                )
         if self._offered is not None:
             instance, started, _gesture = self._offered
             if self.now - started >= 1.5:
@@ -584,7 +605,7 @@ class RoomRuntime:
         self.leisure.suspend(self.now)
         previous = self.position
         destination = self.geometry.accessible(destination)
-        if self.geometry.distance(previous, destination) < 1:
+        if self.geometry.distance(previous, destination) < 1e-6:
             if self._wander is not None and not self.night():
                 self.leisure.arrived(self.now, self.facing)
             self._called = self._wander = None
@@ -604,7 +625,6 @@ class RoomRuntime:
         current = step.point
         self.moving = current != previous
         if self.moving:
-            import math
             last_start = step.travelled[-2] if len(step.travelled) > 1 else previous
             self.environment.heading = math.atan2(
                 current.x - last_start.x, last_start.depth - current.depth,
@@ -618,7 +638,7 @@ class RoomRuntime:
 
     def _placement(self, point: RoomPoint) -> RoomPoint:
         if not self.geometry.layout.can_place(point.x, point.depth, 6):
-            raise ValueError("Dort ist kein freier Boden f�r den Gegenstand.")
+            raise ValueError("Dort ist kein freier Boden für den Gegenstand.")
         return point
 
     def suspend(self) -> None:

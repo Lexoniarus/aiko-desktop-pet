@@ -11,13 +11,192 @@
   "camera_height": 70,
   "camera_clearance": 110,
   "furniture": [
-    {"id":"door","asset":"door","x":120,"z":0,"width":65,"depth":0,"height":125,"wall":"north","blocking":false,"crop":[163,107,698,1319],"pivot":[0.5,1]},
-    {"id":"kitchen","asset":"kitchenUnit","x":350,"z":32.5,"width":100,"depth":65,"height":120,"wall":"north","blocking":true,"crop":[115,85,964,1183],"pivot":[0.5,1]},
-    {"id":"fridge","asset":"fridge","x":540,"z":30,"width":60,"depth":60,"height":120,"wall":"north","blocking":true,"crop":[140,130,760,1350],"pivot":[0.5,1]},
-    {"id":"table","asset":"table","x":665,"z":300,"width":65,"depth":130,"height":40,"wall":null,"blocking":true,"crop":[216,138,1741,489],"pivot":[0.5,1]},
-    {"id":"bed","asset":"bed","x":590,"z":555,"width":170,"depth":90,"height":70,"wall":"south","blocking":true,"crop":[56,126,1659,665],"pivot":[0.5,1]},
-    {"id":"desk","asset":"desk","x":30,"z":380,"width":60,"depth":100,"height":75,"wall":"west","blocking":true,"crop":[44,178,1265,821],"pivot":[0.5,1]},
-    {"id":"shelf","asset":"shelf","x":0,"z":380,"width":0.1,"depth":70,"height":55,"wall":"west","elevation":110,"blocking":false,"crop":[124,122,1121,923],"pivot":[0.5,1]},
-    {"id":"plant","asset":"plant","x":55,"z":530,"width":40,"depth":40,"height":80,"wall":"west","blocking":true,"crop":[94,84,943,1245],"pivot":[0.5,1]}
+    {
+      "id": "door",
+      "asset": "door",
+      "x": 120,
+      "z": 0,
+      "width": 65,
+      "depth": 0,
+      "height": 125,
+      "wall": "north",
+      "blocking": false,
+      "crop": [
+        163,
+        107,
+        698,
+        1319
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "kitchen",
+      "asset": "kitchenUnit",
+      "x": 350,
+      "z": 32.5,
+      "width": 100,
+      "depth": 65,
+      "height": 120,
+      "wall": "north",
+      "blocking": true,
+      "crop": [
+        115,
+        85,
+        964,
+        1183
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "fridge",
+      "asset": "fridge",
+      "x": 540,
+      "z": 30,
+      "width": 60,
+      "depth": 60,
+      "height": 120,
+      "wall": "north",
+      "blocking": true,
+      "crop": [
+        140,
+        130,
+        760,
+        1350
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "table",
+      "asset": "table",
+      "x": 665,
+      "z": 300,
+      "width": 65,
+      "depth": 130,
+      "height": 40,
+      "wall": null,
+      "blocking": true,
+      "crop": [
+        216,
+        138,
+        1741,
+        489
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "bed",
+      "asset": "bed",
+      "x": 590,
+      "z": 555,
+      "width": 170,
+      "depth": 90,
+      "height": 70,
+      "wall": "south",
+      "blocking": true,
+      "crop": [
+        56,
+        126,
+        1659,
+        665
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "desk",
+      "asset": "desk",
+      "x": 30,
+      "z": 380,
+      "width": 60,
+      "depth": 100,
+      "height": 75,
+      "wall": "west",
+      "blocking": true,
+      "crop": [
+        44,
+        178,
+        1265,
+        821
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "shelf",
+      "asset": "shelf",
+      "x": 0,
+      "z": 380,
+      "width": 0.1,
+      "depth": 70,
+      "height": 55,
+      "wall": "west",
+      "elevation": 110,
+      "blocking": false,
+      "crop": [
+        124,
+        122,
+        1121,
+        923
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    },
+    {
+      "id": "plant",
+      "asset": "plant",
+      "x": 55,
+      "z": 530,
+      "width": 40,
+      "depth": 40,
+      "height": 80,
+      "wall": "west",
+      "blocking": true,
+      "crop": [
+        94,
+        84,
+        943,
+        1245
+      ],
+      "pivot": [
+        0.5,
+        1
+      ]
+    }
+  ],
+  "walls": [
+    {
+      "id": "north",
+      "asset": "kitchen"
+    },
+    {
+      "id": "east",
+      "asset": "living"
+    },
+    {
+      "id": "south",
+      "asset": "kitchen"
+    },
+    {
+      "id": "west",
+      "asset": "living"
+    }
   ]
 }

@@ -22,12 +22,20 @@ class RoomNavigator:
         self.geometry = geometry
         layout = geometry.layout
         self.cell = layout.cell_size
-        self.grid = Grid(matrix=[
-            [int(layout.can_place((x + 0.5) * self.cell, (z + 0.5) * self.cell,
-                                  layout.pet_radius))
-             for x in range(int(layout.width / self.cell))]
-            for z in range(int(layout.depth / self.cell))
-        ])
+        self.walkable = [
+                [
+                    int(
+                        layout.can_place(
+                            (x + 0.5) * self.cell,
+                            (z + 0.5) * self.cell,
+                            layout.pet_radius,
+                        )
+                    )
+                    for x in range(int(layout.width / self.cell))
+                ]
+                for z in range(int(layout.depth / self.cell))
+            ]
+        self.grid = Grid(matrix=self.walkable)
         self.finder = AStarFinder(
             diagonal_movement=DiagonalMovement.only_when_no_obstacle,
         )
@@ -35,20 +43,33 @@ class RoomNavigator:
     def clear_segment(self, start: RoomPoint, end: RoomPoint) -> bool:
         count = max(1, math.ceil(self.geometry.distance(start, end) / (self.cell / 4)))
         layout = self.geometry.layout
-        return all(layout.can_place(
-            start.x + (end.x - start.x) * i / count,
-            start.depth + (end.depth - start.depth) * i / count,
-            layout.pet_radius,
-        ) for i in range(count + 1))
+        return all(
+            layout.can_place(
+                start.x + (end.x - start.x) * i / count,
+                start.depth + (end.depth - start.depth) * i / count,
+                layout.pet_radius,
+            )
+            for i in range(count + 1)
+        )
 
     def _node(self, point: RoomPoint) -> tuple[int, int] | None:
         candidates = sorted(
-            ((x, z) for z, row in enumerate(self.grid.nodes)
-             for x, node in enumerate(row) if node.walkable),
+            (
+                (x, z)
+                for z, row in enumerate(self.walkable)
+                for x, node in enumerate(row)
+                if node
+            ),
             key=lambda cell: self.geometry.distance(point, self._point(*cell)),
         )
-        return next((cell for cell in candidates[:25]
-                     if self.clear_segment(point, self._point(*cell))), None)
+        return next(
+            (
+                cell
+                for cell in candidates[:25]
+                if self.clear_segment(point, self._point(*cell))
+            ),
+            None,
+        )
 
     def _point(self, x: int, z: int) -> RoomPoint:
         return RoomPoint((x + 0.5) * self.cell, (z + 0.5) * self.cell)
@@ -61,7 +82,9 @@ class RoomNavigator:
             return None
         self.grid.cleanup()
         path, _runs = self.finder.find_path(
-            self.grid.node(*first), self.grid.node(*last), self.grid,
+            self.grid.node(*first),
+            self.grid.node(*last),
+            self.grid,
         )
         if not path:
             return None
@@ -79,6 +102,8 @@ class RoomNavigator:
             index = end + 1
         return RoomRoute(tuple(points))
 
-    def nearest_reachable(self, start: RoomPoint, desired: RoomPoint) -> RoomPoint | None:
+    def nearest_reachable(
+        self, start: RoomPoint, desired: RoomPoint
+    ) -> RoomPoint | None:
         target = self.geometry.accessible(desired)
         return target if self.find_route(start, target) is not None else None

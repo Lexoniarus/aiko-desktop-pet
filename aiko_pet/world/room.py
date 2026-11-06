@@ -14,8 +14,10 @@ class RoomPoint:
     depth: float = 300
 
     def __post_init__(self) -> None:
-        if any(type(v) not in (int, float) or not math.isfinite(v) or v < 0
-               for v in (self.x, self.depth)):
+        if any(
+            type(v) not in (int, float) or not math.isfinite(v) or v < 0
+            for v in (self.x, self.depth)
+        ):
             raise ValueError("Invalid room location")
 
     @property

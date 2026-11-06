@@ -24,6 +24,7 @@ from ..application.session_time import SessionTimeProgression
 from ..application.settings import PetSettings
 from ..application.wish_context import wish_context_for
 from ..application.wish_forecast import RoomTimeProgression, WishForecastService
+from ..infrastructure.room_layout import load_room_layout
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.expression import EXPRESSION_CLIPS
 from ..pet.animation.item_assets import ItemCatalog
@@ -38,14 +39,18 @@ from ..pet.wish_catalog import WISH_CATALOG
 from ..pet.wishes import wish_to_express
 from ..telemetry import ComputerSnapshot
 from ..world.contracts import WorldSurface
-from ..world.room import RoomGeometry, RoomPoint
+from ..world.room import RoomPoint
 from ..world.state import WorldState
 from .games.session import GameSessionCoordinator
 from .room_content import RoomContent
 from .room_playback import RoomPlayback
 from .room_runtime import RoomRuntime
 from .view_models.care_text import care_animation, format_care_response
-from .view_models.emotional_text import MOODLET_ICONS, moodlet_description, wish_description
+from .view_models.emotional_text import (
+    MOODLET_ICONS,
+    moodlet_description,
+    wish_description,
+)
 from .view_models.projections import project_status
 
 
@@ -88,7 +93,10 @@ class RoomSession:
         )
         if loaded.world is not None:
             world.restore_snapshot(loaded.world)
-        world.change_surface(WorldSurface(800, 225, 6), recovering=True)
+        layout = load_room_layout()
+        world.change_surface(
+            WorldSurface(layout.width, layout.wall_height + 25, 6), recovering=True,
+        )
         self.room = RoomRuntime(
             world,
             self.state,
@@ -100,8 +108,10 @@ class RoomSession:
             inputs=self.inputs,
             game_open=lambda: self.game_snapshot is not None,
             items=items,
-            night=lambda: self.settings.auto_routine
-            and self.routine.sleep_context().window(time.time())[0],
+            night=lambda: (
+                self.settings.auto_routine
+                and self.routine.sleep_context().window(time.time())[0]
+            ),
             wandering=lambda: self.settings.auto_walk,
             time_progression=self._make_progression,
         )
@@ -194,7 +204,7 @@ class RoomSession:
             and self.room.geometry.distance(
                 self.room.position, self.room.geometry.anchor("bed")
             )
-            > 160
+            > 40
         ):
             sleep = replace(sleep, blocked=True)
         return SessionInputs(
@@ -336,9 +346,7 @@ class RoomSession:
         elif name == "contact":
             self.contact.click("left")
         elif name == "call":
-            self.room.call(
-                RoomPoint(float(args["x"]), float(args.get("depth", 300)))
-            )
+            self.room.call(RoomPoint(float(args["x"]), float(args.get("depth", 300))))
         elif name == "place":
             self.room.place(
                 str(args["definition"]),
@@ -477,12 +485,15 @@ class RoomSession:
             ),
             "moving": self.room.moving,
             "facing": self.room.facing,
-            "heading": self.room.environment.heading,
+            "heading": self.room.movement.heading(
+                self.room.position, self.room.environment.heading,
+            ),
             "motion": {
                 "serial": self.room.movement.serial,
                 "time": self.room.now,
                 "travelled": json_value(self.room.movement.travelled)
-                    if self.room.moving else [],
+                if self.room.moving
+                else [],
             },
             "held_item": (
                 self.games.effects.held_item

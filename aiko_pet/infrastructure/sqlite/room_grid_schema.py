@@ -16,12 +16,16 @@ ROOM_GRID_SCHEMA = (
     )""",
     "INSERT INTO room_state SELECT *,1,'aiko-home',1 FROM legacy_room_state",
     "DROP TABLE legacy_room_state",
-    "CREATE TEMP TABLE saved_room_memory_sources AS SELECT * FROM object_memory_sources",
+    "CREATE TEMP TABLE saved_room_memory_sources AS "
+    "SELECT * FROM object_memory_sources",
     "DROP TABLE object_memory_sources",
     "ALTER TABLE object_memories RENAME TO legacy_room_object_memories",
-    WORLD_SCHEMA[3].replace("('food', 'drink')", "('food', 'drink', 'book')").rsplit(
-        ")", 1,
-    )[0] + ", depth REAL NOT NULL DEFAULT 0.9 CHECK(depth >= 0))",
+    WORLD_SCHEMA[3]
+    .replace("('food', 'drink')", "('food', 'drink', 'book')")
+    .replace(
+        "CHECK((identity IS NULL)",
+        "depth REAL NOT NULL DEFAULT 0.9 CHECK(depth >= 0), CHECK((identity IS NULL)",
+    ),
     "INSERT INTO object_memories SELECT * FROM legacy_room_object_memories",
     "DROP TABLE legacy_room_object_memories",
     WORLD_SCHEMA[4],

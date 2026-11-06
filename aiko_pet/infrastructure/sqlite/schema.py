@@ -121,7 +121,8 @@ MIGRATIONS = (
     SchemaMigration(
         4,
         "joke_candidate_exclusions",
-        ("""CREATE TABLE joke_exclusions (
+        (
+            """CREATE TABLE joke_exclusions (
             position_index INTEGER PRIMARY KEY CHECK(position_index >= 0),
             state_id INTEGER NOT NULL REFERENCES save_state(id) ON DELETE CASCADE
                 CHECK(state_id = 1),
@@ -132,19 +133,27 @@ MIGRATIONS = (
             until REAL NOT NULL CHECK(until >= 0),
             revision INTEGER NOT NULL CHECK(revision > 0),
             UNIQUE(category, lower, upper)
-        )""",),
+        )""",
+        ),
     ),
     SchemaMigration(
         5,
         "ui_size_preference",
-        ("ALTER TABLE app_settings ADD COLUMN ui_scale_percent INTEGER NOT NULL "
-         "DEFAULT 100 CHECK(typeof(ui_scale_percent) = 'integer' AND "
-         "ui_scale_percent IN (75,100,125,150,175,200))",),
+        (
+            "ALTER TABLE app_settings ADD COLUMN ui_scale_percent INTEGER NOT NULL "
+            "DEFAULT 100 CHECK(typeof(ui_scale_percent) = 'integer' AND "
+            "ui_scale_percent IN (75,100,125,150,175,200))",
+        ),
     ),
-    SchemaMigration(6, "shared_room_spatial_state", ROOM_SCHEMA + (
-        "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 0.9 "
-        "CHECK(depth >= 0.2 AND depth <= 1.55)",
-    )),
+    SchemaMigration(
+        6,
+        "shared_room_spatial_state",
+        ROOM_SCHEMA
+        + (
+            "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 0.9 "
+            "CHECK(depth >= 0.2 AND depth <= 1.55)",
+        ),
+    ),
     SchemaMigration(7, "room_floor_grid", ROOM_GRID_SCHEMA),
 )
 
