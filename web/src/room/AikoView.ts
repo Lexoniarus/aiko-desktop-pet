@@ -1,4 +1,5 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
+import type { RoomItemAsset } from './RoomAssets';
 
 export interface Clip {
   frames: Array<{
@@ -33,6 +34,7 @@ export class AikoView extends Container {
   private foreground = new Sprite(Texture.EMPTY);
   private heldKey = '';
   private heldItem = '';
+  private heldOffset: [number, number] = [0, 0];
   private contact?: { x: number; y: number; at: number };
   private chipHands?: Texture[];
   private disposed = false;
@@ -41,15 +43,7 @@ export class AikoView extends Container {
   constructor(
     private root: string,
     private clips: Record<string, Clip>,
-    private items: Record<
-      string,
-      {
-        file: string;
-        pivot: [number, number];
-        states?: Record<string, string>;
-        size?: number;
-      }
-    >,
+    private items: Record<string, RoomItemAsset>,
   ) {
     super();
     this.addChild(this.sprite, this.held, this.foreground);
@@ -165,9 +159,11 @@ export class AikoView extends Container {
     contact?: { x: number; y: number },
   ): Promise<void> {
     const definition = item ? this.items[item] : undefined;
-    const file = definition?.states?.[pose] ?? definition?.file ?? '';
-    if (file === this.heldKey) return;
-    this.heldKey = file;
+    const state = definition?.states?.[pose] ?? definition;
+    const file = state?.file ?? '';
+    const key = item ? `${item}:${pose}:${file}` : '';
+    if (key === this.heldKey) return;
+    this.heldKey = key;
     this.heldItem = item ?? '';
     this.contact = contact ? { ...contact, at: performance.now() } : undefined;
     if (!definition) {
@@ -175,13 +171,17 @@ export class AikoView extends Container {
       return;
     }
     const texture = await Assets.load<Texture>(new URL(file, this.root).href);
-    if (this.disposed || file !== this.heldKey) return;
+    if (this.disposed || key !== this.heldKey) return;
     this.held.texture = texture;
     this.held.scale.set(definition.size ? definition.size / texture.width : 1);
     this.held.anchor.set(
-      definition.pivot[0] / texture.width,
-      definition.pivot[1] / texture.height,
+      state!.pivot[0] / texture.width,
+      state!.pivot[1] / texture.height,
     );
+    this.heldOffset = [
+      2*((definition.handOffset?.[0] ?? 0) + (state?.offset?.[0] ?? 0)),
+      2*((definition.handOffset?.[1] ?? 0) + (state?.offset?.[1] ?? 0)),
+    ];
     this.placeHeld();
     if (item === 'c4-red' && !this.chipHands) {
       const hands = await Promise.all(
@@ -262,8 +262,8 @@ export class AikoView extends Container {
       this.foreground.height = this.sprite.texture.height;
     }
     if (anchor) {
-      let x = (anchor[0] - clip.anchor[0]) * 2;
-      let y = (anchor[1] - clip.anchor[1]) * 2;
+      let x = (anchor[0] - clip.anchor[0]) * 2 + this.heldOffset[0];
+      let y = (anchor[1] - clip.anchor[1]) * 2 + this.heldOffset[1];
       if (this.contact && this.clipName !== 'put_down') {
         const blend = Math.min(1, (performance.now() - this.contact.at) / 130);
         x = this.contact.x * (1 - blend) + x * blend;

@@ -153,9 +153,15 @@ def runtime_assets() -> dict[str, Any]:
             + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
             "label": item.label,
             "pivot": item.sprites[2].pivot,
+            "handOffset": item.hand_offset,
+            "worldZoom": item.world_zoom,
             "states": {
-                name: "assets/"
-                + variants[2].render_path.relative_to(ASSET_ROOT).as_posix()
+                name: {
+                    "file": "assets/" + variants[2].render_path.relative_to(ASSET_ROOT).as_posix(),
+                    "pivot": variants[2].pivot,
+                    "dimensions": Image.open(variants[2].render_path).size,
+                    "offset": item.state_offsets.get(name, (0, 0)),
+                }
                 for name, variants in item.states.items()
             },
         }

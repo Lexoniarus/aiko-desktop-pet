@@ -10,6 +10,7 @@ import { RoomMotion } from './RoomMotion';
 import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import type { RoomLayout, RoomPoint } from './RoomLayout';
+import type { RoomItemAsset } from './RoomAssets';
 
 
 export interface AssetManifest {
@@ -20,17 +21,7 @@ export interface AssetManifest {
     surfaces: Record<string, string>;
   };
   clips: Record<string, Clip>;
-  items: Record<
-    string,
-    {
-      file: string;
-      label: string;
-      pivot: [number, number];
-      states?: Record<string, string>;
-      size?: number;
-      dimensions: [number, number];
-    }
-  >;
+  items: Record<string, RoomItemAsset>;
   room: Record<string, string>;
 }
 type WorldItem = RoomSnapshot['objects'][number];
@@ -192,7 +183,7 @@ export class RoomView {
       )
         continue;
       const sprite = new Sprite(texture);
-      sprite.anchor.set(0.5, 1);
+      sprite.anchor.set(asset.pivot[0]/texture.width, asset.pivot[1]/texture.height);
       sprite.eventMode = 'static';
       sprite.cursor = 'grab';
       sprite.on('pointerdown', (event) => {
@@ -247,7 +238,7 @@ export class RoomView {
       const p = this.camera.projection.projectPoint(display, display.height ?? position.height);
       sprite.visible &&= p.depth > 1;
       sprite.position.set(p.x, p.y);
-      sprite.scale.set(this.assets.layout.pet_height / this.assets.characterHeight * p.scale);
+      sprite.scale.set(this.assets.layout.pet_height / this.assets.characterHeight * p.scale * (this.assets.items[item.definition_id]?.worldZoom ?? 1));
       sprite.zIndex = -this.camera.projection.projectPoint(display).depth;
 
     }
@@ -280,7 +271,7 @@ export class RoomView {
   portionSizeAt(definition: string, depth: number): [number, number] {
     const dimensions = this.assets.items[definition]?.dimensions ?? [72, 72];
     const point = this.petPosition ?? {x: 400, depth};
-    const factor = this.camera.projection.projectPoint({...point, depth}).scale * this.assets.layout.pet_height / this.assets.characterHeight;
+    const factor = this.camera.projection.projectPoint({...point, depth}).scale * this.assets.layout.pet_height / this.assets.characterHeight * (this.assets.items[definition]?.worldZoom ?? 1);
     return [dimensions[0]! * factor, dimensions[1]! * factor];
   }
   objectDepth(instance: string): number {

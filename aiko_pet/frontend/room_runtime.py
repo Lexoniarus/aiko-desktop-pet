@@ -160,6 +160,7 @@ class RoomRuntime:
 
     def _select_item(self, item: str | None) -> None:
         self.held_item = item
+        self.held_pose = "carry_closed" if item in self.items.readables else "closed_world"
 
     @property
     def drag_ready(self) -> bool:
