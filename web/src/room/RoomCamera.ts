@@ -43,7 +43,7 @@ export class RoomCamera {
         this.lastDragAt = performance.now();
         this.pointer.x = event.clientX;
         this.following = false;
-        this.velocity = (-dx / this.width) * 1.25;
+        this.velocity = -dx / this.projection.angularScale;
         this.rotateBy(this.velocity);
       },
       options,
