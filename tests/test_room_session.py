@@ -30,7 +30,7 @@ class RoomSessionTests(unittest.TestCase):
         result = json.loads(
             self.endpoint.dispatch_json(
                 json.dumps({
-                    "protocol": 1,
+                    "protocol": 2,
                     "requestId": self.sequence,
                     "name": name,
                     "args": args,
@@ -55,7 +55,7 @@ class RoomSessionTests(unittest.TestCase):
 
     def test_accepted_call_moves_the_world_and_persists_across_reopen(self) -> None:
         before = self.endpoint.session.room.position
-        self.command("call", x=900, depth=1.2)
+        self.command("call", x=470, depth=100)
         snapshot = self.command("snapshot")["snapshot"]
         for _ in range(12):
             self.wall += 0.25
@@ -63,8 +63,8 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(snapshot["animation"], "body-step-right-profil")
         position = self.endpoint.session.room.position
         self.assertLess(
-            RoomGeometry.distance(position, RoomPoint(900, 1.2)),
-            RoomGeometry.distance(before, RoomPoint(900, 1.2)),
+            RoomGeometry.distance(position, RoomPoint(470, 100)),
+            RoomGeometry.distance(before, RoomPoint(470, 100)),
         )
         self.command("suspend")
         reopened = create_browser_session(str(self.path))
@@ -72,12 +72,28 @@ class RoomSessionTests(unittest.TestCase):
         self.assertFalse(reopened.session.settings.learn_rhythm)
         self.assertFalse(reopened.session.settings.observe_computer)
 
+    def test_called_route_goes_around_table_on_free_floor(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        room.world.locate_in_room(replace(room.spatial, pet=RoomPoint(610, 300)))
+        self.command("call", x=740, depth=300)
+        for _ in range(180):
+            self.wall += 0.25
+            self.command("tick")
+            self.assertTrue(room.geometry.layout.can_place(
+                room.position.x, room.position.depth, room.geometry.layout.pet_radius,
+            ))
+            if room.position == RoomPoint(740, 300):
+                break
+        self.assertEqual(room.position, RoomPoint(740, 300))
+
     def test_duplicate_request_cannot_create_a_second_portion(self) -> None:
         message = json.dumps({
-            "protocol": 1,
+            "protocol": 2,
             "requestId": 900,
             "name": "place",
-            "args": {"definition": "apple", "x": 800, "depth": 1.2},
+            "args": {"definition": "apple", "x": 460, "depth": 100},
         })
         first = self.endpoint.dispatch_json(message)
         self.assertTrue(json.loads(first)["ok"])
@@ -88,7 +104,7 @@ class RoomSessionTests(unittest.TestCase):
         before = self.endpoint.session.state.capture_checkpoint()
         reply = self.endpoint.dispatch_json(
             json.dumps({
-                "protocol": 1,
+                "protocol": 2,
                 "requestId": 12,
                 "name": "eval",
                 "args": {},
@@ -99,7 +115,7 @@ class RoomSessionTests(unittest.TestCase):
 
     def test_search_forecast_uses_copies_of_all_live_owners(self) -> None:
         session = self.endpoint.session
-        self.command("place", definition="onigiri", x=800, depth=0.9)
+        self.command("place", definition="onigiri", x=460, depth=100)
         before = (
             session.state.capture_checkpoint(),
             session.room.world.snapshot(),
@@ -151,7 +167,7 @@ class RoomSessionTests(unittest.TestCase):
         session.state.restore_checkpoint(
             replace(session.state.capture_checkpoint(), satiety=30)
         )
-        self.command("call", x=4780, depth=0.28)
+        self.command("call", x=430, depth=100)
         self.command("offer", definition="onigiri")
         self.advance_until(
             lambda: any(
@@ -170,7 +186,7 @@ class RoomSessionTests(unittest.TestCase):
 
     def test_offered_book_starts_local_reading_and_reuses_its_identity(self) -> None:
         self.command("settings", zodiac_sign="leo", auto_routine=False)
-        self.command("call", x=4780, depth=0.28)
+        self.command("call", x=430, depth=100)
         self.command("horoscope")
         session = self.endpoint.session
         self.advance_until(lambda: session.playback.snapshot().story)
@@ -193,7 +209,7 @@ class RoomSessionTests(unittest.TestCase):
     def test_drag_cancel_restores_the_same_portion(
         self,
     ) -> None:
-        original = self.command("place", definition="apple", x=800, depth=1.2)[
+        original = self.command("place", definition="apple", x=460, depth=100)[
             "snapshot"
         ]["objects"][0]
         self.command(
@@ -210,17 +226,17 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(restored[0]["state"], "resting")
 
     def test_drag_drop_and_suspension_keep_world_identity_and_depth(self) -> None:
-        item = self.command("place", definition="apple", x=800, depth=1.2)["snapshot"][
+        item = self.command("place", definition="apple", x=460, depth=100)["snapshot"][
             "objects"
         ][0]
         self.command(
             "object_drag_start", instance=item["instance_id"], revision=item["revision"]
         )
-        moved = self.command("object_drag_drop", x=1100, depth=1.1, offer=False)[
+        moved = self.command("object_drag_drop", x=510, depth=110, offer=False)[
             "snapshot"
         ]["objects"][0]
         self.assertEqual(moved["instance_id"], item["instance_id"])
-        self.assertEqual(moved["position"]["x"], 1100)
+        self.assertEqual(moved["position"]["x"], 510)
         self.assertEqual(moved["state"], "falling")
         self.advance_until(
             lambda: self.endpoint.session.room.world.get(
@@ -237,21 +253,21 @@ class RoomSessionTests(unittest.TestCase):
         self.command("suspend")
         reopened = create_browser_session(str(self.path)).session.room
         self.assertEqual(reopened.world.get(item["instance_id"]).state.value, "resting")
-        self.assertEqual(reopened.spatial.depth_for(item["instance_id"]), 1.1)
+        self.assertEqual(reopened.spatial.depth_for(item["instance_id"]), 110)
 
     def test_air_release_uses_world_fall_and_cancel_creates_no_supply(self) -> None:
         self.command("object_drag_start", definition="apple")
-        self.command("object_drag_move", x=950, depth=1.2, height=280, inside=True)
+        self.command("object_drag_move", x=470, depth=110, height=70, inside=True)
         released = self.command(
-            "object_drag_drop", x=950, depth=1.2, height=280, offer=False
+            "object_drag_drop", x=470, depth=110, height=70, offer=False
         )["snapshot"]["objects"][0]
         self.assertEqual(
-            (released["state"], released["position"]["height"]), ("falling", 280)
+            (released["state"], released["position"]["height"]), ("falling", 70)
         )
         self.wall += 0.1
         falling = self.command("tick")["snapshot"]["objects"][0]
         self.assertGreater(falling["position"]["height"], 0)
-        self.assertLess(falling["position"]["height"], 280)
+        self.assertLess(falling["position"]["height"], 70)
         self.advance_until(
             lambda: self.endpoint.session.room.world.get(
                 released["instance_id"]
@@ -283,9 +299,9 @@ class RoomSessionTests(unittest.TestCase):
         assert token is not None
         self.command(
             "object_drag_move",
-            x=600,
-            depth=0.9,
-            height=240,
+            x=400,
+            depth=100,
+            height=60,
             inside=True,
             face_x=0,
             face_y=0,
@@ -300,9 +316,9 @@ class RoomSessionTests(unittest.TestCase):
         self.assertLess(session.state.satiety, 31)
         self.command(
             "object_drag_move",
-            x=600,
-            depth=0.9,
-            height=100,
+            x=400,
+            depth=100,
+            height=25,
             inside=True,
             face_x=0,
             face_y=0.28,
@@ -313,48 +329,35 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(
             (ready["animation"], ready["animation_hold_frame"]), ("pick_up", 7)
         )
-        self.command("object_drag_drop", x=600, depth=0.9, height=100, offer=True)
+        self.command("object_drag_drop", x=400, depth=100, height=25, offer=True)
         self.assertEqual(session.room.world.get(token).state.value, "pet_held")
         self.advance_until(
             lambda: session.room.world.get(token).state.value == "consumed"
         )
         self.assertGreater(session.state.satiety, 30)
 
-    def test_furniture_drops_and_legacy_depth_recovery_keep_portions_in_front(
+    def test_furniture_footprints_reject_drop_but_allow_free_ground_in_front(
         self,
     ) -> None:
         session = self.endpoint.session
-        for x in (930, 1425, 2450, 4240, 4780):
-            self.command("place", definition="apple", x=x, depth=0.22)
-        objects = session.room.world.snapshot().objects
-        self.assertEqual(len(objects), 5)
-        self.assertTrue(
-            all(session.room.spatial.depth_for(o.instance_id) >= 1.05 for o in objects)
+        before = session.room.world.snapshot()
+        rejected = json.loads(
+            self.endpoint.dispatch_json(
+                json.dumps({
+                    "protocol": 2,
+                    "requestId": 500,
+                    "name": "place",
+                    "args": {"definition": "apple", "x": 665, "depth": 300},
+                })
+            )
         )
-        original = objects[0]
-        self.command(
-            "object_drag_start",
-            instance=original.instance_id,
-            revision=original.revision,
-        )
-        self.command("object_drag_drop", x=1425, depth=0.22, height=80, offer=False)
-        self.assertEqual(len(session.room.world.snapshot().objects), 5)
-        legacy = replace(
-            session.room.spatial,
-            pet=RoomPoint(2450, 0.8),
-            object_depths=tuple((o.instance_id, 0.22) for o in objects),
-        )
-        session.room.world.locate_in_room(legacy)
-        session.save()
-        restored = create_browser_session(str(self.path)).session.room
-        self.assertGreaterEqual(restored.position.depth, 1.05)
-        self.assertEqual(
-            [o.instance_id for o in restored.world.snapshot().objects],
-            [o.instance_id for o in objects],
-        )
-        self.assertTrue(
-            all(restored.spatial.depth_for(o.instance_id) >= 1.05 for o in objects)
-        )
+        self.assertFalse(rejected["ok"])
+        self.assertEqual(session.room.world.snapshot().objects, before.objects)
+        item = self.command("place", definition="apple", x=600, depth=300)["snapshot"][
+            "objects"
+        ][0]
+        self.assertEqual(item["position"]["x"], 600)
+        self.assertEqual(session.room.spatial.depth_for(item["instance_id"]), 300)
 
     def test_room_effects_never_expose_a_dealt_hole_card(self) -> None:
         self.command("game_open", id="blackjack")
@@ -405,7 +408,7 @@ class RoomSessionTests(unittest.TestCase):
             lambda: self.endpoint.session.playback.animation == "idle"
             and not self.endpoint.session.playback.player.active
         )
-        current = self.command("call", x=750, depth=1.1)["snapshot"]
+        current = self.command("call", x=450, depth=100)["snapshot"]
         saw_walk = False
         for _ in range(80):
             self.wall += 0.1
@@ -416,12 +419,12 @@ class RoomSessionTests(unittest.TestCase):
         self.assertTrue(saw_walk)
         self.assertLess(
             RoomGeometry.distance(
-                self.endpoint.session.room.position, RoomPoint(750, 1.1)
+                self.endpoint.session.room.position, RoomPoint(450, 100)
             ),
             0.01,
         )
         self.assertFalse(current["moving"])
-        current = self.command("call", x=750, depth=1.1)["snapshot"]
+        current = self.command("call", x=450, depth=100)["snapshot"]
         self.wall += 0.2
         current = self.command("tick")["snapshot"]
         self.assertFalse(current["moving"])
@@ -476,16 +479,21 @@ class RoomSessionTests(unittest.TestCase):
 
 
 class RoomGeometryTests(unittest.TestCase):
-    def test_foreground_routes_keep_the_short_wrapped_direction(self) -> None:
-        for start, destination in (
-            (RoomPoint(2000, 1.1), RoomPoint(2900, 1.1)),
-            (RoomPoint(4900, 1.1), RoomPoint(100, 1.1)),
-        ):
-            position = start
-            for _ in range(120):
-                position = RoomGeometry.approach(position, destination, 0.05)
-                self.assertEqual(RoomGeometry.accessible(position), position)
-            self.assertLess(RoomGeometry.distance(position, destination), 0.01)
+    def test_routes_go_around_the_table_without_cutting_its_corners(self) -> None:
+        from aiko_pet.infrastructure.room_layout import load_room_layout
+        from aiko_pet.world.room_navigation import RoomNavigator
+
+        geometry = RoomGeometry(load_room_layout())
+        navigator = RoomNavigator(geometry)
+        route = navigator.find_route(RoomPoint(610, 300), RoomPoint(740, 300))
+        self.assertIsNotNone(route)
+        assert route is not None
+        self.assertGreater(len(route.points), 2)
+        for start, end in zip(route.points, route.points[1:]):
+            self.assertTrue(navigator.clear_segment(start, end))
+        self.assertIsNone(
+            navigator.find_route(RoomPoint(610, 300), RoomPoint(665, 300))
+        )
 
     def test_profile_steps_and_quarter_body_facing_use_distinct_source_banks(
         self,
@@ -499,8 +507,9 @@ class RoomGeometryTests(unittest.TestCase):
             (pose.selection.animation, pose.selection.fixed_frame),
             ("body-look-right", 4),
         )
-        pose.walk(3, RoomPoint(600, 1.05), RoomPoint(600, 1.13))
-        self.assertEqual(pose.selection.animation, "body-look-right")
+        for step in range(10):
+            pose.walk(3 + step * 0.1, RoomPoint(600, 100), RoomPoint(600, 130))
+        self.assertEqual(pose.selection.animation, "body-step-right-profil")
         for step in range(10):
             pose.walk(4 + step * 0.1, RoomPoint(900), RoomPoint(600))
         self.assertEqual(pose.selection.animation, "body-step-left-profil")

@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {
-  depthScale,
-  feetY,
-  projectX,
-  unproject,
-  wrap,
-} from '../src/room/RoomProjection.ts';
+import { RoomProjection } from '../src/room/RoomProjection.ts';
+import { readFileSync } from 'node:fs';
 import {
   validPackagePath,
   validateManifest,
@@ -14,27 +9,40 @@ import {
 import { validatePublishedPackage } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 
-test('room projection round-trips depth at the wrap boundary', () => {
-  for (const [x, depth, center] of [
-    [10, 0.2, 5000],
-    [4800, 0.9, 50],
-    [2100, 1.55, 2450],
+const layout = JSON.parse(
+  readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
+);
+test('floor projection round-trips after camera rotation and nearer Aiko is larger', () => {
+  const projection = new RoomProjection(layout);
+  for (const [yaw, point] of [
+    [0, { x: 400, depth: 100 }],
+    [Math.PI / 2, { x: 650, depth: 280 }],
+    [Math.PI, { x: 430, depth: 500 }],
+    [-Math.PI / 2, { x: 100, depth: 300 }],
   ]) {
-    const result = unproject(projectX(x, depth, center), feetY(depth), center);
-    assert.ok(Math.abs(result.x - x) < 0.01);
-    assert.ok(Math.abs(result.depth - depth) < 0.001);
+    projection.update(1024, 768, yaw);
+    const screen = projection.projectPoint(point),
+      result = projection.intersectFloor(screen.x, screen.y);
+    assert.ok(Math.abs(result.x - point.x) < 0.05);
+    assert.ok(Math.abs(result.depth - point.depth) < 0.05);
   }
-  assert.equal(wrap(-10), 5090);
-  assert.ok(depthScale(1.55) > depthScale(0.9));
+  projection.update(1024, 768, 0);
+  assert.ok(
+    projection.projectPoint({ x: 400, depth: 150 }).scale >
+      projection.projectPoint({ x: 400, depth: 50 }).scale,
+  );
 });
-
-test('display motion interpolates the short wrap and does not restart for repeated snapshots', () => {
+test('display interpolation follows the admitted corner rather than its diagonal', () => {
   const motion = new RoomMotion();
-  motion.receive({ x: 5080, depth: 0.9 }, 1000);
-  motion.receive({ x: 20, depth: 1.1 }, 1250);
-  assert.deepEqual(motion.position(1225), { x: 0, depth: 1 });
-  motion.receive({ x: 20, depth: 1.1 }, 1375);
-  assert.deepEqual(motion.position(1500), { x: 20, depth: 1.1 });
+  motion.receive({ x: 100, depth: 100 }, 1000);
+  motion.receive({ x: 200, depth: 200 }, 1200, [
+    { x: 100, depth: 100 },
+    { x: 200, depth: 100 },
+    { x: 200, depth: 200 },
+  ]);
+  assert.deepEqual(motion.position(1200), { x: 200, depth: 100 });
+  motion.receive({ x: 200, depth: 200 }, 1300);
+  assert.deepEqual(motion.position(1500), { x: 200, depth: 200 });
 });
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [
