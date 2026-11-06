@@ -1,33 +1,60 @@
-/** v16 room projection. Depth stays separate from height above the floor. */
-export const roomWidth = 5100;
-export const wrap = (x: number): number => ((x % roomWidth) + roomWidth) % roomWidth;
-export const delta = (from: number, to: number): number =>
-  ((to - from + roomWidth * 1.5) % roomWidth) - roomWidth / 2;
-export const depthScale = (depth: number): number => {
-  const d = Math.min(1.55, Math.max(0.2, depth));
-  return 0.88 + d * 0.16 + ((0.55 - 0.16) / 0.55) * Math.max(0, d - 1) ** 2;
-};
-export const feetY = (depth: number): number =>
-  802 +
-  76 * Math.min(depth, 1) +
-  (76 / 0.16) * Math.max(0, depthScale(depth) - depthScale(1));
-export const projectX = (x: number, depth: number, center: number): number =>
-  center + (delta(center, x) * depthScale(depth)) / depthScale(0.9);
-export function unproject(
-  x: number,
-  y: number,
-  center: number,
-): { x: number; depth: number } {
-  let low = 0.2,
-    high = 1.55;
-  for (let i = 0; i < 24; i++) {
-    const middle = (low + high) / 2;
-    if (feetY(middle) < y) low = middle;
-    else high = middle;
+import { mat4, vec3, vec4 } from 'gl-matrix';
+import type { RoomLayout, RoomPoint } from './RoomLayout';
+
+export class RoomProjection {
+  readonly matrix = mat4.create();
+  private inverse = mat4.create();
+  private view = mat4.create();
+  width = 1;
+  height = 1;
+  private focal = 1;
+  constructor(readonly layout: RoomLayout) {}
+  update(width: number, height: number, yaw: number): void {
+    this.width = width;
+    this.height = height;
+    const pitch = 8 * Math.PI / 180;
+    const eye = vec3.fromValues(this.layout.width / 2, this.layout.camera_height, this.layout.depth / 2);
+    const target = vec3.fromValues(eye[0]! + Math.sin(yaw) * Math.cos(pitch), eye[1]! - Math.sin(pitch), eye[2]! - Math.cos(yaw) * Math.cos(pitch));
+    mat4.lookAt(this.view, eye, target, [0, 1, 0]);
+    const perspective = mat4.perspective(mat4.create(), 55 * Math.PI / 180, width / height, 1, 2500);
+    mat4.multiply(this.matrix, perspective, this.view);
+    mat4.invert(this.inverse, this.matrix);
+    this.focal = height / (2 * Math.tan(55 * Math.PI / 360));
   }
-  const depth = (low + high) / 2;
-  return {
-    x: wrap(center + ((x - center) * depthScale(0.9)) / depthScale(depth)),
-    depth,
-  };
+  projectPoint(point: RoomPoint, height = 0): { x: number; y: number; depth: number; scale: number } {
+    const clip = vec4.transformMat4(vec4.create(), [point.x, height, point.depth, 1], this.matrix);
+    const depth = clip[3]!;
+    return { x: (clip[0]! / depth + 1) * this.width / 2,
+      y: (1 - clip[1]! / depth) * this.height / 2, depth,
+      scale: this.focal / Math.max(1, depth) };
+  }
+  screenRay(x: number, y: number): { origin: vec3; direction: vec3 } {
+    const sample = (z: number): vec3 => {
+      const p = vec4.transformMat4(vec4.create(), [2 * x / this.width - 1, 1 - 2 * y / this.height, z, 1], this.inverse);
+      return vec3.fromValues(p[0]! / p[3]!, p[1]! / p[3]!, p[2]! / p[3]!);
+    };
+    const origin = sample(-1);
+    return { origin, direction: vec3.normalize(vec3.create(), vec3.subtract(vec3.create(), sample(1), origin)) };
+  }
+  intersectFloor(x: number, y: number): RoomPoint | undefined {
+    const ray = this.screenRay(x, y);
+    if (ray.direction[1]! >= -0.0001) return;
+    const t = -ray.origin[1]! / ray.direction[1]!;
+    if (t < 0) return;
+    return { x: ray.origin[0]! + t * ray.direction[0]!, depth: ray.origin[2]! + t * ray.direction[2]! };
+  }
+  intersectWall(x: number, y: number): { wall: string; along: number; height: number } | undefined {
+    const ray = this.screenRay(x, y), results: Array<{wall: string; along: number; height: number; t: number}> = [];
+    for (const [wall, axis, plane, length] of [
+      ['north', 2, 0, this.layout.width], ['east', 0, this.layout.width, this.layout.depth],
+      ['south', 2, this.layout.depth, this.layout.width], ['west', 0, 0, this.layout.depth],
+    ] as const) {
+      const t = (plane - ray.origin[axis]!) / ray.direction[axis]!;
+      const along = ray.origin[axis === 0 ? 2 : 0]! + t * ray.direction[axis === 0 ? 2 : 0]!;
+      const height = ray.origin[1]! + t * ray.direction[1]!;
+      if (t > 0 && along >= 0 && along <= length && height >= 0 && height <= this.layout.wall_height)
+        results.push({wall, along, height, t});
+    }
+    return results.sort((a, b) => a.t - b.t)[0];
+  }
 }
