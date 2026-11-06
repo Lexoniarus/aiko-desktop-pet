@@ -355,8 +355,11 @@ class ObjectBehaviorCoordinator:
             seen.token == known.token for seen in awareness.observations
         ):
             return None
-        distance = math.hypot(
-            known.x - attention.origin[0], known.height - attention.origin[1]
+        distance = (
+            awareness.spatial.distance_to_place(known)
+            if awareness.spatial is not None else math.hypot(
+                known.x - attention.origin[0], known.height - attention.origin[1]
+            )
         )
         if distance <= attention.width * BALANCE.number(
             "object_behavior",

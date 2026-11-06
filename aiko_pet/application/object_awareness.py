@@ -22,6 +22,7 @@ from ..pet.mind.object_perception import (
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, ObjectState, WorldSnapshot
 from .object_tracking import ObjectTracker
+from .object_geometry import ObjectSpatialGeometry
 
 TargetEvidence = Literal["observed", "unresolved", "unseen", "forgotten"]
 
@@ -69,6 +70,7 @@ def held_type_conflicts_with_memory(
 
 class ObjectAwareness:
     def __init__(self, saved: ObjectMemorySnapshot | None = None) -> None:
+        self.spatial: ObjectSpatialGeometry | None = None
         self.readable: Callable[[str], bool] = lambda _instance: False
         self.perception = ObjectPerception()
         self._absence = ObjectAbsencePerception()
@@ -431,10 +433,14 @@ class ObjectAwareness:
             presentation=presentation,
             inspecting=inspecting,
         )
+        if self.spatial is not None:
+            candidates = [item for item in candidates
+                          if self.spatial.sees_instance(item.token, attention)]
         checked = tuple(
             item
             for item in self.memory.snapshot()
-            if known_coverage is not None
+            if (self.spatial is None or self.spatial.sees_place(item, attention))
+            and known_coverage is not None
             and item.recognized
             and item.resting
             and item.place_status == "remembered"
@@ -449,6 +455,7 @@ class ObjectAwareness:
             item.token
             for item in candidates
             if (known := self.memory.learned_instance(item.token)) is not None
+            and (self.spatial is None or self.spatial.same_place(item.token, known))
             and known in checked
             and known.at_place(
                 x=item.x,
@@ -505,6 +512,7 @@ class ObjectAwareness:
                 item.token
                 for item in visible
                 if (known := self.memory.learned_instance(item.token)) is not None
+                and (self.spatial is None or self.spatial.same_place(item.token, known))
                 and known.at_place(
                     x=item.x,
                     height=item.height,
@@ -602,6 +610,7 @@ class ObjectAwareness:
             item
             for item in self.memory.snapshot()
             if item.token not in excluded
+            and (self.spatial is None or self.spatial.sees_place(item, attention))
             and self.autonomous_interest(item)
             and (attention.mode != "object" or item.token == committed)
         )
