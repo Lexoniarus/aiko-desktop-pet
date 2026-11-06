@@ -33,6 +33,38 @@ hash-pinned release artifact. Neither source-art authoring originals nor saves
 are needed in CI. Hosting publishes the bundled program/runtime images for
 the initial download and remains a separate external publication step.
 
+## Floor-grid update acceptance
+
+For an already installed icon, publish the complete updated starter/runtime to
+the existing origin first. A cold reopening then loads the compatible starter;
+use **Einstellungen -> Nach Updates suchen -> Jetzt neu starten**. The older
+starter running in an already open window cannot import protocol 2 until that
+shell has refreshed. Reopen the installed app; do not remove its profile or
+clear browser/app storage.
+
+The schema-6 database is backed up before schema 7 is applied. Stock IDs and
+pet progress survive; old object positions and remembered positions are mapped
+independently. The backup is internal database recovery data, not a new UI
+restore/export feature. Original user data must not be used for automated QA.
+
+On the target iPad, verify:
+
+- Swipe through all four walls and corners; floor/skirting joins stay coherent.
+- Call Aiko closer; size changes with distance while her logical size stays fixed.
+- Aiko walks around the table and occupied furniture footprints, including behind.
+- Fixing follows her bearing; a swipe releases it. Find appears only off-camera.
+- Lift food, move it in front of furniture, release and see it fall/bounce; pick
+  up the same portion again. Present at the face before handing it over.
+- Read the horoscope: closed/carry/open size and hand registration are coherent.
+- Inspect moodlet details, need cards and wishes with progress/pin/dismiss.
+- Confirm the old pet values, zodiac, live portions and progress after update,
+  after closing/reopening, and with the network disabled.
+
+Full forward/backward authored walking cycles and new furniture back views are
+not part of this asset set. Assess the reused 2D directional poses accordingly.
+
+All physical-device items above remain pending until the owner checks them.
+
 ## First installation
 
 1. Download the installation ZIP through Dropbox or GitHub into Files.

@@ -660,6 +660,49 @@ ZIP has been copied to the owner's Dropbox and confirmed downloadable there.
 No merge into main has been performed. Generated program/installation ZIPs stay
 outside source Git; the deployment branch pins only their release metadata.
 
+## Implemented floor-grid follow-up (2026-11-06)
+
+The foreground-strip/panorama geometry described in earlier execution records
+has been replaced on `feature/shared-room-pwa`. This is one shared room frontend
+for browser/iPad and future desktop embedding, not another pet simulation.
+The native desktop-to-room handoff remains a later integration task.
+
+The canonical `assets/room/v1/layout.json` sets Aiko's visible height to 100,
+the floor to 800 by 600, walls to 200, and cells to 12.5 (64 by 48 floor cells).
+Four wall definitions, furniture footprints, source crops, pivots and mounting
+heights are exported from the same Python resource to the renderer. These are
+initial proportions, pending owner acceptance on iPad. Serialized `depth` now
+means physical floor Z in room units; `height` still means height above ground.
+
+| Module | Implemented responsibility |
+| --- | --- |
+| `world/room.py`, `world/room_layout.py` | Immutable room positions/layout, footprint and wall geometry; World owns positions. |
+| `world/room_navigation.py` | A* via pinned `pathfinding==1.0.22`; inflated obstacles, no corner cutting, checked continuous endpoints. |
+| `frontend/room_movement.py` | One cached route executor for call, search, approach and leisure; no second position writer. |
+| `frontend/room_environment.py`, `application/object_geometry.py` | Optional room distances, visibility and remembered-place coverage; desktop defaults remain unchanged. |
+| `infrastructure/room_layout.py`, `room_migration.py` | Load the shared layout; transform old stock and historical memories independently. |
+| `infrastructure/sqlite/room_grid_schema.py` | Schema 7 with versioned geometry, original schema-6 rows and automatic pre-migration backup. |
+| `RoomProjection.ts`, `RoomCamera.ts` | `gl-matrix==3.4.4` perspective/rays; fixed observer position, rotating view, follow released by swipe. |
+| `RoomScene.ts`, `RoomPicking.ts` | Shared floor/four walls, fixed furniture planes, depth order, alpha-aware picking and floor/held placement. |
+| `RoomMotion.ts`, `AikoView.ts` | Route-segment interpolation, stable animation phase and view-relative movement banks, native book state anchors. |
+| `MoodletStrip.ts`, existing status/wish/UI panels | Native icons/details, compact readouts, wish goals/progress, one conditional Find and a separate Follow control. |
+
+Room transport is protocol 2. The updated starter accepts the delivered
+protocol-1/schema-6 package and protocol-2/schema-7 packages, enabling an
+in-place upgrade. It rejects incompatible downgrades before stopping the app;
+SQLite also refuses a schema newer than the running code understands.
+The save location, installed icon and hosting origin remain stable.
+
+Existing art remains 2D. Furniture uses its existing cutout on a fixed room
+face, with its real floor footprint blocking movement. This does not invent
+missing furniture back views or complete forward/backward walking cycles.
+Quarter-head walking banks and authored quarter-body rest/look poses are reused;
+missing directional cycles remain an explicit asset limitation.
+
+Source implementation and automated/headless verification are separate from
+publication and real-iPad acceptance. See `VERIFICATION.md` and
+`IPAD_ACCEPTANCE.md`; no device acceptance is implied by green local checks.
+
 ## References
 
 - [Current architecture](../ARCHITECTURE.md), [World contracts](../WORLD_OBJECT_CONTRACTS.md), [UI contract](../UI_WINDOW_CONTRACT.md).
