@@ -462,3 +462,85 @@ Evidence is `live-result.json`, `live-grid.png` and `live-offline.png` in the
 same external QA directory. This verifies delivery and offline reopening in
 Chromium; physical iPad/Safari visual and interaction acceptance remains open.
 Main, the resident desktop app and the owner's actual save were untouched.
+
+## Flat 2D panorama over the retained grid (2026-11-06)
+
+Runtime source `7cafd21e2a35b4bef5364229c78cacf5b211025d`, package
+`0.1.0-7cafd21e2a35`, replaces the rejected perspective preview with flat wall
+panels and proportion-preserving furniture sprites. Swiping translates art;
+camera yaw never changes its width, height or vertical position. Physical floor
+coordinates, footprints, A* routing, transport protocol 2 and SQLite schema 7
+are retained without another migration. The inverse panorama projection handles
+floor drops and raised drags using those same coordinates. The now-unused
+gl-matrix dependency was removed.
+
+Ten prepared profile walking images from `2026-11-06-profil-geh-hals-vorschau`
+were copied only after checking their manifest's source and output SHA-256.
+Private originals were preserved. Their neck corrections and per-step head
+registration are recorded in the committed `profile-walk-2026-11-06.json`;
+other character art and the existing 620ms playback cycle are unchanged.
+
+Final checks, after implementation:
+
+- 36 existing Python checks: body-pose and character catalogs, room grid and
+  room session. No Tk/native windows were opened.
+- Four existing Node checks, adapted in place for the new projection: ground
+  and elevated round-trips across four directions, size/depth behavior, stable
+  art dimensions and height across panorama wrap, held-height recovery, route
+  corner interpolation and installer validation.
+- TypeScript production build, Prettier and diff whitespace checks passed.
+  [Shared room web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42251675611)
+  passed for the exact runtime source.
+
+Browser plugin not available; used installed Playwright Chromium headless shell
+with software WebGL, touch enabled, and isolated storage. Target flow:
+`http://127.0.0.1:8893/room/` -> import the real 0aef preview -> use the actual
+online updater/restart -> retained grid save in the flat renderer. Settings,
+live object IDs and pet values survived; no schema change was needed. Actual
+touch supply dragging, lifted release/fall, follow/swipe release, conditional
+Find, needs/wishes, original RPS, petting and offline reopening passed at
+1024x768 and 768x1024. An additional retained-profile touch sweep captured all
+four panels and joins, including bed, desk/plant, kitchen/fridge and table.
+
+Page identity and meaningful content, image completion, no framework error
+overlay, screenshots and interaction results were checked. No JavaScript page
+errors. The update harness's expected resource messages were limited to its
+deliberately disabled initial update descriptor and the deliberate offline
+check. Screenshots and scripts stay outside Git in
+`%TEMP%/aiko-room-flat-qa/`; `result.json` records the retained-save flow.
+
+The more spatial renderer is superseded, not an optional visual default.
+Artwork seams between the two original wall backgrounds remain visible; the
+shared skirting and floor edge remain level. Actual iPad/Safari visual acceptance
+is still open. Main and the owner's running desktop pet/save were untouched.
+
+The immutable test release
+[`room-test-0.1.0-7cafd21e2a35`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-7cafd21e2a35)
+contains the installer, starter site and direct runtime ZIP. GitHub confirmed
+the runtime upload (86,888,454 bytes) and SHA-256
+`84bb2cee3bc4b8ef93428c6244fc88ad5097164d1d4acf7275ae42d7acdfd489`.
+A ZIP-to-ZIP comparison proves exactly the ten intended profile PNGs changed;
+all other packaged PNGs match 0aef. The starter site SHA-256 is
+`7b2cd8832f297a856ea35e9609612ec1fa6726f685a9a09432818ace908bfb51`.
+
+**Publication is blocked, not live-verified.** Pages run
+[`42253263202`](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42253263202)
+timed out in `updating_pages`; its retry encountered duplicate artifact names.
+Fresh run `42255542889` reused the cancelled deployment revision and was
+cancelled. A separate CI fix gives upload and deployment the same
+attempt-specific artifact name. It was applied to source (`bad0977d`) and
+deployment (`a629c647`). The resulting fresh
+[`42256011899`](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42256011899)
+passed artifact selection/upload but again timed out in Pages `updating_pages`.
+The public descriptor still returned `0.1.0-0aef82356f35` at the final check.
+Do not describe the new room as available through the installed app's updater.
+
+An additional isolated **Einstellungen -> Paket aus Datei importieren** flow
+retained settings and object IDs (`manual-result.json`). However, a second real
+flow serving the *old* online descriptor confirmed that the existing starter
+stages that old package again after the manual import. Version inequality alone
+does not establish release order. This is a pre-existing updater limitation,
+not a reason to change room coordinates or pet behavior. An online manual-import
+workaround is therefore not recommended while the feed is stale. No production
+profile was used or changed in either check. The direct ZIP is a prepared
+artifact, not proof of a safe online production upgrade during this blockage.
