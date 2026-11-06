@@ -1,5 +1,7 @@
 import type { RoomSnapshot } from '../bridge/RoomClient';
 import { element, line } from './dom';
+import { MoodletStrip } from './MoodletStrip';
+import type { RoomArtwork } from './RoomArtwork';
 
 const labels: Record<string, string> = {
   satiety: 'Sättigung',
@@ -25,25 +27,31 @@ export class StatusPanel {
   private needs = new Map<string, { label: Text; meter: HTMLMeterElement }>();
   private lines = new Map<string, HTMLElement>();
   private emotion = element('h3');
-  private moodlets = new Map<
-    number,
-    { detail: HTMLDetailsElement; text: HTMLElement }
-  >();
-  constructor() {
+  private moodlets: MoodletStrip;
+  constructor(artwork: RoomArtwork) {
+    this.moodlets = new MoodletStrip(artwork);
+    this.element.classList.add('status-cards');
+    this.element.append(this.emotion, this.moodlets.element);
+    const needs = element('div', 'needs-grid');
+    this.element.append(needs);
     for (const [key, name] of Object.entries(labels)) {
-      const row = element('label', 'need-row'),
+      const row = element('div', 'need-card'),
         label = document.createTextNode(name),
         meter = element('meter');
       meter.min = 0;
       meter.max = 100;
-      row.append(label, meter);
-      this.element.append(row);
+      const icon = key==='mood' ? 'detail_wellbeing' : `status_${key}`;
+      row.append(artwork.image(artwork.icon(icon,64)), label, meter);
+      needs.append(row);
       this.needs.set(key, { label, meter });
     }
+    const details = element('details', 'status-details');
+    details.append(element('summary', '', 'Alltag und weitere Details'));
+    this.element.append(details);
     for (const key of fields) {
       const text = line('');
       this.lines.set(key, text);
-      this.element.append(text);
+      details.append(text);
     }
     this.element.append(this.emotion);
   }
@@ -69,28 +77,6 @@ export class StatusPanel {
       }>;
     };
     this.emotion.textContent = emotional.state_label;
-    const descriptions = snapshot.catalog.moodlet_descriptions as Record<
-      string,
-      string
-    >;
-    const ids = new Set(emotional.moodlets.map((m) => m.value.instance_id));
-    for (const [id, node] of this.moodlets)
-      if (!ids.has(id)) {
-        node.detail.remove();
-        this.moodlets.delete(id);
-      }
-    for (const moodlet of emotional.moodlets) {
-      const id = moodlet.value.instance_id;
-      let node = this.moodlets.get(id);
-      if (!node) {
-        const detail = element('details'),
-          text = line('');
-        detail.append(element('summary', '', moodlet.label), text);
-        this.element.append(detail);
-        node = { detail, text };
-        this.moodlets.set(id, node);
-      }
-      node.text.textContent = descriptions?.[String(id)] ?? moodlet.description;
-    }
+    this.moodlets.update(snapshot);
   }
 }

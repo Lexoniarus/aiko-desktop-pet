@@ -45,7 +45,7 @@ from .room_content import RoomContent
 from .room_playback import RoomPlayback
 from .room_runtime import RoomRuntime
 from .view_models.care_text import care_animation, format_care_response
-from .view_models.emotional_text import moodlet_description, wish_description
+from .view_models.emotional_text import MOODLET_ICONS, moodlet_description, wish_description
 from .view_models.projections import project_status
 
 
@@ -509,6 +509,7 @@ class RoomSession:
             if self.content
             else None,
             "catalog": {
+                "moodlet_icons": MOODLET_ICONS,
                 "moodlet_descriptions": {
                     str(view.value.instance_id): moodlet_description(view)
                     for view in status.emotional.moodlets

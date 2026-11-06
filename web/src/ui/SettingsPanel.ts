@@ -57,14 +57,6 @@ export class SettingsPanel {
     );
     for (const [key, title, choices] of [
       [
-        'scale',
-        'Aikos Größe',
-        [
-          [1, 'Normal'],
-          [2, 'Größer'],
-        ],
-      ],
-      [
         'ui_scale_percent',
         'Menügröße',
         [75, 100, 125, 150, 175, 200].map((value) => [value, value + ' %']),

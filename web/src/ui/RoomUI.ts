@@ -3,6 +3,7 @@ import type { RoomView } from '../room/RoomView';
 import type { ObjectDragController } from '../input/ObjectDragController';
 import { FoodPanel } from './FoodPanel';
 import { SocialPanel } from './SocialPanel';
+import { MoodletStrip } from './MoodletStrip';
 import { StatusPanel } from './StatusPanel';
 import { WishPanel } from './WishPanel';
 import { SettingsPanel } from './SettingsPanel';
@@ -27,6 +28,14 @@ export class RoomUI {
   private speech: SpeechBubbles;
   private artwork: RoomArtwork;
   private props: GameProps;
+  private moodlets: MoodletStrip;
+  private find = button('Aiko finden', () => {
+    if (this.room.petPosition) this.room.camera.lookAt(this.room.petPosition);
+  });
+  private fix = button('Aiko fixieren', () => {
+    if (this.room.camera.following) this.room.camera.releaseFollow();
+    else this.room.camera.followPet();
+  });
   private panel = element('dialog', 'room-panel');
   private panelBody = element('div', 'panel-body');
   private title = element('h2');
@@ -53,6 +62,8 @@ export class RoomUI {
   ) {
     this.artwork = new RoomArtwork(room.root, room.assets.ui);
     this.artwork.apply(host);
+    this.moodlets = new MoodletStrip(this.artwork);
+    this.moodlets.element.classList.add('room-moodlets');
     this.speech = new SpeechBubbles(host, room, command);
     this.props = new GameProps(host, room, this.artwork, command);
     if (updates) this.updates = new UpdateControls(updates);
@@ -80,10 +91,8 @@ export class RoomUI {
     care.append(
       this.pet,
       this.sleep,
-      button('Aiko finden', () => {
-        const point = this.room.petPosition;
-        if (point) this.room.camera.lookAt(point.x);
-      }),
+      this.find,
+      this.fix,
     );
     const header = element('header', 'panel-header');
     header.append(
@@ -103,7 +112,13 @@ export class RoomUI {
       this.panelName = '';
       this.activePanel = undefined;
     };
-    host.append(this.toolbar, care, this.panel, this.status);
+    host.append(this.toolbar, care, this.panel, this.status, this.moodlets.element);
+    room.followPet(() => {
+      this.find.hidden = room.petVisible;
+      this.fix.setAttribute('aria-pressed', String(room.camera.following));
+      this.fix.textContent = room.camera.following ? 'Fixierung lösen' : 'Aiko fixieren';
+      this.moodlets.element.hidden = this.panel.open;
+    });
   }
   private open(name: string): void {
     const snapshot = this.snapshot;
@@ -137,12 +152,12 @@ export class RoomUI {
         }).element,
       );
     if (name === 'status') {
-      this.activePanel = new StatusPanel();
+      this.activePanel = new StatusPanel(this.artwork);
       this.activePanel.update(snapshot);
       this.panelBody.append(this.activePanel.element);
     }
     if (name === 'wishes') {
-      this.activePanel = new WishPanel(this.command);
+      this.activePanel = new WishPanel(this.command, this.artwork, this.room);
       this.activePanel.update(snapshot);
       this.panelBody.append(this.activePanel.element);
     }
@@ -212,6 +227,7 @@ export class RoomUI {
     this.pet.disabled = !!snapshot.game;
     this.sleep.disabled = !!snapshot.game;
     this.speech.update(snapshot);
+    this.moodlets.update(snapshot);
     this.props.update(snapshot);
     if (this.activePanel) this.activePanel.update(snapshot);
     const id = String(snapshot.game?.id ?? '');

@@ -12,10 +12,6 @@ export class SpeechBubbles {
   private next = button('Weiter', () => {
     void this.command('speech_next');
   });
-  private find = button('Aiko finden', () => {
-    const point = this.room.petPosition;
-    if (point) this.room.camera.lookAt(point.x);
-  });
   private speech?: RoomSnapshot['speech'];
   private shown = -1;
   private scale = 1;
@@ -29,9 +25,8 @@ export class SpeechBubbles {
     this.element.append(this.emote, this.text, this.next);
     this.emote.alt = 'Aikos Reaktion';
     this.emote.draggable = false;
-    this.find.className = 'speech-find';
-    this.element.hidden = this.find.hidden = true;
-    host.append(this.element, this.find);
+    this.element.hidden = true;
+    host.append(this.element);
     room.followPet((bounds) => this.position(bounds));
   }
 
@@ -54,13 +49,12 @@ export class SpeechBubbles {
   private position(bounds: Bounds): void {
     const speech = this.speech;
     const content = !!speech && (!!speech.text || !!speech.emote);
-    const visible =
+    const visible = this.room.petVisible &&
       bounds.x + bounds.width > 0 &&
       bounds.x < this.host.clientWidth &&
       bounds.y < this.host.clientHeight &&
       bounds.y + bounds.height > 0;
     this.element.hidden = !content || !visible;
-    this.find.hidden = !content || visible;
     if (!content || !visible) return;
     const panel = this.host
       .querySelector<HTMLDialogElement>('.room-panel[open]')
