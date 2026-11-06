@@ -12,11 +12,11 @@ export const roomPresentation = {
     kitchen: { width: (475 * 964) / 1183 },
     fridge: { width: 244 },
     table: { width: 527 },
-    bed: { width: 680 },
+    bed: { width: 680, flipX: true },
     desk: { width: 386 },
     shelf: { width: 270, mount: 262 },
     plant: { width: 204 },
-  } as Record<string, { width: number; mount?: number }>,
+  } as Record<string, { width: number; mount?: number; flipX?: boolean }>,
 } as const;
 
 export function furnitureSupport(
@@ -39,12 +39,32 @@ export function furnitureFrame(projection: RoomProjection, item: FurniturePlacem
   const ground = projection.projectPoint(furnitureSupport(projection.layout, item));
   const profile = roomPresentation.furniture[item.id]!;
   const scale = (profile.width * projection.fit) / item.crop[2];
+  const width = item.crop[2] * scale;
+  let x = ground.x;
+  if (item.wall) {
+    const angles: Record<string, number> = {
+      north: 0,
+      east: Math.PI / 2,
+      south: Math.PI,
+      west: -Math.PI / 2,
+    };
+    const centre = projection.screenX(angles[item.wall]!);
+    const halfWall = (projection.panelWidth * projection.fit) / 2;
+    const margin = 18 * projection.fit;
+    const pivot = profile.flipX ? 1 - item.pivot[0] : item.pivot[0];
+    // Art can overhang its support point, but never cross a room-wall joint.
+    x = Math.max(
+      centre - halfWall + width * pivot + margin,
+      Math.min(centre + halfWall - width * (1 - pivot) - margin, x),
+    );
+  }
   return {
-    x: ground.x,
+    x,
     y: ground.groundY - (profile.mount ?? 0) * projection.fit,
     scale,
-    width: item.crop[2] * scale,
+    width,
     height: item.crop[3] * scale,
     order: ground.groundY,
+    flipX: profile.flipX ?? false,
   };
 }

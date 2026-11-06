@@ -83,7 +83,7 @@ export class RoomScene {
     for (const { view, item } of this.furniture) {
       const frame = furnitureFrame(projection, item);
       view.position.set(frame.x, frame.y);
-      view.scale.set(frame.scale);
+      view.scale.set(frame.scale * (frame.flipX ? -1 : 1), frame.scale);
       view.zIndex = frame.order;
     }
   }

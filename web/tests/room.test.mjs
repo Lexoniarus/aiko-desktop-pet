@@ -58,6 +58,12 @@ test('four wall grids have one window and use the authored furniture proportions
   assert.ok(Math.abs(shelf.x - 660) < 1e-6);
   assert.equal(shelf.y, 540);
   assert.equal(shelf.width, 270);
+  const plant = furnitureFrame(projection, item('plant'));
+  assert.ok(plant.x - plant.width / 2 >= 18);
+  projection.update(1800, 900, Math.PI);
+  const bed = furnitureFrame(projection, item('bed'));
+  assert.ok(bed.x - bed.width / 2 >= 18);
+  assert.equal(bed.flipX, true);
   for (const entry of layout.furniture) {
     const frame = furnitureFrame(projection, entry);
     assert.ok(
