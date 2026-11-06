@@ -7,7 +7,7 @@ from dataclasses import asdict, is_dataclass
 from enum import Enum
 from typing import Any
 
-PROTOCOL_VERSION = 1
+PROTOCOL_VERSION = 2
 ROOM_COMMANDS = frozenset({
     "snapshot",
     "tick",

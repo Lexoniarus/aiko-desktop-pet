@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 import type { PyodideInterface } from 'pyodide';
+import { roomProtocol } from '../../bridge/commands';
 
 declare const self: DedicatedWorkerGlobalScope;
 let python: PyodideInterface;
@@ -53,7 +54,7 @@ self.onmessage = (event) => {
         session.dispatch_json(
           JSON.stringify({
             ...message,
-            protocol: 1,
+            protocol: roomProtocol,
             name: message.name === 'initialize' ? 'snapshot' : message.name,
           }),
         ),
@@ -66,7 +67,7 @@ self.onmessage = (event) => {
       self.postMessage({ ...reply, saved: true });
     } catch (error) {
       self.postMessage({
-        protocol: 1,
+        protocol: roomProtocol,
         requestId: message.requestId,
         ok: false,
         saved: !dirty,

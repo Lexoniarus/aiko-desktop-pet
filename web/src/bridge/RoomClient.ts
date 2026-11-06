@@ -1,6 +1,6 @@
 import type { RoomCommandName } from './commands';
 export interface RoomReply {
-  protocol: 1;
+  protocol: 2;
   requestId: number;
   ok: boolean;
   snapshot?: RoomSnapshot;
@@ -11,7 +11,7 @@ export interface RoomReply {
 export interface RoomSnapshot {
   revision: number;
   pet: Record<string, unknown>;
-  room: { pet: { x: number; depth: number }; object_depths: [string, number][] };
+  room: { pet: { x: number; depth: number }; object_depths: [string, number][]; geometry_version: 2; layout_id: string; layout_revision: number };
   objects: Array<{
     instance_id: string;
     definition_id: string;

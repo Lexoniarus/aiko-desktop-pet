@@ -36,7 +36,7 @@ def write_room(connection: sqlite3.Connection, world: WorldSnapshot | None) -> N
         if item.state not in (ObjectState.CONSUMED, ObjectState.REMOVED)
     }
     connection.execute(
-        "INSERT INTO room_state VALUES (1, ?, ?, ?, ?)",
+        "INSERT INTO room_state VALUES (1, ?, ?, ?, ?, ?, ?, ?)",
         (
             room.environment,
             room.pet.x,
@@ -44,6 +44,9 @@ def write_room(connection: sqlite3.Connection, world: WorldSnapshot | None) -> N
             json.dumps([
                 (key, depth) for key, depth in room.object_depths if key in retained
             ]),
+            room.geometry_version,
+            room.layout_id,
+            room.layout_revision,
         ),
     )
 
@@ -61,6 +64,9 @@ def read_room(connection: sqlite3.Connection, world: WorldSnapshot) -> WorldSnap
         RoomPoint(row[2], row[3]),
         tuple((entry[0], entry[1]) for entry in raw),
         row[1],
+        row[5],
+        row[6],
+        row[7],
     )
     ids = {item.instance_id for item in world.objects}
     if any(key not in ids for key, _depth in room.object_depths):

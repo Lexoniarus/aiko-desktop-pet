@@ -5,22 +5,22 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from .room_layout import RoomLayout
+
 
 @dataclass(frozen=True, slots=True)
 class RoomPoint:
     x: float
-    depth: float = 1.1
+    depth: float = 300
 
     def __post_init__(self) -> None:
-        if (
-            isinstance(self.x, bool)
-            or not math.isfinite(self.x)
-            or not 0 <= self.x < 5100
-            or isinstance(self.depth, bool)
-            or not math.isfinite(self.depth)
-            or not 0.2 <= self.depth <= 1.55
-        ):
+        if any(type(v) not in (int, float) or not math.isfinite(v) or v < 0
+               for v in (self.x, self.depth)):
             raise ValueError("Invalid room location")
+
+    @property
+    def z(self) -> float:
+        return self.depth
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,12 +34,15 @@ class RoomAnchor:
 class RoomSpatialState:
     """World-owned avatar and separate depth, never reinterpret item height."""
 
-    pet: RoomPoint = RoomPoint(600)
+    pet: RoomPoint = RoomPoint(400, 100)
     object_depths: tuple[tuple[str, float], ...] = ()
     environment: str = "aiko_room"
+    geometry_version: int = 2
+    layout_id: str = "aiko-home"
+    layout_revision: int = 1
 
     def __post_init__(self) -> None:
-        if self.environment != "aiko_room":
+        if self.environment != "aiko_room" or self.geometry_version not in (1, 2):
             raise ValueError("Unknown room environment")
         ids = [key for key, _depth in self.object_depths]
         if len(ids) != len(set(ids)) or len(ids) > 4096:
@@ -50,65 +53,45 @@ class RoomSpatialState:
             RoomPoint(0, depth)
 
     def depth_for(self, instance: str) -> float:
-        return dict(self.object_depths).get(instance, 1.1)
+        return dict(self.object_depths).get(instance, 300)
 
 
+@dataclass(frozen=True, slots=True)
 class RoomGeometry:
-    width = 5100.0
-    floor_y = 802.0
-    # Furniture belongs to the backdrop. The pet and portable objects share a
-    # foreground strip whose feet remain visible in the reference's 900px frame.
-    foreground_depth = (1.05, 1.13)
-    ground_reach = 18.0
-    anchors = (
-        RoomAnchor("door", "Tür", RoomPoint(315, 0.2)),
-        RoomAnchor("kitchen", "Küche", RoomPoint(930, 0.22)),
-        RoomAnchor("fridge", "Kühlschrank", RoomPoint(1425, 0.22)),
-        RoomAnchor("table", "Tisch", RoomPoint(2450, 1.0)),
-        RoomAnchor("desk", "Schreibtisch", RoomPoint(4240, 0.28)),
-        RoomAnchor("bed", "Bett", RoomPoint(4780, 0.28)),
-    )
+    layout: RoomLayout
+    ground_reach: float = 12
 
-    @classmethod
-    def delta(cls, start: float, end: float) -> float:
-        return (end - start + cls.width / 2) % cls.width - cls.width / 2
+    @property
+    def width(self) -> float:
+        return self.layout.width
 
-    @classmethod
-    def distance(cls, start: RoomPoint, end: RoomPoint) -> float:
-        return math.hypot(cls.delta(start.x, end.x), (end.depth - start.depth) * 475)
+    @property
+    def anchors(self) -> tuple[RoomAnchor, ...]:
+        return tuple(
+            RoomAnchor(item.id, item.id, RoomPoint(*points[0]))
+            for item in self.layout.furniture
+            if item.id != "shelf"
+            and (points := self.layout.interaction_points(item.id))
+        )
 
-    @classmethod
-    def approach(
-        cls,
-        start: RoomPoint,
-        end: RoomPoint,
-        seconds: float,
-        *,
-        speed: float = 310,
-    ) -> RoomPoint:
-        if not math.isfinite(seconds) or seconds < 0:
-            raise ValueError("Invalid movement interval")
-        start, end = cls.accessible(start), cls.accessible(end)
-        budget = seconds * speed
-        for point in cls.route(start, end):
-            distance = cls.distance(start, point)
-            fraction = min(1.0, budget / max(0.0001, distance))
-            current = RoomPoint(
-                (start.x + cls.delta(start.x, point.x) * fraction) % cls.width,
-                start.depth + (point.depth - start.depth) * fraction,
-            )
-            if fraction < 1:
-                return current
-            budget -= distance
-            start = current
-        return start
+    @staticmethod
+    def delta(start: float, end: float) -> float:
+        return end - start
 
-    @classmethod
-    def accessible(cls, point: RoomPoint) -> RoomPoint:
-        back, front = cls.foreground_depth
-        return RoomPoint(point.x, max(back, min(front, point.depth)))
+    @staticmethod
+    def distance(start: RoomPoint, end: RoomPoint) -> float:
+        return math.hypot(end.x - start.x, end.depth - start.depth)
 
-    @classmethod
-    def route(cls, start: RoomPoint, end: RoomPoint) -> tuple[RoomPoint, ...]:
-        """Direct foreground travel, retaining the shortest panorama wrap."""
-        return (cls.accessible(end),)
+    def accessible(self, point: RoomPoint, radius: float | None = None) -> RoomPoint:
+        """Recover to free ground; ordinary drop validation never calls this."""
+        radius = self.layout.pet_radius if radius is None else radius
+        if self.layout.can_place(point.x, point.depth, radius):
+            return point
+        cell = self.layout.cell_size
+        candidates = (
+            RoomPoint((x + 0.5) * cell, (z + 0.5) * cell)
+            for z in range(int(self.layout.depth / cell))
+            for x in range(int(self.layout.width / cell))
+            if self.layout.can_place((x + 0.5) * cell, (z + 0.5) * cell, radius)
+        )
+        return min(candidates, key=lambda p: self.distance(p, point))

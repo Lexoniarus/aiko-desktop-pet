@@ -23,13 +23,14 @@ from .interaction_schema import INTERACTION_SCHEMA
 from .moodlet_schema import MOODLET_SCHEMA
 from .pet_schema import PET_SCHEMA
 from .relationship_schema import RELATIONSHIP_SCHEMA
+from .room_grid_schema import ROOM_GRID_SCHEMA
 from .room_rows import ROOM_SCHEMA
 from .social_schema import SOCIAL_SCHEMA
 from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 SnapshotTransaction = Literal["read", "write"]
 
 _DOMAIN_SCHEMA = (
@@ -144,6 +145,7 @@ MIGRATIONS = (
         "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 0.9 "
         "CHECK(depth >= 0.2 AND depth <= 1.55)",
     )),
+    SchemaMigration(7, "room_floor_grid", ROOM_GRID_SCHEMA),
 )
 
 

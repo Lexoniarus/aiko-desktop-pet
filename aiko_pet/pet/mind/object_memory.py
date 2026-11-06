@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 
 from ..balance import BALANCE
@@ -68,7 +69,7 @@ class ObjectMemory:
 
     def observe_depth(self, token: str, depth: float) -> None:
         """Only a fresh room observation can update the remembered depth."""
-        if not 0.2 <= depth <= 1.55:
+        if not math.isfinite(depth) or depth < 0:
             raise ValueError("Invalid observed room depth")
         known = self.get(token)
         if known is not None:

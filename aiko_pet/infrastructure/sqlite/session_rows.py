@@ -19,6 +19,7 @@ from ...pet.mind.object_knowledge import ObjectMemorySnapshot
 from ...pet.state import PetState
 from ...pet.state_values import PetValues
 from ...world.contracts import ObjectDefinition, WorldSnapshot
+from ..room_migration import migrate_legacy_room
 from .adaptive_rows import read_adaptive, write_adaptive
 from .horoscope_rows import read_horoscope, write_horoscope
 from .moodlet_rows import read_moodlets, write_moodlets
@@ -81,6 +82,7 @@ def read_session_rows(
     world, memory = read_world_memory(connection, definitions)
     if world is not None:
         world = read_room(connection, world)
+        world, memory = migrate_legacy_room(world, memory)
     horoscope = read_horoscope(connection)
     validate_book_bindings(horoscope, world)
     return LoadedPetData(
