@@ -74,6 +74,9 @@ class RoomGeometry:
             and (points := self.layout.interaction_points(item.id))
         )
 
+    def anchor(self, key: str) -> RoomPoint:
+        return next(anchor.position for anchor in self.anchors if anchor.id == key)
+
     @staticmethod
     def delta(start: float, end: float) -> float:
         return end - start

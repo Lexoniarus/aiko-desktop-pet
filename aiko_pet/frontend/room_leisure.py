@@ -12,7 +12,8 @@ from .room_locomotion import RoomLocomotion
 
 
 class RoomLeisure:
-    def __init__(self, rng: random.Random, *, rest_cycle: float) -> None:
+    def __init__(self, rng: random.Random, geometry: RoomGeometry, *, rest_cycle: float) -> None:
+        self.geometry = geometry
         self.rng, self.rest_cycle = rng, rest_cycle
         self.director = AmbientDirector(
             0,
@@ -28,20 +29,20 @@ class RoomLeisure:
             return None
         candidates = [
             anchor.position
-            for anchor in RoomGeometry.anchors
-            if abs(RoomGeometry.delta(position.x, anchor.position.x)) >= 160
+            for anchor in self.geometry.anchors
+            if self.geometry.distance(position, anchor.position) >= 40
         ]
         if not candidates:
             return None
         nearby = sorted(
-            candidates, key=lambda point: abs(RoomGeometry.delta(position.x, point.x))
+            candidates, key=lambda point: self.geometry.distance(position, point)
         )[:3]
-        target = RoomGeometry.accessible(self.rng.choice(nearby))
-        distance = RoomGeometry.delta(position.x, target.x)
-        if abs(distance) > 650:
-            distance = math.copysign(self.rng.uniform(400, 650), distance)
+        target = self.geometry.accessible(self.rng.choice(nearby))
+        distance = self.geometry.delta(position.x, target.x)
+        if abs(distance) > 162.5:
+            distance = math.copysign(self.rng.uniform(100, 162.5), distance)
             target = RoomPoint(
-                (position.x + distance) % RoomGeometry.width, target.depth
+                max(0, min(self.geometry.width, position.x + distance)), target.depth
             )
         self.next_outing = float("inf")
         return target

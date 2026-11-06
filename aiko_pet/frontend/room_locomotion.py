@@ -12,8 +12,8 @@ from ..world.room import RoomGeometry, RoomPoint
 
 class RoomLocomotion:
     # The native step covers 16 logical pixels in 620 ms. Room artwork displays
-    # the 156-logical-pixel visible figure at 400 world units, without skating.
-    speed = 16 / 0.62 * 400 / 156
+    # the 156-logical-pixel visible figure at 100 room units, without skating.
+    speed = 16 / 0.62 * 100 / 156
 
     def __init__(self) -> None:
         self.orientation = BodyOrientation()
@@ -21,22 +21,10 @@ class RoomLocomotion:
 
     def walk(self, now: float, start: RoomPoint, end: RoomPoint) -> bool:
         dx = RoomGeometry.delta(start.x, end.x)
-        dy = (end.depth - start.depth) * 475
         side = (1 if dx > 0 else -1) if abs(dx) > 1 else (self.orientation.side or 1)
         if self.orientation.side not in (0, side):
             self.orientation.reset()
         label = "right" if side > 0 else "left"
-        if dy > max(1, abs(dx) * 1.5):
-            # The approved forward-facing quarter body is a stance/turn pose,
-            # not a baked forward step cycle. Keep that distinction explicit.
-            gaze = 4 if side > 0 else 12
-            self.selection = self.orientation.select_gaze_stance(
-                now,
-                SpriteSelection("look", gaze),
-                intent="three_quarter",
-                side=side,
-            )
-            return True
         turn = self.orientation.orient_for_motion(now, side, responsive=True)
         if not self.orientation.motion_ready:
             self.selection = turn

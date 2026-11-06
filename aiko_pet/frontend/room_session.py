@@ -88,7 +88,7 @@ class RoomSession:
         )
         if loaded.world is not None:
             world.restore_snapshot(loaded.world)
-        world.change_surface(WorldSurface(5100, 900, 24), recovering=True)
+        world.change_surface(WorldSurface(800, 225, 6), recovering=True)
         self.room = RoomRuntime(
             world,
             self.state,
@@ -191,8 +191,8 @@ class RoomSession:
         if (
             not self.state.sleeping
             and sleep.window(time.time())[0]
-            and RoomGeometry.distance(
-                self.room.position, RoomGeometry.anchors[-1].position
+            and self.room.geometry.distance(
+                self.room.position, self.room.geometry.anchor("bed")
             )
             > 160
         ):
@@ -337,18 +337,18 @@ class RoomSession:
             self.contact.click("left")
         elif name == "call":
             self.room.call(
-                RoomPoint(float(args["x"]) % 5100, float(args.get("depth", 1.1)))
+                RoomPoint(float(args["x"]), float(args.get("depth", 300)))
             )
         elif name == "place":
             self.room.place(
                 str(args["definition"]),
-                RoomPoint(float(args["x"]) % 5100, float(args.get("depth", 0.9))),
+                RoomPoint(float(args["x"]), float(args.get("depth", 300))),
             )
         elif name == "move":
             self.room.relocate(
                 str(args["instance"]),
                 int(args["revision"]),
-                RoomPoint(float(args["x"]) % 5100, float(args.get("depth", 0.9))),
+                RoomPoint(float(args["x"]), float(args.get("depth", 300))),
             )
         elif name == "offer":
             if "instance" in args:
@@ -363,7 +363,7 @@ class RoomSession:
             )
         elif name == "object_drag_move":
             self.room.move_drag(
-                RoomPoint(float(args["x"]) % 5100, float(args["depth"])),
+                RoomPoint(float(args["x"]), float(args["depth"])),
                 float(args["height"]),
                 inside=args.get("inside") is True,
                 face=(float(args["face_x"]), float(args["face_y"]))
@@ -372,7 +372,7 @@ class RoomSession:
             )
         elif name == "object_drag_drop":
             self.room.drop_drag(
-                RoomPoint(float(args["x"]) % 5100, float(args["depth"])),
+                RoomPoint(float(args["x"]), float(args["depth"])),
                 offer=args.get("offer") is True,
                 height=float(args.get("height", 0)),
             )
@@ -477,6 +477,13 @@ class RoomSession:
             ),
             "moving": self.room.moving,
             "facing": self.room.facing,
+            "heading": self.room.environment.heading,
+            "motion": {
+                "serial": self.room.movement.serial,
+                "time": self.room.now,
+                "travelled": json_value(self.room.movement.travelled)
+                    if self.room.moving else [],
+            },
             "held_item": (
                 self.games.effects.held_item
                 if self.games.effects and self.games.effects.held_item
