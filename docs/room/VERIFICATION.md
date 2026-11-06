@@ -544,3 +544,61 @@ not a reason to change room coordinates or pet behavior. An online manual-import
 workaround is therefore not recommended while the feed is stale. No production
 profile was used or changed in either check. The direct ZIP is a prepared
 artifact, not proof of a safe online production upgrade during this blockage.
+
+## Pages delivery recovered and retained HTTPS save verified (2026-11-06)
+
+The publication blockage above is resolved. The pinned runtime remains
+`0.1.0-7cafd21e2a35`; no pet, geometry, save-schema or character changes were
+made during this recovery.
+
+Diagnosis localized the failure to Pages' server-side publication step:
+
+- Successful and failed runs used identical SHAs of all six GitHub Actions.
+  The failing artifact was accepted, selected unambiguously and passed download
+  hash validation before a deployment ID was created.
+- The new starter site has nine files totaling 87,022,821 bytes, compared with
+  173,920,832 bytes in the last successful site. Both pinned ZIPs passed CRC and
+  SHA-256 checks; neither has an individual file above 100 MB or unusual entries.
+- The failed Pages records reported `deployment_cancelled`; the public site
+  continued serving 0aef. No domain or source misconfiguration was found.
+
+The two failed Pages deployment IDs (`cbe2a071...` and `a629c647...`) were
+explicitly cancelled through the supported Pages REST endpoint. A fresh run
+then deployed the **same pinned site ZIP** successfully in 106 seconds. This
+supports a stuck Pages publication-state diagnosis; GitHub's internal cause is
+not exposed by its status endpoint. The result does not establish a general
+GitHub outage. No Pages site deletion/recreation, publishing-source switch,
+environment reset, URL change or browser-storage clearing was performed.
+
+A separate deployment fix (`af317e0b` in source, `b4c8fa22` in deployment) adds
+`scripts/verify_room_deployment.py` as a required final workflow step. It waits
+for the expected public descriptor, compares the live starter HTML/service
+worker byte for byte, and downloads the runtime to check its size and SHA-256
+against the reviewed ZIP. A stale or mismatched publication now fails CI.
+Ruff, formatting and strict Mypy passed for the new script; the actual public
+verification succeeded both on GitHub and locally.
+
+The [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42260645693)
+is green, including the public-files gate. The
+[source web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42261653186)
+is also green for the deployment-verifier change. The live descriptor advertises
+`0.1.0-7cafd21e2a35`; the complete downloaded runtime matches SHA-256
+`84bb2cee3bc4b8ef93428c6244fc88ad5097164d1d4acf7275ae42d7acdfd489`.
+
+Before the fresh publication finished, an isolated headless Chromium profile
+installed the actual previous production version at the real HTTPS origin
+`https://lexoniarus.github.io/aiko-desktop-pet/room/`, set zodiac `virgo`, placed
+an apple outside the actor's sight, and durably suspended its synthetic save.
+After publication the same profile used **Einstellungen -> Nach Updates suchen
+-> Jetzt neu starten**. It upgraded from 0aef to 7cafd while retaining the zodiac
+and live object IDs. Touch petting completed, no old pending package remained,
+and an offline reload retained the new version and the same saved IDs/settings.
+Page identity, meaningful content, screenshot/image loading and absence of
+JavaScript page errors were checked. Browser plugin unavailable; existing
+Playwright headless shell/software WebGL was used at 1024x768 with touch.
+
+Evidence remains outside Git in `%TEMP%/aiko-room-flat-qa/`:
+`deploy-baseline.json`, `deploy-upgrade-result.json`, `deploy-before.png`,
+`deploy-after.png` and `deploy-offline.png`. No personal iPad save was read,
+changed or uploaded. Actual iPad visual/device acceptance remains the owner's
+next check. Main and parallel desktop asset work were not modified by recovery.
