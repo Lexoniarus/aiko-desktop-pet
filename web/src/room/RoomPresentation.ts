@@ -24,6 +24,7 @@ export function furnitureSupport(
   item: FurniturePlacement,
 ): RoomPoint {
   const point = { x: item.x, depth: item.z };
+  if (!item.blocking) return point;
   if (item.wall === 'north') point.depth += item.depth / 2;
   else if (item.wall === 'south') point.depth -= item.depth / 2;
   else if (item.wall === 'east') point.x -= item.width / 2;
