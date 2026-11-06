@@ -55,10 +55,11 @@ export function roomBackground(
     );
     const pixels = windowContext.getImageData(0, 0, 1800, 42);
     for (let i = 0; i < pixels.data.length; i += 4) {
+      const x = (i / 4) % 1800;
       const r = pixels.data[i]!,
         g = pixels.data[i + 1]!,
         b = pixels.data[i + 2]!;
-      if (g < r + 4 || b < r + 8) pixels.data[i + 3] = 0;
+      if (x < 205 || x >= 1125 || g < r + 4 || b < r + 8) pixels.data[i + 3] = 0;
     }
     windowContext.putImageData(pixels, 0, 0);
     ctx.drawImage(foot, 0, 760);
