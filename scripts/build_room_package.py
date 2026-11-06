@@ -29,7 +29,9 @@ from aiko_pet.infrastructure.character_assets import (  # noqa: E402
 )
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
 from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
-from aiko_pet.world.room import RoomGeometry  # noqa: E402
+from aiko_pet.infrastructure.room_layout import load_room_layout  # noqa: E402
+from aiko_pet.application.room_contracts import PROTOCOL_VERSION  # noqa: E402
+from dataclasses import asdict
 from scripts.room_installer import (  # noqa: E402
     installation_instructions,
     installation_profile,
@@ -178,7 +180,7 @@ def runtime_assets() -> dict[str, Any]:
         "items": item_files,
         "room": ROOM_IMAGES,
         "characterHeight": character_height,
-        "foregroundDepth": RoomGeometry.foreground_depth,
+        "layout": asdict(load_room_layout()),
         "ui": ui,
     }
 
@@ -228,7 +230,7 @@ def main() -> None:
         url = f"https://cdn.jsdelivr.net/pyodide/v{package['dependencies']['pyodide']}/full/{filename}"
         files["runtime/" + filename] = download(url, cache / filename, record["sha256"])
     wheels = []
-    for name, pinned in (("astronomy-engine", "2.1.19"), ("pyjokes", "0.8.3")):
+    for name, pinned in (("astronomy-engine", "2.1.19"), ("pyjokes", "0.8.3"), ("pathfinding", "1.0.22")):
         filename, contents = python_wheel(name, pinned, cache)
         files["python/" + filename] = contents
         wheels.append(filename)
@@ -280,7 +282,7 @@ def main() -> None:
     files["licenses/ASSETS.md"] = (ROOT / "ASSETS.md").read_bytes()
     manifest = dict(
         format=1,
-        protocol=1,
+        protocol=PROTOCOL_VERSION,
         saveSchema=SCHEMA_VERSION,
         version=version,
         entry="app/app.js",

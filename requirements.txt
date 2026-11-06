@@ -8,3 +8,6 @@ Pillow==11.3.0
 # Run Aiko_installieren.bat to check the runtime and download/install it if missing.
 # Tkinter is a Python installer component, not a package installable through pip.
 # CI quality tools are development-only, not runtime dependencies.
+
+# Shared room grid navigation, pure Python (also packaged for Pyodide).
+pathfinding==1.0.22
