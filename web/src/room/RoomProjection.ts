@@ -55,6 +55,30 @@ export class RoomProjection {
       scale: this.focal / Math.max(1, depth),
     };
   }
+  projectFloorPolygon(
+    points: RoomPoint[],
+  ): Array<{ x: number; y: number; depth: number; scale: number }> {
+    const result: Array<{ x: number; y: number; depth: number; scale: number }> = [];
+    if (!points.length) return result;
+    let previous = points.at(-1)!,
+      prior = this.projectPoint(previous);
+    for (const point of points) {
+      const current = this.projectPoint(point);
+      if (prior.depth >= 1 !== current.depth >= 1) {
+        const t = (1 - prior.depth) / (current.depth - prior.depth);
+        result.push(
+          this.projectPoint({
+            x: previous.x + (point.x - previous.x) * t,
+            depth: previous.depth + (point.depth - previous.depth) * t,
+          }),
+        );
+      }
+      if (current.depth >= 1) result.push(current);
+      previous = point;
+      prior = current;
+    }
+    return result;
+  }
   screenRay(x: number, y: number): { origin: vec3; direction: vec3 } {
     const sample = (z: number): vec3 => {
       const p = vec4.transformMat4(

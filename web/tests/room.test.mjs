@@ -32,6 +32,23 @@ test('floor projection round-trips after camera rotation and nearer Aiko is larg
       projection.projectPoint({ x: 400, depth: 50 }).scale,
   );
 });
+test('floor polygons crossing the camera near plane remain filled', () => {
+  const projection = new RoomProjection(layout);
+  projection.update(1024, 768, Math.PI / 4);
+  const polygon = projection.projectFloorPolygon([
+    { x: 300, depth: 275 },
+    { x: 500, depth: 275 },
+    { x: 500, depth: 300 },
+    { x: 300, depth: 300 },
+  ]);
+  assert.ok(polygon.length >= 3);
+  assert.ok(
+    polygon.every(
+      (p) => Number.isFinite(p.x) && Number.isFinite(p.y) && p.depth >= 0.999,
+    ),
+  );
+});
+
 test('display interpolation follows the admitted corner rather than its diagonal', () => {
   const motion = new RoomMotion();
   motion.receive({ x: 100, depth: 100 }, 1000);

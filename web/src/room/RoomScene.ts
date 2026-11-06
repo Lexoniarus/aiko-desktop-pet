@@ -166,13 +166,13 @@ export class RoomScene {
       for (let column = 0, x = offset; x < l.width; column++, x += plankWidth) {
         const left = Math.max(0, x),
           right = Math.min(l.width, x + plankWidth);
-        const points = [
-          [left, z],
-          [right, z],
-          [right, Math.min(l.depth, z + rowHeight)],
-          [left, Math.min(l.depth, z + rowHeight)],
-        ].map(([px, pz]) => camera.projection.projectPoint({ x: px!, depth: pz! }));
-        if (points.some((p) => p.depth < 1)) continue;
+        const points = camera.projection.projectFloorPolygon([
+          { x: left, depth: z },
+          { x: right, depth: z },
+          { x: right, depth: Math.min(l.depth, z + rowHeight) },
+          { x: left, depth: Math.min(l.depth, z + rowHeight) },
+        ]);
+        if (points.length < 3) continue;
         const colours = [0xd8bf9c, 0xd6bd9a, 0xdbc3a2];
         this.floor
           .poly(points.flatMap((p) => [p.x, p.y]))
