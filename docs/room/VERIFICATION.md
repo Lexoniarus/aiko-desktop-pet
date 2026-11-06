@@ -385,3 +385,80 @@ restart. The published app showed petting and completed its pose, then accepted
 one RPS touch choice. Offline reload retained the version and preference without
 page errors. No profile/storage recreation was used. Main and the resident
 desktop app/save were untouched.
+
+
+## Floor-grid preview, fixed furniture and retained-save upgrade (2026-11-06)
+
+Verified runtime source: `0aef82356f357e93f8f67bdddf938e6e5c50f961`, package
+`0.1.0-0aef82356f35`. This is a preview of the more spatial presentation, not
+owner acceptance of that visual direction. The owner explicitly requires
+kitchen, fridge and other furniture to keep their own room orientation.
+
+All furniture cutouts now occupy fixed room faces, including the kitchen and
+fridge; they do not billboard toward the view. Cropped alpha masks block picking
+through visible furniture while allowing transparent gaps. The one floor is
+clipped against the camera near plane: partially visible planks are retained,
+rather than leaving the lower-edge holes found during screenshot review.
+Authored character art was reused without regenerating or changing PNGs.
+
+Final local checks, all after the implementation commits:
+
+- 348 selected, headless Python regressions: World state/falling/persistence,
+  object attention/perception/tracking/knowledge/absence/interaction/consumption,
+  all SQLite boundary/migration modules, and room-session/grid scenarios.
+  This is a targeted selection, not a claim that the complete native GUI suite ran.
+- Four Node checks: floor projection round-trip at rotated bearings and relative
+  size; near-plane floor clipping; admitted route-corner interpolation; package
+  path/protocol validation.
+- 21 existing architecture/boundary checks: dependency graph, UI ownership,
+  pet movement/mind and animation timing/policy boundaries.
+- Ruff across application, tests, tooling and balance tests; strict Mypy across
+  432 application/tool source files; repository Pyright: no errors or warnings.
+- TypeScript, production starter/runtime/service-worker build and GitHub
+  **Shared room web** run `42245562415`: successful for the runtime source above.
+
+Browser plugin not available. Used the installed Playwright Chromium headless
+shell with software WebGL and isolated profile/storage; no visible windows,
+resident desktop process or personal save was used. Local test origin:
+`http://127.0.0.1:8893/room/`; viewports 1024x768 and 768x1024, with touch input.
+
+The actual previous production package `0.1.0-6515ed307321` first created a
+synthetic live save. The current starter downloaded the preview and applied
+**Jetzt neu starten** to the same IDBFS database. Schema 6 -> 7 retained live
+portion IDs, zodiac and pet values, allowing only genuine elapsed progression.
+A separate SQLite fixture also proves the automatic schema-6 backup, exact pet
+checkpoint preservation, independent remembered-position migration, stable
+reopening and rejection of an older schema reader.
+
+Actual touch flows passed: camera following, swipe releases following, fixed
+furniture at different bearings, conditional Find, need cards, wish cards,
+removed room-size selector, supply drag with a raised release and real fall,
+original RPS choice/artwork, native petting, and offline reopening with retained
+live object IDs/settings. Visible images were awaited before capture. Page
+identity/nonblank content, no framework overlay, image loading and interaction
+results were checked; no JavaScript page errors. Expected console resource
+messages were limited to the deliberately absent initial update descriptor
+and the intentionally disconnected network during offline checks.
+
+The isolated QA script, screenshots and browser profiles stay outside Git under
+`%TEMP%/aiko-room-grid-qa/`. Generated runtime/installer/site ZIPs and checksums
+are under ignored `dist-room/grid-final/`; no save/profile data enters them.
+Physical iPad acceptance and complete forward/backward character step assets
+remain open, as described in `IPAD_ACCEPTANCE.md`.
+
+Published test release:
+[`room-test-0.1.0-0aef82356f35`](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-0aef82356f35).
+Deployment commit `b76f47bafbb57f07eb28977566835f0170829e1e` pins starter
+SHA-256 `b47dd0b33a03230bda14a494de4662a5c31415f979f4568b31b4a9362079045f`.
+The [deployment run](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42247193246)
+completed successfully. The live HTTPS `install.json` exactly matched the local
+descriptor for version `0.1.0-0aef82356f35`; live `index.html` and `sw.js` also
+matched the built files byte for byte.
+
+A separate fresh, isolated headless HTTPS installation then downloaded the
+published version, reported geometry 2, accepted touch petting and retained a
+changed zodiac setting through an offline reload. No JavaScript page errors.
+Evidence is `live-result.json`, `live-grid.png` and `live-offline.png` in the
+same external QA directory. This verifies delivery and offline reopening in
+Chromium; physical iPad/Safari visual and interaction acceptance remains open.
+Main, the resident desktop app and the owner's actual save were untouched.
