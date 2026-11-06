@@ -8,6 +8,7 @@ import {
 } from '../src/platforms/browser/PackageImporter.ts';
 import { validatePublishedPackage } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
+import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
@@ -19,6 +20,8 @@ test('flat panorama preserves floor and lifted drop coordinates in every directi
     [Math.PI / 2, { x: 650, depth: 280 }],
     [Math.PI, { x: 430, depth: 500 }],
     [-Math.PI / 2, { x: 100, depth: 300 }],
+    [Math.PI / 4, { x: 700, depth: 74.99 }],
+    [Math.PI / 4, { x: 700, depth: 75.01 }],
   ]) {
     projection.update(1024, 768, yaw);
     for (const height of [0, 25]) {
@@ -33,6 +36,34 @@ test('flat panorama preserves floor and lifted drop coordinates in every directi
     projection.projectPoint({ x: 400, depth: 150 }).scale >
       projection.projectPoint({ x: 400, depth: 50 }).scale,
   );
+});
+
+test('four wall grids have one window and use the authored furniture proportions', () => {
+  assert.equal(new Set(layout.walls.map((wall) => wall.id)).size, 4);
+  assert.deepEqual(
+    layout.walls.filter((wall) => wall.asset === 'living').map((wall) => wall.id),
+    ['east'],
+  );
+  const projection = new RoomProjection(layout);
+  projection.update(1800, 900, 0);
+  const item = (id) => layout.furniture.find((item) => item.id === id);
+  const door = furnitureFrame(projection, item('door'));
+  assert.ok(Math.abs(door.x - 270) < 1e-6);
+  assert.equal(door.y, 802);
+  assert.equal(door.width, 255);
+  assert.equal(furnitureFrame(projection, item('bed')).width, 680);
+  assert.equal(furnitureFrame(projection, item('table')).width, 527);
+  projection.update(1800, 900, -Math.PI / 2);
+  const shelf = furnitureFrame(projection, item('shelf'));
+  assert.ok(Math.abs(shelf.x - 660) < 1e-6);
+  assert.equal(shelf.y, 540);
+  assert.equal(shelf.width, 270);
+  for (const entry of layout.furniture) {
+    const frame = furnitureFrame(projection, entry);
+    assert.ok(
+      Math.abs(frame.width / frame.height - entry.crop[2] / entry.crop[3]) < 1e-6,
+    );
+  }
 });
 test('panning only translates art, including across the panorama wrap', () => {
   const projection = new RoomProjection(layout);
