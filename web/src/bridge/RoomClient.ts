@@ -28,6 +28,8 @@ export interface RoomSnapshot {
   held_item?: string | null;
   held_pose?: string;
   moving: boolean;
+  heading: number;
+  motion?: {serial: number; time: number; travelled: Array<{x:number; depth:number}>};
   facing: number;
   game: Record<string, unknown> | null;
   catalog: Record<string, unknown>;

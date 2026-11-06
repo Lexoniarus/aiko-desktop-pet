@@ -118,6 +118,29 @@ export class AikoView extends Container {
     this.placeHeld();
     this.updateBounds();
   }
+  async showFromCamera(
+    name: string, heading: number, yaw: number, moving: boolean, actionId: number,
+    timings?: number[] | null, frame?: number | null,
+  ): Promise<void> {
+    if (moving && name.startsWith('body-step-')) {
+      const relative = heading-yaw;
+      const right = Math.sin(relative)>=0;
+      const side = right ? 'right' : 'left';
+      const quarter = Math.abs(Math.sin(relative))<.65;
+      const variant = quarter ? `body-step-${side}-${right ? '04' : '12'}` : `body-step-${side}-profil`;
+      name = variant in this.clips ? variant : `body-step-${side}-profil`;
+      frame = null;
+    } else if ((name==='look' || name.startsWith('body-look-')) && frame != null) {
+      const original = name==='body-look-left' && frame>0 ? frame+7 : frame;
+      const angle = original*Math.PI/8;
+      const worldHeading = Math.atan2(Math.sin(angle), -Math.cos(angle));
+      const relative = worldHeading-yaw;
+      const sector = (Math.round(Math.atan2(Math.sin(relative),-Math.cos(relative))/(Math.PI/8))+16)%16;
+      name = sector>0 && sector<8 ? 'body-look-right' : sector>8 ? 'body-look-left' : 'look';
+      frame = name==='body-look-left' ? sector-7 : sector;
+    }
+    await this.show(name, actionId, timings, frame);
+  }
   async warmWalking(): Promise<void> {
     const names = [
       'body-step-right-profil',

@@ -153,12 +153,6 @@ export class RoomView {
     }
     this.snapshot = snapshot;
     this.motion.receive(snapshot.room.pet, performance.now(), snapshot.motion?.travelled);
-    void this.aiko.show(
-      snapshot.animation,
-      snapshot.animation_id,
-      snapshot.animation_timings,
-      snapshot.animation_hold_frame,
-    );
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose, contact);
     const live = new Set(
       snapshot.objects
@@ -179,7 +173,7 @@ export class RoomView {
           if (item.position)
             known.motion.receive({
               ...item.position,
-              depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 0.9,
+              depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 300,
             });
         }
         continue;
@@ -210,7 +204,7 @@ export class RoomView {
       if (item.position)
         motion.receive({
           ...item.position,
-          depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 0.9,
+          depth: new Map(snapshot.room.object_depths).get(item.instance_id) ?? 300,
         });
       this.objects.set(item.instance_id, { sprite, item, motion });
     }
@@ -223,6 +217,9 @@ export class RoomView {
     const point = this.motion.position() ?? snapshot.room.pet;
     this.camera.tick(point);
     this.scene.update(this.camera);
+    void this.aiko.showFromCamera(snapshot.animation, snapshot.heading ?? 0,
+      this.camera.yaw, snapshot.moving, snapshot.animation_id,
+      snapshot.animation_timings, snapshot.animation_hold_frame);
     const projected = this.camera.projection.projectPoint(point);
     this.aiko.visible = projected.depth > 1;
     this.aiko.position.set(projected.x, projected.y);
@@ -245,7 +242,7 @@ export class RoomView {
       if (!position) continue;
       const display = motion.position() ?? {
         ...position,
-        depth: depths.get(item.instance_id) ?? 0.9,
+        depth: depths.get(item.instance_id) ?? 300,
       };
       const p = this.camera.projection.projectPoint(display, display.height ?? position.height);
       sprite.visible &&= p.depth > 1;
@@ -277,7 +274,7 @@ export class RoomView {
   portionSize(definition: string, x: number, y: number): [number, number] {
     return this.portionSizeAt(
       definition,
-      this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 0.9,
+      this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 300,
     );
   }
   portionSizeAt(definition: string, depth: number): [number, number] {
