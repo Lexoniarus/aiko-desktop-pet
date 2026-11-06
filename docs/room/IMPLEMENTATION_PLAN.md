@@ -682,8 +682,9 @@ means physical floor Z in room units; `height` still means height above ground.
 | `frontend/room_environment.py`, `application/object_geometry.py` | Optional room distances, visibility and remembered-place coverage; desktop defaults remain unchanged. |
 | `infrastructure/room_layout.py`, `room_migration.py` | Load the shared layout; transform old stock and historical memories independently. |
 | `infrastructure/sqlite/room_grid_schema.py` | Schema 7 with versioned geometry, original schema-6 rows and automatic pre-migration backup. |
-| `RoomProjection.ts`, `RoomCamera.ts` | Flat angular panorama over the floor grid, modest depth scaling and matching inverse placement; follow released by swipe. |
-| `RoomScene.ts`, `RoomPicking.ts` | Four adjoining 2D backgrounds, undistorted furniture sprites, depth order, alpha-aware picking and floor/held placement. |
+| `RoomProjection.ts`, `RoomCamera.ts` | Wall-linear panorama chart over the floor grid, modest depth scaling and matching inverse placement; follow released by swipe. |
+| `RoomPresentation.ts`, `RoomBackground.ts` | Authored v16 picture dimensions, mounting/overhang/orientation and full-height background composition; one east window. |
+| `RoomScene.ts`, `RoomPicking.ts` | Four adjoining 2D backgrounds, undistorted furniture sprites, ground-based draw order, alpha-aware picking and floor/held placement. |
 | `RoomMotion.ts`, `AikoView.ts` | Route-segment interpolation, stable animation phase and view-relative movement banks, native book state anchors. |
 | `MoodletStrip.ts`, existing status/wish/UI panels | Native icons/details, compact readouts, wish goals/progress, one conditional Find and a separate Follow control. |
 
@@ -700,6 +701,35 @@ occupied footprints, placement and persisted positions. Nearness changes Aiko's
 scale and foot position without tilting or foreshortening furniture. The unused
 `gl-matrix` dependency was removed; PixiJS and pixi-viewport remain.
 This is a rendering change, not another save migration or room simulation.
+
+The owner explicitly chose to retain the current furniture distribution across
+all four walls, rather than regrouping the bedroom furniture as in v16. The west
+wall now uses neutral art; only the east wall uses the window image. Furniture
+coordinates, occupied footprints, mounting heights in the world model and grid
+dimensions are unchanged. No save/schema migration accompanies this correction.
+
+Picture dimensions use a separate 1800x900 design space: the reference widths
+are independent of logical collision-box sizes. The floor seam is restored to
+802 and visible foreground feet end at 890. The shelf's picture mount is 262px
+above that seam. Picture overhangs stay within their assigned wall's joint;
+the bed headboard faces the near corner. Background art is drawn at its full
+height, with wall-only colour matching and a shared floor/skirting. Character
+and furniture PNGs remain unchanged.
+
+Wall-local coordinates, rather than physical azimuth, determine horizontal
+panorama position. Camera following, inverse drops and calling use that same
+chart; animation direction still uses world heading relative to the observer.
+Draw order uses ground-foot height. Raised drops use a 24-design-pixel release
+offset so the restored narrow 2D floor band remains usable by touch.
+
+The installed runtime owns browser update policy, including when launched by
+an older cached starter. It delegates the starter's public update operations
+to one runtime-owned controller; shutdown/save and game blockers remain shared.
+Package and publication manifests carry the source commit timestamp. A stamped
+runtime accepts only a strictly newer timestamp, so an older hosted package
+cannot undo a newer manual ZIP import. Legacy unstamped installations retain
+their first-upgrade path. No profile replacement or storage-origin change is
+required.
 
 Furniture uses its existing cutout with its original aspect ratio,
 with its real floor footprint blocking movement. This does not invent

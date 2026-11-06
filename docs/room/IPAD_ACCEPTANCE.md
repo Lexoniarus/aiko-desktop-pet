@@ -51,6 +51,12 @@ On the target iPad, verify:
 
 - Swipe through all four flat wall panels and their joins; the floor/skirting
   stays level, and furniture translates without tilting, narrowing or turning.
+- Confirm exactly one window on the east wall and neutral art behind the west
+  desk/shelf. Keep the current four-wall furniture distribution; check original
+  v16 picture proportions, shelf mounting and corner-contained bed/plant art.
+- Update through the existing icon and retain the save. If a runtime ZIP is
+  imported through Settings, an older online offer must not replace it, including
+  after online and offline reopening. Do not reinstall the profile.
 - Call Aiko closer; size changes with distance while her logical size stays fixed.
 - Aiko walks around the table and occupied furniture footprints, including behind.
 - Fixing follows her bearing; a swipe releases it. Find appears only off-camera.

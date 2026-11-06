@@ -602,3 +602,107 @@ Evidence remains outside Git in `%TEMP%/aiko-room-flat-qa/`:
 `deploy-after.png` and `deploy-offline.png`. No personal iPad save was read,
 changed or uploaded. Actual iPad visual/device acceptance remains the owner's
 next check. Main and parallel desktop asset work were not modified by recovery.
+
+## Single-window and four-wall picture calibration (2026-11-06)
+
+Runtime source `a4e8069e75f44e9f955b01d71329ef85e9c1a1f3`, version
+`0.1.0-a4e8069e75f4`. The owner explicitly selected **keep the current furniture
+distribution across four walls**. The correction therefore changes presentation
+and the west wall's background asset, not the placement of world furniture.
+A comparison with the preceding layout confirmed every furniture record,
+footprint, mounting height, grid dimension and revision is unchanged. Geometry
+version 2, protocol 2 and SQLite schema 7 remain unchanged; no migration or
+personal save access was needed. Character and room PNGs were not modified.
+
+The duplicated window came from using `living` artwork on both east and west.
+West now uses neutral art; exactly one wall (east) uses the window image.
+The other mismatch came from applying angular/radial screen placement and
+generic logical heights to a four-panel picture. Wall-linear chart coordinates
+now agree at room corners and map floor positions, camera following/calling and
+touch placement consistently. Original full-height backgrounds retain the 802px
+floor seam. Ground-foot height controls painter order.
+
+`RoomPresentation.ts` owns the v16 cutout widths independently of collision-box
+dimensions, shelf picture mounting and corner overhang/orientation. Door, bed,
+table and shelf anchor/size assertions use explicit reference values. Nonblocking
+wall-mounted artwork stays on its exact attachment point. Bed and plant pictures
+stay within their wall joints; the bed headboard faces the near corner. The
+window-frame restoration is bounded to its own opening so cool wall pixels do
+not create a false strip at the skirting. `RoomBackground.ts` assembles the
+unchanged source images; no new drawing or perspective mesh was introduced.
+
+Final local checks:
+
+- 36 targeted existing Python checks (character/body asset catalogs, room grid
+  and session) passed without native windows.
+- Five focused Node checks passed: round-trips including lifted positions and
+  both sides of a corner, one east window, explicit picture dimensions/mounts,
+  corner containment, panorama wrap, route interpolation and package validation.
+- TypeScript/production build, Prettier and diff whitespace checks passed.
+  [Source web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42266448363)
+  passed for the exact source above.
+
+The actual previous 7cafd package created an isolated local save, which upgraded
+through the real starter/update/restart flow to this package. IDs, settings and
+pet progress were retained. Touch food dragging used the visible floor and
+produced a raised release/fall with the same portion; camera following and swipe
+release, Find, needs/wishes, original RPS, petting and offline reopening passed.
+The narrower restored 2D floor uses a 24-design-pixel release offset rather than
+a fixed large world height. All screenshots were captured from the installed
+runtime after image loading, not a mock layout.
+
+Browser plugin unavailable; existing Playwright Chromium headless shell with
+software WebGL was used at 1024x768 and 768x1024, touch enabled. Additional
+cardinal-wall views at 1800x900 show each complete panel and its corner cutouts.
+Page identity/content, absence of an error overlay, image loading and interaction
+results were checked. No JavaScript page errors. Expected resource messages were
+limited to the deliberately disabled initial update descriptor and the offline
+network check. Evidence stays outside Git in `%TEMP%/aiko-room-wall-qa/`:
+`result.json`, `wall-{north,east,south,west}.png`, corresponding `-full.png`
+views, care/drag/game screenshots and isolated browser profiles. Generated ZIPs
+and checksums are under ignored `dist-room/wall-calibrated-publish/`.
+
+### Cached-starter update ordering and publication recovery
+
+The final code adds runtime-owned update ordering in source `a4159a00e702985ba6a71dba6e0ec83fef004db2`,
+package `0.1.0-a4159a00e702`. Six focused Node checks, the production build,
+Ruff and strict Mypy for the package builder passed. The exact
+[source web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42270907054)
+passed. Package manifests carry the source commit timestamp; the runtime takes
+ownership through the cached starter's public update methods. Older hosted
+packages cannot silently replace a newer imported runtime.
+
+An isolated profile actually ran the unchanged 7cafd starter (`index-CjUiuH0a.js`),
+imported the a415 runtime through its file input, and continued receiving the
+older 7cafd online descriptor. The retained object IDs and zodiac survived the
+import, online reload and offline reload. No rollback/pending package or
+JavaScript page errors occurred. Evidence is
+`%TEMP%/aiko-room-wall-qa/manual-safe/legacy-manual-result.json` and its offline
+screenshot. No personal save was accessed.
+
+The first a4e Pages publication and two operational retries failed after artifact
+upload, while Pages reported deployment failure without its internal cause.
+Explicit cancellation and a backed-up recreation at the same URL did not make
+those attempts succeed. A rollback to the unchanged last-known-good 7cafd site
+then passed, including the public checksum gate, in
+[run 42270245318](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42270245318).
+The source/configuration and prior site archive were backed up outside Git.
+No browser storage was cleared. This does not establish a general GitHub outage
+or prove which internal Pages condition failed.
+
+The subsequent final a415 publication succeeded in
+[run 42271808025](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42271808025),
+deploy commit `149f854280a86f8d97f1b25fa864580d540f2be6`, including the public
+descriptor/starter/runtime verification gate. The published runtime ZIP SHA-256
+is `3608b3d2ee249439663bbba30a757d0513b1a510f1c709b8974bd6e5a77809e5`;
+the starter ZIP is `e783052332155130a8e75945b3708b898e72e68b9fd8be9f5130b258355e5038`.
+The direct runtime ZIP is also attached to the test release for file import
+through the existing app, without changing the profile or storage origin.
+
+After the gate passed, the existing isolated profile at the real production
+HTTPS origin upgraded from 7cafd to a415 through Settings -> Check for updates
+-> Restart. Its object IDs and zodiac remained intact, touch petting worked,
+no stale pending package remained, and offline reopening preserved the same
+version and saved data. JavaScript page errors: none. Evidence is
+`%TEMP%/aiko-room-wall-qa/deploy-upgrade-result.json`, `deploy-after.png` and
+`deploy-offline.png`. The owner's real iPad visual acceptance is still pending.
