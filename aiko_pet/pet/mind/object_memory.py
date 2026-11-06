@@ -64,7 +64,9 @@ class ObjectMemory:
                 (previous.possible_sources
                  if compatible and previous is not None else ()),
                 previous.instance_id if compatible and previous is not None else None,
-                previous.depth if compatible and previous is not None else 0.9,
+                observation.depth if observation.depth is not None else (
+                    previous.depth if compatible and previous is not None else 0.9
+                ),
             )
 
     def observe_depth(self, token: str, depth: float) -> None:
@@ -86,7 +88,7 @@ class ObjectMemory:
         reunion = None
         supported = learned is not None and (
             seen.identity is not None or learned.at_place(
-                x=seen.x, height=seen.height, resting=seen.resting,
+                x=seen.x, height=seen.height, resting=seen.resting, depth=seen.depth,
             )
         )
         if supported and learned is not None:
@@ -219,6 +221,7 @@ class ObjectMemory:
             if (not item.recognized and item.resting and item.token not in observed
                     and any(seen.token in new_records and seen.resting and math.hypot(
                         seen.x - item.x, seen.height - item.height,
+                        (seen.depth - item.depth) if seen.depth is not None else 0,
                     ) <= maximum_distance for seen in observations)):
                 self.forget(item.token)
 

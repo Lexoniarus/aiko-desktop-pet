@@ -21,8 +21,8 @@ from ..pet.mind.object_perception import (
 )
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, ObjectState, WorldSnapshot
-from .object_tracking import ObjectTracker
 from .object_geometry import ObjectSpatialGeometry
+from .object_tracking import ObjectTracker
 
 TargetEvidence = Literal["observed", "unresolved", "unseen", "forgotten"]
 
@@ -364,6 +364,8 @@ class ObjectAwareness:
                     and presentation[0] == item.instance_id
                     and item.state == ObjectState.USER_HELD
                     else None,
+                    depth=world.room.depth_for(item.instance_id)
+                    if world.room is not None else None,
                 )
             )
         return candidates, own_actions, held
@@ -460,7 +462,7 @@ class ObjectAwareness:
             and known.at_place(
                 x=item.x,
                 height=item.height,
-                resting=item.resting,
+                resting=item.resting, depth=item.depth,
             )
         )
         # Distant occupancy is evidence about a checked learned place only.
@@ -516,7 +518,7 @@ class ObjectAwareness:
                 and known.at_place(
                     x=item.x,
                     height=item.height,
-                    resting=item.resting,
+                    resting=item.resting, depth=item.depth,
                 )
             ),
         )

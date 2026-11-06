@@ -88,6 +88,8 @@ class ObjectTracker:
         distances = {
             (index, token): math.hypot(
                 item.x - track.candidate.x, item.height - track.candidate.height,
+                item.depth - track.candidate.depth
+                if item.depth is not None and track.candidate.depth is not None else 0,
             )
             for index, item in enumerate(candidates)
             for token, track in previous.items()

@@ -36,7 +36,8 @@ def match_find(
     local = [item for item in (*compatible, *unknown_places)
              if item.resting == seen.resting
              and (seen.identity is not None or item.place_status != "missing")
-             and math.hypot(item.x - seen.x, item.height - seen.height)
+             and math.hypot(item.x - seen.x, item.height - seen.height,
+                            (item.depth - seen.depth) if seen.depth is not None else 0)
              <= maximum_distance]
     if len(local) == 1:
         return FindMatch(local[0].token)

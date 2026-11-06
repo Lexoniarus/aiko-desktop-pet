@@ -19,6 +19,7 @@ class _EmptyPlace:
     since: float
     last: float
     confirmed: bool = False
+    depth: float | None = None
 
 
 class ObjectAbsencePerception:
@@ -61,14 +62,17 @@ class ObjectAbsencePerception:
                     or not ground_bounds[0] <= item.x <= ground_bounds[1]
                     or not visible
                     or any(math.hypot(candidate.x - item.x,
-                                      candidate.height - item.height) <= reach
+                                      candidate.height - item.height,
+                                      candidate.depth - item.depth
+                                      if candidate.depth is not None else 0) <= reach
                            and self._could_be(item, candidate, identified)
                            for candidate in occupants)):
                 continue
             previous = self._places.get(item.token)
             if (previous is None or not 0 <= now - previous.last <= gap
-                    or (previous.x, previous.height) != (item.x, item.height)):
-                previous = _EmptyPlace(item.x, item.height, now, now)
+                    or (previous.x, previous.height, previous.depth)
+                    != (item.x, item.height, item.depth)):
+                previous = _EmptyPlace(item.x, item.height, now, now, depth=item.depth)
             previous.last = now
             if not previous.confirmed and now - previous.since + 1e-9 >= duration:
                 previous.confirmed = True
@@ -83,8 +87,10 @@ class ObjectAbsencePerception:
         identified: Mapping[str, ObjectKnowledge] | None,
     ) -> bool:
         if remembered.recognized:
-            if not remembered.at_place(x=candidate.x, height=candidate.height,
-                                       resting=candidate.resting):
+            if not remembered.at_place(
+                x=candidate.x, height=candidate.height,
+                resting=candidate.resting, depth=candidate.depth,
+            ):
                 return False
             if remembered.instance_id is not None:
                 # An acquired reference confirms only this exact learned place;

@@ -32,6 +32,7 @@ class ObjectCandidate:
     resting: bool
     inspecting: bool = False
     presentation: ItemPresentation | None = None
+    depth: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +45,7 @@ class ObjectObservation:
     resting: bool
     observed_at: float
     presented: bool = False
+    depth: float | None = None
 
 
 @dataclass
@@ -158,6 +160,7 @@ class ObjectPerception:
                     item.resting,
                     now,
                     current.presented,
+                    item.depth,
                 )
             )
         self._evidence = evidence

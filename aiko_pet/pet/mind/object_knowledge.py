@@ -32,9 +32,12 @@ class ObjectKnowledge:
     def recognized(self) -> bool:
         return self.identity is not None and self.kind is not None
 
-    def at_place(self, *, x: float, height: float, resting: bool) -> bool:
+    def at_place(
+        self, *, x: float, height: float, resting: bool, depth: float | None = None,
+    ) -> bool:
         """Compare an observed place exactly; proximity is not object identity."""
-        return (self.x, self.height, self.resting) == (x, height, resting)
+        return ((self.x, self.height, self.resting) == (x, height, resting)
+                and (depth is None or self.depth == depth))
 
 
 @dataclass(frozen=True, slots=True)
