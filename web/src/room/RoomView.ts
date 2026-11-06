@@ -12,7 +12,6 @@ import { RoomPicking } from './RoomPicking';
 import type { RoomLayout, RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 
-
 export interface AssetManifest {
   characterHeight: number;
   layout: RoomLayout;
@@ -101,7 +100,8 @@ export class RoomView {
     this.scene = new RoomScene(this.world, this.assets.layout, images);
     this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
     this.aiko.on('pointertap', () => {
-      if (performance.now() > this.petTapBlockedUntil) this.onPetTap();
+      if (performance.now() > this.petTapBlockedUntil && !this.camera.blocksTap)
+        this.onPetTap();
     });
     this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
@@ -111,7 +111,7 @@ export class RoomView {
     );
     this.resizeObserver.observe(this.host);
     this.camera.resize(this.host.clientWidth, this.host.clientHeight);
-    this.camera.lookAt({x: 400, depth: 100});
+    this.camera.lookAt({ x: 400, depth: 100 });
     this.app.ticker.add(() => this.draw());
   }
 
@@ -143,7 +143,11 @@ export class RoomView {
       }
     }
     this.snapshot = snapshot;
-    this.motion.receive(snapshot.room.pet, performance.now(), snapshot.motion?.travelled);
+    this.motion.receive(
+      snapshot.room.pet,
+      performance.now(),
+      snapshot.motion?.travelled,
+    );
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose, contact);
     const live = new Set(
       snapshot.objects
@@ -183,7 +187,10 @@ export class RoomView {
       )
         continue;
       const sprite = new Sprite(texture);
-      sprite.anchor.set(asset.pivot[0]/texture.width, asset.pivot[1]/texture.height);
+      sprite.anchor.set(
+        asset.pivot[0] / texture.width,
+        asset.pivot[1] / texture.height,
+      );
       sprite.eventMode = 'static';
       sprite.cursor = 'grab';
       sprite.on('pointerdown', (event) => {
@@ -208,13 +215,24 @@ export class RoomView {
     const point = this.motion.position() ?? snapshot.room.pet;
     this.camera.tick(point);
     this.scene.update(this.camera);
-    void this.aiko.showFromCamera(snapshot.animation, snapshot.heading ?? 0,
-      this.camera.yaw, snapshot.moving, snapshot.animation_id,
-      snapshot.animation_timings, snapshot.animation_hold_frame);
+    void this.aiko.showFromCamera(
+      snapshot.animation,
+      snapshot.heading ?? 0,
+      Math.atan2(
+        point.x - this.assets.layout.width / 2,
+        this.assets.layout.depth / 2 - point.depth,
+      ),
+      snapshot.moving,
+      snapshot.animation_id,
+      snapshot.animation_timings,
+      snapshot.animation_hold_frame,
+    );
     const projected = this.camera.projection.projectPoint(point);
     this.aiko.visible = projected.depth > 1;
     this.aiko.position.set(projected.x, projected.y);
-    this.aiko.scale.set(this.assets.layout.pet_height / this.assets.characterHeight * projected.scale);
+    this.aiko.scale.set(
+      (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
+    );
     this.aiko.zIndex = -projected.depth;
     this.aiko.renderHeld();
     this.shadow.position.copyFrom(this.aiko.position);
@@ -235,24 +253,33 @@ export class RoomView {
         ...position,
         depth: depths.get(item.instance_id) ?? 300,
       };
-      const p = this.camera.projection.projectPoint(display, display.height ?? position.height);
+      const p = this.camera.projection.projectPoint(
+        display,
+        display.height ?? position.height,
+      );
       sprite.visible &&= p.depth > 1;
       sprite.position.set(p.x, p.y);
-      sprite.scale.set(this.assets.layout.pet_height / this.assets.characterHeight * p.scale * (this.assets.items[item.definition_id]?.worldZoom ?? 1));
+      sprite.scale.set(
+        (this.assets.layout.pet_height / this.assets.characterHeight) *
+          p.scale *
+          (this.assets.items[item.definition_id]?.worldZoom ?? 1),
+      );
       sprite.zIndex = -this.camera.projection.projectPoint(display).depth;
-
     }
   }
 
   pointAt(clientX: number, clientY: number): RoomPoint {
-    return this.floorPoint(clientX, clientY) ?? this.petPosition ?? {x:400, depth:100};
+    return (
+      this.floorPoint(clientX, clientY) ?? this.petPosition ?? { x: 400, depth: 100 }
+    );
   }
   petContains(clientX: number, clientY: number): boolean {
     const box = this.app.canvas.getBoundingClientRect();
     const bounds = this.aiko.screenBounds();
     const x = clientX - box.left,
       y = clientY - box.top;
-    return this.aiko.visible && (
+    return (
+      this.aiko.visible &&
       x >= bounds.x &&
       x <= bounds.x + bounds.width &&
       y >= bounds.y &&
@@ -268,31 +295,58 @@ export class RoomView {
       this.floorPoint(x, y)?.depth ?? this.petPosition?.depth ?? 300,
     );
   }
-  portionSizeAt(definition: string, depth: number): [number, number] {
+  portionSizeAt(definition: string, depth: number, x?: number): [number, number] {
     const dimensions = this.assets.items[definition]?.dimensions ?? [72, 72];
-    const point = this.petPosition ?? {x: 400, depth};
-    const factor = this.camera.projection.projectPoint({...point, depth}).scale * this.assets.layout.pet_height / this.assets.characterHeight * (this.assets.items[definition]?.worldZoom ?? 1);
+    const point = { x: x ?? this.petPosition?.x ?? 400, depth };
+    const projected = this.camera.projection.projectPoint(point);
+    const scale =
+      projected.depth > 50
+        ? projected.scale
+        : this.camera.projection.projectPoint(this.callPoint()).scale;
+    const factor =
+      ((scale * this.assets.layout.pet_height) / this.assets.characterHeight) *
+      (this.assets.items[definition]?.worldZoom ?? 1);
     return [dimensions[0]! * factor, dimensions[1]! * factor];
   }
   objectDepth(instance: string): number {
     return new Map(this.snapshot?.room.object_depths).get(instance) ?? 300;
   }
-  dragPoint(clientX: number, clientY: number, depth: number, definition: string): DragPlacement {
+  dragPoint(
+    clientX: number,
+    clientY: number,
+    ground: RoomPoint,
+    definition: string,
+  ): DragPlacement {
     const box = this.app.canvas.getBoundingClientRect();
-    const x = clientX-box.left, y=clientY-box.top;
+    const x = clientX - box.left,
+      y = clientY - box.top;
     const asset = this.assets.items[definition]!;
-    const support = (asset.dimensions[1]-asset.pivot[1]) * this.portionSizeAt(definition, depth)[1] / asset.dimensions[1];
+    const support =
+      ((asset.dimensions[1] - asset.pivot[1]) *
+        this.portionSizeAt(definition, ground.depth, ground.x)[1]) /
+      asset.dimensions[1];
     const overPet = this.petContains(clientX, clientY);
-    const previous = this.petPosition ? {...this.petPosition, depth} : {x:400, depth};
-    const floor = this.picking.resolveDrop(x, y+support);
-    const held = this.picking.atDepth(x, y+support, overPet ? this.petPosition! : previous);
-    const placement = overPet ? held : floor ? {point: floor, height:0} : held;
+    const previous = ground;
+    const floor = this.picking.resolveDrop(x, y + support, 25);
+    const held = this.picking.atDepth(
+      x,
+      y + support,
+      overPet ? this.petPosition! : previous,
+    );
+    const placement = overPet ? held : floor ? { point: floor, height: 25 } : held;
     const point = placement?.point ?? previous;
-    const pet = this.aiko.screenBounds(), width = Math.max(1, pet.scale*192);
-    const inside = x>=0 && x<=box.width && y>=0 && y<=this.camera.sceneHeight && !!placement;
-    return {...point, height: placement?.height ?? 0, inside, offer: inside && overPet,
-      face_x: (x-pet.originX-pet.scale*96)/width,
-      face_y: (y-pet.originY-pet.scale*100)/width};
+    const pet = this.aiko.screenBounds(),
+      width = Math.max(1, pet.scale * 192);
+    const inside =
+      x >= 0 && x <= box.width && y >= 0 && y <= this.camera.sceneHeight && !!placement;
+    return {
+      ...point,
+      height: placement?.height ?? 0,
+      inside,
+      offer: inside && overPet,
+      face_x: (x - pet.originX - pet.scale * 96) / width,
+      face_y: (y - pet.originY - pet.scale * 100) / width,
+    };
   }
   followPet(callback: (bounds: PetScreenBounds) => void): () => void {
     this.followers.add(callback);
@@ -304,19 +358,29 @@ export class RoomView {
   }
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {
     const box = this.app.canvas.getBoundingClientRect();
-    const x=clientX-box.left, y=clientY-box.top;
-    if (x<0 || x>box.width || y<0 || y>this.camera.sceneHeight) return;
-    return this.picking.resolveDrop(x,y);
+    const x = clientX - box.left,
+      y = clientY - box.top;
+    if (x < 0 || x > box.width || y < 0 || y > this.camera.sceneHeight) return;
+    return this.picking.resolveDrop(x, y);
   }
   callPoint(): RoomPoint {
-    return {x: this.assets.layout.width/2 + Math.sin(this.camera.yaw)*180,
-      depth: this.assets.layout.depth/2 - Math.cos(this.camera.yaw)*180};
+    return {
+      x: this.assets.layout.width / 2 + Math.sin(this.camera.yaw) * 180,
+      depth: this.assets.layout.depth / 2 - Math.cos(this.camera.yaw) * 180,
+    };
   }
-  get petPosition(): RoomPoint | undefined { return this.snapshot?.room.pet; }
+  get petPosition(): RoomPoint | undefined {
+    return this.snapshot?.room.pet;
+  }
   get petVisible(): boolean {
     if (!this.snapshot || !this.aiko.visible) return false;
-    const b=this.aiko.screenBounds();
-    return b.x+b.width>0 && b.x<this.host.clientWidth && b.y+b.height>0 && b.y<this.camera.sceneHeight;
+    const b = this.aiko.screenBounds();
+    return (
+      b.x + b.width > 0 &&
+      b.x < this.host.clientWidth &&
+      b.y + b.height > 0 &&
+      b.y < this.camera.sceneHeight
+    );
   }
   destroy(): void {
     this.disposed = true;

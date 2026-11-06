@@ -11,7 +11,13 @@ export interface RoomReply {
 export interface RoomSnapshot {
   revision: number;
   pet: Record<string, unknown>;
-  room: { pet: { x: number; depth: number }; object_depths: [string, number][]; geometry_version: 2; layout_id: string; layout_revision: number };
+  room: {
+    pet: { x: number; depth: number };
+    object_depths: [string, number][];
+    geometry_version: 2;
+    layout_id: string;
+    layout_revision: number;
+  };
   objects: Array<{
     instance_id: string;
     definition_id: string;
@@ -29,7 +35,11 @@ export interface RoomSnapshot {
   held_pose?: string;
   moving: boolean;
   heading: number;
-  motion?: {serial: number; time: number; travelled: Array<{x:number; depth:number}>};
+  motion?: {
+    serial: number;
+    time: number;
+    travelled: Array<{ x: number; depth: number }>;
+  };
   facing: number;
   game: Record<string, unknown> | null;
   catalog: Record<string, unknown>;

@@ -49,7 +49,8 @@ export class SpeechBubbles {
   private position(bounds: Bounds): void {
     const speech = this.speech;
     const content = !!speech && (!!speech.text || !!speech.emote);
-    const visible = this.room.petVisible &&
+    const visible =
+      this.room.petVisible &&
       bounds.x + bounds.width > 0 &&
       bounds.x < this.host.clientWidth &&
       bounds.y < this.host.clientHeight &&

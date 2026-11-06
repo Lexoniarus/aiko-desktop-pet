@@ -83,17 +83,12 @@ export class RoomUI {
       );
     this.toolbar.prepend(
       button('Aiko rufen', () => {
-        void command('call', room.callPoint());
+        void command('call', { ...room.callPoint() });
       }),
     );
     this.status.setAttribute('role', 'status');
     const care = element('div', 'quick-care');
-    care.append(
-      this.pet,
-      this.sleep,
-      this.find,
-      this.fix,
-    );
+    care.append(this.pet, this.sleep, this.find, this.fix);
     const header = element('header', 'panel-header');
     header.append(
       this.title,
@@ -116,7 +111,9 @@ export class RoomUI {
     room.followPet(() => {
       this.find.hidden = room.petVisible;
       this.fix.setAttribute('aria-pressed', String(room.camera.following));
-      this.fix.textContent = room.camera.following ? 'Fixierung lösen' : 'Aiko fixieren';
+      this.fix.textContent = room.camera.following
+        ? 'Fixierung lÃ¶sen'
+        : 'Aiko fixieren';
       this.moodlets.element.hidden = this.panel.open;
     });
   }

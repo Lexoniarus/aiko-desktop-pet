@@ -1,5 +1,6 @@
 import { Unzip, UnzipInflate } from 'fflate';
 import {
+  activePackage,
   activatePackage,
   stagePackage,
   packageCachePrefix,
@@ -35,7 +36,10 @@ export function validateManifest(input: unknown): PackageManifest {
   if (
     !m ||
     m.format !== 1 ||
-    !((m.protocol === 1 && m.saveSchema === 6) || (m.protocol === 2 && m.saveSchema === 7)) ||
+    !(
+      (m.protocol === 1 && m.saveSchema === 6) ||
+      (m.protocol === 2 && m.saveSchema === 7)
+    ) ||
     typeof m.version !== 'string' ||
     !/^[\w.-]{1,80}$/.test(m.version) ||
     typeof m.entry !== 'string' ||
@@ -214,6 +218,11 @@ export async function importPackage(
         saveSchema: manifest.saveSchema,
         installedAt: Date.now(),
       };
+      const current = await activePackage();
+      if (manifest.saveSchema < (current?.saveSchema ?? 6))
+        throw new Error(
+          'Diese ältere Version unterstützt den aktualisierten Spielstand nicht.',
+        );
       // Storage persistence is a best-effort browser capability. Commit the
       // active pointer last so a refusal cannot delete an activated package.
       try {

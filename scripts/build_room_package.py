@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+from dataclasses import asdict
 from functools import cache
 from pathlib import Path
 from typing import Any
@@ -23,15 +24,15 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+
+from aiko_pet.application.room_contracts import PROTOCOL_VERSION  # noqa: E402
 from aiko_pet.asset_paths import ASSET_ROOT  # noqa: E402
 from aiko_pet.infrastructure.character_assets import (  # noqa: E402
     load_character_catalog,
 )
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
-from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
 from aiko_pet.infrastructure.room_layout import load_room_layout  # noqa: E402
-from aiko_pet.application.room_contracts import PROTOCOL_VERSION  # noqa: E402
-from dataclasses import asdict
+from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
 from scripts.room_installer import (  # noqa: E402
     installation_instructions,
     installation_profile,
@@ -157,7 +158,8 @@ def runtime_assets() -> dict[str, Any]:
             "worldZoom": item.world_zoom,
             "states": {
                 name: {
-                    "file": "assets/" + variants[2].render_path.relative_to(ASSET_ROOT).as_posix(),
+                    "file": "assets/"
+                    + variants[2].render_path.relative_to(ASSET_ROOT).as_posix(),
                     "pivot": variants[2].pivot,
                     "dimensions": Image.open(variants[2].render_path).size,
                     "offset": item.state_offsets.get(name, (0, 0)),
@@ -236,7 +238,11 @@ def main() -> None:
         url = f"https://cdn.jsdelivr.net/pyodide/v{package['dependencies']['pyodide']}/full/{filename}"
         files["runtime/" + filename] = download(url, cache / filename, record["sha256"])
     wheels = []
-    for name, pinned in (("astronomy-engine", "2.1.19"), ("pyjokes", "0.8.3"), ("pathfinding", "1.0.22")):
+    for name, pinned in (
+        ("astronomy-engine", "2.1.19"),
+        ("pyjokes", "0.8.3"),
+        ("pathfinding", "1.0.22"),
+    ):
         filename, contents = python_wheel(name, pinned, cache)
         files["python/" + filename] = contents
         wheels.append(filename)

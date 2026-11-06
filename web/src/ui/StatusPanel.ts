@@ -40,8 +40,8 @@ export class StatusPanel {
         meter = element('meter');
       meter.min = 0;
       meter.max = 100;
-      const icon = key==='mood' ? 'detail_wellbeing' : `status_${key}`;
-      row.append(artwork.image(artwork.icon(icon,64)), label, meter);
+      const icon = key === 'mood' ? 'detail_wellbeing' : `status_${key}`;
+      row.append(artwork.image(artwork.icon(icon, 64)), label, meter);
       needs.append(row);
       this.needs.set(key, { label, meter });
     }
@@ -53,7 +53,6 @@ export class StatusPanel {
       this.lines.set(key, text);
       details.append(text);
     }
-    this.element.append(this.emotion);
   }
   update(snapshot: RoomSnapshot): void {
     const status = snapshot.catalog.status as Record<string, unknown>;
