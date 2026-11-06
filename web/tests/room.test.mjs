@@ -12,7 +12,7 @@ import { RoomMotion } from '../src/room/RoomMotion.ts';
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
-test('floor projection round-trips after camera rotation and nearer Aiko is larger', () => {
+test('flat panorama preserves floor and lifted drop coordinates in every direction', () => {
   const projection = new RoomProjection(layout);
   for (const [yaw, point] of [
     [0, { x: 400, depth: 100 }],
@@ -21,10 +21,12 @@ test('floor projection round-trips after camera rotation and nearer Aiko is larg
     [-Math.PI / 2, { x: 100, depth: 300 }],
   ]) {
     projection.update(1024, 768, yaw);
-    const screen = projection.projectPoint(point),
-      result = projection.intersectFloor(screen.x, screen.y);
-    assert.ok(Math.abs(result.x - point.x) < 0.05);
-    assert.ok(Math.abs(result.depth - point.depth) < 0.05);
+    for (const height of [0, 25]) {
+      const screen = projection.projectPoint(point, height),
+        result = projection.intersectFloor(screen.x, screen.y, height);
+      assert.ok(Math.abs(result.x - point.x) < 0.05);
+      assert.ok(Math.abs(result.depth - point.depth) < 0.05);
+    }
   }
   projection.update(1024, 768, 0);
   assert.ok(
@@ -32,21 +34,20 @@ test('floor projection round-trips after camera rotation and nearer Aiko is larg
       projection.projectPoint({ x: 400, depth: 50 }).scale,
   );
 });
-test('floor polygons crossing the camera near plane remain filled', () => {
+test('panning only translates art, including across the panorama wrap', () => {
   const projection = new RoomProjection(layout);
-  projection.update(1024, 768, Math.PI / 4);
-  const polygon = projection.projectFloorPolygon([
-    { x: 300, depth: 275 },
-    { x: 500, depth: 275 },
-    { x: 500, depth: 300 },
-    { x: 300, depth: 300 },
-  ]);
-  assert.ok(polygon.length >= 3);
-  assert.ok(
-    polygon.every(
-      (p) => Number.isFinite(p.x) && Number.isFinite(p.y) && p.depth >= 0.999,
-    ),
-  );
+  const point = { x: 430, depth: 500 };
+  projection.update(1024, 768, Math.PI - 0.1);
+  const before = projection.projectPoint(point, 40);
+  projection.update(1024, 768, -Math.PI + 0.1);
+  const after = projection.projectPoint(point, 40);
+  assert.equal(after.scale, before.scale);
+  assert.equal(after.y, before.y);
+  assert.ok(Math.abs(after.x - before.x + 0.2 * projection.angularScale) < 1e-6);
+  const held = projection.atDistance(after.x, after.y, point);
+  assert.ok(Math.hypot(held.point.x - point.x, held.point.depth - point.depth) < 1e-6);
+  assert.ok(Math.abs(held.height - 40) < 1e-6);
+  assert.equal(projection.intersectFloor(512, 10), undefined);
 });
 
 test('display interpolation follows the admitted corner rather than its diagonal', () => {
