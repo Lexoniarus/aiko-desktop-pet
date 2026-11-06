@@ -6,7 +6,7 @@ import math
 from dataclasses import replace
 from enum import StrEnum
 from threading import get_ident
-from typing import Iterable
+from typing import Callable, Iterable
 
 from .contracts import (
     ObjectDefinition,
@@ -19,7 +19,7 @@ from .contracts import (
     WorldSurface,
 )
 from .motion import ItemMotion, MotionParameters, advance_motion
-from .room import RoomSpatialState
+from .room import RoomPoint, RoomSpatialState
 
 
 class WorldFailure(StrEnum):
@@ -248,6 +248,24 @@ class WorldState:
         position = WorldPosition(self._surface.ground_x(x, item.footprint), 0)
         return self._commit(item, item.state, position)
 
+    def move_in_room(
+        self, instance_id: str, point: RoomPoint, height: float, *,
+        expected_revision: int,
+    ) -> WorldObjectSnapshot:
+        """Commit X, floor Z and height together on the one World owner."""
+        item = self._expect(instance_id, expected_revision,
+                            ObjectState.USER_HELD, ObjectState.RESTING)
+        if self._room is None or self._room.geometry_version != 2:
+            raise ValueError("Room geometry is unavailable")
+        position = WorldPosition(point.x, height if item.state == ObjectState.USER_HELD else 0)
+        self._validate_position(position, item.footprint)
+        depths = dict(self._room.object_depths)
+        depths[instance_id] = point.depth
+        spatial = replace(self._room, object_depths=tuple(depths.items()))
+        updated = self._commit(item, item.state, position)
+        self._room = spatial
+        return updated
+
     def release(
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
@@ -368,7 +386,10 @@ class WorldState:
         for item, position, state, motion in replacements:
             self._commit(item, state, position, motion=motion)
 
-    def advance_motion(self, elapsed: float, parameters: MotionParameters) -> None:
+    def advance_motion(
+        self, elapsed: float, parameters: MotionParameters, *,
+        bounds_for: Callable[[WorldObjectSnapshot], tuple[float, float]] | None = None,
+    ) -> None:
         """Advance all flying/bouncing portions; only final contact grants rest."""
         self._require_owner()
         if not math.isfinite(elapsed) or elapsed < 0:
@@ -390,7 +411,8 @@ class WorldState:
                 item.position.height,
                 item.motion,
                 elapsed,
-                self._surface.ground_interval(item.footprint),
+                (bounds_for(item) if bounds_for is not None
+                 else self._surface.ground_interval(item.footprint)),
                 parameters,
                 ceiling=self._surface.height,
             )

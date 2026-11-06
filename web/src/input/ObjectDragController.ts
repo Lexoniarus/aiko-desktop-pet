@@ -44,7 +44,7 @@ export class ObjectDragController {
     let reservation = Promise.resolve(true);
     let depth = item
       ? this.room.objectDepth(item.instance_id)
-      : (this.room.petPosition?.depth ?? 0.9);
+      : (this.room.petPosition?.depth ?? 300);
     let pending: DragPlacement | undefined;
     let sending: Promise<void> | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;

@@ -219,7 +219,7 @@ class RoomRuntime:
                 )
                 and (
                     item.state != ObjectState.USER_HELD
-                    or 4 <= item.position.height <= 150
+                    or 4 <= item.position.height <= 100
                 )
             ),
             offer_ready=self._dragged.ready if self._dragged else True,
@@ -265,9 +265,7 @@ class RoomRuntime:
         item = self.world.get(instance)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
-        x = self.world.snapshot().surface.ground_x(point.x, item.footprint)
-        self.world.move_resting(instance, x, expected_revision=revision)
-        self._depth(instance, point.depth)
+        self.world.move_in_room(instance, point, 0, expected_revision=revision)
         self.behavior.refresh_after_placement()
 
     def offer(self, definition: str) -> None:
@@ -336,7 +334,7 @@ class RoomRuntime:
                 position=(original.x, original.height),
                 now=self.now,
                 attention=ObjectAttention(
-                    "survey", (self.facing, 0), (self.position.x, 60), 490
+                    "survey", (self.facing, 0), (self.position.x, 60), 122.5
                 ),
                 committed=self.interaction.focus_record,
             )
@@ -360,14 +358,13 @@ class RoomRuntime:
         if drag is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
         item = self.world.get(drag.instance)
-        surface = self.world.snapshot().surface
+        if not inside:
+            drag.inside = False
+            drag.presentation = None
+            return
         point = self._placement(point)
-        self.world.move_held(
-            drag.instance,
-            WorldPosition(surface.ground_x(point.x, item.footprint), height),
-            expected_revision=item.revision,
-        )
-        self._depth(drag.instance, point.depth)
+        self.world.move_in_room(drag.instance, point, height,
+                                expected_revision=item.revision)
         drag.inside = inside
         drag.presentation = (
             ItemPresentation(drag.gesture, *face) if inside and face else None
@@ -394,14 +391,8 @@ class RoomRuntime:
         point = self._placement(point)
         instance = self._dragged.instance
         item = self.world.get(instance)
-        destination = point
-        x = self.world.snapshot().surface.ground_x(destination.x, item.footprint)
-        item = self.world.move_held(
-            instance,
-            WorldPosition(x, height),
-            expected_revision=item.revision,
-        )
-        self._depth(instance, destination.depth)
+        item = self.world.move_in_room(instance, point, height,
+                                       expected_revision=item.revision)
         accepted = offer and self.interaction.offer_on_release(instance)
         if not accepted:
             self.world.release(instance, expected_revision=item.revision)
@@ -411,7 +402,8 @@ class RoomRuntime:
     def update(self, seconds: float) -> None:
         self.now += seconds
         self.moving = False
-        self.world.advance_motion(seconds, self._motion_parameters)
+        self.world.advance_motion(seconds, self._motion_parameters,
+                                  bounds_for=self.environment.ground_interval)
         self.interaction.update()
         target = self.awareness.intentions.goal
         focused = self.awareness.memory.get(self.interaction.focus_record or "")
@@ -450,7 +442,7 @@ class RoomRuntime:
             presentation = drag.instance, drag.presentation
             direction = (drag.presentation.x, -drag.presentation.y)
             attention = ObjectAttention(
-                "cursor", direction, (self.position.x, 60), 490
+                "cursor", direction, (self.position.x, 60), 122.5
             )
         previewing = drag is not None and self.playback.player.subject == drag.gesture
         facts = BehaviorFacts(

@@ -8,7 +8,7 @@ from dataclasses import replace
 from ..infrastructure.world_motion import motion_parameters
 from ..pet.mind.object_attention import ObjectAttention
 from ..pet.mind.object_knowledge import ObjectKnowledge
-from ..world.contracts import ObjectState
+from ..world.contracts import ObjectState, WorldObjectSnapshot
 from ..world.motion import MotionParameters
 from ..world.room import RoomGeometry, RoomPoint
 from ..world.state import WorldState
@@ -80,10 +80,33 @@ class RoomEnvironment:
     def approach_target(self, point: RoomPoint) -> RoomPoint:
         return self.geometry.accessible(point)
 
+    def ground_interval(self, item: WorldObjectSnapshot) -> tuple[float, float]:
+        assert item.position is not None
+        point = self.object_point(item.instance_id)
+        assert point is not None
+        layout = self.geometry.layout
+        radius = max(item.footprint.left, item.footprint.right)
+        left, right = self.world.snapshot().surface.ground_interval(item.footprint)
+        blocked = [(entry.x-entry.width/2-radius, entry.x+entry.width/2+radius)
+                   for entry in layout.furniture if entry.blocking
+                   and abs(point.depth-entry.z) <= entry.depth/2+radius]
+        dz = point.depth-layout.depth/2
+        if abs(dz) < layout.camera_clearance+radius:
+            half = math.sqrt((layout.camera_clearance+radius)**2-dz**2)
+            blocked.append((layout.width/2-half, layout.width/2+half))
+        for lower, upper in blocked:
+            if point.x < lower:
+                right = min(right, lower-0.01)
+            elif point.x > upper:
+                left = max(left, upper+0.01)
+            else:
+                return point.x, point.x
+        return left, right
+
     @staticmethod
     def motion_parameters() -> MotionParameters:
         native = motion_parameters()
         return replace(native, gravity=native.gravity / 4,
                        minimum_bounce_speed=native.minimum_bounce_speed / 4,
                        settling_speed=native.settling_speed / 4,
-                       inward_factor=native.inward_factor / 4)
+                       inward_factor=native.inward_factor)
