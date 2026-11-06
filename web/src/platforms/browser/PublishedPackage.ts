@@ -7,6 +7,18 @@ export interface PublishedPackage {
   package: string;
   size: number;
   manifestSHA256: string;
+  buildTimestamp?: number;
+}
+
+export function isNewerPublication(
+  installedVersion: string,
+  installedTimestamp: number,
+  published: Pick<PublishedPackage, 'version' | 'buildTimestamp'>,
+): boolean {
+  return (
+    published.version !== installedVersion &&
+    (installedTimestamp === 0 || (published.buildTimestamp ?? 0) > installedTimestamp)
+  );
 }
 
 export function validatePublishedPackage(value: unknown): PublishedPackage {
@@ -24,7 +36,9 @@ export function validatePublishedPackage(value: unknown): PublishedPackage {
     item.size! <= 0 ||
     item.size! > 300 * 1024 * 1024 ||
     typeof item.manifestSHA256 !== 'string' ||
-    !/^[a-f0-9]{64}$/.test(item.manifestSHA256)
+    !/^[a-f0-9]{64}$/.test(item.manifestSHA256) ||
+    (item.buildTimestamp !== undefined &&
+      (!Number.isSafeInteger(item.buildTimestamp) || item.buildTimestamp <= 0))
   )
     throw new Error('Die Online-Einrichtung ist nicht korrekt bereitgestellt.');
   return item as PublishedPackage;

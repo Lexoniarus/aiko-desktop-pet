@@ -5,7 +5,11 @@ import type {
 } from '../../bridge/RoomUpdates';
 import { activatePendingPackage, pendingPackage } from './PackageStore';
 import type { InstalledPackage } from './PackageStore';
-import { publishedPackage, installPublishedPackage } from './PublishedPackage';
+import {
+  publishedPackage,
+  installPublishedPackage,
+  isNewerPublication,
+} from './PublishedPackage';
 
 export class BrowserUpdates implements RoomUpdates {
   private state: UpdateState;
@@ -14,8 +18,10 @@ export class BrowserUpdates implements RoomUpdates {
   private lastCheck = 0;
   private shutdown?: () => Promise<void>;
   private gameOpen = false;
+  private buildTimestamp: number;
 
-  constructor(version: string) {
+  constructor(version: string, buildTimestamp = 0) {
+    this.buildTimestamp = buildTimestamp;
     this.state = {
       installedVersion: version,
       phase: 'idle',
@@ -78,7 +84,11 @@ export class BrowserUpdates implements RoomUpdates {
       const published = await publishedPackage();
       if (
         published &&
-        published.version !== this.state.installedVersion &&
+        isNewerPublication(
+          this.state.installedVersion,
+          this.buildTimestamp,
+          published,
+        ) &&
         published.version !== pending?.version
       ) {
         this.publish({
@@ -96,9 +106,12 @@ export class BrowserUpdates implements RoomUpdates {
         this.publish({
           phase: 'current',
           availableVersion: undefined,
-          message: published
-            ? 'Aiko ist auf dem aktuellen Stand.'
-            : 'Für diese Installation ist kein Online-Update veröffentlicht.',
+          message: !published
+            ? 'Für diese Installation ist kein Online-Update veröffentlicht.'
+            : this.buildTimestamp > 0 &&
+                (published.buildTimestamp ?? 0) < this.buildTimestamp
+              ? 'Die installierte Version ist neuer als das Online-Angebot.'
+              : 'Aiko ist auf dem aktuellen Stand.',
         });
         return;
       }

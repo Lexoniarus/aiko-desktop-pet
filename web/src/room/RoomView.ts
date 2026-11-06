@@ -13,6 +13,8 @@ import type { RoomLayout, RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 
 export interface AssetManifest {
+  packageVersion: string;
+  buildTimestamp: number;
   characterHeight: number;
   layout: RoomLayout;
   ui: {

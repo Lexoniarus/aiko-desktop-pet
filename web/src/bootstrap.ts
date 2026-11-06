@@ -2,6 +2,7 @@ import './room.css';
 import './games/games.css';
 import { BrowserRoomClient } from './platforms/browser/BrowserRoomClient';
 import { BrowserLifecycle } from './platforms/browser/BrowserLifecycle';
+import { browserRuntimeUpdates } from './platforms/browser/BrowserRuntimeUpdates';
 import type { RoomReply } from './bridge/RoomClient';
 import type { RoomHostOptions } from './bridge/RoomUpdates';
 import { RoomView } from './room/RoomView';
@@ -32,6 +33,11 @@ export async function startRoom(
         (response) => response.json() as Promise<AssetManifest>,
       ),
     ]);
+    options = browserRuntimeUpdates(
+      options,
+      assets.packageVersion,
+      assets.buildTimestamp,
+    );
     const stage = element('section', 'room-stage');
     stage.setAttribute('aria-label', 'Aikos Zimmer – zum Umschauen wischen');
     host.className = 'aiko-room';

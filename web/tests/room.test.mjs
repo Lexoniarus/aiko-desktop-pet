@@ -6,7 +6,10 @@ import {
   validPackagePath,
   validateManifest,
 } from '../src/platforms/browser/PackageImporter.ts';
-import { validatePublishedPackage } from '../src/platforms/browser/PublishedPackage.ts';
+import {
+  validatePublishedPackage,
+  isNewerPublication,
+} from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 
@@ -132,6 +135,29 @@ test('installer refuses traversal paths and incompatible package protocols', () 
     { ...published, package: 'packages/../outside.zip' },
     { ...published, size: Infinity },
     { ...published, manifestSHA256: 'missing' },
+    { ...published, buildTimestamp: -1 },
+    { ...published, buildTimestamp: 'tomorrow' },
   ])
     assert.throws(() => validatePublishedPackage(invalid));
+});
+
+test('a manual runtime accepts newer publications without reverting to a stale feed', () => {
+  assert.equal(isNewerPublication('local', 200, { version: 'legacy' }), false);
+  assert.equal(
+    isNewerPublication('local', 200, { version: 'old', buildTimestamp: 100 }),
+    false,
+  );
+  assert.equal(
+    isNewerPublication('local', 200, { version: 'other', buildTimestamp: 200 }),
+    false,
+  );
+  assert.equal(
+    isNewerPublication('local', 200, { version: 'local', buildTimestamp: 300 }),
+    false,
+  );
+  assert.equal(
+    isNewerPublication('local', 200, { version: 'next', buildTimestamp: 300 }),
+    true,
+  );
+  assert.equal(isNewerPublication('legacy', 0, { version: 'initial-update' }), true);
 });

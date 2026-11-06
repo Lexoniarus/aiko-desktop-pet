@@ -104,7 +104,7 @@ def image_bounds(path: Path) -> tuple[int, int, int, int] | None:
         return image.convert("RGBA").getbbox()
 
 
-def runtime_assets() -> dict[str, Any]:
+def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
     catalog = load_character_catalog()
     clips = {}
     for name in (
@@ -139,7 +139,7 @@ def runtime_assets() -> dict[str, Any]:
             family=clip.family,
         )
     items = load_item_catalog()
-    item_files = {
+    item_files: dict[str, dict[str, Any]] = {
         key: {
             "file": "assets/"
             + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
@@ -180,10 +180,12 @@ def runtime_assets() -> dict[str, Any]:
         assert bounds is not None
         character_height = bounds[3] - bounds[1]
     ui = json.loads((ASSET_ROOT / "ui/catalog.json").read_text("utf8"))
-    for item in item_files.values():
-        with Image.open(ROOT / "aiko_pet" / item["file"]) as image:
-            item["dimensions"] = (image.width, image.height)
+    for definition in item_files.values():
+        with Image.open(ROOT / "aiko_pet" / definition["file"]) as image:
+            definition["dimensions"] = (image.width, image.height)
     return {
+        "packageVersion": version,
+        "buildTimestamp": build_timestamp,
         "clips": clips,
         "items": item_files,
         "room": ROOM_IMAGES,
@@ -207,6 +209,13 @@ def main() -> None:
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
     version = f"{package['version']}-{sha[:12]}"
+    build_timestamp = int(
+        subprocess.check_output(
+            ["git", "show", "-s", "--format=%ct", sha],
+            cwd=ROOT,
+            text=True,
+        ).strip()
+    )
     files = {
         "app/" + path.relative_to(web / "dist-runtime").as_posix(): path.read_bytes()
         for path in sorted((web / "dist-runtime").rglob("*"))
@@ -265,7 +274,7 @@ def main() -> None:
     code_archive = cache / "aiko.zip"
     archive(code_archive, python_files)
     files["python/aiko.zip"] = code_archive.read_bytes()
-    files["runtime-assets.json"] = encoded(runtime_assets())
+    files["runtime-assets.json"] = encoded(runtime_assets(version, build_timestamp))
     with ZipFile(args.prototype) as reference:
         for filename in ROOM_IMAGES.values():
             files["room/" + filename] = reference.read(
@@ -320,6 +329,7 @@ def main() -> None:
             encoded({
                 "format": 1,
                 "version": version,
+                "buildTimestamp": build_timestamp,
                 "package": "packages/" + zip_path.name,
                 "size": zip_path.stat().st_size,
                 "manifestSHA256": manifest_hash,
