@@ -81,10 +81,7 @@ export class RoomCamera {
     this.refresh();
   }
   lookAt(point: RoomPoint): void {
-    this.yaw = Math.atan2(
-      point.x - this.layout.width / 2,
-      this.layout.depth / 2 - point.depth,
-    );
+    this.yaw = this.projection.bearing(point);
     this.velocity = 0;
     this.refresh();
   }
@@ -99,10 +96,7 @@ export class RoomCamera {
       dt = Math.min(0.1, (now - this.last) / 1000);
     this.last = now;
     if (this.following) {
-      const target = Math.atan2(
-        point.x - this.layout.width / 2,
-        this.layout.depth / 2 - point.depth,
-      );
+      const target = this.projection.bearing(point);
       const delta = Math.atan2(
         Math.sin(target - this.yaw),
         Math.cos(target - this.yaw),

@@ -1,6 +1,8 @@
 import { Container, Sprite, Texture } from 'pixi.js';
 import type { RoomCamera } from './RoomCamera';
-import type { FurniturePlacement, RoomLayout, RoomPoint } from './RoomLayout';
+import type { FurniturePlacement, RoomLayout } from './RoomLayout';
+import { furnitureFrame } from './RoomPresentation';
+import { roomBackground } from './RoomBackground';
 
 /** The grid owns placement; artwork stays flat with its original proportions. */
 export class RoomScene {
@@ -8,7 +10,6 @@ export class RoomScene {
   private furniture: Array<{
     view: Sprite;
     item: FurniturePlacement;
-    point: RoomPoint;
   }> = [];
   private lastVersion = -1;
   constructor(
@@ -24,51 +25,12 @@ export class RoomScene {
     };
     // Four adjoining 2D panels. Shared skirting/floor keep the joins level.
     for (const [index, wall] of layout.walls.entries()) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1800;
-      canvas.height = 900;
-      const ctx = canvas.getContext('2d')!,
-        source = images[wall.asset]!,
-        floor = images.kitchen!;
-      ctx.drawImage(
-        source,
-        0,
-        0,
-        source.width,
-        (source.height * 760) / 900,
-        0,
-        0,
-        1800,
-        654,
+      const canvas = roomBackground(
+        images[wall.asset]!,
+        images.kitchen!,
+        wall.asset === 'living',
+        index % 2 !== 0,
       );
-      ctx.drawImage(
-        floor,
-        0,
-        (floor.height * 760) / 900,
-        floor.width,
-        (floor.height * 42) / 900,
-        0,
-        654,
-        1800,
-        36,
-      );
-      ctx.save();
-      if (index % 2) {
-        ctx.translate(1800, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(
-        floor,
-        0,
-        (floor.height * 802) / 900,
-        floor.width,
-        (floor.height * 98) / 900,
-        0,
-        690,
-        1800,
-        210,
-      );
-      ctx.restore();
       const texture = Texture.from(canvas);
       for (const repeat of [-1, 0, 1]) {
         const view = new Sprite(texture);
@@ -103,18 +65,7 @@ export class RoomScene {
         },
       };
       world.addChild(view);
-      const point = { x: item.x, depth: item.z };
-      // The same occupied footprint support edge as the grid renderer.
-      if (item.wall === 'north') point.depth += item.depth / 2;
-      else if (item.wall === 'south') point.depth -= item.depth / 2;
-      else if (item.wall === 'east') point.x -= item.width / 2;
-      else if (item.wall === 'west') point.x += item.width / 2;
-      else if (
-        Math.abs(layout.width / 2 - item.x) > Math.abs(layout.depth / 2 - item.z)
-      )
-        point.x += (Math.sign(layout.width / 2 - item.x) * item.width) / 2;
-      else point.depth += (Math.sign(layout.depth / 2 - item.z) * item.depth) / 2;
-      this.furniture.push({ view, item, point });
+      this.furniture.push({ view, item });
     }
   }
   update(camera: RoomCamera): void {
@@ -129,11 +80,11 @@ export class RoomScene {
       );
       view.scale.set(projection.fit);
     }
-    for (const { view, item, point } of this.furniture) {
-      const ground = projection.projectPoint(point, item.elevation);
-      view.position.set(ground.x, ground.y);
-      view.scale.set((item.height * ground.scale) / item.crop[3]);
-      view.zIndex = -ground.depth;
+    for (const { view, item } of this.furniture) {
+      const frame = furnitureFrame(projection, item);
+      view.position.set(frame.x, frame.y);
+      view.scale.set(frame.scale);
+      view.zIndex = frame.order;
     }
   }
 }

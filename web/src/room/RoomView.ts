@@ -233,7 +233,7 @@ export class RoomView {
     this.aiko.scale.set(
       (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
     );
-    this.aiko.zIndex = -projected.depth;
+    this.aiko.zIndex = projected.groundY;
     this.aiko.renderHeld();
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.visible = this.aiko.visible;
@@ -264,7 +264,7 @@ export class RoomView {
           p.scale *
           (this.assets.items[item.definition_id]?.worldZoom ?? 1),
       );
-      sprite.zIndex = -this.camera.projection.projectPoint(display).depth;
+      sprite.zIndex = this.camera.projection.projectPoint(display).groundY;
     }
   }
 
@@ -327,13 +327,31 @@ export class RoomView {
       asset.dimensions[1];
     const overPet = this.petContains(clientX, clientY);
     const previous = ground;
-    const floor = this.picking.resolveDrop(x, y + support, 25);
+    const projection = this.camera.projection;
+    const floor = this.picking.resolveDrop(
+      x,
+      Math.min(
+        y + support + 24 * projection.fit,
+        projection.floorFront * projection.fit,
+      ),
+    );
     const held = this.picking.atDepth(
       x,
       y + support,
       overPet ? this.petPosition! : previous,
     );
-    const placement = overPet ? held : floor ? { point: floor, height: 25 } : held;
+    const groundProjection = floor && projection.projectPoint(floor);
+    const placement = overPet
+      ? held
+      : floor && groundProjection
+        ? {
+            point: floor,
+            height: Math.max(
+              0,
+              (groundProjection.y - y - support) / groundProjection.scale,
+            ),
+          }
+        : held;
     const point = placement?.point ?? previous;
     const pet = this.aiko.screenBounds(),
       width = Math.max(1, pet.scale * 192);
@@ -364,10 +382,7 @@ export class RoomView {
     return this.picking.resolveDrop(x, y);
   }
   callPoint(): RoomPoint {
-    return {
-      x: this.assets.layout.width / 2 + Math.sin(this.camera.yaw) * 180,
-      depth: this.assets.layout.depth / 2 - Math.cos(this.camera.yaw) * 180,
-    };
+    return this.camera.projection.pointAtBearing(this.camera.yaw, 180);
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;
