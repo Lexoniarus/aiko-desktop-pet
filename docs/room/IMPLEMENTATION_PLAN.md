@@ -682,8 +682,8 @@ means physical floor Z in room units; `height` still means height above ground.
 | `frontend/room_environment.py`, `application/object_geometry.py` | Optional room distances, visibility and remembered-place coverage; desktop defaults remain unchanged. |
 | `infrastructure/room_layout.py`, `room_migration.py` | Load the shared layout; transform old stock and historical memories independently. |
 | `infrastructure/sqlite/room_grid_schema.py` | Schema 7 with versioned geometry, original schema-6 rows and automatic pre-migration backup. |
-| `RoomProjection.ts`, `RoomCamera.ts` | `gl-matrix==3.4.4` perspective/rays; fixed observer position, rotating view, follow released by swipe. |
-| `RoomScene.ts`, `RoomPicking.ts` | Shared floor/four walls, fixed furniture planes, depth order, alpha-aware picking and floor/held placement. |
+| `RoomProjection.ts`, `RoomCamera.ts` | Flat angular panorama over the floor grid, modest depth scaling and matching inverse placement; follow released by swipe. |
+| `RoomScene.ts`, `RoomPicking.ts` | Four adjoining 2D backgrounds, undistorted furniture sprites, depth order, alpha-aware picking and floor/held placement. |
 | `RoomMotion.ts`, `AikoView.ts` | Route-segment interpolation, stable animation phase and view-relative movement banks, native book state anchors. |
 | `MoodletStrip.ts`, existing status/wish/UI panels | Native icons/details, compact readouts, wish goals/progress, one conditional Find and a separate Follow control. |
 
@@ -693,11 +693,26 @@ in-place upgrade. It rejects incompatible downgrades before stopping the app;
 SQLite also refuses a schema newer than the running code understands.
 The save location, installed icon and hosting origin remain stable.
 
-Existing art remains 2D. Furniture uses its existing cutout on a fixed room
-face, with its real floor footprint blocking movement. This does not invent
+The owner's iPad review rejected the perspective renderer. The current renderer
+therefore returns to the original flat 2D panorama: swiping only translates
+background and furniture art. The unchanged floor grid still owns movement,
+occupied footprints, placement and persisted positions. Nearness changes Aiko's
+scale and foot position without tilting or foreshortening furniture. The unused
+`gl-matrix` dependency was removed; PixiJS and pixi-viewport remain.
+This is a rendering change, not another save migration or room simulation.
+
+Furniture uses its existing cutout with its original aspect ratio,
+with its real floor footprint blocking movement. This does not invent
 missing furniture back views or complete forward/backward walking cycles.
 Quarter-head walking banks and authored quarter-body rest/look poses are reused;
 missing directional cycles remain an explicit asset limitation.
+
+The ten prepared profile walking PNGs from the private
+`2026-11-06-profil-geh-hals-vorschau` job were adopted on the owner's instruction.
+Their exact input/output hashes and per-step head registration are recorded in
+`assets/body_poses/profile-walk-2026-11-06.json`; playback timing, other character
+images and private originals remain unchanged. The local preview's earlier
+"not installed" note describes its pre-integration state.
 
 Source implementation and automated/headless verification are separate from
 publication and real-iPad acceptance. See `VERIFICATION.md` and

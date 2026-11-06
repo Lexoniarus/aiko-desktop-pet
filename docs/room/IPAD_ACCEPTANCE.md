@@ -49,7 +49,8 @@ restore/export feature. Original user data must not be used for automated QA.
 
 On the target iPad, verify:
 
-- Swipe through all four walls and corners; floor/skirting joins stay coherent.
+- Swipe through all four flat wall panels and their joins; the floor/skirting
+  stays level, and furniture translates without tilting, narrowing or turning.
 - Call Aiko closer; size changes with distance while her logical size stays fixed.
 - Aiko walks around the table and occupied furniture footprints, including behind.
 - Fixing follows her bearing; a swipe releases it. Find appears only off-camera.
