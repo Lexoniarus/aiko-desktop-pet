@@ -404,7 +404,8 @@ class RoomSessionTests(unittest.TestCase):
         first = room.world.snapshot().objects[0]
         assert first.position is not None
         self.assertAlmostEqual(first.position.x, expected.x)
-        self.assertAlmostEqual(room.spatial.depth_for(first.instance_id), expected.depth)
+        self.assertAlmostEqual(room.spatial.depth_for(first.instance_id),
+                               expected.depth)
         self.command("offer", definition="cookie")
         self.command("suspend")
         reopened = create_browser_session(str(self.path)).session.room

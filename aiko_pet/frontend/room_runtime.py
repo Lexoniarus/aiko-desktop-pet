@@ -35,7 +35,10 @@ from ..pet.mind.object_perception import ItemPresentation
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..world.contracts import (
-    ObjectFootprint, ObjectState, WorldObjectSnapshot, WorldPosition,
+    ObjectFootprint,
+    ObjectState,
+    WorldObjectSnapshot,
+    WorldPosition,
 )
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.room_navigation import RoomNavigator
