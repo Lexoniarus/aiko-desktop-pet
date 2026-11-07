@@ -1,0 +1,57 @@
+{
+  "source_job": "2026-11-06-v3-koerper-zuordnung",
+  "reference": "expressions/rest-neutral/00.png",
+  "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+  "image_generation_calls": 0,
+  "scope": "16 current V3 heads on the neutral body; four takeoff legacy upper parts replaced; other poses retained",
+  "frames": [
+    {
+      "file": "body_poses/body-turn-right/01.png",
+      "before_sha256": "ffeba0eb1dbc9a06c356cfa1921cff0fc977056647e320fe1c70443481ab546a",
+      "sha256": "704eeda3954f00a7bee5b5993b246ca9326c7f8c11424c93921e03ac1cd78c01",
+      "kind": "turn_legacy_head_and_upper",
+      "translation": [
+        -3,
+        0
+      ],
+      "protected_lower_from_y": 340,
+      "protected_lower_sha256": "df6fce1c76a3c947c50384752bf2c62d717273e325309a41eb3614c626fc7ab6"
+    },
+    {
+      "file": "body_poses/body-orient-right/01.png",
+      "before_sha256": "ffeba0eb1dbc9a06c356cfa1921cff0fc977056647e320fe1c70443481ab546a",
+      "sha256": "704eeda3954f00a7bee5b5993b246ca9326c7f8c11424c93921e03ac1cd78c01",
+      "kind": "turn_legacy_head_and_upper",
+      "translation": [
+        -3,
+        0
+      ],
+      "protected_lower_from_y": 340,
+      "protected_lower_sha256": "df6fce1c76a3c947c50384752bf2c62d717273e325309a41eb3614c626fc7ab6"
+    },
+    {
+      "file": "body_poses/body-turn-left/01.png",
+      "before_sha256": "f8ccc0fa92a3a9bae2e364b0e47537485e8d2e41460c14caeb08e3d2e55192f2",
+      "sha256": "e08d47449a64156f47e0cccc70180be83394c2ddc3b0a231d664a49819f4377f",
+      "kind": "turn_legacy_head_and_upper",
+      "translation": [
+        3,
+        0
+      ],
+      "protected_lower_from_y": 340,
+      "protected_lower_sha256": "6b7f460d81727e8e99f583d22a6ff4f4886ba9afbc1f9f20c0ee7c160a4fa37a"
+    },
+    {
+      "file": "body_poses/body-orient-left/01.png",
+      "before_sha256": "f8ccc0fa92a3a9bae2e364b0e47537485e8d2e41460c14caeb08e3d2e55192f2",
+      "sha256": "e08d47449a64156f47e0cccc70180be83394c2ddc3b0a231d664a49819f4377f",
+      "kind": "turn_legacy_head_and_upper",
+      "translation": [
+        3,
+        0
+      ],
+      "protected_lower_from_y": 340,
+      "protected_lower_sha256": "6b7f460d81727e8e99f583d22a6ff4f4886ba9afbc1f9f20c0ee7c160a4fa37a"
+    }
+  ]
+}
