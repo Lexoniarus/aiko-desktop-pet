@@ -22,8 +22,8 @@ import {
 
 test('table chips retain their diameter and flight joins the same landing geometry', () => {
   const frame = tableGameFrame({ x: 500, y: 700, width: 480, height: 150 });
-  assert.equal(frame.chip, 28.8);
-  assert.equal(frame.scale, 0.9);
+  assert.equal(frame.chip, 26.24);
+  assert.equal(frame.scale, 0.82);
   const half = tableGameFrame({ x: 250, y: 350, width: 240, height: 75 });
   assert.equal(half.chip, frame.chip / 2);
   assert.equal(columnAt(99.9), undefined);

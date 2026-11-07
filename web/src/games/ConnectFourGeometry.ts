@@ -26,7 +26,7 @@ export function tableGameFrame(table: {
   width: number;
   height: number;
 }): TableGameFrame {
-  const scale = (table.width * 0.9) / connectFourGeometry.size;
+  const scale = (table.width * 0.82) / connectFourGeometry.size;
   const surface = table.y - table.height * 0.88;
   return {
     x: table.x - (connectFourGeometry.size * scale) / 2,

@@ -280,7 +280,8 @@ class RoomRuntime:
         )
         margin = self.geometry.layout.pet_radius + self.geometry.layout.cell_size
         point = RoomPoint(
-            table.x + table.width / 2 + margin, table.z + table.depth / 2
+            table.x + table.width / 2 + margin,
+            table.z + table.depth / 2 + self.geometry.layout.cell_size * 2.5,
         )
         target = self.geometry.accessible(point)
         if self.movement.navigator.find_route(self.position, target) is None:

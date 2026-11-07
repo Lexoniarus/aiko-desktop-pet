@@ -108,7 +108,7 @@ class RoomSessionTests(unittest.TestCase):
             ))
             if self.endpoint.session.games.sequence is not None:
                 break
-        self.assertEqual(room.position, RoomPoint(730, 365))
+        self.assertEqual(room.position, RoomPoint(730, 396.25))
         self.assertIsNotNone(self.endpoint.session.games.sequence)
         self.command("game_close")
         self.command("suspend")
