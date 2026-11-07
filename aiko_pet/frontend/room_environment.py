@@ -97,8 +97,26 @@ class RoomEnvironment:
         point = self.object_point(instance)
         return point is not None and abs(point.depth - known.depth) < 1
 
-    def approach_target(self, point: RoomPoint) -> RoomPoint:
-        return self.geometry.accessible(point)
+    def approach_target(self, point: RoomPoint) -> RoomPoint | None:
+        """Stand on the viewer-facing side, not on/behind the resting portion."""
+        layout = self.geometry.layout
+        dx, dz = layout.width / 2 - point.x, layout.depth / 2 - point.depth
+        distance = math.hypot(dx, dz)
+        if distance < 1:
+            return None
+        for reach in (18, 12, 6):
+            candidate = RoomPoint(
+                point.x + dx * reach / distance, point.depth + dz * reach / distance
+            )
+            if layout.can_place(candidate.x, candidate.depth, layout.pet_radius):
+                return candidate
+        return None
+
+    def at_pickup_contact(self, point: RoomPoint) -> bool:
+        target = self.approach_target(point)
+        return (
+            target is not None and self.geometry.distance(self.position, target) <= 0.5
+        )
 
     def ground_interval(self, item: WorldObjectSnapshot) -> tuple[float, float]:
         assert item.position is not None

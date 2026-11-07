@@ -234,15 +234,20 @@ class RoomRuntime:
         if item.position is None:
             return False
         point = RoomPoint(item.position.x, self.spatial.depth_for(instance))
+        resting_contact = (
+            item.state == ObjectState.RESTING
+            and self.environment.at_pickup_contact(point)
+        )
         return self.behavior.can_acquire(
             instance,
             object_state=item.state,
             reachable=(
-                self.geometry.distance(self.position, point)
-                <= (
-                    100
-                    if item.state == ObjectState.USER_HELD
-                    else 25
+                (
+                    resting_contact
+                    or (
+                        item.state == ObjectState.USER_HELD
+                        and self.geometry.distance(self.position, point) <= 100
+                    )
                 )
                 and (
                     item.state != ObjectState.USER_HELD
@@ -578,9 +583,13 @@ class RoomRuntime:
         elif isinstance(motion, Approach):
             focused_instance = self.awareness.instance_for_record(motion.target.token)
             known = self.awareness.memory.get(motion.target.token)
-            destination = RoomPoint(
+            remembered_place = RoomPoint(
                 motion.target.x, known.depth if known else self.position.depth
             )
+            destination = self.environment.approach_target(remembered_place)
+            if destination is None:
+                self.behavior.unreachable(now=self.now)
+                self.pause_route()
             if focused_instance is not None and self._can_acquire(focused_instance):
                 self.interaction.arrive()
                 destination = None
