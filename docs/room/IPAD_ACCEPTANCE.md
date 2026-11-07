@@ -163,3 +163,19 @@ the periodic checkpoint is a recovery point, not guaranteed background execution
 Notifications are the subsequent T2 phase: forecast data is local; closed-app
 Web Push needs a separately operated Internet sender. No native offline scheduled
 notifications or continuous background Python are claimed for this PWA.
+
+## Table-based Connect Four acceptance (2026-11-07)
+
+- Open Vier gewinnt: Aiko walks around furniture to the near side of the table.
+  Closing during that walk must not start a game later.
+- Check both orientations: board feet rest on the tabletop, Aiko stays beside
+  the board, and speech/controls leave the seven columns unobstructed.
+- Drag yellow from the supply over an entry. Check entry/landing previews,
+  release/fall, full columns, returning invalid drops and cancelled gestures.
+  Tap a column directly as an alternative; there is no numbered button row.
+- Compare the supply, held, flying, falling and settled chip diameters. Check the
+  handoff above the board and its face hiding the chip during its fall.
+- Swipe outside the board to look around. Dragging a chip must hold the camera
+  only until release/cancel. Check normal and 175% menu size independently.
+- Close during Aiko's throw, reopen, then close/reopen offline. Retain the same
+  pet progress, zodiac and existing objects. Unfinished games remain transient.

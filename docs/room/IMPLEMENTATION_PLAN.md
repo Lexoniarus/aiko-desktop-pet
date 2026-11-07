@@ -748,6 +748,32 @@ Source implementation and automated/headless verification are separate from
 publication and real-iPad acceptance. See `VERIFICATION.md` and
 `IPAD_ACCEPTANCE.md`; no device acceptance is implied by green local checks.
 
+## Table-based Connect Four (2026-11-07)
+
+Connect Four uses the existing room table instead of a board inside the menu.
+`RoomRuntime.prepare_table_game` walks to a reachable near-side play spot through
+the existing navigator. `RoomSession` exposes transient preparation; the original
+game sequence opens only on arrival. Closing, interruption or suspension cancels
+preparation without a late game. There is no new reward or save migration.
+
+`ConnectFourGeometry.ts` defines one authored board space and chip diameter.
+`ConnectFourTable.ts` owns table-bound art, previews, direct column targets and
+pointer capture. `AikoView` uses the same screen diameter for the held chip;
+one moving chip passes continuously from its arc behind the board face into its
+landing cell. The duplicate Connect Four path in `GameProps` is removed.
+The existing table artwork and physical floor position remain unchanged.
+
+The player can drag a yellow chip from the supply to an entry, tap a column,
+or use Enter/Space on a focused column. Invalid/full-column drops and cancelled
+input commit no move. The camera is held only for the gesture; room swipes remain
+available. Compact controls and speech above the board keep its playfield clear.
+Board size is independent of UI zoom; game text/control zoom is capped at 125%.
+
+Python rules, bounded opponent search, round pacing, commentary, experience/wish
+events and the native desktop window remain unchanged. The renderer/input can
+also be used by the later desktop room host. Parallel local character-asset work
+is not part of this release. See the verification and device checklists.
+
 ## References
 
 - [Current architecture](../ARCHITECTURE.md), [World contracts](../WORLD_OBJECT_CONTRACTS.md), [UI contract](../UI_WINDOW_CONTRACT.md).

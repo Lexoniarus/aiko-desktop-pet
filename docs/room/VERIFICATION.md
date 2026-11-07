@@ -706,3 +706,75 @@ no stale pending package remained, and offline reopening preserved the same
 version and saved data. JavaScript page errors: none. Evidence is
 `%TEMP%/aiko-room-wall-qa/deploy-upgrade-result.json`, `deploy-after.png` and
 `deploy-offline.png`. The owner's real iPad visual acceptance is still pending.
+
+## Connect Four at the existing room table (2026-11-07)
+
+Runtime `0.1.0-7a0517e5f24a`, source
+`7a0517e5f24aae4327e5a1d2f90fc6f608416391`. Table furniture/layout, room geometry
+2, protocol 2 and SQLite schema 7 remain unchanged. The source was built from an
+isolated clean checkout; parallel unstaged character-asset edits were excluded.
+No personal save was read or altered. Existing desktop game code/rules and PNGs
+were not changed.
+
+The room walks to a reachable near-side table spot before starting the existing
+ConnectFourSequence. Preparation is transient and cancellable. One board-space
+diameter controls its supply, held chip, arc, fall and settled pieces. One moving
+image changes painter layer at entry rather than changing size or handing off to
+another differently scaled image. Direct column taps, drag entry/landing previews,
+invalid-drop return and pointer-cancel cleanup replace the numbered button row.
+Speech sits above the playfield and the room camera remains swipeable outside
+chip gestures. Game text/control zoom is capped at 125%; board geometry does not
+change with the separate menu setting.
+
+Final checks, run only after implementation, without visible windows:
+
+- 26 Python checks in `tests.test_room_session` and `tests.test_room_grid` passed.
+  New coverage exercises the real route around occupied furniture, deferred
+  start, close/suspend cancellation and retained World objects on reopen.
+- Seven Node checks passed, including chip geometry/continuous arc-to-entry,
+  direct-column boundaries and full-column preview rejection.
+- TypeScript/production build, Ruff, Mypy for changed Python sources, Prettier
+  (Windows checkout line endings accepted) and diff whitespace checks passed.
+- [Exact-source web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42388732562)
+  passed.
+
+Browser plugin not available; existing Playwright headless Chromium with software
+WebGL was used, with real CDP touch at 1024x768 and 768x1024. An isolated profile
+installed the prior a415 runtime, stored zodiac/World objects, then upgraded by
+the normal check/restart flow to this package. Drag/tap, invalid drop, touch
+cancellation, camera swipe after release, close during Aiko's turn, portrait,
+175% menu size and offline reopening passed. Object IDs/settings were retained.
+Drawn drag/flight/fall/settled chips measured 24.584px in the landscape fixture,
+within 0.001px of the shared diameter. Held-chip sizing is controlled by that same
+frame diameter in the renderer; held and flight screenshots were inspected.
+
+Initial rendered checks exposed an offscreen/occluded partner and speech over
+the board. The final play spot/framing and speech placement correct both in the
+reviewed cardinal/portrait shots. The initial large-menu test attempted a covered
+toolbar button while Settings remained open; the final flow closes Settings
+through its visible close control before opening the game.
+
+Page title/content, image loading, absence of framework overlays and JavaScript
+page errors were checked. Only expected missing initial update-descriptor and
+deliberate offline-network messages were recorded. Evidence is outside Git in
+`%TEMP%/aiko-room-c4-qa/`: `result.json`, `table-ready-landscape.png`,
+`table-ready-portrait.png`, `table-drag-preview.png`, `table-aiko-held.png`,
+`table-aiko-flight.png`, `table-aiko-fall.png` and `table-large-menu.png`.
+Actual iPad visual/touch acceptance remains pending.
+
+The final package is published in
+[the test release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-7a0517e5f24a).
+[Deployment 42388946229](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42388946229)
+passed including the public descriptor/starter/runtime checksum gate. The runtime
+ZIP SHA-256 is `cf070b73ae38c05439f71de309e4767324cef0e49fe7735d748b18bae7217923`;
+the starter SHA-256 is `14294dc49b0ebc379fd2feeb4d96df6fd292a0cdf03ef1e70c8fb09ba166e11d`.
+The existing icon/profile/update address is unchanged. A direct runtime ZIP is
+also available in the release for the existing app's file-import path.
+
+The existing synthetic profile at the real production HTTPS origin then upgraded
+from a415 to 7a0517 through Check for updates -> Restart. Retained object IDs and
+zodiac `virgo` survived. The table scene and seven direct targets loaded; closing
+during preparation removed the scene without a late game. Touch petting and an
+offline reload passed with no stale pending package or JavaScript page errors.
+Evidence: `%TEMP%/aiko-room-c4-qa/deploy-upgrade-result.json`, `deploy-after.png`
+and `deploy-offline.png`. This profile contains no personal iPad save.
