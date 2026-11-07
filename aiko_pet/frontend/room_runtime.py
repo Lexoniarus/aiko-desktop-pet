@@ -98,6 +98,7 @@ class RoomRuntime:
         self._held_instance: str | None = None
         self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
+        self._activity_arrived: Callable[[bool], None] | None = None
         self._wander: RoomPoint | None = None
         self._offered: tuple[str, float, str] | None = None
         self._dragged: RoomDrag | None = None
@@ -265,10 +266,25 @@ class RoomRuntime:
         self.awareness.intentions.cancel(self.now)
 
     def pause_route(self) -> None:
+        self._finish_activity(False)
         self._called = self._wander = None
         self.moving = False
         self.movement.cancel()
         self.leisure.suspend(self.now, cancel_outing=True)
+
+    def prepare_activity(self, point: RoomPoint, arrived: Callable[[bool], None]) -> None:
+        """Walk to a room activity using the normal route, never teleport."""
+        self.pause_route()
+        target = self.geometry.accessible(point)
+        if self.movement.navigator.find_route(self.position, target) is None:
+            raise ValueError("Aiko kann den Spielplatz gerade nicht erreichen.")
+        self._called = target
+        self._activity_arrived = arrived
+
+    def _finish_activity(self, success: bool) -> None:
+        callback, self._activity_arrived = self._activity_arrived, None
+        if callback is not None:
+            callback(success)
 
     def place(self, definition: str, point: RoomPoint) -> str:
         point = self._placement(point)
@@ -580,7 +596,7 @@ class RoomRuntime:
             destination is None
             or self._offered is not None
             or self._dragged is not None
-            or self.game_open()
+            or (self.game_open() and self._activity_arrived is None)
             or self.state.sleeping
             or self.state.energy < 15
             or self.playback.animation != "idle"
@@ -610,6 +626,7 @@ class RoomRuntime:
                 self.leisure.arrived(self.now, self.facing)
             self._called = self._wander = None
             self.locomotion.rest(self.now)
+            self._finish_activity(True)
             return
         destination = self.geometry.accessible(destination)
         if not self.movement.start(previous, destination):
@@ -635,6 +652,7 @@ class RoomRuntime:
             if self._wander is not None and not self.night():
                 self.leisure.arrived(self.now, self.facing)
             self._called = self._wander = None
+            self._finish_activity(True)
 
     def _placement(self, point: RoomPoint) -> RoomPoint:
         if not self.geometry.layout.can_place(point.x, point.depth, 6):

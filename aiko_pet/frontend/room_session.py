@@ -78,6 +78,7 @@ class RoomSession:
         self.error: str | None = None
         self.content: RoomContent | None = None
         self.game_snapshot: dict[str, Any] | None = None
+        self._preparing_game: str | None = None
         self._suspended = False
         self._last_tick = time.time()
         self._last_saved = self._last_tick
@@ -198,6 +199,8 @@ class RoomSession:
 
     def inputs(self) -> SessionInputs:
         sleep = self.routine.sleep_context()
+        if self._preparing_game is not None:
+            sleep = replace(sleep, blocked=True)
         if (
             not self.state.sleeping
             and sleep.window(time.time())[0]
@@ -262,6 +265,7 @@ class RoomSession:
             self.settings.spontaneous_talk
             and not self.state.sleeping
             and self.games.sequence is None
+            and self._preparing_game is None
             and not self.room.interaction.active
             and not self.playback.player.active
             and time.monotonic() >= self._next_comment
@@ -289,8 +293,15 @@ class RoomSession:
         if now - self._last_saved >= 5:
             self.save()
 
+    def _cancel_game_preparation(self) -> None:
+        if self._preparing_game is not None:
+            self._preparing_game = None
+            self.room.pause_route()
+            self.game_snapshot = None
+
     def suspend(self) -> None:
         self.tick()
+        self._cancel_game_preparation()
         if self.content is not None:
             self.content.suspend()
         self.games.close()
@@ -397,14 +408,38 @@ class RoomSession:
             else:
 
                 def open_game() -> None:
+                    self._cancel_game_preparation()
                     self.playback.player.cancel()
-                    self.games.open(str(args["id"]))
-                    self.game_snapshot = self.games.snapshot()
+                    game_id = str(args["id"])
+                    if game_id == "connect_four":
+                        self.games.close()
+                        self._preparing_game = game_id
+                        self.game_snapshot = {"id": game_id, "preparing": True}
+
+                        def arrived(success: bool) -> None:
+                            self._preparing_game = None
+                            self.game_snapshot = None
+                            if success:
+                                self.games.open(game_id)
+                                self.game_snapshot = self.games.snapshot()
+
+                        try:
+                            self.room.prepare_activity(
+                                self.room.geometry.anchor("table"), arrived
+                            )
+                        except ValueError:
+                            self._preparing_game = None
+                            self.game_snapshot = None
+                            raise
+                    else:
+                        self.games.open(game_id)
+                        self.game_snapshot = self.games.snapshot()
 
                 self.room.interaction.interrupt(open_game)
         elif name == "game_action":
             self.games.action(str(args["action"]), args.get("value"))
         elif name == "game_close":
+            self._cancel_game_preparation()
             self.games.close()
             self.game_snapshot = None
         elif name == "wish_pin":
@@ -454,7 +489,11 @@ class RoomSession:
 
     def snapshot(self) -> dict[str, Any]:
         world = self.room.world.snapshot()
-        self.game_snapshot = self.games.snapshot()
+        self.game_snapshot = (
+            {"id": self._preparing_game, "preparing": True}
+            if self._preparing_game
+            else self.games.snapshot()
+        )
         status = project_status(
             snapshot_pet(self.state, wish_context=self.wish_context()),
             context_at(time.time()),
