@@ -182,3 +182,20 @@ notifications or continuous background Python are claimed for this PWA.
   only until release/cancel. Check normal and 175% menu size independently.
 - Close during Aiko's throw, reopen, then close/reopen offline. Retain the same
   pet progress, zodiac and existing objects. Unfinished games remain transient.
+
+## Ground feeding and corrected gaze acceptance (2026-11-07)
+
+- Keep the existing profile/icon. Install the update normally and confirm the
+  same pet progress, zodiac and existing ground objects after offline reopening.
+- Compare turn starts and frontal up/down looks to the corrected desktop art.
+- Drag a portion onto the floor in front of Aiko. It must remain in place while
+  she walks to its observer-facing side, then play the original bend/pickup with
+  the portion appearing in her hands at the source contact marker. No floor-to-
+  hands attraction should occur.
+- Repeat facing each wall and near furniture. An obstructed front station must
+  not be replaced by pickup from behind or at a distance.
+- Move a portion away during approach/before hand contact. No acquisition at
+  the old location, duplicate portion or nutrition credit should occur. Verify
+  direct handover separately, including touch cancellation.
+- Inspect portrait and landscape for natural hand contact and foreground masks;
+  check identification/eating, then reopen offline without respawn.

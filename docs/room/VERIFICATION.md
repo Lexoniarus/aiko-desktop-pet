@@ -875,3 +875,54 @@ public Release metadata but could not fetch either the asset API download or
 browser-download URL. Therefore simply pointing the existing fetch importer at
 GitHub Releases has not been established as an automatic fallback. No alternate
 hosting, new origin, profile reset or runtime transport migration was introduced.
+
+## Corrected gaze and foreground ground pickup (2026-11-07)
+
+The owner reported old turn/up-down art, pickup behind ground food and portions
+being pulled to the hands. Source commits `2d85535f`, `935fa49f`, `f78a9110` and
+`e1c10527` adopt the existing 20 corrected images, require a free observer-side
+contact station, remove the web floor-to-hand interpolation and cover the new
+contact contract. Native pickup rendering and shared custody/nutrition ownership
+are unchanged. Save format and origin remain unchanged.
+
+All 40 targeted room/session/grid/character/body-pose test methods passed across
+the batch and focused rerun. The new hungry-ground-food regression checks the
+initial behind-item position, stationary portion before the pickup marker,
+foreground arrival, single acquisition/consumption and durable nutrition with
+no consumed-item respawn. The second new method checks four wall bearings and
+an obstructed foreground station. Two test-fixture assertions were corrected
+during final verification; no additional behavioral edits were needed. Ruff and
+strict Mypy passed for the changed Python paths; TypeScript/Vite and seven
+existing Node tests passed. No full desktop suite or visible native test window
+was run. Exact-source
+[web CI 42395468509](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42395468509)
+passed.
+
+Headless Chromium with touch input installed the previously published b253 ZIP,
+saved a stock item and Pisces setting, then installed the final
+`0.1.0-e1c105270b98` update through the normal settings controls. Both survived.
+A real supply drag released one apple at `(450.0054, 134.9822)`. It stayed at that
+position throughout approach and initial pickup; acquisition occurred only at
+the foreground station `(444.4611, 151.8308)`, at the original animation marker.
+Inspection used the source food anchor/mask without the removed attraction.
+Landscape/portrait screenshots were inspected. Offline reload retained both
+object IDs and settings, with no page errors. Diagnostics contained two 404s
+during isolated manual bootstrap and an offline network request; the descriptor
+was deliberately withheld until the update step. All 20 corrected source PNGs matched the final runtime archive
+byte for byte. Evidence stays outside Git in
+`%TEMP%/aiko-room-feeding-contact-qa/`: `result.json`, `observations.json`, and
+supply/approach/contact/inspection/portrait screenshots. Real iPad visual
+acceptance remains pending; no personal save was accessed.
+
+Package runtime SHA-256:
+`88df2e94ee5f8ac2b05fd2d840885661ccd8b683cee4a0c671516e02f3594fe5`;
+starter SHA-256:
+`7eed2c714834295bdc855b19e8e4741d01495d60acc0c84696c61dfc6f50e1d9`.
+
+[The test release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-e1c105270b98)
+includes the installer, direct runtime ZIP and pinned starter.
+Deploy commit `cbedfba5` and
+[publication run 42395824952](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42395824952)
+passed: the fresh publication identity was allowed, Pages deployed in about six
+seconds, and the public descriptor, starter and full runtime checksum matched.
+The existing `/room/` origin and profile remain in use.

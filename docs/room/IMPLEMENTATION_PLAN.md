@@ -781,6 +781,27 @@ events and the native desktop window remain unchanged. The renderer/input can
 also be used by the later desktop room host. Parallel local character-asset work
 is not part of this release. See the verification and device checklists.
 
+## Room pickup contact and adopted character corrections (2026-11-07)
+
+`RoomEnvironment.approach_target` chooses a free station on the radial side of
+the portion facing the observer, keeping the same bearing. It tries 18, 12 and
+6 world units of reach with the actor's full collision radius. No foreground
+station means unreachable; it does not substitute a position behind the item.
+`at_pickup_contact` requires arrival within 0.5 world units. `RoomRuntime` uses
+this station for remembered-object approaches and rechecks actual ground-item
+contact at acquisition. A moved item cannot attach at the old station.
+
+World custody, source animation markers, identification and consumption retain
+their existing owners. The web renderer no longer interpolates a portion from
+its old floor/drag coordinates to the hands. It uses the authored per-frame
+food anchor and foreground mask directly. Native desktop pickup presentation
+and user-held handover eligibility remain unchanged. No save migration occurs.
+
+The owner's existing November 6 artwork corrections are included: 16 frontal
+look frames and frame 01 of the two turn/two orient sequences, with their source
+metadata. Other animation frames and calibration remain unchanged; no image
+generation or private originals are included.
+
 ## References
 
 - [Current architecture](../ARCHITECTURE.md), [World contracts](../WORLD_OBJECT_CONTRACTS.md), [UI contract](../UI_WINDOW_CONTRACT.md).
