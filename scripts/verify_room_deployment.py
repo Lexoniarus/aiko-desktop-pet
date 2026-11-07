@@ -19,7 +19,7 @@ def fetch(name: str) -> bytes:
         headers={"Cache-Control": "no-cache"},
     )
     with urllib.request.urlopen(request, timeout=30) as response:
-        return response.read()
+        return bytes(response.read())
 
 
 def verify(site: Path) -> None:

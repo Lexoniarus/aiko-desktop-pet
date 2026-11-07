@@ -13,9 +13,10 @@ concurrency:
 jobs:
   starter:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || 'https://lexoniarus.github.io/aiko-desktop-pet/' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,12 +26,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/prepare_room_deployment.py
+      - name: Check publication identity and current public files
+        id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m scripts.check_room_deployment
       - uses: actions/configure-pages@v5
+        if: steps.preflight.outputs.publish == 'true'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.preflight.outputs.publish == 'true'
         with:
           name: github-pages-${{ github.run_attempt }}
           path: dist-room/published
       - name: Deploy starter
+        if: steps.preflight.outputs.publish == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
         with:
