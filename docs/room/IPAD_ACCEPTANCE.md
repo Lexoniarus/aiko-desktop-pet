@@ -170,6 +170,9 @@ notifications or continuous background Python are claimed for this PWA.
   Closing during that walk must not start a game later.
 - Check both orientations: board feet rest on the tabletop, Aiko stays beside
   the board, and speech/controls leave the seven columns unobstructed.
+- Empty openings show the real window/room through the board. The board stands
+  towards the front of the tabletop; both supplies rest on the foreground floor.
+  Aiko's stack must not rise or sink when her pickup pose changes.
 - Drag yellow from the supply over an entry. Check entry/landing previews,
   release/fall, full columns, returning invalid drops and cancelled gestures.
   Tap a column directly as an alternative; there is no numbered button row.

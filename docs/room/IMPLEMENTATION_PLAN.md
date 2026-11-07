@@ -769,6 +769,13 @@ input commit no move. The camera is held only for the gesture; room swipes remai
 available. Compact controls and speech above the board keep its playfield clear.
 Board size is independent of UI zoom; game text/control zoom is capped at 125%.
 
+Following the owner's visual review, empty openings remain transparent so the
+actual room/window shows through. Board feet sit further forward on the tabletop
+(70% of cutout height above its floor anchor). Both supplies are on the floor;
+Aiko's supply uses the actor's stable ground anchor rather than pose-relative
+image coordinates. These presentation changes leave all physical layout and
+game rules unchanged.
+
 Python rules, bounded opponent search, round pacing, commentary, experience/wish
 events and the native desktop window remain unchanged. The renderer/input can
 also be used by the later desktop room host. Parallel local character-asset work

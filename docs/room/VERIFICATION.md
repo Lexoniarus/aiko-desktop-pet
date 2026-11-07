@@ -778,3 +778,36 @@ during preparation removed the scene without a late game. Touch petting and an
 offline reload passed with no stale pending package or JavaScript page errors.
 Evidence: `%TEMP%/aiko-room-c4-qa/deploy-upgrade-result.json`, `deploy-after.png`
 and `deploy-offline.png`. This profile contains no personal iPad save.
+
+## Transparent openings and foreground placement correction (2026-11-07)
+
+The owner rejected the white empty-hole backing and rearward board/supplies.
+Runtime `0.1.0-b2533d858c96` removes the backing, moves the board towards the front
+of the existing tabletop, and puts both supplies on the floor. `PetScreenBounds`
+now exposes the stable actor ground anchor; the red stack no longer follows its
+pose-image origin. Geometry, save schema, game rules and PNGs are unchanged.
+
+Production build/typecheck, seven existing Node checks and Prettier passed after
+the changes. Python was not rerun because no Python code changed. The existing
+headless touch flow upgraded a synthetic saved 7a0517 installation to this
+package, verified dragging/tapping/cancellation/invalid drops, constant chip size,
+camera swipe, both orientations, 175% menus and retained offline objects/settings.
+No JavaScript page errors. Expected initial descriptor 404 and deliberate
+offline-network messages only. Source web CI
+[42389431909](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42389431909)
+passed for the exact source.
+
+The rendered empty board was compared to an immediately captured room-only view:
+five centre pixels in each of all 42 openings matched the background exactly.
+Final landscape/portrait screenshots were visually inspected; board feet rest
+on the forward tabletop and both supplies on the floor. Evidence stays outside
+Git in `%TEMP%/aiko-room-c4-placement-qa/`: `result.json`,
+`transparency-result.json`, `table-background-landscape.png` and the corresponding
+table, pickup, flight/fall and portrait screenshots. Real iPad/owner visual
+acceptance remains pending.
+
+The correction package is available in
+[the b2533d test release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-b2533d858c96).
+Its direct runtime ZIP can be imported through the existing app/profile. Runtime
+SHA-256: `665bf09c28ba2bd055a5d99690909f4aee17c475cfabb559c085827c18f8d884`;
+starter SHA-256: `7dc73613ec1342869e89ae55f7d4709f65ccb65c017134aed5e3d30903fe198b`.
