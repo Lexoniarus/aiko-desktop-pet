@@ -209,6 +209,49 @@ class RoomSessionTests(unittest.TestCase):
         player.suspend()
         self.assertFalse(player.player.active)
 
+    def test_ground_food_requires_front_contact_before_pickup(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        session = self.endpoint.session
+        session.state.restore_checkpoint(
+            replace(session.state.capture_checkpoint(), satiety=10)
+        )
+        room = session.room
+        point = RoomPoint(250, 100)
+        room.world.locate_in_room(replace(room.spatial, pet=RoomPoint(239.2, 85.6)))
+        instance = self.command("place", definition="apple", x=point.x,
+                                depth=point.depth)["snapshot"]["objects"][0]["instance_id"]
+        original = room.world.get(instance).position
+        self.assertFalse(room.environment.at_pickup_contact(point))
+        self.advance_until(lambda: room.interaction.phase == "pick_up")
+        self.assertEqual(room.position, room.environment.approach_target(point))
+        self.assertLess(room.geometry.distance(room.position, RoomPoint(400, 300)),
+                        room.geometry.distance(point, RoomPoint(400, 300)))
+        self.assertEqual(room.world.get(instance).state.value, "resting")
+        self.assertEqual(room.world.get(instance).position, original)
+        self.assertIsNone(room.held_item)
+        self.advance_until(lambda: room.world.get(instance).state.value == "pet_held")
+        self.assertEqual(room.held_item, "apple")
+        self.advance_until(lambda: room.world.get(instance).state.value == "consumed")
+        self.command("suspend")
+        reopened = create_browser_session(str(self.path))
+        self.assertEqual(reopened.session.room.world.snapshot().objects, ())
+        self.assertGreater(reopened.session.state.satiety, 10)
+
+    def test_pickup_stations_keep_the_front_free_on_all_walls(self) -> None:
+        environment = self.endpoint.session.room.environment
+        centre = RoomPoint(400, 300)
+        for point in (RoomPoint(250, 100), RoomPoint(700, 180),
+                      RoomPoint(400, 500), RoomPoint(100, 200)):
+            target = environment.approach_target(point)
+            self.assertIsNotNone(target)
+            assert target is not None
+            self.assertLess(environment.geometry.distance(centre, target),
+                            environment.geometry.distance(centre, point))
+            self.assertTrue(environment.geometry.layout.can_place(
+                target.x, target.depth, environment.geometry.layout.pet_radius))
+        self.assertIsNone(environment.approach_target(RoomPoint(400, 180)))
+
     def test_offered_food_uses_real_handover_and_consumes_one_portion(self) -> None:
         session = self.endpoint.session
         session.state.restore_checkpoint(
