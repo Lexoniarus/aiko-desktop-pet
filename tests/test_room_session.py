@@ -88,6 +88,53 @@ class RoomSessionTests(unittest.TestCase):
                 break
         self.assertEqual(room.position, RoomPoint(740, 300))
 
+    def test_table_game_walks_around_furniture_before_starting(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        start = RoomPoint(610, 300)
+        room.world.locate_in_room(replace(room.spatial, pet=start))
+        self.command("place", definition="apple", x=470, depth=100)
+        objects = room.world.snapshot().objects
+        reply = self.command("game_open", id="connect_four")["snapshot"]
+        self.assertTrue(reply["game"]["preparing"])
+        self.assertEqual(room.position, start)
+        self.assertIsNone(self.endpoint.session.games.sequence)
+        for _ in range(180):
+            self.wall += 0.25
+            self.command("tick")
+            self.assertTrue(room.geometry.layout.can_place(
+                room.position.x, room.position.depth, room.geometry.layout.pet_radius,
+            ))
+            if self.endpoint.session.games.sequence is not None:
+                break
+        self.assertEqual(room.position, room.geometry.anchor("table"))
+        self.assertIsNotNone(self.endpoint.session.games.sequence)
+        self.command("game_close")
+        self.command("suspend")
+        reopened = create_browser_session(str(self.path))
+        self.assertEqual(reopened.session.room.position, room.position)
+        self.assertEqual(reopened.session.room.world.snapshot().objects, objects)
+
+    def test_cancelled_table_walk_never_starts_a_late_game(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        self.command("game_open", id="connect_four")
+        self.wall += 0.25
+        self.command("tick")
+        self.command("game_close")
+        stopped = room.position
+        for _ in range(12):
+            self.wall += 0.25
+            reply = self.command("tick")["snapshot"]
+        self.assertIsNone(reply["game"])
+        self.assertEqual(room.position, stopped)
+        self.command("game_open", id="connect_four")
+        self.command("suspend")
+        reopened = create_browser_session(str(self.path))
+        self.assertIsNone(reopened.session.snapshot()["game"])
+
     def test_duplicate_request_cannot_create_a_second_portion(self) -> None:
         message = json.dumps({
             "protocol": 2,

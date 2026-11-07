@@ -272,7 +272,9 @@ class RoomRuntime:
         self.movement.cancel()
         self.leisure.suspend(self.now, cancel_outing=True)
 
-    def prepare_activity(self, point: RoomPoint, arrived: Callable[[bool], None]) -> None:
+    def prepare_activity(
+        self, point: RoomPoint, arrived: Callable[[bool], None]
+    ) -> None:
         """Walk to a room activity using the normal route, never teleport."""
         self.pause_route()
         target = self.geometry.accessible(point)

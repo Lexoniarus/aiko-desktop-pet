@@ -12,6 +12,35 @@ import {
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
+import {
+  cellPoint,
+  chipPoint,
+  columnAt,
+  landingCell,
+  tableGameFrame,
+} from '../src/games/ConnectFourGeometry.ts';
+
+test('table chips retain their diameter and flight joins the same landing geometry', () => {
+  const frame = tableGameFrame({ x: 500, y: 700, width: 480, height: 150 });
+  assert.equal(frame.chip, 28.8);
+  assert.equal(frame.scale, 0.9);
+  const half = tableGameFrame({ x: 250, y: 350, width: 240, height: 75 });
+  assert.equal(half.chip, frame.chip / 2);
+  assert.equal(columnAt(99.9), undefined);
+  assert.equal(columnAt(100), 0);
+  assert.equal(columnAt(379.9), 6);
+  assert.equal(columnAt(380), undefined);
+  const cells = Array(42).fill(0);
+  assert.equal(landingCell(cells, 2), 37);
+  for (let row = 0; row < 6; row++) cells[row * 7 + 2] = 1;
+  assert.equal(landingCell(cells, 2), undefined);
+  const start = { x: 560, y: 470 },
+    seam = 1240 / 1490;
+  const before = chipPoint(start, 35, seam - 1e-8, seam);
+  const after = chipPoint(start, 35, seam, seam);
+  assert.ok(Math.hypot(before.x - after.x, before.y - after.y) < 0.001);
+  assert.deepEqual(chipPoint(start, 35, 1, seam), cellPoint(35));
+});
 
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
