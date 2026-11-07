@@ -199,3 +199,18 @@ notifications or continuous background Python are claimed for this PWA.
   direct handover separately, including touch cancellation.
 - Inspect portrait and landscape for natural hand contact and foreground masks;
   check identification/eating, then reopen offline without respawn.
+
+## Fixed food line and same-cell drawing (2026-11-07)
+
+- Update the existing profile. Older food stays at its previous position; begin
+  moving an old portion and cancel to verify exact restoration without snapping.
+- Drag a new portion left/right, then move only up/down. Its size and target
+  ground line stay constant; only release height changes. Repeat at each wall
+  and across a corner. Falling/bouncing should settle on the same line.
+- Walk Aiko behind a portion, onto its cell, then onto a nearer cell. Food covers
+  her on the same cell or behind; she covers it only from a nearer cell. Food
+  does not block walking, and pickup remains at the authored contact marker.
+- Repeat ordinary direct handover. A refused/timed-out offer and an offered item
+  returned on app suspension land on the line; a successful offer stays in hand.
+- Reopen offline and verify the same object identities and care progress. Check
+  portrait/landscape on the actual iPad; no new profile is needed.

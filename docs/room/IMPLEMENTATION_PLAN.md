@@ -802,6 +802,33 @@ look frames and frame 01 of the two turn/two orient sequences, with their source
 metadata. Other animation frames and calibration remain unchanged; no image
 generation or private originals are included.
 
+## Food line and same-cell occlusion (2026-11-07)
+
+`RoomDepthOrder.objectGroundOrder` gives a floor object priority over Aiko when
+both displayed positions occupy the same `cell_size` grid cell. On different
+cells the existing projected ground order remains authoritative; equal ground
+height explicitly favors the object. This changes drawing order only: food does
+not become a navigation obstacle, and held food keeps the source hand masks.
+
+The shared layout's `food_line: 0.65` chooses one normalized foreground floor
+depth around all four walls, including the corners. In the 900px design view
+its ground line is y=859.2 and its projection scale is 3.98. This is a placement
+policy, not a new room geometry revision. `RoomGeometry.food_placement` preserves
+bearing and places food at this depth. `RoomProjection.foodPlacement` previews
+the same rule from pointer x; pointer y controls only height above that line.
+The export marks food/drink assets explicitly. Books retain free floor placement.
+
+`RoomRuntime` applies the rule to player placement/relocation and releases. Its
+shared `_release_to_floor` also handles rejected direct handover, timed-out
+offers and offered items returned on suspension. Successful handover retains
+its existing eligibility, food anchors and nutrition rules. Acquiring a resting
+item still requires the existing contact station and source pickup marker.
+
+Loading existing ground objects never snaps them to this line. Drag cancellation
+restores original coordinates/depth, including older off-line objects. Only a
+new committed player placement/drop uses the line. Aiko's own free movement,
+depth-dependent size and native desktop presentation remain unchanged.
+
 ## References
 
 - [Current architecture](../ARCHITECTURE.md), [World contracts](../WORLD_OBJECT_CONTRACTS.md), [UI contract](../UI_WINDOW_CONTRACT.md).

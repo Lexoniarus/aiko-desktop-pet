@@ -926,3 +926,65 @@ Deploy commit `cbedfba5` and
 passed: the fresh publication identity was allowed, Pages deployed in about six
 seconds, and the public descriptor, starter and full runtime checksum matched.
 The existing `/room/` origin and profile remain in use.
+
+## Fixed food line and same-cell occlusion (2026-11-07)
+
+The owner's follow-up separated drawing order from approach position: Aiko must
+be behind a ground object on its cell or a farther cell, while player food drops
+must use one line/scale instead of choosing depth from pointer height. Commits
+`efba6f34`, `4cec135b`, `9b74d0ce`, `45fa68e7` and `42da08c1` implement the explicit
+same-cell drawing priority, layout-owned food line, regressions and shared release
+path including declined/timed-out offers. No existing ground object is migrated;
+cancel restores the old place. Books retain free placement, Aiko retains free
+depth/scaling, and native desktop rendering/custody/nutrition remain unchanged.
+
+Thirty targeted Python session/grid test methods passed in the applicable
+batches/focused rerun; the final session batch passed all 26 methods. The only
+new geometric assertion correction was floating-point tolerance for repeated
+projection. Coverage includes old off-line food through suspension/reopen/cancel,
+new drop persistence, four wall bearings, source-marker pickup/consumption,
+successful direct handover and refused/unfinished offer release. Ruff and strict
+Mypy passed for the changed Python paths. TypeScript/Vite and all nine Node tests
+passed, including behind/same/front cell order, invariant food-line scale and
+height-only vertical dragging. Exact-source
+[web CI 42398038938](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42398038938)
+passed. No full desktop suite or visible test window was run.
+
+Browser plugin not available: the final package was exercised with the existing
+headless Playwright/Chromium setup at `http://127.0.0.1:8897/room/`, with real touch
+events, landscape 1024x768 and portrait 768x1024. The flow was old e1c105 runtime
+installation, saved stock/settings, normal in-app update to
+`0.1.0-42da08c1d5ba`, vertical supply drag/drop, same-cell crossing, pickup and
+offline reopening. Both old object coordinates/depth and Pisces were unchanged
+after update. The portion's touch-ghost width was 59.859375px at both heights;
+its floor point stayed constant and only height changed.
+
+Pixi's existing application-init hook exposed the actual scene without modifying
+served runtime bytes. On the same cell, Aiko's ground order was 733.94845 and the
+apple's 733.95845 (child indices 22/23), even though the actor was slightly nearer
+within the cell. The screenshot shows the apple covering her feet. It stayed at
+`(452.5537,126.5728)` until pickup at `(447.3681,143.7052)`. Offline reopening kept
+both original/new object IDs. Evidence stays outside Git under
+`%TEMP%/aiko-room-food-line-qa/`: `result.json`, `observations.json`,
+`same-cell-item-front.png`, supply/contact/inspection/portrait screenshots.
+
+| Rendered check | Result |
+| --- | --- |
+| Intended route / meaningful app | Local room route, installer/update controls and room toolbar loaded. |
+| Blank page / framework error overlay | None in the inspected landscape/portrait screenshots. |
+| Console health | No page errors; two bootstrap 404s while descriptor withheld, plus expected offline network failure. |
+| Interaction | Real touch y-only drag, fixed scale/point, floor fall, same-cell draw priority and original pickup marker passed. |
+| Save / offline | Existing coordinates, IDs/settings survived update; offline reload retained both portions. |
+
+Final runtime SHA-256:
+`7c39bd39d736d747003461b46aa11708a85dff1abade5aee1a707f2adb672f64`;
+starter SHA-256:
+`cf10f3f8d82c7563e3560820576c7b68420295b2d848e10db6b721065b813328`.
+Actual iPad/Safari visual acceptance remains pending. No personal save was read.
+
+[The final test release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-42da08c1d5ba)
+is pinned by deploy commit `2649bf7f`.
+[Publication run 42398259255](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42398259255)
+passed, including fresh-identity preflight and the full public runtime checksum.
+Pages deployed in about eight seconds. The public `/room/` origin/profile remain
+unchanged; use the installed app's normal update controls.
