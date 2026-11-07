@@ -36,7 +36,6 @@ export class AikoView extends Container {
   private heldKey = '';
   private heldItem = '';
   private heldOffset: [number, number] = [0, 0];
-  private contact?: { x: number; y: number; at: number };
   private chipHands?: Texture[];
   private disposed = false;
   private frameBounds = new Rectangle();
@@ -156,11 +155,7 @@ export class AikoView extends Container {
       ),
     );
   }
-  async hold(
-    item: string | null,
-    pose = 'closed_world',
-    contact?: { x: number; y: number },
-  ): Promise<void> {
+  async hold(item: string | null, pose = 'closed_world'): Promise<void> {
     const definition = item ? this.items[item] : undefined;
     const state = definition?.states?.[pose] ?? definition;
     const file = state?.file ?? '';
@@ -168,7 +163,6 @@ export class AikoView extends Container {
     if (key === this.heldKey) return;
     this.heldKey = key;
     this.heldItem = item ?? '';
-    this.contact = contact ? { ...contact, at: performance.now() } : undefined;
     if (!definition) {
       this.held.visible = false;
       return;
@@ -271,13 +265,8 @@ export class AikoView extends Container {
       this.foreground.height = this.sprite.texture.height;
     }
     if (anchor) {
-      let x = (anchor[0] - clip.anchor[0]) * 2 + this.heldOffset[0];
-      let y = (anchor[1] - clip.anchor[1]) * 2 + this.heldOffset[1];
-      if (this.contact && this.clipName !== 'put_down') {
-        const blend = Math.min(1, (performance.now() - this.contact.at) / 130);
-        x = this.contact.x * (1 - blend) + x * blend;
-        y = this.contact.y * (1 - blend) + y * blend;
-      }
+      const x = (anchor[0] - clip.anchor[0]) * 2 + this.heldOffset[0];
+      const y = (anchor[1] - clip.anchor[1]) * 2 + this.heldOffset[1];
       this.held.position.set(x, y);
     }
   }

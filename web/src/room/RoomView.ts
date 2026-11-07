@@ -58,7 +58,6 @@ export class RoomView {
   private followers = new Set<(bounds: PetScreenBounds) => void>();
   draggingInstance?: string;
   dragging = false;
-  dragVisual?: { x: number; y: number };
   private petTapBlockedUntil = 0;
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
@@ -120,39 +119,13 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
-    let contact: { x: number; y: number } | undefined;
-    if (snapshot.held_item && snapshot.held_item !== this.snapshot?.held_item) {
-      if (this.dragVisual) {
-        const box = this.app.canvas.getBoundingClientRect();
-        contact = this.aiko.toLocal({
-          x: this.dragVisual.x - box.left,
-          y: this.dragVisual.y - box.top,
-        });
-      } else {
-        const incoming = snapshot.objects.find((item) => item.state === 'pet_held');
-        const previous = incoming && this.objects.get(incoming.instance_id);
-        if (previous) {
-          const asset = this.assets.items[incoming!.definition_id]!;
-          contact = this.aiko.toLocal(
-            this.world.toGlobal({
-              x:
-                previous.sprite.x +
-                (asset.pivot[0] - asset.dimensions[0] / 2) * previous.sprite.scale.x,
-              y:
-                previous.sprite.y -
-                (asset.dimensions[1] - asset.pivot[1]) * previous.sprite.scale.y,
-            }),
-          );
-        }
-      }
-    }
     this.snapshot = snapshot;
     this.motion.receive(
       snapshot.room.pet,
       performance.now(),
       snapshot.motion?.travelled,
     );
-    void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose, contact);
+    void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
     const live = new Set(
       snapshot.objects
         .filter((item) => !['consumed', 'removed'].includes(item.state))

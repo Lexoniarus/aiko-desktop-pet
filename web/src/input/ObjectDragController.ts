@@ -112,7 +112,6 @@ export class ObjectDragController {
         ghost.style.height = `${height}px`;
         ghost.style.transform = `translate(${x}px,${y}px) translate(${(-100 * asset!.pivot[0]) / asset!.dimensions[0]}%,${(-100 * asset!.pivot[1]) / asset!.dimensions[1]}%)`;
         ghost.classList.toggle('invalid-drop', !target.inside);
-        this.room.dragVisual = { x, y };
       },
       finish: (x, y, dragged, cancelled) => {
         finished = true;
@@ -138,7 +137,6 @@ export class ObjectDragController {
           } finally {
             this.room.draggingInstance = undefined;
             this.room.dragging = false;
-            this.room.dragVisual = undefined;
             ghost.remove();
             this.settling = false;
           }
