@@ -40,9 +40,6 @@ export class ConnectFourTable {
   ) {
     this.element.setAttribute('aria-label', 'Vier gewinnt auf dem Tisch');
     for (let cell = 0; cell < g.columns * g.rows; cell++) {
-      const hole = element('span', 'c4-table-hole');
-      this.position(hole, cellPoint(cell));
-      this.board.append(hole);
       const image = art.image('', '', 'c4-table-chip');
       image.dataset.cell = String(cell);
       this.position(image, cellPoint(cell));

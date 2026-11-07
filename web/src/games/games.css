@@ -56,14 +56,6 @@
   transform: translate(-50%, -50%);
   z-index: 1;
 }
-.c4-table-hole {
-  position: absolute;
-  width: 31.2px;
-  height: 31.2px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: #fffcfd;
-}
 .c4-table-chip.winning {
   outline: 3px solid #755c93;
   border-radius: 50%;
