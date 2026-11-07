@@ -217,7 +217,7 @@ class RoomSessionTests(unittest.TestCase):
             replace(session.state.capture_checkpoint(), satiety=10)
         )
         room = session.room
-        point = RoomPoint(250, 100)
+        point = room.geometry.food_placement(RoomPoint(250, 100))
         room.world.locate_in_room(replace(room.spatial, pet=RoomPoint(239.2, 85.6)))
         instance = self.command("place", definition="apple", x=point.x,
                                 depth=point.depth)["snapshot"]["objects"][0]["instance_id"]
@@ -296,12 +296,23 @@ class RoomSessionTests(unittest.TestCase):
             1,
         )
 
-    def test_drag_cancel_restores_the_same_portion(
+    def test_legacy_food_position_survives_reopen_and_drag_cancel(
         self,
     ) -> None:
         original = self.command("place", definition="apple", x=460, depth=100)[
             "snapshot"
         ]["objects"][0]
+        room = self.endpoint.session.room
+        room.world.move_in_room(
+            original["instance_id"], RoomPoint(460, 90), 0,
+            expected_revision=original["revision"],
+        )
+        self.command("suspend")
+        self.endpoint = create_browser_session(str(self.path))
+        original = self.command("snapshot")["snapshot"]["objects"][0]
+        self.assertEqual(original["position"]["x"], 460)
+        self.assertEqual(self.endpoint.session.room.spatial.depth_for(
+            original["instance_id"]), 90)
         self.command(
             "object_drag_start",
             instance=original["instance_id"],
@@ -314,6 +325,8 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(restored[0]["instance_id"], original["instance_id"])
         self.assertEqual(restored[0]["position"], original["position"])
         self.assertEqual(restored[0]["state"], "resting")
+        self.assertEqual(self.endpoint.session.room.spatial.depth_for(
+            original["instance_id"]), 90)
 
     def test_drag_drop_and_suspension_keep_world_identity_and_depth(self) -> None:
         item = self.command("place", definition="apple", x=460, depth=100)["snapshot"][
@@ -326,7 +339,10 @@ class RoomSessionTests(unittest.TestCase):
             "snapshot"
         ]["objects"][0]
         self.assertEqual(moved["instance_id"], item["instance_id"])
-        self.assertEqual(moved["position"]["x"], 510)
+        expected = self.endpoint.session.room.geometry.food_placement(
+            RoomPoint(510, 110),
+        )
+        self.assertAlmostEqual(moved["position"]["x"], expected.x)
         self.assertEqual(moved["state"], "falling")
         self.advance_until(
             lambda: self.endpoint.session.room.world.get(
@@ -343,7 +359,8 @@ class RoomSessionTests(unittest.TestCase):
         self.command("suspend")
         reopened = create_browser_session(str(self.path)).session.room
         self.assertEqual(reopened.world.get(item["instance_id"]).state.value, "resting")
-        self.assertEqual(reopened.spatial.depth_for(item["instance_id"]), 110)
+        self.assertAlmostEqual(reopened.spatial.depth_for(item["instance_id"]),
+                               expected.depth)
 
     def test_air_release_uses_world_fall_and_cancel_creates_no_supply(self) -> None:
         self.command("object_drag_start", definition="apple")
@@ -437,15 +454,14 @@ class RoomSessionTests(unittest.TestCase):
                     "protocol": 2,
                     "requestId": 500,
                     "name": "place",
-                    "args": {"definition": "apple", "x": 665, "depth": 300},
+                    "args": {"definition": "horoscope_book", "x": 665, "depth": 300},
                 })
             )
         )
         self.assertFalse(rejected["ok"])
         self.assertEqual(session.room.world.snapshot().objects, before.objects)
-        item = self.command("place", definition="apple", x=600, depth=300)["snapshot"][
-            "objects"
-        ][0]
+        item = self.command("place", definition="horoscope_book", x=600, depth=300)[
+            "snapshot"]["objects"][0]
         self.assertEqual(item["position"]["x"], 600)
         self.assertEqual(session.room.spatial.depth_for(item["instance_id"]), 300)
 

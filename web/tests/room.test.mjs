@@ -12,6 +12,7 @@ import {
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
+import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import {
   cellPoint,
   chipPoint,
@@ -47,6 +48,40 @@ test('table chips retain their diameter and flight joins the same landing geomet
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
+
+test('ground objects cover Aiko on the same cell or behind, independent of insertion order', () => {
+  const projection = new RoomProjection(layout);
+  projection.update(1024, 768, 0);
+  const item = { x: 450, depth: 130 },
+    ground = projection.projectPoint(item).groundY;
+  for (const [pet, covered] of [
+    [{ x: 451, depth: 125 }, true],
+    [{ x: 451, depth: 136 }, true],
+    [{ x: 450, depth: 100 }, true],
+    [{ x: 450, depth: 155 }, false],
+  ]) {
+    const petY = projection.projectPoint(pet).groundY;
+    assert.equal(objectGroundOrder(layout, pet, item, petY, ground) > petY, covered);
+  }
+});
+
+test('food drag has one floor line and scale while vertical movement changes height', () => {
+  const projection = new RoomProjection(layout);
+  for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4]) {
+    projection.update(1024, 768, yaw);
+    const low = projection.foodPlacement(512, 700),
+      high = projection.foodPlacement(512, 400);
+    assert.deepEqual(low.point, high.point);
+    assert.ok(high.height > low.height);
+    const screen = projection.projectPoint(low.point);
+    assert.ok(
+      Math.abs(screen.scale - (3.2 + 1.2 * layout.food_line) * projection.fit) < 1e-8,
+    );
+    assert.ok(
+      Math.abs(screen.groundY - (802 + 88 * layout.food_line) * projection.fit) < 1e-8,
+    );
+  }
+});
 test('flat panorama preserves floor and lifted drop coordinates in every direction', () => {
   const projection = new RoomProjection(layout);
   for (const [yaw, point] of [

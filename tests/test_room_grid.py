@@ -31,6 +31,21 @@ from aiko_pet.world.state import WorldState
 
 
 class RoomGridTests(unittest.TestCase):
+    def test_food_line_has_one_visual_depth_on_all_four_walls(self):
+        geometry = RoomGeometry(load_room_layout())
+        for point, expected in (
+            (RoomPoint(400, 20), RoomPoint(400, 123.5)),
+            (RoomPoint(790, 300), RoomPoint(611.5, 300)),
+            (RoomPoint(400, 580), RoomPoint(400, 476.5)),
+            (RoomPoint(10, 300), RoomPoint(188.5, 300)),
+        ):
+            placed = geometry.food_placement(point)
+            self.assertEqual(placed, expected)
+            self.assertAlmostEqual(
+                geometry.distance(geometry.food_placement(placed), expected), 0,
+            )
+            self.assertTrue(geometry.layout.can_place(placed.x, placed.depth, 6))
+
     def test_v6_upgrade_preserves_values_ids_and_independent_remembered_place(self):
         folder = self.enterContext(tempfile.TemporaryDirectory())
         path = Path(folder) / "synthetic.sqlite3"
