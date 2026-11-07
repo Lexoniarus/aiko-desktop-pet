@@ -15,6 +15,7 @@ export class SpeechBubbles {
   private speech?: RoomSnapshot['speech'];
   private shown = -1;
   private scale = 1;
+  private tableGame = false;
 
   constructor(
     private host: HTMLElement,
@@ -34,6 +35,9 @@ export class SpeechBubbles {
     const speech = (this.speech = snapshot.speech);
     const settings = snapshot.catalog.settings as Record<string, unknown>;
     this.scale = Number(settings.ui_scale_percent ?? 100) / 100;
+    this.tableGame = snapshot.game?.id === 'connect_four';
+    if (this.tableGame) this.scale = Math.min(this.scale, 1.25);
+    this.element.style.zoom = this.tableGame ? String(this.scale) : '';
     this.text.textContent = speech.text;
     this.text.hidden = !speech.text;
     this.next.hidden = !speech.story;
@@ -79,6 +83,8 @@ export class SpeechBubbles {
       x = bounds.x + bounds.width + 8;
       if (x + rect.width > this.host.clientWidth - 8) x = bounds.x - rect.width - 8;
     }
+    const table = this.tableGame && this.room.tableGameFrame();
+    if (table) y = Math.min(y, table.y - rect.height - 12);
     if (panel && sidePanel && reserve && x + rect.width + reserve > panel.left - 12)
       x = panel.left - rect.width - reserve - 12;
     if (

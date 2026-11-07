@@ -272,11 +272,16 @@ class RoomRuntime:
         self.movement.cancel()
         self.leisure.suspend(self.now, cancel_outing=True)
 
-    def prepare_activity(
-        self, point: RoomPoint, arrived: Callable[[bool], None]
-    ) -> None:
+    def prepare_table_game(self, arrived: Callable[[bool], None]) -> None:
         """Walk to a room activity using the normal route, never teleport."""
         self.pause_route()
+        table = next(
+            item for item in self.geometry.layout.furniture if item.id == "table"
+        )
+        margin = self.geometry.layout.pet_radius + self.geometry.layout.cell_size
+        point = RoomPoint(
+            table.x + table.width / 2 + margin, table.z + table.depth / 2
+        )
         target = self.geometry.accessible(point)
         if self.movement.navigator.find_route(self.position, target) is None:
             raise ValueError("Aiko kann den Spielplatz gerade nicht erreichen.")

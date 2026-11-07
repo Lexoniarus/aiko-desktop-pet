@@ -385,7 +385,7 @@ export class RoomView {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
       this.camera.releaseFollow();
-      this.camera.lookAt({ x: table.x, depth: table.z });
+      this.camera.lookAt({ x: table.x, depth: table.z + table.depth * 0.1 });
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {

@@ -120,6 +120,7 @@
   transform: translate(-50%, -50%);
 }
 .room-panel.table-game-panel {
+  zoom: min(var(--ui-scale, 1), 1.25);
   inset: max(88px, env(safe-area-inset-top)) 16px auto auto;
   width: min(300px, calc((100vw - 32px) / var(--ui-scale, 1)));
   max-height: 34dvh;

@@ -424,9 +424,7 @@ class RoomSession:
                                 self.game_snapshot = self.games.snapshot()
 
                         try:
-                            self.room.prepare_activity(
-                                self.room.geometry.anchor("table"), arrived
-                            )
+                            self.room.prepare_table_game(arrived)
                         except ValueError:
                             self._preparing_game = None
                             self.game_snapshot = None
