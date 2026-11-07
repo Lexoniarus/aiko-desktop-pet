@@ -9,7 +9,7 @@ import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
 import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
-import type { RoomLayout, RoomPoint } from './RoomLayout';
+import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 import { furnitureFrame } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
@@ -307,13 +307,16 @@ export class RoomView {
     const x = clientX - box.left,
       y = clientY - box.top;
     const asset = this.assets.items[definition]!;
-    const support =
-      ((asset.dimensions[1] - asset.pivot[1]) *
-        this.portionSizeAt(definition, ground.depth, ground.x)[1]) /
-      asset.dimensions[1];
     const overPet = this.petContains(clientX, clientY);
     const previous = ground;
     const projection = this.camera.projection;
+    const foodLine =
+      asset.food && !overPet ? projection.foodPlacement(x, y) : undefined;
+    const supportPoint = foodLine?.point ?? (overPet ? this.petPosition! : ground);
+    const support =
+      ((asset.dimensions[1] - asset.pivot[1]) *
+        this.portionSizeAt(definition, supportPoint.depth, supportPoint.x)[1]) /
+      asset.dimensions[1];
     const floor = this.picking.resolveDrop(
       x,
       Math.min(
@@ -329,20 +332,27 @@ export class RoomView {
     const groundProjection = floor && projection.projectPoint(floor);
     const placement = overPet
       ? held
-      : floor && groundProjection
-        ? {
-            point: floor,
-            height: Math.max(
-              0,
-              (groundProjection.y - y - support) / groundProjection.scale,
-            ),
-          }
-        : held;
+      : foodLine
+        ? projection.foodPlacement(x, y + support)
+        : floor && groundProjection
+          ? {
+              point: floor,
+              height: Math.max(
+                0,
+                (groundProjection.y - y - support) / groundProjection.scale,
+              ),
+            }
+          : held;
     const point = placement?.point ?? previous;
     const pet = this.aiko.screenBounds(),
       width = Math.max(1, pet.scale * 192);
     const inside =
-      x >= 0 && x <= box.width && y >= 0 && y <= this.camera.sceneHeight && !!placement;
+      x >= 0 &&
+      x <= box.width &&
+      y >= 0 &&
+      y <= this.camera.sceneHeight &&
+      !!placement &&
+      canPlace(this.assets.layout, point);
     return {
       ...point,
       height: placement?.height ?? 0,

@@ -48,6 +48,7 @@ class RoomLayout:
     camera_clearance: float
     furniture: tuple[FurniturePlacement, ...]
     walls: tuple[RoomWall, ...]
+    food_line: float = 0.65
 
     def wall_to_floor(
         self,

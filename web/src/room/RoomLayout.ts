@@ -29,6 +29,7 @@ export interface RoomLayout {
   pet_radius: number;
   camera_height: number;
   camera_clearance: number;
+  food_line: number;
   furniture: FurniturePlacement[];
 }
 export function canPlace(layout: RoomLayout, point: RoomPoint, radius = 6): boolean {

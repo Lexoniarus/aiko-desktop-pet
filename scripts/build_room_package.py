@@ -141,6 +141,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
     items = load_item_catalog()
     item_files: dict[str, dict[str, Any]] = {
         key: {
+            "food": True,
             "file": "assets/"
             + item.sprites[2].render_path.relative_to(ASSET_ROOT).as_posix(),
             "label": item.label,

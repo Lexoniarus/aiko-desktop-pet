@@ -112,6 +112,16 @@ export class RoomProjection {
       edge - closeness * (edge - this.layout.camera_clearance),
     );
   }
+  foodPlacement(x: number, y: number): { point: RoomPoint; height: number } {
+    const bearing = this.screenBearing(x),
+      edge = this.edgeDistance(bearing);
+    const point = this.pointAtBearing(
+      bearing,
+      edge - this.layout.food_line * (edge - this.layout.camera_clearance),
+    );
+    const ground = this.projectPoint(point);
+    return { point, height: Math.max(0, Math.min(225, (ground.y - y) / ground.scale)) };
+  }
   atDistance(
     x: number,
     y: number,

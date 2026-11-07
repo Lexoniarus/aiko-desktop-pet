@@ -91,6 +91,9 @@ def load_room_layout(path: Path = ASSET_ROOT / "room/v1/layout.json") -> RoomLay
         "west",
     }:
         raise ValueError("A room requires four distinct walls")
+    food_line = raw["food_line"]
+    if type(food_line) not in (int, float) or not 0 < food_line < 1:
+        raise ValueError("Invalid food placement line")
     return RoomLayout(
         raw["id"],
         raw["revision"],
@@ -104,4 +107,5 @@ def load_room_layout(path: Path = ASSET_ROOT / "room/v1/layout.json") -> RoomLay
         raw["camera_clearance"],
         items,
         walls,
+        food_line,
     )

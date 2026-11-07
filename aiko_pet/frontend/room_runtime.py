@@ -300,7 +300,7 @@ class RoomRuntime:
             callback(success)
 
     def place(self, definition: str, point: RoomPoint) -> str:
-        point = self._placement(point)
+        point = self._item_placement(definition, point)
         footprint = ObjectFootprint(6, 6)
         x = self.world.snapshot().surface.ground_x(point.x, footprint)
         item = self.world.place_resting(definition, x, footprint)
@@ -316,8 +316,8 @@ class RoomRuntime:
         )
 
     def relocate(self, instance: str, revision: int, point: RoomPoint) -> None:
-        point = self._placement(point)
         item = self.world.get(instance)
+        point = self._item_placement(item.definition_id, point)
         if item.state != ObjectState.RESTING:
             raise ValueError("Dieser Gegenstand wird gerade benutzt.")
         self.world.move_in_room(instance, point, 0, expected_revision=revision)
@@ -445,13 +445,21 @@ class RoomRuntime:
     def drop_drag(self, point: RoomPoint, *, offer: bool, height: float = 0) -> None:
         if self._dragged is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
-        point = self._placement(point)
         instance = self._dragged.instance
         item = self.world.get(instance)
+        point = (
+            self._placement(point) if offer
+            else self._item_placement(item.definition_id, point)
+        )
         item = self.world.move_in_room(instance, point, height,
                                        expected_revision=item.revision)
         accepted = offer and self.interaction.offer_on_release(instance)
         if not accepted:
+            floor = self._item_placement(item.definition_id, point)
+            if floor != point:
+                item = self.world.move_in_room(
+                    instance, floor, height, expected_revision=item.revision,
+                )
             self.world.release(instance, expected_revision=item.revision)
         self._dragged = None
         self.behavior.refresh_after_placement()
@@ -670,6 +678,11 @@ class RoomRuntime:
                 self.leisure.arrived(self.now, self.facing)
             self._called = self._wander = None
             self._finish_activity(True)
+
+    def _item_placement(self, definition: str, point: RoomPoint) -> RoomPoint:
+        if definition in self.items.foods:
+            point = self.geometry.food_placement(point)
+        return self._placement(point)
 
     def _placement(self, point: RoomPoint) -> RoomPoint:
         if not self.geometry.layout.can_place(point.x, point.depth, 6):

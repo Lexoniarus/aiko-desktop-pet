@@ -6,6 +6,7 @@ export interface ItemStateAsset {
 }
 export interface RoomItemAsset extends ItemStateAsset {
   label: string;
+  food?: boolean;
   states?: Record<string, ItemStateAsset>;
   handOffset?: [number, number];
   worldZoom?: number;

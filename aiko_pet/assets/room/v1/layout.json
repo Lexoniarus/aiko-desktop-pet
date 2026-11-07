@@ -10,6 +10,7 @@
   "pet_radius": 20,
   "camera_height": 70,
   "camera_clearance": 110,
+  "food_line": 0.65,
   "furniture": [
     {
       "id": "door",

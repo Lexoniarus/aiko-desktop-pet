@@ -100,3 +100,15 @@ class RoomGeometry:
             if self.layout.can_place((x + 0.5) * cell, (z + 0.5) * cell, radius)
         )
         return min(candidates, key=lambda p: self.distance(p, point))
+
+    def food_placement(self, point: RoomPoint) -> RoomPoint:
+        """Keep bearing, with one projected floor depth around all four walls."""
+        cx, cz = self.layout.width / 2, self.layout.depth / 2
+        dx, dz = point.x - cx, point.depth - cz
+        fraction = max(abs(dx) / cx, abs(dz) / cz)
+        if fraction == 0:
+            dx, dz, fraction = 0, -cz, 1
+        edge_x, edge_z = dx / fraction, dz / fraction
+        edge = math.hypot(edge_x, edge_z)
+        distance = edge - self.layout.food_line * (edge - self.layout.camera_clearance)
+        return RoomPoint(cx + edge_x * distance / edge, cz + edge_z * distance / edge)
