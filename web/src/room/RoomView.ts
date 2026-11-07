@@ -12,6 +12,7 @@ import { RoomPicking } from './RoomPicking';
 import type { RoomLayout, RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 import { furnitureFrame } from './RoomPresentation';
+import { objectGroundOrder } from './RoomDepthOrder';
 import { tableGameFrame } from '../games/ConnectFourGeometry';
 
 export interface AssetManifest {
@@ -243,7 +244,13 @@ export class RoomView {
           p.scale *
           (this.assets.items[item.definition_id]?.worldZoom ?? 1),
       );
-      sprite.zIndex = this.camera.projection.projectPoint(display).groundY;
+      sprite.zIndex = objectGroundOrder(
+        this.assets.layout,
+        point,
+        display,
+        projected.groundY,
+        p.groundY,
+      );
     }
   }
 
