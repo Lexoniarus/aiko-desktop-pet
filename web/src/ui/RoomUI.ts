@@ -238,12 +238,13 @@ export class RoomUI {
           new RockPaperScissorsView(this.command, this.artwork),
         tic_tac_toe: () => new TicTacToeView(this.command, this.artwork),
         blackjack: () => new BlackjackView(this.command, this.artwork),
-        connect_four: () => new ConnectFourView(this.command, this.artwork),
+        connect_four: () =>
+          new ConnectFourView(this.command, this.artwork, this.room, this.host),
         mastermind: () => new MastermindView(this.command, this.artwork),
         quiz: () => new QuizView(this.command, this.artwork),
       };
       if (id && types[id]) {
-        this.room.frameForGame();
+        this.room.frameForGame(id);
         this.game = types[id]!();
         this.open('games');
       } else {
@@ -252,6 +253,8 @@ export class RoomUI {
       }
     }
     this.panel.classList.toggle('game-panel', !!id);
+    this.panel.classList.toggle('table-game-panel', id === 'connect_four');
+    this.host.classList.toggle('table-game-active', id === 'connect_four');
     if (this.game && snapshot.game) {
       const signature = JSON.stringify(snapshot.game);
       if (signature !== this.gameSignature) {

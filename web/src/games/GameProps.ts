@@ -6,8 +6,6 @@ import type { Command } from '../ui/dom';
 import type { RoomArtwork } from '../ui/RoomArtwork';
 import { record, values } from './GameView';
 
-type Point = { x: number; y: number };
-
 /** Character-side game artwork, separate from speech and from World objects. */
 export class GameProps {
   private root = element('section', 'pet-game-props');
@@ -19,7 +17,6 @@ export class GameProps {
   private safeImage: HTMLImageElement;
   private snack: HTMLImageElement;
   private lights = element('div', 'mm-safe-lights');
-  private pile: HTMLImageElement;
   private flight = element('div', 'game-flight');
   private game?: Record<string, unknown>;
   private received = 0;
@@ -48,15 +45,7 @@ export class GameProps {
     this.safeImage = art.image(art.game('mm-safe/00'), 'Aikos Snack-Tresor');
     this.snack = art.image(art.game('mm-donut'), 'Donut', 'mm-safe-snack');
     this.safe.append(this.safeImage, this.snack, this.lights);
-    this.pile = art.image(art.game('c4-pile'), 'Aikos Spielsteine', 'pet-c4-pile');
-    this.root.append(
-      this.rps,
-      this.dealer,
-      this.deck,
-      this.safe,
-      this.pile,
-      this.flight,
-    );
+    this.root.append(this.rps, this.dealer, this.deck, this.safe, this.flight);
     host.append(this.root);
     room.followPet((bounds) => this.draw(bounds));
   }
@@ -128,7 +117,6 @@ export class GameProps {
         this.lights.append(light);
       }
     }
-    this.pile.hidden = game?.id !== 'connect_four';
     this.host.dataset.gameMotion = String(
       record(record(game?.props).motion).kind ?? '',
     );
@@ -150,7 +138,10 @@ export class GameProps {
   private draw(bounds: PetScreenBounds): void {
     const game = this.game;
     this.root.hidden =
-      !game || bounds.x + bounds.width < 0 || bounds.x > this.host.clientWidth;
+      !game ||
+      game.id === 'connect_four' ||
+      bounds.x + bounds.width < 0 ||
+      bounds.x > this.host.clientWidth;
     if (!game || this.root.hidden) return;
     const right = bounds.x + bounds.width,
       bottom = bounds.y + bounds.height;
@@ -186,12 +177,6 @@ export class GameProps {
       Math.max(8, bounds.x - safeWidth - 12),
       bottom - (safeWidth * 233) / 296,
       safeWidth,
-    );
-    this.place(
-      this.pile,
-      bounds.originX + 64 * bounds.scale,
-      bounds.originY + 158 * bounds.scale,
-      32 * bounds.scale,
     );
     const motion = record(record(game.props).motion),
       key = `${game.id}:${motion.id ?? ''}`;
@@ -250,8 +235,7 @@ export class GameProps {
           96,
         );
       });
-    } else if (motion.kind === 'chip') this.chip(bounds, motion, fraction);
-    else {
+    } else {
       const player = this.host.querySelector('.bj-player')?.getBoundingClientRect();
       if (!player) return;
       const index = Number(motion.index),
@@ -288,65 +272,5 @@ export class GameProps {
         width / compression,
       );
     }
-  }
-
-  private chip(
-    bounds: PetScreenBounds,
-    motion: Record<string, unknown>,
-    fraction: number,
-  ): void {
-    const cell = Number(motion.cell),
-      targetCell = this.host.querySelector<HTMLElement>(
-        `.c4-cell[data-cell="${cell}"]`,
-      ),
-      board = this.host.querySelector('.c4-board');
-    if (!targetCell || !board) return;
-    const targetBox = targetCell.getBoundingClientRect(),
-      boardBox = board.getBoundingClientRect();
-    const start: Point = {
-      x: bounds.originX + 96 * bounds.scale,
-      y: bounds.originY + 141 * bounds.scale,
-    };
-    const target: Point = {
-      x: targetBox.left + targetBox.width / 2,
-      y: boardBox.top + (92 / 480) * boardBox.height,
-    };
-    const flightFraction = Number(motion.flight_duration) / Number(motion.duration),
-      t = Math.min(1, fraction / flightFraction);
-    let height = Math.abs(target.y - start.y) * 0.55 + 60;
-    const left = boardBox.left + (100 / 480) * boardBox.width,
-      right = boardBox.left + (380 / 480) * boardBox.width,
-      top = boardBox.top + (112 / 480) * boardBox.height;
-    // Same board-clearance construction as frontend.view_models.chip_flight.
-    if (start.x < left || start.x > right)
-      for (let i = 1; i < 100; i++) {
-        const p = i / 100,
-          x = start.x + (target.x - start.x) * p,
-          size = 32 + (targetBox.width * 0.8 - 32) * p;
-        if (x + size / 2 >= left && x - size / 2 <= right)
-          height = Math.max(
-            height,
-            (start.y + (target.y - start.y) * p + size / 2 - top + 14 * (1 - p)) /
-              (4 * p * (1 - p)),
-          );
-      }
-    const drop = Math.max(0, (fraction - flightFraction) / (1 - flightFraction));
-    const x = start.x + (target.x - start.x) * t,
-      y =
-        fraction < flightFraction
-          ? start.y + (target.y - start.y) * t - 4 * height * t * (1 - t)
-          : target.y + (targetBox.top + targetBox.height / 2 - target.y) * drop * drop;
-    const image = this.motionImages[0];
-    if (!image) return;
-    image.hidden = fraction >= flightFraction;
-    const falling = board.querySelector<HTMLImageElement>('.c4-falling');
-    if (falling && fraction >= flightFraction) {
-      falling.hidden = false;
-      falling.src = this.art.game('c4-red');
-      falling.style.left = `${((x - boardBox.left) / boardBox.width) * 100}%`;
-      falling.style.top = `${((y - boardBox.top) / boardBox.height) * 100}%`;
-    }
-    image.src = this.art.game('c4-red');
-    this.place(image, x, y, targetBox.width * 0.8);
   }
 }

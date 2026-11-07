@@ -199,7 +199,12 @@ export class AikoView extends Container {
       }
     }
   }
-  renderHeld(): void {
+  renderHeld(chipDiameter?: number): void {
+    if (this.heldItem === 'c4-red' && chipDiameter !== undefined) {
+      const size = chipDiameter / Math.abs(this.scale.x);
+      this.held.width = size;
+      this.held.height = size;
+    }
     this.placeHeld();
   }
   private updateBounds(): void {

@@ -11,6 +11,8 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import type { RoomLayout, RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
+import { furnitureFrame } from './RoomPresentation';
+import { tableGameFrame } from '../games/ConnectFourGeometry';
 
 export interface AssetManifest {
   packageVersion: string;
@@ -236,7 +238,9 @@ export class RoomView {
       (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
     );
     this.aiko.zIndex = projected.groundY;
-    this.aiko.renderHeld();
+    this.aiko.renderHeld(
+      snapshot.game?.id === 'connect_four' ? this.tableGameFrame()?.chip : undefined,
+    );
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.visible = this.aiko.visible;
     this.shadow.scale.set(projected.scale / 4);
@@ -372,9 +376,17 @@ export class RoomView {
     this.followers.add(callback);
     return () => this.followers.delete(callback);
   }
-  frameForGame(): void {
-    this.camera.setGame(true);
-    if (this.petPosition) this.camera.lookAt(this.petPosition);
+  tableGameFrame() {
+    const table = this.assets.layout.furniture.find((item) => item.id === 'table');
+    return table && tableGameFrame(furnitureFrame(this.camera.projection, table));
+  }
+  frameForGame(id: string): void {
+    this.camera.setGame(true, id === 'connect_four');
+    const table = this.assets.layout.furniture.find((item) => item.id === 'table');
+    if (id === 'connect_four' && table) {
+      this.camera.releaseFollow();
+      this.camera.lookAt({ x: table.x, depth: table.z });
+    } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {
     const box = this.app.canvas.getBoundingClientRect();
@@ -388,6 +400,9 @@ export class RoomView {
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;
+  }
+  get heldGameChip(): boolean {
+    return this.snapshot?.held_item === 'c4-red';
   }
   get petVisible(): boolean {
     if (!this.snapshot || !this.aiko.visible) return false;

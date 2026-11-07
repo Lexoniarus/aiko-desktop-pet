@@ -8,6 +8,7 @@ export class RoomCamera {
   following = false;
   private held = false;
   private gameOpen = false;
+  private tableGame = false;
   private width = 1;
   private height = 1;
   private pointer?: { id: number; x: number; moved: boolean };
@@ -62,7 +63,7 @@ export class RoomCamera {
     );
   }
   get portraitGame(): boolean {
-    return this.gameOpen && this.height > this.width;
+    return this.gameOpen && !this.tableGame && this.height > this.width;
   }
   get sceneHeight(): number {
     return this.portraitGame ? Math.max(180, this.height * 0.48 - 88) : this.height;
@@ -107,8 +108,9 @@ export class RoomCamera {
       this.velocity *= Math.exp(-9 * dt);
     }
   }
-  setGame(open: boolean): void {
+  setGame(open: boolean, atTable = false): void {
     this.gameOpen = open;
+    this.tableGame = atTable;
     this.refresh();
   }
   hold(held: boolean): void {
