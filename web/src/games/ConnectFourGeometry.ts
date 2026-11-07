@@ -27,14 +27,14 @@ export function tableGameFrame(table: {
   height: number;
 }): TableGameFrame {
   const scale = (table.width * 0.82) / connectFourGeometry.size;
-  const surface = table.y - table.height * 0.88;
+  const surface = table.y - table.height * 0.7;
   return {
     x: table.x - (connectFourGeometry.size * scale) / 2,
     y: surface - connectFourGeometry.base * scale,
     scale,
     chip: connectFourGeometry.chip * scale,
     playerX: table.x - table.width * 0.34,
-    playerY: surface + table.height * 0.2,
+    playerY: table.y + connectFourGeometry.chip * scale * 0.4,
   };
 }
 

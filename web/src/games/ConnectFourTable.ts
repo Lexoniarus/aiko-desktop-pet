@@ -268,7 +268,7 @@ export class ConnectFourTable {
     this.aikoPile.forEach((chip, index) => {
       this.position(chip, {
         x: bounds.originX + 80 * bounds.scale,
-        y: bounds.originY + 178 * bounds.scale - index * 4 * frame.scale,
+        y: bounds.groundY + frame.chip * 0.4 - index * 4 * frame.scale,
       });
       chip.style.width = `${frame.chip}px`;
       chip.hidden =

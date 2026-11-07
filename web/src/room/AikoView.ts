@@ -22,6 +22,7 @@ export interface PetScreenBounds {
   height: number;
   originX: number;
   originY: number;
+  groundY: number;
   scale: number;
 }
 export class AikoView extends Container {
@@ -238,6 +239,7 @@ export class AikoView extends Container {
       height: bottom.y - top.y,
       originX: origin.x,
       originY: origin.y,
+      groundY: zero.y,
       scale: unit.x - zero.x,
     };
   }
