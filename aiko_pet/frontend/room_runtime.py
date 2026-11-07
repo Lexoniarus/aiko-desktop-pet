@@ -34,7 +34,9 @@ from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.mind.object_perception import ItemPresentation
 from ..pet.routine import context_at
 from ..pet.state import PetState
-from ..world.contracts import ObjectFootprint, ObjectState, WorldPosition
+from ..world.contracts import (
+    ObjectFootprint, ObjectState, WorldObjectSnapshot, WorldPosition,
+)
 from ..world.room import RoomGeometry, RoomPoint, RoomSpatialState
 from ..world.room_navigation import RoomNavigator
 from ..world.state import WorldState
@@ -455,12 +457,7 @@ class RoomRuntime:
                                        expected_revision=item.revision)
         accepted = offer and self.interaction.offer_on_release(instance)
         if not accepted:
-            floor = self._item_placement(item.definition_id, point)
-            if floor != point:
-                item = self.world.move_in_room(
-                    instance, floor, height, expected_revision=item.revision,
-                )
-            self.world.release(instance, expected_revision=item.revision)
+            self._release_to_floor(instance)
         self._dragged = None
         self.behavior.refresh_after_placement()
 
@@ -569,8 +566,7 @@ class RoomRuntime:
                 if self.interaction.offer_on_release(instance):
                     self._offered = None
                 elif self.now - started > 8:
-                    item = self.world.get(instance)
-                    self.world.release(instance, expected_revision=item.revision)
+                    self._release_to_floor(instance)
                     self._offered = None
         motion = self.behavior.advance(
             observation.goal,
@@ -684,6 +680,17 @@ class RoomRuntime:
             point = self.geometry.food_placement(point)
         return self._placement(point)
 
+    def _release_to_floor(self, instance: str) -> WorldObjectSnapshot:
+        item = self.world.get(instance)
+        point = self.environment.object_point(instance)
+        assert point is not None and item.position is not None
+        floor = self._item_placement(item.definition_id, point)
+        if self.geometry.distance(floor, point) > 1e-8:
+            item = self.world.move_in_room(
+                instance, floor, item.position.height, expected_revision=item.revision,
+            )
+        return self.world.release(instance, expected_revision=item.revision)
+
     def _placement(self, point: RoomPoint) -> RoomPoint:
         if not self.geometry.layout.can_place(point.x, point.depth, 6):
             raise ValueError("Dort ist kein freier Boden für den Gegenstand.")
@@ -695,9 +702,7 @@ class RoomRuntime:
         if self._offered is not None:
             item = self.world.get(self._offered[0])
             if item.state == ObjectState.USER_HELD:
-                item = self.world.release(
-                    item.instance_id, expected_revision=item.revision
-                )
+                item = self._release_to_floor(item.instance_id)
                 self.world.land(item.instance_id, expected_revision=item.revision)
             self._offered = None
         self.pause_route()

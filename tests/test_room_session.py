@@ -393,6 +393,28 @@ class RoomSessionTests(unittest.TestCase):
             [released["instance_id"]],
         )
 
+    def test_unaccepted_offers_use_food_line_on_timeout_and_suspend(self) -> None:
+        room = self.endpoint.session.room
+        expected = room.geometry.food_placement(room.position)
+        with patch.object(room.interaction, "offer_on_release", return_value=False):
+            self.command("offer", definition="apple")
+            self.advance_until(
+                lambda: room.world.snapshot().objects[0].state.value == "falling",
+            )
+        first = room.world.snapshot().objects[0]
+        assert first.position is not None
+        self.assertAlmostEqual(first.position.x, expected.x)
+        self.assertAlmostEqual(room.spatial.depth_for(first.instance_id), expected.depth)
+        self.command("offer", definition="cookie")
+        self.command("suspend")
+        reopened = create_browser_session(str(self.path)).session.room
+        second = reopened.world.snapshot().objects[1]
+        assert second.position is not None
+        self.assertEqual(second.state.value, "resting")
+        self.assertAlmostEqual(second.position.x, expected.x)
+        self.assertAlmostEqual(reopened.spatial.depth_for(second.instance_id),
+                               expected.depth)
+
     def test_face_presentation_recognizes_before_release_and_eats_only_after_handover(
         self,
     ) -> None:
