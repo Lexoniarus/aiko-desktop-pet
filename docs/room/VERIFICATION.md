@@ -811,3 +811,67 @@ The correction package is available in
 Its direct runtime ZIP can be imported through the existing app/profile. Runtime
 SHA-256: `665bf09c28ba2bd055a5d99690909f4aee17c475cfabb559c085827c18f8d884`;
 starter SHA-256: `7dc73613ec1342869e89ae55f7d4709f65ccb65c017134aed5e3d30903fe198b`.
+
+## Repeated Pages timeout investigation and prevention (2026-11-07)
+
+The owner requested a concrete comparison rather than another blind rerun.
+Actions job logs and actual uploaded `artifact.tar` contents were inspected:
+
+| Attempt | Artifact / Pages identity | Observed publication result |
+| --- | --- | --- |
+| 42388946229 | 7a0517 site, 86,904,921-byte Actions ZIP | Created 15:58:58 UTC; success 15:59:03. |
+| 42389629791 attempt 1 | b253 site, 86,904,911-byte Actions ZIP; 722e1f97 identity | `syncing_files` until ten-minute timeout; action cancelled Pages. |
+| 42389629791 attempt 2 | Same reviewed b253 site and same 722e1f97 identity | Empty status from first poll for over five minutes; explicitly cancelled for diagnosis. |
+| 42391066779 | Same pinned b253 starter/runtime, fresh 0425bd46 identity | Created 16:23:56 UTC; success 16:24:01; public runtime verified 16:24:03. |
+
+Both downloaded Actions archives passed ZIP CRC and TAR inspection: nine regular
+site files, no symlinks/hardlinks/path traversal, normal 0644/0755 permissions and
+the same owner. All starter/icon/HTML/SW bytes were identical; only install.json
+and the runtime ZIP differed. The failed runtime was 27 bytes smaller. Upload
+and Pages-create authorization succeeded. The exact resolved action SHAs were
+identical on success/failure. Neither a malformed artifact, retry selecting the
+wrong artifact, an action-version change nor a size-limit breach explains this
+comparison. Large packages remain an operational cost, not a proven root cause.
+
+The first stall is inside Pages synchronization; its internal cause is not
+exposed. Same-SHA retry reused its identity and returned empty status, while a
+fresh identity published the unchanged reviewed site in about five seconds.
+This supports avoiding that retry path, not a claim that new commits cure every
+Pages backend failure. Earlier queued/deployment_failed incidents are a distinct
+recorded failure mode. GitHub's public status was operational during this check;
+no general outage is asserted. The pinned action itself clamps timeout at
+600,000ms and does not treat an empty status as an immediate terminal failure.
+
+Prevention is implemented in source `80c90cfd` / deploy `282e81e7`:
+`check_room_deployment.py` checks existing public files and deployment history
+before configure/upload/deploy. Already-live sites skip publication but retain
+the full live ZIP checksum gate; previously attempted unhealthy identities fail
+before upload. Empty API status alone is insufficient: even never-deployed SHAs
+return it, so the guard inspects actual workflow steps across attempts. A
+15-minute whole-job bound is separate from the unchanged ten-minute Pages limit.
+
+Validation ran after implementation, without visible windows. Ruff and strict
+Mypy passed for preflight/verifier. Read-only real-API cases passed: already-live
+site skips (0.92s), stale identity rejects (0.99s), fresh identity permits (1.47s),
+and actual old workflow history identifies a prior Pages attempt. No tests for
+tests or broad pet/game suite were added/run for this deployment-only change.
+[Web CI 42391696100](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42391696100)
+passed. The actual
+[deployment workflow 42391700248](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42391700248)
+passed twice on the same commit: preflight succeeded, configure/upload/deploy
+were skipped, and the public runtime digest was fully verified both times.
+
+The real HTTPS synthetic profile retained b253, zodiac and object IDs through
+offline reopening with no stale pending package or JavaScript errors. Its energy
+had fallen to 7.35 after absence, so the attempted live game start was correctly
+refused; that fixture is not used to claim a live game-admission pass. Full touch
+gameplay was already verified in the isolated local fixture above. No personal
+iPad save was accessed. Evidence remains outside Git in
+`%TEMP%/aiko-room-c4-placement-qa/`: artifact comparison, fetched job logs,
+`preflight-result.json` and `live-save-result.json`.
+
+A separate browser feasibility probe from the real Pages origin could read
+public Release metadata but could not fetch either the asset API download or
+browser-download URL. Therefore simply pointing the existing fetch importer at
+GitHub Releases has not been established as an automatic fallback. No alternate
+hosting, new origin, profile reset or runtime transport migration was introduced.

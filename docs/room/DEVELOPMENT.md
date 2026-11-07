@@ -106,3 +106,39 @@ documentation commits do not change that packaged runtime. Future code pushes
 still require building, reviewing and publishing a new package/site release,
 then updating the deployment branch's release pin. The installed app discovers
 published packages automatically; a source push alone is not an app release.
+
+## Pages publication preflight and recovery
+
+`scripts/check_room_deployment.py` runs after the pinned site is extracted and
+before configure/upload/deploy. It reports inventory/size, rejects missing runtime
+files or links, and checks the actual public descriptor, HTML and Service Worker.
+If these already match, publication is skipped; the final full runtime download
+and checksum gate still runs. Rerunning a successful workflow is idempotent.
+
+When publication is needed, an existing Pages identity or a previous attempted
+`Deploy starter` step for that SHA causes an immediate, explicit failure before
+upload. The Pages API can return an empty status both for unused SHAs and for
+failed identities, so the guard also consults workflow jobs across attempts.
+There is no automatic retry loop or automatic history rewrite.
+
+For a genuine first-attempt Pages timeout:
+
+1. Save run/job IDs, exact artifact digest and Pages status history. Distinguish
+   `deployment_queued`, `syncing_files`, empty responses and explicit rejection.
+2. Check/cancel only the Pages deployment named by the failed run through
+   `repos/OWNER/REPO/pages/deployments/FULL_DEPLOY_SHA[/cancel]`. Cancelling an
+   Actions run alone does not prove the Pages operation ended.
+3. If a new attempt is warranted, create a fresh deployment commit retaining the
+   same reviewed `.room-release.json`. This supplies a fresh Pages identity;
+   rebuilding/replacing the immutable runtime ZIP is unnecessary.
+4. Require the final live checksum gate before announcing an automatic update.
+   If it fails, the test release's direct ZIP remains a manual import option in
+   the existing app/profile. Do not clear storage or change the site origin.
+
+GitHub enforces a ten-minute Pages deployment limit; increasing the workflow
+input does not bypass it. This preflight prevents unnecessary republication and
+known bad retry identities. It cannot predict or eliminate the first backend
+sync stall. Site recreation, action upgrades and package-size changes are not
+evidence-backed cures for the observed incidents. See the measured comparison
+in `VERIFICATION.md` and GitHub's
+[Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
