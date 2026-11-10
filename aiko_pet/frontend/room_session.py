@@ -539,7 +539,7 @@ class RoomSession:
             ),
             "game": self.game_snapshot,
             "held_pose": self.room.held_pose,
-            "animation_id": self.playback.action_id,
+            "animation_id": self.playback.presentation_id,
             "animation_timings": self.playback.action_timings,
             "animation_hold_frame": (
                 7

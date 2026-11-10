@@ -23,6 +23,7 @@ from ...pet.animation.expression import event_expression
 from ...pet.mind import PetMind
 from ...pet.routine import context_at
 from ...pet.state import PetState
+from ..room_communication import COMMUNICATION_ACTIONS
 from ..room_playback import RoomPlayback
 from ..view_models.mastermind_models import CodeView
 from .blackjack_sequence import BlackjackSequence
@@ -66,6 +67,14 @@ class GameSessionCoordinator:
     def _present(self, **data: Any) -> None:
         self.visible.update({key: json_value(value) for key, value in data.items()})
 
+    def _animate(self, name: str) -> None:
+        """Speech owns V3 expressions; other gestures have a bounded lifetime."""
+        if name == "idle" or name in COMMUNICATION_ACTIONS:
+            self.playback.stop_animation()
+            self.playback.express(None)
+        else:
+            self.playback.start_action(name, 1.0)
+
     def open(self, game_id: str) -> None:
         self.close()
         self.game_id = GameId(game_id)
@@ -74,9 +83,7 @@ class GameSessionCoordinator:
             schedule=self.playback.schedule,
             cancel=self.playback.cancel_timer,
             say=self.playback.comment,
-            animate=lambda name: self.playback.play_animation(name)
-            if name != "idle"
-            else self.playback.stop_animation(),
+            animate=self._animate,
             dialogue=self._dialogue,
             round_event=self._round,
             express_event=lambda event: self.playback.express(event_expression(event)),
@@ -245,3 +252,4 @@ class GameSessionCoordinator:
         self.visible.clear()
         self._busy = False
         self.playback.stop_animation()
+        self.playback.express(None)

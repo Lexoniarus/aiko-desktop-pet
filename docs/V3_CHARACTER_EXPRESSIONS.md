@@ -1,5 +1,10 @@
 # V3: Idle, Mimik und durchgehendes Schwanken
 
+Nachtrag 10.11.2026: Die Raum-/iPad-Fassung leitet verbliebene historische
+Sprechgesten auf die vorhandenen V3-Ausdrücke um und gibt nach Spielreaktionen
+wieder den Idle-Kanal frei. Kopf-/Körperbilder bleiben unverändert.
+Siehe [V3-Kommunikationsmimik im Raum](ROOM_V3_COMMUNICATION.md).
+
 Nachtrag 03.11.2026: Die Halskontur wird vollständig aus dem passenden
 vorhandenen Kopf geführt. Die Halsfläche des Körpers überdeckt sie nicht mehr;
 Kragen und Kleidung bleiben davor. Das betrifft 84 bestehende Bilder:

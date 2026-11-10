@@ -69,7 +69,7 @@ class MastermindSequence:
         self.pending_timer = self._schedule(delay, run)
 
     def _react(
-        self, event: str, *, emote: str | None = None, animation: str = "idle",
+        self, event: str, *, emote: str | None = None,
         then: Callable[[], None] | None = None,
     ) -> None:
         if event in ('game_mm_last', 'game_mm_progress'):
@@ -78,7 +78,7 @@ class MastermindSequence:
             return
         self.busy = True
         self._show()
-        self._animate(animation)
+        self._animate("idle")
         text = self._dialogue(event)
         duration = GAME_PACING.text_ms(text)
 
@@ -175,7 +175,6 @@ class MastermindSequence:
             self._react(
                 "game_mm_player_win" if won else "game_mm_aiko_win",
                 emote="star" if won else "idea",
-                animation="jumping" if won else "idle",
             )
 
     def next_round(self) -> None:

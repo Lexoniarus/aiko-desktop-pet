@@ -11,6 +11,7 @@ from ..pet.animation.expression import EXPRESSION_CLIPS, Expression
 from ..pet.interaction_events import SocialCompletion
 from ..pet.mind.catalog import Reaction
 from .playback import ReactionPlayer
+from .room_communication import COMMUNICATION_ACTIONS, communication_reaction
 
 
 @dataclass(frozen=True, slots=True)
@@ -218,6 +219,9 @@ class RoomPlayback:
         animate: bool = True,
         require_presentation: bool = True,
     ) -> None:
+        reaction = communication_reaction(reaction)
+        if reaction is not None and self.animation in COMMUNICATION_ACTIONS:
+            self.stop_animation()
         self._require_text_ack = require_presentation
         self.player.play(
             reaction,
@@ -239,6 +243,11 @@ class RoomPlayback:
     @property
     def now(self) -> float:
         return self._now
+
+    @property
+    def presentation_id(self) -> int:
+        """Restart repeated expressions without invalidating physical actions."""
+        return -self._expression_id if self.expression is not None else self.action_id
 
     @property
     def rest_cycle(self) -> float:

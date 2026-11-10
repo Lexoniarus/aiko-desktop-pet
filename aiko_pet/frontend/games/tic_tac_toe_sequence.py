@@ -71,8 +71,7 @@ class TicTacToeSequence:
                 "X": "game_ttt_player_win", "O": "game_ttt_aiko_win",
                 "": "game_ttt_draw",
             }
-            if board.winner == "O":
-                self._animate("jumping")
+            self._animate("idle")
             self._look(None)
             self._commentary.event(event[board.winner], "question" if
                                    board.winner == "" else "star" if

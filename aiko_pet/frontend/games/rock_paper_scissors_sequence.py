@@ -78,7 +78,7 @@ class RockPaperScissorsSequence:
 
     def greet(self) -> None:
         if not self._closed and not self.busy:
-            self._animate("waving-greeting")
+            self._animate("idle")
             phrase = self._dialogue("game_greeting")
             self._express_event("game_greeting")
             self._say(phrase, GAME_PACING.rps_text_ms(phrase))
@@ -138,8 +138,7 @@ class RockPaperScissorsSequence:
         result = self._result
         if result is None:
             return
-        if result.outcome is Outcome.LOSS:
-            self._animate("jumping")
+        self._animate("idle")
         emote = {Outcome.WIN: "drops", Outcome.LOSS: "star",
                  Outcome.DRAW: "question"}[result.outcome]
         self._show_emote(emote, self.REACTION_EMOTE_MS)

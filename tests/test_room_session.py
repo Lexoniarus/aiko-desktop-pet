@@ -123,7 +123,7 @@ class RoomSessionTests(unittest.TestCase):
         self.command("game_open", id="connect_four")
         self.wall += 0.25
         self.command("tick")
-        self.command("game_close")
+        reply = self.command("game_close")["snapshot"]
         stopped = room.position
         for _ in range(12):
             self.wall += 0.25

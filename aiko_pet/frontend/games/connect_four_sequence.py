@@ -92,7 +92,6 @@ class ConnectFourSequence:
         event: str,
         then: Callable[[], None],
         *,
-        animation: str = "idle",
         emote: str | None = None,
     ) -> None:
         if self.game.board.turn == 1 and self.game.board.winner is None:
@@ -101,7 +100,7 @@ class ConnectFourSequence:
             return
         self._busy = True
         self._show()
-        self._animate(animation)
+        self._animate("idle")
         text = self._dialogue(event)
         duration = GAME_PACING.text_ms(text)
 
@@ -179,9 +178,6 @@ class ConnectFourSequence:
                     winner
                 ],
                 self._ready,
-                animation="jumping"
-                if winner == 2
-                else "idle",
                 emote="star" if winner == 2 else "faceSad" if winner == 1 else None,
             )
             return
