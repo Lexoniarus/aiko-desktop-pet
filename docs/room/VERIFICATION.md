@@ -1026,3 +1026,72 @@ selection handles or native keyboard/copy-paste behavior. Actual Safari and
 Home Screen acceptance remains pending as listed in
 [the device checklist](IPAD_ACCEPTANCE.md#touch-selection-and-editing-acceptance).
 Nothing was pushed, released or deployed for this change.
+
+## Android/POCO preparation (2026-11-10, local candidate)
+
+The next major branch work block is A1 in the overall plan. Commits `edd6efaf`
+and `ca6302dc` prepare the same mobile PWA for iPad and Android: device-neutral
+starter text, explicit Chrome/Safari build targets, a Settings device-report
+download, Android install/manual-import instructions and a separate POCO
+acceptance sheet. No separate Python simulation, save format or Android renderer
+was introduced. Diagnostics record actual browser/viewport, package/runtime
+identity and read-only persistence/quota observations. Room-ready startup time
+is captured once, rather than growing until the report button is pressed.
+
+Phone verification reproduced enlarged Settings panels outside the portrait
+viewport at 175%/200% (393x873 CSS pixels; top positions -465.75/-657).
+Commit `fcc45434` corrects zoom-adjusted phone panel limits/insets, permits header
+wrapping, keeps the body scrollable and gives short-landscape panels usable
+height. Quick-care controls can wrap. It retains the configured UI size and
+leaves room positions, assets, saves and game rules unchanged.
+
+Final local candidate: **`0.1.0-fcc4543432ed`**, source
+`fcc4543432ed54471164dc417ed492fcb45499bb`, under
+`dist-room/android-poco-ready/` (ignored generated files). Runtime size is
+86,816,450 bytes with 1,169 manifest-listed files. Runtime SHA-256:
+`adb6d89335644903285d589c9f513ef5c0b5bc3f6e6cdff220d15bcd2a85e94a`.
+Starter SHA-256:
+`5558e432a42a7a34b5480271d3b45b8067da4aa81e822f0eaa76f1739db613db`.
+CRC, every runtime file size/hash, descriptor/manifest, bundled pathfinding wheel,
+identical runtime embedded in the starter and delivered Android documents passed.
+No private save, source-art job or original reference archive enters the runtime.
+
+Rebuilding used a private deterministic ZIP of the ten preserved, extracted v16
+room images. All ten were byte-compared to the previously shipped `42da08c1`
+runtime. Its `prototypeSHA256` identifies this reconstructed build input, not the
+original delivery archive. Provenance/hashes stay in the external QA folder;
+the preserved images and character artwork were not modified.
+
+Validation commands: `npm --prefix web run build`, `npm --prefix web test`,
+Prettier check on changed web files, Ruff on `scripts/build_room_package.py`,
+`python -m unittest tests.test_room_session tests.test_room_grid
+tests.test_room_communication`, and focused diff whitespace checks. TypeScript,
+both Vite builds, Service Worker build, all 11 Node tests and all 41 focused
+Python tests passed. No dependency upgrade or personal-save access was needed.
+
+Browser plugin not available: used the existing headless Playwright/Chromium
+with actual bundled Pyodide/Python/SQLite and isolated synthetic saves at
+`http://127.0.0.1:8903/room/`. Phone viewports were 393x873 and 873x393 CSS pixels;
+tablet regressions used 768x1024 and 1024x768. These are representative browser
+viewports, not measurements from the POCO. No visible windows were opened.
+
+| Rendered / integrated check | Result |
+| --- | --- |
+| Page identity, meaningful screen, error overlay | Correct title/route, real room/canvas and controls; no blank app or framework overlay. |
+| Diagnostics / controls | Settings report downloaded without a query parameter; viewport/package/storage fields were correct; repeated downloads retained the same startup duration. Checkboxes and zodiac select updated real Python state. |
+| Phone and tablet layout | Status/game-menu screenshots inspected at all four viewports. Phone Settings stayed inside the viewport at 175%/200%, with a reachable wrapped close header and scrollable body. |
+| Games / touch | Real touch input and close passed for all six games: RPS choice, Tic-Tac-Toe move, Blackjack stand, Mastermind placement, Quiz answer and Connect Four column. Futter supply touch cancellation left no user-held portion. This is interaction smoke evidence, not full round/reward parity acceptance. |
+| Care / offline | Petting started its real animation. Zodiac remained after offline reload and full browser close/relaunch with the network disabled. |
+| Manual candidate handoff | Imported candidate over `42da08c1` through Settings/file input; zodiac and object identities survived. Subsequent opening against the older feed retained the newer imported version. The package importer/store/Service Worker sources are unchanged from that published baseline. |
+| Console health | No JavaScript page errors. Game/layout pass had no console warnings/errors; lifecycle run had only two deliberate offline-network errors. |
+
+Scripts, JSON results, reports and screenshots stay outside Git under
+`%TEMP%/aiko-android-poco-qa/`: `check-final.mjs`, `phone-flows-final.mjs`,
+`result.json`, `phone-flows-result.json`, `package-result.json`, device reports
+and phone/tablet screenshots. The earlier candidate is not the handoff version.
+
+This candidate was not pushed, released or deployed by this task. The Android
+guide explains importing the local ZIP through the existing HTTPS PWA. Actual
+Chrome/MIUI installation, system Back, storage pressure, reboot/OS termination,
+performance, sustained use and affected physical iPad/Safari acceptance remain
+pending in their device sheets. A1 is not marked complete by browser emulation.
