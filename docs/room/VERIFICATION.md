@@ -1380,3 +1380,54 @@ save or live endpoint is accessed. TypeScript and the complete Vite starter,
 runtime and service-worker production build passed. No full Python suite or
 physical iPad/POCO acceptance was run for this TypeScript update-routing fix.
 This is a local source correction; it has not been published to the devices.
+
+## Shared automatic-check correction published (2026-11-10)
+
+The owner subsequently authorised publication and local Dropbox downloads.
+The immutable source is `6a57c86375f0b42c258f55898a0a7d07bee1964b`, version
+`0.1.0-6a57c86375f0`. It includes the preceding committed Android native-interaction
+boundary. Later parallel documentation was preserved outside this build identity.
+[Exact-source web CI 42857176835](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42857176835)
+passed its 18 Node tests, TypeScript and production build. No full Python suite
+was repeated: packaged Python contents (normalising text line endings), Pyodide
+and all 1,123 PNGs match the previous shared release. ZIP CRC, all 1,169 manifest
+entries, descriptor identity/size/hash and the shared runtime in the starter passed.
+
+Browser plugin not available: existing headless Playwright/Chromium tested
+`http://127.0.0.1:8913/room/` at 393x873 and 768x1024 in separate touch profiles.
+Both installed `0.1.0-c5aa29a3019e`, then used that previous cached starter to
+discover and activate the same new runtime through Settings. Their distinct
+zodiac settings and object IDs survived activation and offline reopening.
+Forty foreground/online events at 59,999 ms produced no request; an event at
+60,000 ms produced one. Manual search was immediate and reset the automatic
+interval. The clock was controlled in the test page; there were no minute-long
+waits. Both settings screenshots show the target version and current status.
+No page errors or framework overlays occurred; the two console network failures
+are from the intentional offline checks. This does not constitute physical
+Safari/iPad or POCO acceptance.
+
+[Release room-test-0.1.0-6a57c86375f0](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-6a57c86375f0)
+contains eight files, including runtime, starter, iPad first-install helper,
+Android/iPad instructions, build identity, Android checklist and SHA-256 sums.
+All eight were downloaded from GitHub into
+`D:/Dropbox/Download/Aiko-PWA-Updatepruefung-2026-11-10-0.1.0-6a57c86375f0`
+and matched against GitHub's asset digests and sizes. Protocols and the inspected
+screenshots are beside them. Existing Dropbox desktop sync handles the local
+folder; remote cloud-sync completion was not independently checked.
+
+Deployment commit `1d57ce6aea79df3ed1f7059c6c3092ec5dcf9e6b` pins the verified
+starter on `deploy/room-pwa`.
+[Publication run 42858207762](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42858207762)
+passed, including public descriptor, starter and complete runtime verification.
+An independent local live-download check also matched the reviewed site.
+Both devices continue using `https://lexoniarus.github.io/aiko-desktop-pet/room/`;
+existing icons and local saves are retained. No merge into `main` was performed.
+
+Runtime: 86,817,364 bytes, SHA-256
+`1d631937d580260e247d80476331074f539ae4c7c6600ad29f0ff20b002e2e90`.
+Starter SHA-256:
+`5d2cd5e51854ebd728e802427c01b17447780af96a463e4f31cb971709dad129`.
+The site totals 86,952,320 bytes. Cost review reconfirmed the public repository,
+standard runners and existing Pages route. No billing configuration, paid option,
+subscription or quota was changed; full account billing/monthly bandwidth was
+not audited. Details and source links are in the local Dropbox cost protocol.
