@@ -104,6 +104,12 @@ strategy for the first Android test:
   Android/iPad release branches, platform-specific feeds, version tracks, app IDs
   or deployments. Installer documents and the Apple Web Clip only lead to this
   common PWA; viewport/capability adaptations stay in the shared runtime.
+- Provide a simple Android entry from Dropbox as a linked PDF and optional
+  `Aiko-Android-Einstieg.zip` containing that PDF and brief instructions. Its
+  link opens the same stable HTTPS PWA; Chrome performs the user-confirmed icon
+  installation. This entry helper contains no runtime/APK, has no separate
+  update feed and is distinct from the versioned runtime ZIP used for recovery.
+  Keep the PDF available directly beside the ZIP to avoid mandatory extraction.
 - A reviewed publication updates the program offered to both platforms. A code
   edit, commit, push or local package build alone does not publish an app update.
   Code/content/resource changes included in a mobile release travel together;

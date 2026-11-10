@@ -1197,3 +1197,32 @@ Updates suchen, then safe restart (or complete close/reopen). A first-time POCO
 installation opens the same HTTPS address in Chrome and uses its install menu.
 No manual runtime import is needed for this release. Physical POCO/iPad checks,
 system Back, device performance and sustained use remain open in their sheets.
+
+## Dropbox entry helper for the POCO (2026-11-10)
+
+The owner requested an Android entry through Dropbox without a separate app
+version. Added a local supplement beside the downloaded release files:
+`Aiko-auf-dem-POCO-starten.pdf` and `Aiko-Android-Einstieg.zip`. The PDF has one
+large HTTPS link to the unchanged shared `/room/` address and three German setup
+steps. The ZIP contains exactly that same PDF and `LIES_MICH.txt`. It does not
+contain an APK, runtime, Apple profile, script or personal save. The PDF can be
+opened directly from Dropbox; extracting the ZIP is optional. Chrome still
+performs the PWA installation after user confirmation.
+
+Created with the bundled local ReportLab tools, rendered through Poppler and
+visually inspected. One page, one URI annotation pointing to the canonical
+shared address, matching PDF bytes inside the ZIP, ZIP CRC and local Dropbox
+copy hashes passed. Actual POCO Dropbox preview/browser handoff remains pending.
+The helper opens whichever common version is currently published; it is not a
+version-pinned Android application. Source/runtime, hosted PWA and the eight
+previously downloaded release files remain unchanged. This supplement was
+generated locally, not represented as another GitHub release download.
+
+PDF SHA-256:
+`b82172265f696fb83c93dd77322472e0e467b2c5feb0632e130588791154eea7`.
+Entry ZIP SHA-256:
+`aa61a85857524f0cf3b237f6403e7a919fe8e0a417782e5961004fb95245e989`.
+Generator, preview and verification data stay outside Git under the existing
+publication job's `android-entry/` folder. Setup guidance is recorded in the
+Android install guide and section 1.2 of the overall plan. No new service,
+dependency installation or paid option was introduced for this helper.

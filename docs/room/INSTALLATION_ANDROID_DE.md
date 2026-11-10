@@ -4,6 +4,21 @@ Erstes Testgerät: **POCO X3 NFC, MIUI Global 14.0.5 Stabil, Android 12**.
 Wir verwenden dieselbe Web-App wie auf dem iPad. Auf Android installierst du
 kein Apple-Profil und keine APK. Aiko und ihr Spielstand bleiben auf dem Gerät.
 
+## Einfacher Einstieg aus Dropbox
+
+Im gelieferten Dropbox-Ordner liegt **Aiko-auf-dem-POCO-starten.pdf**. Öffne sie
+direkt in Dropbox und tippe auf den großen Button **Aiko öffnen**. Öffne den
+Link in Chrome; falls Dropbox eine eingebaute Vorschau verwendet, wähle dort
+**Im Browser öffnen**. Danach folgst du den Chrome-Schritten unten. Du musst
+keine Adresse abtippen.
+
+Alternativ kannst du **Aiko-Android-Einstieg.zip** herunterladen, entpacken und
+dieselbe PDF daraus öffnen. Diese kleine ZIP enthält nur die verlinkte Anleitung
+und eine Textanleitung. Sie führt zur gleichen veröffentlichten PWA und zum
+gleichen Updatekanal wie das iPad. Das Anlegen des Symbols bestätigst du in
+Chrome. Die PDF/ZIP ist keine eigene App-Version und kein Runtime-Paket.
+Der tatsächliche Datei-/Link-Übergang auf dem POCO bleibt Teil der Geräteprüfung.
+
 ## Einrichtung über Chrome
 
 1. Chrome im Play Store auf den für dein Gerät verfügbaren Stand aktualisieren.
