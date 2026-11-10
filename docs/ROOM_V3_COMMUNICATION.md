@@ -83,3 +83,48 @@ Ein vorhandener Abbruchtest initialisiert seine Snapshot-Variable jetzt vor
 der Schleife, damit auch die repositoryweite statische Prüfung eindeutig ist.
 Die Veröffentlichung eines neuen iPad-Pakets ist ein gesonderter Schritt;
 ein lokaler Commit verändert die bereits installierte App nicht.
+
+## Veröffentlichtes Testupdate (10.11.2026)
+
+Diese Fassung ist als
+[0.1.0-45d4cf160811](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-45d4cf160811)
+über den bestehenden iPad-Updatekanal veröffentlicht. Enthalten ist auch der
+parallele Touch-Auswahlfix. Kein neuer Icon-/Profilimport und keine Änderung
+des Spielstandschemas sind nötig; es wurde nichts gemergt.
+
+Vor der Veröffentlichung bestanden auf dem exakten Paketquellstand
+`45d4cf160811af1f6821a4b83be16ba550d4c750`:
+
+- [Python 3.11/3.13, vollständige Anwendungssuiten und Windows-Grenztests](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42820946719)
+- [Asset-Tooling](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42820951733)
+- [Langzeitszenarien](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42820956831)
+- [Web-Build und Webtests](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42820962470)
+
+Dabei wurden veraltete Asset-Snapshot-/Herkunftsannahmen aktualisiert und die
+fehlende `pathfinding`-Abhängigkeit im Offline-Wheel-Testbestand ergänzt.
+Die Bilddateien wurden dafür nicht geändert. Alle 1113 PNGs des Pakets sind
+bytegleich mit dem bisherigen veröffentlichten Paket. Ein isolierter Lauf
+des tatsächlich gepackten Python-Codes unter Pyodide bestätigte V3-Reaktionen,
+Rückkehr zu Idle und SQLite-Übernahme eines synthetischen alten Spielstands.
+Eine Safari-/IDBFS- oder reale iPad-Abnahme wird dadurch nicht behauptet.
+
+Die Pages-Vorprüfung erlaubte die frische Deployment-Kennung und wies die
+bekannte fehlgeschlagene Kennung zurück. Ein bereits identischer öffentlicher
+Stand wurde korrekt als nicht erneut zu veröffentlichen erkannt.
+[Deployment 42822273365](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42822273365)
+auf `b3f781fc5c1f3b4419cc80231edd242e71ca979a` bestand im ersten Versuch.
+Die fünf Release-Dateien wurden gegen GitHubs SHA-256-Digests geprüft;
+anschließend wurden öffentlicher Deskriptor, Starter und vollständiges
+Runtime-ZIP durch den Workflow und nochmals lokal verifiziert.
+
+Runtime-SHA-256:
+`9adcce8fe935410fb5ce46b5af2ea99c3a9e3a11e2019cee6d37df916f77c072`.
+Starter-SHA-256:
+`c4d06c3d77865efb2b82ac315cdf71ef9ea7b3e13258522d25b6ae1cc2d8913b`.
+
+Auf dem iPad: **Einstellungen → App-Version und Updates → Nach Updates
+suchen**, den geprüften Download abwarten und **Jetzt neu starten** wählen.
+Danach insbesondere spontane Sprechreaktionen, SSP-Begrüßung und Ergebnisse,
+Vier-gewinnt-/Tic-Tac-Toe-Reaktionen sowie die Rückkehr zu neutralem Idle prüfen.
+Die visuelle Abnahme auf dem Gerät bleibt beim Nutzer. Prüfbelege und Pakete
+liegen privat außerhalb Git im Veröffentlichungsjob vom 10.11.2026.
