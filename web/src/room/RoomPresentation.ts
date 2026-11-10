@@ -64,7 +64,9 @@ export function furnitureFrame(projection: RoomProjection, item: FurniturePlacem
     scale,
     width,
     height: item.crop[3] * scale,
-    order: ground.groundY,
+    // Wall art can overhang its physical footprint. It must never cover an
+    // actor on free floor beside it; freestanding furniture retains depth.
+    order: item.wall ? -1000 + ground.groundY / 10000 : ground.groundY,
     flipX: profile.flipX ?? false,
   };
 }
