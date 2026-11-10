@@ -367,6 +367,12 @@ def main() -> None:
         },
     )
     shutil.copyfile(ROOT / "docs/room/INSTALLATION_DE.md", output / "START_HIER.md")
+    shutil.copyfile(
+        ROOT / "docs/room/INSTALLATION_ANDROID_DE.md", output / "START_ANDROID.md"
+    )
+    shutil.copyfile(
+        ROOT / "docs/room/ANDROID_ACCEPTANCE.md", output / "ANDROID_ACCEPTANCE.md"
+    )
     (output / "BUILD.json").write_bytes(
         encoded(
             dict(
@@ -376,7 +382,8 @@ def main() -> None:
                 starter=starter_zip.name,
                 starterSHA256=hashlib.sha256(starter_zip.read_bytes()).hexdigest(),
                 sha256=hashlib.sha256(zip_path.read_bytes()).hexdigest(),
-                device="iPad 9th generation, iPadOS 26.6; device verification pending",
+                device="iPad and Android PWA; physical-device verification pending",
+                androidInstallation="browser-pwa-or-runtime-zip-import",
                 **installer_metadata,
             )
         )

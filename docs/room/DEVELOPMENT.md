@@ -32,8 +32,10 @@ defaults. First browser publication uses exclusive file creation under the
 browser's lifetime writer lock; successful UI acknowledgement follows IDBFS
 flush. Desktop hard-link publication remains the default adapter.
 
-The supplied device is an iPad of the ninth generation on iPadOS 26.6. Follow
-[the device acceptance sheet](IPAD_ACCEPTANCE.md); later OS releases remain
+The supplied devices are an iPad of the ninth generation on iPadOS 26.6 and a
+POCO X3 NFC on MIUI Global 14.0.5 Stable / Android 12. Follow the
+[iPad acceptance sheet](IPAD_ACCEPTANCE.md) and
+[Android acceptance sheet](ANDROID_ACCEPTANCE.md); later OS releases remain
 compatibility targets rather than an assumed proven result. Automated browser
 QA uses headless Playwright: the Browser plugin/skill is unavailable in this
 session, and the owner explicitly prohibits visible test windows.
@@ -42,6 +44,11 @@ Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `npm ci`, `npm run build`, then the repository Python interpreter to run
 `../scripts/build_room_package.py`. Generated downloads and distributions stay
 outside Git. The resulting delivery includes a starter folder and runtime ZIP.
+The same web/runtime build targets Chrome and Safari. Packaging also includes
+`START_ANDROID.md` and the Android checklist. Android uses the browser install
+route or imports a candidate runtime through the existing PWA; the Apple profile
+remains iPad-specific. See [Android setup](INSTALLATION_ANDROID_DE.md). A local
+candidate does not change the currently hosted version or supply device evidence.
 
 The user-facing installer is now a single ZIP with a removable Web Clip profile
 and a brief instruction file. Build with `--starter-url <stable HTTPS directory>`

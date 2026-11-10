@@ -2,6 +2,9 @@
 
 Status: phase 0 complete. Shared-room implementation is in progress on
 `feature/shared-room-pwa`; final automatic and actual-device acceptance are pending.
+Next major work block: A1, shared mobile PWA preparation and POCO Android
+acceptance (section 6). Critical fixes may interrupt it; notification and desktop
+host expansion follow this block.
 
 Planning baseline: 2026-11-04, `feature/social-optimization` at `54c6e46`,
 including the currently uncommitted desktop/UI work as work to finish in phase 0.
@@ -444,6 +447,37 @@ device checklist warrants its own owner.
 
 ## 6. Implementation phases, commits and exit gates
 
+### Next work block A1 — shared mobile PWA and POCO acceptance (2026-11-10)
+
+The owner selected Android as the next major step on `feature/shared-room-pwa`.
+Work on the existing Python/browser application and preserve installed iPad
+identity, saves, runtime protocol and room/game behaviour. Resolve critical fixes
+as needed. Complete the Android baseline before expanding notifications (phase 8)
+or the native desktop room host (phase 9). The phases below retain the original
+implementation sequence; this block is the current execution order.
+
+| Step | Cohesive work / owner | Completion evidence |
+| --- | --- | --- |
+| A01 | Shared PWA entry and browser build: neutral setup copy; explicit Chrome/Safari build targets; Android instructions and unchanged iPad profile route. | One built runtime, platform install instructions and inspected package inventory. A build target is not a device/browser support guarantee. |
+| A02 | Browser diagnostics: actual user agent, display mode, CSS/visual viewport, runtime/package identity, fixed room-ready startup duration and read-only persistence/quota observations. Expose a report download through Settings. | Focused storage-failure tests and actual report download from the packaged room; no save, inferred hardware model or permission prompt in the report. |
+| A03 | First POCO pass: install/open the same package, perform care, retain a changed setting, close and reopen offline. Record Chrome version and actual viewport before layout changes. | Owner/device evidence on POCO X3 NFC, MIUI Global 14.0.5 Stable, Android 12. Keep runtime/storage failures separate from phone layout findings. |
+| A04 | Responsive room/UI and input: check phone portrait/landscape, cutout/system insets, scrolling, readable panels and games, drag/cancel and system Back; fix demonstrated issues in shared owners. | Reproducible browser checks plus separate actual POCO and affected iPad checks. Preserve user UI scale, room coordinates and existing iPad presentation. |
+| A05 | Durable delivery: acknowledged saves, app switch/lock/kill, reboot/airplane start, package import/update, interrupted update and sustained use. Run all existing care/conversation/book/game checks. | Completed [Android acceptance sheet](ANDROID_ACCEPTANCE.md), exact package/hash and relevant [verification](VERIFICATION.md); iPad regressions and untested cases explicitly recorded. |
+
+Prepare code, local built artifacts and repeatable automated checks before the
+physical-device pass. The first handoff may use a runtime ZIP imported through
+the existing HTTPS PWA; keep any local candidate distinct from the hosted release.
+Publishing a candidate is a separate release action. No new APK, account service,
+cloud save, Android simulation or native wrapper is required for A1.
+
+A1 exit: the same built web application passes the complete existing mobile
+functional scope and lifecycle/update checks on the POCO, with affected iPad
+flows rechecked. Browser emulation, package preparation and first room startup
+are intermediate evidence, not completion of A1. Missing physical-device access
+leaves those checks pending; it does not prevent independent build/diagnostic
+preparation. Supported Android browsers/tablets beyond this baseline require
+their own evidence.
+
 Commit labels below are a proposed order, not commits already made. Each commit
 must be cohesive, reviewed and validated. Split further when needed; do not
 combine unrelated fixes just to match a label. A diagnostic slice must not be
@@ -725,6 +759,7 @@ forking the core or prematurely implementing a native shell.
 | Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
 | Android reuse direction | Agreed 2026-11-10: same mobile Python/web application; PWA first, platform adapters where needed. |
+| A1: shared mobile PWA and POCO acceptance | Next major work block, in progress. Local preparation and checks precede the owner's physical-device pass; see section 6 and [Android checklist](ANDROID_ACCEPTANCE.md). |
 | Actual-Android portability and functional acceptance | Pending; no Android device pass or release is claimed. Use the phase-1 follow-up and section-7 matrix. |
 | T1: complete Tamagotchi core in the shared room PWA | Implementation and local automated checks complete; GitHub and actual-device parity acceptance pending. See [verification](VERIFICATION.md). |
 | T2: notification-enabled iPad candidate | Pending. |
