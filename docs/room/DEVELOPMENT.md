@@ -12,6 +12,14 @@ and serves validated, versioned ZIP content. Program updates and pet data have
 separate stores. The browser Worker owns one local Python session. The same
 RoomClient contract supports a later native desktop host.
 
+iPad and Android permanently share one PWA and release channel: the same
+`/room/` origin/path, manifest identity, starter, `install.json` and runtime ZIP
+per release. BrowserUpdates performs the same discovery, verification, staging
+and safe activation on both. There is no OS-selected feed or Android-only
+runtime. Each device's save and activation time remain local. A manual candidate
+import stays attached to this feed and accepts a later newer shared release.
+See the [delivery contract](IMPLEMENTATION_PLAN.md#12-one-permanent-mobile-pwa-and-shared-updates-2026-11-10).
+
 Implementation commits precede test execution. Automated local verification
 must be headless; device acceptance stays explicitly pending until observed on
 the user's iPad. A Windows browser pass cannot supply that evidence.
@@ -89,8 +97,10 @@ The active/previous/pending package caches are distinct from the pet IDBFS
 database. A cold start acquires both the pet-writer and installation locks before
 switching pending to active; only then are unreferenced package caches removed.
 The previous package is retained, but automatic save-schema rollback is not
-promised. This starter accepts schema 6 only. Another live pet writer prevents
-activation. Failed or interrupted downloads leave the active package unchanged.
+promised. The current shared starter accepts protocol 1/schema 6 and protocol
+2/schema 7 packages; older starters have their historical limits. Another live
+pet writer prevents activation. Failed or interrupted downloads leave the active
+package unchanged.
 
 The new runtime registers an awaited shutdown hook: stop ticks/input, suspend
 and flush IDBFS, then release the writer. Only after success can the starter

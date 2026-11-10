@@ -68,8 +68,9 @@ delivery/acceptance. Track iPad T1 and Android acceptance separately.
 | Forecast selection and notification meaning | Installation, permission/subscription, delivery and any later native scheduling belong to platform adapters. |
 
 The first Android route is the existing HTTPS PWA, opened and installed through
-a supported Android browser. Reuse the same runtime package and deployment where
-compatible. The Apple Web Clip `.mobileconfig` is an iPad installation artifact;
+a supported Android browser. Both mobile platforms use the same runtime package,
+deployment and update channel, as required in section 1.2.
+The Apple Web Clip `.mobileconfig` is an iPad installation artifact;
 Android needs its own brief install instructions, not another application build.
 Use device-neutral shared setup text and report the actual device/browser in
 diagnostics. Prefer capability checks to user-agent branches; keep necessary
@@ -88,6 +89,47 @@ it; the current Service Worker-based installer is not assumed to work unchanged.
 Native scheduled notifications remain distinct from the current Web Push plan.
 Keep the existing Tk desktop UI separate until the planned shared-room host is
 integrated; mobile reuse alone does not eliminate desktop presentation work.
+
+### 1.2 One permanent mobile PWA and shared updates (2026-11-10)
+
+This is the permanent delivery contract for iPad and Android, not just a reuse
+strategy for the first Android test:
+
+- Maintain one mobile source, build pipeline, PWA manifest, starter and runtime
+  artifact per release. Publish one reviewed `aiko-room-<version>.zip`; both
+  platforms receive the same bytes, version and integrity inventory.
+- Keep the installed production PWA at the same stable HTTPS origin and path:
+  `https://lexoniarus.github.io/aiko-desktop-pet/room/`. Both platforms read the
+  same `install.json` there. It selects one shared runtime package. Do not add
+  Android/iPad release branches, platform-specific feeds, version tracks, app IDs
+  or deployments. Installer documents and the Apple Web Clip only lead to this
+  common PWA; viewport/capability adaptations stay in the shared runtime.
+- A reviewed publication updates the program offered to both platforms. A code
+  edit, commit, push or local package build alone does not publish an app update.
+  Code/content/resource changes included in a mobile release travel together;
+  the existing native desktop application retains its own release mechanism.
+- Both platforms use the existing BrowserUpdates flow: check on startup,
+  foreground return/reconnection or explicit Settings action; download and
+  validate the whole package; stage it locally; activate on the next cold start
+  or a safe explicit restart after saving. Do not interrupt a live game or
+  replace the running program during an action.
+- The release offered is shared; activation time is per device. Offline or
+  unopened devices can temporarily keep an older version. Each device retains
+  its own local Aiko/save. Shared program updates neither synchronise saves nor
+  require simultaneous installation or clearing site data.
+- Manual ZIP import is a temporary candidate/recovery path into the same PWA,
+  not a permanent Android channel. A newer imported candidate is protected from
+  an older hosted offer. When that same version is published it is already
+  current; a subsequent newer compatible shared publication updates it normally.
+- Platform-sensitive changes require separate device acceptance but ship in the
+  common mobile release. A different future native distribution model requires
+  an explicit product decision; it is not introduced by A1 or this contract.
+
+A05 must verify one shared published descriptor/package through two independent
+installations, starting from the same older baseline and retaining distinct
+saves. Both must discover and activate the same release. Record offered version,
+package identity/hash and each retained save separately. Browser-profile checks
+and physical iPad/POCO acceptance remain distinct evidence.
 
 ## 2. Phase 0 is mandatory: finish and merge the current desktop work
 
@@ -462,7 +504,7 @@ implementation sequence; this block is the current execution order.
 | A02 | Browser diagnostics: actual user agent, display mode, CSS/visual viewport, runtime/package identity, fixed room-ready startup duration and read-only persistence/quota observations. Expose a report download through Settings. | Focused storage-failure tests and actual report download from the packaged room; no save, inferred hardware model or permission prompt in the report. |
 | A03 | First POCO pass: install/open the same package, perform care, retain a changed setting, close and reopen offline. Record Chrome version and actual viewport before layout changes. | Owner/device evidence on POCO X3 NFC, MIUI Global 14.0.5 Stable, Android 12. Keep runtime/storage failures separate from phone layout findings. |
 | A04 | Responsive room/UI and input: check phone portrait/landscape, cutout/system insets, scrolling, readable panels and games, drag/cancel and system Back; fix demonstrated issues in shared owners. | Reproducible browser checks plus separate actual POCO and affected iPad checks. Preserve user UI scale, room coordinates and existing iPad presentation. |
-| A05 | Durable delivery: acknowledged saves, app switch/lock/kill, reboot/airplane start, package import/update, interrupted update and sustained use. Run all existing care/conversation/book/game checks. | Completed [Android acceptance sheet](ANDROID_ACCEPTANCE.md), exact package/hash and relevant [verification](VERIFICATION.md); iPad regressions and untested cases explicitly recorded. |
+| A05 | Durable shared delivery: same-origin `install.json` and identical runtime update for independent iPad/Android installations, retaining each local save; acknowledged saves, app switch/lock/kill, reboot/airplane start, candidate import/rejoin, interrupted update and sustained use. Run all existing care/conversation/book/game checks. | Same offered/activated version and package identity/hash on both targets; completed [Android acceptance sheet](ANDROID_ACCEPTANCE.md), [iPad acceptance](IPAD_ACCEPTANCE.md) and relevant [verification](VERIFICATION.md); untested cases explicit. |
 
 Prepare code, local built artifacts and repeatable automated checks before the
 physical-device pass. The first handoff may use a runtime ZIP imported through

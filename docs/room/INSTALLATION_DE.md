@@ -36,6 +36,12 @@ die bereits installierte Version weiter. Neue Updates brauchen wieder Internet.
 Ein Git-Push allein veröffentlicht noch kein App-Update: Das geprüfte Paket muss
 zusätzlich auf der bestehenden Startadresse bereitgestellt werden.
 
+iPad und Android verwenden dauerhaft dieselbe PWA, dieselbe Startadresse und
+denselben Updatekanal. Ein veröffentlichtes mobiles Update liefert beiden
+dasselbe Programmpaket. Jedes Gerät übernimmt es über den beschriebenen Ablauf
+zu seinem eigenen Zeitpunkt; ein offline gebliebenes Gerät kann vorübergehend
+einen älteren Stand behalten. Die Spielstände bleiben je Gerät getrennt.
+
 **Erstes Update von der ursprünglichen Testversion:** Das vorhandene Aiko-Symbol
 online öffnen. Danach Aiko im App-Umschalter vollständig schließen und erneut
 öffnen, damit die neue Startoberfläche verwendet wird. Sobald „Update bereit“

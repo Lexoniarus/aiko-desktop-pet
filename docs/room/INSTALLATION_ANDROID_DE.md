@@ -23,6 +23,21 @@ Ein lokal vorbereitetes Testpaket erscheint dort erst nach Veröffentlichung.
 Ein neu erzeugtes Symbol allein bestätigt noch keinen abgeschlossenen Download
 oder zuverlässigen Offlinebetrieb.
 
+## Gemeinsame Updates mit dem iPad
+
+iPad und Android nutzen dauerhaft dieselbe PWA unter derselben Startadresse.
+Ein veröffentlichtes mobiles Update liefert beiden dasselbe Programmpaket.
+Updates werden beim Öffnen, bei Rückkehr in die App und nach erneuter
+Internetverbindung geprüft. Unter **Einstellungen → App-Version und Updates →
+Nach Updates suchen** kannst du die Prüfung selbst starten.
+
+Nach vollständigem Download und erfolgreicher Prüfung wird das Update für den
+nächsten Start vorgemerkt. **Jetzt neu starten** sichert vorher den Spielstand;
+ein laufendes Spiel wird nicht automatisch unterbrochen. Beide Geräte können
+das Update zu unterschiedlichen Zeiten übernehmen, etwa wenn eines offline ist.
+Ihre Spielstände bleiben unabhängig voneinander auf dem jeweiligen Gerät.
+Es gibt keinen separaten dauerhaften Android-Updatekanal.
+
 ## Ein lokales Testpaket vor der Veröffentlichung verwenden
 
 Falls du eine neuere Datei **aiko-room-<version>.zip** erhältst:
@@ -40,6 +55,9 @@ Zum Aktualisieren nicht deinstallieren und keine App-/Browserdaten löschen.
 Der Spielstand dieses Smartphones ist unabhängig von deinem iPad-Spielstand.
 Eine ältere veröffentlichte Version darf das neuere importierte Paket nicht
 automatisch ersetzen; das gehört zu den Prüfungen.
+Sobald diese Version gemeinsam veröffentlicht ist, bist du bereits auf diesem
+Stand. Ein späteres neueres gemeinsames Update kommt wieder über den normalen
+Updateweg; der Dateiimport erfordert keinen Wechsel zu einer anderen App.
 
 ## Erster Prüfdurchgang
 

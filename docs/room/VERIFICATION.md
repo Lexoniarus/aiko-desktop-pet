@@ -1095,3 +1095,40 @@ guide explains importing the local ZIP through the existing HTTPS PWA. Actual
 Chrome/MIUI installation, system Back, storage pressure, reboot/OS termination,
 performance, sustained use and affected physical iPad/Safari acceptance remain
 pending in their device sheets. A1 is not marked complete by browser emulation.
+
+## Permanent shared mobile release channel audit (2026-11-10)
+
+The owner confirmed that iPad and Android must permanently use the same PWA
+with shared updates. Source inspection found this already implemented; this
+audit changes documentation only. Section 1.2 of the overall plan now makes the
+single origin/path, manifest identity, build/runtime and release feed mandatory.
+The earlier conditional deployment wording was removed. Both setup guides and
+device sheets describe one common channel, per-device activation/save ownership
+and temporary manual candidate import followed by ordinary newer shared updates.
+
+| Owning source | Audited implementation |
+| --- | --- |
+| `web/vite.*.ts`, `web/scripts/build-service-worker.mjs`, `scripts/build_room_package.py` | One starter/manifest and one runtime bundle/ZIP per version, targeting Chrome and Safari together. The Apple profile points to the configured common starter; Android instructions do not select another runtime. |
+| `PublishedPackage.ts` | Fetches `install.json` relative to the same PWA directory. The descriptor selects one package/version/integrity inventory. No user-agent/OS-specific feed selection. |
+| `BrowserRuntimeUpdates.ts`, `BrowserUpdates.ts`, `PackageStore.ts` | Shared discovery, complete validation/staging and safe save-before-restart/cold-start activation; local writer locks and per-installation pet storage. |
+| `.github/workflows/room-starter.yml`, `prepare_room_deployment.py`, `verify_room_deployment.py` | One reviewed starter release pin and Pages publication/verification route for the common `/room/` site. No separate mobile-platform deployment matrix. |
+
+Additional end-to-end check at `http://127.0.0.1:8903/room/`: installed baseline
+`0.1.0-42da08c1d5ba` into two independent persistent Chromium profiles, with
+different Android/iPad-like user agents, viewports and synthetic zodiac settings
+(Aries/Pisces). Changed the single server descriptor to candidate
+`0.1.0-fcc4543432ed`. Both profiles discovered it, staged it and applied it via
+the ordinary Settings restart control, without manual ZIP import. Both requested
+the same `/room/packages/aiko-room-0.1.0-fcc4543432ed.zip`, whose SHA-256 was
+rechecked as `adb6d89335644903285d589c9f513ef5c0b5bc3f6e6cdff220d15bcd2a85e94a`.
+Downloaded reports confirmed the same activated version; distinct zodiac values
+and object identities survived activation and offline reload in each profile.
+No JavaScript page errors; only the two deliberately induced offline network
+errors. No source/runtime changes since that candidate affect these paths.
+
+Evidence is external at `%TEMP%/aiko-android-poco-qa/shared-update.mjs`,
+`shared-update-result.json` and the two `shared-*-report.json` files. Browser
+plugin not available; used existing headless Playwright/Chromium. Different user
+agents exercise request handling, not the Safari engine or actual POCO/iPad
+installation. Physical-device acceptance remains pending. No package rebuild,
+push, release or public deployment was performed for this documentation audit.

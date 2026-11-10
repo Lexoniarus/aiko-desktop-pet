@@ -170,6 +170,10 @@ headless-browser results do not mark these as passed.
   **Jetzt neu starten** saves first. Check full close/reopen and offline start.
 - A failed/corrupt or interrupted update keeps the installed package and progress.
   The manual **Paket aus Datei importieren** path remains an alternative.
+- Shared mobile release: iPad and POCO use the same `/room/` origin/path and
+  `install.json`. Verify one newer runtime is offered and activated on both,
+  matching version/package hash while preserving their separate saves. Record
+  delayed activation on an offline device separately; no second platform feed.
 - Open a second window; it must refuse a second save writer.
 - Record startup time, responsiveness, any memory reload, and search cancellation.
   `?diagnostics=1` enables a local device-report download without the pet save.
