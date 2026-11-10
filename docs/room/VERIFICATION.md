@@ -988,3 +988,41 @@ is pinned by deploy commit `2649bf7f`.
 passed, including fresh-identity preflight and the full public runtime checksum.
 Pages deployed in about eight seconds. The public `/room/` origin/profile remain
 unchanged; use the installed app's normal update controls.
+
+## Touch selection containment (2026-11-10, local only)
+
+Frontend commit `0ba4f1c6` contains browser selection and long-touch callouts at
+`.aiko-room`, restores native selection/callouts for inputs, textareas, selects
+and contenteditable elements, and disables native image/link dragging. Existing
+`touch-action` rules, pointer handlers, panel scrolling and viewport zoom policy
+are unchanged. The Safari-specific properties follow Apple's
+[Safari CSS reference](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariCSSRef/Articles/StandardCSSProperties.html).
+
+TypeScript, both Vite builds, service-worker build, all nine existing Node tests,
+CSS formatting and the focused diff whitespace check passed. No redundant CSS
+source-string tests or Python runtime changes were added for this fix.
+
+Browser plugin not available: headless Playwright/Chromium ran at
+`http://127.0.0.1:8901/room/`, at 1024x768 and 768x1024 with actual touch events.
+An isolated QA-only package combined the newly built frontend with the unchanged
+Python/assets from `0.1.0-42da08c1d5ba`; parallel Python communication work and
+personal saves were excluded. This package is not a release or deployment.
+
+| Rendered check | Result |
+| --- | --- |
+| Page identity / meaningful content | `Aikos Zimmer`, room toolbar and real settings/food panels loaded. |
+| Blank page / framework error overlay | None; landscape drag and portrait settings screenshots inspected. |
+| Console health | No page errors, warnings or console errors. |
+| Selection boundary | Old behavior reproduced with selection restored; current CSS prevented double-click and mouse-drag text selection. Text outside the room remained selectable. |
+| Native controls / editors | Input and textarea selection/replacement, contenteditable and nested editable spans, plaintext-only editing, checkboxes, selects and source-link navigation passed in a separate fixture using the actual room CSS. Native image drag did not start. |
+| Touch interaction | 850ms hold then room swipe changed the rendered scene without selection; hold then food supply drag/drop completed. Panel scrolling from its explanation text and native settings changes passed. |
+
+Evidence and temporary scripts are outside Git under
+`%TEMP%/aiko-touch-qa/`: `result.json`, `chromium-editing.png`,
+`landscape-food-drag.png` and `portrait-settings.png`. The installed WebKit
+revision 2311 differs from the current Playwright driver's expected 2370; no
+WebKit pass is claimed. Chromium cannot prove iPadOS callout suppression,
+selection handles or native keyboard/copy-paste behavior. Actual Safari and
+Home Screen acceptance remains pending as listed in
+[the device checklist](IPAD_ACCEPTANCE.md#touch-selection-and-editing-acceptance).
+Nothing was pushed, released or deployed for this change.
