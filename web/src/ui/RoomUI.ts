@@ -59,6 +59,7 @@ export class RoomUI {
     private drag: ObjectDragController,
     private command: Command,
     updates?: RoomUpdates,
+    private downloadReport?: () => Promise<void>,
   ) {
     this.artwork = new RoomArtwork(room.root, room.assets.ui);
     this.artwork.apply(host);
@@ -169,6 +170,12 @@ export class RoomUI {
         }),
       );
       if (this.updates) this.panelBody.prepend(this.updates.element);
+      if (this.downloadReport)
+        this.panelBody.append(
+          button('Gerätebericht herunterladen', () => {
+            void this.downloadReport!().catch((error) => this.message(error));
+          }),
+        );
     }
     if (name === 'credits')
       this.panelBody.append(new CreditsPanel(snapshot, this.room.root).element);

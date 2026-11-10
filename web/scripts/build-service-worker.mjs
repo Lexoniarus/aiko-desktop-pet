@@ -6,7 +6,7 @@ await build({
   publicDir: false,
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   build: {
-    target: 'safari17',
+    target: ['chrome112', 'safari17'],
     outDir: 'dist-sw',
     lib: {
       entry: 'src/platforms/browser/service-worker.ts',

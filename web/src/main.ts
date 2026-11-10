@@ -14,7 +14,7 @@ import {
 const host = document.querySelector<HTMLElement>('#app')!;
 host.innerHTML = `<section class="installer"><h1>Aikos Zimmer</h1>
   <p id="install-status" role="status">Installation vorbereiten …</p>
-  <p id="install-help">Aiko prüft, ob ihr Paket schon auf diesem iPad eingerichtet ist.</p>
+  <p id="install-help">Aiko prüft, ob ihr Paket schon auf diesem Gerät eingerichtet ist.</p>
   <button id="retry" hidden>Einrichtung erneut versuchen</button>
   <label id="manual" class="button" hidden>Aiko-Paket auswählen<input id="package" type="file" accept=".zip,application/zip"></label>
   <button id="start" hidden>Zimmer öffnen</button></section>`;
@@ -101,7 +101,7 @@ async function prepare(): Promise<void> {
       retry.hidden = true;
       manual.hidden = true;
       help.textContent =
-        'Die erste Einrichtung braucht Internet. Danach bleiben Aiko und ihr Spielstand auf diesem iPad verfügbar.';
+        'Die erste Einrichtung braucht Internet. Danach bleiben Aiko und ihr Spielstand auf diesem Gerät verfügbar.';
       try {
         await installPublishedPackage(published, report);
         report('Aiko ist eingerichtet und wird gestartet …');
@@ -115,7 +115,7 @@ async function prepare(): Promise<void> {
   }
   manual.hidden = false;
   help.textContent =
-    'Wähle für diese Installation das Aiko-Paket aus Dateien. Auf dem iPad kannst du es vorher aus Dropbox oder GitHub herunterladen.';
+    'Wähle für diese Installation die heruntergeladene Aiko-Paketdatei aus. Die ZIP-Datei bleibt unverändert; du musst sie nicht entpacken.';
 }
 input.addEventListener('change', async () => {
   const file = input.files?.[0];

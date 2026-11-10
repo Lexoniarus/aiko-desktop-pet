@@ -6,7 +6,7 @@ export default defineConfig({
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   build: {
     outDir: 'dist-runtime',
-    target: 'safari17',
+    target: ['chrome112', 'safari17'],
     lib: {
       entry: 'src/bootstrap.ts',
       formats: ['es'],

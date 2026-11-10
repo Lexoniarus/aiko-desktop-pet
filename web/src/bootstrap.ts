@@ -66,19 +66,31 @@ export async function startRoom(
       if (closing) return;
       await receive(await client.command(name, args));
     });
-    ui = new RoomUI(host, room, drag, command, options?.updates);
+    let startupMilliseconds: number | undefined;
+    const downloadReport = async (): Promise<void> => {
+      if (startupMilliseconds === undefined) return;
+      await downloadDeviceReport({
+        runtime: first.runtime,
+        packageVersion: assets.packageVersion,
+        buildTimestamp: assets.buildTimestamp,
+        startupMilliseconds,
+      });
+    };
+    ui = new RoomUI(host, room, drag, command, options?.updates, downloadReport);
     drag.onError = (error) => ui.message(error);
     room.onPetTap = () => {
       void command('contact');
     };
     await receive(first);
+    // Capture readiness once; downloading a report later must not inflate startup.
+    startupMilliseconds = Math.round(performance.now() - startedAt);
     if (new URL(location.href).searchParams.has('diagnostics')) {
       const report = document.createElement('button');
       report.className = 'diagnostic-report';
       report.textContent = 'Gerätebericht';
-      report.addEventListener('click', () =>
-        downloadDeviceReport(first.runtime, startedAt),
-      );
+      report.addEventListener('click', () => {
+        void downloadReport().catch((error) => ui.message(error));
+      });
       host.append(report);
     }
     const lifecycle = new BrowserLifecycle(client, receive, (error) =>
