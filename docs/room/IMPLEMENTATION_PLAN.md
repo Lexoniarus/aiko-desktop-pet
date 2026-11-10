@@ -801,7 +801,7 @@ forking the core or prematurely implementing a native shell.
 | Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
 | Android reuse direction | Agreed 2026-11-10: same mobile Python/web application; PWA first, platform adapters where needed. |
-| A1: shared mobile PWA and POCO acceptance | In progress: A01/A02 locally prepared and verified in candidate `0.1.0-fcc4543432ed`; phone layout correction and browser lifecycle/import checks passed. A03 and physical POCO/iPad acceptance remain pending. See [verification](VERIFICATION.md#androidpoco-preparation-2026-11-10-local-candidate) and [Android checklist](ANDROID_ACCEPTANCE.md). |
+| A1: shared mobile PWA and POCO acceptance | In progress: A01/A02 published as shared update `0.1.0-9649458666e2`; exact-source CI, public delivery and separate-profile update/save checks passed. A03 and physical POCO/iPad acceptance remain pending. See [publication](VERIFICATION.md#shared-ipadandroid-update-published-2026-11-10) and [Android checklist](ANDROID_ACCEPTANCE.md). |
 | Actual-Android portability and functional acceptance | Pending; no Android device pass or release is claimed. Use the phase-1 follow-up and section-7 matrix. |
 | T1: complete Tamagotchi core in the shared room PWA | Implementation and local automated checks complete; GitHub and actual-device parity acceptance pending. See [verification](VERIFICATION.md). |
 | T2: notification-enabled iPad candidate | Pending. |

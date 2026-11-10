@@ -1132,3 +1132,68 @@ plugin not available; used existing headless Playwright/Chromium. Different user
 agents exercise request handling, not the Safari engine or actual POCO/iPad
 installation. Physical-device acceptance remains pending. No package rebuild,
 push, release or public deployment was performed for this documentation audit.
+
+## Shared iPad/Android update published (2026-11-10)
+
+The owner authorised publication of the shared mobile stand and requested a
+local Dropbox download/protocol folder. Release
+[0.1.0-9649458666e2](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-9649458666e2)
+is now offered through the existing common
+[`/room/` update channel](https://lexoniarus.github.io/aiko-desktop-pet/room/).
+No new installed identity, origin, save schema, native app or separate Android
+feed was introduced. The source is
+`9649458666e2b1b633337e3192acf4b9fded4a2c`; no merge into main was performed.
+
+All required checks passed on that exact source:
+
+- [Python 3.11/3.13, full application/GUI and Windows boundary checks](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42835809976).
+- [Web build and all 11 Node tests](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42835698103).
+- [Asset tooling](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42835816420).
+- [Long balance scenarios](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42835822574).
+
+The release package contains 1,169 manifest-listed files. CRC, each size/hash,
+bundled Python/wheels and the identical runtime in the starter passed local
+verification. All 1,123 PNG files (including room images) are byte-identical to
+the previous `45d4cf16` package. The existing reconstructed v16 build reference
+and its provenance are preserved externally; no private source-art archive or
+personal save is published.
+
+Headless Chromium used the actual new package and two separate persistent
+profiles, with Android/iPad-like user agents and separate synthetic settings.
+Both upgraded through ordinary Settings restart from the currently published
+`0.1.0-45d4cf160811` baseline to `0.1.0-9649458666e2`, requesting the identical
+runtime path/hash. Their different zodiac settings and object identities
+survived activation and offline reload. No JavaScript page errors; only the
+intentional offline-network failures. This is browser/profile evidence, not
+physical Android or Safari acceptance.
+
+The first [Pages attempt](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42837330375)
+on `72f3c116c53229eb38f727b8aa30ad18a2c42ad5` timed out after ten minutes in
+`syncing_files`. Its log confirms cancellation of that specific Pages ID; the
+public site still offered the old release. The failed identity was not rerun.
+A fresh deployment commit retained exactly the same release pin and bytes.
+[Recovery deployment](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42839393079)
+on `74dbe5f9bd2738d2a1b39a64bf4fe8ba4d59bd55` succeeded. Its live checksum gate,
+then an independent local check, verified the public descriptor, starter HTML,
+Service Worker and complete runtime ZIP against the reviewed build.
+
+Runtime: 86,816,455 bytes, SHA-256
+`79e47c094be2696d17978e98f8005d37101d8772deb75fc1a0251c4e52f2cf78`.
+Starter: 86,820,146 bytes, SHA-256
+`a235f44cbf710e07e62a321617d193a5629ea2bf95856beeaac394bdf85d178f`.
+
+All eight release assets were downloaded **from GitHub** into the requested
+local folder, then checked against GitHub's asset sizes and SHA-256 digests:
+`D:/Dropbox/Download/Aiko-Gemeinsame-PWA-2026-11-10-0.1.0-9649458666e2/`.
+It includes runtime/starter/iPad-initial-install ZIPs, build metadata, both setup
+guides, Android acceptance, checksums, CI/update/live/download/publication
+records, `LIES_MICH.txt` and `DIENSTE-UND-KOSTEN.txt`. Local placement is verified;
+Dropbox cloud sync is performed separately by the existing desktop client.
+Private scripts/logs and synthetic browser profiles remain outside Git under
+`E:/aiko-desktop-pet/lokale-daten/release-pruefung/2026-11-10-shared-mobile-release/`.
+
+Both already installed devices use Settings -> App-Version und Updates -> Nach
+Updates suchen, then safe restart (or complete close/reopen). A first-time POCO
+installation opens the same HTTPS address in Chrome and uses its install menu.
+No manual runtime import is needed for this release. Physical POCO/iPad checks,
+system Back, device performance and sustained use remain open in their sheets.
