@@ -1,61 +1,40 @@
 import type { RoomView } from '../room/RoomView';
 import type { PetScreenBounds } from '../room/AikoView';
-import type { RoomArtwork } from '../ui/RoomArtwork';
 import { button, element } from '../ui/dom';
 import { record, values } from './GameView';
-import {
-  cellPoint,
-  chipPoint,
-  columnAt,
-  connectFourGeometry as g,
-  landingCell,
-} from './ConnectFourGeometry';
+import { columnAt, connectFourGeometry as g, landingCell } from './ConnectFourGeometry';
 
-/** Table-bound artwork and input. Only Python commits moves. */
+/** Transparent accessible input; the room scene owns every visible game piece. */
 export class ConnectFourTable {
   readonly element = element('section', 'c4-table-scene');
   private board = element('div', 'c4-table-board');
-  private cells: HTMLImageElement[] = [];
   private columns: HTMLButtonElement[] = [];
-  private moving: HTMLImageElement;
-  private preview: HTMLImageElement;
-  private landing = element('span', 'c4-landing');
-  private dragged: HTMLImageElement;
   private supply: HTMLButtonElement;
-  private aikoPile: HTMLImageElement[] = [];
+  private scene: ReturnType<RoomView['createConnectFourScene']>;
   private data: Record<string, unknown> = {};
-  private received = 0;
-  private flightKey: unknown;
-  private flightStart = { x: 0, y: 0 };
   private gesture?: { id: number; x: number; y: number; pile: boolean; moved: boolean };
   private hover?: number;
-  private returning?: Animation;
+  private returning?: { point: { x: number; y: number }; started: number };
+  private dragPoint?: { x: number; y: number };
+  private previewCell?: number;
   private unsubscribe: () => void;
   private events = new AbortController();
 
   constructor(
     private room: RoomView,
-    private art: RoomArtwork,
     private choose: (column: number) => void,
   ) {
     this.element.setAttribute('aria-label', 'Vier gewinnt auf dem Tisch');
-    for (let cell = 0; cell < g.columns * g.rows; cell++) {
-      const image = art.image('', '', 'c4-table-chip');
-      image.dataset.cell = String(cell);
-      this.position(image, cellPoint(cell));
-      this.cells.push(image);
-      this.board.append(image);
-    }
-    const face = art.image(art.game('c4-board'), 'Vier gewinnt', 'c4-table-face');
-    this.moving = art.image('', '', 'c4-table-chip c4-moving');
-    this.preview = art.image(art.game('c4-yellow'), '', 'c4-table-chip c4-preview');
-    this.dragged = art.image(art.game('c4-yellow'), '', 'c4-table-chip c4-dragged');
-    this.moving.hidden =
-      this.preview.hidden =
-      this.dragged.hidden =
-      this.landing.hidden =
-        true;
-    this.board.append(this.moving, face, this.preview, this.landing, this.dragged);
+    this.scene = room.createConnectFourScene();
+    void this.scene.ready.catch(() => {
+      const message = element(
+        'p',
+        'room-message',
+        'Die Spielgrafik konnte nicht geladen werden. Bitte schließe das Spiel und öffne es erneut.',
+      );
+      message.setAttribute('role', 'alert');
+      this.element.append(message);
+    });
     for (let column = 0; column < g.columns; column++) {
       const target = button('', () => {});
       target.className = 'c4-column-target';
@@ -76,14 +55,6 @@ export class ConnectFourTable {
     this.supply = button('', () => {});
     this.supply.className = 'c4-player-supply';
     this.supply.setAttribute('aria-label', 'Deinen Chip zum Einwurf ziehen');
-    for (let index = 0; index < 3; index++) {
-      const chip = art.image(art.game('c4-yellow'));
-      chip.style.setProperty('--stack-index', String(index));
-      this.supply.append(chip);
-      const red = art.image(art.game('c4-pile'), '', 'c4-aiko-supply');
-      this.aikoPile.push(red);
-      this.element.append(red);
-    }
     this.element.append(this.board, this.supply);
     const options = { signal: this.events.signal };
     this.element.addEventListener('pointerdown', this.down, options);
@@ -111,19 +82,7 @@ export class ConnectFourTable {
 
   update(data: Record<string, unknown>): void {
     this.data = data;
-    this.received = performance.now();
-    const board = record(data.board),
-      cells = values(board.cells);
-    const winning = values(board.winning_line ?? board.winning_cells);
-    const motion = record(record(data.props).motion),
-      drop = record(data.drop);
-    const hidden = Number(motion.kind === 'chip' ? motion.cell : (drop.cell ?? -1));
-    this.cells.forEach((image, index) => {
-      const player = Number(cells[index] ?? 0);
-      image.hidden = !player || index === hidden;
-      if (player) image.src = this.art.game(player === 1 ? 'c4-yellow' : 'c4-red');
-      image.classList.toggle('winning', winning.includes(index));
-    });
+    this.scene.update(data);
     this.columns.forEach((target, index) => {
       target.disabled = !this.legal(index);
     });
@@ -168,8 +127,8 @@ export class ConnectFourTable {
     const target = event.target as HTMLElement;
     const pile = this.supply.contains(target);
     if (!pile && !target.closest('.c4-column-target')) return;
-    this.returning?.cancel();
-    this.dragged.hidden = true;
+    this.returning = undefined;
+    this.dragPoint = undefined;
     this.gesture = {
       id: event.pointerId,
       x: event.clientX,
@@ -193,8 +152,7 @@ export class ConnectFourTable {
     gesture.moved ||=
       Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 6;
     this.showPreview(this.at(event, gesture.pile || gesture.moved));
-    this.dragged.hidden = !gesture.moved;
-    if (gesture.moved) this.position(this.dragged, this.local(event));
+    if (gesture.moved) this.dragPoint = this.local(event);
     event.preventDefault();
   };
   private up = (event: PointerEvent): void => {
@@ -204,29 +162,11 @@ export class ConnectFourTable {
       point = this.local(event);
     this.release();
     if (column !== undefined) {
-      this.dragged.hidden = true;
+      this.dragPoint = undefined;
       this.commit(column);
     } else if (gesture.moved) {
-      const frame = this.room.tableGameFrame();
-      if (frame) {
-        const end = {
-          x: (frame.playerX - frame.x) / frame.scale,
-          y: (frame.playerY - frame.y) / frame.scale,
-        };
-        this.returning = this.dragged.animate(
-          [
-            { left: `${point.x}px`, top: `${point.y}px` },
-            { left: `${end.x}px`, top: `${end.y}px` },
-          ],
-          { duration: 160, easing: 'ease-out' },
-        );
-        void this.returning.finished
-          .then(() => {
-            this.dragged.hidden = true;
-          })
-          .catch(() => {});
-      }
-    } else this.dragged.hidden = true;
+      this.returning = { point, started: performance.now() };
+    } else this.dragPoint = undefined;
     event.preventDefault();
   };
   private release(): void {
@@ -238,22 +178,17 @@ export class ConnectFourTable {
     this.showPreview();
   }
   private cancel = (): void => {
-    this.returning?.cancel();
-    this.dragged.hidden = true;
+    this.returning = undefined;
+    this.dragPoint = undefined;
     if (this.gesture) this.release();
     else this.showPreview();
   };
   private showPreview(column?: number): void {
     this.hover = column;
-    const cell =
+    this.previewCell =
       column !== undefined && this.legal(column)
         ? landingCell(values(record(this.data.board).cells), column)
         : undefined;
-    this.preview.hidden = this.landing.hidden = cell === undefined;
-    if (cell !== undefined) {
-      this.position(this.preview, { x: cellPoint(cell).x, y: g.entry });
-      this.position(this.landing, cellPoint(cell));
-    }
   }
   private position(node: HTMLElement, point: { x: number; y: number }): void {
     node.style.left = `${point.x}px`;
@@ -265,60 +200,35 @@ export class ConnectFourTable {
     this.board.style.transform = `translate(${frame.x}px, ${frame.y}px) scale(${frame.scale})`;
     this.position(this.supply, { x: frame.playerX, y: frame.playerY });
     this.supply.style.setProperty('--chip-size', `${frame.chip}px`);
-    this.aikoPile.forEach((chip, index) => {
-      this.position(chip, {
-        x: bounds.originX + 80 * bounds.scale,
-        y: bounds.groundY + frame.chip * 0.4 - index * 4 * frame.scale,
-      });
-      chip.style.width = `${frame.chip}px`;
-      chip.hidden =
-        !!this.data.preparing ||
-        (index === 2 &&
-          (this.room.heldGameChip ||
-            record(record(this.data.props).motion).kind === 'chip'));
-    });
-    const elapsed = performance.now() - this.received;
-    const motion = record(record(this.data.props).motion),
-      drop = record(this.data.drop);
-    this.moving.hidden = true;
-    if (motion.kind === 'chip') {
-      if (motion.id !== this.flightKey) {
-        this.flightKey = motion.id;
-        this.flightStart = {
-          x: (bounds.originX + 96 * bounds.scale - frame.x) / frame.scale,
-          y: (bounds.originY + 141 * bounds.scale - frame.y) / frame.scale,
-        };
-      }
-      const fraction = Math.min(
-        1,
-        Number(motion.fraction) + elapsed / Number(motion.duration),
-      );
-      const flightFraction = Number(motion.flight_duration) / Number(motion.duration);
-      this.position(
-        this.moving,
-        chipPoint(this.flightStart, Number(motion.cell), fraction, flightFraction),
-      );
-      this.moving.src = this.art.game('c4-red');
-      this.moving.style.zIndex = fraction < flightFraction ? '3' : '1';
-      this.moving.hidden = false;
-    } else if (Number(drop.cell ?? -1) >= 0 && Number(drop.fraction) >= 0) {
-      const target = cellPoint(Number(drop.cell)),
-        fraction = Math.min(1, Number(drop.fraction) + elapsed / 180);
-      this.position(this.moving, {
-        x: target.x,
-        y: g.entry + (target.y - g.entry) * fraction,
-      });
-      this.moving.src = this.art.game(
-        Number(drop.player) === 1 ? 'c4-yellow' : 'c4-red',
-      );
-      this.moving.style.zIndex = '1';
-      this.moving.hidden = false;
+    if (this.returning) {
+      const t = Math.min(1, (performance.now() - this.returning.started) / 160);
+      const eased = t * (2 - t);
+      const end = {
+        x: (frame.playerX - frame.x) / frame.scale,
+        y: (frame.playerY - frame.y) / frame.scale,
+      };
+      this.dragPoint =
+        t < 1
+          ? {
+              x: this.returning.point.x + (end.x - this.returning.point.x) * eased,
+              y: this.returning.point.y + (end.y - this.returning.point.y) * eased,
+            }
+          : undefined;
+      if (t === 1) this.returning = undefined;
     }
+    this.scene.draw(
+      frame,
+      bounds,
+      this.room.heldGameChip,
+      this.previewCell,
+      this.dragPoint,
+    );
   }
   destroy(): void {
     this.cancel();
     this.events.abort();
     this.unsubscribe();
+    this.scene.destroy();
     this.element.remove();
   }
 }

@@ -41,39 +41,6 @@
   transform-origin: 0 0;
   isolation: isolate;
 }
-.c4-table-face {
-  position: absolute;
-  inset: 0;
-  width: 480px;
-  height: 480px;
-  z-index: 2;
-}
-.c4-table-chip,
-.c4-landing {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
-.c4-table-chip.winning {
-  outline: 3px solid #755c93;
-  border-radius: 50%;
-  z-index: 3;
-}
-.c4-preview {
-  opacity: 0.65;
-  z-index: 3;
-}
-.c4-landing {
-  border: 3px dashed #755c93;
-  border-radius: 50%;
-  box-sizing: border-box;
-  z-index: 3;
-}
-.c4-dragged {
-  z-index: 5;
-}
 .aiko-room .c4-column-target {
   position: absolute;
   top: 68px;
@@ -106,18 +73,6 @@
   pointer-events: auto;
   touch-action: none;
   cursor: grab;
-}
-.c4-player-supply img {
-  position: absolute;
-  width: var(--chip-size);
-  height: var(--chip-size);
-  left: 50%;
-  top: calc(50% - var(--stack-index) * 4px);
-  transform: translate(-50%, -50%) scaleY(0.55);
-}
-.c4-aiko-supply {
-  position: absolute;
-  transform: translate(-50%, -50%);
 }
 .room-panel.table-game-panel {
   zoom: min(var(--ui-scale, 1), 1.25);

@@ -14,6 +14,7 @@ import type { RoomItemAsset } from './RoomAssets';
 import { furnitureFrame } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { tableGameFrame } from '../games/ConnectFourGeometry';
+import { ConnectFourScene } from '../games/ConnectFourScene';
 
 export interface AssetManifest {
   packageVersion: string;
@@ -369,6 +370,9 @@ export class RoomView {
   tableGameFrame() {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     return table && tableGameFrame(furnitureFrame(this.camera.projection, table));
+  }
+  createConnectFourScene(): ConnectFourScene {
+    return new ConnectFourScene(this.world, this.root);
   }
   frameForGame(id: string): void {
     this.camera.setGame(true, id === 'connect_four');

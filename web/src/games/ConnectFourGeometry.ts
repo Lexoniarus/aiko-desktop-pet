@@ -12,6 +12,7 @@ export const connectFourGeometry = {
 } as const;
 
 export interface TableGameFrame {
+  order: number;
   x: number;
   y: number;
   scale: number;
@@ -25,10 +26,12 @@ export function tableGameFrame(table: {
   y: number;
   width: number;
   height: number;
+  order?: number;
 }): TableGameFrame {
   const scale = (table.width * 0.82) / connectFourGeometry.size;
   const surface = table.y - table.height * 0.7;
   return {
+    order: table.order ?? table.y,
     x: table.x - (connectFourGeometry.size * scale) / 2,
     y: surface - connectFourGeometry.base * scale,
     scale,

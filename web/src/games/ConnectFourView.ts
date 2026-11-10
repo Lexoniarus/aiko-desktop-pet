@@ -9,12 +9,10 @@ import { ConnectFourTable } from './ConnectFourTable';
 export class ConnectFourView extends GameFrame implements GameView {
   private nextButton = this.next();
   private table: ConnectFourTable;
-  constructor(command: Command, art: RoomArtwork, room: RoomView, host: HTMLElement) {
+  constructor(command: Command, _art: RoomArtwork, room: RoomView, host: HTMLElement) {
     super(command);
     this.element.dataset.game = 'connect-four';
-    this.table = new ConnectFourTable(room, art, (column) =>
-      this.action('choose', column),
-    );
+    this.table = new ConnectFourTable(room, (column) => this.action('choose', column));
     host.append(this.table.element);
     this.content.append(this.nextButton);
   }
