@@ -1310,6 +1310,53 @@ unrecorded; do not assign this report to a particular release by inference.
 The plan now makes ongoing delivery-cost review explicit. This documentation
 record changes no runtime, hosting, service subscription or billing setting.
 
+## Native Android long-press containment (2026-11-10, local only)
+
+The owner reports selection/highlighting while holding and dragging on Android.
+The shared runtime still contained the earlier CSS selection protection, but
+Safari's `-webkit-touch-callout` does not contain Chromium's native context-menu
+and drag path. A mobile Chromium fixture using the existing CSS reproduced a
+native, uncancelled `contextmenu` event after a real long touch on a source link.
+The installed POCO package/browser version is unrecorded; this identifies a
+code-level gap, not the exact device-side rendering of every reported mark.
+See Chromium's [Android touch-drag/context-menu notice](https://groups.google.com/a/chromium.org/g/blink-dev/c/KnfFsL2dM8w).
+
+Commit `3b99630c` adds one room-scoped capture boundary for `selectstart`,
+`contextmenu` and `dragstart`, leaving native inputs, textareas, selects and
+editable descendants alone. Its listeners are released on startup failure and
+successful shutdown. It never cancels pointer/touch events or changes
+`touch-action`, scrolling, click handling or viewport zoom. CSS also removes the
+browser tap highlight from the room, restoring its native default in editors;
+existing keyboard focus and application pressed-state styles remain intact.
+
+TypeScript, starter/runtime/service-worker builds, all 18 current Node checks,
+Prettier for the three changed source files and focused whitespace checks passed.
+Browser plugin not available: headless Playwright/Chromium ran an isolated
+QA-only package at `http://127.0.0.1:8911/room/`, with the newly built frontend and
+the last published `c5aa29a3019e` Python/assets. No personal save was used.
+
+| Check | Observed result |
+| --- | --- |
+| Room identity / rendering / console | Correct title and toolbar; meaningful room/panels, no framework overlay, page errors, console errors or warnings. Screenshots inspected. |
+| Native event boundary | Selection/context-menu/drag events cancelled on room text, assets, links and canvas, including text-node targets; allowed in inputs, textarea, select, nested editors and plaintext-only editors, and outside the room. A noneditable child inside an editor remains protected. Disposing the boundary restores native behavior. |
+| Editing / ordinary controls | Real text selection/replacement, checkbox/select changes, ordinary source-link navigation and one activation per touch passed. Native pointer/touch sequences remained uncancelled by the boundary. |
+| Phone portrait, 393x873 | One-second hold then room swipe and food supply drag/drop passed without selection. Text-origin menu scrolling and cancelled-drag cleanup passed. |
+| Phone landscape, 873x393 | Native settings changes passed; panel remained scrollable. |
+| Tablet regression, 1024x768 | Room swipe and settings passed. One-second hold then Vier-gewinnt chip drag showed the Pixi drag preview and committed a player chip on release. |
+| Browser touch highlight | Toolbar computes to transparent; no focus-style or touch-action changes. |
+
+Evidence and temporary regression scripts remain outside Git under
+`%TEMP%/aiko-android-touch-qa-20261110/`: `result.json`, `check.mjs`,
+`android-portrait-drag.png`, `android-landscape-settings.png`, `ipad-settings.png`
+and `game-chip-drag.png`. An older failed fixture screenshot is not final
+acceptance evidence. The phone screenshot also shows an existing moodlet/care
+overlap at 393px; layout changes were outside this input fix.
+
+Actual POCO/Android and Safari/iPad acceptance remains pending, particularly
+system selection handles, native long-touch UI, keyboard/copy-paste and both
+browser/installed modes. The Android checklist contains the required device
+steps. No release, push or deployment was performed for this fix.
+
 ## Automatic update-check interval with cached starters (2026-11-10)
 
 The owner's request to enforce the shared iPad/Android automatic-check limit
