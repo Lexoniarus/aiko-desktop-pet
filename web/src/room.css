@@ -5,10 +5,11 @@
   background: #f7f2f3;
   color: #243451;
   font-family: system-ui, sans-serif;
-  /* Room gestures must not start browser text selection or iPad callouts. */
+  /* Room gestures must not start browser selection, callouts or touch highlights. */
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .aiko-room
   :is(input, textarea, select, [contenteditable]:not([contenteditable='false'])) {
@@ -16,6 +17,7 @@
   -webkit-user-select: text;
   user-select: text;
   -webkit-touch-callout: default;
+  -webkit-tap-highlight-color: initial;
 }
 .aiko-room :is(img, a) {
   /* Native asset/link dragging is separate from our pointer-based gestures. */

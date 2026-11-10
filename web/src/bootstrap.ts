@@ -8,6 +8,7 @@ import type { RoomHostOptions } from './bridge/RoomUpdates';
 import { RoomView } from './room/RoomView';
 import type { AssetManifest } from './room/RoomView';
 import { ObjectDragController } from './input/ObjectDragController';
+import { protectRoomInteractions } from './input/NativeInteractionBoundary';
 import { RoomUI } from './ui/RoomUI';
 import { element } from './ui/dom';
 import type { Command } from './ui/dom';
@@ -26,6 +27,7 @@ export async function startRoom(
   const loading = element('p', 'runtime-loading', 'Aiko wird wach …');
   host.replaceChildren(loading);
   const client = new BrowserRoomClient();
+  let releaseInteractionBoundary: (() => void) | undefined;
   try {
     const [first, assets] = await Promise.all([
       client.initialize(root),
@@ -41,6 +43,7 @@ export async function startRoom(
     const stage = element('section', 'room-stage');
     stage.setAttribute('aria-label', 'Aikos Zimmer – zum Umschauen wischen');
     host.className = 'aiko-room';
+    releaseInteractionBoundary = protectRoomInteractions(host);
     host.replaceChildren(stage);
     const room = new RoomView(stage, root, assets);
     await room.initialize();
@@ -105,6 +108,7 @@ export async function startRoom(
       try {
         await client.close(true);
         room.destroy();
+        releaseInteractionBoundary?.();
       } catch (error) {
         closing = false;
         lifecycle.start();
@@ -113,6 +117,7 @@ export async function startRoom(
     });
     window.addEventListener('pagehide', () => drag.cancel());
   } catch (error) {
+    releaseInteractionBoundary?.();
     await client.close().catch(() => {});
     throw error;
   }
