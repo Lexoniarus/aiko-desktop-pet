@@ -989,6 +989,33 @@ restores original coordinates/depth, including older off-line objects. Only a
 new committed player placement/drop uses the line. Aiko's own free movement,
 depth-dependent size and native desktop presentation remain unchanged.
 
+## Wall furniture and table-game occlusion (2026-11-10)
+
+Wall furniture keeps its existing physical footprint against the wall. The
+reported kitchen case was a drawing mismatch beside that footprint: an allowed
+actor position could sort behind the wider artwork. `furnitureFrame` now places
+wall-bound art above the backgrounds but below actors/free-floor objects. It does
+not enlarge obstacles, move saved stock or distort the original art. Freestanding
+furniture retains its projected foreground support edge and normal depth order.
+
+`ConnectFourScene.ts` owns visible board/settled pieces, previews, supplies,
+flight/drop and dragged/returning chips as noninteractive Pixi nodes in the same
+world container as Aiko. `TableGameFrame.order` carries the table support order;
+the board follows immediately above the table, so a nearer actor covers both.
+Flying chips interpolate floor order from actor to board, then fall behind the
+board face. Held chips retain the existing Aiko hand/mask path and shared diameter.
+
+`ConnectFourTable.ts` retains transparent DOM column/supply targets for touch,
+keyboard focus and pointer capture. It delegates drawing to the scene, including
+the bounded return animation, and destroys game nodes on close. There is no
+second HTML copy of visible game art and no change to Python game rules/pacing.
+`tableGamePan` preserves the actor/table composition while keeping entry targets
+inside narrow viewports; framing is reapplied on resize. Room panning stays free.
+
+This uses the same shared mobile runtime/update channel, not a separate platform
+build. No save/geometry migration, new library or character/furniture PNG change
+is required. Physical iPad/Android visual acceptance remains a separate gate.
+
 ## References
 
 - [Current architecture](../ARCHITECTURE.md), [World contracts](../WORLD_OBJECT_CONTRACTS.md), [UI contract](../UI_WINDOW_CONTRACT.md).

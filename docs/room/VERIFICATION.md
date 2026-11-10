@@ -1226,3 +1226,75 @@ Generator, preview and verification data stay outside Git under the existing
 publication job's `android-entry/` folder. Setup guidance is recorded in the
 Android install guide and section 1.2 of the overall plan. No new service,
 dependency installation or paid option was introduced for this helper.
+
+## Wall-furniture and Connect Four room depth (2026-11-10)
+
+The owner reported Aiko disappearing beside the kitchen and behind the game
+board while walking in front of the table. Both causes were confirmed in code:
+the kitchen's wide image could cover an allowed side position `(425,60)`, and
+the board was a DOM overlay above the entire room canvas. Commits `b020193f`,
+`e3fab823`, `ab321844`, `aa406d86` and `c5aa29a3` implement wall-art ordering,
+Pixi game artwork, focused regressions and width-aware table framing. The final
+implementation retains the tablet's actor/table composition and shifts only
+enough to keep all input columns on narrow screens. Geometry/footprints, stock,
+Python game rules, save schema and hosting origin are unchanged.
+
+Validation started after implementation, without visible windows. TypeScript,
+Vite/starter/runtime/service-worker build and all 13 Node tests passed. Two
+focused regressions were added: wall overhang on an allowed route, and the shared
+table/board support order with mobile entry bounds. Exact-source
+[web CI 42851223916](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42851223916)
+passed. No desktop GUI/full Python suite was run for these rendering changes.
+
+Browser plugin not available: existing headless Playwright/Chromium exercised
+`http://127.0.0.1:8905/room/` at 1024x768, 768x1024 and 393x873 with touch input.
+The flow installed the actual previous `9649458666e2` package, saved Pisces and
+one stock portion, walked beside the kitchen, then updated normally through
+Settings to `0.1.0-c5aa29a3019e`. Entire room/object snapshots matched across the
+update. Aiko was then drawn above the kitchen at exactly the same saved point.
+
+During the real approach to the table, Aiko crossed both sides of the board's
+floor order (actor/board 736.1618/727.7562 in front, 727.3654/727.7562 behind).
+Pixi child order followed both cases. No game image remained in the DOM overlay.
+Real touch supply drag/preview/drop, Aiko's held chip/flight/fall, two settled
+pieces, invalid release, pointer cancellation, camera swipe, keyboard Enter and
+direct taps passed. The shared screen chip size was 24.58397px in landscape.
+Closing during active play and reopening in tablet/phone layouts left exactly
+five live game nodes while open and zero after close, with no delayed game.
+All seven touch targets remained inside each viewport. Tablet portrait was
+visually inspected with both board and Aiko visible; narrow phones retain the
+free panorama for viewing Aiko beside the playfield.
+
+The renderer was briefly frozen to compare board holes to the same room without
+the board. All 42 openings matched five centre pixels each (210 exact matches).
+Runtime CRC and every manifest-listed file hash/size passed. All 1,123 PNGs are
+byte-identical to the previous shared release. Bundled Python/resource paths and
+contents match after CRLF normalization; archive bytes differ because text line
+endings differ, not because of a backend change. Offline reload retained stock
+identity/coordinates/depth and settings. No personal save was read.
+
+| Rendered check | Result |
+| --- | --- |
+| Page identity / meaningful app | Expected local `/room/` URL, Aiko title, room toolbar and game controls loaded. |
+| Blank page / error overlay | None in inspected kitchen/table/portrait screenshots. |
+| Console | No page errors; two bootstrap 404s with the update descriptor intentionally withheld, plus expected offline network failure. |
+| Interactions / cleanup | Touch, keyboard, front/back walk, cancelled/invalid drop, chip sequence and node cleanup passed. |
+| Update / save / offline | Existing room/object snapshots matched at activation; stock/settings survived offline reload. |
+
+Evidence remains outside Git at `%TEMP%/aiko-room-furniture-depth-qa/`:
+`result.json`, `package-verification.json`, before/after kitchen, table-front/back,
+held/flight/drop, transparency and three-viewport screenshots. Actual Safari/iPad
+and Android device acceptance remains pending.
+
+Runtime SHA-256:
+`4deb2469717ad5e16b9e9e9162d9099a10261f7a284e5ba38dd584a212e7a2a5`;
+starter SHA-256:
+`f07cffb77e80ce43e385d03408d6c67001a6788679bc0fe27ed7bddf8dc8dcb9`.
+
+[The shared test release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-c5aa29a3019e)
+includes the direct runtime ZIP, starter and iPad initial-install helper.
+Deployment commit `67535817` and
+[publication run 42851722713](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/42851722713)
+passed: preflight accepted the new identity, the deployment step took about seven
+seconds, and the public descriptor, starter and complete runtime checksum matched.
+Both platforms continue using the existing `/room/` update feed and local save.

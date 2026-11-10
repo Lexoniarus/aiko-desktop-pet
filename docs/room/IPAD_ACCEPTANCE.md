@@ -236,3 +236,17 @@ notifications or continuous background Python are claimed for this PWA.
   returned on app suspension land on the line; a successful offer stays in hand.
 - Reopen offline and verify the same object identities and care progress. Check
   portrait/landscape on the actual iPad; no new profile is needed.
+
+## Furniture and table-board depth acceptance (2026-11-10)
+
+- Update the installed app without replacing its profile. Verify retained food,
+  settings and pet progress after offline reopening.
+- Walk beside the kitchen/fridge and other wall furniture. Aiko must remain in
+  front of their artwork on allowed floor, with no path through their footprint.
+- Open Vier gewinnt while Aiko approaches. She must cover table/board when nearer
+  and be covered when farther away; holes show the real room behind them.
+- Exercise direct tap, yellow-chip drag, invalid release, touch cancellation and
+  Aiko's pickup/throw/fall. Compare chip size and masks; closing mid-action must
+  remove all game artwork without leaving a held camera or later game action.
+- Check tablet portrait/landscape and phone entry reachability. Pan away and back,
+  rotate the device, and confirm hit targets remain aligned with the seven slots.
