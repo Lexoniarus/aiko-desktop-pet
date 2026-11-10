@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import unittest
 
@@ -171,17 +172,21 @@ class ShippedGazeExportTests(unittest.TestCase):
         for index in range(16):
             self.assertLessEqual(abs(centers[index] - centers[(index + 1) % 16]), 1.5)
 
-    def test_gaze_keeps_approved_shared_body_when_neutral_idle_is_replaced(
+    def test_gaze_uses_current_neutral_body_without_recalibrating_heads(
         self,
     ) -> None:
         hd_root = ASSET_ROOT / "frames_2x"
         with Image.open(hd_root / "idle/00.png") as idle:
             reference_feet = planted_foot_bounds(idle)
-        # The approved gaze body is retained; swapping neutral Idle must not
-        # silently transplant that newer body into all sixteen gaze poses.
-        with Image.open(hd_root / "look/00.png") as gaze_reference:
-            reference_body = gaze_reference.crop((0, 260, 384, 416)).tobytes()
+            reference_body = idle.crop((0, 260, 384, 416)).tobytes()
         manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
+        correction = manifest["frontal_source_corrections"]
+        self.assertEqual(correction["reference"], "expressions/rest-neutral/00.png")
+        reference_sha = hashlib.sha256((
+            ASSET_ROOT / correction["reference"]
+        ).read_bytes()).hexdigest()
+        self.assertEqual(correction["reference_sha256"], reference_sha)
+        heads = {r["file"]: r for r in correction["frames"]}
         entries = {entry["path"]: entry for entry in manifest["frames"]}
         for index in range(16):
             with self.subTest(direction=index):
@@ -189,13 +194,17 @@ class ShippedGazeExportTests(unittest.TestCase):
                     feet = planted_foot_bounds(image)
                     self.assertEqual(image.crop((0, 260, 384, 416)).tobytes(),
                                      reference_body)
+                    row = heads[f"frames_2x/look/{index:02d}.png"]
+                    self.assertEqual(hashlib.sha256(image.crop((
+                        0, 0, 384, row["head_before_y"],
+                    )).tobytes()).hexdigest(), row["head_pixels_sha256"])
                 self.assertEqual(feet[3], reference_feet[3])
                 entry = entries[f"look/{index:02d}.png"]
                 self.assertEqual(entry["scale_calibration"],
-                                 "shared_idle_body_pixels")
+                                 "unchanged_registered_v3_head_current_neutral_body")
                 self.assertEqual(entry["shared_body_from_y"], 260)
                 self.assertEqual(entry["body_sha256"],
-                                 entries["look/00.png"]["body_sha256"])
+                                 reference_sha)
 
     def test_modular_sources_keep_idle_foot_anchors_and_sector_mapping(
         self,
@@ -204,11 +213,10 @@ class ShippedGazeExportTests(unittest.TestCase):
         manifest = json.loads((hd_root / "manifest.json").read_text("utf-8"))
         entries = {entry["path"]: entry for entry in manifest["frames"]}
         idle_path = hd_root / "idle/00.png"
-        # This records the original approved calibration, independently of
-        # the later neutral Idle replacement. It is provenance, not a demand
-        # to rebase approved heads and bodies on every new Idle image.
+        # The targeted 06.11 correction replaces the V2 body, preserving the
+        # original head registration and sector mapping.
         approved_reference_sha = (
-            "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743"
+            "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f"
         )
         with Image.open(idle_path) as idle:
             current_floor = planted_foot_bounds(idle)[3]
@@ -219,7 +227,10 @@ class ShippedGazeExportTests(unittest.TestCase):
             path = f"look/{index:02d}.png"
             entry = entries[path]
             self.assertEqual(entry["source"],
-                             f"private-v3-gaze-modular/look/{index:02d}.png")
+                             f"private-v3-front-source-2026-11-06/frames_2x/{path}")
+            self.assertEqual(entry["source_sha256"], hashlib.sha256(
+                (hd_root / path).read_bytes(),
+            ).hexdigest())
             self.assertEqual(entry["status"], "composited_v3_gaze_shared_idle_body")
             self.assertEqual(entry["source_size"], [384, 416])
             self.assertGreaterEqual(min(entry["head_provenance"]["size"]), 1000)

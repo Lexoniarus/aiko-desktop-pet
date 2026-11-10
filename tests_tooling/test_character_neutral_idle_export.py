@@ -94,14 +94,14 @@ class NeutralIdleExportTests(unittest.TestCase):
 
 class InstalledNeutralIdleTests(unittest.TestCase):
     def test_approved_gaze_and_body_art_outside_neck_matches_snapshot(self) -> None:
-        # Outside the explicitly approved local join, retain the complete
-        # original drawings from before the rejected body/position rebase.
+        # Pin the approved 06.11 scope: sixteen frontal bodies, four turn
+        # starts and ten true-profile joins. Other accepted art stays fixed.
         expected = {
             "frames_2x/look": (
-                16, "d32fdf9f392ad890e8e3ea00f4a1e977772cd87b6480acf6c2fc0513fef6c756",
+                16, "9bf2483fda696b7ac2c41506c07e606f4a14714b2e8396d13c7662e15d6eb89f",
             ),
             "body_poses": (
-                102, "0c37a0e4daf80870979818efa6032cd3184f8f393b93b9e1c760480117701504",
+                102, "9f7bf07b1952d0744b6e12945cc45e40720e8866f88ee82cef17562c7cae9d15",
             ),
         }
         for folder, (count, digest) in expected.items():

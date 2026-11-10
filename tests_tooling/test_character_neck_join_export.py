@@ -180,8 +180,26 @@ class InstalledNeckJoinTests(unittest.TestCase):
             (ASSET_ROOT / "frames_2x/manifest.json").read_text("utf-8"),
         )
         rows = manifest["neck_join_corrections"]["frames"]
-        self.assertEqual(len(rows), 84)
-        self.assertEqual(sum(r["file"].startswith("frames_2x/") for r in rows), 16)
+        expected = {
+            f"body_poses/body-look-{side}/{index:02}.png"
+            for side in ("left", "right") for index in range(9)
+        }
+        for side, axes in (("right", range(2, 7)), ("left", range(10, 15))):
+            expected.update(
+                f"body_poses/body-step-{side}-{axis:02}/{phase}.png"
+                for axis in axes for phase in ("stand", "01", "03", "07", "00")
+            )
+        self.assertEqual({r["file"] for r in rows}, expected)
+        self.assertEqual(len(rows), 68)
+        # The sixteen frontal joins now belong to the targeted neutral-body
+        # replacement; keep their former records as explicitly superseded history.
+        frontal = [r for r in manifest["frontal_source_corrections"]["frames"]
+                   if r["kind"] == "front_gaze_body_only"]
+        self.assertEqual({r["file"] for r in frontal}, {
+            f"frames_2x/look/{i:02}.png" for i in range(16)
+        })
+        self.assertTrue(all(r["previous_neck_join"]["file"] == r["file"]
+                            for r in frontal))
         self.assertEqual(manifest["neck_join_corrections"]["neck_owner"], "head")
         for row in rows:
             with self.subTest(file=row["file"]):
