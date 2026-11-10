@@ -137,6 +137,19 @@ saves. Both must discover and activate the same release. Record offered version,
 package identity/hash and each retained save separately. Browser-profile checks
 and physical iPad/POCO acceptance remain distinct evidence.
 
+### 1.3 Delivery cost awareness
+
+Keep service costs explicit before each publication or infrastructure change:
+confirm the public-repository/standard-runner route, review relevant Pages and
+artifact/cache storage limits, and distinguish included hosting from other
+metered account services. Record unknown account usage rather than claiming a
+complete zero-cost account audit. Do not enable paid services, premium runners,
+paid quota increases or change billing settings without explicit owner consent.
+Continue using the existing GitHub delivery and local Dropbox archive while
+they meet these constraints. Current owning references are
+[Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+and [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+
 ## 2. Phase 0 is mandatory: finish and merge the current desktop work
 
 The repository's default branch is `main`; this is the branch called "Master"
@@ -807,8 +820,8 @@ forking the core or prematurely implementing a native shell.
 | Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
 | Android reuse direction | Agreed 2026-11-10: same mobile Python/web application; PWA first, platform adapters where needed. |
-| A1: shared mobile PWA and POCO acceptance | In progress: A01/A02 published as shared update `0.1.0-9649458666e2`; exact-source CI, public delivery and separate-profile update/save checks passed. A03 and physical POCO/iPad acceptance remain pending. See [publication](VERIFICATION.md#shared-ipadandroid-update-published-2026-11-10) and [Android checklist](ANDROID_ACCEPTANCE.md). |
-| Actual-Android portability and functional acceptance | Pending; no Android device pass or release is claimed. Use the phase-1 follow-up and section-7 matrix. |
+| A1: shared mobile PWA and POCO acceptance | In progress: A01/A02 initially published as shared update `0.1.0-9649458666e2`; exact-source CI, public delivery and separate-profile update/save checks passed. Owner confirms first POCO startup (2026-11-10); easier initial installation remains an open UX item. Remaining A03 and physical POCO/iPad checks are pending; running device version is unrecorded. See [publication](VERIFICATION.md#shared-ipadandroid-update-published-2026-11-10) and [Android checklist](ANDROID_ACCEPTANCE.md). |
+| Actual-Android portability and functional acceptance | Partial: first POCO startup confirmed by the owner; simpler installation UX and remaining device/functional checks are open. This is not a full Android acceptance pass. Use the phase-1 follow-up and section-7 matrix. |
 | T1: complete Tamagotchi core in the shared room PWA | Implementation and local automated checks complete; GitHub and actual-device parity acceptance pending. See [verification](VERIFICATION.md). |
 | T2: notification-enabled iPad candidate | Pending. |
 | D1: shared room hosted by the desktop application | Later work; pending. |

@@ -1,8 +1,19 @@
 # Android / POCO acceptance — A1
 
-Status: **physical-device checks pending**. Initial device information is supplied
+Status: **first startup confirmed by the owner on the POCO (2026-11-10)**;
+remaining physical-device checks are pending. Device information is supplied
 by the owner, not obtained from an automated device session. Follow the
 [German setup and first-test instructions](INSTALLATION_ANDROID_DE.md).
+
+## First owner feedback (2026-11-10)
+
+The owner successfully started Aiko on the POCO and reports that it works in
+principle. Initial installation required more manual steps than the iPad route
+and is not yet considered convenient enough. Keep simpler Android onboarding
+as an open UX item within the same PWA. The precise manual steps, browser version,
+running package version and standalone/window mode have not been recorded.
+This confirms startup, not full installation, persistence, offline, update or
+functional acceptance. No further runtime change is initiated by this record.
 
 ## Record for each pass
 
@@ -16,8 +27,9 @@ by the owner, not obtained from an automated device session. Follow the
 
 ## Technical and interaction checks
 
-All rows below are pending on the actual POCO. First separate Python/installation
-failures from viewport/input findings. Use the same built package as the iPad;
+Only first startup is confirmed so far; the other observations below remain
+pending on the actual POCO. Separate Python/installation failures from
+viewport/input findings. Use the same built package as the iPad;
 do not create an Android-specific rule implementation or save.
 
 | Area | Required observation |

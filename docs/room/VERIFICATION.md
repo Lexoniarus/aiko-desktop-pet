@@ -1298,3 +1298,14 @@ Deployment commit `67535817` and
 passed: preflight accepted the new identity, the deployment step took about seven
 seconds, and the public descriptor, starter and complete runtime checksum matched.
 Both platforms continue using the existing `/room/` update feed and local save.
+
+## First POCO startup reported by the owner (2026-11-10)
+
+The owner confirms that Aiko started successfully on the POCO and works in
+principle. They found first installation more manual than on the iPad and not
+yet optimal. The Android acceptance sheet records this as startup evidence and
+an open onboarding UX item, not full device acceptance. Running package/browser
+versions, standalone mode, exact manual steps and remaining device checks are
+unrecorded; do not assign this report to a particular release by inference.
+The plan now makes ongoing delivery-cost review explicit. This documentation
+record changes no runtime, hosting, service subscription or billing setting.
