@@ -826,8 +826,8 @@
     },
     {
       "path": "look/00.png",
-      "source": "private-v3-gaze-modular/look/00.png",
-      "source_sha256": "738572e438a2db2fe92c96cab9299390df7a97c157eb08deb8de2e9eca584d19",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/00.png",
+      "source_sha256": "1eed1507477963388b933d440b144d58a5e4703584f5b5f0319108a0606d52cd",
       "source_size": [
         384,
         416
@@ -835,11 +835,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 0.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "093f66e0a3d2f276629d9d9c500c971798fa9bf4c6075812ee83f4cac8dc4626",
       "head_provenance": {
         "kind": "corrected_individual_head",
@@ -879,13 +879,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -894,31 +894,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
-      "bytes": 86564,
-      "neck_join": {
-        "file": "frames_2x/look/00.png",
-        "base_sha256": "dbb02fd00bbefe9468537b8b53ec54cb9405e28bd341c22faad84dfa10625d81",
-        "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "1eed1507477963388b933d440b144d58a5e4703584f5b5f0319108a0606d52cd",
+      "bytes": 84775
     },
     {
       "path": "look/01.png",
-      "source": "private-v3-gaze-modular/look/01.png",
-      "source_sha256": "31ac1b1848b700380433606cd2d43d5e2ac8d544351e17006eacf8e194689e24",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/01.png",
+      "source_sha256": "580db492a84f40278bfe8fe4119c30618a04b9371d75ec6d2e12fdbeec00bd2a",
       "source_size": [
         384,
         416
@@ -926,11 +908,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 22.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "ce9dcf1506199971e5eb103cd73986c7d85a408136edd2bc69d32a007d7044d7",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -970,13 +952,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -985,31 +967,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
-      "bytes": 87079,
-      "neck_join": {
-        "file": "frames_2x/look/01.png",
-        "base_sha256": "384780c4fd23e36f8e0846bd2ae0a945bcd57514aad983e38a204958c48c7817",
-        "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "580db492a84f40278bfe8fe4119c30618a04b9371d75ec6d2e12fdbeec00bd2a",
+      "bytes": 85291
     },
     {
       "path": "look/02.png",
-      "source": "private-v3-gaze-modular/look/02.png",
-      "source_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/02.png",
+      "source_sha256": "9fa246dc14a1a12dc2d9065e1cfe8b085e16824df16df0fa88363558115e6d89",
       "source_size": [
         384,
         416
@@ -1017,11 +981,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 45.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "9e62cf16f77ea4487effc7389c2dba89d34f69dfce17beac83adabea624c29c8",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1061,13 +1025,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1076,31 +1040,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
-      "bytes": 84791,
-      "neck_join": {
-        "file": "frames_2x/look/02.png",
-        "base_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
-        "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 8,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "9fa246dc14a1a12dc2d9065e1cfe8b085e16824df16df0fa88363558115e6d89",
+      "bytes": 83011
     },
     {
       "path": "look/03.png",
-      "source": "private-v3-gaze-modular/look/03.png",
-      "source_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/03.png",
+      "source_sha256": "98acb626a88956ce9f16650cacab44a844017581e23706f5a61f3e1ed0a7d498",
       "source_size": [
         384,
         416
@@ -1108,11 +1054,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 67.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "d0cbc3703b2901e8236143b58992813495fa9f97bfb0498ce5732514000a6c1e",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1152,13 +1098,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1167,31 +1113,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
-      "bytes": 83391,
-      "neck_join": {
-        "file": "frames_2x/look/03.png",
-        "base_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
-        "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "98acb626a88956ce9f16650cacab44a844017581e23706f5a61f3e1ed0a7d498",
+      "bytes": 81789
     },
     {
       "path": "look/04.png",
-      "source": "private-v3-gaze-modular/look/04.png",
-      "source_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/04.png",
+      "source_sha256": "3602364b6ae60bbd4707c2255eb1002a15eca1ad42a4223188ed20c89cff59f5",
       "source_size": [
         384,
         416
@@ -1199,11 +1127,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 90.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "39ce85b6e7e473717768feca109d64abf1319cf0568900b66669c731505a2865",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1243,13 +1171,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1258,31 +1186,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
-      "bytes": 84234,
-      "neck_join": {
-        "file": "frames_2x/look/04.png",
-        "base_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
-        "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 10,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "3602364b6ae60bbd4707c2255eb1002a15eca1ad42a4223188ed20c89cff59f5",
+      "bytes": 82568
     },
     {
       "path": "look/05.png",
-      "source": "private-v3-gaze-modular/look/05.png",
-      "source_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/05.png",
+      "source_sha256": "9587ed92d75dce1a3e1ec465f8c00c3142b87702881ec0f7fc93861e265b5220",
       "source_size": [
         384,
         416
@@ -1290,11 +1200,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 112.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "7970486d597278a82a4338303c61f18f8f25f5055d7aafbb2cae79a5c0716f2b",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1334,13 +1244,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1349,31 +1259,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
-      "bytes": 84377,
-      "neck_join": {
-        "file": "frames_2x/look/05.png",
-        "base_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
-        "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "9587ed92d75dce1a3e1ec465f8c00c3142b87702881ec0f7fc93861e265b5220",
+      "bytes": 82612
     },
     {
       "path": "look/06.png",
-      "source": "private-v3-gaze-modular/look/06.png",
-      "source_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/06.png",
+      "source_sha256": "be9c44b81dd781a69f8c6fb66f6466f82ad42dff68dccf33d9273e53d595d403",
       "source_size": [
         384,
         416
@@ -1381,11 +1273,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 135.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "24da50baac4eb56fc941afe4d320de744e393e98d9b7174c5cb8978468747c16",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1425,13 +1317,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1440,31 +1332,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
-      "bytes": 82816,
-      "neck_join": {
-        "file": "frames_2x/look/06.png",
-        "base_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
-        "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 51,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "be9c44b81dd781a69f8c6fb66f6466f82ad42dff68dccf33d9273e53d595d403",
+      "bytes": 81180
     },
     {
       "path": "look/07.png",
-      "source": "private-v3-gaze-modular/look/07.png",
-      "source_sha256": "c38bf71dacd20da62d4858dfe8ec2107d683d51ee5b3e3028e85ce61e72c4ac8",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/07.png",
+      "source_sha256": "3ffab90eb5469e650e45c5c24b618eaf642e76ab26e3b890e6381113d4a91aa8",
       "source_size": [
         384,
         416
@@ -1472,11 +1346,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 157.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "709ceb1aade47eca952f83450690f8ce7b77f65b0e5e7ae2569f87ea3ebde6b3",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1516,13 +1390,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1531,31 +1405,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
-      "bytes": 86542,
-      "neck_join": {
-        "file": "frames_2x/look/07.png",
-        "base_sha256": "ecc451df0fa359a462c58e2d496413e84a66f8ac48ab95813a106c2c33b7d7a2",
-        "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "3ffab90eb5469e650e45c5c24b618eaf642e76ab26e3b890e6381113d4a91aa8",
+      "bytes": 84911
     },
     {
       "path": "look/08.png",
-      "source": "private-v3-gaze-modular/look/08.png",
-      "source_sha256": "3c51025df7925ac59a37a4b4d96df77c85a0f9ec737464cb2195325638cde1a5",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/08.png",
+      "source_sha256": "ea90caa40c6199e35ce2669b05e745a257e6e96653206e142d64d2cf3634e48b",
       "source_size": [
         384,
         416
@@ -1563,11 +1419,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 180.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "6dc9c42582afe47fcdf42b5c59f2882191100c530161ec93586119dadae79198",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1607,13 +1463,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1622,31 +1478,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
-      "bytes": 86320,
-      "neck_join": {
-        "file": "frames_2x/look/08.png",
-        "base_sha256": "875c5d33e48881ab42cc8bf2ae3286e63a54343e3291a5c3bd2549c77554118b",
-        "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 27,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "ea90caa40c6199e35ce2669b05e745a257e6e96653206e142d64d2cf3634e48b",
+      "bytes": 84613
     },
     {
       "path": "look/09.png",
-      "source": "private-v3-gaze-modular/look/09.png",
-      "source_sha256": "89b2153f2e5105137e766c59a5785242c21554ab6bea38e41aeca5c7b4e16e9f",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/09.png",
+      "source_sha256": "19b492a8352fdea7a7eaabf6c7eb74a975b2084dba141d9ce98cd9f9eb0e8f56",
       "source_size": [
         384,
         416
@@ -1654,11 +1492,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 202.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "ee0a2cd9ec32452499555dcf8c333bb918a6234adb1e501ab50bccf5371e3678",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1698,13 +1536,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1713,31 +1551,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
-      "bytes": 83687,
-      "neck_join": {
-        "file": "frames_2x/look/09.png",
-        "base_sha256": "be133162c80614c99ba447a50d457ae7e68b4d77b2508d03037e9be437b3e6d1",
-        "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 37,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "19b492a8352fdea7a7eaabf6c7eb74a975b2084dba141d9ce98cd9f9eb0e8f56",
+      "bytes": 82024
     },
     {
       "path": "look/10.png",
-      "source": "private-v3-gaze-modular/look/10.png",
-      "source_sha256": "267f230f11b3c1e5f3a6a761381073d0183a5f907c1ccaa0645cf8aeac28c8f4",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/10.png",
+      "source_sha256": "73a312d0bb89d524f885bbe722115ec367b3a946106f70ce7ccab5a289c1b58c",
       "source_size": [
         384,
         416
@@ -1745,11 +1565,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 225.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "87fa8326c7f0c3b49d3ec6a459c40311e460a2843a630b6591f065d0e850fb03",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1789,13 +1609,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1804,31 +1624,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
-      "bytes": 84166,
-      "neck_join": {
-        "file": "frames_2x/look/10.png",
-        "base_sha256": "2a05610328fa25477ecf73f6bf2a115923b2750dd4ed0938e5638b3ceaf788fe",
-        "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "73a312d0bb89d524f885bbe722115ec367b3a946106f70ce7ccab5a289c1b58c",
+      "bytes": 82502
     },
     {
       "path": "look/11.png",
-      "source": "private-v3-gaze-modular/look/11.png",
-      "source_sha256": "5c9e882586a4264fa2ede633d8e61a02f91acdfc99f44c5ebb3e26175791ec38",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/11.png",
+      "source_sha256": "8c0f1df6b7f2caa4da144665b2e7d9ba2a6d0a42cb9c6e61640e4bd2e15eb581",
       "source_size": [
         384,
         416
@@ -1836,11 +1638,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 247.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "c7fc8cdc462ab2e90256e3d96d052c98bef302900f4facf7122d7ad55d93c048",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1880,13 +1682,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1895,31 +1697,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
-      "bytes": 83984,
-      "neck_join": {
-        "file": "frames_2x/look/11.png",
-        "base_sha256": "f79be811ccf5bf76f3c0361b171997cc7f85503800b7e6e15f53acb3cace2d6f",
-        "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 15,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "8c0f1df6b7f2caa4da144665b2e7d9ba2a6d0a42cb9c6e61640e4bd2e15eb581",
+      "bytes": 82229
     },
     {
       "path": "look/12.png",
-      "source": "private-v3-gaze-modular/look/12.png",
-      "source_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/12.png",
+      "source_sha256": "70b9f13b5599b153827c0623a3152057f93e628536190f3457e9c5e5a9b1ae8d",
       "source_size": [
         384,
         416
@@ -1927,11 +1711,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 270.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "43d129c900b1c44ea0515537b94593dc5a7ee516114928c20f90dbb544216c9e",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -1971,13 +1755,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -1986,31 +1770,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
-      "bytes": 82735,
-      "neck_join": {
-        "file": "frames_2x/look/12.png",
-        "base_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
-        "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "70b9f13b5599b153827c0623a3152057f93e628536190f3457e9c5e5a9b1ae8d",
+      "bytes": 81100
     },
     {
       "path": "look/13.png",
-      "source": "private-v3-gaze-modular/look/13.png",
-      "source_sha256": "2c112e3a623476dedb15a879d8140364080d67aa97fe1afb27b4ec327bd01a1b",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/13.png",
+      "source_sha256": "fe0a6a9042b7662e25c54c7025a8af0312b3babde58f9dca4e260c77dd72711d",
       "source_size": [
         384,
         416
@@ -2018,11 +1784,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 292.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "aa5b084ccdd0d7cc85d2e4381cc797a4ab6a92666709b88e1bf6e76cd4354b1b",
       "head_provenance": {
         "kind": "extracted_individual_head",
@@ -2062,13 +1828,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -2077,31 +1843,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
-      "bytes": 82757,
-      "neck_join": {
-        "file": "frames_2x/look/13.png",
-        "base_sha256": "a1c12c57ce8dd2eb912de395b3d98f6e81009384e14fe0363fc4007c1fffe111",
-        "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "fe0a6a9042b7662e25c54c7025a8af0312b3babde58f9dca4e260c77dd72711d",
+      "bytes": 81048
     },
     {
       "path": "look/14.png",
-      "source": "private-v3-gaze-modular/look/14.png",
-      "source_sha256": "f47bfe581f748b0d82667f202952cc6e5f15961caa8bb3d6748f6d86b6173348",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/14.png",
+      "source_sha256": "c18e62e248b5be298b2c21efbe5a78e138e4495e99b23627a6cc54320dd8a156",
       "source_size": [
         384,
         416
@@ -2109,11 +1857,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 315.0,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "d1b31c2692d24c24eedb77a71985c3dbf45843e89fd88acb921f695885e17381",
       "head_provenance": {
         "kind": "corrected_individual_head",
@@ -2153,13 +1901,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -2168,31 +1916,13 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
-      "bytes": 83848,
-      "neck_join": {
-        "file": "frames_2x/look/14.png",
-        "base_sha256": "c5eeeac7b92a7b4aaff343c8b9747adab9ac0be74cf22981087cf69192186bc5",
-        "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 26,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "c18e62e248b5be298b2c21efbe5a78e138e4495e99b23627a6cc54320dd8a156",
+      "bytes": 81935
     },
     {
       "path": "look/15.png",
-      "source": "private-v3-gaze-modular/look/15.png",
-      "source_sha256": "33541740e74c44c88371062416627dedd663f0bd1adbad0ef01cabad137da40a",
+      "source": "private-v3-front-source-2026-11-06/frames_2x/look/15.png",
+      "source_sha256": "a24d6fea666de98bdcf6e2f682683262acad041d5f853d90388d4d8e55a60c84",
       "source_size": [
         384,
         416
@@ -2200,11 +1930,11 @@
       "status": "composited_v3_gaze_shared_idle_body",
       "degrees_clockwise_from_up": 337.5,
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "scale_calibration": "shared_idle_body_pixels",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "scale_calibration": "unchanged_registered_v3_head_current_neutral_body",
       "shared_body_from_y": 260,
-      "body_source": "private-v3-gaze-modular/body.png",
-      "body_sha256": "1448d4c158a58445ca2964bf5acf6e2de0a066780b5be68753ef7f6ca786fd8c",
+      "body_source": "expressions/rest-neutral/00.png",
+      "body_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "head_sha256": "cb30850c5042f87c48828b5a521a0089402e43d221ce3afea905bea6c402cc5c",
       "head_provenance": {
         "kind": "hair_corrected_individual_head",
@@ -2248,13 +1978,13 @@
         }
       },
       "reference_foot_bounds": [
-        156,
+        159,
         351,
-        226,
+        228,
         388
       ],
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "foot_anchor_error": [
@@ -2263,26 +1993,8 @@
       ],
       "aspect_rescale_ratio": 1.0,
       "alpha128_normalized_pixels": 0,
-      "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
-      "bytes": 83356,
-      "neck_join": {
-        "file": "frames_2x/look/15.png",
-        "base_sha256": "c059d288057fcaf2f8a88e8aa4ca9e36f711db5e4b9468d506df43ce9a462888",
-        "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      }
+      "sha256": "a24d6fea666de98bdcf6e2f682683262acad041d5f853d90388d4d8e55a60c84",
+      "bytes": 81597
     },
     {
       "path": "petting/00.png",
@@ -5749,296 +5461,497 @@
           "texture_source": "same_original_head",
           "collar_source": "same_original_step_body"
         }
-      },
-      {
-        "file": "frames_2x/look/00.png",
-        "base_sha256": "dbb02fd00bbefe9468537b8b53ec54cb9405e28bd341c22faad84dfa10625d81",
-        "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/01.png",
-        "base_sha256": "384780c4fd23e36f8e0846bd2ae0a945bcd57514aad983e38a204958c48c7817",
-        "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/02.png",
-        "base_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
-        "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 8,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/03.png",
-        "base_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
-        "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/04.png",
-        "base_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
-        "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 10,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/05.png",
-        "base_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
-        "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 7,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/06.png",
-        "base_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
-        "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 51,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/07.png",
-        "base_sha256": "ecc451df0fa359a462c58e2d496413e84a66f8ac48ab95813a106c2c33b7d7a2",
-        "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 17,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/08.png",
-        "base_sha256": "875c5d33e48881ab42cc8bf2ae3286e63a54343e3291a5c3bd2549c77554118b",
-        "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 27,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/09.png",
-        "base_sha256": "be133162c80614c99ba447a50d457ae7e68b4d77b2508d03037e9be437b3e6d1",
-        "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 37,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/10.png",
-        "base_sha256": "2a05610328fa25477ecf73f6bf2a115923b2750dd4ed0938e5638b3ceaf788fe",
-        "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/11.png",
-        "base_sha256": "f79be811ccf5bf76f3c0361b171997cc7f85503800b7e6e15f53acb3cace2d6f",
-        "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 15,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/12.png",
-        "base_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
-        "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/13.png",
-        "base_sha256": "a1c12c57ce8dd2eb912de395b3d98f6e81009384e14fe0363fc4007c1fffe111",
-        "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 13,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/14.png",
-        "base_sha256": "c5eeeac7b92a7b4aaff343c8b9747adab9ac0be74cf22981087cf69192186bc5",
-        "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 26,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
-      },
-      {
-        "file": "frames_2x/look/15.png",
-        "base_sha256": "c059d288057fcaf2f8a88e8aa4ca9e36f711db5e4b9468d506df43ce9a462888",
-        "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
-        "bounds_2x": [
-          165,
-          233,
-          231,
-          259
-        ],
-        "changed_pixels": 6,
-        "method": "complete_original_neck_silhouette_collar_foreground",
-        "head_translation": [
-          0,
-          0
-        ],
-        "head_scale": 1
       }
     ],
     "neck_owner": "head"
+  },
+  "frontal_source_corrections": {
+    "source_job": "2026-11-06-v3-koerper-zuordnung",
+    "reference": "expressions/rest-neutral/00.png",
+    "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+    "image_generation_calls": 0,
+    "scope": "16 current V3 heads on the neutral body; four takeoff legacy upper parts replaced; other poses retained",
+    "frames": [
+      {
+        "file": "frames_2x/look/00.png",
+        "before_sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
+        "sha256": "1eed1507477963388b933d440b144d58a5e4703584f5b5f0319108a0606d52cd",
+        "source_head_sha256": "093f66e0a3d2f276629d9d9c500c971798fa9bf4c6075812ee83f4cac8dc4626",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "f92ba9ba946fa1bf1fac79cc3cbb1755c2493efe4a769ec22fa46356b73f2c77",
+        "previous_neck_join": {
+          "file": "frames_2x/look/00.png",
+          "base_sha256": "dbb02fd00bbefe9468537b8b53ec54cb9405e28bd341c22faad84dfa10625d81",
+          "sha256": "2de1a51b20a2aeb31fbe1e3aa80e0689bc8982221b767b7279991dc67211c341",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 6,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/01.png",
+        "before_sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
+        "sha256": "580db492a84f40278bfe8fe4119c30618a04b9371d75ec6d2e12fdbeec00bd2a",
+        "source_head_sha256": "ce9dcf1506199971e5eb103cd73986c7d85a408136edd2bc69d32a007d7044d7",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "b6b6d5b471e97ef4b35e60fd34e72be5e71dd785c81d9442493952443de70bbc",
+        "previous_neck_join": {
+          "file": "frames_2x/look/01.png",
+          "base_sha256": "384780c4fd23e36f8e0846bd2ae0a945bcd57514aad983e38a204958c48c7817",
+          "sha256": "ae7eaa10cb07e51d840e64f33078da39bdb1563b5f3b1b2373b0217b67ce286a",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 7,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/02.png",
+        "before_sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
+        "sha256": "9fa246dc14a1a12dc2d9065e1cfe8b085e16824df16df0fa88363558115e6d89",
+        "source_head_sha256": "9e62cf16f77ea4487effc7389c2dba89d34f69dfce17beac83adabea624c29c8",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "e588f0d07ff7e0604e9cb51c59b56e8981d9c8dabb7d127bd22411a60ccc6d97",
+        "previous_neck_join": {
+          "file": "frames_2x/look/02.png",
+          "base_sha256": "01b20a2e8affb00f9a9bab33028c74009f1a6936a07f0133e41eddf5e7d9e5ba",
+          "sha256": "ec782b397023956a62d198114ae3d38d81b95a6533791a601ba7510ad3645ceb",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 8,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/03.png",
+        "before_sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
+        "sha256": "98acb626a88956ce9f16650cacab44a844017581e23706f5a61f3e1ed0a7d498",
+        "source_head_sha256": "d0cbc3703b2901e8236143b58992813495fa9f97bfb0498ce5732514000a6c1e",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "c8796dcac2ea33ade2ba053eb6a8332ba39215e19d336619a109e14d4b016646",
+        "previous_neck_join": {
+          "file": "frames_2x/look/03.png",
+          "base_sha256": "8a2c285e02181e2871a74013fc9bccfeda5023246368e1d393c66a3ac0d250f8",
+          "sha256": "bccf4b4394fbebd0735a976f6b1009f63b928bb607995e7a05946ef44200b39d",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 13,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/04.png",
+        "before_sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
+        "sha256": "3602364b6ae60bbd4707c2255eb1002a15eca1ad42a4223188ed20c89cff59f5",
+        "source_head_sha256": "39ce85b6e7e473717768feca109d64abf1319cf0568900b66669c731505a2865",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "56807c98c574478bde31c1722ff9f27897bf73833d42eb7cdedafa7aba3e5354",
+        "previous_neck_join": {
+          "file": "frames_2x/look/04.png",
+          "base_sha256": "5b5129c6370d6bc75662ee55ba88fb28b7d26da7c933abebebc7294a2ee4670f",
+          "sha256": "d2cb01251894c24b897b0fe7a73e8db4f443cb9b9b0b70ce258c5ee2565a6854",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 10,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/05.png",
+        "before_sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
+        "sha256": "9587ed92d75dce1a3e1ec465f8c00c3142b87702881ec0f7fc93861e265b5220",
+        "source_head_sha256": "7970486d597278a82a4338303c61f18f8f25f5055d7aafbb2cae79a5c0716f2b",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "92643c2fa7ae60dc4cafe754be0034caf9637b321daf6f7cd584ede6a58496b0",
+        "previous_neck_join": {
+          "file": "frames_2x/look/05.png",
+          "base_sha256": "8c5483c1d3cc9cdae377418c55c58915cb14dffb75966e72e07d65e2a177bbfb",
+          "sha256": "3ea9c5fd492c849612d45fcc7b04dbd4195cf307edb15d092f272be38a5ec48e",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 7,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/06.png",
+        "before_sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
+        "sha256": "be9c44b81dd781a69f8c6fb66f6466f82ad42dff68dccf33d9273e53d595d403",
+        "source_head_sha256": "24da50baac4eb56fc941afe4d320de744e393e98d9b7174c5cb8978468747c16",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "932c05b7a0511c688a78c55c8a32e505576630cd8b07b4f54e8fd31f02ce3c19",
+        "previous_neck_join": {
+          "file": "frames_2x/look/06.png",
+          "base_sha256": "bec8412b8605da0406f5199cc528495c404321bc7cb908718d534fcd7639bcd4",
+          "sha256": "ceac7733f874a71ce8759fabde34ec107b83a25cb3ac21ffaeabc5a496de1a3e",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 51,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/07.png",
+        "before_sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
+        "sha256": "3ffab90eb5469e650e45c5c24b618eaf642e76ab26e3b890e6381113d4a91aa8",
+        "source_head_sha256": "709ceb1aade47eca952f83450690f8ce7b77f65b0e5e7ae2569f87ea3ebde6b3",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "393eecf4349b9f24c158b8e194c56541a4d0017a26c9fc91ecb4abc6abe448d3",
+        "previous_neck_join": {
+          "file": "frames_2x/look/07.png",
+          "base_sha256": "ecc451df0fa359a462c58e2d496413e84a66f8ac48ab95813a106c2c33b7d7a2",
+          "sha256": "318eed71f39676daa8f94ab31cf56837f61b1e9b80d44068ad9229806273a787",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 17,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/08.png",
+        "before_sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
+        "sha256": "ea90caa40c6199e35ce2669b05e745a257e6e96653206e142d64d2cf3634e48b",
+        "source_head_sha256": "6dc9c42582afe47fcdf42b5c59f2882191100c530161ec93586119dadae79198",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "17b5730fcd71b8d5769f6704954356f484a1d0c301b93fa1aa60780f64176291",
+        "previous_neck_join": {
+          "file": "frames_2x/look/08.png",
+          "base_sha256": "875c5d33e48881ab42cc8bf2ae3286e63a54343e3291a5c3bd2549c77554118b",
+          "sha256": "a7ec33b9beee7d532c6d94583f678a04ab7fe4776f04de0a2bc06cce141b5c34",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 27,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/09.png",
+        "before_sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
+        "sha256": "19b492a8352fdea7a7eaabf6c7eb74a975b2084dba141d9ce98cd9f9eb0e8f56",
+        "source_head_sha256": "ee0a2cd9ec32452499555dcf8c333bb918a6234adb1e501ab50bccf5371e3678",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "986e78ea8711deb77986e8a228dd7937048e6ab7b3b8530b2b37a92b9185105d",
+        "previous_neck_join": {
+          "file": "frames_2x/look/09.png",
+          "base_sha256": "be133162c80614c99ba447a50d457ae7e68b4d77b2508d03037e9be437b3e6d1",
+          "sha256": "107976bc0e3238ccb57c9022543153915b2c0387d82b00a4f2d099f9ecfbbe67",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 37,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/10.png",
+        "before_sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
+        "sha256": "73a312d0bb89d524f885bbe722115ec367b3a946106f70ce7ccab5a289c1b58c",
+        "source_head_sha256": "87fa8326c7f0c3b49d3ec6a459c40311e460a2843a630b6591f065d0e850fb03",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "49c40ef297bb124ded2ed820db4311bc5b11bde156ad2315be0a1a4df2ede7d6",
+        "previous_neck_join": {
+          "file": "frames_2x/look/10.png",
+          "base_sha256": "2a05610328fa25477ecf73f6bf2a115923b2750dd4ed0938e5638b3ceaf788fe",
+          "sha256": "60cde480a6f0d516d0e3f9957556f02947f0bbf52d66bfe0a497505586ca2639",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 13,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/11.png",
+        "before_sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
+        "sha256": "8c0f1df6b7f2caa4da144665b2e7d9ba2a6d0a42cb9c6e61640e4bd2e15eb581",
+        "source_head_sha256": "c7fc8cdc462ab2e90256e3d96d052c98bef302900f4facf7122d7ad55d93c048",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "f59235bf189dc7c9be79d7b80e69b008dd9fbda9a0885a528a57c434867a6147",
+        "previous_neck_join": {
+          "file": "frames_2x/look/11.png",
+          "base_sha256": "f79be811ccf5bf76f3c0361b171997cc7f85503800b7e6e15f53acb3cace2d6f",
+          "sha256": "68d1e9312f77f33ee68a9debcb4fa9d3906354584c54bcb1739ae9ad423e66c6",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 15,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/12.png",
+        "before_sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
+        "sha256": "70b9f13b5599b153827c0623a3152057f93e628536190f3457e9c5e5a9b1ae8d",
+        "source_head_sha256": "43d129c900b1c44ea0515537b94593dc5a7ee516114928c20f90dbb544216c9e",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "d6b2ca230ff2dfd383874441be4a336cdd78e63d36fc4a88ddda1876df5c236f",
+        "previous_neck_join": {
+          "file": "frames_2x/look/12.png",
+          "base_sha256": "f5e1d46bd5f5bad6977d761b715a65912e1ad128d1da2e20e2da11c3b8461002",
+          "sha256": "effc47f4820c4b2cc72edf4a79aaba963fcdcfebbe68fd37c903a73e77c5fc35",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 6,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/13.png",
+        "before_sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
+        "sha256": "fe0a6a9042b7662e25c54c7025a8af0312b3babde58f9dca4e260c77dd72711d",
+        "source_head_sha256": "aa5b084ccdd0d7cc85d2e4381cc797a4ab6a92666709b88e1bf6e76cd4354b1b",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "32c59290354ec73c383e9eb1b135b08ffd7cff4d05418f18bd26a34aba4dcfc1",
+        "previous_neck_join": {
+          "file": "frames_2x/look/13.png",
+          "base_sha256": "a1c12c57ce8dd2eb912de395b3d98f6e81009384e14fe0363fc4007c1fffe111",
+          "sha256": "e3757134ce7dc28dd6745c4aa72df6e6384964422324b9b1ceca8e0294f229e8",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 13,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/14.png",
+        "before_sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
+        "sha256": "c18e62e248b5be298b2c21efbe5a78e138e4495e99b23627a6cc54320dd8a156",
+        "source_head_sha256": "d1b31c2692d24c24eedb77a71985c3dbf45843e89fd88acb921f695885e17381",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "f7594e708bdeef99ac3b56cf733f8ed9e3c6ad288afd28ee82dd8f5ac333e586",
+        "previous_neck_join": {
+          "file": "frames_2x/look/14.png",
+          "base_sha256": "c5eeeac7b92a7b4aaff343c8b9747adab9ac0be74cf22981087cf69192186bc5",
+          "sha256": "71b130968caa641fd8642623e9db679ec8347ca46f01527a4f74170542b03b3f",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 26,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "frames_2x/look/15.png",
+        "before_sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
+        "sha256": "a24d6fea666de98bdcf6e2f682683262acad041d5f853d90388d4d8e55a60c84",
+        "source_head_sha256": "cb30850c5042f87c48828b5a521a0089402e43d221ce3afea905bea6c402cc5c",
+        "kind": "front_gaze_body_only",
+        "head_before_y": 233,
+        "head_pixels_sha256": "86ed8e204bd61831a5a16abe7ca48578255d2844df6e0c6b8a4a8d047e3b1f02",
+        "previous_neck_join": {
+          "file": "frames_2x/look/15.png",
+          "base_sha256": "c059d288057fcaf2f8a88e8aa4ca9e36f711db5e4b9468d506df43ce9a462888",
+          "sha256": "010263f03a0a6d6f511fea8fad6c60846d8fe0ec03238442b4ec7199d04b3fba",
+          "bounds_2x": [
+            165,
+            233,
+            231,
+            259
+          ],
+          "changed_pixels": 6,
+          "method": "complete_original_neck_silhouette_collar_foreground",
+          "head_translation": [
+            0,
+            0
+          ],
+          "head_scale": 1
+        }
+      },
+      {
+        "file": "body_poses/body-turn-right/01.png",
+        "before_sha256": "ffeba0eb1dbc9a06c356cfa1921cff0fc977056647e320fe1c70443481ab546a",
+        "sha256": "704eeda3954f00a7bee5b5993b246ca9326c7f8c11424c93921e03ac1cd78c01",
+        "kind": "turn_legacy_head_and_upper",
+        "translation": [
+          -3,
+          0
+        ],
+        "protected_lower_from_y": 340,
+        "protected_lower_sha256": "df6fce1c76a3c947c50384752bf2c62d717273e325309a41eb3614c626fc7ab6"
+      },
+      {
+        "file": "body_poses/body-orient-right/01.png",
+        "before_sha256": "ffeba0eb1dbc9a06c356cfa1921cff0fc977056647e320fe1c70443481ab546a",
+        "sha256": "704eeda3954f00a7bee5b5993b246ca9326c7f8c11424c93921e03ac1cd78c01",
+        "kind": "turn_legacy_head_and_upper",
+        "translation": [
+          -3,
+          0
+        ],
+        "protected_lower_from_y": 340,
+        "protected_lower_sha256": "df6fce1c76a3c947c50384752bf2c62d717273e325309a41eb3614c626fc7ab6"
+      },
+      {
+        "file": "body_poses/body-turn-left/01.png",
+        "before_sha256": "f8ccc0fa92a3a9bae2e364b0e47537485e8d2e41460c14caeb08e3d2e55192f2",
+        "sha256": "e08d47449a64156f47e0cccc70180be83394c2ddc3b0a231d664a49819f4377f",
+        "kind": "turn_legacy_head_and_upper",
+        "translation": [
+          3,
+          0
+        ],
+        "protected_lower_from_y": 340,
+        "protected_lower_sha256": "6b7f460d81727e8e99f583d22a6ff4f4886ba9afbc1f9f20c0ee7c160a4fa37a"
+      },
+      {
+        "file": "body_poses/body-orient-left/01.png",
+        "before_sha256": "f8ccc0fa92a3a9bae2e364b0e47537485e8d2e41460c14caeb08e3d2e55192f2",
+        "sha256": "e08d47449a64156f47e0cccc70180be83394c2ddc3b0a231d664a49819f4377f",
+        "kind": "turn_legacy_head_and_upper",
+        "translation": [
+          3,
+          0
+        ],
+        "protected_lower_from_y": 340,
+        "protected_lower_sha256": "6b7f460d81727e8e99f583d22a6ff4f4886ba9afbc1f9f20c0ee7c160a4fa37a"
+      }
+    ]
   }
 }

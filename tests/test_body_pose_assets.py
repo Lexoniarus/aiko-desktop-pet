@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
@@ -15,6 +16,49 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 
 
 class BodyPoseAssetTests(unittest.TestCase):
+    def test_frontal_gazes_keep_v3_heads_on_current_neutral_body(self) -> None:
+        data = json.loads((ASSET_ROOT / "frames_2x/manifest.json").read_text("utf-8"))
+        provenance = data["frontal_source_corrections"]
+        reference = ASSET_ROOT / provenance["reference"]
+        self.assertEqual(hashlib.sha256(reference.read_bytes()).hexdigest(),
+                         provenance["reference_sha256"])
+        with Image.open(reference) as image:
+            lower = image.convert("RGBA").crop((0, 260, 384, 416)).tobytes()
+        rows = [r for r in provenance["frames"] if r["kind"] == "front_gaze_body_only"]
+        self.assertEqual({r["file"] for r in rows},
+                         {f"frames_2x/look/{i:02}.png" for i in range(16)})
+        for row in rows:
+            with (
+                self.subTest(frame=row["file"]),
+                Image.open(ASSET_ROOT / row["file"]) as im,
+            ):
+                image = im.convert("RGBA")
+                self.assertEqual(image.crop((0, 260, 384, 416)).tobytes(), lower)
+                head = image.crop((0, 0, 384, row["head_before_y"])).tobytes()
+                self.assertEqual(
+                    hashlib.sha256(head).hexdigest(), row["head_pixels_sha256"],
+                )
+
+    def test_first_turn_step_reuses_neutral_v3_upper_and_retains_legs(self) -> None:
+        path = ASSET_ROOT / "body_poses/frontal-source-2026-11-06.json"
+        data = json.loads(path.read_text("utf-8"))
+        self.assertEqual(len(data["frames"]), 4)
+        with Image.open(ASSET_ROOT / data["reference"]) as im:
+            neutral = im.convert("RGBA")
+        for row in data["frames"]:
+            with (
+                self.subTest(frame=row["file"]),
+                Image.open(ASSET_ROOT / row["file"]) as im,
+            ):
+                registered = Image.new("RGBA", (384, 416))
+                registered.paste(neutral, tuple(row["translation"]))
+                self.assertEqual(im.crop((0, 0, 384, 283)).tobytes(),
+                                 registered.crop((0, 0, 384, 283)).tobytes())
+                lower = im.crop((0, row["protected_lower_from_y"], 384, 416)).tobytes()
+                self.assertEqual(
+                    hashlib.sha256(lower).hexdigest(), row["protected_lower_sha256"],
+                )
+
     def test_step_clips_share_timing_and_family_across_head_axes(self) -> None:
         clips = load_character_catalog().body_clips
         for side in ("left", "right"):

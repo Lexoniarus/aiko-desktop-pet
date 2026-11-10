@@ -9,6 +9,63 @@ sequence and timings. No second small-image series is generated. Historical
 The Mastermind snack finale uses that same clip and its authored hand anchors.
 See [three-bite eating](V3_EATING_THREE_BITES.md).
 
+## Current V3 frontal sources in gaze and turns (2026-11-06)
+
+The sixteen frontal `look` images now share the exact lower body of the current
+neutral Idle. Their registered V3 heads, including the up/down poses, are
+preserved. The previous images still contained the archived V2 body below the
+head, despite their V3 montage status. All 1X views use the same updated 2X
+source through the existing image cache.
+
+The first takeoff image (`01.png`) in both `body-turn-*` and `body-orient-*`
+also contained an exact V2 head and torso, translated by three pixels. Only
+those four frontal upper parts are replaced with the current neutral V3 art,
+retaining their original weight-shift translation, connected step skirt/legs
+and foot lift. They are not replaced with a motionless standing frame.
+The other quarter/profile turn phases and the approved profile walking
+corrections remain byte-identical. Runtime selection and timing are unchanged:
+the wrong art was baked into the selected PNGs, not selected as an old atlas.
+
+The HD manifest records the unchanged head fingerprints and current body
+reference in `frontal_source_corrections`. Superseded frontal neck-join records
+are retained there as history; the unrelated neck corrections remain active.
+The four turning replacements also have provenance in
+`body_poses/frontal-source-2026-11-06.json`. Regression checks protect the
+neutral lower body, existing gaze heads, new turn upper parts and retained legs.
+
+The private reproducible source job is `2026-11-06-v3-koerper-zuordnung`.
+Its `install.py ASSET_ROOT` stages the twenty images and metadata after checking
+every input and installed target hash. It preserves unrelated assets and the
+strict body-pose manifest. Reapply it after historical gaze/body rebuilds.
+This targeted correction supersedes the earlier Idle-only preservation rule
+for these frontal images; it does not redefine the other accepted head axes
+or bodies. No image generation or runtime UI changes are involved.
+
+## Approved true-profile walking joins (2026-11-06)
+
+The two `body-step-left-profil` / `body-step-right-profil` clips now use the
+ten approved revision-4 PNGs from the private
+`2026-11-06-profil-geh-hals-vorschau` job. The lower neck is fitted from the
+under-chin anchor to the collar as one continuous front/back form. During a
+step the existing complete head follows by 1–3 HD pixels backwards; phase
+01 also adds one downward pixel. These integer translations preserve the
+head proportions and texture. The additional offset returns to zero at rest.
+
+Both clips retain `stand → 01 → 03 → 07 → 00 → stand` and
+`60/110/100/130/120/100 ms` (620 ms). Body pixels below the neck, feet, stride,
+the strict body manifest, all other gaze/head-axis variants and the atlases
+are unchanged. The 1X view continues to be derived from the same 2X images.
+Hashes and head offsets are recorded in
+`aiko_pet/assets/body_poses/profile-walk-2026-11-06.json`.
+
+Reapply the approved package with its private `install_runtime.py ASSET_ROOT`
+after any base body-pose export. The installer validates all ten source and
+target hashes and both clip timelines before staging replacements; it refuses
+unknown target revisions. Originals and assembly diagnostics remain outside
+Git. No new image generation or runtime animation code is involved. The
+earlier no-head-translation neck installer applies to the other gaze families
+and must not be used to reconstruct these profile corrections.
+
 ## Local neck-join corrections (2026-11-03)
 
 The subsequent walking-only pass fits each lower neck to its actual step

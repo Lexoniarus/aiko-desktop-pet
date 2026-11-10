@@ -1,0 +1,173 @@
+{
+  "source_job": "2026-11-06-profil-geh-hals-vorschau",
+  "approved_preview_revision": 4,
+  "order": [
+    "stand",
+    "01",
+    "03",
+    "07",
+    "00",
+    "stand"
+  ],
+  "durations_ms": [
+    60,
+    110,
+    100,
+    130,
+    120,
+    100
+  ],
+  "note": "User-approved existing profile walk art: smooth lower neck and per-step head registration. Other frames, anchors and timing unchanged. No new generation.",
+  "frames": [
+    {
+      "runtime_path": "body_poses/body-step-right-profil/stand.png",
+      "source_sha256": "32aa270637035fbef6e4600cb6f61db177ece6e2f417cfed3a102a159102f550",
+      "preview_sha256": "98022bdf3c061b10b4b6393c4099e9d819c5eaf0bc327c7e6c5549f7168c3a74",
+      "head_translation_delta": [
+        0,
+        0
+      ],
+      "changed_bounds": [
+        171,
+        235,
+        201,
+        244
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-right-profil/01.png",
+      "source_sha256": "b164e9f335dd1f5b37c0809dbaca3f40905f36f882fe338053c0b8ee5d6b1ce5",
+      "preview_sha256": "768263b965a5b040ef7c813d9a27f00f6b41cfc9d9c7b94c3c6003df742c3757",
+      "head_translation_delta": [
+        -2,
+        1
+      ],
+      "changed_bounds": [
+        86,
+        77,
+        257,
+        250
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-right-profil/03.png",
+      "source_sha256": "5a9e7cf95998a826a9ae09a96720db1b3f724cd56c0e91b3f81695dab4642019",
+      "preview_sha256": "0eb561c9f2829dae1a2fb8cc88aec56413c8418a7b38aa532be7139f02e95e7b",
+      "head_translation_delta": [
+        -3,
+        0
+      ],
+      "changed_bounds": [
+        85,
+        73,
+        257,
+        245
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-right-profil/07.png",
+      "source_sha256": "1db2248c49a8d13a36b9a996d824e4eff6e12f6aea36d43373cdb1b9dc93eb10",
+      "preview_sha256": "f17015710021ecd41d83c6de77ea97ad5b854e3a62e5f672d393df69bf8df66f",
+      "head_translation_delta": [
+        -2,
+        0
+      ],
+      "changed_bounds": [
+        86,
+        75,
+        257,
+        247
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-right-profil/00.png",
+      "source_sha256": "8152abbc476dba0db1e8674f77004e2b5828136c321d40d21375f96435c7a624",
+      "preview_sha256": "608dced5408287cddfce2f6b7cdf66d2d275e1b9cd1e0d8125272b6041ffeb42",
+      "head_translation_delta": [
+        -1,
+        0
+      ],
+      "changed_bounds": [
+        87,
+        75,
+        257,
+        247
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-left-profil/stand.png",
+      "source_sha256": "61237d40f4590d43eee615d802892ecec2ae5de44d7f0419e6aa73f366cb5914",
+      "preview_sha256": "bb364e90610e8cfe53a89d6c50d79ca87a89ada4693150c69a2cb2773f695cb9",
+      "head_translation_delta": [
+        0,
+        0
+      ],
+      "changed_bounds": [
+        183,
+        235,
+        207,
+        245
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-left-profil/01.png",
+      "source_sha256": "5b9f1b1585ea91c98ae2e197032f86bdcfdd8267a4713533049b7b2924de46b5",
+      "preview_sha256": "e58b2bc3e7facf7cf9d4a0ff1d79db2672de0edb47f5c55935f95eb181252982",
+      "head_translation_delta": [
+        2,
+        1
+      ],
+      "changed_bounds": [
+        123,
+        76,
+        305,
+        254
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-left-profil/03.png",
+      "source_sha256": "97dec2177bdf69b7029becad9c93497a7c0cd7ee85f821b8951341adc650ccf2",
+      "preview_sha256": "bd19c22a7b504c6b10b20c23270eae6dc98626a42ba5701c6e50f98c07bb784f",
+      "head_translation_delta": [
+        3,
+        0
+      ],
+      "changed_bounds": [
+        123,
+        72,
+        306,
+        249
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-left-profil/07.png",
+      "source_sha256": "ab87068d0dd9bf6113acaad749c1e0cb2f27b0d1fee8881f423241f1d354fc3e",
+      "preview_sha256": "5cac21b73a3d920f1d2ae57bb475d21ebee5beafbec421b63a2d767a2f2d9482",
+      "head_translation_delta": [
+        2,
+        0
+      ],
+      "changed_bounds": [
+        123,
+        74,
+        305,
+        251
+      ]
+    },
+    {
+      "runtime_path": "body_poses/body-step-left-profil/00.png",
+      "source_sha256": "0413527f5c49be6e032c9169ec117131703a6fbb10f6869ea2334303abbbb7e2",
+      "preview_sha256": "53a419ab72abb4ed6bbe274e1f597bc52835120ec87484f0a25fa21cf3fe0754",
+      "head_translation_delta": [
+        1,
+        0
+      ],
+      "changed_bounds": [
+        123,
+        74,
+        304,
+        251
+      ]
+    }
+  ]
+}
