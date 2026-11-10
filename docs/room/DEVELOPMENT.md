@@ -86,8 +86,14 @@ presentation parity open; successful installation is not visual acceptance.
 ## Updates on the installed icon
 
 The starter checks the current same-origin `install.json` after the local room
-has started, on foreground return and on reconnect (automatic checks are
-throttled to once per minute). Settings also provide a manual check and version.
+has started, on foreground return and on reconnect. The shared runtime owns the
+60-second automatic-check interval for the running app, including calls forwarded
+by cached starters; the starter's private timestamp is not authoritative. Failed
+attempts also count, concurrent checks share the same request, and hidden-app
+foreground/reconnect events do not initiate checks. There is no polling timer.
+Settings provide an immediate manual check and version; a manual check also
+resets the interval before another automatic attempt. The interval is in memory,
+so a fresh app launch can check immediately.
 The descriptor is fetched without caching with a 10-second timeout. A full
 package download has a 10-minute bound and uses the existing streamed manifest,
 file-hash, size, path, protocol and schema checks. Delta downloads are not used.

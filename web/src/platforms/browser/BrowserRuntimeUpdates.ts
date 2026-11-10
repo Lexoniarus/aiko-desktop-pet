@@ -1,5 +1,5 @@
 import type { RoomHostOptions } from '../../bridge/RoomUpdates';
-import { BrowserUpdates } from './BrowserUpdates';
+import { BrowserUpdates } from './BrowserUpdates.ts';
 
 /** Keep cached starters compatible while the current browser runtime owns updates. */
 export function browserRuntimeUpdates(
@@ -10,9 +10,10 @@ export function browserRuntimeUpdates(
   const owner = new BrowserUpdates(version, buildTimestamp);
   if (legacy) {
     // The cached starter calls these public methods after startRoom returns.
-    // Delegate its notice and event wiring, never mutate its private state.
+    // Its event throttle uses stale private state after delegation, so enforce
+    // the interval in the runtime owner. Settings use owner.host's manual check.
     legacy.updates.subscribe = owner.subscribe.bind(owner);
-    legacy.updates.check = owner.check.bind(owner);
+    legacy.updates.check = owner.checkAutomatically.bind(owner);
     legacy.updates.apply = owner.apply.bind(owner);
   } else {
     owner.start();

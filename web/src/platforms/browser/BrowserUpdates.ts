@@ -3,19 +3,19 @@ import type {
   RoomUpdates,
   UpdateState,
 } from '../../bridge/RoomUpdates';
-import { activatePendingPackage, pendingPackage } from './PackageStore';
+import { activatePendingPackage, pendingPackage } from './PackageStore.ts';
 import type { InstalledPackage } from './PackageStore';
 import {
   publishedPackage,
   installPublishedPackage,
   isNewerPublication,
-} from './PublishedPackage';
+} from './PublishedPackage.ts';
 
 export class BrowserUpdates implements RoomUpdates {
   private state: UpdateState;
   private listeners = new Set<(state: UpdateState) => void>();
   private checking?: Promise<void>;
-  private lastCheck = 0;
+  private lastCheck?: number;
   private shutdown?: () => Promise<void>;
   private gameOpen = false;
   private buildTimestamp: number;
@@ -59,11 +59,18 @@ export class BrowserUpdates implements RoomUpdates {
 
   start(): void {
     const check = (): void => {
-      if (!document.hidden && Date.now() - this.lastCheck > 60000) void this.check();
+      if (!document.hidden) void this.checkAutomatically();
     };
     document.addEventListener('visibilitychange', check);
     window.addEventListener('online', check);
-    void this.check();
+    void this.checkAutomatically();
+  }
+
+  checkAutomatically(): Promise<void> {
+    // Enforce the interval here, including calls forwarded by cached starters.
+    if (this.lastCheck !== undefined && Date.now() - this.lastCheck < 60000)
+      return this.checking ?? Promise.resolve();
+    return this.check();
   }
 
   check(): Promise<void> {

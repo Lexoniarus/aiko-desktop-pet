@@ -1309,3 +1309,27 @@ versions, standalone mode, exact manual steps and remaining device checks are
 unrecorded; do not assign this report to a particular release by inference.
 The plan now makes ongoing delivery-cost review explicit. This documentation
 record changes no runtime, hosting, service subscription or billing setting.
+
+## Automatic update-check interval with cached starters (2026-11-10)
+
+The owner's request to enforce the shared iPad/Android automatic-check limit
+exposed an adapter bug: a cached starter's event handlers read its own timestamp,
+but delegated `check()` updated only the runtime owner's timestamp. Frequent
+foreground/reconnect events could therefore bypass the starter's 60-second guard.
+
+`BrowserUpdates.checkAutomatically()` now enforces the interval in the runtime
+owner, and the cached starter adapter delegates to that method. Current startup
+and event wiring use the same guard. Settings still call the owner's immediate
+manual `check()`, which also updates the timestamp. Failed attempts count and
+concurrent calls share the in-flight promise. No polling timer was introduced.
+The interval is per running app, in memory; a fresh launch may check immediately.
+The shared delivery contract and development guide now state these boundaries.
+
+All 18 Node tests passed, including five new behavioral tests covering event
+bursts and the exact 60-second boundary, historical cached-starter event wiring,
+the runtime without a starter, network failure, hidden-app events, manual checks
+and in-flight deduplication. Network and package storage are stubbed; no personal
+save or live endpoint is accessed. TypeScript and the complete Vite starter,
+runtime and service-worker production build passed. No full Python suite or
+physical iPad/POCO acceptance was run for this TypeScript update-routing fix.
+This is a local source correction; it has not been published to the devices.

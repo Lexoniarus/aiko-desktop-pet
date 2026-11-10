@@ -119,6 +119,11 @@ strategy for the first Android test:
   validate the whole package; stage it locally; activate on the next cold start
   or a safe explicit restart after saving. Do not interrupt a live game or
   replace the running program during an action.
+- The shared runtime enforces at least 60 seconds between automatic check
+  attempts in the running app, including events forwarded by an older cached
+  starter and failed attempts. Do not add a polling timer. Settings checks remain
+  immediate and reset the automatic interval. A fresh launch may check again;
+  this is not a cross-device or persisted rate limit.
 - The release offered is shared; activation time is per device. Offline or
   unopened devices can temporarily keep an older version. Each device retains
   its own local Aiko/save. Shared program updates neither synchronise saves nor
