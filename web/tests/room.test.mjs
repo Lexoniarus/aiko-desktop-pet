@@ -13,6 +13,7 @@ import {
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
+import { canPlace } from '../src/room/RoomLayout.ts';
 import {
   cellPoint,
   chipPoint,
@@ -48,6 +49,39 @@ test('table chips retain their diameter and flight joins the same landing geomet
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
+
+test('wall furniture stays behind Aiko on free floor while its footprint stays blocked', () => {
+  const projection = new RoomProjection(layout);
+  projection.update(1024, 768, 0);
+  const kitchen = layout.furniture.find((item) => item.id === 'kitchen');
+  const beside = { x: 425, depth: 60 };
+  assert.ok(canPlace(layout, beside, layout.pet_radius));
+  assert.equal(canPlace(layout, { x: 350, depth: 20 }, layout.pet_radius), false);
+  assert.equal(canPlace(layout, { x: 350, depth: 70 }, layout.pet_radius), false);
+  assert.ok(
+    furnitureFrame(projection, kitchen).order < projection.projectPoint(beside).groundY,
+  );
+  for (const item of layout.furniture.filter((item) => item.wall))
+    assert.ok(furnitureFrame(projection, item).order < 0);
+});
+
+test('table and board share the floor order between front and rear walking positions', () => {
+  const projection = new RoomProjection(layout);
+  projection.update(1024, 768, Math.PI / 2);
+  const table = furnitureFrame(
+    projection,
+    layout.furniture.find((item) => item.id === 'table'),
+  );
+  const board = tableGameFrame(table);
+  assert.equal(board.order, table.order);
+  for (const [point, inFront] of [
+    [{ x: 600, depth: 300 }, true],
+    [{ x: 730, depth: 300 }, false],
+  ]) {
+    assert.ok(canPlace(layout, point, layout.pet_radius));
+    assert.equal(projection.projectPoint(point).groundY > board.order + 0.01, inFront);
+  }
+});
 
 test('ground objects cover Aiko on the same cell or behind, independent of insertion order', () => {
   const projection = new RoomProjection(layout);
