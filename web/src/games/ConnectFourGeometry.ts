@@ -48,6 +48,14 @@ export function columnAt(x: number): number | undefined {
   return column >= 0 && column < connectFourGeometry.columns ? column : undefined;
 }
 
+/** Preserve the actor/table framing unless an entry would leave the viewport. */
+export function tableGamePan(frame: TableGameFrame, width: number): number {
+  const left = frame.x + connectFourGeometry.margin * frame.scale;
+  const right =
+    left + connectFourGeometry.columns * connectFourGeometry.cell * frame.scale;
+  return Math.max(16 - left, Math.min(0, width - 16 - right));
+}
+
 export function landingCell(
   cells: readonly unknown[],
   column: number,

@@ -11,9 +11,9 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame, furnitureSupport } from './RoomPresentation';
+import { furnitureFrame } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
-import { tableGameFrame } from '../games/ConnectFourGeometry';
+import { tableGameFrame, tableGamePan } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
 
 export interface AssetManifest {
@@ -111,9 +111,10 @@ export class RoomView {
     this.world.addChild(this.shadow, this.aiko);
     await this.aiko.show('idle');
     await this.aiko.warmWalking();
-    this.resizeObserver = new ResizeObserver(() =>
-      this.camera.resize(this.host.clientWidth, this.host.clientHeight),
-    );
+    this.resizeObserver = new ResizeObserver(() => {
+      this.camera.resize(this.host.clientWidth, this.host.clientHeight);
+      if (this.snapshot?.game?.id === 'connect_four') this.frameForGame('connect_four');
+    });
     this.resizeObserver.observe(this.host);
     this.camera.resize(this.host.clientWidth, this.host.clientHeight);
     this.camera.lookAt({ x: 400, depth: 100 });
@@ -379,7 +380,10 @@ export class RoomView {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
       this.camera.releaseFollow();
-      this.camera.lookAt(furnitureSupport(this.assets.layout, table));
+      this.camera.lookAt({ x: table.x, depth: table.z + table.depth * 0.2 });
+      const frame = this.tableGameFrame()!;
+      const pan = tableGamePan(frame, this.host.clientWidth);
+      if (pan) this.camera.rotateBy(-pan / this.camera.projection.angularScale);
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {

@@ -11,7 +11,7 @@ import {
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
-import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
+import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace } from '../src/room/RoomLayout.ts';
 import {
@@ -20,6 +20,7 @@ import {
   columnAt,
   landingCell,
   tableGameFrame,
+  tableGamePan,
 } from '../src/games/ConnectFourGeometry.ts';
 
 test('table chips retain their diameter and flight joins the same landing geometry', () => {
@@ -82,11 +83,24 @@ test('table and board share the floor order between front and rear walking posit
     assert.equal(projection.projectPoint(point).groundY > board.order + 0.01, inFront);
   }
   const placement = layout.furniture.find((item) => item.id === 'table');
-  projection.update(393, 873, projection.bearing(furnitureSupport(layout, placement)));
+  projection.update(
+    393,
+    873,
+    projection.bearing({ x: placement.x, depth: placement.z + placement.depth * 0.2 }),
+  );
   const phone = tableGameFrame(furnitureFrame(projection, placement));
-  assert.ok(Math.abs(phone.x + 240 * phone.scale - 393 / 2) < 1e-8);
-  assert.ok(phone.x + 100 * phone.scale >= 0);
-  assert.ok(phone.x + 380 * phone.scale <= 393);
+  const pan = tableGamePan(phone, 393);
+  assert.ok(phone.x + 100 * phone.scale + pan >= 16 - 1e-8);
+  assert.ok(phone.x + 380 * phone.scale + pan <= 393 - 16 + 1e-8);
+  projection.update(
+    768,
+    1024,
+    projection.bearing({ x: placement.x, depth: placement.z + placement.depth * 0.2 }),
+  );
+  assert.equal(
+    tableGamePan(tableGameFrame(furnitureFrame(projection, placement)), 768),
+    0,
+  );
 });
 
 test('ground objects cover Aiko on the same cell or behind, independent of insertion order', () => {
