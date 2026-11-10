@@ -1,4 +1,4 @@
-# Shared Aiko room and local iPad PWA — overall implementation plan
+# Shared Aiko room and local iPad/Android PWA — overall implementation plan
 
 Status: phase 0 complete. Shared-room implementation is in progress on
 `feature/shared-room-pwa`; final automatic and actual-device acceptance are pending.
@@ -15,16 +15,18 @@ and [GitHub workflow](../GITHUB_WORKFLOW.md).
 
 ## 1. Agreed product and delivery boundaries
 
-- Build one shared room frontend for iPad and a later desktop integration.
+- Build one shared mobile room frontend for iPad and Android, with a later
+  desktop integration. Keep Android portability in scope during iPad development.
 - Retain the existing Python Tamagotchi rules, dialogue, game rules and content.
-  Adapt their platform dependencies instead of copying an iPad-specific core.
-- On iPad, run Python locally through Pyodide in a Web Worker. Use a PWA with
-  its own Home Screen icon and standalone window. Windows is the development
-  machine; a Mac and a native iOS build/signing pipeline are outside this route.
+  Adapt their platform dependencies instead of copying a platform-specific core.
+- On iPad and Android, run Python locally through Pyodide in a Web Worker. Use
+  a PWA with its own Home Screen icon and standalone window. Windows is the
+  development machine; a Mac and a native iOS build/signing pipeline are outside
+  this route.
 - Use the supplied v16 prototype as the room reference. Aiko acts autonomously;
   the user can look around independently, call her, offer objects and play.
-- Aiko has a defined daily routine on iPad. Do not learn or import the user's
-  desktop rhythm. Final routine times are a product configuration decision;
+- Aiko has a defined daily routine in the mobile PWA. Do not learn or import
+  the user's desktop rhythm. Final routine times are a product configuration decision;
   existing desktop rhythm learning remains intact.
 - Keep the current needs, relationship, care boundaries, wishes and game effects.
   Do not add thirst, a separate health/age system, or other invented parity items.
@@ -43,6 +45,46 @@ and [GitHub workflow](../GITHUB_WORKFLOW.md).
   promise native offline scheduled notifications from the PWA.
 - Full desktop embedding and switching between taskbar and room remain later
   work. Shared contracts and room code must support that direction from the start.
+
+### 1.1 Android reuse decision (2026-11-10)
+
+The iPad prototype is the shared mobile application foundation. Develop Android
+support against the same source, dependencies and built web runtime; do not
+create an Android copy of the Python core, room renderer or game surfaces.
+Section 3 defines the common mobile functional scope. Earlier iPad-specific
+phase wording records the initial delivery target; the Android checks below
+extend the ongoing work without restarting completed phases or claiming Android
+delivery/acceptance. Track iPad T1 and Android acceptance separately.
+
+| Shared across iPad and Android | Platform boundary / required adaptation |
+| --- | --- |
+| Python pet rules, room/world state, dialogue, game rules, fixed routine and elapsed-time catch-up | Browser composition supplies platform services; no platform conditions in authoritative rules. |
+| TypeScript/PixiJS room, animations, UI, touch interactions and runtime assets | Responsive layouts and capability-based input; verify phone and tablet layouts separately. |
+| RoomClient commands, immutable snapshots and serial Python Worker dispatch | Reuse BrowserRoomClient/Pyodide for both mobile PWAs. Keep the later native desktop transport behind the same contract. |
+| SQLite save format/migrations, IDBFS publication and offline package/update logic | Verify actual browser persistence, storage capacity, durable flush, writer locks and recovery on each target. |
+| Forecast selection and notification meaning | Installation, permission/subscription, delivery and any later native scheduling belong to platform adapters. |
+
+The first Android route is the existing HTTPS PWA, opened and installed through
+a supported Android browser. Reuse the same runtime package and deployment where
+compatible. The Apple Web Clip `.mobileconfig` is an iPad installation artifact;
+Android needs its own brief install instructions, not another application build.
+Use device-neutral shared setup text and report the actual device/browser in
+diagnostics. Prefer capability checks to user-agent branches; keep necessary
+platform-specific handling in the platform layer.
+
+Keep browser lifecycle handling and elapsed-time catch-up shared. A Web Worker
+does not guarantee continuous background Python when the app is hidden, closed
+or killed. Each device keeps its own local Aiko; common code/save formats do not
+introduce cross-device synchronisation.
+
+A native Android/iOS shell such as Capacitor remains a later option if store
+distribution or device APIs justify it, not a selected dependency or a task in
+this documentation change. Check Pyodide/Worker loading, package routing,
+storage/migration, lifecycle and update delivery in that host before adopting
+it; the current Service Worker-based installer is not assumed to work unchanged.
+Native scheduled notifications remain distinct from the current Web Push plan.
+Keep the existing Tk desktop UI separate until the planned shared-room host is
+integrated; mobile reuse alone does not eliminate desktop presentation work.
 
 ## 2. Phase 0 is mandatory: finish and merge the current desktop work
 
@@ -440,6 +482,19 @@ large-scale transfer. If no actual iPad evidence is available, leave this gate
 pending rather than calling the route proven. Continue only independent design
 work, not broad implementation predicated on an unproved deployment route.
 
+Android portability follow-up for the current implementation: run the same built
+PWA early on an actual Android device with a current Chrome browser, before
+further platform-dependent storage, input or notification decisions. Exercise
+installation, Python startup, touch/cancel and system Back behaviour, rotation,
+save acknowledgement, app switching/lock/kill, offline cold start after reboot,
+and a verified update retaining the same save. Record device model, Android and
+browser versions, runtime/package hash, startup time, responsiveness and any
+memory reload. Check persistence grant/capacity rather than assuming that a
+storage request was granted. Keep this gate pending until device evidence exists;
+desktop Chromium/touch emulation does not supply it. Fix demonstrated issues in
+the shared owner or a focused platform adapter and recheck both mobile targets.
+Additional browsers and phone/tablet layouts need their own acceptance records.
+
 ### Phase 2 — canonical room model, fixed routine and contracts
 
 - C04 `feat(world): define room locations and reference layout`
@@ -617,6 +672,7 @@ network-CDN path that hides missing runtime files.
 | Presentation | Actual text/action acknowledgement, readable staging, cancellation, hidden-information boundaries and no false completion. |
 | Browser | Mouse/touch gesture conflicts, panels, every game, offline resource requests, installed-package routing and reload. |
 | Actual iPad | Home Screen install, Files import via both transports, reboot/airplane cold start, state retention, orientation, background/kill, update and later Web Push. |
+| Actual Android | Same built PWA in current Chrome; browser installation, Python startup, durable save/persistence status, touch/cancel/Back, rotation, app switch/lock/kill, reboot/airplane cold start, update preserving the save, responsiveness and memory reloads. Record phone/tablet and additional-browser acceptance separately; verify Web Push when implemented. |
 | Actual Windows | Existing desktop smoke checks plus later native room host and environment handoff. |
 
 Use deterministic clocks, seeded random sources and isolated fixture saves for
@@ -625,12 +681,20 @@ For every parity row, record not started/implemented/automatically verified/devi
 verified, the relevant commit/package and evidence. "Implemented" is not the same
 as device-accepted. Do not fill acceptance with a historical desktop screenshot.
 
+During ongoing iPad work, review new dependencies and browser APIs for Android
+compatibility before coupling them to shared code. Run the relevant shared
+automated checks once per change; recheck affected flows on both actual mobile
+targets for platform-sensitive changes. Keep unavailable device checks pending
+and visible. An iPad pass, desktop Chromium pass or wrapper build is not Android
+device acceptance. Do not fork common functionality to resolve an adapter issue.
+
 ## 8. Decisions to close at their earliest useful phase
 
 | Decision | Deadline / evidence |
 | --- | --- |
 | Exact pinned Pyodide/Python and compatible web versions | Phase 1, after real package/runtime checks. |
 | Actual iPad model/iPadOS and initial stable starter origin | Before phase-1 device check; use the real device rather than assumed Safari support. |
+| Initial Android device, browser/version and phone/tablet layout | Early portability follow-up during ongoing iPad development; establish the tested support baseline from actual-device evidence. |
 | Browser SQLite publication and durable storage route | Phase-1 gate, before broad state/persistence integration. |
 | CORS access or minimal relay for each online source | Phase 3, before claiming social parity. |
 | Explicit fixed daily schedule and supported manual controls | Phase 2, recorded as room data and consistent sleep policy. |
@@ -638,6 +702,7 @@ as device-accepted. Do not fill acceptance with a historical desktop screenshot.
 | Prototype shop/economy/upgrades | Separate product decision; no effect on existing-core parity. |
 | Notification sender host, operation and deployment | Before phase 8; offline native scheduling is not the PWA fallback. |
 | Desktop host, transport and room/taskbar switch UX | Phase 9; maintain the shared RoomClient contract before then. |
+| Optional native mobile shell and store distribution | Later product decision if needed; verify host loading, persistence/migration and updates before choosing a wrapper. No separate Android core. |
 
 Do not add mandatory architecture work merely because it might be useful later.
 Close measured blockers at their gate; leave later UX decisions explicit without
@@ -649,6 +714,8 @@ forking the core or prematurely implementing a native shell.
 | --- | --- |
 | Phase 0: green desktop branch, merge, green main, fresh room branch | Complete. PR #11 merged; subsequent workload fix and CI correction included at green `ce4797e`. |
 | Actual-iPad technical feasibility | Pending. |
+| Android reuse direction | Agreed 2026-11-10: same mobile Python/web application; PWA first, platform adapters where needed. |
+| Actual-Android portability and functional acceptance | Pending; no Android device pass or release is claimed. Use the phase-1 follow-up and section-7 matrix. |
 | T1: complete Tamagotchi core in the shared room PWA | Implementation and local automated checks complete; GitHub and actual-device parity acceptance pending. See [verification](VERIFICATION.md). |
 | T2: notification-enabled iPad candidate | Pending. |
 | D1: shared room hosted by the desktop application | Later work; pending. |
@@ -837,6 +904,8 @@ depth-dependent size and native desktop presentation remain unchanged.
 - [Pixi input](https://pixijs.com/8.x/guides/components/events), [AnimatedSprite](https://pixijs.download/release/docs/scene.AnimatedSprite.html), [pixi-viewport](https://github.com/pixijs-userland/pixi-viewport).
 - [Vite](https://vite.dev/guide/), [Workbox custom Service Worker](https://developer.chrome.com/docs/workbox/modules/workbox-build), [fflate](https://github.com/101arrowz/fflate).
 - [Home Screen web apps and Web Push](https://webkit.org/blog/13878/), [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+- [Pyodide supported browsers](https://pyodide.org/en/stable/usage/index.html#supported-browsers), [Android PWA installation](https://web.dev/learn/pwa/installation#android-installation), [offline data/persistence](https://web.dev/learn/pwa/offline-data), [browser lifecycle](https://developer.chrome.com/docs/web-platform/page-lifecycle-api).
+- [Capacitor runtime](https://capacitorjs.com/docs), [native local notifications](https://capacitorjs.com/docs/apis/local-notifications): references for the optional later shell, not a selected implementation.
 
 Library capabilities are documented; this combined Aiko deployment is not yet
 device-proven. Record actual integration evidence at the phase-1 gate.
