@@ -54,7 +54,7 @@ class WindowsSetupTests(unittest.TestCase):
         # native Pillow wheel tags instead of claiming a pure-Python wheel.
         wheels = self.folder / "wheels"
         wheels.mkdir()
-        for name in ("astronomy-engine", "pyjokes", "Pillow"):
+        for name in ("astronomy-engine", "pyjokes", "Pillow", "pathfinding"):
             package = importlib.metadata.distribution(name)
             metadata = package.read_text("WHEEL") or ""
             tag = next(
