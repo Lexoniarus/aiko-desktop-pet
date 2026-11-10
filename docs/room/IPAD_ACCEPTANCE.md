@@ -72,6 +72,24 @@ not part of this asset set. Assess the reused 2D directional poses accordingly.
 
 All physical-device items above remain pending until the owner checks them.
 
+## Touch selection and editing acceptance
+
+In both Safari and the installed Home Screen app, in landscape and portrait:
+
+- Hold and move a finger over toolbar labels, panel text, speech bubbles and
+  game artwork. No browser text selection, selection handles, image preview or
+  link callout should appear. Normal taps and source-link navigation still work.
+- Swipe the room, drag food from the supply and move an existing portion; drag
+  a game chip. Holding before moving must not interrupt the intended gesture.
+- Scroll a long panel from its text area. Check checkboxes, native selects and
+  the package file picker. If text editors are added, check caret placement,
+  selection, copy/paste and the keyboard, including nested editable text.
+- Page zoom outside the custom room/drag surfaces must remain available; this
+  change must not add a global touch-event cancellation or zoom restriction.
+
+Actual iPad acceptance of these checks remains pending. Desktop headless
+WebKit/Chromium checks cannot prove iPadOS selection handles or system callouts.
+
 ## First installation
 
 1. Download the installation ZIP through Dropbox or GitHub into Files.
