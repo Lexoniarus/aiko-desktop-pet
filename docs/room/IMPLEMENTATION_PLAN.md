@@ -495,6 +495,16 @@ desktop Chromium/touch emulation does not supply it. Fix demonstrated issues in
 the shared owner or a focused platform adapter and recheck both mobile targets.
 Additional browsers and phone/tablet layouts need their own acceptance records.
 
+Initial Android test device, supplied by the owner on 2026-11-10: **POCO X3 NFC,
+MIUI Global 14.0.5 Stable, Android 12**. This is a smartphone target. Browser
+version, complete OS build identifier, available storage and actual CSS viewport
+dimensions remain to be recorded on the device; these reported specifications
+are not device acceptance. Use Chrome for the first baseline. Separate runtime,
+installation and persistence findings from phone-layout findings. Test landscape
+and portrait for room gestures, panel/game readability, touch targets, camera
+cutout/system insets and system Back behaviour. Retain the existing iPad layout
+and save identity; phone adaptations belong in the shared responsive frontend.
+
 ### Phase 2 — canonical room model, fixed routine and contracts
 
 - C04 `feat(world): define room locations and reference layout`
@@ -694,7 +704,7 @@ device acceptance. Do not fork common functionality to resolve an adapter issue.
 | --- | --- |
 | Exact pinned Pyodide/Python and compatible web versions | Phase 1, after real package/runtime checks. |
 | Actual iPad model/iPadOS and initial stable starter origin | Before phase-1 device check; use the real device rather than assumed Safari support. |
-| Initial Android device, browser/version and phone/tablet layout | Early portability follow-up during ongoing iPad development; establish the tested support baseline from actual-device evidence. |
+| Initial Android device, browser/version and phone/tablet layout | Owner supplies POCO X3 NFC, MIUI Global 14.0.5 Stable, Android 12 (2026-11-10). Smartphone portrait/landscape; Chrome version and actual-device evidence pending. Android tablet acceptance remains separate. |
 | Browser SQLite publication and durable storage route | Phase-1 gate, before broad state/persistence integration. |
 | CORS access or minimal relay for each online source | Phase 3, before claiming social parity. |
 | Explicit fixed daily schedule and supported manual controls | Phase 2, recorded as room data and consistent sleep policy. |
