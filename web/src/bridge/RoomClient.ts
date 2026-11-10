@@ -25,7 +25,14 @@ export interface RoomSnapshot {
     state: string;
     position: { x: number; height: number } | null;
   }>;
-  speech: { text: string; emote: string; id: number; active: boolean; story: boolean };
+  speech: {
+    text: string;
+    emote: string;
+    id: number;
+    active: boolean;
+    story: boolean;
+    accent?: string;
+  };
   drag?: { instance_id: string | null; ready: boolean };
   animation: string;
   animation_id: number;

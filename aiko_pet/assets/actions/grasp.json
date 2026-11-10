@@ -1,0 +1,2205 @@
+{
+  "version": 1,
+  "size": [
+    384,
+    416
+  ],
+  "anchor": [
+    96,
+    194
+  ],
+  "clips": {
+    "pick_up": {
+      "frames": [
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 320,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        },
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 24,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-01.png",
+          "duration_ms": 24,
+          "sha256": "ae996a5467472c330da922d051a4a17bb989cae799d4970cbc6b9f84cdea6eb1",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-02.png",
+          "duration_ms": 24,
+          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "events": [],
+          "food_anchor": [
+            96,
+            162
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-03.png",
+          "duration_ms": 24,
+          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "events": [],
+          "food_anchor": [
+            96,
+            165
+          ]
+        },
+        {
+          "file": "actions/grasp/b01.png",
+          "duration_ms": 24,
+          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "events": [],
+          "food_anchor": [
+            96,
+            167
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-01.png",
+          "duration_ms": 24,
+          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "events": [],
+          "food_anchor": [
+            96,
+            170
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-02.png",
+          "duration_ms": 24,
+          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "events": [],
+          "food_anchor": [
+            96,
+            172
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-03.png",
+          "duration_ms": 24,
+          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "events": [],
+          "food_anchor": [
+            96,
+            175
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 24,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 31,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-01.png",
+          "duration_ms": 31,
+          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "events": [],
+          "food_anchor": [
+            96,
+            179
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-02.png",
+          "duration_ms": 31,
+          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "events": [],
+          "food_anchor": [
+            96,
+            181
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-03.png",
+          "duration_ms": 31,
+          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-04.png",
+          "duration_ms": 31,
+          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "events": [],
+          "food_anchor": [
+            96,
+            185
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-05.png",
+          "duration_ms": 31,
+          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 31,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 17,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-01.png",
+          "duration_ms": 17,
+          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-02.png",
+          "duration_ms": 17,
+          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-03.png",
+          "duration_ms": 17,
+          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-04.png",
+          "duration_ms": 17,
+          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-05.png",
+          "duration_ms": 17,
+          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 17,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [
+            "attach_object"
+          ],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 36,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-01.png",
+          "duration_ms": 36,
+          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-02.png",
+          "duration_ms": 36,
+          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "events": [],
+          "food_anchor": [
+            96,
+            180
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-03.png",
+          "duration_ms": 36,
+          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-04.png",
+          "duration_ms": 36,
+          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "events": [],
+          "food_anchor": [
+            96,
+            174
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-05.png",
+          "duration_ms": 36,
+          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "events": [],
+          "food_anchor": [
+            96,
+            171
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 36,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 24,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-01.png",
+          "duration_ms": 24,
+          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "events": [],
+          "food_anchor": [
+            96,
+            164
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-02.png",
+          "duration_ms": 24,
+          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-03.png",
+          "duration_ms": 24,
+          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "events": [],
+          "food_anchor": [
+            96,
+            156
+          ]
+        },
+        {
+          "file": "actions/grasp/b45.png",
+          "duration_ms": 24,
+          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "events": [],
+          "food_anchor": [
+            96,
+            152
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-01.png",
+          "duration_ms": 24,
+          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "events": [],
+          "food_anchor": [
+            96,
+            148
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-02.png",
+          "duration_ms": 24,
+          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "events": [],
+          "food_anchor": [
+            96,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-03.png",
+          "duration_ms": 24,
+          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 24,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 21,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-01.png",
+          "duration_ms": 21,
+          "sha256": "2ab0a838f4266971a002ec3e6e04e2160a1cad1cb036fa74c253e2d18234d7c5",
+          "events": [],
+          "food_anchor": [
+            96,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-02.png",
+          "duration_ms": 21,
+          "sha256": "bf971e4d6466a069df57b8d45226ba0188895a700b4fcf7330c4811346731e07",
+          "events": [],
+          "food_anchor": [
+            96,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-03.png",
+          "duration_ms": 21,
+          "sha256": "a5ecdca4d6608e2f2ecb7e1063007d8cc3a7689780109b015974401e311ea927",
+          "events": [],
+          "food_anchor": [
+            96,
+            138
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-04.png",
+          "duration_ms": 21,
+          "sha256": "8a33588b1b263351f9cc40ec5a0f7eeda70b75e0a6d12472456d47a16fd85379",
+          "events": [],
+          "food_anchor": [
+            96,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-05.png",
+          "duration_ms": 21,
+          "sha256": "eda20704179411d392b6de63ddab51a68318de977a14e3c55d042617c96e9187",
+          "events": [],
+          "food_anchor": [
+            96,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g06.png",
+          "duration_ms": 21,
+          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g06.png",
+          "duration_ms": 21,
+          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-01.png",
+          "duration_ms": 21,
+          "sha256": "60719e9735f35fca0ebd09271acb12d84bee1c5c079c426f4d3e92f78d597228",
+          "events": [],
+          "food_anchor": [
+            96,
+            141
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-02.png",
+          "duration_ms": 21,
+          "sha256": "a2ef2d34cdf05eca5f543a132db8311c3649e0d36af25ad8cb9372548759be78",
+          "events": [],
+          "food_anchor": [
+            96,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-03.png",
+          "duration_ms": 21,
+          "sha256": "83ea2040e14c88bc5503bed2bc41a8df5d946ef2f34194d968fd4c496222835e",
+          "events": [],
+          "food_anchor": [
+            96,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-04.png",
+          "duration_ms": 21,
+          "sha256": "fb9160eff27793e91827e9c08a5be6351b63d2331b12407673e373077722bd9e",
+          "events": [],
+          "food_anchor": [
+            96,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-05.png",
+          "duration_ms": 21,
+          "sha256": "6a05b3f66b7365e5c049ba7fdd4b7f17840607ba1699fd2a92ce8622f33df3f2",
+          "events": [],
+          "food_anchor": [
+            96,
+            146
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 21,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        }
+      ],
+      "hold_last": true
+    },
+    "put_down": {
+      "frames": [
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 320,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 21,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-05.png",
+          "duration_ms": 21,
+          "sha256": "6a05b3f66b7365e5c049ba7fdd4b7f17840607ba1699fd2a92ce8622f33df3f2",
+          "events": [],
+          "food_anchor": [
+            96,
+            146
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-04.png",
+          "duration_ms": 21,
+          "sha256": "fb9160eff27793e91827e9c08a5be6351b63d2331b12407673e373077722bd9e",
+          "events": [],
+          "food_anchor": [
+            96,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-03.png",
+          "duration_ms": 21,
+          "sha256": "83ea2040e14c88bc5503bed2bc41a8df5d946ef2f34194d968fd4c496222835e",
+          "events": [],
+          "food_anchor": [
+            96,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-02.png",
+          "duration_ms": 21,
+          "sha256": "a2ef2d34cdf05eca5f543a132db8311c3649e0d36af25ad8cb9372548759be78",
+          "events": [],
+          "food_anchor": [
+            96,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g06-g07-01.png",
+          "duration_ms": 21,
+          "sha256": "60719e9735f35fca0ebd09271acb12d84bee1c5c079c426f4d3e92f78d597228",
+          "events": [],
+          "food_anchor": [
+            96,
+            141
+          ]
+        },
+        {
+          "file": "actions/grasp/g06.png",
+          "duration_ms": 21,
+          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g06.png",
+          "duration_ms": 21,
+          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-05.png",
+          "duration_ms": 21,
+          "sha256": "eda20704179411d392b6de63ddab51a68318de977a14e3c55d042617c96e9187",
+          "events": [],
+          "food_anchor": [
+            96,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-04.png",
+          "duration_ms": 21,
+          "sha256": "8a33588b1b263351f9cc40ec5a0f7eeda70b75e0a6d12472456d47a16fd85379",
+          "events": [],
+          "food_anchor": [
+            96,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-03.png",
+          "duration_ms": 21,
+          "sha256": "a5ecdca4d6608e2f2ecb7e1063007d8cc3a7689780109b015974401e311ea927",
+          "events": [],
+          "food_anchor": [
+            96,
+            138
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-02.png",
+          "duration_ms": 21,
+          "sha256": "bf971e4d6466a069df57b8d45226ba0188895a700b4fcf7330c4811346731e07",
+          "events": [],
+          "food_anchor": [
+            96,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g05-g06-01.png",
+          "duration_ms": 21,
+          "sha256": "2ab0a838f4266971a002ec3e6e04e2160a1cad1cb036fa74c253e2d18234d7c5",
+          "events": [],
+          "food_anchor": [
+            96,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 21,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 24,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-03.png",
+          "duration_ms": 24,
+          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-02.png",
+          "duration_ms": 24,
+          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "events": [],
+          "food_anchor": [
+            96,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-01.png",
+          "duration_ms": 24,
+          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "events": [],
+          "food_anchor": [
+            96,
+            148
+          ]
+        },
+        {
+          "file": "actions/grasp/b45.png",
+          "duration_ms": 24,
+          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "events": [],
+          "food_anchor": [
+            96,
+            152
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-03.png",
+          "duration_ms": 24,
+          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "events": [],
+          "food_anchor": [
+            96,
+            156
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-02.png",
+          "duration_ms": 24,
+          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-01.png",
+          "duration_ms": 24,
+          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "events": [],
+          "food_anchor": [
+            96,
+            164
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 24,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 36,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-05.png",
+          "duration_ms": 36,
+          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "events": [],
+          "food_anchor": [
+            96,
+            171
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-04.png",
+          "duration_ms": 36,
+          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "events": [],
+          "food_anchor": [
+            96,
+            174
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-03.png",
+          "duration_ms": 36,
+          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-02.png",
+          "duration_ms": 36,
+          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "events": [],
+          "food_anchor": [
+            96,
+            180
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-01.png",
+          "duration_ms": 36,
+          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 36,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 17,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-05.png",
+          "duration_ms": 17,
+          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-04.png",
+          "duration_ms": 17,
+          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-03.png",
+          "duration_ms": 17,
+          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-02.png",
+          "duration_ms": 17,
+          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-01.png",
+          "duration_ms": 17,
+          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 17,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [
+            "detach_object"
+          ],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 31,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-05.png",
+          "duration_ms": 31,
+          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-04.png",
+          "duration_ms": 31,
+          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "events": [],
+          "food_anchor": [
+            96,
+            185
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-03.png",
+          "duration_ms": 31,
+          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-02.png",
+          "duration_ms": 31,
+          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "events": [],
+          "food_anchor": [
+            96,
+            181
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-01.png",
+          "duration_ms": 31,
+          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "events": [],
+          "food_anchor": [
+            96,
+            179
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 31,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 24,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-03.png",
+          "duration_ms": 24,
+          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "events": [],
+          "food_anchor": [
+            96,
+            175
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-02.png",
+          "duration_ms": 24,
+          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "events": [],
+          "food_anchor": [
+            96,
+            172
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-01.png",
+          "duration_ms": 24,
+          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "events": [],
+          "food_anchor": [
+            96,
+            170
+          ]
+        },
+        {
+          "file": "actions/grasp/b01.png",
+          "duration_ms": 24,
+          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "events": [],
+          "food_anchor": [
+            96,
+            167
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-03.png",
+          "duration_ms": 24,
+          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "events": [],
+          "food_anchor": [
+            96,
+            165
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-02.png",
+          "duration_ms": 24,
+          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "events": [],
+          "food_anchor": [
+            96,
+            162
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-01.png",
+          "duration_ms": 24,
+          "sha256": "ae996a5467472c330da922d051a4a17bb989cae799d4970cbc6b9f84cdea6eb1",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 24,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        },
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 700,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        }
+      ],
+      "hold_last": false
+    },
+    "hold_item": {
+      "frames": [
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 1000,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        }
+      ],
+      "hold_last": true
+    },
+    "inspect_item": {
+      "frames": [
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 400,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 64,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [
+            "inspect_comment"
+          ],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-01.png",
+          "duration_ms": 65,
+          "sha256": "d3a977e14859317a18c15f2e6032e6b2a433b6bc9fc40f990facfa000bc6a8a5",
+          "events": [],
+          "food_anchor": [
+            92,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-02.png",
+          "duration_ms": 64,
+          "sha256": "d71bc000b13307ee89fe89101e17224264f7641583e8a7cb214b38ae95f382e1",
+          "events": [],
+          "food_anchor": [
+            88,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-03.png",
+          "duration_ms": 64,
+          "sha256": "0d31ccaea88d315752e07adba8a03093d3fd69963dad33a113beb1ade32faea9",
+          "events": [],
+          "food_anchor": [
+            85,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-04.png",
+          "duration_ms": 64,
+          "sha256": "00662225142b97bbd087448a1cc7adad9877351c64c43d102e02f120a6853b63",
+          "events": [],
+          "food_anchor": [
+            81,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-05.png",
+          "duration_ms": 65,
+          "sha256": "ef143768bce74f558074ec254de86598b899a971b3b1367f1d08747cd5f37228",
+          "events": [],
+          "food_anchor": [
+            77,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/u-left.png",
+          "duration_ms": 64,
+          "sha256": "846bb8f9c047abeb920de473584d6d6fc27863ee38534ca91bf755041473f3c1",
+          "events": [],
+          "food_anchor": [
+            74,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/u-left.png",
+          "duration_ms": 650,
+          "sha256": "846bb8f9c047abeb920de473584d6d6fc27863ee38534ca91bf755041473f3c1",
+          "events": [
+            "inspect_emote"
+          ],
+          "food_anchor": [
+            74,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/u-left.png",
+          "duration_ms": 350,
+          "sha256": "846bb8f9c047abeb920de473584d6d6fc27863ee38534ca91bf755041473f3c1",
+          "events": [],
+          "food_anchor": [
+            74,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/u-left.png",
+          "duration_ms": 50,
+          "sha256": "846bb8f9c047abeb920de473584d6d6fc27863ee38534ca91bf755041473f3c1",
+          "events": [],
+          "food_anchor": [
+            74,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-05.png",
+          "duration_ms": 50,
+          "sha256": "ef143768bce74f558074ec254de86598b899a971b3b1367f1d08747cd5f37228",
+          "events": [],
+          "food_anchor": [
+            77,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-04.png",
+          "duration_ms": 50,
+          "sha256": "00662225142b97bbd087448a1cc7adad9877351c64c43d102e02f120a6853b63",
+          "events": [],
+          "food_anchor": [
+            81,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-03.png",
+          "duration_ms": 50,
+          "sha256": "0d31ccaea88d315752e07adba8a03093d3fd69963dad33a113beb1ade32faea9",
+          "events": [],
+          "food_anchor": [
+            85,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-02.png",
+          "duration_ms": 50,
+          "sha256": "d71bc000b13307ee89fe89101e17224264f7641583e8a7cb214b38ae95f382e1",
+          "events": [],
+          "food_anchor": [
+            88,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-left-01.png",
+          "duration_ms": 50,
+          "sha256": "d3a977e14859317a18c15f2e6032e6b2a433b6bc9fc40f990facfa000bc6a8a5",
+          "events": [],
+          "food_anchor": [
+            92,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 50,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 50,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-01.png",
+          "duration_ms": 50,
+          "sha256": "8fd6273701d8895ff57df41753cdcb5a6dd7cbe32328e8061f8cb3c4540a0f01",
+          "events": [],
+          "food_anchor": [
+            99,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-02.png",
+          "duration_ms": 50,
+          "sha256": "a3481a54f9b35f15b56a125ded38c6547b7e2936e52323fea4b8f9dc07a19410",
+          "events": [],
+          "food_anchor": [
+            102,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-03.png",
+          "duration_ms": 50,
+          "sha256": "d853c4b27d6d6ba221c83cd11ac3e1a4eb5c36a7bab3fdca62355178b8f94658",
+          "events": [],
+          "food_anchor": [
+            106,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-04.png",
+          "duration_ms": 50,
+          "sha256": "dbe80bf8bc8d5990666e977b80c3eac51e8f71095ad88436152089ab0972c363",
+          "events": [],
+          "food_anchor": [
+            109,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-05.png",
+          "duration_ms": 50,
+          "sha256": "5498890b2d4ce847abf396826ac3ed177226ca9d322c318a0964d5898a0ca23d",
+          "events": [],
+          "food_anchor": [
+            112,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/u-right.png",
+          "duration_ms": 50,
+          "sha256": "9efdb98283292bc1c1f17501e09fbfc7946509df800101e2a8d743e6ac120081",
+          "events": [],
+          "food_anchor": [
+            116,
+            137
+          ]
+        }
+      ],
+      "hold_last": true
+    },
+    "inspect_hold": {
+      "frames": [
+        {
+          "file": "actions/grasp/u-right.png",
+          "duration_ms": 1000,
+          "sha256": "9efdb98283292bc1c1f17501e09fbfc7946509df800101e2a8d743e6ac120081",
+          "events": [],
+          "food_anchor": [
+            116,
+            137
+          ]
+        }
+      ],
+      "hold_last": true
+    },
+    "inspect_return": {
+      "frames": [
+        {
+          "file": "actions/grasp/u-right.png",
+          "duration_ms": 64,
+          "sha256": "9efdb98283292bc1c1f17501e09fbfc7946509df800101e2a8d743e6ac120081",
+          "events": [],
+          "food_anchor": [
+            116,
+            137
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-05.png",
+          "duration_ms": 65,
+          "sha256": "5498890b2d4ce847abf396826ac3ed177226ca9d322c318a0964d5898a0ca23d",
+          "events": [],
+          "food_anchor": [
+            112,
+            139
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-04.png",
+          "duration_ms": 64,
+          "sha256": "dbe80bf8bc8d5990666e977b80c3eac51e8f71095ad88436152089ab0972c363",
+          "events": [],
+          "food_anchor": [
+            109,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-03.png",
+          "duration_ms": 64,
+          "sha256": "d853c4b27d6d6ba221c83cd11ac3e1a4eb5c36a7bab3fdca62355178b8f94658",
+          "events": [],
+          "food_anchor": [
+            106,
+            142
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-02.png",
+          "duration_ms": 64,
+          "sha256": "a3481a54f9b35f15b56a125ded38c6547b7e2936e52323fea4b8f9dc07a19410",
+          "events": [],
+          "food_anchor": [
+            102,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/g07-u-right-01.png",
+          "duration_ms": 65,
+          "sha256": "8fd6273701d8895ff57df41753cdcb5a6dd7cbe32328e8061f8cb3c4540a0f01",
+          "events": [],
+          "food_anchor": [
+            99,
+            145
+          ]
+        },
+        {
+          "file": "actions/grasp/g07.png",
+          "duration_ms": 64,
+          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "events": [],
+          "food_anchor": [
+            96,
+            147
+          ]
+        }
+      ],
+      "hold_last": true
+    },
+    "throw_item": {
+      "frames": [
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 250,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        },
+        {
+          "file": "actions/grasp/g00.png",
+          "duration_ms": 20,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": [
+            96,
+            158
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-01.png",
+          "duration_ms": 20,
+          "sha256": "ae996a5467472c330da922d051a4a17bb989cae799d4970cbc6b9f84cdea6eb1",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-02.png",
+          "duration_ms": 20,
+          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "events": [],
+          "food_anchor": [
+            96,
+            162
+          ]
+        },
+        {
+          "file": "actions/grasp/g00-b01-03.png",
+          "duration_ms": 20,
+          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "events": [],
+          "food_anchor": [
+            96,
+            165
+          ]
+        },
+        {
+          "file": "actions/grasp/b01.png",
+          "duration_ms": 20,
+          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "events": [],
+          "food_anchor": [
+            96,
+            167
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-01.png",
+          "duration_ms": 20,
+          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "events": [],
+          "food_anchor": [
+            96,
+            170
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-02.png",
+          "duration_ms": 20,
+          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "events": [],
+          "food_anchor": [
+            96,
+            172
+          ]
+        },
+        {
+          "file": "actions/grasp/b01-g01-03.png",
+          "duration_ms": 20,
+          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "events": [],
+          "food_anchor": [
+            96,
+            175
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 20,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g01.png",
+          "duration_ms": 21,
+          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-01.png",
+          "duration_ms": 21,
+          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "events": [],
+          "food_anchor": [
+            96,
+            179
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-02.png",
+          "duration_ms": 21,
+          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "events": [],
+          "food_anchor": [
+            96,
+            181
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-03.png",
+          "duration_ms": 21,
+          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-04.png",
+          "duration_ms": 21,
+          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "events": [],
+          "food_anchor": [
+            96,
+            185
+          ]
+        },
+        {
+          "file": "actions/grasp/g01-g02-05.png",
+          "duration_ms": 21,
+          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 21,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g02.png",
+          "duration_ms": 17,
+          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "events": [],
+          "food_anchor": [
+            96,
+            189
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-01.png",
+          "duration_ms": 17,
+          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-02.png",
+          "duration_ms": 17,
+          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-03.png",
+          "duration_ms": 17,
+          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "events": [],
+          "food_anchor": [
+            96,
+            188
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-04.png",
+          "duration_ms": 17,
+          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "events": [],
+          "food_anchor": [
+            96,
+            187
+          ]
+        },
+        {
+          "file": "actions/grasp/g02-g03-05.png",
+          "duration_ms": 17,
+          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 17,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [
+            "attach_object"
+          ],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03.png",
+          "duration_ms": 26,
+          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "events": [],
+          "food_anchor": [
+            96,
+            186
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-01.png",
+          "duration_ms": 26,
+          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "events": [],
+          "food_anchor": [
+            96,
+            183
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-02.png",
+          "duration_ms": 26,
+          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "events": [],
+          "food_anchor": [
+            96,
+            180
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-03.png",
+          "duration_ms": 26,
+          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "events": [],
+          "food_anchor": [
+            96,
+            177
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-04.png",
+          "duration_ms": 26,
+          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "events": [],
+          "food_anchor": [
+            96,
+            174
+          ]
+        },
+        {
+          "file": "actions/grasp/g03-g04-05.png",
+          "duration_ms": 26,
+          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "events": [],
+          "food_anchor": [
+            96,
+            171
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 26,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g04.png",
+          "duration_ms": 18,
+          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "events": [],
+          "food_anchor": [
+            96,
+            168
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-01.png",
+          "duration_ms": 18,
+          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "events": [],
+          "food_anchor": [
+            96,
+            164
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-02.png",
+          "duration_ms": 18,
+          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "events": [],
+          "food_anchor": [
+            96,
+            160
+          ]
+        },
+        {
+          "file": "actions/grasp/g04-b45-03.png",
+          "duration_ms": 18,
+          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "events": [],
+          "food_anchor": [
+            96,
+            156
+          ]
+        },
+        {
+          "file": "actions/grasp/b45.png",
+          "duration_ms": 18,
+          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "events": [],
+          "food_anchor": [
+            96,
+            152
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-01.png",
+          "duration_ms": 18,
+          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "events": [],
+          "food_anchor": [
+            96,
+            148
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-02.png",
+          "duration_ms": 18,
+          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "events": [],
+          "food_anchor": [
+            96,
+            144
+          ]
+        },
+        {
+          "file": "actions/grasp/b45-g05-03.png",
+          "duration_ms": 18,
+          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "events": [],
+          "food_anchor": [
+            96,
+            140
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 18,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 30,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": [
+            96,
+            136
+          ]
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 1,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [
+            "release_object"
+          ],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05.png",
+          "duration_ms": 23,
+          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05-release-01.png",
+          "duration_ms": 23,
+          "sha256": "866ed84c32d258e59301b476f51d1b63da2e2c0e49541995441faee8d4e11b9d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05-release-02.png",
+          "duration_ms": 23,
+          "sha256": "bf098b9621dcc046a130bbaf5c3a7689b7d8c488aef8e7187af5f6e697f32968",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05-release-03.png",
+          "duration_ms": 23,
+          "sha256": "f1b529ab462256b4b9bba472dd0401e13101785bc3b1dfb81743c4d395a6ab35",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05-release-04.png",
+          "duration_ms": 23,
+          "sha256": "38cdbbc95d647a7403c7d0b73542005b063977aa43d2dbe822d43b8a6a35f150",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/g05-release-05.png",
+          "duration_ms": 23,
+          "sha256": "3d4e7550622980745e9d332071ebf8bb73a2eb7df771b43ec68e9dd3d2b023f7",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release.png",
+          "duration_ms": 23,
+          "sha256": "47d74ce312ff90d04d31fb630b52462473ab46ba2b417753df35b7a647019610",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release.png",
+          "duration_ms": 26,
+          "sha256": "47d74ce312ff90d04d31fb630b52462473ab46ba2b417753df35b7a647019610",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release-relax-01.png",
+          "duration_ms": 26,
+          "sha256": "8c15a469745b2c06dac688aa8a903defad93fce0adbf2355e11084d23e797ddb",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release-relax-02.png",
+          "duration_ms": 26,
+          "sha256": "960dd55919bb28e7799fe35dc129079f0ec20a463b0d3a300edd89125653e7ff",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release-relax-03.png",
+          "duration_ms": 26,
+          "sha256": "347ba7bce33cd28e4edee124a9e8bc81479b16b511af99a4a4bfd39538c9b1b0",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release-relax-04.png",
+          "duration_ms": 26,
+          "sha256": "55749df5fe9732aa0d82dca5761a9395cac79074abe38f494488ad02269330d8",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/release-relax-05.png",
+          "duration_ms": 26,
+          "sha256": "c92c1b24484413e6503a91a3018d0f9c1f6293db01f9125b0c51f765a6135bdd",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax.png",
+          "duration_ms": 26,
+          "sha256": "6798751c0bb1e60fb791dcf4880006e7e59e3af03978a8c8641ecc61e3c3683e",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax.png",
+          "duration_ms": 29,
+          "sha256": "6798751c0bb1e60fb791dcf4880006e7e59e3af03978a8c8641ecc61e3c3683e",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax-idle-01.png",
+          "duration_ms": 29,
+          "sha256": "d0618f8214bbd486573575ea403eb71007c24e56dea3da9341ce4896b74cbb24",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax-idle-02.png",
+          "duration_ms": 29,
+          "sha256": "5aab80401a9c3bfd09de4bb8f873adda173cd72ad92feedc56c2beff0f0a0271",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax-idle-03.png",
+          "duration_ms": 29,
+          "sha256": "1e0abbbd8d647c12e51cfed105858190ef549f81747aa1569a433ce00536541d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax-idle-04.png",
+          "duration_ms": 29,
+          "sha256": "80ca23d86a587ae8f1fd6202ac840cfb386f1db3fc8ed12c6f47c56845cbea1a",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/relax-idle-05.png",
+          "duration_ms": 29,
+          "sha256": "9ee99002e7806a73a771e50dd6a794fa7df7009d458761d80f1f267df1800215",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 29,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 40,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        },
+        {
+          "file": "actions/grasp/idle.png",
+          "duration_ms": 20,
+          "sha256": "cb3340ba30f7103128a31b5807204f66fbf3cefd01c4b7f14b7a24f1cc94e23d",
+          "events": [],
+          "food_anchor": null
+        }
+      ],
+      "hold_last": false
+    }
+  }
+}

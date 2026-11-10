@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
 
-from ..pet.animation.character import CharacterCatalog, PlaybackEvent
+from ..pet.animation.character import AnimationClip, CharacterCatalog, PlaybackEvent
 from ..pet.animation.expression import EXPRESSION_CLIPS, Expression
 from ..pet.interaction_events import SocialCompletion
 from ..pet.mind.catalog import Reaction
@@ -21,6 +21,7 @@ class SpeechSnapshot:
     id: int
     active: bool
     story: bool
+    accent: str = ""
 
 
 class RoomPlayback:
@@ -52,6 +53,8 @@ class RoomPlayback:
         self.expression: Expression | None = None
         self._expression_id = 0
         self._emote_id = 0
+        self._accent = ""
+        self._accent_id = 0
         self.can_express: Callable[[], bool] = lambda: False
         self.action_id = 0
         self.action_timings: tuple[int, ...] | None = None
@@ -164,6 +167,27 @@ class RoomPlayback:
         self._pending_event = None
         self._pending_wish = None
 
+    def inspection_hint(self) -> None:
+        """A short concurrent accent never replaces readable dialogue."""
+        self._accent_id += 1
+        current = self._accent_id
+        self._accent = "🔎"
+
+        def clear() -> None:
+            if current == self._accent_id:
+                self._accent = ""
+
+        self.schedule(650, clear)
+
+    def has_clip(self, name: str) -> bool:
+        return name in (
+            set(self._catalog.clips) | set(self._catalog.hd_action_clips)
+            | set(self._catalog.body_clips) | set(self._catalog.expression_clips)
+        )
+
+    def clip(self, name: str) -> AnimationClip:
+        return self._catalog.clip_for(name, 2)
+
     def acknowledge(self, text_id: int) -> None:
         if text_id == self._text_id:
             self._unshown = False
@@ -207,6 +231,7 @@ class RoomPlayback:
             self._text_id,
             self.player.active,
             self.player.story_active,
+            self._accent,
         )
 
     def speak(
@@ -233,6 +258,8 @@ class RoomPlayback:
 
     def stop_animation(self) -> None:
         self.action_id += 1
+        self._accent_id += 1
+        self._accent = ""
         for token in self._action_timers:
             self.cancel_timer(token)
         self._action_timers.clear()
@@ -278,13 +305,19 @@ class RoomPlayback:
             ]
             timings = tuple(b - a for a, b in zip(boundaries, boundaries[1:]))
         self.action_timings = timings
+        action = self.action_id
+
+        def emit(source: int) -> None:
+            if self.action_id == action:
+                marker(source)
+
         elapsed = 0
         for index, milliseconds in enumerate(timings):
+            source = clip.sprite_index(index)
             self._action_timers.append(
-                self.schedule(elapsed, partial(marker, clip.sprite_index(index)))
+                self.schedule(elapsed, partial(emit, source))
             )
             elapsed += milliseconds
-        action = self.action_id
 
         def complete() -> None:
             if self.action_id == action:
@@ -305,7 +338,8 @@ class RoomPlayback:
 
     def play_animation(self, name: str) -> int:
         self.stop_animation()
-        self.animation = "pick_up" if name == "hold_item" else name
+        self.animation = ("pick_up" if name == "hold_item"
+                          and name not in self._catalog.hd_action_clips else name)
         clip = self._catalog.clip_for(self.animation, 2)
         action_id = self.action_id
         elapsed = 0
@@ -316,7 +350,7 @@ class RoomPlayback:
         for index in indices:
             source = clip.sprite_index(index)
             events = clip.frames[source].events
-            if name == "put_down":
+            if name == "put_down" and name not in self._catalog.hd_action_clips:
                 events = ("detach_object",) if source == 2 else ()
             event = PlaybackEvent(action_id, self.animation, source, events, False)
             self._action_timers.append(

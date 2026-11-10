@@ -35,6 +35,7 @@ class AnimationClip:
     head_direction: int | None = None
     stride: float = 0.0
     rest_sway: bool = False
+    item_anchor_mode: str = "catalog"
 
     @property
     def timings(self) -> tuple[int, ...]:

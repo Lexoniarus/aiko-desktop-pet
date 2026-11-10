@@ -77,7 +77,8 @@ class FoodOverlay:
     ) -> None:
         item_id = self.current_food_id
         if (
-            clip.name not in ("eat", "pick_up", "put_down")
+            (clip.name not in ("eat", "pick_up", "put_down")
+             and clip.item_anchor_mode != "center")
             or frame.food_anchor is None
             or item_id is None
         ):
@@ -91,7 +92,8 @@ class FoodOverlay:
             image = self._images[(item_id, scale)]
         x: float = (FRAME_WIDTH // 2 - clip.anchor[0] + frame.food_anchor[0]) * scale
         y: float = (FOOT_BASELINE - clip.anchor[1] + frame.food_anchor[1]) * scale
-        if item_id in self._readables:
+        centered = clip.item_anchor_mode == "center"
+        if item_id in self._readables and not centered:
             book = self._readables[item_id]
             offset = book.state_offsets.get(self.readable_state, (0.0, 0.0))
             x += (book.hand_offset[0] + offset[0]) * scale
@@ -100,10 +102,14 @@ class FoodOverlay:
             blend = min(1.0, (time.monotonic() - self._contact_at) / 0.13)
             x = self.contact_origin[0] * (1 - blend) + x * blend
             y = self.contact_origin[1] * (1 - blend) + y * blend
+        pivot = sprite.pivot
+        if centered:
+            pivot = (image.width() / 2, image.height() / 2)
+            y = min(y, FOOT_BASELINE * scale - image.height() / 2)
         self._canvas.coords(
             self.item,
-            round(x - sprite.pivot[0]),
-            round(y - sprite.pivot[1]),
+            round(x - pivot[0]),
+            round(y - pivot[1]),
         )
         self._canvas.itemconfigure(self.item, image=image, state="normal")
         # Consumables stay in front of the character in every interaction pose.

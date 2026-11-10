@@ -132,6 +132,8 @@ class RoomRuntime:
             cancel_feedback=playback.player.cancel,
             now=lambda: self.now,
             inspection_seconds=BALANCE.number("object_behavior", "inspection_seconds"),
+            animated_inspection=playback.has_clip("inspect_item"),
+            inspection_hint=playback.inspection_hint,
             experience=state.experience_interaction,
             begin_handover=lambda item, record: self.consumption.begin_handover(
                 world,
@@ -222,6 +224,9 @@ class RoomRuntime:
         reaction = self.mind.select_reaction(
             cue.event, self.state, context_at(time.time()), self.now
         )
+        if reaction is None:
+            self.interaction.receive_feedback(FeedbackReceipt(cue.key, True))
+            return
         self.playback.speak(
             format_object_reaction(reaction, cue.identity, self.items)
             if reaction

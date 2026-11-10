@@ -107,6 +107,7 @@ class AnimatedPet:
         self._active_action: str | None = None
         self._stopped = False
         self._closed = False
+        self._hint_timer: str | None = None
         self._last_motion_at = time.monotonic()
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
@@ -138,6 +139,7 @@ class AnimatedPet:
             catalog=items,
             scale=self.settings.scale,
         )
+        self._hint_item = canvas.create_text(0, 0, state="hidden")
         initial = "rest-neutral" if assets.expression_clips else "idle"
         self.show_frame(initial, time.monotonic(), fixed=0)
 
@@ -250,7 +252,8 @@ class AnimatedPet:
     def refresh_food_overlay(self) -> None:
         """Refresh contact using the same scale-specific clip as the sprite."""
         state = self._display_clip
-        if state not in ("pick_up", "put_down", "eat"):
+        if (state not in ("pick_up", "put_down", "eat")
+                and state not in self.assets.hd_action_clips):
             return
         clip = self.assets.clip_for(state, self.settings.scale)
         index = clip.sprite_index(self.frame_clock.frame_index)
@@ -259,6 +262,7 @@ class AnimatedPet:
     def begin_action(self, state: str, now: float) -> None:
         """Start a new visual action, including repeated actions of one kind."""
         self._ambient.suspend(now)
+        self._clear_inspection_hint()
         self.frame_clock.reset()
         self._active_action = state
         self.action_id += 1
@@ -269,6 +273,7 @@ class AnimatedPet:
     def cancel_action(self, now: float) -> None:
         """Interrupt the previous visual when entering or leaving sleep."""
         self._ambient.suspend(now)
+        self._clear_inspection_hint()
         self.frame_clock.reset()
         self._active_action = None
         self.ports.interrupt_walk()
@@ -276,7 +281,9 @@ class AnimatedPet:
 
     def hold_last_pose(self, state: str, now: float) -> None:
         """Present an explicit held pose without replaying a ground pickup."""
-        self.frame_clock.frame_index = len(self.assets.clips[state].timings) - 1
+        self.frame_clock.frame_index = len(
+            self.assets.clip_for(state, self.settings.scale).timings,
+        ) - 1
         self.frame_clock.frame_started_at = now
         self.frame_clock.finished = True
         self.show_frame(state, now)
@@ -339,7 +346,7 @@ class AnimatedPet:
             if key not in self._emitted:
                 self._emitted.add(key)
                 events = clip.frames[source_index].events
-                if state == "put_down":
+                if state == "put_down" and state not in self.assets.hd_action_clips:
                     events = ("detach_object",) if source_index == 2 else ()
                 self.on_playback(
                     PlaybackEvent(
@@ -437,9 +444,33 @@ class AnimatedPet:
         self.show_frame(state, now, fixed=fixed,
                         playback_rate=playback_rate, reverse=reverse)
 
+    def _clear_inspection_hint(self) -> None:
+        if self._hint_timer is not None:
+            self.root.after_cancel(self._hint_timer)
+            self._hint_timer = None
+        self.canvas.itemconfigure(self._hint_item, state="hidden")
+
+    def inspection_hint(self) -> None:
+        """Independent visual accent; never replace the readable speech bubble."""
+        if self._stopped:
+            return
+        self._clear_inspection_hint()
+        scale = self.settings.scale
+        self.canvas.coords(self._hint_item, FRAME_WIDTH * .87 * scale, 58 * scale)
+        self.canvas.itemconfigure(self._hint_item, text="🔎", state="normal",
+                                  font=("Segoe UI Emoji", 13 * scale))
+        self.canvas.tag_raise(self._hint_item)
+
+        def clear() -> None:
+            self._hint_timer = None
+            self.canvas.itemconfigure(self._hint_item, state="hidden")
+
+        self._hint_timer = self.root.after(650, clear)
+
     def stop(self) -> None:
         """Cancel animation callbacks before the desktop destroys Tk."""
         self._stopped = True
+        self._clear_inspection_hint()
         self.cancel_game_action()
         self._frame_generation += 1
         if self._frame_timer is not None:
@@ -454,6 +485,7 @@ class AnimatedPet:
         self.stop()
         self.on_playback = lambda _event: None
         self.food_overlay.close()
+        self.canvas.delete(self._hint_item)
         self._rest_renderer.clear()
         self.sprites.clear()
         self._sprite_cache.close()
@@ -481,7 +513,7 @@ class AnimatedPet:
         if decision.clear_action:
             self._active_action = None
             if (
-                decision.sprite.animation == "pick_up"
+                decision.sprite.animation in ("pick_up", "hold_item")
                 and decision.sprite.fixed_frame is not None
             ):
                 # Empty hands are a visual offer; the cursor still owns the item.

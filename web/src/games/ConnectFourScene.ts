@@ -154,9 +154,10 @@ export class ConnectFourScene {
     if (motion.kind === 'chip') {
       if (motion.id !== this.flightKey) {
         this.flightKey = motion.id;
+        const hand = Array.isArray(motion.hand_anchor) ? motion.hand_anchor : [96, 141];
         this.flightStart = {
-          x: (bounds.originX + 96 * bounds.scale - frame.x) / frame.scale,
-          y: (bounds.originY + 141 * bounds.scale - frame.y) / frame.scale,
+          x: (bounds.originX + Number(hand[0]) * bounds.scale - frame.x) / frame.scale,
+          y: (bounds.originY + Number(hand[1]) * bounds.scale - frame.y) / frame.scale,
         };
       }
       const fraction = Math.min(

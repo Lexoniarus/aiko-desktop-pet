@@ -196,7 +196,7 @@ class DesktopAnimationRuntime:
         self._walk.movement.interrupt()
 
     def idle_gesture_duration(self, clip_id: str) -> float:
-        return self._assets.clips[clip_id].duration_seconds
+        return self._assets.clip_for(clip_id, 1).duration_seconds
 
     def prepare_idle_gesture(
         self, requested: bool, now: float,
@@ -268,13 +268,16 @@ class DesktopAnimationRuntime:
             not game_mode
             and not self._state.sleeping
             and self._ports.holding_readable()
+            and active_action is None
         ):
             self._body_orientation.reset()
             self.ambient.suspend(now)
             return RenderDecision(
                 SpriteSelection(
-                    "pick_up",
-                    fixed_frame=len(self._assets.clips["pick_up"].frames) - 1,
+                    "hold_item" if "hold_item" in self._assets.hd_action_clips
+                    else "pick_up",
+                    fixed_frame=0 if "hold_item" in self._assets.hd_action_clips else
+                    len(self._assets.clips["pick_up"].frames) - 1,
                 )
             )
         priority = choose_animation_priority(
@@ -282,7 +285,7 @@ class DesktopAnimationRuntime:
             sleeping=self._state.sleeping,
             active_action=active_action,
             action_loops=(
-                self._assets.clips[active_action].loop
+                self._assets.clip_for(active_action, 1).loop
                 if active_action is not None
                 else False
             ),
@@ -382,11 +385,10 @@ class DesktopAnimationRuntime:
             self.ambient.suspend(now)
             return RenderDecision(
                 SpriteSelection(
-                    "pick_up",
-                    fixed_frame=len(
-                        self._assets.clips["pick_up"].frames,
-                    )
-                    - 1,
+                    "hold_item" if "hold_item" in self._assets.hd_action_clips
+                    else "pick_up",
+                    fixed_frame=0 if "hold_item" in self._assets.hd_action_clips else
+                    len(self._assets.clips["pick_up"].frames) - 1,
                 ),
                 clear_action=True,
             )

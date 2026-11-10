@@ -22,3 +22,5 @@ class GamePresentation:
     configure: Callable[[tk.Toplevel], None] = lambda _: None
     configure_control: Callable[[tk.Toplevel], None] = lambda _: None
     food_anchor: Callable[[str, int], tuple[float, float] | None] = lambda _c, _i: None
+    has_animation: Callable[[str], bool] = lambda _name: False
+    frame_events: Callable[[str, int], tuple[str, ...]] = lambda _c, _i: ()

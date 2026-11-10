@@ -59,13 +59,33 @@ class ConnectFourThrow:
         generation = self._generation
         self._resting = False
         self.effects.hide('stack2')
+        v3 = self._presentation.has_animation('throw_item')
+        clip = 'throw_item' if v3 else 'pick_up'
+        holding = False
+        held_point = (96.0, 136.0)
         points = [None, (96, 164), (96, 184), (96, 181), (96, 171),
                   (96, 143), (96, 146), (96, 153)]
 
         def marker(index: int) -> None:
+            nonlocal holding, held_point
             if self._closed or generation != self._generation:
                 return
             x, y, scale = self._presentation.origin()
+            if v3:
+                events = self._presentation.frame_events(clip, index)
+                if 'attach_object' in events:
+                    holding = True
+                point = self._presentation.food_anchor(clip, index)
+                if holding and point is not None:
+                    held_point = (point[0], min(point[1], 178.0))
+                    chip = self.effects.image(GAME_ART_DIR / 'c4-red.png', 32 * scale)
+                    self.effects.show('held', chip,
+                                      x + (held_point[0] - 16) * scale,
+                                      y + (held_point[1] - 16) * scale)
+                if holding and 'release_object' in events:
+                    holding = False
+                    release()
+                return
             point = points[index]
             if point and index >= 3 and index <= 5:
                 chip = self.effects.image(GAME_ART_DIR / 'c4-red.png', 32 * scale)
@@ -81,7 +101,8 @@ class ConnectFourThrow:
             if self._closed or generation != self._generation:
                 return
             x, y, scale = self._presentation.origin()
-            start = (x + 96 * scale, y + 141 * scale)
+            start = ((x + held_point[0] * scale, y + held_point[1] * scale)
+                     if v3 else (x + 96 * scale, y + 141 * scale))
             self.effects.hide('held')
             self.effects.hide('mask')
 
@@ -119,7 +140,7 @@ class ConnectFourThrow:
             self.effects.tween(1240, draw, fall)
 
         self._presentation.action(
-            'pick_up', (180, 120, 120, 130, 110, 140, 140, 220), marker,
+            clip, None if v3 else (180, 120, 120, 130, 110, 140, 140, 220), marker,
             lambda: None,
         )
 

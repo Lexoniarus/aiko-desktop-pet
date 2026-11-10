@@ -172,7 +172,7 @@ class RoomCommunicationTests(unittest.TestCase):
             self.session.playback.advance(.05)
             seen.add(self.session.snapshot()["animation"])
         self.assertEqual(flow.game.board.winner, 2)
-        self.assertIn("pick_up", seen)
+        self.assertIn("throw_item", seen)
         self.assertIn("expression-positive", seen)
         self.assertNotIn("jumping", seen)
         self.assertEqual(self.session.snapshot()["animation"], "rest-neutral")

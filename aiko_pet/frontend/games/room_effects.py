@@ -71,9 +71,14 @@ class RoomGameEffects:
         self.later(duration, landed)
 
     def throw(self, move: Move, done: Callable[[], None]) -> None:
+        v3 = self.playback.has_clip("throw_item")
+        clip = self.playback.clip("throw_item" if v3 else "pick_up")
+        release_anchor: tuple[int, int] = (96, 141)
+
         def release() -> None:
             self.held_item = None
-            self.motion("chip", 1490, cell=move.cell, flight_duration=1240)
+            self.motion("chip", 1490, cell=move.cell, flight_duration=1240,
+                        hand_anchor=release_anchor)
 
             def landed() -> None:
                 self._motion = None
@@ -82,13 +87,23 @@ class RoomGameEffects:
             self.later(1490, landed)
 
         def marker(index: int) -> None:
-            if index == 3:
+            nonlocal release_anchor
+            events = clip.frames[index].events
+            point = clip.frames[index].food_anchor
+            if v3 and point is not None:
+                release_anchor = point
+            if (v3 and "attach_object" in events) or (not v3 and index == 3):
                 self.held_item = "c4-red"
-            if index == 5:
-                self.later(30, release)
+            if (v3 and "release_object" in events) or (not v3 and index == 5):
+                if v3:
+                    release()
+                else:
+                    self.later(30, release)
 
         self.playback.game_action(
-            "pick_up", (180, 120, 120, 130, 110, 140, 140, 220), marker, lambda: None
+            "throw_item" if v3 else "pick_up",
+            None if v3 else (180, 120, 120, 130, 110, 140, 140, 220),
+            marker, lambda: None,
         )
 
     def finale(self, _won: bool, done: Callable[[], None]) -> None:

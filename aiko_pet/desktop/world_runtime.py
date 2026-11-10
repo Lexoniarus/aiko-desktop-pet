@@ -207,6 +207,8 @@ class DesktopWorldRuntime:
                 self.world,
                 item,
             ),
+            animated_inspection="inspect_item" in animated.assets.hd_action_clips,
+            inspection_hint=animated.inspection_hint,
         )
         self._behavior = ObjectBehaviorCoordinator(
             state,
@@ -269,9 +271,11 @@ class DesktopWorldRuntime:
         return FRAME_WIDTH * self.settings.scale
 
     def _play(self, clip: str) -> int:
-        self._playback.start("pick_up" if clip == "hold_item" else clip, 0)
+        selected = ("pick_up" if clip == "hold_item"
+                    and clip not in self._animated.assets.hd_action_clips else clip)
+        self._playback.start(selected, 0)
         if clip == "hold_item":
-            self._animated.hold_last_pose("pick_up", time.monotonic())
+            self._animated.hold_last_pose(selected, time.monotonic())
         return self._animated.action_id
 
     def _decide(self, token: str, context: ObjectUseContext) -> ObjectUseDecision:

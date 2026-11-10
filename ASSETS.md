@@ -25,6 +25,13 @@ Aiko artwork terms, not the source-code MIT license.
 
 ### Current Aiko Anime assets — restricted reuse
 
+The approved V3 grasp family uses 77 existing 384×416 images under
+`aiko_pet/assets/actions/grasp/`, shared by 1X and 2X. Pickup, holding,
+inspection, put-down and the Connect Four throw variant use this family;
+full-resolution originals and authoring material remain outside Git.
+Its derivatives retain the restricted Aiko artwork terms. See
+[V3 grasp sources and runtime use](docs/V3_GRASP.md).
+
 Food/drink display copies under `aiko_pet/assets/items/display/` use the same
 128-threshold binary alpha as character frames, preventing partial-alpha blends
 with the Windows Magenta color key. Run

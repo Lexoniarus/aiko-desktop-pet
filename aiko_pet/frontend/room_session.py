@@ -512,7 +512,7 @@ class RoomSession:
             "animation": (
                 "sleep"
                 if self.state.sleeping
-                else "pick_up"
+                else ("hold_item" if self.playback.has_clip("hold_item") else "pick_up")
                 if self.room.drag_ready and self.playback.animation == "idle"
                 else EXPRESSION_CLIPS[self.playback.expression]
                 if self.playback.expression is not None and not self.room.moving
@@ -542,7 +542,7 @@ class RoomSession:
             "animation_id": self.playback.presentation_id,
             "animation_timings": self.playback.action_timings,
             "animation_hold_frame": (
-                7
+                (0 if self.playback.has_clip("hold_item") else 7)
                 if self.room.drag_ready and self.playback.animation == "idle"
                 else self.room.locomotion.selection.fixed_frame
                 if self.playback.animation == "idle"

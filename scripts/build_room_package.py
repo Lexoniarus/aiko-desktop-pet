@@ -59,6 +59,11 @@ def encoded(value: Any) -> bytes:
     ).encode("utf8")
 
 
+def image_size(path: Path) -> tuple[int, int]:
+    with Image.open(path) as image:
+        return int(image.width), int(image.height)
+
+
 def archive(path: Path, files: dict[str, bytes]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(path, "w", compression=ZIP_DEFLATED, compresslevel=6) as output:
@@ -75,7 +80,7 @@ def download(url: str, target: Path, digest: str) -> bytes:
             return content
     request = urllib.request.Request(url, headers={"User-Agent": "AikoRoomBuilder/1"})
     with urllib.request.urlopen(request, timeout=60) as response:
-        content = response.read(40 * 1024 * 1024)
+        content = bytes(response.read(40 * 1024 * 1024))
     if hashlib.sha256(content).hexdigest() != digest:
         raise ValueError(f"Dependency digest mismatch: {target.name}")
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -101,7 +106,9 @@ def python_wheel(project: str, version: str, cache: Path) -> tuple[str, bytes]:
 @cache
 def image_bounds(path: Path) -> tuple[int, int, int, int] | None:
     with Image.open(path) as image:
-        return image.convert("RGBA").getbbox()
+        bounds = image.convert("RGBA").getbbox()
+        return (int(bounds[0]), int(bounds[1]), int(bounds[2]), int(bounds[3])) \
+            if bounds is not None else None
 
 
 def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
@@ -109,6 +116,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
     clips = {}
     for name in (
         set(catalog.clips) | set(catalog.body_clips) | set(catalog.expression_clips)
+        | set(catalog.hd_action_clips)
     ):
         clip = catalog.clip_for(name, 2)
         frames = []
@@ -137,6 +145,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
             anchor=clip.anchor,
             duration=clip.duration_seconds,
             family=clip.family,
+            itemAnchorMode=clip.item_anchor_mode,
         )
     items = load_item_catalog()
     item_files: dict[str, dict[str, Any]] = {
@@ -162,7 +171,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
                     "file": "assets/"
                     + variants[2].render_path.relative_to(ASSET_ROOT).as_posix(),
                     "pivot": variants[2].pivot,
-                    "dimensions": Image.open(variants[2].render_path).size,
+                    "dimensions": image_size(variants[2].render_path),
                     "offset": item.state_offsets.get(name, (0, 0)),
                 }
                 for name, variants in item.states.items()

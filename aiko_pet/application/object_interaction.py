@@ -76,6 +76,8 @@ class ObjectInteractionCoordinator:
         acknowledge_handover: Callable[[str, str], None] = lambda _item, _record: None,
         begin_handover: Callable[[str, str], None] = lambda _item, _record: None,
         finish_handover: Callable[[str], None] = lambda _item: None,
+        animated_inspection: bool = False,
+        inspection_hint: Callable[[], None] = lambda: None,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -109,6 +111,8 @@ class ObjectInteractionCoordinator:
         self._acknowledge_handover = acknowledge_handover
         self._begin_handover = begin_handover
         self._finish_handover = finish_handover
+        self._animated_inspection = animated_inspection
+        self._inspection_hint = inspection_hint
 
     @property
     def _episode(self) -> InteractionEpisode:
@@ -574,6 +578,8 @@ class ObjectInteractionCoordinator:
             self._episode.identity, self._episode.kind = known.identity, known.kind
             self._acknowledge_known_handover()
             self._set_phase(CuePhase("recognize"))
+            if self._animated_inspection:
+                self._play("hold_item")
             self._announce("object_recognized")
 
     def _complete_recognition(self, token: str) -> None:
@@ -656,10 +662,28 @@ class ObjectInteractionCoordinator:
         return True
 
     def _inspect(self, event: ObjectEvent = "object_inspect") -> None:
-        state = InspectionPhase(started_at=0.0)
+        state = InspectionPhase(started_at=0.0, animated=self._animated_inspection,
+                                event=event)
         self._set_phase(state)
         state.started_at = self._now()
-        self._announce(event)
+        if state.animated:
+            state.playback.action_id = self._play(state.clip_id)
+        else:
+            self._announce(event)
+
+    def _inspection_ready(self, state: InspectionPhase, cue_done: bool) -> bool:
+        if not state.animated:
+            return (cue_done
+                    and self._now() - state.started_at >= self._inspection_seconds)
+        if not state.playback.finished:
+            return False
+        if state.stage == "scan" or (state.stage == "hold" and cue_done):
+            state.stage = "hold" if state.stage == "scan" else "return"
+            state.playback.finished = False
+            state.playback.action_id = self._play(state.clip_id)
+            return False
+        return (state.stage == "return" and cue_done
+                and self._now() - state.started_at >= self._inspection_seconds)
 
     def receive_feedback(self, receipt: FeedbackReceipt) -> None:
         state = self._phase
@@ -734,6 +758,20 @@ class ObjectInteractionCoordinator:
 
     def receive(self, event: PlaybackEvent) -> None:
         state = self._phase
+        if isinstance(state, InspectionPhase) and state.animated:
+            if (event.action_id != state.playback.action_id
+                    or event.clip_id != state.clip_id or event in self._episode.seen):
+                return
+            self._episode.seen.add(event)
+            if "inspect_comment" in event.events and not state.announced:
+                state.announced = True
+                self._announce(state.event)
+            if "inspect_emote" in event.events:
+                self._inspection_hint()
+            if event.finished:
+                state.playback.finished = True
+            self.update()
+            return
         if (
             not isinstance(state, (AnimationPhase, PutDownPhase))
             or event.action_id != state.playback.action_id
@@ -953,8 +991,7 @@ class ObjectInteractionCoordinator:
                 self._complete_pickup(episode, token)
             elif (
                 isinstance(state, InspectionPhase)
-                and cue_done
-                and self._now() - state.started_at >= self._inspection_seconds
+                and self._inspection_ready(state, cue_done)
             ):
                 known = self._memory.get(token)
                 if known is None or not known.recognized:

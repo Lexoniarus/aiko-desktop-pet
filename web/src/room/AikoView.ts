@@ -1,5 +1,6 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 import type { RoomItemAsset } from './RoomAssets';
+import { heldItemPosition } from './heldItemPosition';
 
 export interface Clip {
   frames: Array<{
@@ -14,6 +15,7 @@ export interface Clip {
   anchor: [number, number];
   duration: number;
   family?: string;
+  itemAnchorMode?: string;
 }
 export interface PetScreenBounds {
   x: number;
@@ -36,6 +38,7 @@ export class AikoView extends Container {
   private heldKey = '';
   private heldItem = '';
   private heldOffset: [number, number] = [0, 0];
+  private heldPivot: [number, number] = [0, 0];
   private chipHands?: Texture[];
   private disposed = false;
   private frameBounds = new Rectangle();
@@ -171,16 +174,21 @@ export class AikoView extends Container {
     if (this.disposed || key !== this.heldKey) return;
     this.held.texture = texture;
     this.held.scale.set(definition.size ? definition.size / texture.width : 1);
-    this.held.anchor.set(
+    this.heldPivot = [
       state!.pivot[0] / texture.width,
       state!.pivot[1] / texture.height,
-    );
+    ];
+    this.held.anchor.set(...this.heldPivot);
     this.heldOffset = [
       2 * ((definition.handOffset?.[0] ?? 0) + (state?.offset?.[0] ?? 0)),
       2 * ((definition.handOffset?.[1] ?? 0) + (state?.offset?.[1] ?? 0)),
     ];
     this.placeHeld();
-    if (item === 'c4-red' && !this.chipHands) {
+    if (
+      item === 'c4-red' &&
+      this.clips[this.clipName]?.itemAnchorMode !== 'center' &&
+      !this.chipHands
+    ) {
       const hands = await Promise.all(
         [3, 4, 5].map((index) =>
           Assets.load<Texture>(
@@ -246,7 +254,8 @@ export class AikoView extends Container {
     const clip = this.clips[this.clipName];
     if (!clip) return;
     const index = clip.order[this.sprite.currentFrame] ?? this.sprite.currentFrame;
-    const chip = this.heldItem === 'c4-red' && this.clipName === 'pick_up';
+    const centered = clip.itemAnchorMode === 'center';
+    const chip = !centered && this.heldItem === 'c4-red' && this.clipName === 'pick_up';
     const chipAnchors: Record<number, [number, number]> = {
       3: [96, 181],
       4: [96, 171],
@@ -265,6 +274,13 @@ export class AikoView extends Container {
       this.foreground.height = this.sprite.texture.height;
     }
     if (anchor) {
+      if (centered) {
+        this.held.anchor.set(0.5);
+        const [x, y] = heldItemPosition(anchor, clip.anchor, this.held.height);
+        this.held.position.set(x, y);
+        return;
+      }
+      this.held.anchor.set(...this.heldPivot);
       const x = (anchor[0] - clip.anchor[0]) * 2 + this.heldOffset[0];
       const y = (anchor[1] - clip.anchor[1]) * 2 + this.heldOffset[1];
       this.held.position.set(x, y);

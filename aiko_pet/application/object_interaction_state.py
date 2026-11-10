@@ -244,6 +244,16 @@ class InspectionPhase:
     name: ClassVar[Literal["inspect"]] = "inspect"
     started_at: float
     feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
+    animated: bool = False
+    stage: Literal["scan", "hold", "return"] = "scan"
+    playback: AnimationProgress = field(default_factory=AnimationProgress)
+    announced: bool = False
+    event: ObjectEvent = "object_inspect"
+
+    @property
+    def clip_id(self) -> str:
+        return {"scan": "inspect_item", "hold": "inspect_hold",
+                "return": "inspect_return"}[self.stage]
 
 
 @dataclass(slots=True)

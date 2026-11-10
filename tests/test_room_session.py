@@ -457,7 +457,7 @@ class RoomSessionTests(unittest.TestCase):
         ready = self.command("tick")["snapshot"]
         self.assertTrue(ready["drag"]["ready"])
         self.assertEqual(
-            (ready["animation"], ready["animation_hold_frame"]), ("pick_up", 7)
+            (ready["animation"], ready["animation_hold_frame"]), ("hold_item", 0)
         )
         self.command("object_drag_drop", x=400, depth=100, height=25, offer=True)
         self.assertEqual(session.room.world.get(token).state.value, "pet_held")

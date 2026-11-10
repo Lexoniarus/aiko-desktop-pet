@@ -9,6 +9,7 @@ export class SpeechBubbles {
   readonly element = element('div', 'room-speech');
   private text = element('p');
   private emote = element('img', 'speech-emote');
+  private accent = element('span', 'speech-accent');
   private next = button('Weiter', () => {
     void this.command('speech_next');
   });
@@ -23,7 +24,9 @@ export class SpeechBubbles {
     private command: Command,
   ) {
     this.element.setAttribute('aria-live', 'polite');
-    this.element.append(this.emote, this.text, this.next);
+    this.element.append(this.emote, this.accent, this.text, this.next);
+    this.accent.style.fontSize = '24px';
+    this.accent.setAttribute('aria-label', 'Aiko untersucht den Gegenstand');
     this.emote.alt = 'Aikos Reaktion';
     this.emote.draggable = false;
     this.element.hidden = true;
@@ -40,6 +43,8 @@ export class SpeechBubbles {
     this.element.style.zoom = this.tableGame ? String(this.scale) : '';
     this.text.textContent = speech.text;
     this.text.hidden = !speech.text;
+    this.accent.textContent = speech.accent ?? '';
+    this.accent.hidden = !speech.accent;
     this.next.hidden = !speech.story;
     this.emote.hidden = !speech.emote;
     this.element.classList.toggle('emote-only', !!speech.emote && !speech.text);
@@ -52,7 +57,7 @@ export class SpeechBubbles {
 
   private position(bounds: Bounds): void {
     const speech = this.speech;
-    const content = !!speech && (!!speech.text || !!speech.emote);
+    const content = !!speech && (!!speech.text || !!speech.emote || !!speech.accent);
     const visible =
       this.room.petVisible &&
       bounds.x + bounds.width > 0 &&

@@ -43,6 +43,10 @@ def assemble_speech(
             configure_object_window,
             lambda window: configure_object_window(window, interactive=True),
             food_anchor=animated.game_food_anchor,
+            has_animation=lambda name: name in animated.assets.hd_action_clips,
+            frame_events=lambda name, index: animated.assets.clip_for(
+                name, settings.scale,
+            ).frames[index].events,
         ),
     )
 
