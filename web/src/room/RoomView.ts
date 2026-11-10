@@ -11,7 +11,7 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame } from './RoomPresentation';
+import { furnitureFrame, furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { tableGameFrame } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
@@ -379,7 +379,7 @@ export class RoomView {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
       this.camera.releaseFollow();
-      this.camera.lookAt({ x: table.x, depth: table.z + table.depth * 0.2 });
+      this.camera.lookAt(furnitureSupport(this.assets.layout, table));
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {

@@ -11,7 +11,7 @@ import {
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
-import { furnitureFrame } from '../src/room/RoomPresentation.ts';
+import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace } from '../src/room/RoomLayout.ts';
 import {
@@ -81,6 +81,12 @@ test('table and board share the floor order between front and rear walking posit
     assert.ok(canPlace(layout, point, layout.pet_radius));
     assert.equal(projection.projectPoint(point).groundY > board.order + 0.01, inFront);
   }
+  const placement = layout.furniture.find((item) => item.id === 'table');
+  projection.update(393, 873, projection.bearing(furnitureSupport(layout, placement)));
+  const phone = tableGameFrame(furnitureFrame(projection, placement));
+  assert.ok(Math.abs(phone.x + 240 * phone.scale - 393 / 2) < 1e-8);
+  assert.ok(phone.x + 100 * phone.scale >= 0);
+  assert.ok(phone.x + 380 * phone.scale <= 393);
 });
 
 test('ground objects cover Aiko on the same cell or behind, independent of insertion order', () => {
