@@ -1453,3 +1453,30 @@ offline. Page and console errors were absent. The local browser report is in
 
 The candidate remains local. Physical acceptance of the manual-only version
 follows publication and installation on the test devices.
+
+## Manual update checks published (2026-11-11)
+
+The release applies the update change from `ed990765` to the last published
+runtime source and its documentation. The release source is `a1ec89fd282e`
+on `release/room-manual-updates-20261111`. The V3 grasp work belongs to the
+development branch. The release package matches the previous Python, Pyodide
+and artwork contents, with text line endings normalised for comparison.
+
+The exact release source passed 17 web tests and the production build. The
+two headless profiles passed again with the release package and both starter
+versions. Each manual check fetched one descriptor and both profiles retained
+their saves through activation and offline reopening. Startup and simulated
+foreground/reconnect events fetched zero descriptors after activation.
+[Web CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/43017693132)
+
+The shared update channel now offers `0.1.0-a1ec89fd282e`. Deployment
+`314a3a9c` verified the live descriptor, starter and full runtime ZIP. The
+normal public descriptor and local release files also matched. Testers can
+choose **Nach Updates suchen** and **Jetzt neu starten** in the installed PWA.
+Physical checks on the two phones and two iPads remain pending for this version.
+[Release](https://github.com/Lexoniarus/aiko-desktop-pet/releases/tag/room-test-0.1.0-a1ec89fd282e)
+[Deployment](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/43018369958)
+
+All eight release files were downloaded from GitHub and matched its sizes and
+SHA-256 digests. The packages, test results and cost review are in
+`D:/Dropbox/Download/Aiko-PWA-Manuelle-Updates-2026-11-11-0.1.0-a1ec89fd282e`.
