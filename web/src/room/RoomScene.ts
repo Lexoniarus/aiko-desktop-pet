@@ -16,6 +16,7 @@ export class RoomScene {
     world: Container,
     layout: RoomLayout,
     images: Record<string, HTMLImageElement>,
+    onFridgeTap: () => void,
   ) {
     const wallBearings: Record<string, number> = {
       north: 0,
@@ -64,6 +65,10 @@ export class RoomScene {
           );
         },
       };
+      if (item.id === 'fridge') {
+        view.cursor = 'pointer';
+        view.on('pointertap', onFridgeTap);
+      }
       world.addChild(view);
       this.furniture.push({ view, item });
     }

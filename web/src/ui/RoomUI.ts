@@ -2,6 +2,7 @@ import type { RoomSnapshot } from '../bridge/RoomClient';
 import type { RoomView } from '../room/RoomView';
 import type { ObjectDragController } from '../input/ObjectDragController';
 import { FoodPanel } from './FoodPanel';
+import { FoodTray } from './FoodTray';
 import { SocialPanel } from './SocialPanel';
 import { MoodletStrip } from './MoodletStrip';
 import { StatusPanel } from './StatusPanel';
@@ -29,6 +30,7 @@ export class RoomUI {
   private artwork: RoomArtwork;
   private props: GameProps;
   private moodlets: MoodletStrip;
+  private foodTray: FoodTray;
   private find = button('Aiko finden', () => {
     if (this.room.petPosition) this.room.camera.lookAt(this.room.petPosition);
   });
@@ -56,7 +58,7 @@ export class RoomUI {
   constructor(
     private host: HTMLElement,
     private room: RoomView,
-    private drag: ObjectDragController,
+    drag: ObjectDragController,
     private command: Command,
     updates?: RoomUpdates,
     private downloadReport?: () => Promise<void>,
@@ -67,6 +69,8 @@ export class RoomUI {
     this.moodlets.element.classList.add('room-moodlets');
     this.speech = new SpeechBubbles(host, room, command);
     this.props = new GameProps(host, room, this.artwork, command);
+    this.foodTray = new FoodTray(room, drag);
+    room.onFridgeTap = () => this.open('food');
     if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
     for (const [name, label] of [
@@ -103,12 +107,15 @@ export class RoomUI {
       event.preventDefault();
       this.close();
     });
-    drag.onDragBegin = () => {
-      this.panel.close();
-      this.panelName = '';
-      this.activePanel = undefined;
-    };
-    host.append(this.toolbar, care, this.panel, this.status, this.moodlets.element);
+    drag.onDragBegin = () => this.dismissPanel();
+    host.append(
+      this.toolbar,
+      this.panel,
+      this.foodTray.element,
+      care,
+      this.status,
+      this.moodlets.element,
+    );
     room.followPet(() => {
       this.find.hidden = room.petVisible;
       this.fix.setAttribute('aria-pressed', String(room.camera.following));
@@ -122,14 +129,17 @@ export class RoomUI {
     const snapshot = this.snapshot;
     if (!snapshot) return;
     if (this.gameId && name !== 'games') {
-      void this.command('game_close').then(() => this.open(name));
+      void this.command('game_close').then(() => {
+        if (!this.gameId) this.open(name);
+      });
       return;
     }
+    this.foodTray.clear();
     this.panelName = name;
     this.activePanel = undefined;
     this.panelBody.replaceChildren();
     const titles: Record<string, string> = {
-      food: 'Füttern',
+      food: 'Kühlschrank',
       games: 'Spielen',
       social: 'Plaudern',
       status: 'Befinden',
@@ -138,10 +148,17 @@ export class RoomUI {
       credits: 'Quellen und Bildrechte',
     };
     this.title.textContent = titles[name] ?? name;
-    if (name === 'food')
+    this.panel.classList.toggle('fridge-panel', name === 'food');
+    if (name === 'food') {
+      this.room.frameFridge();
       this.panelBody.append(
-        new FoodPanel(snapshot, this.room, this.drag, this.command).element,
+        new FoodPanel(snapshot, this.room, (food) => {
+          this.dismissPanel();
+          this.room.framePetForFeeding();
+          this.foodTray.select(food);
+        }).element,
       );
+    }
     if (name === 'social')
       this.panelBody.append(
         new SocialPanel(async (action, args) => {
@@ -216,6 +233,9 @@ export class RoomUI {
   }
   private close(): void {
     if (this.gameId) void this.command('game_close');
+    this.dismissPanel();
+  }
+  private dismissPanel(): void {
     this.panel.close();
     this.panelName = '';
     this.activePanel = undefined;

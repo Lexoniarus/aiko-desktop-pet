@@ -11,7 +11,7 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame } from './RoomPresentation';
+import { furnitureFrame, furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { tableGameFrame, tableGamePan } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
@@ -63,6 +63,7 @@ export class RoomView {
   private petTapBlockedUntil = 0;
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
+  onFridgeTap: () => void = () => {};
   private resizeObserver?: ResizeObserver;
 
   constructor(
@@ -102,7 +103,14 @@ export class RoomView {
       }),
     );
     const images = Object.fromEntries(imageEntries);
-    this.scene = new RoomScene(this.world, this.assets.layout, images);
+    this.scene = new RoomScene(this.world, this.assets.layout, images, () => {
+      if (
+        !this.dragging &&
+        performance.now() > this.petTapBlockedUntil &&
+        !this.camera.blocksTap
+      )
+        this.onFridgeTap();
+    });
     this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
     this.aiko.on('pointertap', () => {
       if (performance.now() > this.petTapBlockedUntil && !this.camera.blocksTap)
@@ -367,6 +375,25 @@ export class RoomView {
   followPet(callback: (bounds: PetScreenBounds) => void): () => void {
     this.followers.add(callback);
     return () => this.followers.delete(callback);
+  }
+  frameFridge(): void {
+    const fridge = this.assets.layout.furniture.find((item) => item.id === 'fridge');
+    if (!fridge) return;
+    const { x, width } = furnitureFrame(this.camera.projection, fridge);
+    this.camera.releaseFollow();
+    if (x - width / 2 < 0 || x + width / 2 > this.host.clientWidth)
+      this.camera.lookAt(furnitureSupport(this.assets.layout, fridge));
+  }
+  framePetForFeeding(): void {
+    const point = this.motion.position() ?? this.petPosition;
+    if (!point) return;
+    const bounds = this.aiko.screenBounds();
+    if (
+      !this.petVisible ||
+      bounds.x < 0 ||
+      bounds.x + bounds.width > this.host.clientWidth
+    )
+      this.camera.lookAt(point);
   }
   tableGameFrame() {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');

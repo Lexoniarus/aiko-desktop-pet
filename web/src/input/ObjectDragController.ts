@@ -6,6 +6,8 @@ import type { DragPlacement, RoomView } from '../room/RoomView';
 import { PointerDrag } from './PointerDrag';
 import type { DragPointer } from './PointerDrag';
 
+type WorldItem = RoomSnapshot['objects'][number];
+
 export class ObjectDragController {
   onDragBegin: () => void = () => {};
   onError: (error: unknown) => void = () => {};
@@ -20,26 +22,23 @@ export class ObjectDragController {
   ) {
     room.onObjectDown = (item, event) => this.existing(item, event);
   }
-  private existing(
-    item: RoomSnapshot['objects'][number],
-    event: FederatedPointerEvent,
-  ): void {
+  private existing(item: WorldItem, event: FederatedPointerEvent): void {
     if (item.state !== 'resting') return;
     event.stopPropagation();
-    this.begin(event, item.definition_id, item);
+    this.begin(event, item.definition_id, { item });
   }
-  bindSupply(control: HTMLElement, definition: string): void {
+  bindSupply(control: HTMLElement, definition: string, onDrop: () => void): void {
     control.addEventListener('pointerdown', (event) => {
       if (event.button === 0 && event.isPrimary) {
         event.preventDefault();
-        this.begin(event, definition);
+        this.begin(event, definition, { onDrop });
       }
     });
   }
   private begin(
     event: DragPointer,
     definition: string,
-    item?: RoomSnapshot['objects'][number],
+    { item, onDrop }: { item?: WorldItem; onDrop?: () => void },
   ): void {
     if (this.settling) return;
     let reservation = Promise.resolve(true);
@@ -130,6 +129,7 @@ export class ObjectDragController {
             else {
               await this.request('object_drag_move', { ...target });
               await this.request('object_drag_drop', { ...target });
+              onDrop?.();
             }
           } catch (error) {
             if (dragged) await this.request('object_drag_cancel').catch(() => {});
@@ -153,7 +153,7 @@ export class ObjectDragController {
   ): DragPlacement {
     const overlay = document
       .elementFromPoint(x, y)
-      ?.closest('button,input,select,dialog,a');
+      ?.closest('button,input,select,dialog,a,.food-tray');
     const point = this.room.dragPoint(x, y, ground, definition);
     return overlay ? { ...point, inside: false, offer: false } : point;
   }
