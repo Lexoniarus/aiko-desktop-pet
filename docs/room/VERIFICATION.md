@@ -1431,3 +1431,25 @@ The site totals 86,952,320 bytes. Cost review reconfirmed the public repository,
 standard runners and existing Pages route. No billing configuration, paid option,
 subscription or quota was changed; full account billing/monthly bandwidth was
 not audited. Details and source links are in the local Dropbox cost protocol.
+
+## Manual package checks during the four-device test (2026-11-11)
+
+The owner reported that the published update worked on two phones and two iPads
+across two testers. The owner chose to notify testers when a release is ready.
+Testers now initiate package checks from **Einstellungen → App-Version und
+Updates → Nach Updates suchen**. Commit `ed990765` removes the startup,
+foreground and reconnect triggers and ignores forwarded checks from older
+starters. First setup still retrieves the initial package.
+
+All 20 web tests and the production build passed. Headless Chromium updated
+from `0.1.0-6a57c86375f0` to local candidate `0.1.0-ed990765093b` in a phone-sized
+profile with the previous cached starter and a tablet-sized profile with the new
+starter. Each manual update fetched one descriptor and the same runtime ZIP.
+After activation, startup and simulated foreground/reconnect events produced
+zero descriptor requests. Pressing the Settings button fetched one descriptor.
+Both profiles retained their distinct settings and object IDs and reopened
+offline. Page and console errors were absent. The local browser report is in
+`%TEMP%/aiko-manual-update-qa-20261111/result.json`.
+
+The candidate remains local. Physical acceptance of the manual-only version
+follows publication and installation on the test devices.
