@@ -123,11 +123,12 @@ export class RoomUI {
         ? 'Fixierung lösen'
         : 'Aiko fixieren';
       this.moodlets.element.hidden = this.panel.open;
+      this.foodTray.setPanning(room.camera.panning);
     });
   }
   private open(name: string): void {
     const snapshot = this.snapshot;
-    if (!snapshot) return;
+    if (!snapshot || (name === 'food' && this.panelName === 'food')) return;
     if (this.gameId && name !== 'games') {
       void this.command('game_close').then(() => {
         if (!this.gameId) this.open(name);
@@ -150,12 +151,17 @@ export class RoomUI {
     this.title.textContent = titles[name] ?? name;
     this.panel.classList.toggle('fridge-panel', name === 'food');
     if (name === 'food') {
-      this.room.frameFridge();
+      const fridgeX = this.room.frameFridge();
+      this.panel.classList.toggle(
+        'fridge-panel-left',
+        fridgeX > this.host.clientWidth / 2,
+      );
       this.panelBody.append(
         new FoodPanel(snapshot, this.room, (food) => {
           this.dismissPanel();
           this.room.framePetForFeeding();
           this.foodTray.select(food);
+          this.foodTray.setPanning(this.room.camera.panning);
         }).element,
       );
     }

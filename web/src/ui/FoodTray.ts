@@ -31,4 +31,8 @@ export class FoodTray {
     this.element.hidden = true;
     this.element.replaceChildren();
   }
+
+  setPanning(panning: boolean): void {
+    if (!this.element.hidden) this.element.toggleAttribute('data-panning', panning);
+  }
 }

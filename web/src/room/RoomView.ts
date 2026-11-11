@@ -376,15 +376,21 @@ export class RoomView {
     this.followers.add(callback);
     return () => this.followers.delete(callback);
   }
-  frameFridge(): void {
+  frameFridge(): number {
+    const viewportWidth = this.host.clientWidth;
     const fridge = this.assets.layout.furniture.find((item) => item.id === 'fridge');
-    if (!fridge) return;
+    if (!fridge) return viewportWidth / 2;
     const { x, width } = furnitureFrame(this.camera.projection, fridge);
     this.camera.releaseFollow();
-    if (x - width / 2 < 0 || x + width / 2 > this.host.clientWidth)
-      this.camera.lookAt(furnitureSupport(this.assets.layout, fridge));
+    this.camera.stopPanning();
+    if (x - width / 2 < 0 || x + width / 2 > viewportWidth) {
+      this.camera.panTo(furnitureSupport(this.assets.layout, fridge));
+      return viewportWidth / 2;
+    }
+    return x;
   }
   framePetForFeeding(): void {
+    this.camera.stopPanning();
     const point = this.motion.position() ?? this.petPosition;
     if (!point) return;
     const bounds = this.aiko.screenBounds();
@@ -393,7 +399,7 @@ export class RoomView {
       bounds.x < 0 ||
       bounds.x + bounds.width > this.host.clientWidth
     )
-      this.camera.lookAt(point);
+      this.camera.panTo(point);
   }
   tableGameFrame() {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');

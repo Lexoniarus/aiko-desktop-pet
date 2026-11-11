@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { RoomProjection } from '../src/room/RoomProjection.ts';
+import { RoomCamera } from '../src/room/RoomCamera.ts';
 import { readFileSync } from 'node:fs';
 import {
   validPackagePath,
@@ -50,6 +51,47 @@ test('table chips retain their diameter and flight joins the same landing geomet
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
+
+test('feeding pan stays at room scale and a held drag pauses camera following', (t) => {
+  const window = Object.assign(new EventTarget(), {
+    matchMedia: () => ({ matches: false }),
+  });
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: window });
+  t.after(() => {
+    if (previous) Object.defineProperty(globalThis, 'window', previous);
+    else delete globalThis.window;
+  });
+  let now = 0;
+  t.mock.method(performance, 'now', () => now);
+  const camera = new RoomCamera(new EventTarget(), layout);
+  t.after(() => camera.destroy());
+  camera.resize(393, 873);
+  const point = { x: 700, depth: 300 };
+  const scale = camera.projection.projectPoint(point).scale;
+  const start = camera.yaw;
+  const bearing = camera.projection.bearing(point);
+  camera.panTo(point);
+  now += 160;
+  camera.tick(point);
+  assert.ok(camera.yaw > start && camera.yaw < bearing);
+  assert.equal(camera.sceneHeight, 873);
+  assert.equal(camera.projection.projectPoint(point).scale, scale);
+  now += 160;
+  camera.tick(point);
+  assert.equal(camera.panning, false);
+  assert.equal(camera.projection.projectPoint(point).x, 393 / 2);
+  camera.followPet();
+  camera.hold(true);
+  const other = { x: 380, depth: 140 };
+  now += 100;
+  camera.tick(other);
+  assert.equal(camera.yaw, bearing);
+  camera.hold(false);
+  now += 100;
+  camera.tick(other);
+  assert.notEqual(camera.yaw, bearing);
+});
 
 test('wall furniture stays behind Aiko on free floor while its footprint stays blocked', () => {
   const projection = new RoomProjection(layout);

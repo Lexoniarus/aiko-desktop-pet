@@ -31,14 +31,22 @@ export class ObjectDragController {
     control.addEventListener('pointerdown', (event) => {
       if (event.button === 0 && event.isPrimary) {
         event.preventDefault();
-        this.begin(event, definition, { onDrop });
+        if (this.room.camera.panning) return;
+        this.begin(event, definition, {
+          onDrop,
+          offsetY: event.pointerType === 'touch' ? 24 : 0,
+        });
       }
     });
   }
   private begin(
     event: DragPointer,
     definition: string,
-    { item, onDrop }: { item?: WorldItem; onDrop?: () => void },
+    {
+      item,
+      onDrop,
+      offsetY = 0,
+    }: { item?: WorldItem; onDrop?: () => void; offsetY?: number },
   ): void {
     if (this.settling) return;
     let reservation = Promise.resolve(true);
@@ -98,7 +106,7 @@ export class ObjectDragController {
         document.body.append(ghost);
       },
       move: (x, y) => {
-        const target = this.dropTarget(x, y, ground, definition);
+        const target = this.dropTarget(x, y, ground, definition, offsetY);
         if (target.inside) ground = { x: target.x, depth: target.depth };
         pending = target;
         send();
@@ -109,13 +117,17 @@ export class ObjectDragController {
         );
         ghost.style.width = `${width}px`;
         ghost.style.height = `${height}px`;
-        ghost.style.transform = `translate(${x}px,${y}px) translate(${(-100 * asset!.pivot[0]) / asset!.dimensions[0]}%,${(-100 * asset!.pivot[1]) / asset!.dimensions[1]}%)`;
+        ghost.style.transform = `translate(${x}px,${y - offsetY}px) translate(${(-100 * asset!.pivot[0]) / asset!.dimensions[0]}%,${(-100 * asset!.pivot[1]) / asset!.dimensions[1]}%)`;
         ghost.classList.toggle('invalid-drop', !target.inside);
       },
       finish: (x, y, dragged, cancelled) => {
         finished = true;
         clearTimeout(timer);
         pending = undefined;
+        const target =
+          dragged && !cancelled
+            ? this.dropTarget(x, y, ground, definition, offsetY)
+            : undefined;
         this.room.camera.hold(false);
         if (dragged) this.room.suppressPetTap();
         this.settling = true;
@@ -124,8 +136,7 @@ export class ObjectDragController {
             if (!(await reservation)) return;
             await sending;
             if (!dragged) return;
-            const target = this.dropTarget(x, y, ground, definition);
-            if (cancelled || !target.inside) await this.request('object_drag_cancel');
+            if (!target?.inside) await this.request('object_drag_cancel');
             else {
               await this.request('object_drag_move', { ...target });
               await this.request('object_drag_drop', { ...target });
@@ -150,11 +161,12 @@ export class ObjectDragController {
     y: number,
     ground: RoomPoint,
     definition: string,
+    offsetY: number,
   ): DragPlacement {
     const overlay = document
       .elementFromPoint(x, y)
       ?.closest('button,input,select,dialog,a,.food-tray');
-    const point = this.room.dragPoint(x, y, ground, definition);
+    const point = this.room.dragPoint(x, y - offsetY, ground, definition);
     return overlay ? { ...point, inside: false, offer: false } : point;
   }
   cancel(): void {

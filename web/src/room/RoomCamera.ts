@@ -1,8 +1,11 @@
 import type { RoomPoint, RoomLayout } from './RoomLayout';
-import { RoomProjection } from './RoomProjection';
+import { RoomProjection } from './RoomProjection.ts';
+
+const panDuration = 320;
 
 export class RoomCamera {
   readonly projection: RoomProjection;
+  readonly layout: RoomLayout;
   yaw = 0;
   version = 0;
   following = false;
@@ -13,16 +16,15 @@ export class RoomCamera {
   private height = 1;
   private pointer?: { id: number; x: number; moved: boolean };
   private velocity = 0;
+  private pan?: { from: number; delta: number; started: number };
   private last = performance.now();
   private lastDragAt = -Infinity;
   get blocksTap(): boolean {
     return performance.now() - this.lastDragAt < 350;
   }
   private controller = new AbortController();
-  constructor(
-    private canvas: HTMLCanvasElement,
-    readonly layout: RoomLayout,
-  ) {
+  constructor(canvas: HTMLCanvasElement, layout: RoomLayout) {
+    this.layout = layout;
     this.projection = new RoomProjection(layout);
     const options = { signal: this.controller.signal };
     canvas.addEventListener(
@@ -44,6 +46,7 @@ export class RoomCamera {
         this.lastDragAt = performance.now();
         this.pointer.x = event.clientX;
         this.following = false;
+        this.pan = undefined;
         this.velocity = -dx / this.projection.angularScale;
         this.rotateBy(this.velocity);
       },
@@ -68,6 +71,9 @@ export class RoomCamera {
   get sceneHeight(): number {
     return this.portraitGame ? Math.max(180, this.height * 0.48 - 88) : this.height;
   }
+  get panning(): boolean {
+    return this.pan !== undefined;
+  }
   rotateBy(angle: number): void {
     this.yaw = (this.yaw + angle) % (Math.PI * 2);
     this.refresh();
@@ -82,11 +88,30 @@ export class RoomCamera {
     this.refresh();
   }
   lookAt(point: RoomPoint): void {
+    this.stopPanning();
     this.yaw = this.projection.bearing(point);
-    this.velocity = 0;
     this.refresh();
   }
+  stopPanning(): void {
+    this.pan = undefined;
+    this.velocity = 0;
+  }
+  panTo(point: RoomPoint): void {
+    const offset = this.projection.bearing(point) - this.yaw;
+    const delta = Math.atan2(Math.sin(offset), Math.cos(offset));
+    if (
+      Math.abs(delta) < 0.001 ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      this.lookAt(point);
+      return;
+    }
+    this.pointer = undefined;
+    this.velocity = 0;
+    this.pan = { from: this.yaw, delta, started: performance.now() };
+  }
   followPet(): void {
+    this.pan = undefined;
     this.following = true;
   }
   releaseFollow(): void {
@@ -96,14 +121,21 @@ export class RoomCamera {
     const now = performance.now(),
       dt = Math.min(0.1, (now - this.last) / 1000);
     this.last = now;
-    if (this.following) {
+    if (this.held) return;
+    if (this.pan) {
+      const { from, delta, started } = this.pan;
+      const progress = Math.min(1, (now - started) / panDuration);
+      this.yaw = (from + delta * (1 - (1 - progress) ** 3)) % (Math.PI * 2);
+      this.refresh();
+      if (progress === 1) this.pan = undefined;
+    } else if (this.following) {
       const target = this.projection.bearing(point);
       const delta = Math.atan2(
         Math.sin(target - this.yaw),
         Math.cos(target - this.yaw),
       );
       if (Math.abs(delta) > 0.00001) this.rotateBy(delta * (1 - Math.exp(-7 * dt)));
-    } else if (!this.pointer && !this.held && Math.abs(this.velocity) > 0.00002) {
+    } else if (!this.pointer && Math.abs(this.velocity) > 0.00002) {
       this.rotateBy(this.velocity * dt * 60);
       this.velocity *= Math.exp(-9 * dt);
     }
@@ -117,6 +149,7 @@ export class RoomCamera {
     this.held = held;
     this.pointer = undefined;
     this.velocity = 0;
+    if (held) this.pan = undefined;
   }
   destroy(): void {
     this.controller.abort();
