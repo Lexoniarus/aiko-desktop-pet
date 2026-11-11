@@ -38,8 +38,7 @@ async function launch(): Promise<void> {
     const module = await import(/* @vite-ignore */ new URL(installed.entry, root).href);
     const updates = new BrowserUpdates(installed.version);
     await module.startRoom(host, root.href, updates.host);
-    // Outside #app: the already installed runtime replaces that element's children
-    // and knows nothing about updates. It can still display this first-upgrade notice.
+    // Show staged updates outside #app, whose children the runtime owns.
     const notice = document.createElement('aside');
     notice.className = 'update-notice';
     notice.setAttribute('aria-label', 'App-Update');
@@ -56,7 +55,6 @@ async function launch(): Promise<void> {
       message.textContent = state.message;
       restart.hidden = !state.canRestart;
     });
-    updates.start();
     const locationURL = new URL(location.href);
     locationURL.searchParams.delete('install');
     history.replaceState(null, '', locationURL);

@@ -114,16 +114,13 @@ strategy for the first Android test:
   edit, commit, push or local package build alone does not publish an app update.
   Code/content/resource changes included in a mobile release travel together;
   the existing native desktop application retains its own release mechanism.
-- Both platforms use the existing BrowserUpdates flow: check on startup,
-  foreground return/reconnection or explicit Settings action; download and
-  validate the whole package; stage it locally; activate on the next cold start
-  or a safe explicit restart after saving. Do not interrupt a live game or
-  replace the running program during an action.
-- The shared runtime enforces at least 60 seconds between automatic check
-  attempts in the running app, including events forwarded by an older cached
-  starter and failed attempts. Do not add a polling timer. Settings checks remain
-  immediate and reset the automatic interval. A fresh launch may check again;
-  this is not a cross-device or persisted rate limit.
+- During the four-device test phase, both platforms check for program updates
+  only when a tester selects **Einstellungen → App-Version und Updates → Nach
+  Updates suchen**. The runtime ignores automatic requests from cached starters.
+  The first online setup still fetches the initial package for an empty installation.
+- A manual check downloads and validates a newer package and stages it locally.
+  Activation happens on the next cold start or after a safe explicit restart
+  that saves first. The restart waits until the tester finishes an active game.
 - The release offered is shared; activation time is per device. Offline or
   unopened devices can temporarily keep an older version. Each device retains
   its own local Aiko/save. Shared program updates neither synchronise saves nor
@@ -138,8 +135,8 @@ strategy for the first Android test:
 
 A05 must verify one shared published descriptor/package through two independent
 installations, starting from the same older baseline and retaining distinct
-saves. Both must discover and activate the same release. Record offered version,
-package identity/hash and each retained save separately. Browser-profile checks
+saves. Both must find the same release through Settings and activate it. Record
+the offered version, package identity/hash and each retained save separately. Browser-profile checks
 and physical iPad/POCO acceptance remain distinct evidence.
 
 ### 1.3 Delivery cost awareness

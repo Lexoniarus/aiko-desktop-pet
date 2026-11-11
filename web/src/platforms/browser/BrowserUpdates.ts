@@ -15,7 +15,6 @@ export class BrowserUpdates implements RoomUpdates {
   private state: UpdateState;
   private listeners = new Set<(state: UpdateState) => void>();
   private checking?: Promise<void>;
-  private lastCheck?: number;
   private shutdown?: () => Promise<void>;
   private gameOpen = false;
   private buildTimestamp: number;
@@ -25,7 +24,7 @@ export class BrowserUpdates implements RoomUpdates {
     this.state = {
       installedVersion: version,
       phase: 'idle',
-      message: 'Updates werden beim Öffnen geprüft.',
+      message: 'Hier kannst du nach einer neuen Version suchen.',
       canRestart: false,
     };
   }
@@ -57,26 +56,9 @@ export class BrowserUpdates implements RoomUpdates {
     for (const listener of this.listeners) listener(this.state);
   }
 
-  start(): void {
-    const check = (): void => {
-      if (!document.hidden) void this.checkAutomatically();
-    };
-    document.addEventListener('visibilitychange', check);
-    window.addEventListener('online', check);
-    void this.checkAutomatically();
-  }
-
-  checkAutomatically(): Promise<void> {
-    // Enforce the interval here, including calls forwarded by cached starters.
-    if (this.lastCheck !== undefined && Date.now() - this.lastCheck < 60000)
-      return this.checking ?? Promise.resolve();
-    return this.check();
-  }
-
   check(): Promise<void> {
     if (this.state.phase === 'applying') return Promise.resolve();
     if (this.checking) return this.checking;
-    this.lastCheck = Date.now();
     this.checking = this.download().finally(() => {
       this.checking = undefined;
     });
@@ -101,7 +83,7 @@ export class BrowserUpdates implements RoomUpdates {
         this.publish({
           phase: 'downloading',
           availableVersion: published.version,
-          message: 'Update wird im Hintergrund geladen …',
+          message: 'Update wird heruntergeladen …',
         });
         pending = await installPublishedPackage(
           published,
