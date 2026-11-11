@@ -42,9 +42,8 @@ oder zuverlässigen Offlinebetrieb.
 
 iPad und Android nutzen dauerhaft dieselbe PWA unter derselben Startadresse.
 Ein veröffentlichtes mobiles Update liefert beiden dasselbe Programmpaket.
-Updates werden beim Öffnen, bei Rückkehr in die App und nach erneuter
-Internetverbindung geprüft. Unter **Einstellungen → App-Version und Updates →
-Nach Updates suchen** kannst du die Prüfung selbst starten.
+Starte die Suche unter **Einstellungen → App-Version und Updates → Nach Updates
+suchen**. Die Tester entscheiden damit selbst, wann sie eine neue Version abrufen.
 
 Nach vollständigem Download und erfolgreicher Prüfung wird das Update für den
 nächsten Start vorgemerkt. **Jetzt neu starten** sichert vorher den Spielstand;
@@ -71,8 +70,8 @@ Der Spielstand dieses Smartphones ist unabhängig von deinem iPad-Spielstand.
 Eine ältere veröffentlichte Version darf das neuere importierte Paket nicht
 automatisch ersetzen; das gehört zu den Prüfungen.
 Sobald diese Version gemeinsam veröffentlicht ist, bist du bereits auf diesem
-Stand. Ein späteres neueres gemeinsames Update kommt wieder über den normalen
-Updateweg; der Dateiimport erfordert keinen Wechsel zu einer anderen App.
+Stand. Ein späteres neueres gemeinsames Update findest du über **Nach Updates
+suchen** in den Einstellungen derselben App.
 
 ## Erster Prüfdurchgang
 

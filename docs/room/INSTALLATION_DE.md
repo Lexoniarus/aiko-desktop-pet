@@ -26,13 +26,12 @@ Das Hinzufügen des Symbols allein installiert die Runtime noch nicht. Der
 erste Start muss den Download abschließen. Erst danach ist der Offline-Start
 abgesichert. Eine unterbrochene Einrichtung kann erneut gestartet werden.
 
-Updates werden beim Öffnen und bei Rückkehr in die App im Hintergrund geprüft.
-Nur vollständig heruntergeladene und geprüfte Pakete werden für den nächsten
-Start vorgemerkt. Unter **Einstellungen → App-Version und Updates** stehen die
-installierte Version, **Nach Updates suchen** und bei einem fertigen Update
-**Jetzt neu starten**. Ein laufendes Spiel wird nicht automatisch unterbrochen;
-vor einem bewussten Neustart wird der Spielstand gesichert. Ohne Internet läuft
-die bereits installierte Version weiter. Neue Updates brauchen wieder Internet.
+Starte die Suche nach Updates unter **Einstellungen → App-Version und Updates →
+Nach Updates suchen**. Dort siehst du auch die installierte Version. Nach
+vollständigem Download und erfolgreicher Prüfung wird das Paket für den
+nächsten Start vorgemerkt. Mit **Jetzt neu starten** kannst du es sofort
+übernehmen, sobald ein laufendes Spiel beendet ist. Aiko sichert vorher den
+Spielstand. Ohne Internet läuft die installierte Version weiter.
 Ein Git-Push allein veröffentlicht noch kein App-Update: Das geprüfte Paket muss
 zusätzlich auf der bestehenden Startadresse bereitgestellt werden.
 
@@ -42,13 +41,7 @@ dasselbe Programmpaket. Jedes Gerät übernimmt es über den beschriebenen Ablau
 zu seinem eigenen Zeitpunkt; ein offline gebliebenes Gerät kann vorübergehend
 einen älteren Stand behalten. Die Spielstände bleiben je Gerät getrennt.
 
-**Erstes Update von der ursprünglichen Testversion:** Das vorhandene Aiko-Symbol
-online öffnen. Danach Aiko im App-Umschalter vollständig schließen und erneut
-öffnen, damit die neue Startoberfläche verwendet wird. Sobald „Update bereit“
-erscheint, nochmals vollständig schließen und wieder öffnen. Danach sind die
-Update-Einstellungen verfügbar. Je nach bereits erfolgtem Laden entfällt der
-erste Neustart. **Profil, Symbol und Website-Daten nicht entfernen.** Eine neue
-ZIP oder Profilinstallation ist für diesen Übergang nicht nötig.
+Behalte für Updates das vorhandene Profil, Aiko-Symbol und die Website-Daten.
 
 Der Dateiimport bleibt als manueller Ausweichweg in den Einstellungen erhalten.
 Die Starter-Adresse beibehalten, damit Aikos vorhandener Spielstand zur gleichen

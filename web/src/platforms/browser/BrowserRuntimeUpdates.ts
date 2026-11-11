@@ -9,14 +9,11 @@ export function browserRuntimeUpdates(
 ): RoomHostOptions {
   const owner = new BrowserUpdates(version, buildTimestamp);
   if (legacy) {
-    // The cached starter calls these public methods after startRoom returns.
-    // Its event throttle uses stale private state after delegation, so enforce
-    // the interval in the runtime owner. Settings use owner.host's manual check.
+    // Cached starters can still call check() on startup and browser events.
+    // Settings use the separate runtime owner's check() for explicit requests.
     legacy.updates.subscribe = owner.subscribe.bind(owner);
-    legacy.updates.check = owner.checkAutomatically.bind(owner);
+    legacy.updates.check = () => Promise.resolve();
     legacy.updates.apply = owner.apply.bind(owner);
-  } else {
-    owner.start();
   }
   return owner.host;
 }

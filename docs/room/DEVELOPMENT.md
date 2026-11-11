@@ -85,15 +85,13 @@ presentation parity open; successful installation is not visual acceptance.
 
 ## Updates on the installed icon
 
-The starter checks the current same-origin `install.json` after the local room
-has started, on foreground return and on reconnect. The shared runtime owns the
-60-second automatic-check interval for the running app, including calls forwarded
-by cached starters; the starter's private timestamp is not authoritative. Failed
-attempts also count, concurrent checks share the same request, and hidden-app
-foreground/reconnect events do not initiate checks. There is no polling timer.
-Settings provide an immediate manual check and version; a manual check also
-resets the interval before another automatic attempt. The interval is in memory,
-so a fresh app launch can check immediately.
+For an installed package, **Einstellungen → App-Version und Updates → Nach
+Updates suchen** is the only trigger for fetching the same-origin `install.json`.
+The shared runtime ignores check calls from cached starters. Concurrent manual
+checks share one request. On an empty installation, the starter fetches the
+initial package during first setup. Browser service-worker registration still
+handles the app shell separately from runtime package discovery.
+
 The descriptor is fetched without caching with a 10-second timeout. A full
 package download has a 10-minute bound and uses the existing streamed manifest,
 file-hash, size, path, protocol and schema checks. Delta downloads are not used.
@@ -114,21 +112,18 @@ activate and reload. Restart is disabled while a game is open. A failed save
 leaves the old runtime running and the verified update pending. No automatic
 in-session reload is performed.
 
-For the original d073 installation, the new Service Worker takes over only shell
-routing without reloading the existing page. Runtime requests remain bound to
-their package UUID. On the next navigation the new shell can run the unchanged
-old runtime and stage its replacement. An external notice asks the user to close
-and reopen: old runtimes have no shutdown hook and never receive an unsafe
-restart button. Preserve the same URL, profile, icon and website data throughout.
-See [installation instructions](INSTALLATION_DE.md) for this first transition.
+The service worker takes over shell routing on navigation. Runtime requests stay
+bound to their package UUID. The historical update from the original d073
+installation used a starter notice to request a full close and reopen because
+the old runtime lacked a shutdown hook.
 
-The first installed-package update is published as `room-test-0.1.0-a8a6a75a11c9`.
+The first installed-package update was published as `room-test-0.1.0-a8a6a75a11c9`.
 The source web check and deployment `8dc2747b` passed; the actual HTTPS upgrade
 from d073 retained the same settings/object IDs and reopened offline. Subsequent
 documentation commits do not change that packaged runtime. Future code pushes
 still require building, reviewing and publishing a new package/site release,
-then updating the deployment branch's release pin. The installed app discovers
-published packages automatically; a source push alone is not an app release.
+then updating the deployment branch's release pin. Testers then find published
+packages through Settings.
 
 ## Pages publication preflight and recovery
 
