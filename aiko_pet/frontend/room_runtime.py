@@ -105,6 +105,7 @@ class RoomRuntime:
         self._called: RoomPoint | None = None
         self._call_arrival: RoomPoint | None = None
         self._call_serial = 0
+        self._near_call = False
         self._activity_arrived: Callable[[bool], None] | None = None
         self._wander: RoomPoint | None = None
         self._offered: tuple[str, float, str] | None = None
@@ -163,7 +164,7 @@ class RoomRuntime:
                 or self.spatial.layout_id != self.geometry.layout.id
                 or self.spatial.layout_revision != self.geometry.layout.revision):
             raise ValueError("Der gespeicherte Raum benötigt eine passende Migration.")
-        safe_position = self.geometry.accessible(self.position)
+        safe_position = self.movement.recover_position(self.position)
         world.locate_in_room(replace(self.spatial, pet=safe_position))
 
     @property
@@ -179,6 +180,10 @@ class RoomRuntime:
     @property
     def call_id(self) -> int | None:
         return self._call_serial if self._call_arrival is not None else None
+
+    @property
+    def close_call_id(self) -> int | None:
+        return self.call_id if self._near_call else None
 
     def _select_item(self, item: str | None) -> None:
         if item is not None:
@@ -275,17 +280,36 @@ class RoomRuntime:
             facts=BehaviorFacts(game_open=self.game_open()),
         )
 
-    def call(self, point: RoomPoint, *, wall: str | None = None) -> None:
+    def call(
+        self, point: RoomPoint | None = None, *,
+        wall: str | None = None, bearing: float | None = None,
+    ) -> None:
         if self.state.sleeping:
             raise ValueError("Aiko schläft gerade.")
         if wall is not None and all(
             item.id != wall for item in self.geometry.layout.walls
         ):
             raise ValueError("Ungültige Blickrichtung beim Rufen.")
+        if bearing is not None:
+            if not math.isfinite(bearing):
+                raise ValueError("Ungültige Blickrichtung beim Rufen.")
+            target = self.movement.call_target(bearing)
+        elif point is not None:
+            target = self.geometry.accessible(point)
+        else:
+            raise ValueError("Beim Rufen fehlt das Ziel.")
 
         def start() -> None:
+            if (
+                bearing is not None
+                and self._near_call
+                and self._call_arrival is not None
+                and self.geometry.distance(self._call_arrival, target) < 1e-6
+            ):
+                return
             self.pause_route()
-            self._called = self._call_arrival = self.geometry.accessible(point)
+            self._called = self._call_arrival = target
+            self._near_call = bearing is not None
             self._call_serial += 1
 
         self.interaction.interrupt(start)
@@ -295,6 +319,7 @@ class RoomRuntime:
         self._finish_activity(False)
         self._called = self._wander = None
         self._call_arrival = None
+        self._near_call = False
         self.moving = False
         self.movement.cancel()
         self.locomotion.stop_walk()
@@ -312,7 +337,7 @@ class RoomRuntime:
             table.z + table.depth / 2 + self.geometry.layout.cell_size * 2.5,
         )
         target = self.geometry.accessible(point)
-        if self.movement.navigator.find_route(self.position, target) is None:
+        if self.movement.plan(self.position, target) is None:
             raise ValueError("Aiko kann den Spielplatz gerade nicht erreichen.")
         self._called = target
         self._activity_arrived = arrived
@@ -671,7 +696,8 @@ class RoomRuntime:
             return
         self.leisure.suspend(self.now)
         previous = self.position
-        destination = self.geometry.accessible(destination)
+        if destination != self._call_arrival:
+            destination = self.geometry.accessible(destination)
         if self.geometry.distance(previous, destination) < 1e-6:
             if self._wander is not None and not self.night():
                 self.leisure.arrived(self.now, self.facing)
@@ -694,6 +720,7 @@ class RoomRuntime:
         if self.moving:
             if self._called is None:
                 self._call_arrival = None
+                self._near_call = False
             last_start = step.travelled[-2] if len(step.travelled) > 1 else previous
             self.environment.heading = math.atan2(
                 current.x - last_start.x, last_start.depth - current.depth,

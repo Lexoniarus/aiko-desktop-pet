@@ -27,12 +27,19 @@ scale and ground occlusion all use the same distance from the camera.
 Routes continue across wall boundaries. At equal floor depth, an object
 remains visible in front of Aiko.
 
-When the user calls a visible Aiko, her target lies on her current bearing
-just outside the camera clearance, if the floor is reachable. Calls take
-priority over autonomous object interactions at all friendship levels.
-Aiko waits facing the user when she arrives.
+When the user calls a visible Aiko, she approaches along her current
+bearing. If she is offscreen, the target bearing is the camera's current
+direction. The ordinary route reaches radius 131, followed by a checked
+radial leg to radius 70. If that leg is obstructed, Aiko stops at the
+reachable transition point. Calls take priority over autonomous object
+interactions at all friendship levels. Aiko waits facing the user at
+the destination.
 
-The camera enters close framing only for a call that has started. Face,
-shoulders and room for the speech bubble stay visible, and the lower
-edge can crop the lower body. Cancelling the call, opening a game or
-leaving close range ends the close framing.
+The camera keeps its normal scale and horizon. On a confirmed approach
+inside radius 100 it can pan horizontally once to center Aiko. Her
+physical distance supplies the close view. The foreground character
+projection limits the frontal silhouette to the viewport width and
+places the lower body below the room viewport at arrival. A later trip
+starts along the same ray back to the ordinary floor. A saved near
+position is restored if that exit remains clear. Food placement uses
+the ordinary clearance.

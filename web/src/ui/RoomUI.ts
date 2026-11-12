@@ -80,7 +80,7 @@ export class RoomUI {
     talk.classList.add('room-wide-action');
     this.toolbar.append(
       button('Aiko rufen', () => {
-        void command('call', { ...room.callPoint() });
+        void command('call', { bearing: room.callBearing() });
       }),
       button('Füttern', () => this.open('food')),
       play,

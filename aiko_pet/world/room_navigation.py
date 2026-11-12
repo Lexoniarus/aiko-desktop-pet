@@ -145,10 +145,16 @@ class RoomNavigator:
                         return True
         return False
 
-    def clear_segment(self, start: RoomPoint, end: RoomPoint) -> bool:
+    def clear_segment(
+        self, start: RoomPoint, end: RoomPoint, *,
+        minimum_distance: float | None = None,
+    ) -> bool:
         layout = self.geometry.layout
         if not all(
-            layout.can_place(point.x, point.depth, layout.pet_radius)
+            layout.can_place(
+                point.x, point.depth, layout.pet_radius,
+                minimum_distance=minimum_distance,
+            )
             for point in (start, end)
         ):
             return False
@@ -157,6 +163,8 @@ class RoomNavigator:
             return False
         if not leg.turn:
             return not any(_ray_hits_box(start, end, box) for box in self._boxes)
+        if minimum_distance is not None:
+            return False
         # The extrema bound the arc against room walls. Intersections with each
         # inflated furniture box catch obstructions between valid endpoints.
         for angle in (0, math.pi / 2, math.pi, -math.pi / 2):

@@ -360,9 +360,13 @@ class RoomSession:
             wall = args.get("wall")
             if wall is not None and not isinstance(wall, str):
                 raise ValueError("Ungültige Blickrichtung beim Rufen.")
-            self.room.call(
-                RoomPoint(float(args["x"]), float(args.get("depth", 300))), wall=wall,
-            )
+            if "bearing" in args:
+                self.room.call(wall=wall, bearing=float(args["bearing"]))
+            else:
+                self.room.call(
+                    RoomPoint(float(args["x"]), float(args.get("depth", 300))),
+                    wall=wall,
+                )
         elif name == "place":
             self.room.place(
                 str(args["definition"]),
@@ -509,6 +513,7 @@ class RoomSession:
             "pet": json_value(self.state.capture_checkpoint()),
             "room": json_value(world.room),
             "call_id": self.room.call_id,
+            "close_call_id": self.room.close_call_id,
             "objects": json_value(world.objects),
             "speech": json_value(self.playback.snapshot()),
             "drag": {

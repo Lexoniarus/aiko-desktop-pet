@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 
 from aiko_pet.application.room_contracts import PROTOCOL_VERSION  # noqa: E402
 from aiko_pet.asset_paths import ASSET_ROOT  # noqa: E402
+from aiko_pet.frontend.room_movement import CALL_DISTANCE  # noqa: E402
 from aiko_pet.infrastructure.character_assets import (  # noqa: E402
     load_character_catalog,
 )
@@ -218,6 +219,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
         "items": item_files,
         "room": ROOM_IMAGES,
         "characterHeight": character_height,
+        "closeCallDistance": CALL_DISTANCE,
         "layout": asdict(load_room_layout()),
         "ui": ui,
     }

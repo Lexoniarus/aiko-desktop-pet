@@ -13,8 +13,9 @@ from unittest.mock import patch
 from aiko_pet.browser.bootstrap import create_browser_session
 from aiko_pet.frontend.games.room_effects import RoomGameEffects
 from aiko_pet.frontend.room_locomotion import ROOM_WALK_ANIMATION, RoomLocomotion
+from aiko_pet.frontend.room_movement import RoomMovement
 from aiko_pet.world.room import RoomGeometry, RoomPoint
-from aiko_pet.world.room_navigation import RoomLeg
+from aiko_pet.world.room_navigation import RoomLeg, RoomNavigator
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -123,6 +124,95 @@ class RoomSessionTests(unittest.TestCase):
         self.command("resume")
         second = self.command("call", x=470, depth=100)["snapshot"]["call_id"]
         self.assertNotEqual(second, active)
+
+    def test_near_call_reaches_radius_70_without_restarting_on_repeat(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        bearing = 0.35
+        start = RoomPoint(*room.geometry.polar_position(bearing, 200))
+        transition = RoomPoint(*room.geometry.polar_position(bearing, 131))
+        target = RoomPoint(*room.geometry.polar_position(bearing, 70))
+        room.world.locate_in_room(replace(room.spatial, pet=start))
+        first = self.command("call", bearing=bearing)["snapshot"]
+        call_id = first["close_call_id"]
+        self.assertIsNotNone(call_id)
+        self.advance_until(lambda: room.position != start)
+        serial = room.movement.serial
+        again = self.command("call", bearing=bearing)["snapshot"]
+        self.assertEqual(again["close_call_id"], call_id)
+        self.assertEqual(room.movement.serial, serial)
+        self.advance_until(lambda: room.position == target)
+        first_stop, final_stop = room.movement.points
+        self.assertAlmostEqual(room.geometry.distance(first_stop, transition), 0)
+        self.assertEqual(final_stop, target)
+        self.assertAlmostEqual(room.movement.distance_walked, 130)
+
+        self.command("call", bearing=bearing)
+        self.wall += 0.5
+        standing = self.command("tick")["snapshot"]
+        self.assertEqual(standing["close_call_id"], call_id)
+        self.assertEqual(standing["animation"], "rest-neutral")
+        self.assertFalse(standing["moving"])
+        self.assertEqual(room.movement.serial, serial)
+
+    def test_blocked_near_call_stops_at_the_transition(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        layout = room.geometry.layout
+        table = next(item for item in layout.furniture if item.id == "table")
+        obstacle = replace(table, id="test_obstacle", x=400, z=200, width=4, depth=4)
+        geometry = replace(room.geometry, layout=replace(
+            layout, furniture=(*layout.furniture, obstacle)
+        ))
+        room.geometry = geometry
+        room.movement = RoomMovement(RoomNavigator(geometry))
+        start, transition, target = (RoomPoint(400, z) for z in (90, 169, 230))
+        self.assertTrue(geometry.layout.can_place(
+            target.x, target.depth, geometry.layout.pet_radius, minimum_distance=70,
+        ))
+        room.world.locate_in_room(replace(room.spatial, pet=start))
+        self.command("call", bearing=0)
+        self.advance_until(lambda: room.position == transition)
+        self.assertEqual(room.movement.points, (transition,))
+
+    def test_near_position_reopens_and_exits_along_the_arrival_ray(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        bearing = 0.35
+        close = RoomPoint(*room.geometry.polar_position(bearing, 70))
+        transition = RoomPoint(*room.geometry.polar_position(bearing, 131))
+        room.world.locate_in_room(replace(room.spatial, pet=close))
+        self.command("suspend")
+        self.endpoint = create_browser_session(str(self.path))
+        self.sequence = 0
+        reopened = self.endpoint.session.room
+        self.assertEqual(reopened.position, close)
+        self.assertFalse(reopened.geometry.layout.can_place(
+            close.x, close.depth, reopened.geometry.layout.pet_radius
+        ))
+        self.command("call", x=470, depth=100)
+        self.advance_until(lambda: reopened.position == RoomPoint(470, 100))
+        self.assertAlmostEqual(
+            reopened.geometry.distance(reopened.movement.points[0], transition), 0
+        )
+
+    def test_table_game_walks_out_of_the_near_position_before_starting(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        session = self.endpoint.session
+        room = session.room
+        close, transition = RoomPoint(400, 230), RoomPoint(400, 169)
+        room.world.locate_in_room(replace(room.spatial, pet=close))
+        reply = self.command("game_open", id="connect_four")["snapshot"]
+        self.assertTrue(reply["game"]["preparing"])
+        self.assertEqual(room.position, close)
+        self.assertIsNone(session.games.sequence)
+        self.advance_until(lambda: session.games.sequence is not None)
+        self.assertEqual(room.movement.points[0], transition)
+        self.assertEqual(room.position, RoomPoint(730, 396.25))
 
     def test_motion_snapshot_carries_the_duration_used_by_the_simulation(self) -> None:
         locomotion = self.endpoint.session.room.locomotion

@@ -19,6 +19,7 @@ export interface RoomSnapshot {
     layout_revision: number;
   };
   call_id: number | null;
+  close_call_id: number | null;
   objects: Array<{
     instance_id: string;
     definition_id: string;

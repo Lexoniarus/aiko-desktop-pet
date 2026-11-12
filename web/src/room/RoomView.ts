@@ -11,7 +11,7 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame, furnitureSupport, roomPresentation } from './RoomPresentation';
+import { furnitureFrame, furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { connectFourGeometry, tableGameFrame } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
@@ -20,6 +20,7 @@ export interface AssetManifest {
   packageVersion: string;
   buildTimestamp: number;
   characterHeight: number;
+  closeCallDistance: number;
   layout: RoomLayout;
   ui: {
     icons: Record<string, Record<string, string>>;
@@ -61,7 +62,8 @@ export class RoomView {
   draggingInstance?: string;
   dragging = false;
   private petTapBlockedUntil = 0;
-  private closeCall?: { entered: boolean; centered: boolean };
+  private callPan?: 'waiting' | 'started';
+  private readonly frontalHalfWidth: number;
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   onFridgeTap: () => void = () => {};
@@ -73,6 +75,21 @@ export class RoomView {
     readonly assets: AssetManifest,
   ) {
     this.motion = new RoomMotion(assets.layout);
+    const frontalClips = ['rest-neutral', 'room-walk-toward', 'room-walk-away'];
+    const halfWidth = Math.max(
+      1,
+      ...frontalClips.flatMap((name) => {
+        const clip = assets.clips[name];
+        const anchor = (clip?.anchor[0] ?? 0) * 2;
+        return (
+          clip?.frames.map(({ bounds }) =>
+            Math.max(anchor - bounds[0], bounds[2] - anchor),
+          ) ?? []
+        );
+      }),
+    );
+    this.frontalHalfWidth =
+      (halfWidth * assets.layout.pet_height) / assets.characterHeight;
   }
 
   async initialize(): Promise<void> {
@@ -133,17 +150,17 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
-    const callChanged = snapshot.call_id !== this.snapshot?.call_id;
+    const callChanged = snapshot.close_call_id !== this.snapshot?.close_call_id;
     const gameReady =
       snapshot.game?.id === 'connect_four' &&
       !snapshot.game.preparing &&
       (this.snapshot?.game?.id !== 'connect_four' || this.snapshot.game.preparing);
     if (snapshot.game || callChanged) {
-      this.endCloseCall();
-      if (!snapshot.game && snapshot.call_id != null) {
+      this.endCallPan();
+      if (!snapshot.game && snapshot.close_call_id != null) {
         this.camera.releaseFollow();
         this.camera.stopPanning();
-        this.closeCall = { entered: false, centered: false };
+        this.callPan = 'waiting';
       }
     }
     this.snapshot = snapshot;
@@ -221,7 +238,7 @@ export class RoomView {
     const motion = this.motion.sample();
     const point = motion?.point ?? snapshot.room.pet;
     this.camera.tick(point);
-    if (!snapshot.game) this.frameCloseCall(point);
+    if (!snapshot.game) this.panForCall(point);
     this.scene.update(this.camera);
     const projection = this.camera.projection;
     const walk = motion?.walk;
@@ -234,13 +251,20 @@ export class RoomView {
       snapshot.animation_timings,
       snapshot.animation_hold_frame,
     );
-    const projected = projection.projectPoint(point);
+    const projected =
+      snapshot.game?.id === 'connect_four' && !snapshot.game.preparing
+        ? projection.projectPoint(point)
+        : projection.projectAiko(
+            point,
+            this.assets.closeCallDistance,
+            this.frontalHalfWidth,
+          );
     this.aiko.visible = projected.depth > 1;
     this.aiko.position.set(projected.x, projected.groundY);
     this.aiko.scale.set(
       (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
     );
-    this.aiko.zIndex = projected.groundY;
+    this.aiko.zIndex = projection.yAt(projected.depth);
     this.aiko.renderHeld(
       snapshot.game?.id === 'connect_four' ? this.tableGameFrame()?.chip : undefined,
     );
@@ -424,7 +448,7 @@ export class RoomView {
     return new ConnectFourScene(this.world, this.root);
   }
   frameForGame(id: string): void {
-    this.endCloseCall();
+    this.endCallPan();
     this.camera.setGame(true, id === 'connect_four');
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
@@ -478,40 +502,19 @@ export class RoomView {
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
 
-  private endCloseCall(): void {
-    if (!this.closeCall) return;
-    if (this.closeCall.centered && this.camera.panning) this.camera.stopPanning();
-    if (this.closeCall.entered) this.camera.setFraming();
-    this.closeCall = undefined;
+  private endCallPan(): void {
+    if (this.callPan === 'started' && this.camera.panning) this.camera.stopPanning();
+    this.callPan = undefined;
   }
 
-  private frameCloseCall(point: RoomPoint): void {
-    if (!this.closeCall) return;
-    const projection = this.camera.projection;
-    const distance = worldPolar(this.assets.layout, point).distance;
-    const end = projection.nearDistance + 1;
-    const weight = Math.max(0, Math.min(1, (180 - distance) / (180 - end)));
-    if (!weight) {
-      if (this.closeCall.entered) this.endCloseCall();
-      return;
-    }
-    this.closeCall.entered = true;
-    if (weight > 0.5 && !this.closeCall.centered) {
-      this.closeCall.centered = true;
+  private panForCall(point: RoomPoint): void {
+    if (
+      this.callPan === 'waiting' &&
+      worldPolar(this.assets.layout, point).distance <= 100
+    ) {
+      this.callPan = 'started';
       this.camera.panTo(point);
     }
-    const { width, height, designHeight } = projection;
-    const body = this.assets.layout.pet_height;
-    const targetHeight = Math.min(height * 1.1, width * 1.35);
-    const top = Math.max(height * 0.21, height - targetHeight * 0.73);
-    const normalFit = height / designHeight;
-    const targetFit = ((targetHeight / body) * end) / roomPresentation.focalLength;
-    const targetHorizon =
-      top + ((body - this.assets.layout.camera_height) * targetHeight) / body;
-    this.camera.setFraming(
-      normalFit + (targetFit - normalFit) * weight,
-      height * roomPresentation.horizon * (1 - weight) + targetHorizon * weight,
-    );
   }
 
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {
@@ -521,16 +524,10 @@ export class RoomView {
     if (x < 0 || x > box.width || y < 0 || y > this.camera.sceneHeight) return;
     return this.picking.resolveDrop(x, y);
   }
-  callPoint(): RoomPoint {
+  callBearing(): number {
     const { projection, yaw } = this.camera;
     const pet = this.petPosition;
-    const near = projection.nearDistance + 1;
-    if (pet && this.petVisible) {
-      const distance = worldPolar(this.assets.layout, pet).distance;
-      if (distance <= near) return pet;
-      return projection.pointAtBearing(projection.bearing(pet), near);
-    }
-    return projection.pointAtBearing(yaw, near);
+    return pet && this.petVisible ? projection.bearing(pet) : yaw;
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;

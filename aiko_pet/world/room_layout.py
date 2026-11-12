@@ -66,14 +66,21 @@ class RoomLayout:
             return distance, self.depth - along
         raise ValueError("Unknown room wall")
 
-    def can_place(self, x: float, z: float, radius: float = 0) -> bool:
+    def can_place(
+        self, x: float, z: float, radius: float = 0, *,
+        minimum_distance: float | None = None,
+    ) -> bool:
+        clearance = (
+            self.camera_clearance + radius
+            if minimum_distance is None else minimum_distance
+        )
         return (
             all(math.isfinite(v) for v in (x, z, radius))
             and radius >= 0
             and radius <= x <= self.width - radius
             and radius <= z <= self.depth - radius
             and math.hypot(x - self.width / 2, z - self.depth / 2)
-            >= self.camera_clearance + radius
+            >= clearance
             and not any(item.contains(x, z, radius) for item in self.furniture)
         )
 

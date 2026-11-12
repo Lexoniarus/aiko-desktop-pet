@@ -107,6 +107,30 @@ export class RoomProjection {
     };
   }
 
+  projectAiko(point: RoomPoint, callDistance: number, frontalHalfWidth: number) {
+    const projected = this.projectPoint(point);
+    const maxScale = Math.max(1, this.width - 24) / (2 * frontalHalfWidth);
+    const near = this.nearDistance;
+    const progress = Math.max(
+      0,
+      Math.min(1, (near - projected.depth) / (near - callDistance)),
+    );
+    if (!progress) return { ...projected, scale: Math.min(projected.scale, maxScale) };
+
+    // Keep the frontal silhouette inside a tall viewport and the lower body
+    // below its bottom edge. The camera and the physical depth stay fixed.
+    const displayDistance = near * (1 - 0.2 * progress);
+    const scale = Math.min(this.scaleAt(displayDistance), maxScale);
+    const closeScale = Math.min(this.scaleAt(near * 0.8), maxScale);
+    const entryY = this.yAt(near);
+    const closeY = Math.max(
+      entryY,
+      this.height + 0.3 * this.layout.pet_height * closeScale,
+    );
+    const groundY = entryY + (closeY - entryY) * progress;
+    return { ...projected, y: groundY, groundY, scale };
+  }
+
   intersectFloor(x: number, y: number, height = 0): RoomPoint | undefined {
     const divisor = (this.layout.camera_height - height) * this.angularScale;
     if (Math.abs(divisor) < 1e-6) return;

@@ -264,6 +264,32 @@ test('panning only translates art, including across the panorama wrap', () => {
   assert.equal(projection.intersectFloor(512, 10), undefined);
 });
 
+test('a close Aiko keeps her frontal silhouette inside the viewport above the lower body crop', () => {
+  const projection = new RoomProjection(layout);
+  const frontalHalfWidth = 30;
+  for (const [width, height] of [
+    [393, 819],
+    [873, 339],
+    [1024, 768],
+  ]) {
+    projection.update(width, height, 0);
+    const frames = [200, 147, 130, 120, 100, 70].map((distance) =>
+      projection.projectAiko(worldPoint(layout, 0, distance), 70, frontalHalfWidth),
+    );
+    for (const [index, frame] of frames.slice(1).entries()) {
+      assert.ok(frame.scale >= frames[index].scale);
+      assert.ok(frame.groundY >= frames[index].groundY);
+    }
+    const close = frames.at(-1);
+    const fullHeight = close.scale * layout.pet_height;
+    assert.equal(close.depth, 70);
+    assert.ok(close.scale * frontalHalfWidth * 2 <= width - 24 + 1e-8);
+    assert.ok(Math.abs((close.groundY - height) / fullHeight - 0.3) < 1e-8);
+    assert.ok(close.groundY - fullHeight >= height * 0.2);
+    assert.equal(projection.yAt(Infinity), height * 0.3);
+  }
+});
+
 test('display interpolation follows the admitted corner rather than its diagonal', () => {
   const motion = new RoomMotion();
   motion.receive({ x: 100, depth: 100 }, 1000);
