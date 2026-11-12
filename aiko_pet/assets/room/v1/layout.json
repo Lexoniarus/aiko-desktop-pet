@@ -8,7 +8,7 @@
   "cell_size": 12.5,
   "pet_height": 100,
   "pet_radius": 20,
-  "camera_height": 70,
+  "camera_height": 95,
   "camera_clearance": 110,
   "food_line": 0.65,
   "furniture": [

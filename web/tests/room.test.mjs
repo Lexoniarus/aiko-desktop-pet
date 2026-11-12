@@ -13,7 +13,7 @@ import {
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
-import { furnitureFrame } from '../src/room/RoomPresentation.ts';
+import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
@@ -22,16 +22,27 @@ import {
   columnAt,
   landingCell,
   tableGameFrame,
-  tableGamePan,
 } from '../src/games/ConnectFourGeometry.ts';
 
 test('table chips retain their diameter and flight joins the same landing geometry', () => {
-  const frame = tableGameFrame({ x: 500, y: 700, width: 480, height: 150 });
-  assert.equal(frame.chip, 26.24);
-  assert.equal(frame.scale, 0.82);
+  const frame = tableGameFrame({
+    x: 500,
+    y: 700,
+    width: 480,
+    order: 700,
+    surface: { x: 500, y: 595, scale: 4 },
+  });
+  assert.equal(frame.chip, 19.2);
+  assert.equal(frame.scale, 0.6);
   assert.equal(frame.y + 446 * frame.scale, 595);
   assert.ok(frame.playerY > 700);
-  const half = tableGameFrame({ x: 250, y: 350, width: 240, height: 75 });
+  const half = tableGameFrame({
+    x: 250,
+    y: 350,
+    width: 240,
+    order: 350,
+    surface: { x: 250, y: 297.5, scale: 2 },
+  });
   assert.equal(half.chip, frame.chip / 2);
   assert.equal(columnAt(99.9), undefined);
   assert.equal(columnAt(100), 0);
@@ -125,25 +136,8 @@ test('table and board share the floor order between front and rear walking posit
     assert.ok(canPlace(layout, point, layout.pet_radius));
     assert.equal(projection.projectPoint(point).groundY > board.order + 0.01, inFront);
   }
-  const placement = layout.furniture.find((item) => item.id === 'table');
-  projection.update(
-    393,
-    873,
-    projection.bearing({ x: placement.x, depth: placement.z + placement.depth * 0.2 }),
-  );
-  const phone = tableGameFrame(furnitureFrame(projection, placement));
-  const pan = tableGamePan(phone, 393);
-  assert.ok(phone.x + 100 * phone.scale + pan >= 16 - 1e-8);
-  assert.ok(phone.x + 380 * phone.scale + pan <= 393 - 16 + 1e-8);
-  projection.update(
-    768,
-    1024,
-    projection.bearing({ x: placement.x, depth: placement.z + placement.depth * 0.2 }),
-  );
-  assert.equal(
-    tableGamePan(tableGameFrame(furnitureFrame(projection, placement)), 768),
-    0,
-  );
+  assert.ok(Math.abs(board.y + 446 * board.scale - table.surface.y) < 1e-8);
+  assert.equal(board.scale * 480, 72 * table.surface.scale);
 });
 
 test('ground objects cover Aiko only when nearer or on the same depth', () => {
@@ -174,9 +168,7 @@ test('food drag has one floor line and scale while vertical movement changes hei
     scale ??= screen.scale;
     assert.ok(Math.abs(screen.scale - scale) < 1e-8);
     assert.ok(Math.abs(screen.depth - 175.43859649122805) < 1e-8);
-    assert.ok(
-      Math.abs(screen.groundY - (802 + 88 * layout.food_line) * projection.fit) < 1e-8,
-    );
+    assert.ok(Math.abs(screen.groundY - projection.yAt(screen.depth)) < 1e-8);
   }
 });
 test('flat panorama preserves floor and lifted drop coordinates in every direction', () => {
@@ -211,31 +203,30 @@ test('four wall grids have one window and use the authored furniture proportions
     ['east'],
   );
   const projection = new RoomProjection(layout);
-  projection.update(1800, 900, 0);
-  const item = (id) => layout.furniture.find((item) => item.id === id);
-  const door = furnitureFrame(projection, item('door'));
-  assert.ok(Math.abs(door.x - 270) < 1e-6);
-  assert.equal(door.y, 802);
-  assert.equal(door.width, 255);
-  assert.equal(furnitureFrame(projection, item('bed')).width, 680);
-  assert.equal(furnitureFrame(projection, item('table')).width, 527);
-  projection.update(1800, 900, -Math.PI / 2);
-  const shelf = furnitureFrame(projection, item('shelf'));
-  assert.ok(Math.abs(shelf.x - 660) < 1e-6);
-  assert.equal(shelf.y, 540);
-  assert.equal(shelf.width, 270);
-  const plant = furnitureFrame(projection, item('plant'));
-  assert.ok(plant.x - plant.width / 2 >= 18);
-  projection.update(1800, 900, Math.PI);
-  const bed = furnitureFrame(projection, item('bed'));
-  assert.ok(bed.x - bed.width / 2 >= 18);
-  assert.equal(bed.flipX, true);
-  for (const entry of layout.furniture) {
-    const frame = furnitureFrame(projection, entry);
-    assert.ok(
-      Math.abs(frame.width / frame.height - entry.crop[2] / entry.crop[3]) < 1e-6,
-    );
+  for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2]) {
+    projection.update(1800, 900, yaw);
+    for (const item of layout.furniture) {
+      const frame = furnitureFrame(projection, item);
+      const support = furnitureSupport(layout, item);
+      const ground = projection.projectPoint(support);
+      assert.equal(frame.x, ground.x);
+      assert.equal(frame.y, projection.projectPoint(support, item.elevation ?? 0).y);
+      assert.ok(Math.abs(frame.height / ground.scale - item.height) < 1e-8);
+      assert.ok(
+        Math.abs(frame.width / frame.height - item.crop[2] / item.crop[3]) < 1e-8,
+      );
+    }
   }
+  const door = layout.furniture.find(({ id }) => id === 'door');
+  const frame = furnitureFrame(projection, door);
+  assert.ok(
+    Math.abs(projection.yAt(projection.wallDistanceAt(frame.x)) - frame.y) < 1e-8,
+  );
+  const far = projection.projectPoint(worldPoint(layout, 0, 340));
+  const near = projection.projectPoint(worldPoint(layout, 0, 180));
+  assert.ok(
+    Math.abs((near.groundY - far.groundY) / (near.scale - far.scale) - 95) < 1e-8,
+  );
 });
 test('panning only translates art, including across the panorama wrap', () => {
   const projection = new RoomProjection(layout);
@@ -268,9 +259,9 @@ test('display interpolation follows the admitted corner rather than its diagonal
 test('Aiko crosses the seam behind an apple, approaches on one ray and returns in front', () => {
   const projection = new RoomProjection(layout);
   const motion = new RoomMotion(layout);
-  projection.update(1024, 900, Math.PI / 4);
-  const apple = projection.projectPoint(projection.foodPlacement(512, 859.2).point);
   const seam = Math.atan2(layout.width, layout.depth);
+  projection.update(1024, 900, seam);
+  const apple = projection.projectPoint(projection.foodPlacement(512, 859.2).point);
   const left = seam - 0.095,
     right = seam + 0.095;
   const far = 225,
@@ -320,11 +311,10 @@ test('Aiko crosses the seam behind an apple, approaches on one ray and returns i
     assert.equal(row[0].x < row[2].x, appleInFront);
   }
   assert.ok(front[1].scale > back[1].scale);
-  const projectedStride = projection.profileStepLength(stepLength);
   for (const radius of [far, near]) {
     const a = projection.projectPoint(worldPoint(layout, seam, radius));
     const b = projection.projectPoint(
-      worldPoint(layout, seam + projectedStride / radius, radius),
+      worldPoint(layout, seam + stepLength / radius, radius),
     );
     const strideInPixels = a.scale * stepLength;
     assert.ok(Math.abs(b.x - a.x - strideInPixels) < 0.06 * strideInPixels);

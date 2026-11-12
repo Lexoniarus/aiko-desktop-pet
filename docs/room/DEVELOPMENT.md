@@ -48,6 +48,18 @@ compatibility targets rather than an assumed proven result. Automated browser
 QA uses headless Playwright: the Browser plugin/skill is unavailable in this
 session, and the owner explicitly prohibits visible test windows.
 
+## Room projection
+
+The flat panorama uses physical bearing and distance for the room layout.
+The normal horizon is at 30% of the usable scene height and the eye height
+is 95 room units, with Aiko at 100. A single distance-dependent scale sets
+sprite heights, floor contact, tabletop elevation and inverse floor picking.
+Furniture keeps its authored aspect ratio at the projected support point.
+The room draws one floor to the projected wall perimeter. Connect Four
+anchors the board and chip scale to the projected table surface.
+
+## Build and delivery
+
 Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `npm ci`, `npm run build`, then the repository Python interpreter to run
 `../scripts/build_room_package.py`. Generated downloads and distributions stay

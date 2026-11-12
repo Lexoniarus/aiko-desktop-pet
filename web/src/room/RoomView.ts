@@ -209,8 +209,6 @@ export class RoomView {
     this.scene.update(this.camera);
     const projection = this.camera.projection;
     const walk = motion?.walk;
-    if (walk?.clip.startsWith('body-step-'))
-      walk.stepLength = projection.profileStepLength(walk.stepLength);
     void this.aiko.showFromCamera(
       snapshot.animation,
       snapshot.heading ?? 0,
@@ -332,7 +330,7 @@ export class RoomView {
       x,
       Math.min(
         y + support + 24 * projection.fit,
-        projection.floorFront * projection.fit,
+        Math.min(projection.height, projection.yAt(projection.nearDistance)),
       ),
     );
     const held = this.picking.atDepth(

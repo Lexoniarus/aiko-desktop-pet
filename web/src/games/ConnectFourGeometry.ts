@@ -1,6 +1,7 @@
 /** One authored board space for previews, held chips, flight and settled pieces. */
 export const connectFourGeometry = {
   size: 480,
+  roomWidth: 72,
   margin: 100,
   cell: 40,
   rows: 6,
@@ -25,15 +26,15 @@ export function tableGameFrame(table: {
   x: number;
   y: number;
   width: number;
-  height: number;
-  order?: number;
+  order: number;
+  surface: { x: number; y: number; scale: number };
 }): TableGameFrame {
-  const scale = (table.width * 0.82) / connectFourGeometry.size;
-  const surface = table.y - table.height * 0.7;
+  const scale =
+    (connectFourGeometry.roomWidth * table.surface.scale) / connectFourGeometry.size;
   return {
-    order: table.order ?? table.y,
-    x: table.x - (connectFourGeometry.size * scale) / 2,
-    y: surface - connectFourGeometry.base * scale,
+    order: table.order,
+    x: table.surface.x - (connectFourGeometry.size * scale) / 2,
+    y: table.surface.y - connectFourGeometry.base * scale,
     scale,
     chip: connectFourGeometry.chip * scale,
     playerX: table.x - table.width * 0.34,

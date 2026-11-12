@@ -10,33 +10,22 @@ import { roomPresentation } from './RoomPresentation.ts';
 export class RoomProjection {
   readonly designHeight = roomPresentation.designHeight;
   readonly panelWidth = roomPresentation.panelWidth;
-  readonly floorBack = roomPresentation.floorBack;
-  readonly floorFront = roomPresentation.floorFront;
   width = 1;
   height = 1;
   readonly layout: RoomLayout;
   private yaw = 0;
   private readonly farInverse: number;
   private readonly nearInverse: number;
-  private readonly groundScale: number;
-  private readonly horizon: number;
-  private readonly spriteScale: number;
+  private horizon = 0;
 
   constructor(layout: RoomLayout) {
     this.layout = layout;
-    // Calibrate the perspective to the shallow floor strip and the original
-    // character size in the default position, 100 units from the north wall.
     this.farInverse = this.inverseDepth(Math.hypot(layout.width / 2, layout.depth / 2));
-    this.nearInverse = this.inverseDepth(layout.camera_clearance + layout.pet_radius);
-    this.groundScale =
-      (this.floorFront - this.floorBack) / (this.nearInverse - this.farInverse);
-    this.horizon = this.floorBack - this.groundScale * this.farInverse;
-    const referenceDistance = layout.depth / 3;
-    const referenceScale =
-      3.2 +
-      (1.2 * (layout.depth / 2 - referenceDistance)) /
-        (layout.depth / 2 - layout.camera_clearance);
-    this.spriteScale = referenceScale / this.inverseDepth(referenceDistance);
+    this.nearInverse = this.inverseDepth(this.nearDistance);
+  }
+
+  get nearDistance(): number {
+    return this.layout.camera_clearance + this.layout.pet_radius;
   }
 
   get fit(): number {
@@ -44,27 +33,18 @@ export class RoomProjection {
   }
 
   get angularScale(): number {
-    return (this.panelWidth * 2 * this.fit) / Math.PI;
-  }
-
-  profileStepLength(stepLength: number): number {
-    // Match the profile artwork's stride to its size on the panorama.
-    return (stepLength * this.spriteScale * Math.PI) / (this.panelWidth * 2);
+    return roomPresentation.focalLength * this.fit;
   }
 
   update(width: number, height: number, yaw: number): void {
     this.width = width;
     this.height = height;
     this.yaw = yaw;
+    this.horizon = height * roomPresentation.horizon;
   }
 
   bearing(point: RoomPoint): number {
-    // Normalise the rectangular floor to align its corners with the four
-    // equally wide panels. Every ray keeps the same screen x at all depths.
-    return Math.atan2(
-      (2 * point.x) / this.layout.width - 1,
-      1 - (2 * point.depth) / this.layout.depth,
-    );
+    return worldPolar(this.layout, point).bearing;
   }
 
   screenX(bearing: number): number {
@@ -75,20 +55,36 @@ export class RoomProjection {
     return this.width / 2 + delta * this.angularScale;
   }
 
-  private screenBearing(x: number): number {
+  screenBearing(x: number): number {
     return this.yaw + (x - this.width / 2) / this.angularScale;
   }
 
   pointAtBearing(bearing: number, distance: number): RoomPoint {
-    const angle = Math.atan2(
-      this.layout.width * Math.sin(bearing),
-      this.layout.depth * Math.cos(bearing),
-    );
-    return worldPoint(this.layout, angle, distance);
+    return worldPoint(this.layout, bearing, distance);
   }
 
   private inverseDepth(distance: number): number {
     return 1 / Math.max(distance, 1);
+  }
+
+  scaleAt(distance: number): number {
+    return this.angularScale * this.inverseDepth(distance);
+  }
+
+  yAt(distance: number, elevation = 0): number {
+    return (
+      this.horizon + (this.layout.camera_height - elevation) * this.scaleAt(distance)
+    );
+  }
+
+  wallDistanceAt(x: number): number {
+    const ray = this.pointAtBearing(this.screenBearing(x), 1);
+    const xDirection = Math.abs(ray.x - this.layout.width / 2);
+    const zDirection = Math.abs(ray.depth - this.layout.depth / 2);
+    return Math.min(
+      this.layout.width / (2 * xDirection),
+      this.layout.depth / (2 * zDirection),
+    );
   }
 
   projectPoint(
@@ -96,9 +92,8 @@ export class RoomProjection {
     height = 0,
   ): { x: number; y: number; depth: number; scale: number; groundY: number } {
     const depth = worldPolar(this.layout, point).distance;
-    const inverse = this.inverseDepth(depth);
-    const scale = this.spriteScale * inverse * this.fit;
-    const groundY = (this.horizon + this.groundScale * inverse) * this.fit;
+    const scale = this.scaleAt(depth);
+    const groundY = this.yAt(depth);
     return {
       x: this.screenX(this.bearing(point)),
       y: groundY - height * scale,
@@ -109,9 +104,9 @@ export class RoomProjection {
   }
 
   intersectFloor(x: number, y: number, height = 0): RoomPoint | undefined {
-    const divisor = this.groundScale - height * this.spriteScale;
+    const divisor = (this.layout.camera_height - height) * this.angularScale;
     if (Math.abs(divisor) < 1e-6) return;
-    const inverse = (y / this.fit - this.horizon) / divisor;
+    const inverse = (y - this.horizon) / divisor;
     if (inverse < this.farInverse - 1e-9 || inverse > this.nearInverse + 1e-9) return;
     return this.pointAtBearing(this.screenBearing(x), 1 / inverse);
   }

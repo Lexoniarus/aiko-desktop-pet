@@ -15,8 +15,8 @@ zur gemeinsamen Bodenlinie bleiben Teil der Animation.
 
 Die acht Bilder des Tiefengangs entsprechen zwei Schritten mit je 620 ms
 bei normalem Gehtempo. Die Wiedergabe wählt das Bild anhand der tatsächlich
-zurückgelegten Strecke. Beim Seitwärtsgang wird die Schrittlänge an die
-Darstellungsgröße des Profils und die horizontale Panoramaskala angepasst.
+zurückgelegten Strecke. Beim Seitwärtsgang verwendet die Projektion dieselbe Schrittlänge in
+Raumeinheiten für das Profilbild und die horizontale Bewegung.
 
 Die Wegsuche verwendet Bögen mit konstantem Kameraabstand und Geraden
 entlang einer Blickrichtung. Beide Abschnitte werden gegen die vorhandenen
