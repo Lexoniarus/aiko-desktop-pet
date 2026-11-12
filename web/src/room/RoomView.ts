@@ -67,6 +67,7 @@ export class RoomView {
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   onFridgeTap: () => void = () => {};
+  onAnimationError: (error: Error) => void = () => {};
   private resizeObserver?: ResizeObserver;
 
   constructor(
@@ -131,14 +132,16 @@ export class RoomView {
       )
         this.onFridgeTap();
     });
-    this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items);
+    this.aiko = new AikoView(this.root, this.assets.clips, this.assets.items, (error) =>
+      this.onAnimationError(error),
+    );
     this.aiko.on('pointertap', () => {
       if (performance.now() > this.petTapBlockedUntil && !this.camera.blocksTap)
         this.onPetTap();
     });
     this.world.addChild(this.shadow, this.aiko);
-    await this.aiko.show('idle');
-    await this.aiko.warmWalking();
+    await this.aiko.prepareRoom();
+    this.aiko.show('idle');
     this.resizeObserver = new ResizeObserver(() => {
       this.camera.resize(this.host.clientWidth, this.host.clientHeight);
       if (this.snapshot?.game?.id === 'connect_four') this.frameForGame('connect_four');
@@ -242,7 +245,7 @@ export class RoomView {
     this.scene.update(this.camera);
     const projection = this.camera.projection;
     const walk = motion?.walk;
-    void this.aiko.showFromCamera(
+    this.aiko.showFromCamera(
       snapshot.animation,
       snapshot.heading ?? 0,
       worldPolar(this.assets.layout, point).bearing,

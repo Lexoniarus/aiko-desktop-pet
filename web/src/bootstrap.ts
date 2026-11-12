@@ -81,6 +81,7 @@ export async function startRoom(
     };
     ui = new RoomUI(host, room, drag, command, options?.updates, downloadReport);
     drag.onError = (error) => ui.message(error);
+    room.onAnimationError = (error) => ui.message(error);
     room.onPetTap = () => {
       void command('contact');
     };

@@ -1,12 +1,12 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 import type { RoomItemAsset } from './RoomAssets';
-import { heldItemPosition } from './heldItemPosition';
+import { heldItemPosition } from './heldItemPosition.ts';
 import {
   roomWalkAnimation,
   roomWalkClips,
   roomWalkFrame,
   type RoomWalk,
-} from './RoomWalkPresentation';
+} from './RoomWalkPresentation.ts';
 
 export interface Clip {
   frames: Array<{
@@ -33,28 +33,41 @@ export interface PetScreenBounds {
   groundY: number;
   scale: number;
 }
+type ClipFrame = { texture: Texture; time: number };
+
 export class AikoView extends Container {
+  private readonly root: string;
+  private readonly clips: Record<string, Clip>;
+  private readonly items: Record<string, RoomItemAsset>;
+  private readonly onError: (error: Error) => void;
   private sprite = new AnimatedSprite([Texture.EMPTY]);
   private clipName = '';
-  private generation = 0;
   private actionId = -1;
   private holdFrame: number | null = null;
+  private pendingClip?: { name: string; actionId: number };
+  private pausedForClip = false;
   private held = new Sprite(Texture.EMPTY);
   private foreground = new Sprite(Texture.EMPTY);
   private heldKey = '';
   private heldItem = '';
   private heldOffset: [number, number] = [0, 0];
   private heldPivot: [number, number] = [0, 0];
-  private chipHands?: Texture[];
+  private chipHands: Texture[] = [];
   private disposed = false;
   private frameBounds = new Rectangle();
-  private loaded = new Map<string, Array<{ texture: Texture; time: number }>>();
+  private loaded = new Map<string, ClipFrame[]>();
+  private loading = new Map<string, Promise<void>>();
   constructor(
-    private root: string,
-    private clips: Record<string, Clip>,
-    private items: Record<string, RoomItemAsset>,
+    root: string,
+    clips: Record<string, Clip>,
+    items: Record<string, RoomItemAsset>,
+    onError: (error: Error) => void,
   ) {
     super();
+    this.root = root;
+    this.clips = clips;
+    this.items = items;
+    this.onError = onError;
     this.addChild(this.sprite, this.held, this.foreground);
     this.held.visible = false;
     this.foreground.visible = false;
@@ -65,18 +78,44 @@ export class AikoView extends Container {
     this.eventMode = 'static';
     this.cursor = 'pointer';
   }
-  async show(
+  show(
     name: string,
     actionId = 0,
     timings?: number[] | null,
     holdFrame?: number | null,
-  ): Promise<void> {
-    if (!(name in this.clips)) name = 'idle';
+  ): void {
+    if (this.disposed) return;
+    const clip = this.clips[name];
+    const frames = this.loaded.get(name);
+    if (!clip || !frames) {
+      if (this.pendingClip?.name === name && this.pendingClip.actionId === actionId)
+        return;
+      const request = { name, actionId };
+      this.pendingClip = request;
+      this.pausedForClip ||= this.sprite.playing;
+      this.sprite.stop();
+      if (!clip) {
+        this.onError(new Error(`Aikos Animation „${name}“ fehlt.`));
+        return;
+      }
+      void this.prepareClip(name, clip).catch(() => {
+        if (!this.disposed && this.pendingClip === request)
+          this.onError(
+            new Error(`Aikos Animation „${name}“ konnte nicht geladen werden.`),
+          );
+      });
+      return;
+    }
+    this.pendingClip = undefined;
+    const resume = this.pausedForClip;
+    this.pausedForClip = false;
     const fixed = holdFrame ?? null;
-    const clip = this.clips[name]!;
     if (name === this.clipName && (actionId === this.actionId || clip.loop)) {
-      if (fixed === this.holdFrame) return;
-      if (fixed !== null && this.loaded.has(name)) {
+      if (fixed === this.holdFrame) {
+        if (resume) this.sprite.play();
+        return;
+      }
+      if (fixed !== null) {
         this.holdFrame = fixed;
         this.sprite.gotoAndStop(
           Math.max(0, clip.order.length ? clip.order.indexOf(fixed) : fixed),
@@ -94,27 +133,31 @@ export class AikoView extends Container {
     this.actionId = actionId;
     this.holdFrame = fixed;
     this.clipName = name;
-    const generation = ++this.generation;
-    let frames = this.loaded.get(name);
-    if (!frames) frames = await this.loadFrames(name, clip);
-    if (this.disposed || generation !== this.generation) return;
-    this.sprite.textures = timings
-      ? frames.map((frame, index) => ({
-          texture: frame.texture,
-          time: timings[index] ?? frame.time,
-        }))
-      : frames;
-    this.sprite.anchor.set(clip.anchor[0] / 192, clip.anchor[1] / 208);
-    this.sprite.loop = clip.loop;
-    if (holdFrame !== null && holdFrame !== undefined)
-      this.sprite.gotoAndStop(
-        Math.max(0, clip.order.length ? clip.order.indexOf(holdFrame) : holdFrame),
-      );
-    else this.sprite.gotoAndPlay(Math.min(phase, frames.length - 1));
+    // Pixi sets frame zero while replacing textures. Update the overlays only
+    // after the new clip and its intended frame have both been set.
+    const onFrameChange = this.sprite.onFrameChange;
+    this.sprite.onFrameChange = undefined;
+    try {
+      this.sprite.textures = timings
+        ? frames.map((frame, index) => ({
+            texture: frame.texture,
+            time: timings[index] ?? frame.time,
+          }))
+        : frames;
+      this.sprite.anchor.set(clip.anchor[0] / 192, clip.anchor[1] / 208);
+      this.sprite.loop = clip.loop;
+      if (fixed !== null)
+        this.sprite.gotoAndStop(
+          Math.max(0, clip.order.length ? clip.order.indexOf(fixed) : fixed),
+        );
+      else this.sprite.gotoAndPlay(Math.min(phase, frames.length - 1));
+    } finally {
+      this.sprite.onFrameChange = onFrameChange;
+    }
     this.placeHeld();
     this.updateBounds();
   }
-  async showFromCamera(
+  showFromCamera(
     name: string,
     heading: number,
     viewBearing: number,
@@ -123,11 +166,11 @@ export class AikoView extends Container {
     actionId: number,
     timings?: number[] | null,
     frame?: number | null,
-  ): Promise<void> {
+  ): void {
     if (walk && (name === roomWalkAnimation || name === 'rest-neutral')) {
       const clip = this.clips[walk.clip];
       if (clip) {
-        await this.show(walk.clip, actionId, undefined, roomWalkFrame(clip, walk));
+        this.show(walk.clip, actionId, undefined, roomWalkFrame(clip, walk));
         return;
       }
     }
@@ -139,24 +182,58 @@ export class AikoView extends Container {
       const side = Math.sin(heading - viewBearing) >= 0 ? 'right' : 'left';
       name = name.replace(/(left|right)$/, side);
     }
-    await this.show(name, actionId, timings, frame);
+    this.show(name, actionId, timings, frame);
   }
-  async warmWalking(): Promise<void> {
+  async prepareRoom(): Promise<void> {
     const names = [
       ...roomWalkClips,
+      'idle',
+      'rest-neutral',
+      'look',
+      'body-turn-right',
+      'body-turn-left',
       'body-orient-right',
       'body-orient-left',
       'body-look-right',
       'body-look-left',
+      'pick_up',
+      'hold_item',
+      'put_down',
+      'inspect_item',
+      'inspect_hold',
+      'inspect_return',
+      'review',
+      'eat',
+      'throw_item',
     ];
     await Promise.all(
       names.map((name) => {
         const clip = this.clips[name];
-        if (clip) return this.loadFrames(name, clip);
+        if (clip) return this.prepareClip(name, clip);
       }),
     );
+    if (this.items['c4-red']) {
+      const [hands] = await Promise.all([
+        Promise.all(
+          [3, 4, 5].map((index) =>
+            Assets.load<Texture>(
+              new URL(`assets/game_frontends/c4-hands/0${index}.png`, this.root).href,
+            ),
+          ),
+        ),
+        Assets.load<Texture>(new URL(this.items['c4-red'].file, this.root).href),
+      ]);
+      this.chipHands = hands;
+    }
   }
-  private async loadFrames(name: string, clip: Clip) {
+  private prepareClip(name: string, clip: Clip): Promise<void> {
+    const pending = this.loading.get(name);
+    if (pending) return pending;
+    const load = this.loadFrames(name, clip).finally(() => this.loading.delete(name));
+    this.loading.set(name, load);
+    return load;
+  }
+  private async loadFrames(name: string, clip: Clip): Promise<void> {
     const textures = await Promise.all(
       clip.frames.map((frame) =>
         Assets.load<Texture>(new URL(frame.file, this.root).href),
@@ -169,8 +246,7 @@ export class AikoView extends Container {
       texture: textures[index]!,
       time: clip.frames[index]!.duration,
     }));
-    this.loaded.set(name, frames);
-    return frames;
+    if (!this.disposed) this.loaded.set(name, frames);
   }
   async hold(item: string | null, pose = 'closed_world'): Promise<void> {
     const definition = item ? this.items[item] : undefined;
@@ -179,13 +255,19 @@ export class AikoView extends Container {
     const key = item ? `${item}:${pose}:${file}` : '';
     if (key === this.heldKey) return;
     this.heldKey = key;
-    this.heldItem = item ?? '';
-    if (!definition) {
-      this.held.visible = false;
-      return;
-    }
-    const texture = await Assets.load<Texture>(new URL(file, this.root).href);
-    if (this.disposed || key !== this.heldKey) return;
+    this.heldItem = '';
+    this.placeHeld();
+    if (!definition || !item) return;
+    const texture = await Assets.load<Texture>(new URL(file, this.root).href).catch(
+      () => {
+        if (!this.disposed && key === this.heldKey)
+          this.onError(
+            new Error(`Aikos Gegenstand „${item}“ konnte nicht geladen werden.`),
+          );
+      },
+    );
+    if (!texture || this.disposed || key !== this.heldKey) return;
+    this.heldItem = item;
     this.held.texture = texture;
     this.held.scale.set(definition.size ? definition.size / texture.width : 1);
     this.heldPivot = [
@@ -198,23 +280,6 @@ export class AikoView extends Container {
       2 * ((definition.handOffset?.[1] ?? 0) + (state?.offset?.[1] ?? 0)),
     ];
     this.placeHeld();
-    if (
-      item === 'c4-red' &&
-      this.clips[this.clipName]?.itemAnchorMode !== 'center' &&
-      !this.chipHands
-    ) {
-      const hands = await Promise.all(
-        [3, 4, 5].map((index) =>
-          Assets.load<Texture>(
-            new URL(`assets/game_frontends/c4-hands/0${index}.png`, this.root).href,
-          ),
-        ),
-      );
-      if (!this.disposed) {
-        this.chipHands = hands;
-        this.placeHeld();
-      }
-    }
   }
   renderHeld(chipDiameter?: number): void {
     if (this.heldItem === 'c4-red' && chipDiameter !== undefined) {
@@ -261,7 +326,6 @@ export class AikoView extends Container {
   }
   override destroy(): void {
     this.disposed = true;
-    this.generation++;
     super.destroy({ children: true });
   }
   private placeHeld(): void {
@@ -276,10 +340,10 @@ export class AikoView extends Container {
       5: [96, 143],
     };
     const anchor = chip ? chipAnchors[index] : clip.frames[index]?.foodAnchor;
-    this.held.visible = !!anchor && !!this.heldKey;
+    this.held.visible = !!anchor && !!this.heldItem;
     // Desktop FoodOverlay raises ordinary food/books over the character.
     // Only the game's chip pickup deliberately uses a foreground hand mask.
-    const foreground = chip ? this.chipHands?.[index - 3] : undefined;
+    const foreground = chip ? this.chipHands[index - 3] : undefined;
     this.foreground.visible = this.held.visible && !!foreground;
     if (foreground) {
       this.foreground.texture = foreground;

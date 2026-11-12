@@ -20,6 +20,11 @@ runtime. Each device's save and activation time remain local. A manual candidate
 import stays attached to this feed and accepts a later newer shared release.
 See the [delivery contract](IMPLEMENTATION_PLAN.md#12-one-permanent-mobile-pwa-and-shared-updates-2026-11-10).
 
+The room prepares idle, gaze, turn, walking and object or game clips with
+timed markers before the first simulation tick. Other clips load on demand.
+The visible frame and its anchors stay together until the latest requested
+clip is ready to draw. The Python playback clock owns object and game markers.
+
 Implementation commits precede test execution. Automated local verification
 must be headless; device acceptance stays explicitly pending until observed on
 the user's iPad. A Windows browser pass cannot supply that evidence.
