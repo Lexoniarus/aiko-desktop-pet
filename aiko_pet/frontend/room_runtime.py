@@ -285,6 +285,7 @@ class RoomRuntime:
         self._called = self._wander = None
         self.moving = False
         self.movement.cancel()
+        self.locomotion.stop_walk()
         self.leisure.suspend(self.now, cancel_outing=True)
 
     def prepare_table_game(self, arrived: Callable[[bool], None]) -> None:
@@ -675,7 +676,8 @@ class RoomRuntime:
             self.environment.heading = math.atan2(
                 current.x - last_start.x, last_start.depth - current.depth,
             )
-            self.facing = 1 if current.x >= last_start.x else -1
+            if current.x != last_start.x:
+                self.facing = 1 if current.x > last_start.x else -1
             self.world.locate_in_room(replace(self.spatial, pet=current))
         if step.arrived:
             if self._wander is not None and not self.night():

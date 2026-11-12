@@ -1,4 +1,4 @@
-"""Present room travel with the desktop's authored turns and walking banks."""
+"""Start room travel and present the stationary turns and gaze poses."""
 
 from __future__ import annotations
 
@@ -7,7 +7,9 @@ import math
 from ..pet.animation.ambient import AmbientIntent
 from ..pet.animation.animation import SpriteSelection
 from ..pet.animation.body_orientation import BodyOrientation
-from ..world.room import RoomGeometry, RoomPoint
+from ..world.room import RoomPoint
+
+ROOM_WALK_ANIMATION = "room-walk"
 
 
 class RoomLocomotion:
@@ -20,17 +22,29 @@ class RoomLocomotion:
         self.selection = SpriteSelection("rest-neutral")
 
     def walk(self, now: float, start: RoomPoint, end: RoomPoint) -> bool:
-        dx = RoomGeometry.delta(start.x, end.x)
-        side = (1 if dx > 0 else -1) if abs(dx) > 1 else (self.orientation.side or 1)
-        if self.orientation.side not in (0, side):
+        if self.selection.animation == ROOM_WALK_ANIMATION:
+            return True
+        if start.x != end.x:
+            side = 1 if end.x > start.x else -1
+            if self.orientation.side not in (0, side):
+                self.orientation.reset()
+            turn = self.orientation.orient_for_motion(now, side, responsive=True)
+            if not self.orientation.motion_ready:
+                self.selection = turn
+                return False
+        else:
             self.orientation.reset()
-        label = "right" if side > 0 else "left"
-        turn = self.orientation.orient_for_motion(now, side, responsive=True)
-        if not self.orientation.motion_ready:
-            self.selection = turn
-            return False
-        self.selection = SpriteSelection(f"body-step-{label}-profil")
+        # The camera chooses the clip from the direction of the displayed segment.
+        self.selection = SpriteSelection(ROOM_WALK_ANIMATION)
         return True
+
+    def stop_walk(self) -> None:
+        if (
+            self.selection.animation == ROOM_WALK_ANIMATION
+            or self.selection.animation.startswith("body-orient-")
+        ):
+            self.orientation.reset()
+            self.selection = SpriteSelection("rest-neutral")
 
     def rest(self, now: float, look: tuple[float, float] | None = None) -> None:
         choice = SpriteSelection("idle")

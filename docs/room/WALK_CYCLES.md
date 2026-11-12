@@ -16,3 +16,10 @@ zur gemeinsamen Bodenlinie bleiben Teil der Animation.
 Die Raumversion spielt jeden der acht Frames für 155 ms. Der gesamte
 Zyklus deckt zwei Schritte zu je 620 ms ab und passt damit zum seitlichen
 Schritttakt.
+
+Die Wegsuche liefert nur gerade Abschnitte. Für das sichtbare Abbiegen
+liefert die Positionsinterpolation außerdem die Richtung ihres aktuellen
+Abschnitts. Die Ansicht wählt aus dieser Richtung und dem Blickwinkel
+zum Betrachter genau eine der vier Gehfolgen. Die Einleitung beim
+seitlichen Losgehen bleibt erhalten. Innerhalb eines laufenden Wegs
+wechselt die Gehfolge an der Ecke, ohne die Einleitung neu abzuspielen.

@@ -1,6 +1,11 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 import type { RoomItemAsset } from './RoomAssets';
 import { heldItemPosition } from './heldItemPosition';
+import {
+  RoomWalkPresentation,
+  roomWalkAnimation,
+  roomWalkClips,
+} from './RoomWalkPresentation';
 
 export interface Clip {
   frames: Array<{
@@ -29,6 +34,7 @@ export interface PetScreenBounds {
 }
 export class AikoView extends Container {
   private sprite = new AnimatedSprite([Texture.EMPTY]);
+  private walk = new RoomWalkPresentation();
   private clipName = '';
   private generation = 0;
   private actionId = -1;
@@ -124,17 +130,13 @@ export class AikoView extends Container {
     timings?: number[] | null,
     frame?: number | null,
   ): Promise<void> {
-    if (moving && name.startsWith('body-step-')) {
-      const relative = heading - viewBearing;
-      const right = Math.sin(relative) >= 0;
-      const side = right ? 'right' : 'left';
-      const quarter = Math.abs(Math.sin(relative)) < 0.65;
-      const variant = quarter
-        ? `body-step-${side}-${right ? '04' : '12'}`
-        : `body-step-${side}-profil`;
-      name = variant in this.clips ? variant : `body-step-${side}-profil`;
-      frame = null;
-    } else if (name.startsWith('body-orient-') || name.startsWith('body-turn-')) {
+    if (moving && name === roomWalkAnimation) {
+      await this.show(this.walk.clip(heading, viewBearing), actionId);
+      return;
+    }
+    this.walk.reset();
+    if (name === roomWalkAnimation) name = 'rest-neutral';
+    if (name.startsWith('body-orient-') || name.startsWith('body-turn-')) {
       const side = Math.sin(heading - viewBearing) >= 0 ? 'right' : 'left';
       name = name.replace(/(left|right)$/, side);
     }
@@ -142,8 +144,7 @@ export class AikoView extends Container {
   }
   async warmWalking(): Promise<void> {
     const names = [
-      'body-step-right-profil',
-      'body-step-left-profil',
+      ...roomWalkClips,
       'body-orient-right',
       'body-orient-left',
       'body-look-right',

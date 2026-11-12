@@ -200,12 +200,13 @@ export class RoomView {
   private draw(): void {
     const snapshot = this.snapshot;
     if (!snapshot) return;
-    const point = this.motion.position() ?? snapshot.room.pet;
+    const motion = this.motion.sample();
+    const point = motion?.point ?? snapshot.room.pet;
     this.camera.tick(point);
     this.scene.update(this.camera);
     void this.aiko.showFromCamera(
       snapshot.animation,
-      snapshot.heading ?? 0,
+      (snapshot.moving ? motion?.heading : undefined) ?? snapshot.heading ?? 0,
       Math.atan2(
         point.x - this.assets.layout.width / 2,
         this.assets.layout.depth / 2 - point.depth,

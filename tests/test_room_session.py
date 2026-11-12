@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from aiko_pet.browser.bootstrap import create_browser_session
 from aiko_pet.frontend.games.room_effects import RoomGameEffects
-from aiko_pet.frontend.room_locomotion import RoomLocomotion
+from aiko_pet.frontend.room_locomotion import ROOM_WALK_ANIMATION, RoomLocomotion
 from aiko_pet.world.room import RoomGeometry, RoomPoint
 
 
@@ -60,7 +60,7 @@ class RoomSessionTests(unittest.TestCase):
         for _ in range(12):
             self.wall += 0.25
             snapshot = self.command("tick")["snapshot"]
-        self.assertEqual(snapshot["animation"], "body-step-right-profil")
+        self.assertEqual(snapshot["animation"], ROOM_WALK_ANIMATION)
         position = self.endpoint.session.room.position
         self.assertLess(
             RoomGeometry.distance(position, RoomPoint(470, 100)),
@@ -86,6 +86,8 @@ class RoomSessionTests(unittest.TestCase):
                 room.position.x, room.position.depth, room.geometry.layout.pet_radius,
             ))
             travelled = snapshot["motion"]["travelled"]
+            if travelled:
+                self.assertEqual(snapshot["animation"], ROOM_WALK_ANIMATION)
             for start, end in zip(travelled, travelled[1:]):
                 dx = end["x"] - start["x"]
                 dz = end["depth"] - start["depth"]
@@ -556,7 +558,7 @@ class RoomSessionTests(unittest.TestCase):
             current = self.command("tick")["snapshot"]
             if current["moving"]:
                 saw_walk = True
-                self.assertEqual(current["animation"], "body-step-right-profil")
+                self.assertEqual(current["animation"], ROOM_WALK_ANIMATION)
         self.assertTrue(saw_walk)
         self.assertLess(
             RoomGeometry.distance(
@@ -659,21 +661,34 @@ class RoomGeometryTests(unittest.TestCase):
             navigator.find_route(RoomPoint(610, 300), RoomPoint(665, 300))
         )
 
-    def test_profile_steps_and_quarter_body_facing_use_distinct_source_banks(
-        self,
-    ) -> None:
+    def test_room_walk_continues_through_each_corner_and_can_stop(self) -> None:
+        pose = RoomLocomotion()
+        start = RoomPoint(600, 100)
+        route = (
+            start,
+            RoomPoint(650, 100),
+            RoomPoint(650, 150),
+            RoomPoint(600, 150),
+            start,
+        )
+        self.assertFalse(pose.walk(0, *route[:2]))
+        self.assertTrue(pose.selection.animation.startswith("body-orient-"))
+        for step in range(1, 9):
+            pose.walk(step * 0.1, *route[:2])
+        for start, end in zip(route, route[1:]):
+            self.assertTrue(pose.walk(0.9, start, end))
+            self.assertEqual(pose.selection.animation, ROOM_WALK_ANIMATION)
+        pose.stop_walk()
+        self.assertEqual(pose.selection.animation, "rest-neutral")
+        self.assertTrue(pose.walk(1, RoomPoint(600, 100), RoomPoint(600, 130)))
+        self.assertEqual(pose.selection.animation, ROOM_WALK_ANIMATION)
+
+    def test_room_rest_can_hold_a_quarter_pose_after_a_walk(self) -> None:
         pose = RoomLocomotion()
         for step in range(10):
-            pose.walk(step * 0.1, RoomPoint(600), RoomPoint(900))
-        self.assertEqual(pose.selection.animation, "body-step-right-profil")
+            pose.walk(step * 0.1, RoomPoint(600), RoomPoint(700))
         pose.rest(2, (1, 0))
         self.assertEqual(
             (pose.selection.animation, pose.selection.fixed_frame),
             ("body-look-right", 4),
         )
-        for step in range(10):
-            pose.walk(3 + step * 0.1, RoomPoint(600, 100), RoomPoint(600, 130))
-        self.assertEqual(pose.selection.animation, "body-step-right-profil")
-        for step in range(10):
-            pose.walk(4 + step * 0.1, RoomPoint(900), RoomPoint(600))
-        self.assertEqual(pose.selection.animation, "body-step-left-profil")

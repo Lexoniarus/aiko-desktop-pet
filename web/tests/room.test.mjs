@@ -12,6 +12,7 @@ import {
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
+import { RoomWalkPresentation } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace } from '../src/room/RoomLayout.ts';
@@ -263,6 +264,42 @@ test('display interpolation follows the admitted corner rather than its diagonal
   assert.deepEqual(motion.position(1200), { x: 200, depth: 100 });
   motion.receive({ x: 200, depth: 200 }, 1300);
   assert.deepEqual(motion.position(1500), { x: 200, depth: 200 });
+});
+test('walk clips follow the interpolated segment through all four corners', () => {
+  const motion = new RoomMotion();
+  const walk = new RoomWalkPresentation();
+  const route = [
+    { x: 100, depth: 200 },
+    { x: 100, depth: 100 },
+    { x: 200, depth: 100 },
+    { x: 200, depth: 200 },
+    { x: 100, depth: 200 },
+  ];
+  motion.receive(route[0], 1000);
+  motion.receive(route[4], 1800, route);
+  const cases = [
+    [1199, { x: 100, depth: 150.5 }, 'room-walk-away'],
+    [1300, route[1], 'body-step-right-profil'],
+    [1500, route[2], 'room-walk-toward'],
+    [1700, route[3], 'body-step-left-profil'],
+  ];
+  for (const [time, point, clip] of cases) {
+    const sample = motion.sample(time);
+    assert.deepEqual(sample.point, point);
+    assert.equal(walk.clip(sample.heading, 0), clip);
+  }
+});
+
+test('camera-relative gait resists boundary flicker and accepts actual turns', () => {
+  const walk = new RoomWalkPresentation();
+  const radians = (degrees) => (degrees * Math.PI) / 180;
+  assert.equal(walk.clip(0, radians(-44)), 'room-walk-away');
+  assert.equal(walk.clip(0, radians(-47)), 'room-walk-away');
+  assert.equal(walk.clip(0, radians(-52)), 'body-step-right-profil');
+  assert.equal(walk.clip(Math.PI / 2, radians(-44)), 'body-step-right-profil');
+  assert.equal(walk.clip(Math.PI / 2, radians(-52)), 'room-walk-toward');
+  walk.reset();
+  assert.equal(walk.clip(Math.PI, Math.PI), 'room-walk-away');
 });
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [
