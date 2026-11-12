@@ -17,6 +17,7 @@ export class RoomProjection {
   private readonly farInverse: number;
   private readonly nearInverse: number;
   private horizon = 0;
+  private magnification = 1;
 
   constructor(layout: RoomLayout) {
     this.layout = layout;
@@ -29,18 +30,25 @@ export class RoomProjection {
   }
 
   get fit(): number {
-    return this.height / this.designHeight;
+    return this.magnification;
   }
 
   get angularScale(): number {
     return roomPresentation.focalLength * this.fit;
   }
 
-  update(width: number, height: number, yaw: number): void {
+  update(
+    width: number,
+    height: number,
+    yaw: number,
+    fit = height / this.designHeight,
+    horizon = height * roomPresentation.horizon,
+  ): void {
     this.width = width;
     this.height = height;
     this.yaw = yaw;
-    this.horizon = height * roomPresentation.horizon;
+    this.magnification = fit;
+    this.horizon = horizon;
   }
 
   bearing(point: RoomPoint): number {

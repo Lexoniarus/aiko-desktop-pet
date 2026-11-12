@@ -12,6 +12,7 @@ export class RoomCamera {
   private held = false;
   private gameOpen = false;
   private tableGame = false;
+  private framing?: { fit: number; horizon: number };
   private width = 1;
   private height = 1;
   private pointer?: { id: number; x: number; moved: boolean };
@@ -79,7 +80,13 @@ export class RoomCamera {
     this.refresh();
   }
   private refresh(): void {
-    this.projection.update(this.width, this.sceneHeight, this.yaw);
+    this.projection.update(
+      this.width,
+      this.sceneHeight,
+      this.yaw,
+      this.framing?.fit,
+      this.framing?.horizon,
+    );
     this.version++;
   }
   resize(width: number, height: number): void {
@@ -143,6 +150,13 @@ export class RoomCamera {
   setGame(open: boolean, atTable = false): void {
     this.gameOpen = open;
     this.tableGame = atTable;
+    this.framing = undefined;
+    this.refresh();
+  }
+  setFraming(fit?: number, horizon?: number): void {
+    if (fit === this.framing?.fit && horizon === this.framing?.horizon) return;
+    this.framing =
+      fit !== undefined && horizon !== undefined ? { fit, horizon } : undefined;
     this.refresh();
   }
   hold(held: boolean): void {

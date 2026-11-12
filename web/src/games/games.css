@@ -75,19 +75,34 @@
   cursor: grab;
 }
 .room-panel.table-game-panel {
-  zoom: min(var(--ui-scale, 1), 1.25);
-  inset: max(88px, env(safe-area-inset-top)) 16px auto auto;
-  width: min(300px, calc((100vw - 32px) / var(--ui-scale, 1)));
-  max-height: 34dvh;
+  --table-ui-scale: min(var(--ui-scale, 1), 1.25);
+  box-sizing: border-box;
+  zoom: var(--table-ui-scale);
+  inset: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) auto
+    auto;
+  width: calc(min(300px, 100vw - 24px) / var(--table-ui-scale));
+  max-height: calc(min(180px, 34dvh) / var(--table-ui-scale));
 }
 .table-game-panel .panel-header {
+  flex-wrap: nowrap;
+  gap: 8px;
   padding: 6px 12px;
 }
 .table-game-panel .panel-header h2 {
   font-size: 16px;
+  overflow-wrap: normal;
 }
 .table-game-panel .panel-body {
   padding: 4px 12px;
+}
+.table-game-active .room-speech {
+  box-sizing: border-box;
+}
+@media (max-height: 480px) and (orientation: landscape) {
+  .room-panel.table-game-panel {
+    inset-inline: max(8px, env(safe-area-inset-left)) auto;
+    width: calc(min(250px, 29vw) / var(--table-ui-scale));
+  }
 }
 .game-menu {
   display: grid;

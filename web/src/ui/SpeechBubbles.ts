@@ -2,6 +2,7 @@ import type { RoomSnapshot } from '../bridge/RoomClient';
 import type { RoomView } from '../room/RoomView';
 import { button, element } from './dom';
 import type { Command } from './dom';
+import { connectFourGeometry } from '../games/ConnectFourGeometry';
 
 type Bounds = { x: number; y: number; width: number; height: number };
 
@@ -64,32 +65,85 @@ export class SpeechBubbles {
       bounds.x < this.host.clientWidth &&
       bounds.y < this.host.clientHeight &&
       bounds.y + bounds.height > 0;
-    this.element.hidden = !content || !visible;
-    if (!content || !visible) return;
+    this.element.hidden = !content || (!visible && !this.tableGame);
+    if (this.element.hidden) return;
     const panel = this.host
       .querySelector<HTMLDialogElement>('.room-panel[open]')
       ?.getBoundingClientRect();
     const hand = this.host.querySelector<HTMLElement>('.pet-rps-hand:not([hidden])');
     const sidePanel = panel && panel.top < bounds.y + bounds.height / 2;
     const reserve = hand ? hand.getBoundingClientRect().width + 12 : 0;
+    const center = bounds.x + bounds.width / 2;
+    const sceneBottom = this.room.camera.sceneHeight;
+    const besideAiko =
+      center > this.host.clientWidth / 2
+        ? this.host.clientWidth - bounds.x - bounds.width - 16
+        : bounds.x - 16;
     const available =
-      panel && sidePanel ? panel.left - reserve - 24 : this.host.clientWidth - 16;
+      panel && sidePanel && !this.tableGame
+        ? panel.left - reserve - 24
+        : this.tableGame && visible && sceneBottom < 440 && besideAiko >= 140
+          ? besideAiko
+          : this.host.clientWidth - 16;
     if (!this.element.classList.contains('emote-only'))
       this.element.style.width = `${Math.max(96, Math.min(280, available / this.scale))}px`;
     else this.element.style.removeProperty('width');
     const rect = this.element.getBoundingClientRect();
-    const center = bounds.x + bounds.width / 2;
     let x = center - rect.width / 2;
     let y = bounds.y - rect.height - 8;
     const top = 8;
-    const sceneBottom = this.room.camera.sceneHeight;
     if (y < top) {
       y = Math.max(top, bounds.y + 4);
       x = bounds.x + bounds.width + 8;
       if (x + rect.width > this.host.clientWidth - 8) x = bounds.x - rect.width - 8;
     }
     const table = this.tableGame && this.room.tableGameFrame();
-    if (table) y = Math.min(y, table.y - rect.height - 12);
+    if (table) {
+      const boardRight = table.x + connectFourGeometry.size * table.scale;
+      const boardTop = table.y + connectFourGeometry.artTop * table.scale;
+      const boardBottom = table.y + connectFourGeometry.artBottom * table.scale;
+      const aboveBoard = boardTop - rect.height - 12;
+      const left = 8;
+      const right = this.host.clientWidth - rect.width - 8;
+      const bottom = sceneBottom - rect.height - 14;
+      const onRight = center > (table.x + boardRight) / 2;
+      const besideRight =
+        Math.max(boardRight, visible ? bounds.x + bounds.width : boardRight) + 8;
+      const besideLeft =
+        Math.min(table.x, visible ? bounds.x : table.x) - rect.width - 8;
+      const sideX = onRight ? besideRight : besideLeft;
+      const oppositeX = onRight ? besideLeft : besideRight;
+      const anchorX = Math.max(
+        left,
+        Math.min(right, visible ? x : onRight ? right : left),
+      );
+      const candidates = [
+        { x: anchorX, y: Math.min(visible ? y : aboveBoard, aboveBoard) },
+        { x: anchorX, y: aboveBoard },
+        { x: sideX, y: Math.max(top, Math.min(y, bottom)) },
+        { x: oppositeX, y: Math.max(top, Math.min(y, bottom)) },
+        { x: anchorX, y: boardBottom + 8 },
+      ];
+      const position = candidates.find(
+        (candidate) =>
+          candidate.x >= left &&
+          candidate.x <= right &&
+          candidate.y >= top &&
+          candidate.y <= bottom &&
+          (!visible ||
+            candidate.x + rect.width <= bounds.x ||
+            candidate.x >= bounds.x + bounds.width ||
+            candidate.y + rect.height <= bounds.y ||
+            candidate.y >= bounds.y + bounds.height) &&
+          (!panel ||
+            candidate.x + rect.width <= panel.left ||
+            candidate.x >= panel.right ||
+            candidate.y + rect.height <= panel.top ||
+            candidate.y >= panel.bottom),
+      );
+      x = position?.x ?? anchorX;
+      y = position?.y ?? aboveBoard;
+    }
     if (panel && sidePanel && reserve && x + rect.width + reserve > panel.left - 12)
       x = panel.left - rect.width - reserve - 12;
     if (

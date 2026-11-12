@@ -190,8 +190,10 @@ notifications or continuous background Python are claimed for this PWA.
 
 - Open Vier gewinnt: Aiko walks around furniture to the near side of the table.
   Closing during that walk must not start a game later.
-- Check both orientations: board feet rest on the tabletop, Aiko stays beside
-  the board, and speech/controls leave the seven columns unobstructed.
+- Check both orientations. The board feet rest on the tabletop, and speech and
+  controls leave the seven columns unobstructed. In narrow portrait view the
+  board and chip supply take priority. Aiko may stand beyond the edge, with
+  speech on her side and her chip entering from that side.
 - Empty openings show the real window/room through the board. The board stands
   towards the front of the tabletop; both supplies rest on the foreground floor.
   Aiko's stack must not rise or sink when her pickup pose changes.

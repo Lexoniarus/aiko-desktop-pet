@@ -13,7 +13,7 @@ import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLay
 import type { RoomItemAsset } from './RoomAssets';
 import { furnitureFrame, furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
-import { tableGameFrame, tableGamePan } from '../games/ConnectFourGeometry';
+import { connectFourGeometry, tableGameFrame } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
 
 export interface AssetManifest {
@@ -132,7 +132,12 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
+    const gameReady =
+      snapshot.game?.id === 'connect_four' &&
+      !snapshot.game.preparing &&
+      (this.snapshot?.game?.id !== 'connect_four' || this.snapshot.game.preparing);
     this.snapshot = snapshot;
+    if (gameReady) this.frameForGame('connect_four');
     this.motion.receive(
       snapshot.room.pet,
       performance.now(),
@@ -412,12 +417,55 @@ export class RoomView {
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
       this.camera.releaseFollow();
-      this.camera.lookAt({ x: table.x, depth: table.z + table.depth * 0.2 });
-      const frame = this.tableGameFrame()!;
-      const pan = tableGamePan(frame, this.host.clientWidth);
-      if (pan) this.camera.rotateBy(-pan / this.camera.projection.angularScale);
+      const projection = this.camera.projection;
+      const { width, height } = projection;
+      this.camera.lookAt(furnitureSupport(this.assets.layout, table));
+      const furniture = furnitureFrame(projection, table);
+      const board = tableGameFrame(furniture);
+      const pet =
+        this.snapshot?.game?.id === id && !this.snapshot.game.preparing
+          ? this.snapshot.room.pet
+          : undefined;
+      const compactPortrait = width < 650 && height > width;
+      const actor = !compactPortrait && pet ? projection.projectPoint(pet) : undefined;
+      const actorHeight = actor ? actor.scale * this.assets.layout.pet_height : 0;
+      const left = Math.min(
+        compactPortrait ? board.x : furniture.x - furniture.width / 2,
+        board.playerX - 25,
+        actor ? actor.x - actorHeight * 0.36 : Infinity,
+      );
+      const right = Math.max(
+        compactPortrait
+          ? board.x + connectFourGeometry.size * board.scale
+          : furniture.x + furniture.width / 2,
+        actor ? actor.x + actorHeight * 0.36 : -Infinity,
+      );
+      const top = Math.min(
+        board.y + connectFourGeometry.artTop * board.scale,
+        actor ? actor.y - actorHeight : Infinity,
+      );
+      const bottom = Math.max(board.playerY + 12, actor?.groundY ?? 0);
+      const topSpace =
+        height < 440 && width > height
+          ? 62
+          : Math.min(compactPortrait ? 196 : 154, height * 0.32);
+      const bottomSpace = 28;
+      const zoom = Math.max(
+        0.15,
+        Math.min(
+          1.7,
+          (width - 40) / (right - left),
+          (height - topSpace - bottomSpace) / (bottom - top),
+        ),
+      );
+      const horizon =
+        (height + topSpace - bottomSpace) / 2 -
+        ((top + bottom) / 2 - projection.yAt(Infinity)) * zoom;
+      this.camera.rotateBy(((left + right) / 2 - width / 2) / projection.angularScale);
+      this.camera.setFraming(projection.fit * zoom, horizon);
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
+
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {
     const box = this.app.canvas.getBoundingClientRect();
     const x = clientX - box.left,
