@@ -150,8 +150,12 @@ MIGRATIONS = (
         "shared_room_spatial_state",
         ROOM_SCHEMA
         + (
-            "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 0.9 "
+            # SQLite 3.45 can reject a non-integral REAL default while
+            # validating ADD COLUMN on existing rows. Materialize 0.9 before
+            # the next migration rebuilds the table with its final default.
+            "ALTER TABLE object_memories ADD COLUMN depth REAL NOT NULL DEFAULT 1 "
             "CHECK(depth >= 0.2 AND depth <= 1.55)",
+            "UPDATE object_memories SET depth = 0.9",
         ),
     ),
     SchemaMigration(7, "room_floor_grid", ROOM_GRID_SCHEMA),

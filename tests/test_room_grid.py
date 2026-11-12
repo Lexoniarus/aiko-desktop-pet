@@ -31,6 +31,37 @@ from aiko_pet.world.state import WorldState
 
 
 class RoomGridTests(unittest.TestCase):
+    def test_v5_object_memories_upgrade_with_the_original_default_depth(self) -> None:
+        folder = self.enterContext(tempfile.TemporaryDirectory())
+        path = Path(folder) / "desktop-v5.sqlite3"
+        with closing(sqlite3.connect(path)) as db:
+            db.execute("PRAGMA foreign_keys=ON")
+            db.execute(f"PRAGMA application_id={schema.APPLICATION_ID}")
+            for migration in schema.MIGRATIONS[:5]:
+                for statement in migration.statements:
+                    db.execute(statement)
+                db.execute(
+                    "INSERT INTO schema_migrations VALUES (?,?,0)",
+                    (migration.version, migration.name),
+                )
+            db.execute("PRAGMA user_version=5")
+            db.execute("INSERT INTO save_state VALUES (1,2,1800000000,90000)")
+            db.execute("INSERT INTO world_state VALUES (1,800,225,6,9,2)")
+            db.execute("INSERT INTO object_memory_state VALUES (1,2,2)")
+            db.execute(
+                "INSERT INTO object_memories VALUES "
+                "('memory_1',1,0,'apple','food',420,0,1,2,1,NULL,'remembered',NULL)"
+            )
+            db.commit()
+            schema.prepare_schema(db, path)
+            self.assertEqual(db.execute("PRAGMA user_version").fetchone(), (7,))
+            self.assertEqual(
+                db.execute(
+                    "SELECT token, identity, x, depth FROM object_memories",
+                ).fetchall(),
+                [("memory_1", "apple", 420, 0.9)],
+            )
+
     def test_food_line_has_one_visual_depth_on_all_four_walls(self):
         geometry = RoomGeometry(load_room_layout())
         for point, expected in (
