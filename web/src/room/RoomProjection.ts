@@ -14,6 +14,7 @@ export class RoomProjection {
   height = 1;
   readonly layout: RoomLayout;
   private yaw = 0;
+  private readonly farDistance: number;
   private readonly farInverse: number;
   private readonly nearInverse: number;
   private horizon = 0;
@@ -21,12 +22,17 @@ export class RoomProjection {
 
   constructor(layout: RoomLayout) {
     this.layout = layout;
-    this.farInverse = this.inverseDepth(Math.hypot(layout.width / 2, layout.depth / 2));
+    this.farDistance = Math.hypot(layout.width / 2, layout.depth / 2);
+    this.farInverse = this.inverseDepth(this.farDistance);
     this.nearInverse = this.inverseDepth(this.nearDistance);
   }
 
   get nearDistance(): number {
     return this.layout.camera_clearance + this.layout.pet_radius;
+  }
+
+  get floorLine(): number {
+    return Math.max(0, Math.min(this.height, this.yAt(this.farDistance)));
   }
 
   get fit(): number {
@@ -82,16 +88,6 @@ export class RoomProjection {
   yAt(distance: number, elevation = 0): number {
     return (
       this.horizon + (this.layout.camera_height - elevation) * this.scaleAt(distance)
-    );
-  }
-
-  wallDistanceAt(x: number): number {
-    const ray = this.pointAtBearing(this.screenBearing(x), 1);
-    const xDirection = Math.abs(ray.x - this.layout.width / 2);
-    const zDirection = Math.abs(ray.depth - this.layout.depth / 2);
-    return Math.min(
-      this.layout.width / (2 * xDirection),
-      this.layout.depth / (2 * zDirection),
     );
   }
 

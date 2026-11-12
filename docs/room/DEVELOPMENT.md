@@ -54,9 +54,15 @@ The flat panorama uses physical bearing and distance for the room layout.
 The normal horizon is at 30% of the usable scene height and the eye height
 is 95 room units, with Aiko at 100. A single distance-dependent scale sets
 sprite heights, floor contact, tabletop elevation and inverse floor picking.
-Furniture keeps its authored aspect ratio at the projected support point.
-The room draws one floor to the projected wall perimeter. Connect Four
-anchors the board and chip scale to the projected table surface.
+All four frontal wall strips meet one level skirting and floor line at the
+projected distance of the farthest corner. The window is mounted above the
+skirting on the east strip. The floor has level plank rows with staggered
+joints that translate with the panorama. The door sits on the floor line.
+Standing furniture keeps its authored aspect ratio and projected support point.
+Aiko's feet and scale follow her radius from the viewer, with the rectangular
+room and furniture footprints determining which routes are open. Connect Four
+anchors the board and chip scale to the projected table surface and uses the
+table's depth order.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;

@@ -210,24 +210,43 @@ test('four wall grids have one window and use the authored furniture proportions
       const support = furnitureSupport(layout, item);
       const ground = projection.projectPoint(support);
       assert.equal(frame.x, ground.x);
-      assert.equal(frame.y, projection.projectPoint(support, item.elevation ?? 0).y);
+      if (item.id === 'door') assert.equal(frame.y, projection.floorLine);
+      else
+        assert.equal(frame.y, projection.projectPoint(support, item.elevation ?? 0).y);
       assert.ok(Math.abs(frame.height / ground.scale - item.height) < 1e-8);
       assert.ok(
         Math.abs(frame.width / frame.height - item.crop[2] / item.crop[3]) < 1e-8,
       );
     }
   }
-  const door = layout.furniture.find(({ id }) => id === 'door');
-  const frame = furnitureFrame(projection, door);
-  assert.ok(
-    Math.abs(projection.yAt(projection.wallDistanceAt(frame.x)) - frame.y) < 1e-8,
-  );
   const far = projection.projectPoint(worldPoint(layout, 0, 340));
   const near = projection.projectPoint(worldPoint(layout, 0, 180));
   assert.ok(
     Math.abs((near.groundY - far.groundY) / (near.scale - far.scale) - 95) < 1e-8,
   );
 });
+
+test('the common floor line stays fixed through corners and covers the farthest feet', () => {
+  const projection = new RoomProjection(layout);
+  const farCorner = { x: layout.width, depth: 0 };
+  const cornerBearing = projection.bearing(farCorner);
+  for (const [width, height] of [
+    [393, 800],
+    [1024, 768],
+  ]) {
+    projection.update(width, height, cornerBearing - 0.1);
+    const seam = projection.floorLine;
+    assert.ok(seam > 0 && seam < height);
+    assert.equal(seam, projection.projectPoint(farCorner).groundY);
+    for (const yaw of [cornerBearing + 0.1, Math.PI - 0.1, -Math.PI + 0.1]) {
+      projection.update(width, height, yaw);
+      assert.equal(projection.floorLine, seam);
+      const stand = worldPoint(layout, yaw, 200);
+      assert.ok(projection.projectPoint(stand).groundY > seam);
+    }
+  }
+});
+
 test('panning only translates art, including across the panorama wrap', () => {
   const projection = new RoomProjection(layout);
   const point = { x: 430, depth: 500 };
@@ -237,6 +256,7 @@ test('panning only translates art, including across the panorama wrap', () => {
   const after = projection.projectPoint(point, 40);
   assert.equal(after.scale, before.scale);
   assert.equal(after.y, before.y);
+  assert.equal(after.groundY, before.groundY);
   assert.ok(Math.abs(after.x - before.x + 0.2 * projection.angularScale) < 1e-6);
   const held = projection.atDistance(after.x, after.y, point);
   assert.ok(Math.hypot(held.point.x - point.x, held.point.depth - point.depth) < 1e-6);

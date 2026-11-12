@@ -32,9 +32,18 @@ export class RoomScene {
       west: -Math.PI / 2,
     };
     const corner = Math.atan2(layout.width, layout.depth);
+    const textures = new Map<string, Texture>();
     for (const wall of layout.walls) {
-      const canvas = roomBackground(images[wall.asset]!, wall.asset === 'living');
-      const texture = Texture.from(canvas);
+      let texture = textures.get(wall.asset);
+      if (!texture) {
+        const artwork = images[wall.asset]!;
+        const canvas =
+          wall.asset === 'living'
+            ? roomBackground(images.kitchen!, artwork)
+            : roomBackground(artwork);
+        texture = Texture.from(canvas);
+        textures.set(wall.asset, texture);
+      }
       const span =
         wall.id === 'north' || wall.id === 'south' ? 2 * corner : Math.PI - 2 * corner;
       for (const repeat of [-1, 0, 1]) {
@@ -83,21 +92,23 @@ export class RoomScene {
     if (camera.version === this.lastVersion) return;
     this.lastVersion = camera.version;
     const projection = camera.projection;
-    const wallHeight = Math.max(
-      1,
-      Math.min(
-        projection.height,
-        projection.yAt(Math.min(projection.layout.width, projection.layout.depth) / 2),
-      ),
-    );
-    for (const { view, bearing, span, repeat } of this.panels) {
-      view.position.set(
-        projection.screenX(bearing) + repeat * Math.PI * 2 * projection.angularScale,
-        0,
-      );
-      view.setSize(span * projection.angularScale + 1, wallHeight + 1);
-    }
+    const { floorLine, angularScale, width } = projection;
     this.drawFloor(projection);
+    for (const { view, bearing, span, repeat } of this.panels) {
+      const center = projection.screenX(bearing) + repeat * Math.PI * 2 * angularScale;
+      const panelWidth = span * angularScale;
+      view.position.set(center, 0);
+      // A subpixel overlap sits under the common skirting and corner lines.
+      view.setSize(panelWidth + 1, floorLine + 1);
+      const joint = center - panelWidth / 2;
+      if (joint >= 0 && joint <= width) {
+        const seamWidth = Math.max(1, 2.5 * projection.fit);
+        this.floor.rect(joint - seamWidth / 2, 0, seamWidth, floorLine).fill({
+          color: 0x8d7eac,
+          alpha: 0.5,
+        });
+      }
+    }
     for (const { view, item } of this.furniture) {
       const frame = furnitureFrame(projection, item);
       view.position.set(frame.x, frame.y);
@@ -107,45 +118,24 @@ export class RoomScene {
   }
 
   private drawFloor(projection: RoomProjection): void {
-    const { width, height } = projection;
+    const { width, height, floorLine } = projection;
     const floor = this.floor.clear();
-    const count = Math.ceil(width / 10);
-    const edge = Array.from({ length: count + 1 }, (_, index) => {
-      const x = (index * width) / count;
-      return { x, distance: projection.wallDistanceAt(x) };
-    });
-    const rim = edge.map(({ x, distance }) => ({
-      x,
-      y: Math.min(height, projection.yAt(distance)),
-    }));
-    floor.poly([...rim, { x: width, y: height }, { x: 0, y: height }]).fill(0xeac6a7);
-    for (const [elevation, color, thickness] of [
-      [0, 0xb78e7a, 2],
-      [6, 0xc2aabd, 2],
-    ] as const) {
-      for (const [index, { x, distance }] of edge.entries()) {
-        const y = projection.yAt(distance, elevation);
-        if (index) floor.lineTo(x, y);
-        else floor.moveTo(x, y);
-      }
-      floor.stroke({ color, width: thickness });
-    }
-    // Draw a single staggered plank pattern in floor coordinates across every wall.
-    for (let distance = 132; distance < 500; distance += 22) {
-      const y = projection.yAt(distance);
-      const previous = projection.yAt(distance - 22);
-      if (y >= height) continue;
-      for (let i = 1; i < rim.length; i++) {
-        const a = rim[i - 1]!;
-        const b = rim[i]!;
-        if (y >= a.y && y >= b.y) floor.moveTo(a.x, y).lineTo(b.x, y);
-      }
-      const angularStep = (Math.PI * 2) / 48;
-      const phase = Math.round((distance - 132) / 22) % 2 ? angularStep / 2 : 0;
-      for (let index = 0; index < 48; index++) {
-        const x = projection.screenX(index * angularStep + phase);
-        if (x < 0 || x > width || distance > projection.wallDistanceAt(x)) continue;
-        floor.moveTo(x, y).lineTo(x, Math.min(height, previous));
+    floor.rect(0, floorLine, width, height - floorLine).fill(0xeac6a7);
+    const skirtingHeight = Math.min(floorLine, 12 * projection.fit);
+    floor.rect(0, floorLine - skirtingHeight, width, skirtingHeight).fill(0xc2aabd);
+    // The floor is one strip. Its staggered joints share the panorama's turn.
+    const rowHeight = Math.max(1, 54 * projection.fit);
+    const plankWidth = (Math.PI * 2 * projection.angularScale) / 24;
+    const origin = projection.screenX(0);
+    for (let row = 0, y = floorLine; y < height; row++, y += rowHeight) {
+      floor.moveTo(0, y).lineTo(width, y);
+      const phase = origin + ((row % 2) * plankWidth) / 2;
+      for (
+        let x = ((phase % plankWidth) + plankWidth) % plankWidth;
+        x < width;
+        x += plankWidth
+      ) {
+        floor.moveTo(x, y).lineTo(x, Math.min(height, y + rowHeight));
       }
     }
     floor.stroke({ color: 0xc39a7d, width: 1, alpha: 0.62 });

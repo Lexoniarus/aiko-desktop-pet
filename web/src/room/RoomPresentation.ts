@@ -31,9 +31,13 @@ export function furnitureFrame(projection: RoomProjection, item: FurniturePlacem
   const ground = projection.projectPoint(support);
   const scale = (item.height * ground.scale) / item.crop[3];
   const surface = projection.projectPoint(support, item.height);
+  const y =
+    item.id === 'door'
+      ? projection.floorLine
+      : ground.y - (item.elevation ?? 0) * ground.scale;
   return {
     x: ground.x,
-    y: ground.y - (item.elevation ?? 0) * ground.scale,
+    y,
     scale,
     width: item.crop[2] * scale,
     height: item.crop[3] * scale,
