@@ -14,10 +14,50 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class LaunchAndEnvironmentTests(unittest.TestCase):
-    def test_main_py_invokes_shared_gui_entrypoint(self) -> None:
-        with patch("aiko_pet.gui.main") as start:
+    def test_main_py_starts_the_companion_desktop_checkout(self) -> None:
+        desktop = ROOT.with_name("aiko-desktop-pet")
+        entry = desktop / "aiko_pet" / "__main__.py"
+        interpreter = desktop / ".venv" / "Scripts" / "python.exe"
+        starter = desktop / "dist" / "room" / "starter"
+        with (
+            patch.object(
+                Path,
+                "is_dir",
+                autospec=True,
+                side_effect=lambda p: p == starter,
+            ),
+            patch.object(
+                Path,
+                "is_file",
+                autospec=True,
+                side_effect=lambda p: p in (entry, interpreter),
+            ),
+            patch(
+                "aiko_pet.desktop.version_launcher.choose_desktop",
+                return_value=True,
+            ) as choose,
+            patch("subprocess.run", return_value=Mock(returncode=0)) as start,
+        ):
             runpy.run_path(str(ROOT / "main.py"), run_name="__main__")
-        start.assert_called_once_with()
+        choose.assert_called_once_with(starter)
+        start.assert_called_once_with(
+            [str(interpreter), "-m", "aiko_pet"],
+            cwd=desktop,
+            check=False,
+        )
+
+    def test_main_py_leaves_room_selection_to_the_launcher(self) -> None:
+        with (
+            patch(
+                "aiko_pet.desktop.version_launcher.choose_desktop",
+                return_value=False,
+            ),
+            patch("subprocess.run") as start_companion,
+            patch("aiko_pet.gui.main") as start_desktop,
+        ):
+            runpy.run_path(str(ROOT / "main.py"), run_name="__main__")
+        start_companion.assert_not_called()
+        start_desktop.assert_not_called()
 
     def test_gui_entrypoint_orders_env_resources_and_desktop(self) -> None:
         from aiko_pet.gui import main
@@ -38,8 +78,10 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
             patch(
                 "aiko_pet.gui.load_env_file", side_effect=lambda: order.append("env")
             ),
-            patch("aiko_pet.desktop.startup.prepare_runtime_resources",
-                  side_effect=prepare),
+            patch(
+                "aiko_pet.desktop.startup.prepare_runtime_resources",
+                side_effect=prepare,
+            ),
             patch("aiko_pet.gui.DesktopPet", side_effect=create),
         ):
             main()
