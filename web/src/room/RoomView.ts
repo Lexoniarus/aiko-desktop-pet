@@ -247,6 +247,7 @@ export class RoomView {
       snapshot.heading ?? 0,
       worldPolar(this.assets.layout, point).bearing,
       walk,
+      snapshot.moving,
       snapshot.animation_id,
       snapshot.animation_timings,
       snapshot.animation_hold_frame,

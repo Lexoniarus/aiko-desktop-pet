@@ -96,20 +96,7 @@ export class AikoView extends Container {
     this.clipName = name;
     const generation = ++this.generation;
     let frames = this.loaded.get(name);
-    if (!frames) {
-      const textures = await Promise.all(
-        clip.frames.map((frame) =>
-          Assets.load<Texture>(new URL(frame.file, this.root).href),
-        ),
-      );
-      frames = (
-        clip.order.length ? clip.order : clip.frames.map((_frame, index) => index)
-      ).map((index) => ({
-        texture: textures[index]!,
-        time: clip.frames[index]!.duration,
-      }));
-      this.loaded.set(name, frames);
-    }
+    if (!frames) frames = await this.loadFrames(name, clip);
     if (this.disposed || generation !== this.generation) return;
     this.sprite.textures = timings
       ? frames.map((frame, index) => ({
@@ -132,6 +119,7 @@ export class AikoView extends Container {
     heading: number,
     viewBearing: number,
     walk: RoomWalk | undefined,
+    moving: boolean,
     actionId: number,
     timings?: number[] | null,
     frame?: number | null,
@@ -143,7 +131,10 @@ export class AikoView extends Container {
         return;
       }
     }
-    if (name === roomWalkAnimation) name = 'rest-neutral';
+    if (name === roomWalkAnimation) {
+      if (moving && roomWalkClips.some((clip) => clip === this.clipName)) return;
+      name = 'rest-neutral';
+    }
     if (name.startsWith('body-orient-') || name.startsWith('body-turn-')) {
       const side = Math.sin(heading - viewBearing) >= 0 ? 'right' : 'left';
       name = name.replace(/(left|right)$/, side);
@@ -159,13 +150,27 @@ export class AikoView extends Container {
       'body-look-left',
     ];
     await Promise.all(
-      names.flatMap(
-        (name) =>
-          this.clips[name]?.frames.map((frame) =>
-            Assets.load<Texture>(new URL(frame.file, this.root).href),
-          ) ?? [],
+      names.map((name) => {
+        const clip = this.clips[name];
+        if (clip) return this.loadFrames(name, clip);
+      }),
+    );
+  }
+  private async loadFrames(name: string, clip: Clip) {
+    const textures = await Promise.all(
+      clip.frames.map((frame) =>
+        Assets.load<Texture>(new URL(frame.file, this.root).href),
       ),
     );
+    const order = clip.order.length
+      ? clip.order
+      : clip.frames.map((_frame, index) => index);
+    const frames = order.map((index) => ({
+      texture: textures[index]!,
+      time: clip.frames[index]!.duration,
+    }));
+    this.loaded.set(name, frames);
+    return frames;
   }
   async hold(item: string | null, pose = 'closed_world'): Promise<void> {
     const definition = item ? this.items[item] : undefined;

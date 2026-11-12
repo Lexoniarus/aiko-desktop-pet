@@ -22,6 +22,13 @@ segments along a bearing. Both segments are checked against furniture
 footprints. The renderer interpolates the same segments and changes the
 walk cycle at the actual turn.
 
+The room prepares the ordered walking frames before drawing the scene.
+At a boundary between buffered updates, the next interval supplies the
+pose at zero progress. If an update is late, Aiko holds the last confirmed
+position and the last drawn walking frame while the simulation still
+reports walking. The next update resumes distance-based playback. A stop
+can finish the buffered travel, and a new action takes precedence.
+
 The bearing determines the horizontal screen position. Ground contact,
 scale and ground occlusion all use the same distance from the camera.
 Routes continue across wall boundaries. At equal floor depth, an object

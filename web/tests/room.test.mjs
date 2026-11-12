@@ -423,6 +423,85 @@ test('gait frames follow stride distance and the actor stops within the last tic
   assert.deepEqual(motion.sample(1270), { point: end, walk: undefined });
 });
 
+test('a walk keeps its clip and step phase across an exact update boundary', () => {
+  const gait = { step_length: 10, step_duration: 0.5 };
+  const routes = [
+    ['room-walk-toward', (step) => worldPoint(layout, 0, 200 - step)],
+    ['room-walk-away', (step) => worldPoint(layout, 0, 200 + step)],
+    ['body-step-left-profil', (step) => worldPoint(layout, -step / 200, 200)],
+    ['body-step-right-profil', (step) => worldPoint(layout, step / 200, 200)],
+  ];
+  for (const [clip, pointAt] of routes) {
+    const motion = new RoomMotion(layout);
+    for (const step of [0, 1, 2]) {
+      motion.receive(pointAt(step), 1000 + step * 50, [], {
+        ...gait,
+        time: step * 0.05,
+        distance: step,
+      });
+    }
+    for (const [time, distance] of [
+      [1149, 0.98],
+      [1150, 1],
+      [1151, 1.02],
+    ]) {
+      const { point, walk } = motion.sample(time);
+      assert.equal(walk?.clip, clip);
+      assert.ok(Math.abs(walk.distance - distance) < 1e-8);
+      const expected = pointAt(distance);
+      assert.ok(Math.hypot(point.x - expected.x, point.depth - expected.depth) < 1e-8);
+    }
+  }
+});
+
+test('the next interval starts with the outgoing clip at an arc-to-ray corner', () => {
+  const motion = new RoomMotion(layout);
+  const gait = { step_length: 10, step_duration: 0.5 };
+  const corner = worldPoint(layout, 1 / 200, 200);
+  const points = [worldPoint(layout, 0, 200), corner, worldPoint(layout, 1 / 200, 199)];
+  for (const [step, point] of points.entries()) {
+    motion.receive(point, 1000 + step * 50, [], {
+      ...gait,
+      time: step * 0.05,
+      distance: step,
+    });
+  }
+  assert.equal(motion.sample(1149).walk?.clip, 'body-step-right-profil');
+  const atCorner = motion.sample(1150);
+  assert.ok(
+    Math.hypot(atCorner.point.x - corner.x, atCorner.point.depth - corner.depth) < 1e-8,
+  );
+  assert.equal(atCorner.walk?.clip, 'room-walk-toward');
+  assert.equal(atCorner.walk.distance, 1);
+  assert.equal(motion.sample(1151).walk?.clip, 'room-walk-toward');
+});
+
+test('a late update holds the last confirmed position and resumes the same stride', () => {
+  const motion = new RoomMotion(layout);
+  const gait = { step_length: 10, step_duration: 0.5 };
+  const confirmed = worldPoint(layout, 0, 199);
+  motion.receive(worldPoint(layout, 0, 200), 1000, [], {
+    ...gait,
+    time: 0,
+    distance: 0,
+  });
+  motion.receive(confirmed, 1050, [], { ...gait, time: 0.05, distance: 1 });
+  const before = motion.sample(1149);
+  assert.equal(before.walk?.clip, 'room-walk-toward');
+  assert.deepEqual(motion.sample(1150), { point: confirmed });
+  assert.deepEqual(motion.sample(1167), { point: confirmed });
+
+  motion.receive(worldPoint(layout, 0, 197), 1168, [], {
+    ...gait,
+    time: 0.15,
+    distance: 3,
+  });
+  const resumed = motion.sample(1168);
+  assert.equal(resumed.walk?.clip, 'room-walk-toward');
+  assert.ok(resumed.walk.distance > 1 && resumed.walk.distance < 3);
+  assert.ok(resumed.point.depth > confirmed.depth);
+});
+
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [
     '../state.sqlite3',

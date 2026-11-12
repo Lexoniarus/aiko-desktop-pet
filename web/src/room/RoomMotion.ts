@@ -95,8 +95,8 @@ export class RoomMotion {
     const time = now - 100;
     let from = this.samples[0]!;
     for (const to of this.samples.slice(1)) {
-      if (to.time >= time) {
-        if (time <= from.time) return { point: from.point };
+      if (to.time > time) {
+        if (time < from.time) return { point: from.point };
         const fraction = (time - from.time) / (to.time - from.time);
         const length = to.legs.reduce((sum, leg) => sum + leg.length, 0);
         const gait = to.gait;
