@@ -119,6 +119,10 @@ then replace `install.json` atomically. Keep previous ZIPs available for
 recovery. Closing the launcher stops its loopback server. An installed
 room tab can continue running from its browser cache.
 
+The Room checkout's Desktop option requires a sibling `aiko-desktop-pet`
+checkout with the native entry point. The desktop checkout opens its native
+save. Room mode remains available in the chooser if that checkout is missing.
+
 ## Updates on the installed icon
 
 For an installed package, **Einstellungen → App-Version und Updates → Nach

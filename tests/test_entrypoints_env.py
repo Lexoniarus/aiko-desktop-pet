@@ -2,6 +2,7 @@
 
 import os
 import runpy
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -17,6 +18,7 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
     def test_main_py_starts_the_companion_desktop_checkout(self) -> None:
         desktop = ROOT.with_name("aiko-desktop-pet")
         entry = desktop / "aiko_pet" / "__main__.py"
+        gui = desktop / "aiko_pet" / "gui.py"
         interpreter = desktop / ".venv" / "Scripts" / "python.exe"
         starter = desktop / "dist" / "room" / "starter"
         with (
@@ -30,7 +32,7 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
                 Path,
                 "is_file",
                 autospec=True,
-                side_effect=lambda p: p in (entry, interpreter),
+                side_effect=lambda p: p in (entry, gui, interpreter),
             ),
             patch(
                 "aiko_pet.desktop.version_launcher.choose_desktop",
@@ -39,9 +41,9 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
             patch("subprocess.run", return_value=Mock(returncode=0)) as start,
         ):
             runpy.run_path(str(ROOT / "main.py"), run_name="__main__")
-        choose.assert_called_once_with(starter)
+        choose.assert_called_once_with(starter, desktop_error=None)
         start.assert_called_once_with(
-            [str(interpreter), "-m", "aiko_pet"],
+            [str(interpreter), "-E", "-m", "aiko_pet"],
             cwd=desktop,
             check=False,
         )
@@ -59,35 +61,65 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
         start_companion.assert_not_called()
         start_desktop.assert_not_called()
 
-    def test_room_launcher_opens_package_check_and_owns_server(self) -> None:
+    def test_room_entry_blocks_missing_or_room_companion_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            entry = root / "room" / "main.py"
+            entry.parent.mkdir()
+            shutil.copyfile(ROOT / "main.py", entry)
+            companion = root / "aiko-desktop-pet" / "aiko_pet"
+            for room_companion in (False, True):
+                with self.subTest(room_companion=room_companion):
+                    if room_companion:
+                        (companion / "browser").mkdir(parents=True)
+                        for name in ("__main__.py", "gui.py", "browser/bootstrap.py"):
+                            (companion / name).touch()
+                    with (
+                        patch(
+                            "aiko_pet.desktop.version_launcher.choose_desktop",
+                            return_value=True,
+                        ) as choose,
+                        patch("subprocess.run") as subprocess_start,
+                        patch("aiko_pet.gui.main") as native_start,
+                    ):
+                        runpy.run_path(str(entry), run_name="__main__")
+                    self.assertIn(
+                        str(companion.parent), choose.call_args.kwargs["desktop_error"]
+                    )
+                    subprocess_start.assert_not_called()
+                    native_start.assert_not_called()
+
+    def test_room_choice_remains_available_when_desktop_is_blocked(self) -> None:
         from aiko_pet.desktop import version_launcher
 
         with (
             tempfile.TemporaryDirectory() as folder,
             patch.object(version_launcher, "Tk") as tk,
             patch.object(version_launcher, "ttk") as widgets,
-            patch.object(version_launcher, "RoomHTTPServer") as server,
-            patch.object(version_launcher, "Thread"),
-            patch.object(version_launcher.webbrowser, "open_new_tab") as open_tab,
+            patch.object(version_launcher, "messagebox") as messagebox,
+            patch.object(version_launcher, "LocalRoomServer") as server,
         ):
             starter = Path(folder)
-            for filename in ("index.html", "sw.js"):
-                (starter / filename).touch()
 
-            def choose_room() -> None:
-                for call in widgets.Button.call_args_list:
-                    if call.kwargs["text"] == "Raum-Version":
-                        call.kwargs["command"]()
-                        return
-                self.fail("Room version choice missing")
+            def choose_versions() -> None:
+                actions = {
+                    call.kwargs["text"]: call.kwargs["command"]
+                    for call in widgets.Button.call_args_list
+                }
+                actions["Desktop-Version"]()
+                tk.return_value.destroy.assert_not_called()
+                actions["Raum-Version"]()
 
-            tk.return_value.mainloop.side_effect = choose_room
-            self.assertFalse(version_launcher.choose_desktop(starter))
+            tk.return_value.mainloop.side_effect = choose_versions
+            self.assertFalse(
+                version_launcher.choose_desktop(starter, desktop_error="Fehlt")
+            )
 
-        self.assertEqual(server.call_args.args[0], ("127.0.0.1", 8940))
-        open_tab.assert_called_once_with("http://127.0.0.1:8940/?local-launch=1")
-        server.return_value.shutdown.assert_called_once_with()
-        server.return_value.server_close.assert_called_once_with()
+        messagebox.showerror.assert_called_once_with(
+            "Desktop-Version", "Fehlt", parent=tk.return_value
+        )
+        server.return_value.open.assert_called_once_with()
+        server.return_value.close.assert_called_once_with()
 
     def test_gui_entrypoint_orders_env_resources_and_desktop(self) -> None:
         from aiko_pet.gui import main
