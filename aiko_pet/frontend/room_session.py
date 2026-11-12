@@ -357,7 +357,12 @@ class RoomSession:
         elif name == "contact":
             self.contact.click("left")
         elif name == "call":
-            self.room.call(RoomPoint(float(args["x"]), float(args.get("depth", 300))))
+            wall = args.get("wall")
+            if wall is not None and not isinstance(wall, str):
+                raise ValueError("Ungültige Blickrichtung beim Rufen.")
+            self.room.call(
+                RoomPoint(float(args["x"]), float(args.get("depth", 300))), wall=wall,
+            )
         elif name == "place":
             self.room.place(
                 str(args["definition"]),
@@ -487,6 +492,7 @@ class RoomSession:
 
     def snapshot(self) -> dict[str, Any]:
         world = self.room.world.snapshot()
+        approach = self.room.player_approach
         self.game_snapshot = (
             {"id": self._preparing_game, "preparing": True}
             if self._preparing_game
@@ -521,6 +527,17 @@ class RoomSession:
                 else self.playback.animation
             ),
             "moving": self.room.moving,
+            "player_approach": None if approach is None else {
+                "serial": approach.serial,
+                "entry": json_value(approach.entry),
+                "target": json_value(approach.target),
+                "framing": approach.framing,
+                "active": (
+                    approach.via is None
+                    or self.room.movement.next_point == approach.target
+                    or self.room.position == approach.target
+                ),
+            },
             "facing": self.room.facing,
             "heading": self.room.movement.heading(
                 self.room.position, self.room.environment.heading,

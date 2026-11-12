@@ -27,3 +27,10 @@ Im geraden Bereich jeder Wandansicht bestimmt die seitliche Raumkoordinate
 die Bildschirmposition. Die Tiefe bestimmt Aikos Größe nach der Kurve aus
 der freigegebenen Annäherungsvorschau. Am Übergang zwischen zwei Wänden
 verbindet ein schmaler Bereich die Ansichten kontinuierlich.
+
+**Aiko rufen** behält bis Freundschaftsstufe 5 den normalen Raumabstand.
+Auf Stufe 6 endet der Ruf in der Oberkörperansicht, ab Stufe 7 in der
+Videocall-Nahansicht. Die Raumsteuerung wählt den erreichbaren Endpunkt
+vor der zur Kamera gewandten Wand. Auf der letzten Geraden wächst der
+Ausschnitt mit der tatsächlich zurückgelegten Strecke. In der Nahansicht
+wartet Aiko frontal und blinzelt im gewohnten Rhythmus.

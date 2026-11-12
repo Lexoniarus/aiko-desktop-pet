@@ -13,6 +13,7 @@ import {
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { RoomWalkPresentation } from '../src/room/RoomWalkPresentation.ts';
+import { playerFraming } from '../src/room/RoomPlayerFraming.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace } from '../src/room/RoomLayout.ts';
@@ -333,6 +334,38 @@ test('player-facing depth changes size without sideways movement on each wall', 
       1e-8,
   );
 });
+test('the player call fits torso and video-call framing to actual inward progress', () => {
+  const entry = { x: 400, depth: 120 };
+  const torso = {
+    serial: 1,
+    entry,
+    target: { x: 400, depth: 158.22 },
+    framing: 0.78,
+    active: true,
+  };
+  const close = {
+    serial: 2,
+    entry,
+    target: { x: 400, depth: 169 },
+    framing: 1,
+    active: true,
+  };
+  const base = { y: 765, scale: 3.8 };
+  const view = (approach, point) => playerFraming(approach, point, 800, 100, base);
+  assert.deepEqual(view(null, close.target), base);
+  assert.deepEqual(view({ ...close, active: false }, close.target), base);
+  assert.deepEqual(view(close, entry), base);
+  assert.deepEqual(view(close, { x: 420, depth: 145 }), base);
+  const half = view(close, { x: 400, depth: 145 });
+  const level6 = view(torso, torso.target);
+  const level7 = view(close, close.target);
+  assert.ok(half.scale > base.scale && half.scale < level6.scale);
+  assert.ok(level6.y > 800 && level7.y > level6.y);
+  assert.ok(level7.scale > level6.scale);
+  assert.ok(level7.y - level7.scale * 100 < level6.y - level6.scale * 100);
+  assert.ok(Math.abs(view(close, torso.target).scale - level6.scale) < 1e-8);
+});
+
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [
     '../state.sqlite3',

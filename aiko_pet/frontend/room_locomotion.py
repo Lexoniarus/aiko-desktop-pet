@@ -63,7 +63,11 @@ class RoomLocomotion:
         if self.selection.animation == "idle":
             self.selection = SpriteSelection("rest-neutral")
 
-    def idle(self, now: float, intent: AmbientIntent) -> None:
+    def idle(
+        self, now: float, intent: AmbientIntent, *, face_player: bool = False,
+    ) -> None:
+        if face_player:
+            self.orientation.reset()
         self.selection = self.orientation.select(
             now,
             intent.sprite,

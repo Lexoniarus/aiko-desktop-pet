@@ -7,6 +7,7 @@ import type { Clip } from './AikoView';
 import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
+import { playerFraming } from './RoomPlayerFraming';
 import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
@@ -130,6 +131,11 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
+    const approach = snapshot.player_approach;
+    if (approach && approach.serial !== this.snapshot?.player_approach?.serial) {
+      this.camera.releaseFollow();
+      this.camera.panTo(approach.target);
+    }
     this.snapshot = snapshot;
     this.motion.receive(
       snapshot.room.pet,
@@ -215,11 +221,17 @@ export class RoomView {
       snapshot.animation_hold_frame,
     );
     const projected = projection.projectPoint(point);
-    const actorScale = projection.actorScale(point);
+    const actor = playerFraming(
+      snapshot.game ? null : snapshot.player_approach,
+      point,
+      this.camera.sceneHeight,
+      this.assets.layout.pet_height,
+      { y: projected.y, scale: projection.actorScale(point) },
+    );
     this.aiko.visible = projected.depth > 1;
-    this.aiko.position.set(projected.x, projected.y);
+    this.aiko.position.set(projected.x, actor.y);
     this.aiko.scale.set(
-      (this.assets.layout.pet_height / this.assets.characterHeight) * actorScale,
+      (this.assets.layout.pet_height / this.assets.characterHeight) * actor.scale,
     );
     this.aiko.zIndex = projected.groundY;
     this.aiko.renderHeld(
@@ -227,7 +239,7 @@ export class RoomView {
     );
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.visible = this.aiko.visible;
-    this.shadow.scale.set(actorScale / 4);
+    this.shadow.scale.set(actor.scale / 4);
     this.shadow.zIndex = this.aiko.zIndex - 0.1;
     for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
@@ -428,6 +440,10 @@ export class RoomView {
   }
   callPoint(): RoomPoint {
     return this.camera.projection.pointAtBearing(this.camera.yaw, 180);
+  }
+  callWall(): string {
+    const index = Math.round(this.camera.yaw / (Math.PI / 2));
+    return ['north', 'east', 'south', 'west'][((index % 4) + 4) % 4]!;
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;

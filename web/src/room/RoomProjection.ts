@@ -1,13 +1,9 @@
 import type { RoomLayout, RoomPoint } from './RoomLayout';
 import { roomPresentation } from './RoomPresentation.ts';
+import { approachScale } from './RoomPlayerFraming.ts';
 
 const quarterTurn = Math.PI / 2;
 const flatPanelSpan = 0.86;
-
-function approachScale(depth: number): number {
-  // Relative sizes from the approved phone-format approach preview.
-  return 0.23 + 0.425 * (0.64 * depth + 0.36 * depth * depth);
-}
 
 /** Flat panorama over the existing floor grid; never a perspective camera. */
 export class RoomProjection {

@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import random
 
-from ..pet.animation.ambient import AmbientDirector
+from ..pet.animation.ambient import AmbientDirector, AmbientIntent
 from ..pet.state import PetState
 from ..world.room import RoomGeometry, RoomPoint
 from .room_locomotion import RoomLocomotion
@@ -59,21 +59,27 @@ class RoomLeisure:
         if cancel_outing:
             self.next_outing = now + self.rng.uniform(20, 45)
 
-    def pose(self, now: float, state: PetState, locomotion: RoomLocomotion) -> None:
+    def pose(
+        self, now: float, state: PetState, locomotion: RoomLocomotion,
+        *, face_player: bool = False,
+    ) -> None:
         if self._blink_until is not None and now >= self._blink_until:
             self.director.finish_blink(now)
             self._blink_until = None
-        intent = self.director.select_passive_animation(
-            now,
-            gaze_direction=None,
-            observing_computer=False,
-            computer_busy=False,
-            energy=state.energy,
-            mood=state.mood,
-            satiety=state.satiety,
+        intent = (
+            AmbientIntent(self.director.choose_rest(now)) if face_player
+            else self.director.select_passive_animation(
+                now,
+                gaze_direction=None,
+                observing_computer=False,
+                computer_busy=False,
+                energy=state.energy,
+                mood=state.mood,
+                satiety=state.satiety,
+            )
         )
         if self.director.blinking and self._blink_until is None:
             self._blink_until = now + self.rest_cycle
-        locomotion.idle(now, intent)
+        locomotion.idle(now, intent, face_player=face_player)
         if intent.side and locomotion.orientation.phase == 4:
             self.director.note_body_settled(now, intent.side)

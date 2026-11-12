@@ -13,6 +13,7 @@ from aiko_pet.browser.bootstrap import create_browser_session
 from aiko_pet.frontend.games.room_effects import RoomGameEffects
 from aiko_pet.frontend.room_locomotion import ROOM_WALK_ANIMATION, RoomLocomotion
 from aiko_pet.world.room import RoomGeometry, RoomPoint
+from tools.pet_test_support import set_test_pet_values
 
 
 class RoomSessionTests(unittest.TestCase):
@@ -71,6 +72,41 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(reopened.session.room.position, position)
         self.assertFalse(reopened.session.settings.learn_rhythm)
         self.assertFalse(reopened.session.settings.observe_computer)
+
+    def test_call_uses_friendship_to_choose_a_straight_player_approach(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        session = self.endpoint.session
+        room = session.room
+        for friendship, framing, depth in ((40, None, 120), (50, .78, 158.22),
+                                           (60, 1.0, 169)):
+            with self.subTest(friendship=friendship):
+                set_test_pet_values(session.state, friendship=friendship)
+                room.world.locate_in_room(
+                    replace(room.spatial, pet=RoomPoint(430, 100)),
+                )
+                reply = self.command("call", x=400, depth=120, wall="north")["snapshot"]
+                approach = reply["player_approach"]
+                if framing is None:
+                    self.assertIsNone(approach)
+                else:
+                    self.assertEqual(approach["framing"], framing)
+                    self.assertFalse(approach["active"])
+                    self.assertEqual(approach["entry"], {"x": 400, "depth": 120})
+                    self.assertEqual(approach["target"], {"x": 400, "depth": depth})
+                self.advance_until(lambda: room.position == RoomPoint(400, depth))
+                self.assertTrue(room.geometry.layout.can_place(
+                    room.position.x, room.position.depth,
+                    room.geometry.layout.pet_radius,
+                ))
+                if framing is not None:
+                    self.assertEqual(room.movement.points[-2:], (
+                        RoomPoint(400, 120), RoomPoint(400, depth),
+                    ))
+                    self.wall += 0.25
+                    standing = self.command("tick")["snapshot"]
+                    self.assertTrue(standing["player_approach"]["active"])
+                    self.assertEqual(standing["animation"], "rest-neutral")
 
     def test_called_route_goes_around_table_on_free_floor(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,

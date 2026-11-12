@@ -16,6 +16,15 @@ class RoomMotionStep:
     arrived: bool
 
 
+@dataclass(frozen=True, slots=True)
+class PlayerApproach:
+    serial: int
+    entry: RoomPoint
+    target: RoomPoint
+    framing: float
+    via: RoomPoint | None
+
+
 class RoomMovement:
     def __init__(self, navigator: RoomNavigator) -> None:
         self.navigator = navigator
@@ -25,13 +34,55 @@ class RoomMovement:
         self.serial = 0
         self.travelled: tuple[RoomPoint, ...] = ()
 
-    def start(self, start: RoomPoint, goal: RoomPoint) -> bool:
+    def player_approach(
+        self, start: RoomPoint, wall: str, framing: float,
+    ) -> PlayerApproach | None:
+        layout = self.navigator.geometry.layout
+        across, depth = (
+            (layout.width, layout.depth) if wall in ("north", "south")
+            else (layout.depth, layout.width)
+        )
+        stand_off = 180.0
+        closest = layout.camera_clearance + layout.pet_radius + 1.0
+        if not closest < stand_off <= depth / 2:
+            return None
+        entry = RoomPoint(
+            *layout.wall_to_floor(wall, across / 2, depth / 2 - stand_off),
+        )
+        stop = stand_off + (closest - stand_off) * framing
+        target = RoomPoint(*layout.wall_to_floor(wall, across / 2, depth / 2 - stop))
+        if not self.navigator.clear_segment(entry, target):
+            return None
+        # Aiko may already be on the inward lane. Otherwise route to its far end
+        # so the last leg is a genuine straight approach toward the player.
+        aligned = (
+            start.x == target.x and (target.depth - start.depth) *
+            (target.depth - entry.depth) >= 0
+        ) if entry.x == target.x else (
+            start.depth == target.depth and (target.x - start.x) *
+            (target.x - entry.x) >= 0
+        )
+        via = None if aligned and self.navigator.clear_segment(start, target) else entry
+        if via is not None and self.navigator.find_route(start, via) is None:
+            return None
+        return PlayerApproach(self.serial, entry, target, framing, via)
+
+    def start(
+        self, start: RoomPoint, goal: RoomPoint, *, via: RoomPoint | None = None,
+    ) -> bool:
         if self.goal == goal and self.index < len(self.points):
             return True
-        route = self.navigator.find_route(start, goal)
+        route = self.navigator.find_route(start, via if via is not None else goal)
+        points = route.points[1:] if route else ()
+        if route is not None and via is not None:
+            if self.navigator.clear_segment(via, goal):
+                points = (*points, goal)
+            else:
+                route = None
+                points = ()
         self.serial += 1
         self.goal = goal
-        self.points = route.points[1:] if route else ()
+        self.points = points
         self.index = 0
         return route is not None
 
