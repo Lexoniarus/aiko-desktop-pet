@@ -107,6 +107,7 @@ export async function startRoom(
       drag.cancel();
       try {
         await client.close(true);
+        ui.clearMessage();
         room.destroy();
         releaseInteractionBoundary?.();
       } catch (error) {

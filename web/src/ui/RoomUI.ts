@@ -12,6 +12,7 @@ import { CreditsPanel } from './CreditsPanel';
 import { UpdateControls } from './UpdateControls';
 import { SpeechBubbles } from './SpeechBubbles';
 import { RoomArtwork } from './RoomArtwork';
+import { RoomMessage } from './RoomMessage';
 import type { RoomUpdates } from '../bridge/RoomUpdates';
 import { RockPaperScissorsView } from '../games/RockPaperScissorsView';
 import { TicTacToeView } from '../games/TicTacToeView';
@@ -54,7 +55,7 @@ export class RoomUI {
   private sleep = button('Schlafen', () => {
     void this.command('care', { action: 'sleep' });
   });
-  readonly status = element('div', 'room-message');
+  private status = new RoomMessage();
   constructor(
     private host: HTMLElement,
     private room: RoomView,
@@ -86,7 +87,6 @@ export class RoomUI {
       talk,
       button('Mehr', () => this.open('more')),
     );
-    this.status.setAttribute('role', 'status');
     const header = element('header', 'panel-header');
     header.append(
       this.title,
@@ -105,7 +105,7 @@ export class RoomUI {
       this.toolbar,
       this.panel,
       this.foodTray.element,
-      this.status,
+      this.status.element,
       this.moodlets.element,
     );
     room.followPet(() => {
@@ -307,6 +307,9 @@ export class RoomUI {
     }
   }
   message(error: unknown): void {
-    this.status.textContent = error instanceof Error ? error.message : String(error);
+    this.status.show(error);
+  }
+  clearMessage(): void {
+    this.status.clear();
   }
 }
