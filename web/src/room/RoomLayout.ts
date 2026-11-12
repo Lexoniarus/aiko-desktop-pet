@@ -3,6 +3,23 @@ export interface RoomPoint {
   x: number;
   depth: number;
 }
+
+export function worldPolar(layout: RoomLayout, point: RoomPoint) {
+  const x = point.x - layout.width / 2;
+  const z = layout.depth / 2 - point.depth;
+  return { bearing: Math.atan2(x, z), distance: Math.hypot(x, z) };
+}
+
+export function worldPoint(
+  layout: RoomLayout,
+  bearing: number,
+  distance: number,
+): RoomPoint {
+  return {
+    x: layout.width / 2 + distance * Math.sin(bearing),
+    depth: layout.depth / 2 - distance * Math.cos(bearing),
+  };
+}
 export interface FurniturePlacement {
   id: string;
   asset: string;

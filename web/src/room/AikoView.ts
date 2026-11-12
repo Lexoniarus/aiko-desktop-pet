@@ -1,10 +1,11 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 import type { RoomItemAsset } from './RoomAssets';
 import { heldItemPosition } from './heldItemPosition';
+import type { RoomWalk } from './RoomMotion';
 import {
-  RoomWalkPresentation,
   roomWalkAnimation,
   roomWalkClips,
+  roomWalkFrame,
 } from './RoomWalkPresentation';
 
 export interface Clip {
@@ -34,7 +35,6 @@ export interface PetScreenBounds {
 }
 export class AikoView extends Container {
   private sprite = new AnimatedSprite([Texture.EMPTY]);
-  private walk = new RoomWalkPresentation();
   private clipName = '';
   private generation = 0;
   private actionId = -1;
@@ -73,12 +73,19 @@ export class AikoView extends Container {
   ): Promise<void> {
     if (!(name in this.clips)) name = 'idle';
     const fixed = holdFrame ?? null;
-    if (
-      name === this.clipName &&
-      (actionId === this.actionId || this.clips[name]!.loop) &&
-      fixed === this.holdFrame
-    )
-      return;
+    const clip = this.clips[name]!;
+    if (name === this.clipName && (actionId === this.actionId || clip.loop)) {
+      if (fixed === this.holdFrame) return;
+      if (fixed !== null && this.loaded.has(name)) {
+        this.holdFrame = fixed;
+        this.sprite.gotoAndStop(
+          Math.max(0, clip.order.length ? clip.order.indexOf(fixed) : fixed),
+        );
+        this.placeHeld();
+        this.updateBounds();
+        return;
+      }
+    }
     const previous = this.clips[this.clipName];
     const phase =
       previous?.family && previous.family === this.clips[name]?.family
@@ -88,7 +95,6 @@ export class AikoView extends Container {
     this.holdFrame = fixed;
     this.clipName = name;
     const generation = ++this.generation;
-    const clip = this.clips[name]!;
     let frames = this.loaded.get(name);
     if (!frames) {
       const textures = await Promise.all(
@@ -125,16 +131,23 @@ export class AikoView extends Container {
     name: string,
     heading: number,
     viewBearing: number,
-    moving: boolean,
+    walk: RoomWalk | undefined,
     actionId: number,
     timings?: number[] | null,
     frame?: number | null,
   ): Promise<void> {
-    if (moving && name === roomWalkAnimation) {
-      await this.show(this.walk.clip(heading, viewBearing), actionId);
-      return;
+    if (walk && (name === roomWalkAnimation || name === 'rest-neutral')) {
+      const clip = this.clips[walk.clip];
+      if (clip) {
+        await this.show(
+          walk.clip,
+          actionId,
+          undefined,
+          roomWalkFrame(clip, walk.distance, walk.stepLength),
+        );
+        return;
+      }
     }
-    this.walk.reset();
     if (name === roomWalkAnimation) name = 'rest-neutral';
     if (name.startsWith('body-orient-') || name.startsWith('body-turn-')) {
       const side = Math.sin(heading - viewBearing) >= 0 ? 'right' : 'left';

@@ -7,23 +7,20 @@ export const roomWalkClips = [
   'body-step-left-profil',
 ] as const;
 
-const quarterTurn = Math.PI / 2;
+export type RoomWalkClip = (typeof roomWalkClips)[number];
 
-export class RoomWalkPresentation {
-  private heading?: number;
-  private facing = 0;
-
-  clip(heading: number, wallBearing: number): (typeof roomWalkClips)[number] {
-    // A straight path uses one authored gait through the whole segment.
-    if (this.heading !== heading) {
-      this.heading = heading;
-      const turn = Math.round((heading - wallBearing) / quarterTurn);
-      this.facing = ((turn % 4) + 4) % 4;
-    }
-    return roomWalkClips[this.facing]!;
+export function roomWalkFrame(
+  clip: { duration: number; order: number[]; frames: Array<{ duration: number }> },
+  distance: number,
+  stepLength: number,
+): number {
+  const order = clip.order.length
+    ? clip.order
+    : clip.frames.map((_frame, index) => index);
+  let elapsed = ((distance / stepLength) * 620) % (clip.duration * 1000);
+  for (const index of order) {
+    elapsed -= clip.frames[index]!.duration;
+    if (elapsed < 0) return index;
   }
-
-  reset(): void {
-    this.heading = undefined;
-  }
+  return order[0]!;
 }

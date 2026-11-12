@@ -1,6 +1,7 @@
 """Real portable-session boundaries, using isolated saves and explicit time."""
 
 import json
+import math
 import tempfile
 import unittest
 from collections.abc import Callable
@@ -13,6 +14,7 @@ from aiko_pet.browser.bootstrap import create_browser_session
 from aiko_pet.frontend.games.room_effects import RoomGameEffects
 from aiko_pet.frontend.room_locomotion import ROOM_WALK_ANIMATION, RoomLocomotion
 from aiko_pet.world.room import RoomGeometry, RoomPoint
+from aiko_pet.world.room_navigation import RoomLeg
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -73,70 +75,95 @@ class RoomSessionTests(unittest.TestCase):
         self.assertFalse(reopened.session.settings.learn_rhythm)
         self.assertFalse(reopened.session.settings.observe_computer)
 
-    def test_call_uses_friendship_to_choose_a_straight_player_approach(self) -> None:
+    def test_call_stays_on_the_same_bearing_at_all_friendship_levels(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,
                      auto_routine=False)
         session = self.endpoint.session
         room = session.room
-        for friendship, framing, depth in ((40, None, 120), (50, .78, 158.22),
-                                           (60, 1.0, 169)):
+        start = RoomPoint(*room.geometry.polar_position(-0.61, 220))
+        target = RoomPoint(*room.geometry.polar_position(-0.61, 180))
+        for friendship in (40, 50, 60):
             with self.subTest(friendship=friendship):
                 set_test_pet_values(session.state, friendship=friendship)
-                room.world.locate_in_room(
-                    replace(room.spatial, pet=RoomPoint(430, 100)),
-                )
-                reply = self.command("call", x=400, depth=120, wall="north")["snapshot"]
-                approach = reply["player_approach"]
-                if framing is None:
-                    self.assertIsNone(approach)
-                else:
-                    self.assertEqual(approach["framing"], framing)
-                    self.assertFalse(approach["active"])
-                    self.assertEqual(approach["entry"], {"x": 400, "depth": 120})
-                    self.assertEqual(approach["target"], {"x": 400, "depth": depth})
-                self.advance_until(lambda: room.position == RoomPoint(400, depth))
-                self.assertTrue(room.geometry.layout.can_place(
-                    room.position.x, room.position.depth,
-                    room.geometry.layout.pet_radius,
-                ))
-                if framing is not None:
-                    self.assertEqual(room.movement.points[-2:], (
-                        RoomPoint(400, 120), RoomPoint(400, depth),
-                    ))
-                    self.wall += 0.25
-                    standing = self.command("tick")["snapshot"]
-                    self.assertTrue(standing["player_approach"]["active"])
-                    self.assertEqual(standing["animation"], "rest-neutral")
+                room.world.locate_in_room(replace(room.spatial, pet=start))
+                self.command("call", x=target.x, depth=target.depth, wall="north")
+                initial = room.movement.distance_walked
+                self.advance_until(lambda: room.position == target)
+                self.assertEqual(room.movement.points, (target,))
+                self.assertAlmostEqual(room.movement.distance_walked - initial, 40)
+                self.wall += 0.25
+                standing = self.command("tick")["snapshot"]
+                self.assertEqual(standing["animation"], "rest-neutral")
+
+    def test_apple_route_crosses_the_wall_joint_at_constant_depth(self) -> None:
+        self.command("settings", auto_walk=False, spontaneous_talk=False,
+                     auto_routine=False)
+        room = self.endpoint.session.room
+        geometry = room.geometry
+        joint = math.atan2(geometry.layout.width, geometry.layout.depth)
+        left, right = joint - 0.095, joint + 0.095
+        far, near = 225, 145
+        route = ((left, far), (right, far), (right, near), (left, near))
+        positions = [
+            RoomPoint(*geometry.polar_position(angle, distance))
+            for angle, distance in route
+        ]
+        room.world.locate_in_room(replace(room.spatial, pet=positions[0]))
+        apple = RoomPoint(*geometry.polar_position(joint, 190))
+        reply = self.command("place", definition="apple", x=apple.x, depth=apple.depth)
+        snapshot = reply["snapshot"]
+        placed = next(
+            obj for obj in snapshot["objects"] if obj["definition_id"] == "apple"
+        )
+        depths = dict(snapshot["room"]["object_depths"])
+        actual = RoomPoint(placed["position"]["x"], depths[placed["instance_id"]])
+        apple_angle, apple_distance = geometry.polar(actual)
+        self.assertAlmostEqual(apple_angle, joint)
+        self.assertLess(near, apple_distance)
+        self.assertLess(apple_distance, far)
+
+        lengths = (far * (right - left), far - near, near * (right - left))
+        for target, side, length in zip(
+            positions[1:], (1, 0, -1), lengths, strict=True,
+        ):
+            self.command("call", x=target.x, depth=target.depth)
+            initial = room.movement.distance_walked
+            previous = room.position
+            walked = 0
+            while previous != target and walked < 40:
+                self.wall += 0.25
+                snapshot = self.command("tick")["snapshot"]
+                walked += 1
+                if room.position != previous:
+                    leg = RoomLeg.between(geometry, previous, room.position)
+                    assert leg is not None
+                    self.assertEqual(leg.side, side)
+                    self.assertTrue(
+                        room.movement.navigator.clear_segment(previous, room.position)
+                    )
+                    self.assertEqual(snapshot["animation"], ROOM_WALK_ANIMATION)
+                    expected_step = room.locomotion.speed * 0.25
+                    if room.position == target:
+                        self.assertLessEqual(leg.length, expected_step + 1e-8)
+                    else:
+                        self.assertAlmostEqual(leg.length, expected_step)
+                    previous = room.position
+            self.assertEqual(room.position, target)
+            self.assertAlmostEqual(room.movement.distance_walked - initial, length)
 
     def test_called_route_goes_around_table_on_free_floor(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,
                      auto_routine=False)
         room = self.endpoint.session.room
-        room.world.locate_in_room(replace(room.spatial, pet=RoomPoint(610, 300)))
-        self.command("call", x=740, depth=300)
-        directions: list[tuple[int, int]] = []
-        for _ in range(180):
-            self.wall += 0.25
-            snapshot = self.command("tick")["snapshot"]
-            self.assertTrue(room.geometry.layout.can_place(
-                room.position.x, room.position.depth, room.geometry.layout.pet_radius,
-            ))
-            travelled = snapshot["motion"]["travelled"]
-            if travelled:
-                self.assertEqual(snapshot["animation"], ROOM_WALK_ANIMATION)
-            for start, end in zip(travelled, travelled[1:]):
-                dx = end["x"] - start["x"]
-                dz = end["depth"] - start["depth"]
-                self.assertFalse(dx and dz)
-                heading = ((dx > 0) - (dx < 0), (dz > 0) - (dz < 0))
-                if heading != (0, 0) and (not directions or heading != directions[-1]):
-                    directions.append(heading)
-            if room.position == RoomPoint(740, 300):
-                break
-        self.assertEqual(room.position, RoomPoint(740, 300))
-        self.assertIn(
-            directions, [[(0, -1), (1, 0), (0, 1)], [(0, 1), (1, 0), (0, -1)]]
-        )
+        start = RoomPoint(610, 300)
+        goal = RoomPoint(740, 300)
+        room.world.locate_in_room(replace(room.spatial, pet=start))
+        self.command("call", x=goal.x, depth=goal.depth)
+        self.advance_until(lambda: room.position == goal)
+        route = (start, *room.movement.points)
+        self.assertGreater(len(route), 2)
+        for first, last in zip(route, route[1:]):
+            self.assertTrue(room.movement.navigator.clear_segment(first, last))
 
     def test_table_game_walks_around_furniture_before_starting(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,
@@ -667,16 +694,19 @@ class RoomGeometryTests(unittest.TestCase):
         goal = RoomPoint(533.75, 303.5)
         route = navigator.find_route(start, goal)
         assert route is not None
-        # The depth-first corner is inside the camera's clearance circle.
-        self.assertEqual(route.points, (start, RoomPoint(goal.x, start.depth), goal))
+        self.assertEqual((route.points[0], route.points[-1]), (start, goal))
+        self.assertEqual(len(route.points), 3)
+        for first, last in zip(route.points, route.points[1:]):
+            self.assertTrue(navigator.clear_segment(first, last))
 
-    def test_axis_aligned_route_stays_a_single_segment(self) -> None:
+    def test_off_centre_radial_route_stays_a_single_segment(self) -> None:
         from aiko_pet.infrastructure.room_layout import load_room_layout
         from aiko_pet.world.room_navigation import RoomNavigator
 
-        navigator = RoomNavigator(RoomGeometry(load_room_layout()))
-        start = RoomPoint(253.5, 70.25)
-        goal = RoomPoint(253.5, 130.25)
+        geometry = RoomGeometry(load_room_layout())
+        navigator = RoomNavigator(geometry)
+        start = RoomPoint(*geometry.polar_position(-0.61, 250))
+        goal = RoomPoint(*geometry.polar_position(-0.61, 195))
         route = navigator.find_route(start, goal)
         assert route is not None
         self.assertEqual(route.points, (start, goal))
@@ -690,7 +720,7 @@ class RoomGeometryTests(unittest.TestCase):
         route = navigator.find_route(RoomPoint(610, 300), RoomPoint(740, 300))
         self.assertIsNotNone(route)
         assert route is not None
-        self.assertEqual(len(route.points), 4)
+        self.assertGreater(len(route.points), 2)
         for start, end in zip(route.points, route.points[1:]):
             self.assertTrue(navigator.clear_segment(start, end))
         self.assertIsNone(
@@ -699,30 +729,22 @@ class RoomGeometryTests(unittest.TestCase):
 
     def test_room_walk_continues_through_each_corner_and_can_stop(self) -> None:
         pose = RoomLocomotion()
-        start = RoomPoint(600, 100)
-        route = (
-            start,
-            RoomPoint(650, 100),
-            RoomPoint(650, 150),
-            RoomPoint(600, 150),
-            start,
-        )
-        self.assertFalse(pose.walk(0, *route[:2]))
+        self.assertFalse(pose.walk(0, 1))
         self.assertTrue(pose.selection.animation.startswith("body-orient-"))
         for step in range(1, 9):
-            pose.walk(step * 0.1, *route[:2])
-        for start, end in zip(route, route[1:]):
-            self.assertTrue(pose.walk(0.9, start, end))
+            pose.walk(step * 0.1, 1)
+        for side in (1, 0, -1, 0):
+            self.assertTrue(pose.walk(0.9, side))
             self.assertEqual(pose.selection.animation, ROOM_WALK_ANIMATION)
         pose.stop_walk()
         self.assertEqual(pose.selection.animation, "rest-neutral")
-        self.assertTrue(pose.walk(1, RoomPoint(600, 100), RoomPoint(600, 130)))
+        self.assertTrue(pose.walk(1, 0))
         self.assertEqual(pose.selection.animation, ROOM_WALK_ANIMATION)
 
     def test_room_rest_can_hold_a_quarter_pose_after_a_walk(self) -> None:
         pose = RoomLocomotion()
         for step in range(10):
-            pose.walk(step * 0.1, RoomPoint(600), RoomPoint(700))
+            pose.walk(step * 0.1, 1)
         pose.rest(2, (1, 0))
         self.assertEqual(
             (pose.selection.animation, pose.selection.fixed_frame),

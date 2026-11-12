@@ -13,24 +13,22 @@ liegt dort bei `(190, 388)`, entsprechend dem logischen Anker
 Verkleinern entfernt. Die gezeichneten Schuhstellungen und ihre Abstände
 zur gemeinsamen Bodenlinie bleiben Teil der Animation.
 
-Die Raumversion spielt jeden der acht Frames für 155 ms. Der gesamte
-Zyklus deckt zwei Schritte zu je 620 ms ab und passt damit zum seitlichen
-Schritttakt.
+Die acht Bilder des Tiefengangs entsprechen zwei Schritten mit je 620 ms
+bei normalem Gehtempo. Die Wiedergabe wählt das Bild anhand der tatsächlich
+zurückgelegten Strecke. Beim Seitwärtsgang wird die Schrittlänge an die
+Darstellungsgröße des Profils und die horizontale Panoramaskala angepasst.
 
-Die Wegsuche liefert nur gerade Abschnitte. Für das sichtbare Abbiegen
-liefert die Positionsinterpolation außerdem die Richtung ihres aktuellen
-Abschnitts. Die Wandansicht beim Beginn eines Abschnitts bestimmt zusammen
-mit der Laufrichtung die Gehfolge. Die Folge wechselt beim Abbiegen, ohne
-die Einleitung vom seitlichen Losgehen erneut abzuspielen.
+Die Wegsuche verwendet Bögen mit konstantem Kameraabstand und Geraden
+entlang einer Blickrichtung. Beide Abschnitte werden gegen die vorhandenen
+Möbelflächen geprüft. Die Anzeige interpoliert dieselben Abschnitte und
+wechselt die Gehfolge beim tatsächlichen Abbiegen.
 
-Im geraden Bereich jeder Wandansicht bestimmt die seitliche Raumkoordinate
-die Bildschirmposition. Die Tiefe bestimmt Aikos Größe nach der Kurve aus
-der freigegebenen Annäherungsvorschau. Am Übergang zwischen zwei Wänden
-verbindet ein schmaler Bereich die Ansichten kontinuierlich.
+Der Winkel zur Kamera bestimmt die horizontale Bildschirmposition.
+Fußhöhe, Größe und Überdeckung am Boden folgen demselben Kameraabstand.
+Die Wandgrenzen ändern die Geometrie der Laufbahn nicht. Bei gleichem
+Bodenabstand bleibt ein Gegenstand vor Aiko sichtbar.
 
-**Aiko rufen** behält bis Freundschaftsstufe 5 den normalen Raumabstand.
-Auf Stufe 6 endet der Ruf in der Oberkörperansicht, ab Stufe 7 in der
-Videocall-Nahansicht. Die Raumsteuerung wählt den erreichbaren Endpunkt
-vor der zur Kamera gewandten Wand. Auf der letzten Geraden wächst der
-Ausschnitt mit der tatsächlich zurückgelegten Strecke. In der Nahansicht
-wartet Aiko frontal und blinzelt im gewohnten Rhythmus.
+**Aiko rufen** hält auf allen Freundschaftsstufen den normalen Raumabstand.
+Ist Aiko sichtbar, bleibt ihr Ziel auf ihrer aktuellen Blickrichtung zur
+Kamera. Während des Wegs haben ausdrücklich gerufene Ziele Vorrang vor
+autonomen Objektinteraktionen. Nach der Ankunft wartet Aiko frontal.

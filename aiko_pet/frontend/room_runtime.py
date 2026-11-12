@@ -47,7 +47,7 @@ from .room_drag import RoomDrag
 from .room_environment import RoomEnvironment
 from .room_leisure import RoomLeisure
 from .room_locomotion import RoomLocomotion
-from .room_movement import PlayerApproach, RoomMovement
+from .room_movement import RoomMovement
 from .room_playback import RoomPlayback
 from .view_models.object_reactions import format_object_reaction
 
@@ -103,7 +103,7 @@ class RoomRuntime:
         self._held_instance: str | None = None
         self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
-        self.player_approach: PlayerApproach | None = None
+        self._call_arrival: RoomPoint | None = None
         self._activity_arrived: Callable[[bool], None] | None = None
         self._wander: RoomPoint | None = None
         self._offered: tuple[str, float, str] | None = None
@@ -280,15 +280,7 @@ class RoomRuntime:
 
         def start() -> None:
             self.pause_route()
-            level = self.state.friendship_level
-            if wall is not None and level >= 6:
-                self.player_approach = self.movement.player_approach(
-                    self.position, wall, 0.78 if level == 6 else 1.0,
-                )
-            self._called = (
-                self.player_approach.target if self.player_approach is not None
-                else self.geometry.accessible(point)
-            )
+            self._called = self._call_arrival = self.geometry.accessible(point)
 
         self.interaction.interrupt(start)
         self.awareness.intentions.cancel(self.now)
@@ -296,7 +288,7 @@ class RoomRuntime:
     def pause_route(self) -> None:
         self._finish_activity(False)
         self._called = self._wander = None
-        self.player_approach = None
+        self._call_arrival = None
         self.moving = False
         self.movement.cancel()
         self.locomotion.stop_walk()
@@ -530,10 +522,13 @@ class RoomRuntime:
                 "cursor", direction, (self.position.x, 60), 122.5
             )
         previewing = drag is not None and self.playback.player.subject == drag.gesture
+        called = self._called is not None
         facts = BehaviorFacts(
             game_open=self.game_open(),
+            character_action_busy=called,
             carrying=drag is not None,
             playback_busy=self.playback.player.active and not previewing,
+            user_action_pending=called,
         )
         observation = self.behavior.observe(
             self.world.snapshot(),
@@ -648,8 +643,7 @@ class RoomRuntime:
             has_focus = bool(drag or side is not None or point is not None)
             face_player = (
                 drag is None
-                and self.player_approach is not None
-                and self.position == self.player_approach.target
+                and self.position == self._call_arrival
             )
             if (
                 (not has_focus or face_player)
@@ -679,19 +673,14 @@ class RoomRuntime:
             self.locomotion.rest(self.now)
             self._finish_activity(True)
             return
-        approach = self.player_approach
-        if approach is not None and destination != approach.target:
-            self.player_approach = approach = None
-        if not self.movement.start(
-            previous, destination, via=approach.via if approach is not None else None,
-        ):
+        if not self.movement.start(previous, destination):
             self.behavior.unreachable(now=self.now)
             self.pause_route()
             return
-        next_point = self.movement.next_point
-        if next_point is None:
+        leg = self.movement.leg
+        if leg is None:
             return
-        if not self.locomotion.walk(self.now, previous, next_point):
+        if not self.locomotion.walk(self.now, leg.side):
             return
         step = self.movement.advance(previous, min(seconds, 0.5), self.locomotion.speed)
         current = step.point

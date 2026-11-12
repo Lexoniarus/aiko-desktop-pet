@@ -7,7 +7,6 @@ import math
 from ..pet.animation.ambient import AmbientIntent
 from ..pet.animation.animation import SpriteSelection
 from ..pet.animation.body_orientation import BodyOrientation
-from ..world.room import RoomPoint
 
 ROOM_WALK_ANIMATION = "room-walk"
 
@@ -15,17 +14,17 @@ ROOM_WALK_ANIMATION = "room-walk"
 class RoomLocomotion:
     # The native step covers 16 logical pixels in 620 ms. Room artwork displays
     # the 156-logical-pixel visible figure at 100 room units, without skating.
-    speed = 16 / 0.62 * 100 / 156
+    step_length = 16 * 100 / 156
+    speed = step_length / 0.62
 
     def __init__(self) -> None:
         self.orientation = BodyOrientation()
         self.selection = SpriteSelection("rest-neutral")
 
-    def walk(self, now: float, start: RoomPoint, end: RoomPoint) -> bool:
+    def walk(self, now: float, side: int) -> bool:
         if self.selection.animation == ROOM_WALK_ANIMATION:
             return True
-        if start.x != end.x:
-            side = 1 if end.x > start.x else -1
+        if side:
             if self.orientation.side not in (0, side):
                 self.orientation.reset()
             turn = self.orientation.orient_for_motion(now, side, responsive=True)
@@ -34,7 +33,7 @@ class RoomLocomotion:
                 return False
         else:
             self.orientation.reset()
-        # The camera chooses the clip from the direction of the displayed segment.
+        # The renderer chooses the clip and frame from the travelled route.
         self.selection = SpriteSelection(ROOM_WALK_ANIMATION)
         return True
 

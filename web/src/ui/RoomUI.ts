@@ -88,7 +88,7 @@ export class RoomUI {
       );
     this.toolbar.prepend(
       button('Aiko rufen', () => {
-        void command('call', { ...room.callPoint(), wall: room.callWall() });
+        void command('call', { ...room.callPoint() });
       }),
     );
     this.status.setAttribute('role', 'status');

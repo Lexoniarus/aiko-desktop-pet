@@ -1,5 +1,6 @@
 """Grid migration and depth evidence on isolated, synthetic save data."""
 
+import math
 import sqlite3
 import tempfile
 import unittest
@@ -64,16 +65,18 @@ class RoomGridTests(unittest.TestCase):
 
     def test_food_line_has_one_visual_depth_on_all_four_walls(self):
         geometry = RoomGeometry(load_room_layout())
-        for point, expected in (
-            (RoomPoint(400, 20), RoomPoint(400, 123.5)),
-            (RoomPoint(790, 300), RoomPoint(611.5, 300)),
-            (RoomPoint(400, 580), RoomPoint(400, 476.5)),
-            (RoomPoint(10, 300), RoomPoint(188.5, 300)),
+        for point in (
+            RoomPoint(400, 20), RoomPoint(790, 300),
+            RoomPoint(400, 580), RoomPoint(10, 300), RoomPoint(780, 40),
         ):
             placed = geometry.food_placement(point)
-            self.assertEqual(placed, expected)
+            bearing, distance = geometry.polar(placed)
             self.assertAlmostEqual(
-                geometry.distance(geometry.food_placement(placed), expected), 0,
+                math.remainder(bearing - geometry.polar(point)[0], math.tau), 0,
+            )
+            self.assertAlmostEqual(distance, 175.43859649122805)
+            self.assertAlmostEqual(
+                geometry.distance(geometry.food_placement(placed), placed), 0,
             )
             self.assertTrue(geometry.layout.can_place(placed.x, placed.depth, 6))
 

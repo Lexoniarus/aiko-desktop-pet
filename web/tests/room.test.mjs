@@ -12,11 +12,10 @@ import {
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
-import { RoomWalkPresentation } from '../src/room/RoomWalkPresentation.ts';
-import { playerFraming } from '../src/room/RoomPlayerFraming.ts';
+import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame } from '../src/room/RoomPresentation.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
-import { canPlace } from '../src/room/RoomLayout.ts';
+import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
   cellPoint,
   chipPoint,
@@ -147,24 +146,24 @@ test('table and board share the floor order between front and rear walking posit
   );
 });
 
-test('ground objects cover Aiko on the same cell or behind, independent of insertion order', () => {
+test('ground objects cover Aiko only when nearer or on the same depth', () => {
   const projection = new RoomProjection(layout);
   projection.update(1024, 768, 0);
-  const item = { x: 450, depth: 130 },
-    ground = projection.projectPoint(item).groundY;
-  for (const [pet, covered] of [
-    [{ x: 451, depth: 125 }, true],
-    [{ x: 451, depth: 136 }, true],
-    [{ x: 450, depth: 100 }, true],
-    [{ x: 450, depth: 155 }, false],
+  const ground = projection.projectPoint(worldPoint(layout, 0.4, 180)).groundY;
+  for (const [distance, covered] of [
+    [178, false],
+    [180, true],
+    [182, true],
   ]) {
+    const pet = worldPoint(layout, 0.4, distance);
     const petY = projection.projectPoint(pet).groundY;
-    assert.equal(objectGroundOrder(layout, pet, item, petY, ground) > petY, covered);
+    assert.equal(objectGroundOrder(ground) > petY, covered);
   }
 });
 
 test('food drag has one floor line and scale while vertical movement changes height', () => {
   const projection = new RoomProjection(layout);
+  let scale;
   for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4]) {
     projection.update(1024, 768, yaw);
     const low = projection.foodPlacement(512, 700),
@@ -172,9 +171,9 @@ test('food drag has one floor line and scale while vertical movement changes hei
     assert.deepEqual(low.point, high.point);
     assert.ok(high.height > low.height);
     const screen = projection.projectPoint(low.point);
-    assert.ok(
-      Math.abs(screen.scale - (3.2 + 1.2 * layout.food_line) * projection.fit) < 1e-8,
-    );
+    scale ??= screen.scale;
+    assert.ok(Math.abs(screen.scale - scale) < 1e-8);
+    assert.ok(Math.abs(screen.depth - 175.43859649122805) < 1e-8);
     assert.ok(
       Math.abs(screen.groundY - (802 + 88 * layout.food_line) * projection.fit) < 1e-8,
     );
@@ -266,104 +265,112 @@ test('display interpolation follows the admitted corner rather than its diagonal
   motion.receive({ x: 200, depth: 200 }, 1300);
   assert.deepEqual(motion.position(1500), { x: 200, depth: 200 });
 });
-test('walk clips follow the interpolated segment through all four corners', () => {
-  const motion = new RoomMotion();
-  const walk = new RoomWalkPresentation();
-  const route = [
-    { x: 100, depth: 200 },
-    { x: 100, depth: 100 },
-    { x: 200, depth: 100 },
-    { x: 200, depth: 200 },
-    { x: 100, depth: 200 },
-  ];
-  motion.receive(route[0], 1000);
-  motion.receive(route[4], 1800, route);
-  const cases = [
-    [1199, { x: 100, depth: 150.5 }, 'room-walk-away'],
-    [1300, route[1], 'body-step-right-profil'],
-    [1500, route[2], 'room-walk-toward'],
-    [1700, route[3], 'body-step-left-profil'],
-  ];
-  for (const [time, point, clip] of cases) {
-    const sample = motion.sample(time);
-    assert.deepEqual(sample.point, point);
-    assert.equal(walk.clip(sample.heading, 0), clip);
-  }
-});
-
-test('a straight walk keeps its gait until the route actually turns', () => {
-  const walk = new RoomWalkPresentation();
-  assert.equal(walk.clip(Math.PI, 0), 'room-walk-toward');
-  assert.equal(walk.clip(Math.PI, Math.PI / 2), 'room-walk-toward');
-  assert.equal(walk.clip(Math.PI / 2, 0), 'body-step-right-profil');
-  assert.equal(walk.clip(Math.PI / 2, Math.PI / 2), 'body-step-right-profil');
-  assert.equal(walk.clip(0, 0), 'room-walk-away');
-  walk.reset();
-  assert.equal(walk.clip(0, Math.PI), 'room-walk-toward');
-});
-
-test('player-facing depth changes size without sideways movement on each wall', () => {
+test('Aiko crosses the seam behind an apple, approaches on one ray and returns in front', () => {
   const projection = new RoomProjection(layout);
-  for (const [yaw, far, near, side] of [
-    [0, { x: 455, depth: 100 }, { x: 455, depth: 135 }, { x: 360, depth: 135 }],
-    [
-      Math.PI / 2,
-      { x: 690, depth: 265 },
-      { x: 645, depth: 265 },
-      { x: 645, depth: 343 },
-    ],
-    [Math.PI, { x: 455, depth: 500 }, { x: 455, depth: 465 }, { x: 360, depth: 465 }],
-    [
-      -Math.PI / 2,
-      { x: 110, depth: 265 },
-      { x: 155, depth: 265 },
-      { x: 155, depth: 343 },
-    ],
+  const motion = new RoomMotion(layout);
+  projection.update(1024, 900, Math.PI / 4);
+  const apple = projection.projectPoint(projection.foodPlacement(512, 859.2).point);
+  const seam = Math.atan2(layout.width, layout.depth);
+  const left = seam - 0.095,
+    right = seam + 0.095;
+  const far = 225,
+    near = 145;
+  const stepLength = (16 * 100) / 156;
+  const speed = stepLength / 0.62;
+  const route = [
+    { angle: left, distance: far, distanceWalked: 0 },
+    { angle: right, distance: far, distanceWalked: 0.19 * far },
+    { angle: right, distance: near, distanceWalked: 0.19 * far + far - near },
+    { angle: left, distance: near, distanceWalked: 0.19 * (far + near) + far - near },
+  ];
+  const points = route.map(({ angle, distance }) =>
+    worldPoint(layout, angle, distance),
+  );
+  const length = route.at(-1).distanceWalked;
+  motion.receive(points[0], 1000, [], {
+    time: 0,
+    distance: 0,
+    step_length: stepLength,
+  });
+  motion.receive(points.at(-1), 1000 + (1000 * length) / speed, points, {
+    time: length / speed,
+    distance: length,
+    step_length: stepLength,
+  });
+  const sample = (distance) => {
+    const { point, walk } = motion.sample(1100 + (1000 * distance) / speed);
+    return { ...projection.projectPoint(point), walk };
+  };
+  const nearEqual = (a, b) => assert.ok(Math.abs(a - b) < 1e-7);
+  const back = [0.25, 0.5, 0.75].map((t) => sample(route[1].distanceWalked * t));
+  const front = [0.25, 0.5, 0.75].map((t) =>
+    sample(route[2].distanceWalked + 0.19 * near * t),
+  );
+  for (const [row, clip, appleInFront] of [
+    [back, 'body-step-right-profil', true],
+    [front, 'body-step-left-profil', false],
   ]) {
-    projection.update(1024, 768, yaw);
-    assert.equal(projection.wallBearing(far), yaw);
-    assert.equal(projection.wallBearing(near), yaw);
-    assert.equal(projection.projectPoint(far).x, projection.projectPoint(near).x);
-    assert.ok(projection.actorScale(near) > 1.15 * projection.actorScale(far));
-    assert.equal(projection.actorScale(near), projection.actorScale(side));
-    assert.notEqual(projection.projectPoint(near).x, projection.projectPoint(side).x);
+    for (const frame of row) {
+      nearEqual(frame.scale, row[0].scale);
+      nearEqual(frame.groundY, row[0].groundY);
+      assert.equal(frame.walk.clip, clip);
+      assert.equal(objectGroundOrder(apple.groundY) > frame.groundY, appleInFront);
+    }
+    nearEqual(row[1].x, apple.x);
+    assert.equal(row[0].x < row[2].x, appleInFront);
   }
-  const normal = { x: 400, depth: 100 };
+  assert.ok(front[1].scale > back[1].scale);
+  const projectedStride = projection.profileStepLength(stepLength);
+  for (const radius of [far, near]) {
+    const a = projection.projectPoint(worldPoint(layout, seam, radius));
+    const b = projection.projectPoint(
+      worldPoint(layout, seam + projectedStride / radius, radius),
+    );
+    const strideInPixels = a.scale * stepLength;
+    assert.ok(Math.abs(b.x - a.x - strideInPixels) < 0.06 * strideInPixels);
+  }
+  const one = sample(route[1].distanceWalked + 10);
+  const two = sample(route[1].distanceWalked + 20);
+  const three = sample(route[1].distanceWalked + 30);
+  for (const frame of [one, two, three]) {
+    nearEqual(frame.x, one.x);
+    assert.equal(frame.walk.clip, 'room-walk-toward');
+  }
+  nearEqual(two.walk.distance - one.walk.distance, 10);
+  nearEqual(three.walk.distance - two.walk.distance, 10);
+  assert.ok(one.groundY < two.groundY && two.groundY < three.groundY);
+  assert.ok(one.scale < two.scale && two.scale < three.scale);
+  nearEqual(
+    (two.groundY - one.groundY) / (two.scale - one.scale),
+    (three.groundY - two.groundY) / (three.scale - two.scale),
+  );
   assert.ok(
-    Math.abs(projection.actorScale(normal) - projection.projectPoint(normal).scale) <
-      1e-8,
+    front[2].walk.distance - front[0].walk.distance <
+      back[2].walk.distance - back[0].walk.distance,
   );
 });
-test('the player call fits torso and video-call framing to actual inward progress', () => {
-  const entry = { x: 400, depth: 120 };
-  const torso = {
-    serial: 1,
-    entry,
-    target: { x: 400, depth: 158.22 },
-    framing: 0.78,
-    active: true,
-  };
-  const close = {
-    serial: 2,
-    entry,
-    target: { x: 400, depth: 169 },
-    framing: 1,
-    active: true,
-  };
-  const base = { y: 765, scale: 3.8 };
-  const view = (approach, point) => playerFraming(approach, point, 800, 100, base);
-  assert.deepEqual(view(null, close.target), base);
-  assert.deepEqual(view({ ...close, active: false }, close.target), base);
-  assert.deepEqual(view(close, entry), base);
-  assert.deepEqual(view(close, { x: 420, depth: 145 }), base);
-  const half = view(close, { x: 400, depth: 145 });
-  const level6 = view(torso, torso.target);
-  const level7 = view(close, close.target);
-  assert.ok(half.scale > base.scale && half.scale < level6.scale);
-  assert.ok(level6.y > 800 && level7.y > level6.y);
-  assert.ok(level7.scale > level6.scale);
-  assert.ok(level7.y - level7.scale * 100 < level6.y - level6.scale * 100);
-  assert.ok(Math.abs(view(close, torso.target).scale - level6.scale) < 1e-8);
+
+test('gait frames follow stride distance and the actor stops within the last tick', () => {
+  const stepLength = (16 * 100) / 156;
+  const clip = { duration: 1.24, order: [], frames: Array(8).fill({ duration: 155 }) };
+  assert.equal(roomWalkFrame(clip, 0, stepLength), 0);
+  assert.equal(roomWalkFrame(clip, stepLength * 0.3, stepLength), 1);
+  assert.equal(roomWalkFrame(clip, stepLength, stepLength), 4);
+  assert.equal(roomWalkFrame(clip, stepLength * 2, stepLength), 0);
+
+  const motion = new RoomMotion(layout);
+  const start = worldPoint(layout, -0.37, 224);
+  const end = worldPoint(layout, -0.37, 220);
+  motion.receive(start, 1000, [], { time: 0, distance: 0, step_length: stepLength });
+  motion.receive(end, 1500, [start, end], {
+    time: 0.5,
+    distance: 4,
+    step_length: stepLength,
+  });
+  const mid = motion.sample(1220);
+  assert.equal(mid.walk.clip, 'room-walk-toward');
+  assert.ok(Math.abs(worldPolar(layout, mid.point).distance - 222) < 0.02);
+  assert.deepEqual(motion.sample(1350), { point: end, walk: undefined });
 });
 
 test('installer refuses traversal paths and incompatible package protocols', () => {

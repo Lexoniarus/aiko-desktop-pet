@@ -7,10 +7,9 @@ import type { Clip } from './AikoView';
 import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
-import { playerFraming } from './RoomPlayerFraming';
 import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
-import { canPlace, type RoomLayout, type RoomPoint } from './RoomLayout';
+import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 import { furnitureFrame, furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
@@ -54,7 +53,7 @@ export class RoomView {
     { sprite: Sprite; item: WorldItem; motion: RoomMotion }
   >();
   private snapshot?: RoomSnapshot;
-  private motion = new RoomMotion();
+  private motion: RoomMotion;
   private scene!: RoomScene;
   private picking!: RoomPicking;
   private disposed = false;
@@ -71,7 +70,9 @@ export class RoomView {
     private host: HTMLElement,
     readonly root: string,
     readonly assets: AssetManifest,
-  ) {}
+  ) {
+    this.motion = new RoomMotion(assets.layout);
+  }
 
   async initialize(): Promise<void> {
     await this.app.init({
@@ -131,16 +132,12 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
-    const approach = snapshot.player_approach;
-    if (approach && approach.serial !== this.snapshot?.player_approach?.serial) {
-      this.camera.releaseFollow();
-      this.camera.panTo(approach.target);
-    }
     this.snapshot = snapshot;
     this.motion.receive(
       snapshot.room.pet,
       performance.now(),
       snapshot.motion?.travelled,
+      snapshot.motion,
     );
     void this.aiko.hold(snapshot.held_item ?? null, snapshot.held_pose);
     const live = new Set(
@@ -211,27 +208,23 @@ export class RoomView {
     this.camera.tick(point);
     this.scene.update(this.camera);
     const projection = this.camera.projection;
+    const walk = motion?.walk;
+    if (walk?.clip.startsWith('body-step-'))
+      walk.stepLength = projection.profileStepLength(walk.stepLength);
     void this.aiko.showFromCamera(
       snapshot.animation,
-      (snapshot.moving ? motion?.heading : undefined) ?? snapshot.heading ?? 0,
-      snapshot.moving ? projection.wallBearing(point) : projection.bearing(point),
-      snapshot.moving,
+      snapshot.heading ?? 0,
+      worldPolar(this.assets.layout, point).bearing,
+      walk,
       snapshot.animation_id,
       snapshot.animation_timings,
       snapshot.animation_hold_frame,
     );
     const projected = projection.projectPoint(point);
-    const actor = playerFraming(
-      snapshot.game ? null : snapshot.player_approach,
-      point,
-      this.camera.sceneHeight,
-      this.assets.layout.pet_height,
-      { y: projected.y, scale: projection.actorScale(point) },
-    );
     this.aiko.visible = projected.depth > 1;
-    this.aiko.position.set(projected.x, actor.y);
+    this.aiko.position.set(projected.x, projected.groundY);
     this.aiko.scale.set(
-      (this.assets.layout.pet_height / this.assets.characterHeight) * actor.scale,
+      (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
     );
     this.aiko.zIndex = projected.groundY;
     this.aiko.renderHeld(
@@ -239,7 +232,7 @@ export class RoomView {
     );
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.visible = this.aiko.visible;
-    this.shadow.scale.set(actor.scale / 4);
+    this.shadow.scale.set(projected.scale / 4);
     this.shadow.zIndex = this.aiko.zIndex - 0.1;
     for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
@@ -266,13 +259,7 @@ export class RoomView {
           p.scale *
           (this.assets.items[item.definition_id]?.worldZoom ?? 1),
       );
-      sprite.zIndex = objectGroundOrder(
-        this.assets.layout,
-        point,
-        display,
-        projected.groundY,
-        p.groundY,
-      );
+      sprite.zIndex = objectGroundOrder(p.groundY);
     }
   }
 
@@ -310,7 +297,9 @@ export class RoomView {
     const scale =
       projected.depth > 50
         ? projected.scale
-        : this.camera.projection.projectPoint(this.callPoint()).scale;
+        : this.camera.projection.projectPoint(
+            this.camera.projection.pointAtBearing(this.camera.yaw, 180),
+          ).scale;
     const factor =
       ((scale * this.assets.layout.pet_height) / this.assets.characterHeight) *
       (this.assets.items[definition]?.worldZoom ?? 1);
@@ -439,11 +428,16 @@ export class RoomView {
     return this.picking.resolveDrop(x, y);
   }
   callPoint(): RoomPoint {
-    return this.camera.projection.pointAtBearing(this.camera.yaw, 180);
-  }
-  callWall(): string {
-    const index = Math.round(this.camera.yaw / (Math.PI / 2));
-    return ['north', 'east', 'south', 'west'][((index % 4) + 4) % 4]!;
+    this.camera.releaseFollow();
+    this.camera.stopPanning();
+    const { projection, yaw } = this.camera;
+    const pet = this.petPosition;
+    if (pet && this.petVisible) {
+      const distance = worldPolar(this.assets.layout, pet).distance;
+      if (distance <= 180) return pet;
+      return projection.pointAtBearing(projection.bearing(pet), 180);
+    }
+    return projection.pointAtBearing(yaw, 180);
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;

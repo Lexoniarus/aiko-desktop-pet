@@ -8,6 +8,10 @@ from dataclasses import dataclass
 from .room_layout import RoomLayout
 
 
+def bearing_delta(start: float, end: float) -> float:
+    return math.remainder(end - start, math.tau)
+
+
 @dataclass(frozen=True, slots=True)
 class RoomPoint:
     x: float
@@ -68,6 +72,21 @@ class RoomGeometry:
         return self.layout.width
 
     @property
+    def outer_distance(self) -> float:
+        return math.hypot(self.layout.width / 2, self.layout.depth / 2)
+
+    def polar(self, point: RoomPoint) -> tuple[float, float]:
+        x = point.x - self.layout.width / 2
+        z = self.layout.depth / 2 - point.depth
+        return math.atan2(x, z), math.hypot(x, z)
+
+    def polar_position(self, bearing: float, distance: float) -> tuple[float, float]:
+        return (
+            self.layout.width / 2 + distance * math.sin(bearing),
+            self.layout.depth / 2 - distance * math.cos(bearing),
+        )
+
+    @property
     def anchors(self) -> tuple[RoomAnchor, ...]:
         return tuple(
             RoomAnchor(item.id, item.id, RoomPoint(*points[0]))
@@ -102,13 +121,9 @@ class RoomGeometry:
         return min(candidates, key=lambda p: self.distance(p, point))
 
     def food_placement(self, point: RoomPoint) -> RoomPoint:
-        """Keep bearing, with one projected floor depth around all four walls."""
-        cx, cz = self.layout.width / 2, self.layout.depth / 2
-        dx, dz = point.x - cx, point.depth - cz
-        fraction = max(abs(dx) / cx, abs(dz) / cz)
-        if fraction == 0:
-            dx, dz, fraction = 0, -cz, 1
-        edge_x, edge_z = dx / fraction, dz / fraction
-        edge = math.hypot(edge_x, edge_z)
-        distance = edge - self.layout.food_line * (edge - self.layout.camera_clearance)
-        return RoomPoint(cx + edge_x * distance / edge, cz + edge_z * distance / edge)
+        """Use the same inverse-depth interval as the room projection."""
+        bearing, _ = self.polar(point)
+        far = 1 / self.outer_distance
+        near = 1 / (self.layout.camera_clearance + self.layout.pet_radius)
+        distance = 1 / (far + (near - far) * self.layout.food_line)
+        return RoomPoint(*self.polar_position(bearing, distance))

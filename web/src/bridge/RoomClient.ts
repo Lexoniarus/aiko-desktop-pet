@@ -8,13 +8,6 @@ export interface RoomReply {
   saved?: boolean;
   runtime?: Record<string, string>;
 }
-export interface PlayerApproach {
-  serial: number;
-  entry: { x: number; depth: number };
-  target: { x: number; depth: number };
-  framing: number;
-  active: boolean;
-}
 export interface RoomSnapshot {
   revision: number;
   pet: Record<string, unknown>;
@@ -48,11 +41,12 @@ export interface RoomSnapshot {
   held_item?: string | null;
   held_pose?: string;
   moving: boolean;
-  player_approach?: PlayerApproach | null;
   heading: number;
   motion?: {
     serial: number;
     time: number;
+    distance: number;
+    step_length: number;
     travelled: Array<{ x: number; depth: number }>;
   };
   facing: number;

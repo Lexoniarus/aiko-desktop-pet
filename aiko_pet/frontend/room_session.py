@@ -492,7 +492,6 @@ class RoomSession:
 
     def snapshot(self) -> dict[str, Any]:
         world = self.room.world.snapshot()
-        approach = self.room.player_approach
         self.game_snapshot = (
             {"id": self._preparing_game, "preparing": True}
             if self._preparing_game
@@ -527,24 +526,15 @@ class RoomSession:
                 else self.playback.animation
             ),
             "moving": self.room.moving,
-            "player_approach": None if approach is None else {
-                "serial": approach.serial,
-                "entry": json_value(approach.entry),
-                "target": json_value(approach.target),
-                "framing": approach.framing,
-                "active": (
-                    approach.via is None
-                    or self.room.movement.next_point == approach.target
-                    or self.room.position == approach.target
-                ),
-            },
             "facing": self.room.facing,
             "heading": self.room.movement.heading(
-                self.room.position, self.room.environment.heading,
+                self.room.environment.heading,
             ),
             "motion": {
                 "serial": self.room.movement.serial,
                 "time": self.room.now,
+                "distance": self.room.movement.distance_walked,
+                "step_length": self.room.locomotion.step_length,
                 "travelled": json_value(self.room.movement.travelled)
                 if self.room.moving
                 else [],
