@@ -124,6 +124,15 @@ class RoomSessionTests(unittest.TestCase):
         second = self.command("call", x=470, depth=100)["snapshot"]["call_id"]
         self.assertNotEqual(second, active)
 
+    def test_motion_snapshot_carries_the_duration_used_by_the_simulation(self) -> None:
+        locomotion = self.endpoint.session.room.locomotion
+        locomotion.step_duration = 0.4
+        motion = self.command("snapshot")["snapshot"]["motion"]
+        self.assertEqual(motion["step_duration"], 0.4)
+        self.assertAlmostEqual(
+            locomotion.speed * motion["step_duration"], motion["step_length"]
+        )
+
     def test_apple_route_crosses_the_wall_joint_at_constant_depth(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,
                      auto_routine=False)

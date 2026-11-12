@@ -12,9 +12,10 @@ the profile clips' logical anchor at `(95, 194)`. Alpha values of 1 were
 removed before resizing. The authored shoe poses and their distances from
 the common ground line are part of the animation.
 
-The eight depth frames cover two 620 ms steps at normal walking pace.
-Playback selects the frame from the distance actually walked. Profile
-playback uses the same step length in room units as lateral movement.
+Python sends the step length and duration in each motion snapshot. The
+renderer uses both to interpolate travel and select frames from the
+distance walked. A profile cycle covers one step and a depth cycle covers
+two steps. The default duration is 620 ms per step.
 
 Pathfinding uses arcs at a constant distance from the camera and straight
 segments along a bearing. Both segments are checked against furniture

@@ -4,11 +4,15 @@ import {
   type RoomLayout,
   type RoomPoint,
 } from './RoomLayout.ts';
-import type { RoomWalkClip } from './RoomWalkPresentation.ts';
+import type { RoomWalk, RoomWalkClip } from './RoomWalkPresentation.ts';
 
 type Point = RoomPoint & { height?: number };
-type Gait = { time: number; distance: number; step_length: number };
-export type RoomWalk = { clip: RoomWalkClip; distance: number; stepLength: number };
+type Gait = {
+  time: number;
+  distance: number;
+  step_length: number;
+  step_duration: number;
+};
 type MotionSample = { point: Point; walk?: RoomWalk };
 type Segment = {
   length: number;
@@ -95,11 +99,12 @@ export class RoomMotion {
         if (time <= from.time) return { point: from.point };
         const fraction = (time - from.time) / (to.time - from.time);
         const length = to.legs.reduce((sum, leg) => sum + leg.length, 0);
-        const simulated = to.gait && from.gait ? to.gait.time - from.gait.time : 0;
-        const stride = to.gait?.step_length;
+        const gait = to.gait;
+        const simulated = gait && from.gait ? gait.time - from.gait.time : 0;
+        const speed = gait ? gait.step_length / gait.step_duration : 0;
         // Arrival can use only part of the last simulation tick. Stop at the
         // endpoint as soon as the distance budget is exhausted.
-        const budget = Math.max(length, stride ? (simulated * stride) / 0.62 : 0);
+        const budget = Math.max(length, simulated * speed);
         const travelled = fraction * budget;
         let remaining = travelled;
         let point: Point = { ...to.point };
@@ -107,12 +112,12 @@ export class RoomMotion {
         for (const leg of to.legs) {
           if (remaining < leg.length) {
             point = leg.at(remaining / leg.length);
-            if (leg.clip && stride && to.gait) {
+            if (leg.clip && gait) {
               walk = {
                 clip: leg.clip,
-                distance:
-                  (from.gait?.distance ?? to.gait.distance - length) + travelled,
-                stepLength: stride,
+                distance: (from.gait?.distance ?? gait.distance - length) + travelled,
+                stepLength: gait.step_length,
+                stepDuration: gait.step_duration,
               };
             }
             break;

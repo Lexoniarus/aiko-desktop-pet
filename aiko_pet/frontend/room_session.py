@@ -536,6 +536,7 @@ class RoomSession:
                 "time": self.room.now,
                 "distance": self.room.movement.distance_walked,
                 "step_length": self.room.locomotion.step_length,
+                "step_duration": self.room.locomotion.step_duration,
                 "travelled": json_value(self.room.movement.travelled)
                 if self.room.moving
                 else [],

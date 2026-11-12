@@ -48,6 +48,7 @@ export interface RoomSnapshot {
     time: number;
     distance: number;
     step_length: number;
+    step_duration: number;
     travelled: Array<{ x: number; depth: number }>;
   };
   facing: number;

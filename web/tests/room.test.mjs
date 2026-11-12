@@ -282,11 +282,13 @@ test('Aiko crosses the seam behind an apple, approaches on one ray and returns i
     time: 0,
     distance: 0,
     step_length: stepLength,
+    step_duration: 0.62,
   });
   motion.receive(points.at(-1), 1000 + (1000 * length) / speed, points, {
     time: length / speed,
     distance: length,
     step_length: stepLength,
+    step_duration: 0.62,
   });
   const sample = (distance) => {
     const { point, walk } = motion.sample(1100 + (1000 * distance) / speed);
@@ -342,25 +344,37 @@ test('Aiko crosses the seam behind an apple, approaches on one ray and returns i
 
 test('gait frames follow stride distance and the actor stops within the last tick', () => {
   const stepLength = (16 * 100) / 156;
+  const stepDuration = 0.4;
   const clip = { duration: 1.24, order: [], frames: Array(8).fill({ duration: 155 }) };
-  assert.equal(roomWalkFrame(clip, 0, stepLength), 0);
-  assert.equal(roomWalkFrame(clip, stepLength * 0.3, stepLength), 1);
-  assert.equal(roomWalkFrame(clip, stepLength, stepLength), 4);
-  assert.equal(roomWalkFrame(clip, stepLength * 2, stepLength), 0);
+  const walk = { clip: 'room-walk-toward', stepLength, stepDuration };
+  assert.equal(roomWalkFrame(clip, { ...walk, distance: 0 }), 0);
+  assert.equal(roomWalkFrame(clip, { ...walk, distance: stepLength * 0.3 }), 1);
+  assert.equal(roomWalkFrame(clip, { ...walk, distance: stepLength }), 4);
+  assert.equal(roomWalkFrame(clip, { ...walk, distance: stepLength * 2 }), 0);
+  const profile = {
+    duration: 0.62,
+    order: [],
+    frames: Array(4).fill({ duration: 155 }),
+  };
+  const side = { ...walk, clip: 'body-step-left-profil' };
+  assert.equal(roomWalkFrame(profile, { ...side, distance: stepLength * 0.6 }), 2);
+  assert.equal(roomWalkFrame(profile, { ...side, distance: stepLength }), 0);
 
   const motion = new RoomMotion(layout);
   const start = worldPoint(layout, -0.37, 224);
   const end = worldPoint(layout, -0.37, 220);
-  motion.receive(start, 1000, [], { time: 0, distance: 0, step_length: stepLength });
+  const gait = { step_length: stepLength, step_duration: stepDuration };
+  motion.receive(start, 1000, [], { ...gait, time: 0, distance: 0 });
   motion.receive(end, 1500, [start, end], {
+    ...gait,
     time: 0.5,
     distance: 4,
-    step_length: stepLength,
   });
-  const mid = motion.sample(1220);
+  const mid = motion.sample(1100 + (2000 * stepDuration) / stepLength);
   assert.equal(mid.walk.clip, 'room-walk-toward');
+  assert.equal(mid.walk.stepDuration, stepDuration);
   assert.ok(Math.abs(worldPolar(layout, mid.point).distance - 222) < 0.02);
-  assert.deepEqual(motion.sample(1350), { point: end, walk: undefined });
+  assert.deepEqual(motion.sample(1270), { point: end, walk: undefined });
 });
 
 test('installer refuses traversal paths and incompatible package protocols', () => {

@@ -15,11 +15,15 @@ class RoomLocomotion:
     # The native step covers 16 logical pixels in 620 ms. Room artwork displays
     # the 156-logical-pixel visible figure at 100 room units, without skating.
     step_length = 16 * 100 / 156
-    speed = step_length / 0.62
+    step_duration = 0.62
 
     def __init__(self) -> None:
         self.orientation = BodyOrientation()
         self.selection = SpriteSelection("rest-neutral")
+
+    @property
+    def speed(self) -> float:
+        return self.step_length / self.step_duration
 
     def walk(self, now: float, side: int) -> bool:
         if self.selection.animation == ROOM_WALK_ANIMATION:

@@ -1,11 +1,11 @@
 import { AnimatedSprite, Assets, Container, Texture, Sprite, Rectangle } from 'pixi.js';
 import type { RoomItemAsset } from './RoomAssets';
 import { heldItemPosition } from './heldItemPosition';
-import type { RoomWalk } from './RoomMotion';
 import {
   roomWalkAnimation,
   roomWalkClips,
   roomWalkFrame,
+  type RoomWalk,
 } from './RoomWalkPresentation';
 
 export interface Clip {
@@ -139,12 +139,7 @@ export class AikoView extends Container {
     if (walk && (name === roomWalkAnimation || name === 'rest-neutral')) {
       const clip = this.clips[walk.clip];
       if (clip) {
-        await this.show(
-          walk.clip,
-          actionId,
-          undefined,
-          roomWalkFrame(clip, walk.distance, walk.stepLength),
-        );
+        await this.show(walk.clip, actionId, undefined, roomWalkFrame(clip, walk));
         return;
       }
     }

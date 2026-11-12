@@ -8,16 +8,25 @@ export const roomWalkClips = [
 ] as const;
 
 export type RoomWalkClip = (typeof roomWalkClips)[number];
+export type RoomWalk = {
+  clip: RoomWalkClip;
+  distance: number;
+  stepLength: number;
+  stepDuration: number;
+};
 
 export function roomWalkFrame(
   clip: { duration: number; order: number[]; frames: Array<{ duration: number }> },
-  distance: number,
-  stepLength: number,
+  walk: RoomWalk,
 ): number {
   const order = clip.order.length
     ? clip.order
     : clip.frames.map((_frame, index) => index);
-  let elapsed = ((distance / stepLength) * 620) % (clip.duration * 1000);
+  const stepsPerCycle = walk.clip.startsWith('room-walk-') ? 2 : 1;
+  const cycleTime = walk.stepDuration * stepsPerCycle;
+  const walkedTime = (walk.distance / walk.stepLength) * walk.stepDuration;
+  // Map the physical cycle to the timing of the authored frames.
+  let elapsed = ((walkedTime % cycleTime) / cycleTime) * clip.duration * 1000;
   for (const index of order) {
     elapsed -= clip.frames[index]!.duration;
     if (elapsed < 0) return index;
