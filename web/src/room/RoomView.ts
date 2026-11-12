@@ -11,7 +11,7 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame, furnitureSupport } from './RoomPresentation';
+import { furnitureFrame, furnitureSupport, roomPresentation } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { connectFourGeometry, tableGameFrame } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
@@ -61,6 +61,7 @@ export class RoomView {
   draggingInstance?: string;
   dragging = false;
   private petTapBlockedUntil = 0;
+  private closeCall?: { entered: boolean; centered: boolean };
   onObjectDown: (item: WorldItem, event: FederatedPointerEvent) => void = () => {};
   onPetTap: () => void = () => {};
   onFridgeTap: () => void = () => {};
@@ -211,6 +212,7 @@ export class RoomView {
     const motion = this.motion.sample();
     const point = motion?.point ?? snapshot.room.pet;
     this.camera.tick(point);
+    if (!snapshot.game) this.frameCloseCall(point);
     this.scene.update(this.camera);
     const projection = this.camera.projection;
     const walk = motion?.walk;
@@ -413,6 +415,7 @@ export class RoomView {
     return new ConnectFourScene(this.world, this.root);
   }
   frameForGame(id: string): void {
+    this.closeCall = undefined;
     this.camera.setGame(true, id === 'connect_four');
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
@@ -466,6 +469,36 @@ export class RoomView {
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
 
+  private frameCloseCall(point: RoomPoint): void {
+    if (!this.closeCall) return;
+    const projection = this.camera.projection;
+    const distance = worldPolar(this.assets.layout, point).distance;
+    const end = projection.nearDistance + 1;
+    const weight = Math.max(0, Math.min(1, (180 - distance) / (180 - end)));
+    if (!weight) {
+      if (this.closeCall.entered) this.closeCall = undefined;
+      this.camera.setFraming();
+      return;
+    }
+    this.closeCall.entered = true;
+    if (weight > 0.5 && !this.closeCall.centered) {
+      this.closeCall.centered = true;
+      this.camera.panTo(point);
+    }
+    const { width, height, designHeight } = projection;
+    const body = this.assets.layout.pet_height;
+    const targetHeight = Math.min(height * 1.1, width * 1.35);
+    const top = Math.max(height * 0.21, height - targetHeight * 0.73);
+    const normalFit = height / designHeight;
+    const targetFit = ((targetHeight / body) * end) / roomPresentation.focalLength;
+    const targetHorizon =
+      top + ((body - this.assets.layout.camera_height) * targetHeight) / body;
+    this.camera.setFraming(
+      normalFit + (targetFit - normalFit) * weight,
+      height * roomPresentation.horizon * (1 - weight) + targetHorizon * weight,
+    );
+  }
+
   floorPoint(clientX: number, clientY: number): RoomPoint | undefined {
     const box = this.app.canvas.getBoundingClientRect();
     const x = clientX - box.left,
@@ -478,12 +511,14 @@ export class RoomView {
     this.camera.stopPanning();
     const { projection, yaw } = this.camera;
     const pet = this.petPosition;
+    this.closeCall = { entered: false, centered: false };
+    const near = projection.nearDistance + 1;
     if (pet && this.petVisible) {
       const distance = worldPolar(this.assets.layout, pet).distance;
-      if (distance <= 180) return pet;
-      return projection.pointAtBearing(projection.bearing(pet), 180);
+      if (distance <= near) return pet;
+      return projection.pointAtBearing(projection.bearing(pet), near);
     }
-    return projection.pointAtBearing(yaw, 180);
+    return projection.pointAtBearing(yaw, near);
   }
   get petPosition(): RoomPoint | undefined {
     return this.snapshot?.room.pet;

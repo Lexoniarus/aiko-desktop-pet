@@ -28,7 +28,12 @@ Fußhöhe, Größe und Überdeckung am Boden folgen demselben Kameraabstand.
 Die Wandgrenzen ändern die Geometrie der Laufbahn nicht. Bei gleichem
 Bodenabstand bleibt ein Gegenstand vor Aiko sichtbar.
 
-**Aiko rufen** hält auf allen Freundschaftsstufen den normalen Raumabstand.
-Ist Aiko sichtbar, bleibt ihr Ziel auf ihrer aktuellen Blickrichtung zur
-Kamera. Während des Wegs haben ausdrücklich gerufene Ziele Vorrang vor
-autonomen Objektinteraktionen. Nach der Ankunft wartet Aiko frontal.
+Bei **Aiko rufen** liegt das Ziel für eine sichtbare Aiko auf ihrer aktuellen
+Blickrichtung zur Kamera. Das Ziel liegt knapp außerhalb des Mindestabstands,
+sofern der Boden dort erreichbar ist. Ausdrücklich gerufene Ziele haben
+Vorrang vor autonomen Objektinteraktionen. Nach der Ankunft wartet Aiko frontal.
+
+In Kameranähe geht der Ausschnitt fließend in eine Nahansicht über. Gesicht,
+Schultern und Platz für die Sprechblase bleiben sichtbar. Der untere Bildrand
+darf den Unterkörper abschneiden. Verlässt Aiko die Nahdistanz, kehrt der
+normale Ausschnitt zurück.
