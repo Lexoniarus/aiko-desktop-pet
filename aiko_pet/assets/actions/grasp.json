@@ -44,7 +44,7 @@
         {
           "file": "actions/grasp/g00-b01-02.png",
           "duration_ms": 24,
-          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "sha256": "6f94b5000150faf0692b7de8724e4a67c152ae26328278070e23f66dd855f8fa",
           "events": [],
           "food_anchor": [
             96,
@@ -54,7 +54,7 @@
         {
           "file": "actions/grasp/g00-b01-03.png",
           "duration_ms": 24,
-          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "sha256": "fd1d33e9abc09aed28c7d2fb8fabf0ed1fe3e59ef8af03e37154c7c356276f2f",
           "events": [],
           "food_anchor": [
             96,
@@ -64,7 +64,7 @@
         {
           "file": "actions/grasp/b01.png",
           "duration_ms": 24,
-          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "sha256": "826f11fc369d68be7f97bdb13a11495d6f116e8cf6e864b240076cdb779f8b64",
           "events": [],
           "food_anchor": [
             96,
@@ -74,7 +74,7 @@
         {
           "file": "actions/grasp/b01-g01-01.png",
           "duration_ms": 24,
-          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "sha256": "3e96b1b8bc45915b65e445675d6f2a977960097e2cee1c689c47bbe6c083d297",
           "events": [],
           "food_anchor": [
             96,
@@ -84,7 +84,7 @@
         {
           "file": "actions/grasp/b01-g01-02.png",
           "duration_ms": 24,
-          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "sha256": "6404f630c2845b9c84fa353eb08cd95be2a8efe9a1b3c52f318a5667bc962ddf",
           "events": [],
           "food_anchor": [
             96,
@@ -94,7 +94,7 @@
         {
           "file": "actions/grasp/b01-g01-03.png",
           "duration_ms": 24,
-          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "sha256": "bbbd931d9df8743006054f44cc95d67be642b072c663e1b979aad5fb4f5cb409",
           "events": [],
           "food_anchor": [
             96,
@@ -104,7 +104,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 24,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -114,7 +114,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 31,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -124,7 +124,7 @@
         {
           "file": "actions/grasp/g01-g02-01.png",
           "duration_ms": 31,
-          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "sha256": "9991c97575d7501c8d5ede25fb953a983c8a3f347cae01286ae607df22f686f3",
           "events": [],
           "food_anchor": [
             96,
@@ -134,7 +134,7 @@
         {
           "file": "actions/grasp/g01-g02-02.png",
           "duration_ms": 31,
-          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "sha256": "a21fe2b5940e281fa063625bb5032b3f21942982205da7e24f79139557655496",
           "events": [],
           "food_anchor": [
             96,
@@ -144,7 +144,7 @@
         {
           "file": "actions/grasp/g01-g02-03.png",
           "duration_ms": 31,
-          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "sha256": "a1823f59af9c72c52d5422cf449cc2ac97d3a0fbb1624309f5e9edd4739fb417",
           "events": [],
           "food_anchor": [
             96,
@@ -154,7 +154,7 @@
         {
           "file": "actions/grasp/g01-g02-04.png",
           "duration_ms": 31,
-          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "sha256": "8d558522f96b0441e103f414b10b1359363606223db6304ef8874fccdc03ef4c",
           "events": [],
           "food_anchor": [
             96,
@@ -164,7 +164,7 @@
         {
           "file": "actions/grasp/g01-g02-05.png",
           "duration_ms": 31,
-          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "sha256": "9086c41fa45ed7e45fcd9be3eaabe32caa2e49b7b56592a2c1edb3ea9f33daf3",
           "events": [],
           "food_anchor": [
             96,
@@ -174,7 +174,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 31,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -184,7 +184,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 17,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -194,7 +194,7 @@
         {
           "file": "actions/grasp/g02-g03-01.png",
           "duration_ms": 17,
-          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "sha256": "69da95303cf487a68a0faab8aaf23245f318440f24a95cc44f6e43d662f0e891",
           "events": [],
           "food_anchor": [
             96,
@@ -204,7 +204,7 @@
         {
           "file": "actions/grasp/g02-g03-02.png",
           "duration_ms": 17,
-          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "sha256": "dc690facc863313455d17ce79119d514ede3ea604e3491de9655c42def9ec570",
           "events": [],
           "food_anchor": [
             96,
@@ -214,7 +214,7 @@
         {
           "file": "actions/grasp/g02-g03-03.png",
           "duration_ms": 17,
-          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "sha256": "7a2b6cf734934fca3c739e7ef09c02675211635d7253395e2491a0548754e32c",
           "events": [],
           "food_anchor": [
             96,
@@ -224,7 +224,7 @@
         {
           "file": "actions/grasp/g02-g03-04.png",
           "duration_ms": 17,
-          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "sha256": "c2d2855fc1a8dbaed963396c7ec4a3cb9bbcd58c46ad87a6a4bcdefe556363df",
           "events": [],
           "food_anchor": [
             96,
@@ -234,7 +234,7 @@
         {
           "file": "actions/grasp/g02-g03-05.png",
           "duration_ms": 17,
-          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "sha256": "e6136b362b0d65d9e2de280e4cb642ab85cb4f1ba05df055c6bbb1a54298d0b0",
           "events": [],
           "food_anchor": [
             96,
@@ -244,7 +244,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 17,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [
             "attach_object"
           ],
@@ -256,7 +256,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 36,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -266,7 +266,7 @@
         {
           "file": "actions/grasp/g03-g04-01.png",
           "duration_ms": 36,
-          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "sha256": "200be339fdc46494dc4078f5acae9aa00f11928c8cbca3119f9cb7ea3073ed43",
           "events": [],
           "food_anchor": [
             96,
@@ -276,7 +276,7 @@
         {
           "file": "actions/grasp/g03-g04-02.png",
           "duration_ms": 36,
-          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "sha256": "038c1e724204fe76887b92b44b173f235f1b9b625cbe4b7548a6943c16178181",
           "events": [],
           "food_anchor": [
             96,
@@ -286,7 +286,7 @@
         {
           "file": "actions/grasp/g03-g04-03.png",
           "duration_ms": 36,
-          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "sha256": "fdd36b84aaed2ec7111431f5955b68424cbb515fcf273aab756e9209130119de",
           "events": [],
           "food_anchor": [
             96,
@@ -296,7 +296,7 @@
         {
           "file": "actions/grasp/g03-g04-04.png",
           "duration_ms": 36,
-          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "sha256": "c9376ac118c01b8c3e8ec951b52a40c0d0e1c1bf1a3e707ad6c037dc5a38b397",
           "events": [],
           "food_anchor": [
             96,
@@ -306,7 +306,7 @@
         {
           "file": "actions/grasp/g03-g04-05.png",
           "duration_ms": 36,
-          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "sha256": "214fc3524dd52347e077c6885dd75661f811fcf9841c60f1baef075448e37928",
           "events": [],
           "food_anchor": [
             96,
@@ -316,7 +316,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 36,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -326,7 +326,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 24,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -336,7 +336,7 @@
         {
           "file": "actions/grasp/g04-b45-01.png",
           "duration_ms": 24,
-          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "sha256": "38e063dcfd7e1cbfa489637638103b914c82dd2ff10989d7df4b1fb8f24afcd8",
           "events": [],
           "food_anchor": [
             96,
@@ -346,7 +346,7 @@
         {
           "file": "actions/grasp/g04-b45-02.png",
           "duration_ms": 24,
-          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "sha256": "d7510004ec6bab2ebaf47f8012911e9269cf29837bb22ed15ef98fa1da7febd8",
           "events": [],
           "food_anchor": [
             96,
@@ -356,7 +356,7 @@
         {
           "file": "actions/grasp/g04-b45-03.png",
           "duration_ms": 24,
-          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "sha256": "f86f29a9be1f316b654c655171e672c8bde3cb14456279c720ec1360311ec067",
           "events": [],
           "food_anchor": [
             96,
@@ -366,7 +366,7 @@
         {
           "file": "actions/grasp/b45.png",
           "duration_ms": 24,
-          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "sha256": "df3be18bc4d98a437ed7a09151774360852e1eefa9f25c66774a5fe9aa908b35",
           "events": [],
           "food_anchor": [
             96,
@@ -376,7 +376,7 @@
         {
           "file": "actions/grasp/b45-g05-01.png",
           "duration_ms": 24,
-          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "sha256": "3a4bfbdaea8c7786bc231b3b6ecba59b28340d605d1ae8ba5bd5326e067bf779",
           "events": [],
           "food_anchor": [
             96,
@@ -386,7 +386,7 @@
         {
           "file": "actions/grasp/b45-g05-02.png",
           "duration_ms": 24,
-          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "sha256": "906d6116185a4531bcb01825d605526b431c2b8beae6f96fa73e6bc767ba6a9c",
           "events": [],
           "food_anchor": [
             96,
@@ -396,7 +396,7 @@
         {
           "file": "actions/grasp/b45-g05-03.png",
           "duration_ms": 24,
-          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "sha256": "5d676aecf221694c7480f46a0c61a4850abc920ce15056e13e8abfd459dd50fe",
           "events": [],
           "food_anchor": [
             96,
@@ -406,7 +406,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 24,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -416,7 +416,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 21,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -426,7 +426,7 @@
         {
           "file": "actions/grasp/g05-g06-01.png",
           "duration_ms": 21,
-          "sha256": "2ab0a838f4266971a002ec3e6e04e2160a1cad1cb036fa74c253e2d18234d7c5",
+          "sha256": "bc14c9f17cb1c85103dc60b599823d6fe66fc675dad46bfc2fb3188c978561b0",
           "events": [],
           "food_anchor": [
             96,
@@ -436,7 +436,7 @@
         {
           "file": "actions/grasp/g05-g06-02.png",
           "duration_ms": 21,
-          "sha256": "bf971e4d6466a069df57b8d45226ba0188895a700b4fcf7330c4811346731e07",
+          "sha256": "4dcff368582f33b0a257abffb772c8f099a836be615de4566f90f4a6e3eddcad",
           "events": [],
           "food_anchor": [
             96,
@@ -446,7 +446,7 @@
         {
           "file": "actions/grasp/g05-g06-03.png",
           "duration_ms": 21,
-          "sha256": "a5ecdca4d6608e2f2ecb7e1063007d8cc3a7689780109b015974401e311ea927",
+          "sha256": "34b05bc1660bcea40e4544ffee79a108aa52d81139be44efb0ffffd084c383d7",
           "events": [],
           "food_anchor": [
             96,
@@ -456,7 +456,7 @@
         {
           "file": "actions/grasp/g05-g06-04.png",
           "duration_ms": 21,
-          "sha256": "8a33588b1b263351f9cc40ec5a0f7eeda70b75e0a6d12472456d47a16fd85379",
+          "sha256": "25d93a18ccb4652f343bc803e2a76727d10e2504748b73beea39791619427b69",
           "events": [],
           "food_anchor": [
             96,
@@ -466,7 +466,7 @@
         {
           "file": "actions/grasp/g05-g06-05.png",
           "duration_ms": 21,
-          "sha256": "eda20704179411d392b6de63ddab51a68318de977a14e3c55d042617c96e9187",
+          "sha256": "495889d00ce4792cc44810d25c0828a222b2ba3b70313777e613aa9b7af62353",
           "events": [],
           "food_anchor": [
             96,
@@ -476,7 +476,7 @@
         {
           "file": "actions/grasp/g06.png",
           "duration_ms": 21,
-          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "sha256": "f352b05bd339145639f87479121a67cc4cad5725cf050f5b393225852d207f7a",
           "events": [],
           "food_anchor": [
             96,
@@ -486,7 +486,7 @@
         {
           "file": "actions/grasp/g06.png",
           "duration_ms": 21,
-          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "sha256": "f352b05bd339145639f87479121a67cc4cad5725cf050f5b393225852d207f7a",
           "events": [],
           "food_anchor": [
             96,
@@ -496,7 +496,7 @@
         {
           "file": "actions/grasp/g06-g07-01.png",
           "duration_ms": 21,
-          "sha256": "60719e9735f35fca0ebd09271acb12d84bee1c5c079c426f4d3e92f78d597228",
+          "sha256": "024a3ec85aa4e56fcffaeb9d5748aa05759ef02efea88c780c67805a45429b20",
           "events": [],
           "food_anchor": [
             96,
@@ -506,7 +506,7 @@
         {
           "file": "actions/grasp/g06-g07-02.png",
           "duration_ms": 21,
-          "sha256": "a2ef2d34cdf05eca5f543a132db8311c3649e0d36af25ad8cb9372548759be78",
+          "sha256": "59a2730f5ac03a93e431b4f70944135b473dc4aeed3636f59d5849b6517bef00",
           "events": [],
           "food_anchor": [
             96,
@@ -516,7 +516,7 @@
         {
           "file": "actions/grasp/g06-g07-03.png",
           "duration_ms": 21,
-          "sha256": "83ea2040e14c88bc5503bed2bc41a8df5d946ef2f34194d968fd4c496222835e",
+          "sha256": "c3178d12daad5344e34048cd37e2f853b46c8f0369880a348a1f162cada39e6f",
           "events": [],
           "food_anchor": [
             96,
@@ -526,7 +526,7 @@
         {
           "file": "actions/grasp/g06-g07-04.png",
           "duration_ms": 21,
-          "sha256": "fb9160eff27793e91827e9c08a5be6351b63d2331b12407673e373077722bd9e",
+          "sha256": "bfddd9f122d82e879ac0e510f28f9529a02c7767557907e719df0920f62ac5e3",
           "events": [],
           "food_anchor": [
             96,
@@ -536,7 +536,7 @@
         {
           "file": "actions/grasp/g06-g07-05.png",
           "duration_ms": 21,
-          "sha256": "6a05b3f66b7365e5c049ba7fdd4b7f17840607ba1699fd2a92ce8622f33df3f2",
+          "sha256": "cbd18ce2b4bb17e79ec7cd874ca221fe1af04c2c0c0286af961316058e4ac161",
           "events": [],
           "food_anchor": [
             96,
@@ -546,7 +546,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 21,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -561,7 +561,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 320,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -571,7 +571,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 21,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -581,7 +581,7 @@
         {
           "file": "actions/grasp/g06-g07-05.png",
           "duration_ms": 21,
-          "sha256": "6a05b3f66b7365e5c049ba7fdd4b7f17840607ba1699fd2a92ce8622f33df3f2",
+          "sha256": "cbd18ce2b4bb17e79ec7cd874ca221fe1af04c2c0c0286af961316058e4ac161",
           "events": [],
           "food_anchor": [
             96,
@@ -591,7 +591,7 @@
         {
           "file": "actions/grasp/g06-g07-04.png",
           "duration_ms": 21,
-          "sha256": "fb9160eff27793e91827e9c08a5be6351b63d2331b12407673e373077722bd9e",
+          "sha256": "bfddd9f122d82e879ac0e510f28f9529a02c7767557907e719df0920f62ac5e3",
           "events": [],
           "food_anchor": [
             96,
@@ -601,7 +601,7 @@
         {
           "file": "actions/grasp/g06-g07-03.png",
           "duration_ms": 21,
-          "sha256": "83ea2040e14c88bc5503bed2bc41a8df5d946ef2f34194d968fd4c496222835e",
+          "sha256": "c3178d12daad5344e34048cd37e2f853b46c8f0369880a348a1f162cada39e6f",
           "events": [],
           "food_anchor": [
             96,
@@ -611,7 +611,7 @@
         {
           "file": "actions/grasp/g06-g07-02.png",
           "duration_ms": 21,
-          "sha256": "a2ef2d34cdf05eca5f543a132db8311c3649e0d36af25ad8cb9372548759be78",
+          "sha256": "59a2730f5ac03a93e431b4f70944135b473dc4aeed3636f59d5849b6517bef00",
           "events": [],
           "food_anchor": [
             96,
@@ -621,7 +621,7 @@
         {
           "file": "actions/grasp/g06-g07-01.png",
           "duration_ms": 21,
-          "sha256": "60719e9735f35fca0ebd09271acb12d84bee1c5c079c426f4d3e92f78d597228",
+          "sha256": "024a3ec85aa4e56fcffaeb9d5748aa05759ef02efea88c780c67805a45429b20",
           "events": [],
           "food_anchor": [
             96,
@@ -631,7 +631,7 @@
         {
           "file": "actions/grasp/g06.png",
           "duration_ms": 21,
-          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "sha256": "f352b05bd339145639f87479121a67cc4cad5725cf050f5b393225852d207f7a",
           "events": [],
           "food_anchor": [
             96,
@@ -641,7 +641,7 @@
         {
           "file": "actions/grasp/g06.png",
           "duration_ms": 21,
-          "sha256": "261d01f91ea30b5b229990f42696fee71f3fe8f482f7a097eaad88aa6c693e6c",
+          "sha256": "f352b05bd339145639f87479121a67cc4cad5725cf050f5b393225852d207f7a",
           "events": [],
           "food_anchor": [
             96,
@@ -651,7 +651,7 @@
         {
           "file": "actions/grasp/g05-g06-05.png",
           "duration_ms": 21,
-          "sha256": "eda20704179411d392b6de63ddab51a68318de977a14e3c55d042617c96e9187",
+          "sha256": "495889d00ce4792cc44810d25c0828a222b2ba3b70313777e613aa9b7af62353",
           "events": [],
           "food_anchor": [
             96,
@@ -661,7 +661,7 @@
         {
           "file": "actions/grasp/g05-g06-04.png",
           "duration_ms": 21,
-          "sha256": "8a33588b1b263351f9cc40ec5a0f7eeda70b75e0a6d12472456d47a16fd85379",
+          "sha256": "25d93a18ccb4652f343bc803e2a76727d10e2504748b73beea39791619427b69",
           "events": [],
           "food_anchor": [
             96,
@@ -671,7 +671,7 @@
         {
           "file": "actions/grasp/g05-g06-03.png",
           "duration_ms": 21,
-          "sha256": "a5ecdca4d6608e2f2ecb7e1063007d8cc3a7689780109b015974401e311ea927",
+          "sha256": "34b05bc1660bcea40e4544ffee79a108aa52d81139be44efb0ffffd084c383d7",
           "events": [],
           "food_anchor": [
             96,
@@ -681,7 +681,7 @@
         {
           "file": "actions/grasp/g05-g06-02.png",
           "duration_ms": 21,
-          "sha256": "bf971e4d6466a069df57b8d45226ba0188895a700b4fcf7330c4811346731e07",
+          "sha256": "4dcff368582f33b0a257abffb772c8f099a836be615de4566f90f4a6e3eddcad",
           "events": [],
           "food_anchor": [
             96,
@@ -691,7 +691,7 @@
         {
           "file": "actions/grasp/g05-g06-01.png",
           "duration_ms": 21,
-          "sha256": "2ab0a838f4266971a002ec3e6e04e2160a1cad1cb036fa74c253e2d18234d7c5",
+          "sha256": "bc14c9f17cb1c85103dc60b599823d6fe66fc675dad46bfc2fb3188c978561b0",
           "events": [],
           "food_anchor": [
             96,
@@ -701,7 +701,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 21,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -711,7 +711,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 24,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -721,7 +721,7 @@
         {
           "file": "actions/grasp/b45-g05-03.png",
           "duration_ms": 24,
-          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "sha256": "5d676aecf221694c7480f46a0c61a4850abc920ce15056e13e8abfd459dd50fe",
           "events": [],
           "food_anchor": [
             96,
@@ -731,7 +731,7 @@
         {
           "file": "actions/grasp/b45-g05-02.png",
           "duration_ms": 24,
-          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "sha256": "906d6116185a4531bcb01825d605526b431c2b8beae6f96fa73e6bc767ba6a9c",
           "events": [],
           "food_anchor": [
             96,
@@ -741,7 +741,7 @@
         {
           "file": "actions/grasp/b45-g05-01.png",
           "duration_ms": 24,
-          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "sha256": "3a4bfbdaea8c7786bc231b3b6ecba59b28340d605d1ae8ba5bd5326e067bf779",
           "events": [],
           "food_anchor": [
             96,
@@ -751,7 +751,7 @@
         {
           "file": "actions/grasp/b45.png",
           "duration_ms": 24,
-          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "sha256": "df3be18bc4d98a437ed7a09151774360852e1eefa9f25c66774a5fe9aa908b35",
           "events": [],
           "food_anchor": [
             96,
@@ -761,7 +761,7 @@
         {
           "file": "actions/grasp/g04-b45-03.png",
           "duration_ms": 24,
-          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "sha256": "f86f29a9be1f316b654c655171e672c8bde3cb14456279c720ec1360311ec067",
           "events": [],
           "food_anchor": [
             96,
@@ -771,7 +771,7 @@
         {
           "file": "actions/grasp/g04-b45-02.png",
           "duration_ms": 24,
-          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "sha256": "d7510004ec6bab2ebaf47f8012911e9269cf29837bb22ed15ef98fa1da7febd8",
           "events": [],
           "food_anchor": [
             96,
@@ -781,7 +781,7 @@
         {
           "file": "actions/grasp/g04-b45-01.png",
           "duration_ms": 24,
-          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "sha256": "38e063dcfd7e1cbfa489637638103b914c82dd2ff10989d7df4b1fb8f24afcd8",
           "events": [],
           "food_anchor": [
             96,
@@ -791,7 +791,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 24,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -801,7 +801,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 36,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -811,7 +811,7 @@
         {
           "file": "actions/grasp/g03-g04-05.png",
           "duration_ms": 36,
-          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "sha256": "214fc3524dd52347e077c6885dd75661f811fcf9841c60f1baef075448e37928",
           "events": [],
           "food_anchor": [
             96,
@@ -821,7 +821,7 @@
         {
           "file": "actions/grasp/g03-g04-04.png",
           "duration_ms": 36,
-          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "sha256": "c9376ac118c01b8c3e8ec951b52a40c0d0e1c1bf1a3e707ad6c037dc5a38b397",
           "events": [],
           "food_anchor": [
             96,
@@ -831,7 +831,7 @@
         {
           "file": "actions/grasp/g03-g04-03.png",
           "duration_ms": 36,
-          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "sha256": "fdd36b84aaed2ec7111431f5955b68424cbb515fcf273aab756e9209130119de",
           "events": [],
           "food_anchor": [
             96,
@@ -841,7 +841,7 @@
         {
           "file": "actions/grasp/g03-g04-02.png",
           "duration_ms": 36,
-          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "sha256": "038c1e724204fe76887b92b44b173f235f1b9b625cbe4b7548a6943c16178181",
           "events": [],
           "food_anchor": [
             96,
@@ -851,7 +851,7 @@
         {
           "file": "actions/grasp/g03-g04-01.png",
           "duration_ms": 36,
-          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "sha256": "200be339fdc46494dc4078f5acae9aa00f11928c8cbca3119f9cb7ea3073ed43",
           "events": [],
           "food_anchor": [
             96,
@@ -861,7 +861,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 36,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -871,7 +871,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 17,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -881,7 +881,7 @@
         {
           "file": "actions/grasp/g02-g03-05.png",
           "duration_ms": 17,
-          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "sha256": "e6136b362b0d65d9e2de280e4cb642ab85cb4f1ba05df055c6bbb1a54298d0b0",
           "events": [],
           "food_anchor": [
             96,
@@ -891,7 +891,7 @@
         {
           "file": "actions/grasp/g02-g03-04.png",
           "duration_ms": 17,
-          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "sha256": "c2d2855fc1a8dbaed963396c7ec4a3cb9bbcd58c46ad87a6a4bcdefe556363df",
           "events": [],
           "food_anchor": [
             96,
@@ -901,7 +901,7 @@
         {
           "file": "actions/grasp/g02-g03-03.png",
           "duration_ms": 17,
-          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "sha256": "7a2b6cf734934fca3c739e7ef09c02675211635d7253395e2491a0548754e32c",
           "events": [],
           "food_anchor": [
             96,
@@ -911,7 +911,7 @@
         {
           "file": "actions/grasp/g02-g03-02.png",
           "duration_ms": 17,
-          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "sha256": "dc690facc863313455d17ce79119d514ede3ea604e3491de9655c42def9ec570",
           "events": [],
           "food_anchor": [
             96,
@@ -921,7 +921,7 @@
         {
           "file": "actions/grasp/g02-g03-01.png",
           "duration_ms": 17,
-          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "sha256": "69da95303cf487a68a0faab8aaf23245f318440f24a95cc44f6e43d662f0e891",
           "events": [],
           "food_anchor": [
             96,
@@ -931,7 +931,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 17,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [
             "detach_object"
           ],
@@ -943,7 +943,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 31,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -953,7 +953,7 @@
         {
           "file": "actions/grasp/g01-g02-05.png",
           "duration_ms": 31,
-          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "sha256": "9086c41fa45ed7e45fcd9be3eaabe32caa2e49b7b56592a2c1edb3ea9f33daf3",
           "events": [],
           "food_anchor": [
             96,
@@ -963,7 +963,7 @@
         {
           "file": "actions/grasp/g01-g02-04.png",
           "duration_ms": 31,
-          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "sha256": "8d558522f96b0441e103f414b10b1359363606223db6304ef8874fccdc03ef4c",
           "events": [],
           "food_anchor": [
             96,
@@ -973,7 +973,7 @@
         {
           "file": "actions/grasp/g01-g02-03.png",
           "duration_ms": 31,
-          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "sha256": "a1823f59af9c72c52d5422cf449cc2ac97d3a0fbb1624309f5e9edd4739fb417",
           "events": [],
           "food_anchor": [
             96,
@@ -983,7 +983,7 @@
         {
           "file": "actions/grasp/g01-g02-02.png",
           "duration_ms": 31,
-          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "sha256": "a21fe2b5940e281fa063625bb5032b3f21942982205da7e24f79139557655496",
           "events": [],
           "food_anchor": [
             96,
@@ -993,7 +993,7 @@
         {
           "file": "actions/grasp/g01-g02-01.png",
           "duration_ms": 31,
-          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "sha256": "9991c97575d7501c8d5ede25fb953a983c8a3f347cae01286ae607df22f686f3",
           "events": [],
           "food_anchor": [
             96,
@@ -1003,7 +1003,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 31,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -1013,7 +1013,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 24,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -1023,7 +1023,7 @@
         {
           "file": "actions/grasp/b01-g01-03.png",
           "duration_ms": 24,
-          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "sha256": "bbbd931d9df8743006054f44cc95d67be642b072c663e1b979aad5fb4f5cb409",
           "events": [],
           "food_anchor": [
             96,
@@ -1033,7 +1033,7 @@
         {
           "file": "actions/grasp/b01-g01-02.png",
           "duration_ms": 24,
-          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "sha256": "6404f630c2845b9c84fa353eb08cd95be2a8efe9a1b3c52f318a5667bc962ddf",
           "events": [],
           "food_anchor": [
             96,
@@ -1043,7 +1043,7 @@
         {
           "file": "actions/grasp/b01-g01-01.png",
           "duration_ms": 24,
-          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "sha256": "3e96b1b8bc45915b65e445675d6f2a977960097e2cee1c689c47bbe6c083d297",
           "events": [],
           "food_anchor": [
             96,
@@ -1053,7 +1053,7 @@
         {
           "file": "actions/grasp/b01.png",
           "duration_ms": 24,
-          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "sha256": "826f11fc369d68be7f97bdb13a11495d6f116e8cf6e864b240076cdb779f8b64",
           "events": [],
           "food_anchor": [
             96,
@@ -1063,7 +1063,7 @@
         {
           "file": "actions/grasp/g00-b01-03.png",
           "duration_ms": 24,
-          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "sha256": "fd1d33e9abc09aed28c7d2fb8fabf0ed1fe3e59ef8af03e37154c7c356276f2f",
           "events": [],
           "food_anchor": [
             96,
@@ -1073,7 +1073,7 @@
         {
           "file": "actions/grasp/g00-b01-02.png",
           "duration_ms": 24,
-          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "sha256": "6f94b5000150faf0692b7de8724e4a67c152ae26328278070e23f66dd855f8fa",
           "events": [],
           "food_anchor": [
             96,
@@ -1118,7 +1118,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 1000,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -1133,7 +1133,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 400,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -1143,7 +1143,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 64,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [
             "inspect_comment"
           ],
@@ -1297,7 +1297,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 50,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -1307,7 +1307,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 50,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -1457,7 +1457,7 @@
         {
           "file": "actions/grasp/g07.png",
           "duration_ms": 64,
-          "sha256": "577e065051a1d0e1c1fa73fa1ba877af04c7fc0b2d00e3c138057c72fbe3d284",
+          "sha256": "a63a2a3ba735a17cf9c43de4fcca333622420e1282852e3596779141dc6c9875",
           "events": [],
           "food_anchor": [
             96,
@@ -1502,7 +1502,7 @@
         {
           "file": "actions/grasp/g00-b01-02.png",
           "duration_ms": 20,
-          "sha256": "44d52081636e280ea6e1f1b42fcdda9168e211b949c6c9f277f3e9b8290441d9",
+          "sha256": "6f94b5000150faf0692b7de8724e4a67c152ae26328278070e23f66dd855f8fa",
           "events": [],
           "food_anchor": [
             96,
@@ -1512,7 +1512,7 @@
         {
           "file": "actions/grasp/g00-b01-03.png",
           "duration_ms": 20,
-          "sha256": "64149620c7b3058a3f3efa6f975111a29fe4600fb82e84417f423f5af2ad7553",
+          "sha256": "fd1d33e9abc09aed28c7d2fb8fabf0ed1fe3e59ef8af03e37154c7c356276f2f",
           "events": [],
           "food_anchor": [
             96,
@@ -1522,7 +1522,7 @@
         {
           "file": "actions/grasp/b01.png",
           "duration_ms": 20,
-          "sha256": "229e2bde91dac46b194fc497113231dcdcc67e4b3f8def68398b4e03cd0b4c97",
+          "sha256": "826f11fc369d68be7f97bdb13a11495d6f116e8cf6e864b240076cdb779f8b64",
           "events": [],
           "food_anchor": [
             96,
@@ -1532,7 +1532,7 @@
         {
           "file": "actions/grasp/b01-g01-01.png",
           "duration_ms": 20,
-          "sha256": "589ebf299e8bc9fcceae8c73207294c572c89152bdfc65005440ff2f674aadec",
+          "sha256": "3e96b1b8bc45915b65e445675d6f2a977960097e2cee1c689c47bbe6c083d297",
           "events": [],
           "food_anchor": [
             96,
@@ -1542,7 +1542,7 @@
         {
           "file": "actions/grasp/b01-g01-02.png",
           "duration_ms": 20,
-          "sha256": "b2764765116d51e1c6eff709aa76eb7cb1fd861d28110fb746392bd5be0343cb",
+          "sha256": "6404f630c2845b9c84fa353eb08cd95be2a8efe9a1b3c52f318a5667bc962ddf",
           "events": [],
           "food_anchor": [
             96,
@@ -1552,7 +1552,7 @@
         {
           "file": "actions/grasp/b01-g01-03.png",
           "duration_ms": 20,
-          "sha256": "e3aa8b443fedab06a9f3eb14ac32ff6b8af41f07c0c619799d8dc1f638a4ff13",
+          "sha256": "bbbd931d9df8743006054f44cc95d67be642b072c663e1b979aad5fb4f5cb409",
           "events": [],
           "food_anchor": [
             96,
@@ -1562,7 +1562,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 20,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -1572,7 +1572,7 @@
         {
           "file": "actions/grasp/g01.png",
           "duration_ms": 21,
-          "sha256": "e99e12b21e25b796deac5d0b07420d8ff111fcf7a98aebb87c938e300aa0a645",
+          "sha256": "9de1efc70c7dbf7e1b688f746e8d0a297315ccba5eee23001c0ed2950c214e38",
           "events": [],
           "food_anchor": [
             96,
@@ -1582,7 +1582,7 @@
         {
           "file": "actions/grasp/g01-g02-01.png",
           "duration_ms": 21,
-          "sha256": "db7f07d64484d08074f9b50d8d75dd00dfe6ee53b62f2c7e6991f250d26b7b82",
+          "sha256": "9991c97575d7501c8d5ede25fb953a983c8a3f347cae01286ae607df22f686f3",
           "events": [],
           "food_anchor": [
             96,
@@ -1592,7 +1592,7 @@
         {
           "file": "actions/grasp/g01-g02-02.png",
           "duration_ms": 21,
-          "sha256": "3f396dd63d1a4e821b849550477864f09906f03edda8ed39744bd615cedddc25",
+          "sha256": "a21fe2b5940e281fa063625bb5032b3f21942982205da7e24f79139557655496",
           "events": [],
           "food_anchor": [
             96,
@@ -1602,7 +1602,7 @@
         {
           "file": "actions/grasp/g01-g02-03.png",
           "duration_ms": 21,
-          "sha256": "b6095504755a7a2d1dc7588c473adf7fbff32e833fb6a0ecc44b2e2ac2e44dcf",
+          "sha256": "a1823f59af9c72c52d5422cf449cc2ac97d3a0fbb1624309f5e9edd4739fb417",
           "events": [],
           "food_anchor": [
             96,
@@ -1612,7 +1612,7 @@
         {
           "file": "actions/grasp/g01-g02-04.png",
           "duration_ms": 21,
-          "sha256": "85232f3c929fb44d6fef878b37209f602dbd43bca4d889bbbc8a6e3777c53d9f",
+          "sha256": "8d558522f96b0441e103f414b10b1359363606223db6304ef8874fccdc03ef4c",
           "events": [],
           "food_anchor": [
             96,
@@ -1622,7 +1622,7 @@
         {
           "file": "actions/grasp/g01-g02-05.png",
           "duration_ms": 21,
-          "sha256": "275e0be7ae807c4b217109a1e964c0595936d6d44f532a3bacdc7ca9ac921fd3",
+          "sha256": "9086c41fa45ed7e45fcd9be3eaabe32caa2e49b7b56592a2c1edb3ea9f33daf3",
           "events": [],
           "food_anchor": [
             96,
@@ -1632,7 +1632,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 21,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -1642,7 +1642,7 @@
         {
           "file": "actions/grasp/g02.png",
           "duration_ms": 17,
-          "sha256": "ad4724e4d5bb5893a7be964297f0149c4b0812e69a0491dce67c8f79fb8736ac",
+          "sha256": "f0c7470fc55de393f8474826a30b4738cd9607135880c55c41c08ec277e10c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -1652,7 +1652,7 @@
         {
           "file": "actions/grasp/g02-g03-01.png",
           "duration_ms": 17,
-          "sha256": "4382d2c0f87541ddb29f8bf1e87c74d6a0311dba1acd8a929d9d701d978a13e5",
+          "sha256": "69da95303cf487a68a0faab8aaf23245f318440f24a95cc44f6e43d662f0e891",
           "events": [],
           "food_anchor": [
             96,
@@ -1662,7 +1662,7 @@
         {
           "file": "actions/grasp/g02-g03-02.png",
           "duration_ms": 17,
-          "sha256": "89f39733a8c9ba6a3f5d6523b23d49a4cfbcd60dedfa035af40b54910bc0d9b3",
+          "sha256": "dc690facc863313455d17ce79119d514ede3ea604e3491de9655c42def9ec570",
           "events": [],
           "food_anchor": [
             96,
@@ -1672,7 +1672,7 @@
         {
           "file": "actions/grasp/g02-g03-03.png",
           "duration_ms": 17,
-          "sha256": "ce55b3055ad1c8f680663905e5308945a056756f747c8807dbbcc1d7b7703d4c",
+          "sha256": "7a2b6cf734934fca3c739e7ef09c02675211635d7253395e2491a0548754e32c",
           "events": [],
           "food_anchor": [
             96,
@@ -1682,7 +1682,7 @@
         {
           "file": "actions/grasp/g02-g03-04.png",
           "duration_ms": 17,
-          "sha256": "53403159fc236db15d7670b40da02532532ce68aad4589274c0b4bc6a0d27e84",
+          "sha256": "c2d2855fc1a8dbaed963396c7ec4a3cb9bbcd58c46ad87a6a4bcdefe556363df",
           "events": [],
           "food_anchor": [
             96,
@@ -1692,7 +1692,7 @@
         {
           "file": "actions/grasp/g02-g03-05.png",
           "duration_ms": 17,
-          "sha256": "d9bc41f382b17d5780c0bf9f6660d9559d76c382a207f8449d1697bd9ec583f0",
+          "sha256": "e6136b362b0d65d9e2de280e4cb642ab85cb4f1ba05df055c6bbb1a54298d0b0",
           "events": [],
           "food_anchor": [
             96,
@@ -1702,7 +1702,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 17,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [
             "attach_object"
           ],
@@ -1714,7 +1714,7 @@
         {
           "file": "actions/grasp/g03.png",
           "duration_ms": 26,
-          "sha256": "b00f45fbe1a6db0332ff233951d7582b05788a325ff901cff9c7621a534e0f93",
+          "sha256": "72307d72aab63ee2cabf610c8f4f43fa26d61374f6e8d7897f599414e1a56c0a",
           "events": [],
           "food_anchor": [
             96,
@@ -1724,7 +1724,7 @@
         {
           "file": "actions/grasp/g03-g04-01.png",
           "duration_ms": 26,
-          "sha256": "61e0f4efcd9861a2bbb8dce341cb7fe2acca885760832a07a76dcf246db781ba",
+          "sha256": "200be339fdc46494dc4078f5acae9aa00f11928c8cbca3119f9cb7ea3073ed43",
           "events": [],
           "food_anchor": [
             96,
@@ -1734,7 +1734,7 @@
         {
           "file": "actions/grasp/g03-g04-02.png",
           "duration_ms": 26,
-          "sha256": "252178bf37ef71ae0474c78725911283e2c9005932618f50e86a50bfdb4a7963",
+          "sha256": "038c1e724204fe76887b92b44b173f235f1b9b625cbe4b7548a6943c16178181",
           "events": [],
           "food_anchor": [
             96,
@@ -1744,7 +1744,7 @@
         {
           "file": "actions/grasp/g03-g04-03.png",
           "duration_ms": 26,
-          "sha256": "8b2f92aef383d8e15c6090c72bbb719f3ffafe5459fb1dc1ebf5462449ed32a7",
+          "sha256": "fdd36b84aaed2ec7111431f5955b68424cbb515fcf273aab756e9209130119de",
           "events": [],
           "food_anchor": [
             96,
@@ -1754,7 +1754,7 @@
         {
           "file": "actions/grasp/g03-g04-04.png",
           "duration_ms": 26,
-          "sha256": "98c21702b0df329949f58873fa4d6432235d94acd49cb208f42641e588fef2e2",
+          "sha256": "c9376ac118c01b8c3e8ec951b52a40c0d0e1c1bf1a3e707ad6c037dc5a38b397",
           "events": [],
           "food_anchor": [
             96,
@@ -1764,7 +1764,7 @@
         {
           "file": "actions/grasp/g03-g04-05.png",
           "duration_ms": 26,
-          "sha256": "436c23fcfa84fc459c15d94f8b1ad7f4941b9340d6f4d0179dbab0b4d7fea47a",
+          "sha256": "214fc3524dd52347e077c6885dd75661f811fcf9841c60f1baef075448e37928",
           "events": [],
           "food_anchor": [
             96,
@@ -1774,7 +1774,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 26,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -1784,7 +1784,7 @@
         {
           "file": "actions/grasp/g04.png",
           "duration_ms": 18,
-          "sha256": "adb62177a8cbd1b68b75a3fb3eef093b247af30f5bd6f1f04b116946c35e9819",
+          "sha256": "b489cf1da13c00c3beccba59d46501f87e202baf9c349b3e80ab41069ef4a753",
           "events": [],
           "food_anchor": [
             96,
@@ -1794,7 +1794,7 @@
         {
           "file": "actions/grasp/g04-b45-01.png",
           "duration_ms": 18,
-          "sha256": "a5ec0cb2cc29a1deef36d40df8cd1387c5ae1582efdccb7f7254392960958081",
+          "sha256": "38e063dcfd7e1cbfa489637638103b914c82dd2ff10989d7df4b1fb8f24afcd8",
           "events": [],
           "food_anchor": [
             96,
@@ -1804,7 +1804,7 @@
         {
           "file": "actions/grasp/g04-b45-02.png",
           "duration_ms": 18,
-          "sha256": "f270e9bc7f0f2f4d5b93322004977e5d4f2f09491eea7753641aa045a05f6ebc",
+          "sha256": "d7510004ec6bab2ebaf47f8012911e9269cf29837bb22ed15ef98fa1da7febd8",
           "events": [],
           "food_anchor": [
             96,
@@ -1814,7 +1814,7 @@
         {
           "file": "actions/grasp/g04-b45-03.png",
           "duration_ms": 18,
-          "sha256": "2bb414229a033b28b4cf6abc65cd1db0909f8191e5eb38dd9b51ffc49a317a37",
+          "sha256": "f86f29a9be1f316b654c655171e672c8bde3cb14456279c720ec1360311ec067",
           "events": [],
           "food_anchor": [
             96,
@@ -1824,7 +1824,7 @@
         {
           "file": "actions/grasp/b45.png",
           "duration_ms": 18,
-          "sha256": "4c9825823901730144258b1c7b7bb089436c7acf366f5670f2acb1f36688ac17",
+          "sha256": "df3be18bc4d98a437ed7a09151774360852e1eefa9f25c66774a5fe9aa908b35",
           "events": [],
           "food_anchor": [
             96,
@@ -1834,7 +1834,7 @@
         {
           "file": "actions/grasp/b45-g05-01.png",
           "duration_ms": 18,
-          "sha256": "9e1431c3a52bbff6df368bf2c21a1364380245dcbc354737ba6dff9b58626834",
+          "sha256": "3a4bfbdaea8c7786bc231b3b6ecba59b28340d605d1ae8ba5bd5326e067bf779",
           "events": [],
           "food_anchor": [
             96,
@@ -1844,7 +1844,7 @@
         {
           "file": "actions/grasp/b45-g05-02.png",
           "duration_ms": 18,
-          "sha256": "9fa7cbb797c9e46d87b1df0deea756aae25003a1c85b0cc3472d7e7f867e91c7",
+          "sha256": "906d6116185a4531bcb01825d605526b431c2b8beae6f96fa73e6bc767ba6a9c",
           "events": [],
           "food_anchor": [
             96,
@@ -1854,7 +1854,7 @@
         {
           "file": "actions/grasp/b45-g05-03.png",
           "duration_ms": 18,
-          "sha256": "b675b4cdfe3d750a1166c54f0b8caba1c33d9a9604b9961c45912ef0dbaa6fa2",
+          "sha256": "5d676aecf221694c7480f46a0c61a4850abc920ce15056e13e8abfd459dd50fe",
           "events": [],
           "food_anchor": [
             96,
@@ -1864,7 +1864,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 18,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -1874,7 +1874,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 30,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": [
             96,
@@ -1884,7 +1884,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 1,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [
             "release_object"
           ],
@@ -1893,7 +1893,7 @@
         {
           "file": "actions/grasp/g05.png",
           "duration_ms": 23,
-          "sha256": "43ce6bdad9472f206f467cdda72b5ea4ba46c4c48bc559930c204cdd8b0069fa",
+          "sha256": "6e3700323117c2099995b1bf5fbc8af14494797b4e2ff426a2c01f671d0024c7",
           "events": [],
           "food_anchor": null
         },
