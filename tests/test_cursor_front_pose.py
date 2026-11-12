@@ -143,10 +143,10 @@ class CursorPoseRuntimeTests(unittest.TestCase):
                                           refresh_after_ms=140)
         )
 
-    def test_only_ready_offer_selects_static_last_pickup_pose(self):
+    def test_only_ready_offer_selects_static_hold_pose(self):
         self.ready = True
         self.assertEqual(
-            self.choose(), RenderDecision(SpriteSelection("pick_up", 7), True)
+            self.choose(), RenderDecision(SpriteSelection("hold_item", 0), True)
         )
         self.ready = False
         self.assertEqual(
@@ -316,18 +316,18 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
             (app.settings.y or 0)
             + (FOOT_BASELINE - clip.anchor[1] + hand_anchor[1]) * scale,
         )
-        self.assertEqual(render_at(hands), ("pick_up", 7))
+        self.assertEqual(render_at(hands), ("hold_item", 0))
         self.assertTrue(world.ready_for_handover())
         self.assertEqual(render_at((eyes[0], eyes[1] + 12 * scale)),
                          ("rest-neutral", 0))
         self.assertFalse(world.ready_for_handover())
         self.assertEqual(render_at((eyes[0] + 80 * scale, eyes[1])), ("look", 4))
         self.assertFalse(world.ready_for_handover())
-        self.assertEqual(render_at((hands[0] + 23 * scale, hands[1])), ("pick_up", 7))
+        self.assertEqual(render_at((hands[0] + 23 * scale, hands[1])), ("hold_item", 0))
         self.assertNotEqual(
-            render_at((hands[0] + 25 * scale, hands[1])), ("pick_up", 7)
+            render_at((hands[0] + 25 * scale, hands[1])), ("hold_item", 0)
         )
-        self.assertEqual(render_at(hands), ("pick_up", 7))
+        self.assertEqual(render_at(hands), ("hold_item", 0))
         self.assertEqual(world.world.get(token).state, ObjectState.USER_HELD)
         self.assertEqual(world.interaction.phase, "idle")
         self.assertLess(app.state.energy, 61)

@@ -93,8 +93,10 @@ class RoomNavigator:
         def remaining(x: int, z: int) -> float:
             return abs(xs[x] - goal.x) + abs(zs[z] - goal.depth)
 
-        queue = [(remaining(*origin[:2]), 0, 0.0, origin)]
-        costs = {origin: (0.0, 0)}
+        queue: list[tuple[float, int, float, _RouteState]] = [
+            (remaining(*origin[:2]), 0, 0.0, origin)
+        ]
+        costs: dict[_RouteState, tuple[float, int]] = {origin: (0.0, 0)}
         previous: dict[_RouteState, _RouteState] = {}
         while queue:
             _, bends, cost, state = heapq.heappop(queue)
