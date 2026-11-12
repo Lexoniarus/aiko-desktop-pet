@@ -4,7 +4,9 @@ import {
   activatePendingPackage,
   packageRoot,
 } from './platforms/browser/PackageStore';
+import type { InstalledPackage } from './platforms/browser/PackageStore';
 import { BrowserUpdates } from './platforms/browser/BrowserUpdates';
+import { isLocalLaunch, selectLocalPackage } from './platforms/browser/LocalLaunch';
 import { importPackage } from './platforms/browser/PackageImporter';
 import {
   publishedPackage,
@@ -29,8 +31,8 @@ let installing = false;
 const report = (text: string) => {
   status.textContent = text;
 };
-async function launch(): Promise<void> {
-  const installed = await activePackage();
+async function launch(selected?: InstalledPackage): Promise<void> {
+  const installed = selected ?? (await activePackage());
   if (!installed) return;
   start.disabled = true;
   try {
@@ -57,14 +59,39 @@ async function launch(): Promise<void> {
     });
     const locationURL = new URL(location.href);
     locationURL.searchParams.delete('install');
+    if (isLocalLaunch(locationURL)) locationURL.searchParams.delete('local-launch');
     history.replaceState(null, '', locationURL);
   } catch (error) {
     host.replaceChildren(installer);
     start.disabled = false;
+    if (isLocalLaunch(new URL(location.href))) retry.hidden = false;
     report(
       `Aiko konnte nicht starten: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
+}
+async function prepareLocalLaunch(): Promise<void> {
+  retry.textContent = 'Erneut prüfen';
+  start.textContent = 'Installierte Version öffnen';
+  retry.hidden = true;
+  start.hidden = true;
+  report('Lokales Aiko-Paket wird geprüft …');
+  help.textContent = 'Aiko prüft das Paket, das der lokale Starter bereitstellt.';
+  const selection = await selectLocalPackage(report);
+  if (selection.state === 'ready') {
+    await launch(selection.installed);
+    return;
+  }
+  retry.hidden = false;
+  if (selection.state === 'busy') {
+    report('Anderen Aiko-Tab schließen');
+    help.textContent =
+      'Prüfe das lokale Paket erneut, sobald der andere Tab geschlossen ist.';
+    return;
+  }
+  report(selection.reason);
+  help.textContent = `Installiert: ${selection.installed?.version ?? 'keine Version'} · Lokal angeboten: ${selection.offered ?? 'unbekannt'}`;
+  start.hidden = !selection.installed;
 }
 async function prepare(): Promise<void> {
   if (!isSecureContext || !('serviceWorker' in navigator) || !navigator.locks) {
@@ -80,6 +107,10 @@ async function prepare(): Promise<void> {
         once: true,
       }),
     );
+  }
+  if (isLocalLaunch(new URL(location.href))) {
+    await prepareLocalLaunch();
+    return;
   }
   await activatePendingPackage();
   const installed = await activePackage();
@@ -138,12 +169,17 @@ start.addEventListener('click', () => {
   void launch();
 });
 function setup(): void {
-  void prepare().catch((error) => {
-    retry.hidden = false;
-    report(
-      `Einrichtung nicht abgeschlossen: ${error instanceof Error ? error.message : String(error)} Bitte die Internetverbindung prüfen und erneut versuchen.`,
-    );
-  });
+  retry.disabled = true;
+  void prepare()
+    .catch((error) => {
+      retry.hidden = false;
+      report(
+        `Einrichtung nicht abgeschlossen: ${error instanceof Error ? error.message : String(error)} Bitte die Internetverbindung prüfen und erneut versuchen.`,
+      );
+    })
+    .finally(() => {
+      retry.disabled = false;
+    });
 }
 retry.addEventListener('click', setup);
 setup();

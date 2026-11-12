@@ -100,6 +100,25 @@ and first-run behavior on the owner's iPad were subsequently confirmed. The
 owner's feedback leaves room geometry/motion, bubbles, drag-and-drop and game
 presentation parity open; successful installation is not visual acceptance.
 
+## Local Room version
+
+The local **Room version** choice in the Room checkout's `main.py` opens
+`http://127.0.0.1:8940/?local-launch=1`. Keep this marker outside the Service
+Worker's ignored query parameters so even an older cached shell uses the
+network for this navigation. On this origin the starter reads `install.json`
+fresh under the save writer lock. It reuses the matching installed version
+or verifies and activates a newer package before opening the room. If the
+offer cannot be used, the starter shows the reason and offers to open the
+installed version explicitly. If another Aiko tab holds the lock, close it
+and retry. The regular address remains available offline and mobile updates
+still start from Settings.
+
+Build the local offer from a commit to give the ZIP a unique version. Copy
+the starter files and versioned ZIP into the local starter directory first,
+then replace `install.json` atomically. Keep previous ZIPs available for
+recovery. Closing the launcher stops its loopback server. An installed
+room tab can continue running from its browser cache.
+
 ## Updates on the installed icon
 
 For an installed package, **Einstellungen → App-Version und Updates → Nach

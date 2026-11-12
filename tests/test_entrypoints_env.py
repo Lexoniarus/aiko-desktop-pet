@@ -59,6 +59,36 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
         start_companion.assert_not_called()
         start_desktop.assert_not_called()
 
+    def test_room_launcher_opens_package_check_and_owns_server(self) -> None:
+        from aiko_pet.desktop import version_launcher
+
+        with (
+            tempfile.TemporaryDirectory() as folder,
+            patch.object(version_launcher, "Tk") as tk,
+            patch.object(version_launcher, "ttk") as widgets,
+            patch.object(version_launcher, "RoomHTTPServer") as server,
+            patch.object(version_launcher, "Thread"),
+            patch.object(version_launcher.webbrowser, "open_new_tab") as open_tab,
+        ):
+            starter = Path(folder)
+            for filename in ("index.html", "sw.js"):
+                (starter / filename).touch()
+
+            def choose_room() -> None:
+                for call in widgets.Button.call_args_list:
+                    if call.kwargs["text"] == "Raum-Version":
+                        call.kwargs["command"]()
+                        return
+                self.fail("Room version choice missing")
+
+            tk.return_value.mainloop.side_effect = choose_room
+            self.assertFalse(version_launcher.choose_desktop(starter))
+
+        self.assertEqual(server.call_args.args[0], ("127.0.0.1", 8940))
+        open_tab.assert_called_once_with("http://127.0.0.1:8940/?local-launch=1")
+        server.return_value.shutdown.assert_called_once_with()
+        server.return_value.server_close.assert_called_once_with()
+
     def test_gui_entrypoint_orders_env_resources_and_desktop(self) -> None:
         from aiko_pet.gui import main
 

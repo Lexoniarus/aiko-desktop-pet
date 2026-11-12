@@ -15,7 +15,8 @@ from typing import BinaryIO
 ROOM_HOST = "127.0.0.1"
 ROOM_PORT = 8940
 ROOM_ADDRESS = f"{ROOM_HOST}:{ROOM_PORT}"
-ROOM_URL = f"http://{ROOM_ADDRESS}/"
+LOCAL_LAUNCH_PATH = "/?local-launch=1"
+ROOM_URL = f"http://{ROOM_ADDRESS}{LOCAL_LAUNCH_PATH}"
 
 
 class RoomHTTPServer(ThreadingHTTPServer):
@@ -29,6 +30,11 @@ class RoomRequestHandler(SimpleHTTPRequestHandler):
             self.send_error(HTTPStatus.FORBIDDEN)
             return None
         return super().send_head()
+
+    def end_headers(self) -> None:
+        if self.path in (LOCAL_LAUNCH_PATH, "/install.json"):
+            self.send_header("Cache-Control", "no-store")
+        super().end_headers()
 
     def list_directory(self, path: str | os.PathLike[str]) -> None:
         self.send_error(HTTPStatus.NOT_FOUND)
@@ -69,7 +75,7 @@ def choose_desktop(starter: Path) -> bool:
 
     def select_room() -> None:
         nonlocal room_server
-        required = ("index.html", "sw.js", "install.json")
+        required = ("index.html", "sw.js")
         if not all((starter / name).is_file() for name in required):
             messagebox.showerror(
                 "Raum-Version",

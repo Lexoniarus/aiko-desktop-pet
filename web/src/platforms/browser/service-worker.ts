@@ -7,6 +7,7 @@ declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ url: string; revision: string }>;
 };
 precacheAndRoute(self.__WB_MANIFEST, {
+  // Keep the launcher navigation distinct from the cached offline entry.
   ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^install$/, /^diagnostics$/],
 });
 cleanupOutdatedCaches();
