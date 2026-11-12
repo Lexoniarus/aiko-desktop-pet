@@ -104,6 +104,7 @@ class RoomRuntime:
         self.held_pose = "closed_world"
         self._called: RoomPoint | None = None
         self._call_arrival: RoomPoint | None = None
+        self._call_serial = 0
         self._activity_arrived: Callable[[bool], None] | None = None
         self._wander: RoomPoint | None = None
         self._offered: tuple[str, float, str] | None = None
@@ -174,6 +175,10 @@ class RoomRuntime:
     @property
     def position(self) -> RoomPoint:
         return self.spatial.pet
+
+    @property
+    def call_id(self) -> int | None:
+        return self._call_serial if self._call_arrival is not None else None
 
     def _select_item(self, item: str | None) -> None:
         if item is not None:
@@ -281,6 +286,7 @@ class RoomRuntime:
         def start() -> None:
             self.pause_route()
             self._called = self._call_arrival = self.geometry.accessible(point)
+            self._call_serial += 1
 
         self.interaction.interrupt(start)
         self.awareness.intentions.cancel(self.now)
@@ -686,6 +692,8 @@ class RoomRuntime:
         current = step.point
         self.moving = current != previous
         if self.moving:
+            if self._called is None:
+                self._call_arrival = None
             last_start = step.travelled[-2] if len(step.travelled) > 1 else previous
             self.environment.heading = math.atan2(
                 current.x - last_start.x, last_start.depth - current.depth,

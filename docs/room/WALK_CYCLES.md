@@ -1,39 +1,37 @@
-# Gehfolgen im Raum
+# Room walk cycles
 
-Die beiden Tiefen-Gehfolgen stammen aus der abgenommenen privaten Vorschau
-`2026-11-11-raum-naehe-hochformat-vorschau`. Der Raumexport verwendet die
-acht Frames aus `frontalgang/zyklus` für `toward` und aus
-`rueckgang/zyklus` für `away`, jeweils in der Reihenfolge 00 bis 07.
-Die hochauflösenden Quellen liegen im lokalen Asset-Archiv.
+The two depth walk cycles come from the approved private preview
+`2026-11-11-raum-naehe-hochformat-vorschau`. The room export takes frames
+00 through 07 from `frontalgang/zyklus` for `toward` and from
+`rueckgang/zyklus` for `away`. The full-resolution sources are in the
+local asset archive.
 
-Der Export überträgt alle Bilder mit demselben Maßstab `312/1158` auf die
-384 × 416 Pixel große Laufzeitfläche. Der Vorschauanker `(608, 1240)`
-liegt dort bei `(190, 388)`, entsprechend dem logischen Anker
-`(95, 194)` der Seitenprofile. Alpha-Werte von 1 wurden vor dem
-Verkleinern entfernt. Die gezeichneten Schuhstellungen und ihre Abstände
-zur gemeinsamen Bodenlinie bleiben Teil der Animation.
+The export scales every frame by `312/1158` onto the 384 × 416 pixel runtime
+canvas. The preview anchor `(608, 1240)` maps to `(190, 388)`, matching
+the profile clips' logical anchor at `(95, 194)`. Alpha values of 1 were
+removed before resizing. The authored shoe poses and their distances from
+the common ground line are part of the animation.
 
-Die acht Bilder des Tiefengangs entsprechen zwei Schritten mit je 620 ms
-bei normalem Gehtempo. Die Wiedergabe wählt das Bild anhand der tatsächlich
-zurückgelegten Strecke. Beim Seitwärtsgang verwendet die Projektion dieselbe Schrittlänge in
-Raumeinheiten für das Profilbild und die horizontale Bewegung.
+The eight depth frames cover two 620 ms steps at normal walking pace.
+Playback selects the frame from the distance actually walked. Profile
+playback uses the same step length in room units as lateral movement.
 
-Die Wegsuche verwendet Bögen mit konstantem Kameraabstand und Geraden
-entlang einer Blickrichtung. Beide Abschnitte werden gegen die vorhandenen
-Möbelflächen geprüft. Die Anzeige interpoliert dieselben Abschnitte und
-wechselt die Gehfolge beim tatsächlichen Abbiegen.
+Pathfinding uses arcs at a constant distance from the camera and straight
+segments along a bearing. Both segments are checked against furniture
+footprints. The renderer interpolates the same segments and changes the
+walk cycle at the actual turn.
 
-Der Winkel zur Kamera bestimmt die horizontale Bildschirmposition.
-Fußhöhe, Größe und Überdeckung am Boden folgen demselben Kameraabstand.
-Die Wandgrenzen ändern die Geometrie der Laufbahn nicht. Bei gleichem
-Bodenabstand bleibt ein Gegenstand vor Aiko sichtbar.
+The bearing determines the horizontal screen position. Ground contact,
+scale and ground occlusion all use the same distance from the camera.
+Routes continue across wall boundaries. At equal floor depth, an object
+remains visible in front of Aiko.
 
-Bei **Aiko rufen** liegt das Ziel für eine sichtbare Aiko auf ihrer aktuellen
-Blickrichtung zur Kamera. Das Ziel liegt knapp außerhalb des Mindestabstands,
-sofern der Boden dort erreichbar ist. Ausdrücklich gerufene Ziele haben
-Vorrang vor autonomen Objektinteraktionen. Nach der Ankunft wartet Aiko frontal.
+When the user calls a visible Aiko, her target lies on her current bearing
+just outside the camera clearance, if the floor is reachable. Calls take
+priority over autonomous object interactions at all friendship levels.
+Aiko waits facing the user when she arrives.
 
-In Kameranähe geht der Ausschnitt fließend in eine Nahansicht über. Gesicht,
-Schultern und Platz für die Sprechblase bleiben sichtbar. Der untere Bildrand
-darf den Unterkörper abschneiden. Verlässt Aiko die Nahdistanz, kehrt der
-normale Ausschnitt zurück.
+The camera enters close framing only for a call that has started. Face,
+shoulders and room for the speech bubble stay visible, and the lower
+edge can crop the lower body. Cancelling the call, opening a game or
+leaving close range ends the close framing.

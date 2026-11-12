@@ -508,6 +508,7 @@ class RoomSession:
             "revision": self.revision.value,
             "pet": json_value(self.state.capture_checkpoint()),
             "room": json_value(world.room),
+            "call_id": self.room.call_id,
             "objects": json_value(world.objects),
             "speech": json_value(self.playback.snapshot()),
             "drag": {

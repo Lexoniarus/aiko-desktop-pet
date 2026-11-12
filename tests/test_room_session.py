@@ -86,7 +86,11 @@ class RoomSessionTests(unittest.TestCase):
             with self.subTest(friendship=friendship):
                 set_test_pet_values(session.state, friendship=friendship)
                 room.world.locate_in_room(replace(room.spatial, pet=start))
-                self.command("call", x=target.x, depth=target.depth, wall="north")
+                reply = self.command(
+                    "call", x=target.x, depth=target.depth, wall="north"
+                )
+                call_id = reply["snapshot"]["call_id"]
+                self.assertIsNotNone(call_id)
                 initial = room.movement.distance_walked
                 self.advance_until(lambda: room.position == target)
                 self.assertEqual(room.movement.points, (target,))
@@ -94,6 +98,31 @@ class RoomSessionTests(unittest.TestCase):
                 self.wall += 0.25
                 standing = self.command("tick")["snapshot"]
                 self.assertEqual(standing["animation"], "rest-neutral")
+                self.assertEqual(standing["call_id"], call_id)
+
+    def test_rejected_call_does_not_arm_a_later_movement(self) -> None:
+        room = self.endpoint.session.room
+        nearby = RoomPoint(*room.geometry.polar_position(-0.61, 145))
+        with self.assertRaisesRegex(ValueError, "Ungültige Blickrichtung"):
+            room.call(nearby, wall="invalid")
+        room.world.locate_in_room(replace(room.spatial, pet=nearby))
+        self.assertIsNone(self.command("snapshot")["snapshot"]["call_id"])
+
+    def test_deferred_call_gets_an_identity_only_when_its_route_starts(self) -> None:
+        room = self.endpoint.session.room
+        deferred: list[Callable[[], None]] = []
+        with patch.object(room.interaction, "interrupt", side_effect=deferred.append):
+            reply = self.command("call", x=470, depth=100)
+        self.assertIsNone(reply["snapshot"]["call_id"])
+        deferred[0]()
+        active = self.command("snapshot")["snapshot"]["call_id"]
+        self.assertIsNotNone(active)
+
+        cancelled = self.command("suspend")["snapshot"]
+        self.assertIsNone(cancelled["call_id"])
+        self.command("resume")
+        second = self.command("call", x=470, depth=100)["snapshot"]["call_id"]
+        self.assertNotEqual(second, active)
 
     def test_apple_route_crosses_the_wall_joint_at_constant_depth(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,

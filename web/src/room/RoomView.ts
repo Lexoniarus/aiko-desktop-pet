@@ -133,10 +133,19 @@ export class RoomView {
   }
 
   async update(snapshot: RoomSnapshot): Promise<void> {
+    const callChanged = snapshot.call_id !== this.snapshot?.call_id;
     const gameReady =
       snapshot.game?.id === 'connect_four' &&
       !snapshot.game.preparing &&
       (this.snapshot?.game?.id !== 'connect_four' || this.snapshot.game.preparing);
+    if (snapshot.game || callChanged) {
+      this.endCloseCall();
+      if (!snapshot.game && snapshot.call_id != null) {
+        this.camera.releaseFollow();
+        this.camera.stopPanning();
+        this.closeCall = { entered: false, centered: false };
+      }
+    }
     this.snapshot = snapshot;
     if (gameReady) this.frameForGame('connect_four');
     this.motion.receive(
@@ -415,7 +424,7 @@ export class RoomView {
     return new ConnectFourScene(this.world, this.root);
   }
   frameForGame(id: string): void {
-    this.closeCall = undefined;
+    this.endCloseCall();
     this.camera.setGame(true, id === 'connect_four');
     const table = this.assets.layout.furniture.find((item) => item.id === 'table');
     if (id === 'connect_four' && table) {
@@ -469,6 +478,13 @@ export class RoomView {
     } else if (this.petPosition) this.camera.lookAt(this.petPosition);
   }
 
+  private endCloseCall(): void {
+    if (!this.closeCall) return;
+    if (this.closeCall.centered && this.camera.panning) this.camera.stopPanning();
+    if (this.closeCall.entered) this.camera.setFraming();
+    this.closeCall = undefined;
+  }
+
   private frameCloseCall(point: RoomPoint): void {
     if (!this.closeCall) return;
     const projection = this.camera.projection;
@@ -476,8 +492,7 @@ export class RoomView {
     const end = projection.nearDistance + 1;
     const weight = Math.max(0, Math.min(1, (180 - distance) / (180 - end)));
     if (!weight) {
-      if (this.closeCall.entered) this.closeCall = undefined;
-      this.camera.setFraming();
+      if (this.closeCall.entered) this.endCloseCall();
       return;
     }
     this.closeCall.entered = true;
@@ -507,11 +522,8 @@ export class RoomView {
     return this.picking.resolveDrop(x, y);
   }
   callPoint(): RoomPoint {
-    this.camera.releaseFollow();
-    this.camera.stopPanning();
     const { projection, yaw } = this.camera;
     const pet = this.petPosition;
-    this.closeCall = { entered: false, centered: false };
     const near = projection.nearDistance + 1;
     if (pet && this.petVisible) {
       const distance = worldPolar(this.assets.layout, pet).distance;
