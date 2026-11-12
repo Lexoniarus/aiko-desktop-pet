@@ -33,6 +33,7 @@ from aiko_pet.infrastructure.character_assets import (  # noqa: E402
 from aiko_pet.infrastructure.item_assets import load_item_catalog  # noqa: E402
 from aiko_pet.infrastructure.room_layout import load_room_layout  # noqa: E402
 from aiko_pet.infrastructure.sqlite.schema import SCHEMA_VERSION  # noqa: E402
+from aiko_pet.pet.animation.character import AnimationClip, AnimationFrame  # noqa: E402
 from scripts.room_installer import (  # noqa: E402
     installation_instructions,
     installation_profile,
@@ -111,14 +112,31 @@ def image_bounds(path: Path) -> tuple[int, int, int, int] | None:
             if bounds is not None else None
 
 
+def room_walk_clips() -> tuple[AnimationClip, ...]:
+    root = ASSET_ROOT / "room/v1/walk"
+    # Both depth cycles contain two steps. Match the 620 ms profile step.
+    return tuple(
+        AnimationClip(
+            f"room-walk-{direction}",
+            tuple(AnimationFrame(root / direction / f"{index:02}.png", 155)
+                  for index in range(8)),
+            loop=True,
+            anchor=(95, 194),
+            movement=True,
+        )
+        for direction in ("toward", "away")
+    )
+
+
 def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
     catalog = load_character_catalog()
     clips = {}
-    for name in (
+    character_names = (
         set(catalog.clips) | set(catalog.body_clips) | set(catalog.expression_clips)
         | set(catalog.hd_action_clips)
-    ):
-        clip = catalog.clip_for(name, 2)
+    )
+    character_clips = tuple(catalog.clip_for(name, 2) for name in character_names)
+    for clip in (*character_clips, *room_walk_clips()):
         frames = []
         for frame in clip.frames:
             file = frame.file
@@ -138,7 +156,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
                 if frame.hand_foreground
                 else None,
             })
-        clips[name] = dict(
+        clips[clip.name] = dict(
             frames=frames,
             order=list(clip.playback_order),
             loop=clip.loop,

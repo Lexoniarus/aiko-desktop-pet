@@ -19,6 +19,25 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PackagedSourceTests(unittest.TestCase):
+    def test_room_depth_walk_cycles_share_the_profile_anchor(self) -> None:
+        from scripts.build_room_package import runtime_assets
+
+        clips = runtime_assets("test", 0)["clips"]
+        profile = clips["body-step-left-profil"]
+        for direction in ("toward", "away"):
+            with self.subTest(direction=direction):
+                clip = clips[f"room-walk-{direction}"]
+                self.assertTrue(clip["loop"])
+                self.assertEqual(clip["anchor"], profile["anchor"])
+                self.assertEqual(clip["duration"], 2 * profile["duration"])
+                self.assertEqual(len(clip["frames"]), 8)
+                for index, frame in enumerate(clip["frames"]):
+                    self.assertEqual(
+                        frame["file"], f"assets/room/v1/walk/{direction}/{index:02}.png"
+                    )
+                    with Image.open(ROOT / "aiko_pet" / frame["file"]) as image:
+                        self.assertEqual((image.size, image.mode), ((384, 416), "RGBA"))
+
     @unittest.skipIf(Image is None, "Pillow is needed only for asset preparation tests")
     def test_all_display_copies_have_binary_alpha_and_unchanged_geometry_and_rgb(self):
         root = ASSET_ROOT / "items"
