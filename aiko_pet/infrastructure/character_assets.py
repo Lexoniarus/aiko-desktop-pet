@@ -21,6 +21,7 @@ from .body_pose_assets import load_body_pose_clips
 from .eating_assets import load_hd_eating_clip
 from .expression_assets import load_expression_clips
 from .grasp_assets import load_grasp_clips
+from .waiting_assets import load_hd_waiting_clip
 
 
 def _file(root: Path, value: Any) -> Path:
@@ -211,4 +212,5 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     return CharacterCatalog(MappingProxyType(clips), load_body_pose_clips(root),
                             load_expression_clips(root), MappingProxyType({
                                 **load_hd_eating_clip(root), **load_grasp_clips(root),
+                                **load_hd_waiting_clip(root),
                             }))

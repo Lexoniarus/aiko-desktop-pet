@@ -10,9 +10,22 @@ from typing import Any
 
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.infrastructure.waiting_assets import WAITING_REST
 
 
 class CharacterCatalogTests(unittest.TestCase):
+    def test_waiting_uses_one_hd_loop_with_the_approved_blink(self) -> None:
+        catalog = load_character_catalog()
+        waiting = catalog.clip_for("waiting", 1)
+        self.assertIs(catalog.clip_for("waiting", 2), waiting)
+        self.assertEqual(waiting.timings,
+                         (180, *(65,) * 8, 310, 70, 100, 80, *(65,) * 8, 2790))
+        self.assertEqual(waiting.frames[0].file, ASSET_ROOT / WAITING_REST)
+        self.assertEqual(waiting.frames[-1].file, waiting.frames[0].file)
+        self.assertTrue(waiting.loop)
+        self.assertTrue(waiting.rest_sway)
+        self.assertEqual(waiting.anchor, (96, 194))
+
     def test_eight_source_sprites_with_independent_playback(self) -> None:
         catalog = load_character_catalog()
         self.assertEqual(len(catalog.clips), 16)

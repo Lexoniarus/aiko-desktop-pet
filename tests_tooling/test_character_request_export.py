@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from tools.character_export_common import sha256_digest
-from tools.character_request_export import EYES, POSES, export_request
+from tools.character_request_export import EYES, NEUTRAL_PHASES, POSES, export_request
 
 
 class RequestExportTests(unittest.TestCase):
@@ -120,6 +120,43 @@ class RequestExportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "1000px"):
             export_request(self.package, self.hd)
         self.assert_live_unchanged()
+
+    def test_complete_neutral_phases_protect_the_head_during_the_gesture(self) -> None:
+        phase_hashes = {}
+        for phase, relative in NEUTRAL_PHASES.items():
+            path = self.hd / relative
+            if phase != "offen":
+                source = self.package / f"waiting/{EYES.index(phase):02}.png"
+                with (Image.open(self.hd / "idle/00.png") as idle,
+                      Image.open(source) as old):
+                    eyelid = old.getpixel((160, 195))
+                    assert eyelid is not None
+                    idle.putpixel((160, 195), eyelid)
+                    idle.putpixel((115, 110), (230, 200, 150, 255))
+                    idle.save(path)
+            phase_hashes[phase] = sha256_digest(path.read_bytes())
+        self.inputs["neutral_phase_sha256"] = phase_hashes
+
+        for index, phase in enumerate(EYES):
+            if phase == "offen":
+                continue
+            record = self.inputs["frames"][index]
+            path = self.package / record["path"]
+            mask_path = self.package / f"masks/{index:02}.png"
+            with Image.open(path) as frame:
+                frame.putpixel((115, 110), (230, 200, 150, 255))
+                frame.save(path)
+            with Image.open(mask_path) as mask:
+                mask.putpixel((160, 195), 0)
+                mask.save(mask_path)
+            record["sha256"] = sha256_digest(path.read_bytes())
+            record["allowed_mask_sha256"] = sha256_digest(mask_path.read_bytes())
+        self.write_inputs()
+        records = export_request(self.package, self.hd)
+        self.assertEqual(
+            [record["reference_frame"] for record in records],
+            [NEUTRAL_PHASES[phase] for phase in EYES],
+        )
 
     def test_missing_final_frame_never_partially_installs_the_animation(self) -> None:
         (self.package / "waiting/07.png").unlink()

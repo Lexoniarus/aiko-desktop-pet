@@ -57,7 +57,7 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     events = []
                     fixture.anim.on_playback = events.append
                     before = fixture.state.capture_checkpoint()
-                    clip = assets.clips[QUESTION_REQUEST_CLIP]
+                    clip = assets.clip_for(QUESTION_REQUEST_CLIP, scale)
                     for index in range(len(clip.frames)):
                         self.assertIs(
                             fixture.anim.sprites[QUESTION_REQUEST_CLIP][index],
@@ -80,6 +80,32 @@ class ResponsiveTurnTimerTests(unittest.TestCase):
                     self.assertEqual(sum(event.finished for event in events), 1)
                     self.assertEqual(fixture.state.capture_checkpoint(), before)
                     self.assertEqual(fixture.settings.x, 100)
+
+    def test_waiting_displays_the_complete_hd_loop_at_both_sizes(self):
+        for scale in (1, 2):
+            with self.subTest(scale=scale), ControlledTkTime() as clock:
+                with animated_fixture() as fixture:
+                    fixture.settings.scale = scale
+                    animation = fixture.anim
+                    animation.reload_sprites()
+                    clip = animation.assets.clip_for("waiting", scale)
+                    with patch.object(animation._ambient, "motion_offset",
+                                      return_value=0):
+                        animation.show_frame("waiting", clock.monotonic())
+                        for index, duration in enumerate(clip.timings):
+                            sprite = animation.sprites["waiting"][index]
+                            self.assertEqual((sprite.width(), sprite.height()),
+                                             (192 * scale, 208 * scale))
+                            clock.advance((duration - 1) / 1000)
+                            self.assertEqual(animation.frame_clock.frame_index, index)
+                            self.assertEqual(fixture.canvas.itemcget(
+                                animation.image_item, "image"), str(sprite))
+                            clock.advance(0.001)
+                        self.assertEqual(animation.frame_clock.frame_index, 0)
+                        self.assertFalse(animation.frame_clock.finished)
+                        self.assertEqual(fixture.canvas.itemcget(
+                            animation.image_item, "image"),
+                            str(animation.sprites["waiting"][0]))
 
     def test_changed_profile_keeps_settled_episode_then_applies_to_next_one(self):
         for scale, side in product((1, 2), (-1, 1)):

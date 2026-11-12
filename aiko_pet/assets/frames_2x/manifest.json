@@ -3243,33 +3243,33 @@
         384,
         416
       ],
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "idle",
       "eyes": "offen",
       "pose_provenance": null,
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/offen.png",
-        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "source": "idle/00.png",
+        "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "allowed_mask_sha256": "e90df818e94f35d5b3570519cdc34395fd3fb91c06e3cbc0359193f1e3561771",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "waiting/01.png",
@@ -3278,7 +3278,7 @@
         384,
         416
       ],
-      "source_sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "source_sha256": "2a1377b82faaa20bf971f4b1392d13979d074223ed8c1e0ab776f49dc540189a",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "A",
@@ -3311,26 +3311,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/offen.png",
-        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "source": "idle/00.png",
+        "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "4984a4812fbbf9375777520cd21ee76ebf38dccd4eae727af06a32891add9760",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "allowed_mask_sha256": "dac4180a8e9266d48232e74d102f69040df1d9a603f6fd8c89e48fd6e4b05da6",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
-      "bytes": 85647
+      "sha256": "2a1377b82faaa20bf971f4b1392d13979d074223ed8c1e0ab776f49dc540189a",
+      "bytes": 83417
     },
     {
       "path": "waiting/02.png",
@@ -3339,7 +3339,7 @@
         384,
         416
       ],
-      "source_sha256": "cd63ea7cb8a91989df802bf9ce6bf6ac363f7ceb3bdd47d8e203a46cae29dd40",
+      "source_sha256": "cd4beb371e8a721237d9d0072701be40b1b753666b9ffa657c30582b8c21e20d",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "B",
@@ -3372,26 +3372,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/offen.png",
-        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "source": "idle/00.png",
+        "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "99c808447c7704bc9a860be6d93a1b7373b12e197d51970c73427491f419741c",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "allowed_mask_sha256": "679c2bae5d605c578651284dbc25882c00e2e5a371d633979bccf06035c7de89",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "cd63ea7cb8a91989df802bf9ce6bf6ac363f7ceb3bdd47d8e203a46cae29dd40",
-      "bytes": 85218
+      "sha256": "cd4beb371e8a721237d9d0072701be40b1b753666b9ffa657c30582b8c21e20d",
+      "bytes": 82982
     },
     {
       "path": "waiting/03.png",
@@ -3400,7 +3400,7 @@
         384,
         416
       ],
-      "source_sha256": "9eca86e7f02f52be1aa4bb4694a0ced6451e9dc02c84831b665340e350abe56f",
+      "source_sha256": "bbcdc90b1297961226bc510a3a27e2ca6268261c5d92a378c85791b27c79ee4a",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "C",
@@ -3424,26 +3424,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/halboffen.png",
-        "sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+        "source": "idle/02.png",
+        "sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "80e5cb4446214c99efdc70490f37557abe69e48dd773dc80a037a490e4f34e6c",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_frame": "idle/02.png",
+      "reference_sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
+      "allowed_mask_sha256": "58032f9691f2db384a8a077e9ae7f6f7a1d7dc528d837ea93667695f6761caf7",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "9eca86e7f02f52be1aa4bb4694a0ced6451e9dc02c84831b665340e350abe56f",
-      "bytes": 83792
+      "sha256": "bbcdc90b1297961226bc510a3a27e2ca6268261c5d92a378c85791b27c79ee4a",
+      "bytes": 82447
     },
     {
       "path": "waiting/04.png",
@@ -3452,7 +3452,7 @@
         384,
         416
       ],
-      "source_sha256": "771bdec74469a43357e4ec3d609c46daf9d279470abb23143c4d02f6c6cb7c29",
+      "source_sha256": "3b2728cd9252f96e39c8f25a8f12dc3ec98d2f3e2532487fed419b805504c77a",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "C",
@@ -3476,26 +3476,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/geschlossen.png",
-        "sha256": "845eb839753b42ea67f5a393366f63ebbde7e80a912fd69a7645dd9bf862d5aa",
+        "source": "idle/03.png",
+        "sha256": "4a08ea07845fa4dbb78160fecaabc52182f8d4185cd8ad49a05ff7466ad94531",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "80e5cb4446214c99efdc70490f37557abe69e48dd773dc80a037a490e4f34e6c",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_frame": "idle/03.png",
+      "reference_sha256": "4a08ea07845fa4dbb78160fecaabc52182f8d4185cd8ad49a05ff7466ad94531",
+      "allowed_mask_sha256": "58032f9691f2db384a8a077e9ae7f6f7a1d7dc528d837ea93667695f6761caf7",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "771bdec74469a43357e4ec3d609c46daf9d279470abb23143c4d02f6c6cb7c29",
-      "bytes": 83351
+      "sha256": "3b2728cd9252f96e39c8f25a8f12dc3ec98d2f3e2532487fed419b805504c77a",
+      "bytes": 81160
     },
     {
       "path": "waiting/05.png",
@@ -3504,7 +3504,7 @@
         384,
         416
       ],
-      "source_sha256": "6ec1167f46ed53d7042f972c667576eaf544d0d39b410d9b57657fb7ca5e9556",
+      "source_sha256": "06a327f58ce442af34336ced5a4f51459585734809cebfc2293484c288ad4941",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "B",
@@ -3537,26 +3537,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/halboffen.png",
-        "sha256": "873617d7a32c7ff5c07a8c5fe2d00529f2becfed28c1fb9a12f5920b84cd6c42",
+        "source": "idle/02.png",
+        "sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
-      "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "c86ccc45a7fa35022c7e7c2d92f7ab2a9034614800efba0d0a343ba463c726c5",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_frame": "idle/02.png",
+      "reference_sha256": "184f2d5b7fb7bd0bd0463d4280ea05e84c39ef2a0b27c73bf3485164a7280740",
+      "allowed_mask_sha256": "679c2bae5d605c578651284dbc25882c00e2e5a371d633979bccf06035c7de89",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "6ec1167f46ed53d7042f972c667576eaf544d0d39b410d9b57657fb7ca5e9556",
-      "bytes": 84465
+      "sha256": "06a327f58ce442af34336ced5a4f51459585734809cebfc2293484c288ad4941",
+      "bytes": 83200
     },
     {
       "path": "waiting/06.png",
@@ -3565,7 +3565,7 @@
         384,
         416
       ],
-      "source_sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
+      "source_sha256": "2a1377b82faaa20bf971f4b1392d13979d074223ed8c1e0ab776f49dc540189a",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "A",
@@ -3598,26 +3598,26 @@
         "use": "native arm/hand source only; fixed Idle head/standing-body components reused"
       },
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/offen.png",
-        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "source": "idle/00.png",
+        "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "allowed_mask_sha256": "4984a4812fbbf9375777520cd21ee76ebf38dccd4eae727af06a32891add9760",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "allowed_mask_sha256": "dac4180a8e9266d48232e74d102f69040df1d9a603f6fd8c89e48fd6e4b05da6",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "970c00b6b005bf7802fb2743b1b06af7b393e3295dcf0019fd684699d84e3602",
-      "bytes": 85647
+      "sha256": "2a1377b82faaa20bf971f4b1392d13979d074223ed8c1e0ab776f49dc540189a",
+      "bytes": 83417
     },
     {
       "path": "waiting/07.png",
@@ -3626,33 +3626,33 @@
         384,
         416
       ],
-      "source_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "status": "composited_v3_question_request_gesture",
       "semantic_name": "question_request_gesture",
       "pose": "idle",
       "eyes": "offen",
       "pose_provenance": null,
       "eye_provenance": {
-        "source": "private-v3-idle-modular/eyes/offen.png",
-        "sha256": "4354bcf05a843e3eea16b8bcdf59c374bf6cddf921c991ff67cb0fb607ef392f",
+        "source": "idle/00.png",
+        "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
         "size": [
           384,
           416
         ],
-        "kind": "reused_existing_2x_eye_module_not_new_native_original"
+        "kind": "approved_complete_neutral_idle_phase"
       },
       "reference_frame": "idle/00.png",
-      "reference_sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "reference_sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
       "allowed_mask_sha256": "e90df818e94f35d5b3570519cdc34395fd3fb91c06e3cbc0359193f1e3561771",
-      "fixed_head_mask_sha256": "504dab378ecefc6854f875f698ca8e278c4230536ac19032d9537ddca8a3b0b2",
+      "fixed_head_mask_sha256": "dea96f0ceeaf34daec8d6759a37da06909d8e00419862edea2f099970c2732cd",
       "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",
       "rendered_foot_anchor": [
-        191.0,
+        193.5,
         388
       ],
       "aspect_rescale_ratio": 1.0,
-      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
-      "bytes": 89746
+      "sha256": "86e6cc94e47691767ae8a7843d68bd430ee142ce838826c12b9b39250ac0567f",
+      "bytes": 86212
     },
     {
       "path": "waving/00.png",

@@ -11,7 +11,7 @@ Einige historische Dialogeinträge starteten noch `waiting`, `waving`,
 `waving-greeting` oder `jumping`. In der Raumfassung begann diese
 Ganzkörperaktion vor dem V3-Ausdruck. Weil `RoomSession` Mimik nur außerhalb
 einer Körperaktion zulässt, verwarf sie den eigentlich richtigen Ausdruck.
-Insbesondere `waiting/00` und `waiting/07` enthalten noch vollständig den
+Insbesondere `waiting/00` und `waiting/07` enthielten damals vollständig den
 alten V2-Idle mit Kopf und Körper. Eine alte Endpose konnte dadurch wie
 eine zusätzliche Idle-Variante wirken.
 

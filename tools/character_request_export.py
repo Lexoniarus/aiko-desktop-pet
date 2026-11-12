@@ -20,6 +20,8 @@ from tools.character_export_common import (
 POSES = ("idle", "A", "B", "C", "C", "B", "A", "idle")
 EYES = ("offen", "offen", "offen", "halboffen", "geschlossen",
         "halboffen", "offen", "offen")
+NEUTRAL_PHASES = {"offen": "idle/00.png", "halboffen": "idle/02.png",
+                  "geschlossen": "idle/03.png"}
 STATUS = "composited_v3_question_request_gesture"
 
 
@@ -54,18 +56,37 @@ def export_request(package: Path, hd_root: Path) -> list[dict[str, object]]:
     target_feet = planted_foot_bounds(idle)
     lower = (0, 324, HD_FRAME_SIZE[0], HD_FRAME_SIZE[1])
     original_lower = idle.crop(lower).tobytes()
+    neutral_hashes = inputs.get("neutral_phase_sha256")
+    references = {phase: ("idle/00.png", inputs["reference_sha256"], idle)
+                  for phase in NEUTRAL_PHASES}
+    if neutral_hashes is not None:
+        if (not isinstance(neutral_hashes, dict)
+                or set(neutral_hashes) != set(NEUTRAL_PHASES)):
+            raise ValueError("Expected all three approved neutral Idle phases")
+        for phase, path in NEUTRAL_PHASES.items():
+            data = (hd_root / path).read_bytes()
+            digest = sha256_digest(data)
+            if digest != neutral_hashes[phase]:
+                raise ValueError(f"Neutral Idle phase digest mismatch: {phase}")
+            image = load_rgba_component(data)
+            if (image.crop(lower).tobytes() != original_lower
+                    or planted_foot_bounds(image) != target_feet):
+                raise ValueError("Neutral Idle phases must share the same planted body")
+            references[phase] = path, digest, image
     head_mask = gray_mask(package / "head-mask.png", inputs["head_mask_sha256"])
-    eye_mask = gray_mask(package / "eye-mask.png", inputs["eye_mask_sha256"])
-    eye_bounds = eye_mask.getbbox()
-    if (eye_bounds is None or eye_bounds[0] < 130 or eye_bounds[1] < 170
-            or eye_bounds[2] > 250 or eye_bounds[3] > 220):
-        raise ValueError("Eye mask must stay inside the reviewed face region")
     head_support = head_mask.point([255 if v else 0 for v in range(256)])
     if not head_support.getbbox():
         raise ValueError("Expected a nonempty fixed Idle head mask")
-    no_eyes = eye_mask.point([0 if v else 255 for v in range(256)])
-    head_protection = ImageChops.multiply(head_support, no_eyes)
-    editable_region = eye_mask.point([255 if v else 0 for v in range(256)])
+    head_protection = head_support
+    editable_region = Image.new("L", HD_FRAME_SIZE)
+    if neutral_hashes is None:
+        eye_mask = gray_mask(package / "eye-mask.png", inputs["eye_mask_sha256"])
+        eye_bounds = eye_mask.getbbox()
+        if (eye_bounds is None or eye_bounds[0] < 130 or eye_bounds[1] < 170
+                or eye_bounds[2] > 250 or eye_bounds[3] > 220):
+            raise ValueError("Eye mask must stay inside the reviewed face region")
+        editable_region = eye_mask.point([255 if v else 0 for v in range(256)])
+        head_protection = ImageChops.subtract(head_support, editable_region)
     ImageDraw.Draw(editable_region).rectangle((120, 240, 264, 323), fill=255)
     never_edit = ImageChops.invert(editable_region)
     originals = inputs["originals"]
@@ -101,7 +122,8 @@ def export_request(package: Path, hd_root: Path) -> list[dict[str, object]]:
             raise ValueError(f"Request frame changes Idle's lower body: {relative}")
         if planted_foot_bounds(image) != target_feet:
             raise ValueError(f"Request frame changes Idle's foot anchor: {relative}")
-        difference = ImageChops.difference(image, idle)
+        reference_path, reference_sha, reference = references[eyes]
+        difference = ImageChops.difference(image, reference)
         if any(ImageChops.multiply(channel, head_protection).getbbox()
                for channel in difference.split()):
             raise ValueError(f"Request frame changes the fixed Idle head: {relative}")
@@ -131,8 +153,8 @@ def export_request(package: Path, hd_root: Path) -> list[dict[str, object]]:
             "status": STATUS, "semantic_name": "question_request_gesture",
             "pose": pose, "eyes": eyes, "pose_provenance": provenance,
             "eye_provenance": inputs["eye_provenance"][eyes],
-            "reference_frame": "idle/00.png",
-            "reference_sha256": inputs["reference_sha256"],
+            "reference_frame": reference_path,
+            "reference_sha256": reference_sha,
             "allowed_mask_sha256": source["allowed_mask_sha256"],
             "fixed_head_mask_sha256": inputs["head_mask_sha256"],
             "scale_calibration": "fixed_idle_body_and_head_with_arm_modules",

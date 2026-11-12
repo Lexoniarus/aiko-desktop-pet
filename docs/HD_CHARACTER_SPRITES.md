@@ -481,6 +481,46 @@ reused Idle/eye components. A separate native Tk check covers the full loop,
 entry/exit to Idle, all gaze transitions and unchanged 1x selection. Existing
 application sprite caches are refreshed on restart, not by PNG installation.
 
+#### Neutral V3 base for `waiting`
+
+The November 12 export replaces the old standing base in every slot of
+`waiting`, including the shared `idle-question-request` gesture. The three
+approved neutral Idle phases supply the complete head and standing body.
+The existing A/B/C arms and hands retain their motion with a two-pixel
+horizontal registration to the current base. The skirt, planted shoes and
+timing remain stable. The first and last PNG match the current open Idle
+byte for byte.
+
+The installer command above accepts the reviewed `installationspaket/`
+from `asset-generierung/2026-11-12-waiting-v3-neutralbasis/` in the private
+archive. It validates each frame against its corresponding neutral Idle
+phase and protects the complete head. The desktop derives both display
+sizes from the same HD artwork. In the room, spoken reactions continue to
+select the V3 expressions through the existing communication adapter.
+
+#### Interpolated Waiting cycle
+
+`actions/waiting.json` selects the approved 22-phase, 4570 ms cycle. Arm
+movement advances every 65 ms through the existing key poses and their
+interpolated steps. The shoulders use the corrected V3 contour. The blink
+starts at 1010 ms and uses 70/100/80 ms with a fixed outer head contour.
+The first and last phases reference `expressions/rest-neutral/00.png`.
+
+Both display sizes use the same HD clip. The desktop derives 1X in memory.
+`waiting` loops and `idle-question-request` uses the same images and timing
+once, then returns to Idle. Older installations without the optional
+manifest still resolve the eight-phase atlas.
+
+Reproduce the export from the approved private job
+`asset-generierung/2026-11-12-waiting-v3-schulter-takt-vorschau/`:
+
+```console
+python -m tools.character_waiting_export /path/to/approved-preview aiko_pet/assets
+```
+
+The exporter merges comparison-only splits and shares duplicate PNGs. The
+runtime checks each referenced file against its digest before loading it.
+
 ### Open artwork task: regenerate a cohesive eating sequence
 
 **Historical V2 finding; the 2x task was completed and accepted on 2026-10-23

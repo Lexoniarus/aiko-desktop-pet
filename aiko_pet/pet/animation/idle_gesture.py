@@ -21,10 +21,15 @@ class IdleGestureChoice:
 
 
 def with_idle_gestures(catalog: CharacterCatalog) -> CharacterCatalog:
-    """A one-shot playback alias; source frames and legacy waiting stay intact."""
-    clips = dict(catalog.clips)
-    clips[QUESTION_REQUEST_CLIP] = replace(
-        clips["waiting"], name=QUESTION_REQUEST_CLIP,
+    """Play the selected Waiting artwork once, then return to Idle."""
+    request = replace(
+        catalog.clip_for("waiting", 2), name=QUESTION_REQUEST_CLIP,
         loop=False, hold_last=False, return_to="idle",
     )
-    return replace(catalog, clips=MappingProxyType(clips))
+    if "waiting" in catalog.hd_action_clips:
+        return replace(catalog, hd_action_clips=MappingProxyType({
+            **catalog.hd_action_clips, QUESTION_REQUEST_CLIP: request,
+        }))
+    return replace(catalog, clips=MappingProxyType({
+        **catalog.clips, QUESTION_REQUEST_CLIP: request,
+    }))

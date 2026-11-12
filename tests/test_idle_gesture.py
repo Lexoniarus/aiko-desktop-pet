@@ -65,15 +65,16 @@ class IdleGestureTests(unittest.TestCase):
     def test_one_shot_alias_reuses_every_source_frame_and_anchor(self):
         original = load_character_catalog()
         catalog = with_idle_gestures(original)
-        request = catalog.clips[QUESTION_REQUEST_CLIP]
-        source = original.clips["waiting"]
+        request = catalog.clip_for(QUESTION_REQUEST_CLIP, 1)
+        source = original.clip_for("waiting", 1)
         self.assertIs(request.frames, source.frames)
         self.assertEqual(request.timings, source.timings)
         self.assertEqual(request.anchor, source.anchor)
         self.assertFalse(request.loop)
         self.assertEqual(request.return_to, "idle")
-        self.assertTrue(original.clips["waiting"].loop)
-        self.assertEqual({k: catalog.clips[k] for k in original.clips}, original.clips)
+        self.assertTrue(source.loop)
+        self.assertEqual(catalog.clips, original.clips)
+        self.assertIs(catalog.clip_for(QUESTION_REQUEST_CLIP, 2), request)
         clock = FrameClock(started_at=100)
         now = 100.0
         for index, duration in enumerate(request.timings):
@@ -83,6 +84,12 @@ class IdleGestureTests(unittest.TestCase):
             now += duration / 1000 + .001
         clock.next_index(request.name, now, request.timings, loop=False)
         self.assertTrue(clock.finished)
+
+    def test_one_shot_uses_legacy_waiting_when_hd_pack_is_absent(self):
+        original = replace(load_character_catalog(), hd_action_clips={})
+        request = with_idle_gestures(original).clip_for(QUESTION_REQUEST_CLIP, 1)
+        self.assertIs(request.frames, original.clips["waiting"].frames)
+        self.assertFalse(request.loop)
 
     def test_quarter_returns_through_real_phases_before_gesture_is_ready(self):
         fixture = animation_support.AnimationRuntimeFixture()
