@@ -58,6 +58,11 @@ Furniture keeps its authored aspect ratio at the projected support point.
 The room draws one floor to the projected wall perimeter. Connect Four
 anchors the board and chip scale to the projected table surface.
 
+The bottom action bar has its own layout row. Its height and bottom safe area
+are excluded from the room viewport. Call, Feed and More are direct actions;
+Play and Talk are also direct actions on wider screens and live under More on
+narrower screens. Room speech is positioned within the usable scene.
+
 ## Build and delivery
 
 Build dependencies are locked in `web/package-lock.json`. From `web/`, use

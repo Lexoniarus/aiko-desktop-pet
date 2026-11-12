@@ -73,27 +73,20 @@ export class RoomUI {
     room.onFridgeTap = () => this.open('food');
     if (updates) this.updates = new UpdateControls(updates);
     this.toolbar.setAttribute('aria-label', 'Aikos Zimmer');
-    for (const [name, label] of [
-      ['food', 'Füttern'],
-      ['games', 'Spielen'],
-      ['social', 'Plaudern'],
-      ['status', 'Befinden'],
-      ['wishes', 'Wünsche'],
-      ['settings', 'Einstellungen'],
-    ])
-      this.toolbar.append(
-        button(label!, () => {
-          this.open(name!);
-        }),
-      );
-    this.toolbar.prepend(
+    const play = button('Spielen', () => this.open('games'));
+    const talk = button('Plaudern', () => this.open('social'));
+    play.classList.add('room-wide-action');
+    talk.classList.add('room-wide-action');
+    this.toolbar.append(
       button('Aiko rufen', () => {
         void command('call', { ...room.callPoint() });
       }),
+      button('Füttern', () => this.open('food')),
+      play,
+      talk,
+      button('Mehr', () => this.open('more')),
     );
     this.status.setAttribute('role', 'status');
-    const care = element('div', 'quick-care');
-    care.append(this.pet, this.sleep, this.find, this.fix);
     const header = element('header', 'panel-header');
     header.append(
       this.title,
@@ -112,7 +105,6 @@ export class RoomUI {
       this.toolbar,
       this.panel,
       this.foodTray.element,
-      care,
       this.status,
       this.moodlets.element,
     );
@@ -147,9 +139,27 @@ export class RoomUI {
       wishes: 'Wünsche',
       settings: 'Einstellungen',
       credits: 'Quellen und Bildrechte',
+      more: 'Mehr',
     };
     this.title.textContent = titles[name] ?? name;
     this.panel.classList.toggle('fridge-panel', name === 'food');
+    if (name === 'more') {
+      const play = button('Spielen', () => this.open('games'));
+      const talk = button('Plaudern', () => this.open('social'));
+      play.classList.add('room-compact-action');
+      talk.classList.add('room-compact-action');
+      this.panelBody.append(
+        play,
+        talk,
+        this.pet,
+        this.sleep,
+        this.find,
+        this.fix,
+        button('Befinden', () => this.open('status')),
+        button('Wünsche', () => this.open('wishes')),
+        button('Einstellungen', () => this.open('settings')),
+      );
+    }
     if (name === 'food') {
       const fridgeX = this.room.frameFridge();
       this.panel.classList.toggle(

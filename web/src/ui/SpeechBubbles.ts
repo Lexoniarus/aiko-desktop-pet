@@ -81,8 +81,8 @@ export class SpeechBubbles {
     const center = bounds.x + bounds.width / 2;
     let x = center - rect.width / 2;
     let y = bounds.y - rect.height - 8;
-    const toolbar = this.host.querySelector('.room-toolbar')?.getBoundingClientRect();
-    const top = (toolbar?.bottom ?? 0) + 8;
+    const top = 8;
+    const sceneBottom = this.room.camera.sceneHeight;
     if (y < top) {
       y = Math.max(top, bounds.y + 4);
       x = bounds.x + bounds.width + 8;
@@ -102,7 +102,7 @@ export class SpeechBubbles {
     )
       x = panel.left - rect.width - 12;
     x = Math.max(8, Math.min(x, this.host.clientWidth - rect.width - 8));
-    y = Math.max(top, Math.min(y, this.host.clientHeight - rect.height - 76));
+    y = Math.max(top, Math.min(y, sceneBottom - rect.height - 14));
     this.element.style.left = `${x / this.scale}px`;
     this.element.style.top = `${y / this.scale}px`;
     this.element.style.setProperty(
