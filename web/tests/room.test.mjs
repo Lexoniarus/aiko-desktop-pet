@@ -290,16 +290,48 @@ test('walk clips follow the interpolated segment through all four corners', () =
   }
 });
 
-test('camera-relative gait resists boundary flicker and accepts actual turns', () => {
+test('a straight walk keeps its gait until the route actually turns', () => {
   const walk = new RoomWalkPresentation();
-  const radians = (degrees) => (degrees * Math.PI) / 180;
-  assert.equal(walk.clip(0, radians(-44)), 'room-walk-away');
-  assert.equal(walk.clip(0, radians(-47)), 'room-walk-away');
-  assert.equal(walk.clip(0, radians(-52)), 'body-step-right-profil');
-  assert.equal(walk.clip(Math.PI / 2, radians(-44)), 'body-step-right-profil');
-  assert.equal(walk.clip(Math.PI / 2, radians(-52)), 'room-walk-toward');
+  assert.equal(walk.clip(Math.PI, 0), 'room-walk-toward');
+  assert.equal(walk.clip(Math.PI, Math.PI / 2), 'room-walk-toward');
+  assert.equal(walk.clip(Math.PI / 2, 0), 'body-step-right-profil');
+  assert.equal(walk.clip(Math.PI / 2, Math.PI / 2), 'body-step-right-profil');
+  assert.equal(walk.clip(0, 0), 'room-walk-away');
   walk.reset();
-  assert.equal(walk.clip(Math.PI, Math.PI), 'room-walk-away');
+  assert.equal(walk.clip(0, Math.PI), 'room-walk-toward');
+});
+
+test('player-facing depth changes size without sideways movement on each wall', () => {
+  const projection = new RoomProjection(layout);
+  for (const [yaw, far, near, side] of [
+    [0, { x: 455, depth: 100 }, { x: 455, depth: 135 }, { x: 360, depth: 135 }],
+    [
+      Math.PI / 2,
+      { x: 690, depth: 265 },
+      { x: 645, depth: 265 },
+      { x: 645, depth: 343 },
+    ],
+    [Math.PI, { x: 455, depth: 500 }, { x: 455, depth: 465 }, { x: 360, depth: 465 }],
+    [
+      -Math.PI / 2,
+      { x: 110, depth: 265 },
+      { x: 155, depth: 265 },
+      { x: 155, depth: 343 },
+    ],
+  ]) {
+    projection.update(1024, 768, yaw);
+    assert.equal(projection.wallBearing(far), yaw);
+    assert.equal(projection.wallBearing(near), yaw);
+    assert.equal(projection.projectPoint(far).x, projection.projectPoint(near).x);
+    assert.ok(projection.actorScale(near) > 1.15 * projection.actorScale(far));
+    assert.equal(projection.actorScale(near), projection.actorScale(side));
+    assert.notEqual(projection.projectPoint(near).x, projection.projectPoint(side).x);
+  }
+  const normal = { x: 400, depth: 100 };
+  assert.ok(
+    Math.abs(projection.actorScale(normal) - projection.projectPoint(normal).scale) <
+      1e-8,
+  );
 });
 test('installer refuses traversal paths and incompatible package protocols', () => {
   for (const path of [

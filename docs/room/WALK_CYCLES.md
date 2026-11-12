@@ -19,7 +19,11 @@ Schritttakt.
 
 Die Wegsuche liefert nur gerade Abschnitte. Für das sichtbare Abbiegen
 liefert die Positionsinterpolation außerdem die Richtung ihres aktuellen
-Abschnitts. Die Ansicht wählt aus dieser Richtung und dem Blickwinkel
-zum Betrachter genau eine der vier Gehfolgen. Die Einleitung beim
-seitlichen Losgehen bleibt erhalten. Innerhalb eines laufenden Wegs
-wechselt die Gehfolge an der Ecke, ohne die Einleitung neu abzuspielen.
+Abschnitts. Die Wandansicht beim Beginn eines Abschnitts bestimmt zusammen
+mit der Laufrichtung die Gehfolge. Die Folge wechselt beim Abbiegen, ohne
+die Einleitung vom seitlichen Losgehen erneut abzuspielen.
+
+Im geraden Bereich jeder Wandansicht bestimmt die seitliche Raumkoordinate
+die Bildschirmposition. Die Tiefe bestimmt Aikos Größe nach der Kurve aus
+der freigegebenen Annäherungsvorschau. Am Übergang zwischen zwei Wänden
+verbindet ein schmaler Bereich die Ansichten kontinuierlich.

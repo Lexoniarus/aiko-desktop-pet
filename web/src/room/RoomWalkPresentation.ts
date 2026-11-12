@@ -8,27 +8,22 @@ export const roomWalkClips = [
 ] as const;
 
 const quarterTurn = Math.PI / 2;
-const facingMargin = Math.PI / 36;
 
 export class RoomWalkPresentation {
   private heading?: number;
-  private facing?: number;
+  private facing = 0;
 
-  clip(heading: number, bearing: number): (typeof roomWalkClips)[number] {
-    const relative = heading - bearing;
-    if (this.heading === heading && this.facing !== undefined) {
-      const offset = relative - this.facing * quarterTurn;
-      const angle = Math.atan2(Math.sin(offset), Math.cos(offset));
-      if (Math.abs(angle) <= quarterTurn / 2 + facingMargin)
-        return roomWalkClips[this.facing]!;
+  clip(heading: number, wallBearing: number): (typeof roomWalkClips)[number] {
+    // A straight path uses one authored gait through the whole segment.
+    if (this.heading !== heading) {
+      this.heading = heading;
+      const turn = Math.round((heading - wallBearing) / quarterTurn);
+      this.facing = ((turn % 4) + 4) % 4;
     }
-    const turn = Math.round(relative / quarterTurn);
-    this.heading = heading;
-    this.facing = ((turn % 4) + 4) % 4;
     return roomWalkClips[this.facing]!;
   }
 
   reset(): void {
-    this.heading = this.facing = undefined;
+    this.heading = undefined;
   }
 }

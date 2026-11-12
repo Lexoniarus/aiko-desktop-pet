@@ -204,23 +204,22 @@ export class RoomView {
     const point = motion?.point ?? snapshot.room.pet;
     this.camera.tick(point);
     this.scene.update(this.camera);
+    const projection = this.camera.projection;
     void this.aiko.showFromCamera(
       snapshot.animation,
       (snapshot.moving ? motion?.heading : undefined) ?? snapshot.heading ?? 0,
-      Math.atan2(
-        point.x - this.assets.layout.width / 2,
-        this.assets.layout.depth / 2 - point.depth,
-      ),
+      snapshot.moving ? projection.wallBearing(point) : projection.bearing(point),
       snapshot.moving,
       snapshot.animation_id,
       snapshot.animation_timings,
       snapshot.animation_hold_frame,
     );
-    const projected = this.camera.projection.projectPoint(point);
+    const projected = projection.projectPoint(point);
+    const actorScale = projection.actorScale(point);
     this.aiko.visible = projected.depth > 1;
     this.aiko.position.set(projected.x, projected.y);
     this.aiko.scale.set(
-      (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
+      (this.assets.layout.pet_height / this.assets.characterHeight) * actorScale,
     );
     this.aiko.zIndex = projected.groundY;
     this.aiko.renderHeld(
@@ -228,7 +227,7 @@ export class RoomView {
     );
     this.shadow.position.copyFrom(this.aiko.position);
     this.shadow.visible = this.aiko.visible;
-    this.shadow.scale.set(projected.scale / 4);
+    this.shadow.scale.set(actorScale / 4);
     this.shadow.zIndex = this.aiko.zIndex - 0.1;
     for (const follow of this.followers) follow(this.aiko.screenBounds());
     const depths = new Map(snapshot.room.object_depths);
