@@ -1,15 +1,15 @@
-"""Bounded A* over footprint-inflated cells, with continuous checked endpoints."""
+"""Find collision-free room routes on the four walking axes."""
 
 from __future__ import annotations
 
-import math
+import heapq
 from dataclasses import dataclass
-
-from pathfinding.core.diagonal_movement import DiagonalMovement
-from pathfinding.core.grid import Grid
-from pathfinding.finder.a_star import AStarFinder
+from functools import cache
 
 from .room import RoomGeometry, RoomPoint
+
+# Grid indices plus the axis used to enter the point (0 = x, 1 = depth).
+_RouteState = tuple[int, int, int]
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,86 +21,115 @@ class RoomNavigator:
     def __init__(self, geometry: RoomGeometry) -> None:
         self.geometry = geometry
         layout = geometry.layout
-        self.cell = layout.cell_size
-        self.walkable = [
-                [
-                    int(
-                        layout.can_place(
-                            (x + 0.5) * self.cell,
-                            (z + 0.5) * self.cell,
-                            layout.pet_radius,
-                        )
-                    )
-                    for x in range(int(layout.width / self.cell))
-                ]
-                for z in range(int(layout.depth / self.cell))
-            ]
-        self.grid = Grid(matrix=self.walkable)
-        self.finder = AStarFinder(
-            diagonal_movement=DiagonalMovement.only_when_no_obstacle,
+        cell = layout.cell_size
+        self._x_lines = tuple((x + 0.5) * cell for x in range(int(layout.width / cell)))
+        self._z_lines = tuple((z + 0.5) * cell for z in range(int(layout.depth / cell)))
+        self._turn_cost = 2 * cell
+        # On a straight segment the closest point to each inflated obstacle
+        # lies at an endpoint or at the obstacle center projected onto the axis.
+        self._x_probes = (
+            layout.width / 2,
+            *(item.x for item in layout.furniture if item.blocking),
+        )
+        self._z_probes = (
+            layout.depth / 2,
+            *(item.z for item in layout.furniture if item.blocking),
         )
 
     def clear_segment(self, start: RoomPoint, end: RoomPoint) -> bool:
-        count = max(1, math.ceil(self.geometry.distance(start, end) / (self.cell / 4)))
         layout = self.geometry.layout
-        return all(
-            layout.can_place(
-                start.x + (end.x - start.x) * i / count,
-                start.depth + (end.depth - start.depth) * i / count,
-                layout.pet_radius,
+        if start.depth == end.depth:
+            low, high = sorted((start.x, end.x))
+            probes = (low, high, *(x for x in self._x_probes if low < x < high))
+            return all(
+                layout.can_place(x, start.depth, layout.pet_radius) for x in probes
             )
-            for i in range(count + 1)
-        )
-
-    def _node(self, point: RoomPoint) -> tuple[int, int] | None:
-        candidates = sorted(
-            (
-                (x, z)
-                for z, row in enumerate(self.walkable)
-                for x, node in enumerate(row)
-                if node
-            ),
-            key=lambda cell: self.geometry.distance(point, self._point(*cell)),
-        )
-        return next(
-            (
-                cell
-                for cell in candidates[:25]
-                if self.clear_segment(point, self._point(*cell))
-            ),
-            None,
-        )
-
-    def _point(self, x: int, z: int) -> RoomPoint:
-        return RoomPoint((x + 0.5) * self.cell, (z + 0.5) * self.cell)
+        if start.x == end.x:
+            low, high = sorted((start.depth, end.depth))
+            probes = (low, high, *(z for z in self._z_probes if low < z < high))
+            return all(layout.can_place(start.x, z, layout.pet_radius) for z in probes)
+        return False
 
     def find_route(self, start: RoomPoint, goal: RoomPoint) -> RoomRoute | None:
+        layout = self.geometry.layout
+        if not all(
+            layout.can_place(point.x, point.depth, layout.pet_radius)
+            for point in (start, goal)
+        ):
+            return None
+        if start == goal:
+            return RoomRoute((start,))
         if self.clear_segment(start, goal):
             return RoomRoute((start, goal))
-        first, last = self._node(start), self._node(goal)
-        if first is None or last is None:
-            return None
-        self.grid.cleanup()
-        path, _runs = self.finder.find_path(
-            self.grid.node(*first),
-            self.grid.node(*last),
-            self.grid,
-        )
-        if not path:
-            return None
-        raw = [start, *(self._point(node.x, node.y) for node in path), goal]
-        # Remove redundant points only when the whole swept segment stays free.
-        points = [raw[0]]
-        index = 1
-        while index < len(raw):
-            end = index
-            while end + 1 < len(raw) and self.clear_segment(points[-1], raw[end + 1]):
-                end += 1
-            if not self.clear_segment(points[-1], raw[end]):
-                return None
-            points.append(raw[end])
-            index = end + 1
-        return RoomRoute(tuple(points))
+
+        corners = (RoomPoint(goal.x, start.depth), RoomPoint(start.x, goal.depth))
+        if abs(start.depth - goal.depth) > abs(start.x - goal.x):
+            corners = corners[::-1]
+        for corner in corners:
+            if (
+                corner not in (start, goal)
+                and self.clear_segment(start, corner)
+                and self.clear_segment(corner, goal)
+            ):
+                return RoomRoute((start, corner, goal))
+        return self._find_detour(start, goal)
+
+    def _find_detour(self, start: RoomPoint, goal: RoomPoint) -> RoomRoute | None:
+        # Include both endpoint coordinates so the route reaches them exactly
+        # and does not need short corrective steps to/from nearby cell centers.
+        xs = sorted({*self._x_lines, start.x, goal.x})
+        zs = sorted({*self._z_lines, start.depth, goal.depth})
+        origin = (xs.index(start.x), zs.index(start.depth), -1)
+        target = (xs.index(goal.x), zs.index(goal.depth))
+
+        @cache
+        def point(x: int, z: int) -> RoomPoint:
+            return RoomPoint(xs[x], zs[z])
+
+        @cache
+        def clear(a: tuple[int, int], b: tuple[int, int]) -> bool:
+            return self.clear_segment(point(*a), point(*b))
+
+        def remaining(x: int, z: int) -> float:
+            return abs(xs[x] - goal.x) + abs(zs[z] - goal.depth)
+
+        queue = [(remaining(*origin[:2]), 0, 0.0, origin)]
+        costs = {origin: (0.0, 0)}
+        previous: dict[_RouteState, _RouteState] = {}
+        while queue:
+            _, bends, cost, state = heapq.heappop(queue)
+            if (cost, bends) != costs[state]:
+                continue
+            x, z, axis = state
+            if (x, z) == target:
+                points = [goal]
+                while state != origin:
+                    parent = previous[state]
+                    if parent[2] != state[2]:
+                        points.append(point(*parent[:2]))
+                    state = parent
+                return RoomRoute(tuple(reversed(points)))
+
+            for dx, dz, direction in ((1, 0, 0), (-1, 0, 0), (0, 1, 1), (0, -1, 1)):
+                nx, nz = x + dx, z + dz
+                if not (0 <= nx < len(xs) and 0 <= nz < len(zs)):
+                    continue
+                a, b = sorted(((x, z), (nx, nz)))
+                if not clear(a, b):
+                    continue
+                turn = axis != -1 and axis != direction
+                distance = abs(xs[nx] - xs[x]) + abs(zs[nz] - zs[z])
+                new_cost = cost + distance + self._turn_cost * turn
+                new_bends = bends + turn
+                neighbor = (nx, nz, direction)
+                if (new_cost, new_bends) >= costs.get(neighbor, (float("inf"), 0)):
+                    continue
+                costs[neighbor] = (new_cost, new_bends)
+                previous[neighbor] = state
+                heapq.heappush(
+                    queue, (new_cost + remaining(nx, nz), new_bends, new_cost, neighbor)
+                )
+        return None
 
     def nearest_reachable(
         self, start: RoomPoint, desired: RoomPoint

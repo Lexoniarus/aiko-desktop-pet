@@ -78,15 +78,27 @@ class RoomSessionTests(unittest.TestCase):
         room = self.endpoint.session.room
         room.world.locate_in_room(replace(room.spatial, pet=RoomPoint(610, 300)))
         self.command("call", x=740, depth=300)
+        directions: list[tuple[int, int]] = []
         for _ in range(180):
             self.wall += 0.25
-            self.command("tick")
+            snapshot = self.command("tick")["snapshot"]
             self.assertTrue(room.geometry.layout.can_place(
                 room.position.x, room.position.depth, room.geometry.layout.pet_radius,
             ))
+            travelled = snapshot["motion"]["travelled"]
+            for start, end in zip(travelled, travelled[1:]):
+                dx = end["x"] - start["x"]
+                dz = end["depth"] - start["depth"]
+                self.assertFalse(dx and dz)
+                heading = ((dx > 0) - (dx < 0), (dz > 0) - (dz < 0))
+                if heading != (0, 0) and (not directions or heading != directions[-1]):
+                    directions.append(heading)
             if room.position == RoomPoint(740, 300):
                 break
         self.assertEqual(room.position, RoomPoint(740, 300))
+        self.assertIn(
+            directions, [[(0, -1), (1, 0), (0, 1)], [(0, 1), (1, 0), (0, -1)]]
+        )
 
     def test_table_game_walks_around_furniture_before_starting(self) -> None:
         self.command("settings", auto_walk=False, spontaneous_talk=False,
@@ -608,6 +620,29 @@ class RoomSessionTests(unittest.TestCase):
 
 
 class RoomGeometryTests(unittest.TestCase):
+    def test_clear_route_uses_one_bend_and_keeps_exact_coordinates(self) -> None:
+        from aiko_pet.infrastructure.room_layout import load_room_layout
+        from aiko_pet.world.room_navigation import RoomNavigator
+
+        navigator = RoomNavigator(RoomGeometry(load_room_layout()))
+        start = RoomPoint(409.5, 161.25)
+        goal = RoomPoint(533.75, 303.5)
+        route = navigator.find_route(start, goal)
+        assert route is not None
+        # The depth-first corner is inside the camera's clearance circle.
+        self.assertEqual(route.points, (start, RoomPoint(goal.x, start.depth), goal))
+
+    def test_axis_aligned_route_stays_a_single_segment(self) -> None:
+        from aiko_pet.infrastructure.room_layout import load_room_layout
+        from aiko_pet.world.room_navigation import RoomNavigator
+
+        navigator = RoomNavigator(RoomGeometry(load_room_layout()))
+        start = RoomPoint(253.5, 70.25)
+        goal = RoomPoint(253.5, 130.25)
+        route = navigator.find_route(start, goal)
+        assert route is not None
+        self.assertEqual(route.points, (start, goal))
+
     def test_routes_go_around_the_table_without_cutting_its_corners(self) -> None:
         from aiko_pet.infrastructure.room_layout import load_room_layout
         from aiko_pet.world.room_navigation import RoomNavigator
@@ -617,7 +652,7 @@ class RoomGeometryTests(unittest.TestCase):
         route = navigator.find_route(RoomPoint(610, 300), RoomPoint(740, 300))
         self.assertIsNotNone(route)
         assert route is not None
-        self.assertGreater(len(route.points), 2)
+        self.assertEqual(len(route.points), 4)
         for start, end in zip(route.points, route.points[1:]):
             self.assertTrue(navigator.clear_segment(start, end))
         self.assertIsNone(
