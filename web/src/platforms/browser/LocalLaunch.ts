@@ -1,4 +1,4 @@
-import { activePackage, packageRoot } from './PackageStore.ts';
+import { activePackage, packageRoot, prunePackageCaches } from './PackageStore.ts';
 import type { InstalledPackage } from './PackageStore';
 import {
   installPublishedPackage,
@@ -64,10 +64,13 @@ export function selectLocalPackage(
           throw new Error(
             'Das lokale Paket ist nicht neuer als die installierte Version.',
           );
-        return {
-          state: 'ready',
-          installed: await installPublishedPackage(published, report),
-        };
+        await navigator.locks.request('aiko-package-install', prunePackageCaches);
+        const selected = await installPublishedPackage(published, report);
+        // The verified package is active even if cache maintenance fails afterward.
+        await navigator.locks
+          .request('aiko-package-install', prunePackageCaches)
+          .catch(() => {});
+        return { state: 'ready', installed: selected };
       } catch (error) {
         return {
           state: 'failed',

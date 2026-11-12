@@ -78,6 +78,20 @@ export async function activatePackage(value: InstalledPackage): Promise<void> {
   }
 }
 
+/** Call with the save writer and package installer locks held. */
+export async function prunePackageCaches(): Promise<void> {
+  const preserved = await Promise.all(
+    ['active', 'previous', 'pending'].map(storedPackage),
+  );
+  const keep = new Set(
+    preserved.filter((item) => !!item).map((item) => packageCachePrefix + item.id),
+  );
+  for (const name of await caches.keys()) {
+    if (name.startsWith(packageCachePrefix) && !keep.has(name))
+      await caches.delete(name);
+  }
+}
+
 // Never switch packages or prune files while a runtime owns the pet database.
 // A second window must not change the program beneath an existing session.
 export async function activatePendingPackage(): Promise<boolean> {
@@ -93,18 +107,7 @@ export async function activatePendingPackage(): Promise<boolean> {
           if (!installer) return false;
           const pending = await pendingPackage();
           if (pending) await activatePackage(pending);
-          const preserved = await Promise.all(
-            ['active', 'previous', 'pending'].map(storedPackage),
-          );
-          const keep = new Set(
-            preserved
-              .filter((item) => !!item)
-              .map((item) => packageCachePrefix + item.id),
-          );
-          for (const name of await caches.keys()) {
-            if (name.startsWith(packageCachePrefix) && !keep.has(name))
-              await caches.delete(name);
-          }
+          await prunePackageCaches();
           return !!pending;
         },
       );
