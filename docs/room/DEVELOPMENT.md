@@ -3,9 +3,9 @@
 Worktree: `feature/shared-room-pwa`, based on the green desktop commit
 `ce4797ed65a477ca0d8015262584ff895e0a554d`. The workload hotfix is included.
 
-The accepted v16 room is the visual reference. Reuse its approved room artwork
-and the canonical character catalogues; this task does not regenerate art.
-The native desktop retains its own entry point and dependency environment.
+The room uses the canonical character catalogues and separately prepared room
+artwork. The native desktop retains its own entry point and dependency
+environment.
 
 The starter is a small HTTPS-installed PWA. Its Service Worker caches the shell
 and serves validated, versioned ZIP content. Program updates and pet data have
@@ -60,14 +60,22 @@ The normal horizon is at 30% of the usable scene height and the eye height
 is 95 room units, with Aiko at 100. A single distance-dependent scale sets
 sprite heights, floor contact, tabletop elevation and inverse floor picking.
 All four frontal wall strips meet one level skirting and floor line at the
-projected distance of the farthest corner. The window is mounted above the
-skirting on the east strip. The floor has level plank rows with staggered
+projected distance of the farthest corner. The revised balcony window meets that
+floor line at the center of the east strip. The floor has level plank rows with staggered
 joints that translate with the panorama. The door sits on the floor line.
 Standing furniture keeps its authored aspect ratio and projected support point.
 Aiko's feet and scale follow her radius from the viewer, with the rectangular
 room and furniture footprints determining which routes are open. Connect Four
 anchors the board and chip scale to the projected table surface and uses the
 table's depth order.
+
+The revised room artwork uses tight crops for the standing furniture and
+preserves the grid's support points and collision footprints. The upper kitchen
+module and laptop are separate sprites attached to the projected lower unit and
+desk respectively. The stool and wall print are visual props. The open fridge is
+packaged for future use. The fridge tap still opens the current food UI.
+The revised coffee table has its own painted contact point for the board and
+chips, within the visible tabletop.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;
@@ -80,6 +88,11 @@ Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `npm ci`, `npm run build`, then the repository Python interpreter to run
 `../scripts/build_room_package.py`. Generated downloads and distributions stay
 outside Git. The resulting delivery includes a starter folder and runtime ZIP.
+Pass `--room-art <artwork directory>` for the revised room. Use the prepared
+runtime PNGs, with transparent furniture and a plain wall strip. The builder
+requires the complete set and records its fingerprint in the package manifest.
+`--prototype <v16 archive>` continues to build the v16 artwork. Keep the
+authoring files and source notes outside Git.
 The same web/runtime build targets Chrome and Safari. Packaging also includes
 `START_ANDROID.md` and the Android checklist. Android uses the browser install
 route or imports a candidate runtime through the existing PWA; the Apple profile

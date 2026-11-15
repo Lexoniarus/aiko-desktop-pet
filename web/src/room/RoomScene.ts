@@ -1,4 +1,9 @@
 import { Container, Graphics, Sprite, Texture } from 'pixi.js';
+import {
+  artworkAttachments,
+  artworkFurniture,
+  artworkTabletopInset,
+} from './RoomArtwork';
 import type { RoomCamera } from './RoomCamera';
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
 import { furnitureFrame } from './RoomPresentation';
@@ -12,12 +17,15 @@ export class RoomScene {
     bearing: number;
     span: number;
     repeat: number;
+    window?: Sprite;
   }> = [];
   private floor = new Graphics();
   private furniture: Array<{
     view: Sprite;
     item: FurniturePlacement;
+    attachment?: Sprite;
   }> = [];
+  private readonly usesRoomArtwork: boolean;
   private lastVersion = -1;
   constructor(
     world: Container,
@@ -25,6 +33,9 @@ export class RoomScene {
     images: Record<string, HTMLImageElement>,
     onFridgeTap: () => void,
   ) {
+    const wallArtwork = images.wall && Texture.from(images.wall);
+    const windowArtwork = images.window && Texture.from(images.window);
+    this.usesRoomArtwork = Boolean(wallArtwork);
     const wallBearings: Record<string, number> = {
       north: 0,
       east: Math.PI / 2,
@@ -36,12 +47,13 @@ export class RoomScene {
     for (const wall of layout.walls) {
       let texture = textures.get(wall.asset);
       if (!texture) {
-        const artwork = images[wall.asset]!;
-        const canvas =
-          wall.asset === 'living'
-            ? roomBackground(images.kitchen!, artwork)
-            : roomBackground(artwork);
-        texture = Texture.from(canvas);
+        texture =
+          wallArtwork ??
+          Texture.from(
+            wall.asset === 'living'
+              ? roomBackground(images.kitchen!, images[wall.asset])
+              : roomBackground(images[wall.asset]!),
+          );
         textures.set(wall.asset, texture);
       }
       const span =
@@ -51,55 +63,91 @@ export class RoomScene {
         view.anchor.set(0.5, 0);
         view.zIndex = -10000;
         world.addChild(view);
-        this.panels.push({ view, bearing: wallBearings[wall.id]!, span, repeat });
+        const panel = { view, bearing: wallBearings[wall.id]!, span, repeat };
+        if (windowArtwork && wall.id === 'east') {
+          const window = new Sprite(windowArtwork);
+          window.anchor.set(0.5, 1);
+          window.zIndex = -9998;
+          world.addChild(window);
+          this.panels.push({ ...panel, window });
+        } else {
+          this.panels.push(panel);
+        }
       }
     }
     this.floor.zIndex = -9999;
     world.addChild(this.floor);
-    for (const item of layout.furniture) {
+    const furniture = wallArtwork ? artworkFurniture(layout, images) : layout.furniture;
+    for (const item of furniture) {
       const [x, y, width, height] = item.crop;
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(images[item.asset]!, x, y, width, height, 0, 0, width, height);
-      const pixels = ctx.getImageData(0, 0, width, height).data;
       const view = new Sprite(Texture.from(canvas));
       view.anchor.set(...item.pivot);
-      view.eventMode = 'static';
-      view.hitArea = {
-        contains: (px: number, py: number) => {
-          const ix = Math.floor(px + width * item.pivot[0]),
-            iy = Math.floor(py + height * item.pivot[1]);
-          return (
-            ix >= 0 &&
-            ix < width &&
-            iy >= 0 &&
-            iy < height &&
-            pixels[(iy * width + ix) * 4 + 3]! >= 32
-          );
-        },
-      };
       if (item.id === 'fridge') {
+        const pixels = ctx.getImageData(0, 0, width, height).data;
+        view.eventMode = 'static';
+        view.hitArea = {
+          contains: (px: number, py: number) => {
+            const ix = Math.floor(px + width * item.pivot[0]);
+            const iy = Math.floor(py + height * item.pivot[1]);
+            return (
+              ix >= 0 &&
+              ix < width &&
+              iy >= 0 &&
+              iy < height &&
+              pixels[(iy * width + ix) * 4 + 3]! >= 32
+            );
+          },
+        };
         view.cursor = 'pointer';
         view.on('pointertap', onFridgeTap);
       }
       world.addChild(view);
-      this.furniture.push({ view, item });
+      const prop = wallArtwork && artworkAttachments[item.id];
+      if (prop) {
+        const attachment = new Sprite(Texture.from(images[prop.asset]!));
+        attachment.anchor.set(0.5, 1);
+        world.addChild(attachment);
+        this.furniture.push({ view, item, attachment });
+      } else {
+        this.furniture.push({ view, item });
+      }
     }
   }
+  furnitureFrame(id: string, projection: RoomProjection) {
+    const item = this.furniture.find((entry) => entry.item.id === id)?.item;
+    if (!item) return undefined;
+    const frame = furnitureFrame(projection, item);
+    if (this.usesRoomArtwork && id === 'table') {
+      frame.surface.y += frame.height * artworkTabletopInset;
+    }
+    return frame;
+  }
+
   update(camera: RoomCamera): void {
     if (camera.version === this.lastVersion) return;
     this.lastVersion = camera.version;
     const projection = camera.projection;
     const { floorLine, angularScale, width } = projection;
     this.drawFloor(projection);
-    for (const { view, bearing, span, repeat } of this.panels) {
+    for (const { view, bearing, span, repeat, window } of this.panels) {
       const center = projection.screenX(bearing) + repeat * Math.PI * 2 * angularScale;
       const panelWidth = span * angularScale;
       view.position.set(center, 0);
       // A subpixel overlap sits under the common skirting and corner lines.
       view.setSize(panelWidth + 1, floorLine + 1);
+      if (window) {
+        const height = Math.min(
+          floorLine * 0.92,
+          (panelWidth * 0.8 * window.texture.height) / window.texture.width,
+        );
+        window.position.set(center, floorLine);
+        window.scale.set(height / window.texture.height);
+      }
       const joint = center - panelWidth / 2;
       if (joint >= 0 && joint <= width) {
         const seamWidth = Math.max(1, 2.5 * projection.fit);
@@ -109,11 +157,21 @@ export class RoomScene {
         });
       }
     }
-    for (const { view, item } of this.furniture) {
+    for (const { view, item, attachment } of this.furniture) {
       const frame = furnitureFrame(projection, item);
       view.position.set(frame.x, frame.y);
-      view.scale.set(frame.scale * (frame.flipX ? -1 : 1), frame.scale);
+      const flipX = frame.flipX && !this.usesRoomArtwork;
+      view.scale.set(frame.scale * (flipX ? -1 : 1), frame.scale);
       view.zIndex = frame.order;
+      if (attachment) {
+        const prop = artworkAttachments[item.id]!;
+        attachment.position.set(
+          frame.x + frame.width * prop.offsetX,
+          frame.y + frame.height * (prop.offsetY - 1),
+        );
+        attachment.scale.set((frame.width * prop.width) / attachment.texture.width);
+        attachment.zIndex = frame.order + 0.000001;
+      }
     }
   }
 

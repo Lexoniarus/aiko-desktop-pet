@@ -11,7 +11,7 @@ import { RoomScene } from './RoomScene';
 import { RoomPicking } from './RoomPicking';
 import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
-import { furnitureFrame, furnitureSupport } from './RoomPresentation';
+import { furnitureSupport } from './RoomPresentation';
 import { objectGroundOrder } from './RoomDepthOrder';
 import { connectFourGeometry, tableGameFrame } from '../games/ConnectFourGeometry';
 import { ConnectFourScene } from '../games/ConnectFourScene';
@@ -422,8 +422,9 @@ export class RoomView {
   frameFridge(): number {
     const viewportWidth = this.host.clientWidth;
     const fridge = this.assets.layout.furniture.find((item) => item.id === 'fridge');
-    if (!fridge) return viewportWidth / 2;
-    const { x, width } = furnitureFrame(this.camera.projection, fridge);
+    const frame = this.scene.furnitureFrame('fridge', this.camera.projection);
+    if (!fridge || !frame) return viewportWidth / 2;
+    const { x, width } = frame;
     this.camera.releaseFollow();
     this.camera.stopPanning();
     if (x - width / 2 < 0 || x + width / 2 > viewportWidth) {
@@ -445,8 +446,8 @@ export class RoomView {
       this.camera.panTo(point);
   }
   tableGameFrame() {
-    const table = this.assets.layout.furniture.find((item) => item.id === 'table');
-    return table && tableGameFrame(furnitureFrame(this.camera.projection, table));
+    const frame = this.scene.furnitureFrame('table', this.camera.projection);
+    return frame && tableGameFrame(frame);
   }
   createConnectFourScene(): ConnectFourScene {
     return new ConnectFourScene(this.world, this.root);
@@ -460,7 +461,7 @@ export class RoomView {
       const projection = this.camera.projection;
       const { width, height } = projection;
       this.camera.lookAt(furnitureSupport(this.assets.layout, table));
-      const furniture = furnitureFrame(projection, table);
+      const furniture = this.scene.furnitureFrame('table', projection)!;
       const board = tableGameFrame(furniture);
       const pet =
         this.snapshot?.game?.id === id && !this.snapshot.game.preparing

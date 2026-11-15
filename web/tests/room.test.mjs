@@ -14,6 +14,7 @@ import {
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
+import { artworkFurniture } from '../src/room/RoomArtwork.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
@@ -63,6 +64,41 @@ test('table chips retain their diameter and flight joins the same landing geomet
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
+
+test('room artwork keeps the existing collision and table surface anchors', () => {
+  const images = Object.fromEntries(
+    [...layout.furniture.map(({ asset }) => asset), 'stool', 'wallArt'].map((asset) => [
+      asset,
+      { naturalWidth: 600, naturalHeight: 250 },
+    ]),
+  );
+  const artwork = artworkFurniture(layout, images);
+  const projection = new RoomProjection(layout);
+  projection.update(1280, 800, Math.PI / 2);
+  for (const item of layout.furniture.filter(({ blocking }) => blocking)) {
+    const painted = artwork.find(({ id }) => id === item.id);
+    assert.equal(painted.blocking, true);
+    assert.deepEqual(
+      [painted.x, painted.z, painted.width, painted.depth],
+      [item.x, item.z, item.width, item.depth],
+    );
+    assert.deepEqual(furnitureSupport(layout, painted), furnitureSupport(layout, item));
+  }
+  const originalTable = furnitureFrame(
+    projection,
+    layout.furniture.find(({ id }) => id === 'table'),
+  );
+  const paintedTable = furnitureFrame(
+    projection,
+    artwork.find(({ id }) => id === 'table'),
+  );
+  assert.deepEqual(paintedTable.surface, originalTable.surface);
+  assert.equal(paintedTable.order, originalTable.order);
+  assert.equal(paintedTable.height, originalTable.height);
+  assert.ok(Math.abs(paintedTable.width - (600 / 250) * paintedTable.height) < 1e-8);
+  assert.equal(artwork.find(({ id }) => id === 'stool').blocking, false);
+  assert.equal(artwork.find(({ id }) => id === 'wallArt').blocking, false);
+});
 
 test('feeding pan stays at room scale and a held drag pauses camera following', (t) => {
   const window = Object.assign(new EventTarget(), {

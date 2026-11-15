@@ -1,7 +1,7 @@
 """Build a private offline runtime ZIP from pinned dependencies and source IDs.
 
-Never reads personal saves. The supplied reference stays outside the repository;
-only the approved room images used by v16 enter the generated distribution.
+Never reads personal saves. The supplied room art stays outside the repository;
+only the runtime renditions enter the generated distribution.
 """
 
 from __future__ import annotations
@@ -52,6 +52,18 @@ ROOM_IMAGES = {
     "shelf": "wall-shelf-chibi-v1.png",
     "table": "coffee-table-chibi-v1.png",
     "plant": "plant-chibi-v1.png",
+}
+ROOM_ARTWORK = {
+    **{
+        key: f"{key}.png"
+        for key in (
+            "door", "fridge", "table", "bed", "desk", "shelf", "plant",
+            "wall", "window", "stool", "laptop",
+        )
+    },
+    "kitchenUnit": "kitchen-base.png",
+    "kitchenUpper": "kitchen-upper.png",
+    "wallArt": "wall-art.png",
 }
 
 
@@ -129,7 +141,9 @@ def room_walk_clips() -> tuple[AnimationClip, ...]:
     )
 
 
-def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
+def runtime_assets(
+    version: str, build_timestamp: int, room_images: dict[str, str]
+) -> dict[str, Any]:
     catalog = load_character_catalog()
     clips = {}
     character_names = (
@@ -217,7 +231,7 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
         "buildTimestamp": build_timestamp,
         "clips": clips,
         "items": item_files,
-        "room": ROOM_IMAGES,
+        "room": room_images,
         "characterHeight": character_height,
         "closeCallDistance": CALL_DISTANCE,
         "layout": asdict(load_room_layout()),
@@ -227,11 +241,41 @@ def runtime_assets(version: str, build_timestamp: int) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--prototype", type=Path, required=True)
+    artwork_source = parser.add_mutually_exclusive_group(required=True)
+    artwork_source.add_argument("--prototype", type=Path, help="v16 reference ZIP")
+    artwork_source.add_argument(
+        "--room-art", type=Path, help="revised room PNG directory"
+    )
     parser.add_argument("--output", type=Path, default=ROOT / "dist-room")
     parser.add_argument("--starter-url", type=starter_address)
     args = parser.parse_args()
     web, output = ROOT / "web", args.output.resolve()
+    room_images = ROOM_ARTWORK if args.room_art is not None else ROOM_IMAGES
+    if args.room_art is not None:
+        room_files = {}
+        for filename in (*room_images.values(), "fridge-open.png"):
+            image_path = args.room_art / filename
+            with Image.open(image_path, formats=("PNG",)) as image:
+                image.verify()
+            room_files[f"room/{filename}"] = image_path.read_bytes()
+        art_checksums = {
+            name: hashlib.sha256(contents).hexdigest()
+            for name, contents in room_files.items()
+        }
+        artwork_metadata = {
+            "roomArtSHA256": hashlib.sha256(encoded(art_checksums)).hexdigest(),
+        }
+    else:
+        with ZipFile(args.prototype) as reference:
+            room_files = {
+                f"room/{filename}": reference.read(
+                    f"aiko-360-prototype/assets/{filename}"
+                )
+                for filename in room_images.values()
+            }
+        artwork_metadata = {
+            "prototypeSHA256": hashlib.sha256(args.prototype.read_bytes()).hexdigest(),
+        }
     output.mkdir(parents=True, exist_ok=True)
     cache = web / ".runtime"
     package = json.loads((web / "package.json").read_text("utf8"))
@@ -304,12 +348,10 @@ def main() -> None:
     code_archive = cache / "aiko.zip"
     archive(code_archive, python_files)
     files["python/aiko.zip"] = code_archive.read_bytes()
-    files["runtime-assets.json"] = encoded(runtime_assets(version, build_timestamp))
-    with ZipFile(args.prototype) as reference:
-        for filename in ROOM_IMAGES.values():
-            files["room/" + filename] = reference.read(
-                "aiko-360-prototype/assets/" + filename
-            )
+    files["runtime-assets.json"] = encoded(
+        runtime_assets(version, build_timestamp, room_images)
+    )
+    files.update(room_files)
     for path in sorted((ROOT / "LICENSES").iterdir()):
         if path.suffix in (".txt", ".md"):
             files["licenses/" + path.name] = path.read_bytes()
@@ -340,7 +382,7 @@ def main() -> None:
         entry="app/app.js",
         sourceCommit=sha,
         pyodide=package["dependencies"]["pyodide"],
-        prototypeSHA256=hashlib.sha256(args.prototype.read_bytes()).hexdigest(),
+        **artwork_metadata,
         files={
             name: dict(size=len(content), sha256=hashlib.sha256(content).hexdigest())
             for name, content in sorted(files.items())
