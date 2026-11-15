@@ -19,12 +19,18 @@ export class RoomProjection {
   private readonly farInverse: number;
   private readonly nearInverse: number;
   private readonly calibratedCallDistance?: number;
+  private readonly paintedFloor: boolean;
   private horizon = 0;
   private magnification = 1;
 
-  constructor(layout: RoomLayout, calibratedCallDistance?: number) {
+  constructor(
+    layout: RoomLayout,
+    calibratedCallDistance?: number,
+    paintedFloor = false,
+  ) {
     this.layout = layout;
     this.calibratedCallDistance = calibratedCallDistance;
+    this.paintedFloor = paintedFloor;
     this.farDistance = Math.hypot(layout.width / 2, layout.depth / 2);
     this.farInverse = this.inverseDepth(this.farDistance);
     this.nearInverse = this.inverseDepth(this.nearDistance);
@@ -116,6 +122,7 @@ export class RoomProjection {
       viewportHeight: this.height,
       petHeight: this.layout.pet_height,
       maxScale,
+      paintedFloor: this.paintedFloor,
     });
     return {
       groundY: radial.groundY + (north.groundY - radial.groundY) * weight,

@@ -256,8 +256,10 @@ def main() -> None:
     parser.add_argument("--starter-url", type=starter_address)
     args = parser.parse_args()
     web, output = ROOT / "web", args.output.resolve()
-    room_images = ROOM_ARTWORK if args.room_art is not None else ROOM_IMAGES
+    room_images = dict(ROOM_ARTWORK if args.room_art is not None else ROOM_IMAGES)
     if args.room_art is not None:
+        if (args.room_art / "floor.png").is_file():
+            room_images["floor"] = "floor.png"
         room_files = {}
         for filename in (*room_images.values(), "fridge-open.png"):
             image_path = args.room_art / filename

@@ -28,9 +28,10 @@ export class RoomCamera {
     canvas: HTMLCanvasElement,
     layout: RoomLayout,
     calibratedCallDistance?: number,
+    paintedFloor = false,
   ) {
     this.layout = layout;
-    this.projection = new RoomProjection(layout, calibratedCallDistance);
+    this.projection = new RoomProjection(layout, calibratedCallDistance, paintedFloor);
     const options = { signal: this.controller.signal };
     canvas.addEventListener(
       'pointerdown',

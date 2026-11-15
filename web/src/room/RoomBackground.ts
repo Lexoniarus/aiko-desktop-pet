@@ -1,6 +1,37 @@
 import { roomPresentation } from './RoomPresentation';
+import { floorArtwork } from './RoomDepthCurve';
 
 type ImageRect = [x: number, y: number, width: number, height: number];
+
+/** Prepare a half-turn repeat with identical pixels at either end. */
+export function roomFloorTexture(source: HTMLImageElement): HTMLCanvasElement {
+  const { sourceRows, displayRows } = floorArtwork;
+  const width = Math.min(source.naturalWidth, 1600);
+  const canvas = document.createElement('canvas');
+  canvas.width = width * 2;
+  canvas.height = displayRows.at(-1)! * 2;
+  const context = canvas.getContext('2d')!;
+  const scale = source.naturalHeight / sourceRows.at(-1)!;
+  for (let row = 0; row < sourceRows.length - 1; row++) {
+    const top = sourceRows[row]!;
+    const displayTop = displayRows[row]!;
+    context.drawImage(
+      source,
+      0,
+      top * scale,
+      source.naturalWidth,
+      (sourceRows[row + 1]! - top) * scale,
+      0,
+      displayTop * 2,
+      width,
+      (displayRows[row + 1]! - displayTop) * 2,
+    );
+  }
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
+  context.drawImage(canvas, 0, 0, width, canvas.height, 0, 0, width, canvas.height);
+  return canvas;
+}
 
 function drawReferenceRegion(
   ctx: CanvasRenderingContext2D,

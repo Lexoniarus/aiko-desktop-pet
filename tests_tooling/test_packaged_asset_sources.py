@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class PackagedSourceTests(unittest.TestCase):
     def test_room_depth_walk_cycles_share_the_profile_anchor(self) -> None:
-        from scripts.build_room_package import runtime_assets
+        from scripts.build_room_package import ROOM_ARTWORK, runtime_assets
 
-        clips = runtime_assets("test", 0)["clips"]
+        clips = runtime_assets("test", 0, ROOM_ARTWORK)["clips"]
         profile = clips["body-step-left-profil"]
         for direction in ("toward", "away"):
             with self.subTest(direction=direction):

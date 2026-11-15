@@ -61,8 +61,9 @@ is 95 room units, with Aiko at 100. A single distance-dependent scale sets
 sprite heights, floor contact, tabletop elevation and inverse floor picking.
 All four frontal wall strips meet one level skirting and floor line at the
 projected distance of the farthest corner. The revised balcony window meets that
-floor line at the center of the east strip. The floor has level plank rows with staggered
-joints that translate with the panorama. The door sits on the floor line.
+floor line at the center of the east strip. The painted wooden floor repeats as
+one mirrored strip across the panorama. Its level rows gradually open toward
+the foreground. The door sits on the floor line.
 Standing furniture keeps its authored aspect ratio and projected support point.
 Aiko's feet and scale follow her radius from the viewer, with the rectangular
 room and furniture footprints determining which routes are open. Connect Four
@@ -83,8 +84,11 @@ character measurements come from the accepted preview and fit against the room's
 existing skirting line. Near the north wall, points on the same parallel row
 share a display depth. This profile blends with radial projection toward the
 adjacent walls independently of the camera yaw. The same projection is used
-for floor picking. Bed and west-wall furniture positions are centered through
-the shared world layout.
+for floor picking. With the floor artwork installed, the north approach uses
+the painted row intervals between the kitchen and the front stop. Foot position
+and character growth follow this curve at the simulation's existing 620 ms step
+cadence, with continuous joins to the rear row and close-call path. Bed and
+west-wall furniture positions are centered through the shared world layout.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;
@@ -98,8 +102,10 @@ Build dependencies are locked in `web/package-lock.json`. From `web/`, use
 `../scripts/build_room_package.py`. Generated downloads and distributions stay
 outside Git. The resulting delivery includes a starter folder and runtime ZIP.
 Pass `--room-art <artwork directory>` for the revised room. Use the prepared
-runtime PNGs, with transparent furniture and a plain wall strip. The builder
-requires the complete set and records its fingerprint in the package manifest.
+runtime PNGs, with transparent furniture and a plain wall strip. Add the accepted
+wooden panorama artwork as `floor.png` in the same directory to include the
+painted floor and its matching approach curve. The builder records the artwork
+fingerprint in the package manifest.
 `--prototype <v16 archive>` continues to build the v16 artwork. Keep the
 authoring files and source notes outside Git.
 The same web/runtime build targets Chrome and Safari. Packaging also includes

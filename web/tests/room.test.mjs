@@ -198,6 +198,46 @@ test('north approach shares a continuous curve and fits the portrait head at the
   }
 });
 
+test('the painted floor matches the approved north walk at each stop', () => {
+  const projection = new RoomProjection(layout, 70, true);
+  projection.update(1100, 544, 0);
+  const frame = (depth) => projection.projectAiko({ x: 400, depth }, 70, 31);
+  for (const [depth, foot] of [
+    [100, 319.3672661654135],
+    [134.5, 387.27576234486094],
+    [169, 473.2372225428042],
+  ]) {
+    const actor = frame(depth);
+    assert.ok(Math.abs(actor.groundY - foot) < 1e-8);
+    const point = projection.intersectFloor(actor.x, actor.groundY);
+    assert.ok(Math.abs(point.depth - depth) < 1e-7);
+  }
+
+  for (const depth of [95, 100, 169]) {
+    for (const key of ['groundY', 'scale']) {
+      const left = frame(depth)[key] - frame(depth - 0.0001)[key];
+      const right = frame(depth + 0.0001)[key] - frame(depth)[key];
+      assert.ok(left > 0 && right > 0);
+      assert.ok(Math.abs(left / right - 1) < 0.001);
+    }
+  }
+  for (const x of [120, 350, 540]) {
+    assert.equal(projection.projectPoint({ x, depth: 95 }).groundY, frame(95).groundY);
+  }
+
+  // A taller screen may cap the close sprite without shifting its room walk.
+  projection.update(393, 852, 0);
+  for (const depth of [100, 134.5, 169]) {
+    assert.equal(
+      frame(depth).groundY,
+      projection.projectPoint({ x: 400, depth }).groundY,
+    );
+  }
+  const close = frame(230);
+  assert.ok(close.scale * 62 <= 393 - 24 + 1e-8);
+  assert.ok(close.groundY > 852 && close.groundY - close.scale * layout.pet_height > 0);
+});
+
 test('feeding pan stays at room scale and a held drag pauses camera following', (t) => {
   const window = Object.assign(new EventTarget(), {
     matchMedia: () => ({ matches: false }),

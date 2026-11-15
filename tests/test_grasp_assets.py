@@ -11,7 +11,7 @@ from PIL import Image
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.grasp_assets import GRASP_CLIPS, load_grasp_clips
-from scripts.build_room_package import runtime_assets
+from scripts.build_room_package import ROOM_ARTWORK, runtime_assets
 
 
 class GraspAssetsTests(unittest.TestCase):
@@ -45,7 +45,7 @@ class GraspAssetsTests(unittest.TestCase):
                              for f in clips["throw_item"].frames), 1)
 
     def test_room_package_exports_every_new_clip_and_center_pivots(self):
-        exported = runtime_assets("test-grasp", 0)["clips"]
+        exported = runtime_assets("test-grasp", 0, ROOM_ARTWORK)["clips"]
         for name in GRASP_CLIPS:
             self.assertIn(name, exported)
             self.assertEqual(exported[name]["itemAnchorMode"], "center")

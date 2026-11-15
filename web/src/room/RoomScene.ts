@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Texture } from 'pixi.js';
+import { Container, Graphics, Sprite, Texture, TilingSprite } from 'pixi.js';
 import {
   artworkAttachments,
   artworkFurniture,
@@ -9,7 +9,7 @@ import {
 import type { RoomCamera } from './RoomCamera';
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
 import { furnitureFrame } from './RoomPresentation';
-import { roomBackground } from './RoomBackground';
+import { roomBackground, roomFloorTexture } from './RoomBackground';
 import type { RoomProjection } from './RoomProjection';
 
 /** The grid owns placement; artwork stays flat with its original proportions. */
@@ -22,6 +22,7 @@ export class RoomScene {
     window?: Sprite;
   }> = [];
   private floor = new Graphics();
+  private readonly paintedFloor?: TilingSprite;
   private furniture: Array<{
     view: Sprite;
     item: FurniturePlacement;
@@ -38,6 +39,13 @@ export class RoomScene {
     const wallArtwork = images.wall && Texture.from(images.wall);
     const windowArtwork = images.window && Texture.from(images.window);
     this.usesRoomArtwork = Boolean(wallArtwork);
+    if (images.floor) {
+      this.paintedFloor = new TilingSprite({
+        texture: Texture.from(roomFloorTexture(images.floor), true),
+      });
+      this.paintedFloor.zIndex = -9999.5;
+      world.addChild(this.paintedFloor);
+    }
     const wallBearings: Record<string, number> = {
       north: 0,
       east: Math.PI / 2,
@@ -187,13 +195,28 @@ export class RoomScene {
   private drawFloor(projection: RoomProjection): void {
     const { width, height, floorLine } = projection;
     const floor = this.floor.clear();
-    floor.rect(0, floorLine, width, height - floorLine).fill(0xeac6a7);
     const skirtingHeight = Math.min(floorLine, 12 * projection.fit);
     floor.rect(0, floorLine - skirtingHeight, width, skirtingHeight).fill(0xc2aabd);
-    // The floor is one strip. Its staggered joints share the panorama's turn.
+    const origin = projection.screenX(0);
+    const floorHeight = height - floorLine;
+    if (this.paintedFloor) {
+      const tile = this.paintedFloor;
+      const repeatWidth = Math.PI * projection.angularScale;
+      tile.visible = floorHeight > 0;
+      tile.position.set(0, floorLine);
+      tile.width = width;
+      tile.height = floorHeight;
+      tile.tileScale.set(
+        repeatWidth / tile.texture.width,
+        floorHeight / tile.texture.height,
+      );
+      tile.tilePosition.set(origin - repeatWidth / 4, 0);
+      return;
+    }
+    floor.rect(0, floorLine, width, floorHeight).fill(0xeac6a7);
+    // Keep the original floor for packages with no painted room floor.
     const rowHeight = Math.max(1, 54 * projection.fit);
     const plankWidth = (Math.PI * 2 * projection.angularScale) / 24;
-    const origin = projection.screenX(0);
     for (let row = 0, y = floorLine; y < height; row++, y += rowHeight) {
       floor.moveTo(0, y).lineTo(width, y);
       const phase = origin + ((row % 2) * plankWidth) / 2;
