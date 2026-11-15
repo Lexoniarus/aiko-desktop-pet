@@ -128,11 +128,17 @@ def image_bounds(path: Path) -> tuple[int, int, int, int] | None:
 def room_walk_clips() -> tuple[AnimationClip, ...]:
     root = ASSET_ROOT / "room/v1/walk"
     # Both depth cycles contain two steps. Match the 620 ms profile step.
+    toward_timings = (112, 118, 195, 195) * 2
     return tuple(
         AnimationClip(
             f"room-walk-{direction}",
-            tuple(AnimationFrame(root / direction / f"{index:02}.png", 155)
-                  for index in range(8)),
+            tuple(
+                AnimationFrame(
+                    root / direction / f"{index:02}.png",
+                    toward_timings[index] if direction == "toward" else 155,
+                )
+                for index in range(8)
+            ),
             loop=True,
             anchor=(95, 194),
             movement=True,

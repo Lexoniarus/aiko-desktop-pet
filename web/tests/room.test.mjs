@@ -14,7 +14,11 @@ import {
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
-import { artworkFurniture, wallArtworkFloorInset } from '../src/room/RoomArtwork.ts';
+import {
+  artworkFurniture,
+  artworkFurnitureFrame,
+  wallArtworkFloorInset,
+} from '../src/room/RoomArtwork.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
@@ -111,14 +115,86 @@ test('the bed is centered and painted wall furniture meets the level floor', () 
     Math.abs(bedFrame.y - bedFrame.height * 0.59 - projection.floorLine) < 1e-8,
   );
   assert.ok(Math.abs(desk.z - layout.depth / 2) <= 25);
-  projection.update(1440, 840, 0);
-  for (const id of ['kitchen', 'fridge']) {
-    const item = layout.furniture.find((piece) => piece.id === id);
-    const normal = furnitureFrame(projection, item);
-    const painted = furnitureFrame(projection, item, wallArtworkFloorInset[id]);
-    assert.ok(projection.floorLine <= painted.y && painted.y < normal.y);
-    assert.equal(painted.width, normal.width);
-    assert.equal(painted.order, normal.order);
+  const north = new RoomProjection(layout, 70);
+  north.update(1440, 840, 0);
+  const common = north.projectAiko({ x: 350, depth: 95 }, 70, 30);
+  for (const x of [120, 350, 540]) {
+    const actor = north.projectAiko({ x, depth: 95 }, 70, 30);
+    assert.ok(Math.abs(actor.scale - common.scale) < 1e-8);
+    assert.ok(Math.abs(actor.groundY - common.groundY) < 1e-8);
+  }
+  const images = Object.fromEntries(
+    [...layout.furniture.map(({ asset }) => asset), 'stool', 'wallArt'].map((asset) => [
+      asset,
+      { naturalWidth: 600, naturalHeight: 250 },
+    ]),
+  );
+  const artwork = artworkFurniture(layout, images);
+  for (const [id, height, offset] of [
+    ['door', 120.1725, 0],
+    ['kitchen', 67, 38],
+    ['fridge', 120.1725, 36],
+  ]) {
+    const frame = artworkFurnitureFrame(
+      north,
+      artwork.find((item) => item.id === id),
+    );
+    assert.ok(
+      Math.abs(frame.height / (common.scale * layout.pet_height) - height / 121.275) <
+        1e-8,
+    );
+    assert.ok(
+      Math.abs(frame.y - north.floorLine - (offset * north.floorLine) / 350) < 1e-8,
+    );
+  }
+});
+
+test('the calibrated floor projects and picks the same point across the north boundary', () => {
+  const projection = new RoomProjection(layout, 70);
+  projection.update(1240, 544, -0.12);
+  for (const bearing of [-1.12, -0.72, 0, 0.75, 1.16]) {
+    for (const radius of [150, 215, 285]) {
+      const point = worldPoint(layout, bearing, radius);
+      for (const elevation of [0, 40]) {
+        const frame = projection.projectPoint(point, elevation);
+        const restored = projection.intersectFloor(frame.x, frame.y, elevation);
+        assert.ok(
+          Math.hypot(restored.x - point.x, restored.depth - point.depth) < 1e-7,
+        );
+      }
+    }
+  }
+});
+
+test('north approach shares a continuous curve and fits the portrait head at the destination', () => {
+  for (const [width, height] of [
+    [1240, 544],
+    [393, 852],
+    [834, 1112],
+  ]) {
+    const projection = new RoomProjection(layout, 70);
+    projection.update(width, height, 0);
+    const frame = (radius) =>
+      projection.projectAiko(worldPoint(layout, 0, radius), 70, 31);
+    const rear = frame(205);
+    const front = frame(131);
+    const arrival = frame(70);
+    assert.ok(front.groundY < height && arrival.groundY > height);
+    assert.ok(arrival.scale * 62 <= width - 24 + 1e-8);
+    assert.ok(arrival.groundY - arrival.scale * layout.pet_height > 0);
+    for (const key of ['groundY', 'scale']) {
+      const right = frame(130.999)[key] - front[key];
+      const left = front[key] - frame(131.001)[key];
+      assert.ok(right > 0 && left > 0);
+      assert.ok(Math.abs(right / left - 1) < 0.001);
+    }
+    for (const radius of [200, 168, 132, 110, 85]) {
+      const sample = frame(radius);
+      const progress =
+        (sample.groundY - rear.groundY) / (arrival.groundY - rear.groundY);
+      const growth = (sample.scale - rear.scale) / (arrival.scale - rear.scale);
+      assert.ok(Math.abs(progress - growth) < 1e-8);
+    }
   }
 });
 

@@ -77,9 +77,14 @@ packaged for future use. The fridge tap still opens the current food UI.
 The revised coffee table has its own painted contact point for the board and
 chips, within the visible tabletop.
 Artwork with a visible wall contact registers that part of the drawing to the
-skirting line. In particular the kitchen, fridge and desk preserve their radial
-scale while their drawn bases sit close to the wall. Bed and west-wall furniture
-positions are centered through the shared world layout.
+skirting line. The revised north wall uses one illustration scale for the door,
+counter, cupboard, fridge and Aiko's reference row. The wall artwork and
+character measurements come from the accepted preview and fit against the room's
+existing skirting line. Near the north wall, points on the same parallel row
+share a display depth. This profile blends with radial projection toward the
+adjacent walls independently of the camera yaw. The same projection is used
+for floor picking. Bed and west-wall furniture positions are centered through
+the shared world layout.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;

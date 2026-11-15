@@ -76,7 +76,7 @@ export class RoomView {
     readonly assets: AssetManifest,
   ) {
     this.motion = new RoomMotion(assets.layout);
-    const frontalClips = ['rest-neutral', 'room-walk-toward', 'room-walk-away'];
+    const frontalClips = ['idle', 'rest-neutral', 'room-walk-toward', 'room-walk-away'];
     const halfWidth = Math.max(
       1,
       ...frontalClips.flatMap((name) => {
@@ -111,7 +111,11 @@ export class RoomView {
       events: this.app.renderer.events,
     });
     this.app.stage.addChild(this.viewport);
-    this.camera = new RoomCamera(this.app.canvas, this.assets.layout);
+    this.camera = new RoomCamera(
+      this.app.canvas,
+      this.assets.layout,
+      this.assets.room.wall ? this.assets.closeCallDistance : undefined,
+    );
     this.picking = new RoomPicking(this.camera);
     this.world.sortableChildren = true;
     this.viewport.addChild(this.world);
@@ -268,7 +272,7 @@ export class RoomView {
     this.aiko.scale.set(
       (this.assets.layout.pet_height / this.assets.characterHeight) * projected.scale,
     );
-    this.aiko.zIndex = projection.yAt(projected.depth);
+    this.aiko.zIndex = projection.projectPoint(point).groundY;
     this.aiko.renderHeld(
       snapshot.game?.id === 'connect_four' ? this.tableGameFrame()?.chip : undefined,
     );
@@ -374,7 +378,7 @@ export class RoomView {
       x,
       Math.min(
         y + support + 24 * projection.fit,
-        Math.min(projection.height, projection.yAt(projection.nearDistance)),
+        Math.min(projection.height, projection.floorLimitAt(x)),
       ),
     );
     const held = this.picking.atDepth(

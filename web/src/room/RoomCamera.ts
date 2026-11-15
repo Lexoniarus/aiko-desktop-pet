@@ -24,9 +24,13 @@ export class RoomCamera {
     return performance.now() - this.lastDragAt < 350;
   }
   private controller = new AbortController();
-  constructor(canvas: HTMLCanvasElement, layout: RoomLayout) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    layout: RoomLayout,
+    calibratedCallDistance?: number,
+  ) {
     this.layout = layout;
-    this.projection = new RoomProjection(layout);
+    this.projection = new RoomProjection(layout, calibratedCallDistance);
     const options = { signal: this.controller.signal };
     canvas.addEventListener(
       'pointerdown',

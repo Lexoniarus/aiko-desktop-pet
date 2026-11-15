@@ -29,10 +29,13 @@ position and the last drawn walking frame while the simulation still
 reports walking. The next update resumes distance-based playback. A stop
 can finish the buffered travel, and a new action takes precedence.
 
-The bearing determines the horizontal screen position. Ground contact,
-scale and ground occlusion all use the same distance from the camera.
-Routes continue across wall boundaries. At equal floor depth, an object
-remains visible in front of Aiko.
+The bearing determines the horizontal screen position. The revised north
+wall uses one calibrated depth curve for foot position and sprite scale,
+with equal scale along the rear floor rows. Along a call ray the normal
+and close portions share a tangent at the transition. Ground occlusion
+uses the same floor projection. The Python gait still drives both position
+and frame phase, with two 620 ms steps in the front-facing cycle. Its pose
+durations are 112, 118, 195 and 195 ms per step.
 
 When the user calls a visible Aiko, she approaches along her current
 bearing. If she is offscreen, the target bearing is the camera's current

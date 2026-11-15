@@ -2,8 +2,9 @@ import { Container, Graphics, Sprite, Texture } from 'pixi.js';
 import {
   artworkAttachments,
   artworkFurniture,
+  artworkFurnitureFrame,
   artworkTabletopInset,
-  wallArtworkFloorInset,
+  artworkWallScale,
 } from './RoomArtwork';
 import type { RoomCamera } from './RoomCamera';
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
@@ -125,8 +126,9 @@ export class RoomScene {
   }
 
   private projectFurniture(projection: RoomProjection, item: FurniturePlacement) {
-    const inset = this.usesRoomArtwork ? wallArtworkFloorInset[item.id] : undefined;
-    const frame = furnitureFrame(projection, item, inset);
+    const frame = this.usesRoomArtwork
+      ? artworkFurnitureFrame(projection, item)
+      : furnitureFrame(projection, item);
     if (this.usesRoomArtwork && item.id === 'table') {
       frame.surface.y += frame.height * artworkTabletopInset;
     }
@@ -172,7 +174,9 @@ export class RoomScene {
         const prop = artworkAttachments[item.id]!;
         attachment.position.set(
           frame.x + frame.width * prop.offsetX,
-          frame.y + frame.height * (prop.offsetY - 1),
+          prop.wallOffset === undefined
+            ? frame.y + frame.height * ((prop.offsetY ?? 0) - 1)
+            : projection.floorLine + prop.wallOffset * artworkWallScale(projection),
         );
         attachment.scale.set((frame.width * prop.width) / attachment.texture.width);
         attachment.zIndex = frame.order + 0.000001;
