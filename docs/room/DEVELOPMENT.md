@@ -76,6 +76,10 @@ desk respectively. The stool and wall print are visual props. The open fridge is
 packaged for future use. The fridge tap still opens the current food UI.
 The revised coffee table has its own painted contact point for the board and
 chips, within the visible tabletop.
+Artwork with a visible wall contact registers that part of the drawing to the
+skirting line. In particular the kitchen, fridge and desk preserve their radial
+scale while their drawn bases sit close to the wall. Bed and west-wall furniture
+positions are centered through the shared world layout.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;

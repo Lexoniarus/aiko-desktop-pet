@@ -3,6 +3,7 @@ import {
   artworkAttachments,
   artworkFurniture,
   artworkTabletopInset,
+  wallArtworkFloorInset,
 } from './RoomArtwork';
 import type { RoomCamera } from './RoomCamera';
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
@@ -120,9 +121,13 @@ export class RoomScene {
   }
   furnitureFrame(id: string, projection: RoomProjection) {
     const item = this.furniture.find((entry) => entry.item.id === id)?.item;
-    if (!item) return undefined;
-    const frame = furnitureFrame(projection, item);
-    if (this.usesRoomArtwork && id === 'table') {
+    return item && this.projectFurniture(projection, item);
+  }
+
+  private projectFurniture(projection: RoomProjection, item: FurniturePlacement) {
+    const inset = this.usesRoomArtwork ? wallArtworkFloorInset[item.id] : undefined;
+    const frame = furnitureFrame(projection, item, inset);
+    if (this.usesRoomArtwork && item.id === 'table') {
       frame.surface.y += frame.height * artworkTabletopInset;
     }
     return frame;
@@ -158,7 +163,7 @@ export class RoomScene {
       }
     }
     for (const { view, item, attachment } of this.furniture) {
-      const frame = furnitureFrame(projection, item);
+      const frame = this.projectFurniture(projection, item);
       view.position.set(frame.x, frame.y);
       const flipX = frame.flipX && !this.usesRoomArtwork;
       view.scale.set(frame.scale * (flipX ? -1 : 1), frame.scale);

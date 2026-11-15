@@ -3,10 +3,18 @@ import type { FurniturePlacement, RoomLayout } from './RoomLayout';
 /** Visible board contact measured down from the rear rim of the table sprite. */
 export const artworkTabletopInset = 0.12;
 
+/** The front foot lies this fraction of the sprite's height below the wall line. */
+export const wallArtworkFloorInset: Partial<Record<string, number>> = {
+  kitchen: 0.23,
+  fridge: 0.045,
+  bed: 0.59,
+  desk: 0.33,
+};
+
 export const artworkAttachments: Partial<
   Record<string, { asset: string; offsetX: number; offsetY: number; width: number }>
 > = {
-  kitchen: { asset: 'kitchenUpper', offsetX: -0.04, offsetY: -0.57, width: 1 },
+  kitchen: { asset: 'kitchenUpper', offsetX: -0.04, offsetY: -0.07, width: 1 },
   desk: { asset: 'laptop', offsetX: 0.17, offsetY: 0.14, width: 0.22 },
 };
 
@@ -22,8 +30,6 @@ export function artworkFurniture(
         return { ...item, height: 59 };
       case 'desk':
         return { ...item, height: 57 };
-      case 'shelf':
-        return { ...item, z: desk.z + 100 };
       case 'plant':
         return { ...item, height: 52 };
       default:

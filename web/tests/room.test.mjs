@@ -14,7 +14,7 @@ import {
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
-import { artworkFurniture } from '../src/room/RoomArtwork.ts';
+import { artworkFurniture, wallArtworkFloorInset } from '../src/room/RoomArtwork.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
@@ -98,6 +98,28 @@ test('room artwork keeps the existing collision and table surface anchors', () =
   assert.ok(Math.abs(paintedTable.width - (600 / 250) * paintedTable.height) < 1e-8);
   assert.equal(artwork.find(({ id }) => id === 'stool').blocking, false);
   assert.equal(artwork.find(({ id }) => id === 'wallArt').blocking, false);
+});
+
+test('the bed is centered and painted wall furniture meets the level floor', () => {
+  const bed = layout.furniture.find(({ id }) => id === 'bed');
+  const desk = layout.furniture.find(({ id }) => id === 'desk');
+  const projection = new RoomProjection(layout);
+  projection.update(1440, 840, Math.PI);
+  const bedFrame = furnitureFrame(projection, bed, wallArtworkFloorInset.bed);
+  assert.equal(bedFrame.x, projection.width / 2);
+  assert.ok(
+    Math.abs(bedFrame.y - bedFrame.height * 0.59 - projection.floorLine) < 1e-8,
+  );
+  assert.ok(Math.abs(desk.z - layout.depth / 2) <= 25);
+  projection.update(1440, 840, 0);
+  for (const id of ['kitchen', 'fridge']) {
+    const item = layout.furniture.find((piece) => piece.id === id);
+    const normal = furnitureFrame(projection, item);
+    const painted = furnitureFrame(projection, item, wallArtworkFloorInset[id]);
+    assert.ok(projection.floorLine <= painted.y && painted.y < normal.y);
+    assert.equal(painted.width, normal.width);
+    assert.equal(painted.order, normal.order);
+  }
 });
 
 test('feeding pan stays at room scale and a held drag pauses camera following', (t) => {
