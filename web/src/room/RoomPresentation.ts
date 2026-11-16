@@ -25,21 +25,16 @@ export function furnitureSupport(
   return point;
 }
 
-export function furnitureFrame(
-  projection: RoomProjection,
-  item: FurniturePlacement,
-  wallFloorInset?: number,
-) {
+export function furnitureFrame(projection: RoomProjection, item: FurniturePlacement) {
   const layout = projection.layout;
   const support = furnitureSupport(layout, item);
   const ground = projection.projectPoint(support);
   const scale = (item.height * ground.scale) / item.crop[3];
   const surface = projection.projectPoint(support, item.height);
-  const floorInset = item.id === 'door' ? 0 : wallFloorInset;
   const y =
-    floorInset === undefined
-      ? ground.y - (item.elevation ?? 0) * ground.scale
-      : projection.floorLine + item.height * ground.scale * floorInset;
+    item.id === 'door'
+      ? projection.floorLine
+      : ground.y - (item.elevation ?? 0) * ground.scale;
   return {
     x: ground.x,
     y,

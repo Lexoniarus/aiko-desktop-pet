@@ -56,17 +56,16 @@ session, and the owner explicitly prohibits visible test windows.
 ## Room projection
 
 The flat panorama uses physical bearing and distance for the room layout.
-The normal horizon is at 30% of the usable scene height and the eye height
-is 95 room units, with Aiko at 100. A single distance-dependent scale sets
-sprite heights, floor contact, tabletop elevation and inverse floor picking.
+The normal horizon is at 30% of the usable scene height. Bearing determines
+horizontal screen position. One radial curve sets sprite scale, ground
+contact, tabletop elevation and inverse floor picking across all walls.
 All four frontal wall strips meet one level skirting and floor line at the
 projected distance of the farthest corner. The revised balcony window meets that
 floor line at the center of the east strip. The painted wooden floor repeats as
-one mirrored strip across the panorama. Its level rows gradually open toward
-the foreground. The door sits on the floor line.
-Standing furniture keeps its authored aspect ratio and projected support point.
-Aiko's feet and scale follow her radius from the viewer, with the rectangular
-room and furniture footprints determining which routes are open. Connect Four
+one mirrored strip across the panorama. It shares the camera's vertical
+transform with the projected support points, so each horizontal seam marks a
+constant radius, including in the game framing. The rectangular room and
+furniture footprints determine which routes are open. Connect Four
 anchors the board and chip scale to the projected table surface and uses the
 table's depth order.
 
@@ -77,18 +76,17 @@ desk respectively. The stool and wall print are visual props. The open fridge is
 packaged for future use. The fridge tap still opens the current food UI.
 The revised coffee table has its own painted contact point for the board and
 chips, within the visible tabletop.
-Artwork with a visible wall contact registers that part of the drawing to the
-skirting line. The revised north wall uses one illustration scale for the door,
-counter, cupboard, fridge and Aiko's reference row. The wall artwork and
-character measurements come from the accepted preview and fit against the room's
-existing skirting line. Near the north wall, points on the same parallel row
-share a display depth. This profile blends with radial projection toward the
-adjacent walls independently of the camera yaw. The same projection is used
-for floor picking. With the floor artwork installed, the north approach uses
-the painted row intervals between the kitchen and the front stop. Foot position
-and character growth follow this curve at the simulation's existing 620 ms step
-cadence, with continuous joins to the rear row and close-call path. Bed and
-west-wall furniture positions are centered through the shared world layout.
+The door, window, wall decorations and upper cupboard retain their wall
+anchors. The counter, fridge and other standing furniture use their authored
+proportions at the projected support points. Aiko, the free-standing table
+and floor items sort by their ground contacts.
+The radial curve for the revised room follows the accepted painted row intervals
+from radius 200 at the kitchen to radius 131 at the front stop. It joins the
+skirting at the farthest corner and continues to the close pose at radius 70.
+The simulation retains its 620 ms step cadence. In a narrow view, the close
+pose also fits Aiko's frontal silhouette inside the viewport. Floor picking
+inverts the same projection out to the rectangular room boundary along the
+selected bearing. The original V16 artwork uses the original radial perspective.
 
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;
@@ -104,7 +102,7 @@ outside Git. The resulting delivery includes a starter folder and runtime ZIP.
 Pass `--room-art <artwork directory>` for the revised room. Use the prepared
 runtime PNGs, with transparent furniture and a plain wall strip. Add the accepted
 wooden panorama artwork as `floor.png` in the same directory to include the
-painted floor and its matching approach curve. The builder records the artwork
+painted floor. The builder records the artwork
 fingerprint in the package manifest.
 `--prototype <v16 archive>` continues to build the v16 artwork. Keep the
 authoring files and source notes outside Git.

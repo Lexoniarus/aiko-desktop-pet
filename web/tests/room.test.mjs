@@ -11,14 +11,11 @@ import {
   validatePublishedPackage,
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
+import { RoomPicking } from '../src/room/RoomPicking.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
-import {
-  artworkFurniture,
-  artworkFurnitureFrame,
-  wallArtworkFloorInset,
-} from '../src/room/RoomArtwork.ts';
+import { artworkFurniture, artworkFurnitureFrame } from '../src/room/RoomArtwork.ts';
 import { objectGroundOrder } from '../src/room/RoomDepthOrder.ts';
 import { canPlace, worldPoint, worldPolar } from '../src/room/RoomLayout.ts';
 import {
@@ -104,25 +101,9 @@ test('room artwork keeps the existing collision and table surface anchors', () =
   assert.equal(artwork.find(({ id }) => id === 'wallArt').blocking, false);
 });
 
-test('the bed is centered and painted wall furniture meets the level floor', () => {
-  const bed = layout.furniture.find(({ id }) => id === 'bed');
-  const desk = layout.furniture.find(({ id }) => id === 'desk');
-  const projection = new RoomProjection(layout);
+test('standing artwork meets its projected support and the door meets the skirting', () => {
+  const projection = new RoomProjection(layout, 70);
   projection.update(1440, 840, Math.PI);
-  const bedFrame = furnitureFrame(projection, bed, wallArtworkFloorInset.bed);
-  assert.equal(bedFrame.x, projection.width / 2);
-  assert.ok(
-    Math.abs(bedFrame.y - bedFrame.height * 0.59 - projection.floorLine) < 1e-8,
-  );
-  assert.ok(Math.abs(desk.z - layout.depth / 2) <= 25);
-  const north = new RoomProjection(layout, 70);
-  north.update(1440, 840, 0);
-  const common = north.projectAiko({ x: 350, depth: 95 }, 70, 30);
-  for (const x of [120, 350, 540]) {
-    const actor = north.projectAiko({ x, depth: 95 }, 70, 30);
-    assert.ok(Math.abs(actor.scale - common.scale) < 1e-8);
-    assert.ok(Math.abs(actor.groundY - common.groundY) < 1e-8);
-  }
   const images = Object.fromEntries(
     [...layout.furniture.map(({ asset }) => asset), 'stool', 'wallArt'].map((asset) => [
       asset,
@@ -130,32 +111,61 @@ test('the bed is centered and painted wall furniture meets the level floor', () 
     ]),
   );
   const artwork = artworkFurniture(layout, images);
-  for (const [id, height, offset] of [
-    ['door', 120.1725, 0],
-    ['kitchen', 67, 38],
-    ['fridge', 120.1725, 36],
+  for (const id of ['kitchen', 'fridge', 'bed', 'desk', 'table', 'plant', 'stool']) {
+    const item = artwork.find((entry) => entry.id === id);
+    const frame = artworkFurnitureFrame(projection, item);
+    const ground = projection.projectPoint(furnitureSupport(layout, item));
+    assert.equal(frame.y, ground.groundY);
+    assert.equal(frame.height, item.height * ground.scale);
+  }
+  const bed = artwork.find(({ id }) => id === 'bed');
+  const desk = artwork.find(({ id }) => id === 'desk');
+  assert.equal(artworkFurnitureFrame(projection, bed).x, projection.width / 2);
+  assert.ok(Math.abs(desk.z - layout.depth / 2) <= 25);
+  const door = artwork.find(({ id }) => id === 'door');
+  assert.equal(artworkFurnitureFrame(projection, door).y, projection.floorLine);
+});
+
+test('circle walking keeps sprite height and floor row through wall seams and the panorama wrap', () => {
+  const projection = new RoomProjection(layout, 70);
+  const corner = Math.atan2(layout.width, layout.depth);
+  for (const [width, height, fit, horizon] of [
+    [1100, 544, 544 / 900, 163.2],
+    [393, 852, 0.4, 330],
   ]) {
-    const frame = artworkFurnitureFrame(
-      north,
-      artwork.find((item) => item.id === id),
-    );
-    assert.ok(
-      Math.abs(frame.height / (common.scale * layout.pet_height) - height / 121.275) <
-        1e-8,
-    );
-    assert.ok(
-      Math.abs(frame.y - north.floorLine - (offset * north.floorLine) / 350) < 1e-8,
-    );
+    for (const radius of [180, 200, 340]) {
+      projection.update(width, height, 0, fit, horizon);
+      const baseline = projection.projectAiko(
+        worldPoint(layout, corner, radius),
+        70,
+        31,
+      );
+      const row =
+        (baseline.groundY - projection.floorBounds.top) / projection.floorBounds.height;
+      for (const seam of [-corner, corner, Math.PI]) {
+        for (const side of [-0.3, -0.001, 0.001, 0.3]) {
+          projection.update(width, height, seam + side, fit, horizon);
+          const point = worldPoint(layout, seam + side, radius);
+          const actor = projection.projectAiko(point, 70, 31);
+          const ground = projection.projectPoint(point);
+          const { top, height: floorHeight } = projection.floorBounds;
+          assert.ok(Math.abs(actor.scale - baseline.scale) < 1e-8);
+          assert.ok(Math.abs(actor.groundY - baseline.groundY) < 1e-8);
+          assert.equal(actor.groundY, ground.groundY);
+          assert.ok(Math.abs((ground.groundY - top) / floorHeight - row) < 1e-8);
+        }
+      }
+    }
   }
 });
 
-test('the calibrated floor projects and picks the same point across the north boundary', () => {
+test('the calibrated floor picks free drops and rejects furniture and wall bounds', () => {
   const projection = new RoomProjection(layout, 70);
   projection.update(1240, 544, -0.12);
-  for (const bearing of [-1.12, -0.72, 0, 0.75, 1.16]) {
+  for (const bearing of [-3.1, -1.12, -0.72, 0, 0.75, 1.16, 2.8, 3.1]) {
     for (const radius of [150, 215, 285]) {
       const point = worldPoint(layout, bearing, radius);
-      for (const elevation of [0, 40]) {
+      for (const elevation of [0, 40, 190]) {
         const frame = projection.projectPoint(point, elevation);
         const restored = projection.intersectFloor(frame.x, frame.y, elevation);
         assert.ok(
@@ -164,6 +174,13 @@ test('the calibrated floor projects and picks the same point across the north bo
       }
     }
   }
+  const picking = new RoomPicking({ projection, layout });
+  const free = projection.projectPoint({ x: 400, depth: 100 });
+  assert.ok(picking.resolveDrop(free.x, free.y));
+  const blocked = projection.projectPoint({ x: 350, depth: 25 });
+  assert.equal(picking.resolveDrop(blocked.x, blocked.y), undefined);
+  const outside = projection.projectPoint({ x: 400, depth: -30 });
+  assert.equal(projection.intersectFloor(outside.x, outside.y), undefined);
 });
 
 test('north approach shares a continuous curve and fits the portrait head at the destination', () => {
@@ -188,41 +205,33 @@ test('north approach shares a continuous curve and fits the portrait head at the
       assert.ok(right > 0 && left > 0);
       assert.ok(Math.abs(right / left - 1) < 0.001);
     }
-    for (const radius of [200, 168, 132, 110, 85]) {
-      const sample = frame(radius);
-      const progress =
-        (sample.groundY - rear.groundY) / (arrival.groundY - rear.groundY);
-      const growth = (sample.scale - rear.scale) / (arrival.scale - rear.scale);
-      assert.ok(Math.abs(progress - growth) < 1e-8);
-    }
+    assert.ok(rear.scale < front.scale && front.scale <= arrival.scale);
   }
 });
 
 test('the painted floor matches the approved north walk at each stop', () => {
-  const projection = new RoomProjection(layout, 70, true);
+  const projection = new RoomProjection(layout, 70);
   projection.update(1100, 544, 0);
   const frame = (depth) => projection.projectAiko({ x: 400, depth }, 70, 31);
-  for (const [depth, foot] of [
-    [100, 319.3672661654135],
-    [134.5, 387.27576234486094],
-    [169, 473.2372225428042],
+  for (const [depth, foot, spriteHeight] of [
+    [100, 319.3672661654135, 212.73235099514345],
+    [134.5, 387.27576234486094, 265.6418437322244],
+    [169, 473.2372225428042, 332.61692799846103],
   ]) {
     const actor = frame(depth);
     assert.ok(Math.abs(actor.groundY - foot) < 1e-8);
+    assert.ok(Math.abs(actor.scale * layout.pet_height - spriteHeight) < 1e-8);
     const point = projection.intersectFloor(actor.x, actor.groundY);
     assert.ok(Math.abs(point.depth - depth) < 1e-7);
   }
 
-  for (const depth of [95, 100, 169]) {
+  for (const depth of [100, 169]) {
     for (const key of ['groundY', 'scale']) {
       const left = frame(depth)[key] - frame(depth - 0.0001)[key];
       const right = frame(depth + 0.0001)[key] - frame(depth)[key];
       assert.ok(left > 0 && right > 0);
       assert.ok(Math.abs(left / right - 1) < 0.001);
     }
-  }
-  for (const x of [120, 350, 540]) {
-    assert.equal(projection.projectPoint({ x, depth: 95 }).groundY, frame(95).groundY);
   }
 
   // A taller screen may cap the close sprite without shifting its room walk.
@@ -295,7 +304,7 @@ test('wall furniture stays behind Aiko on free floor while its footprint stays b
 });
 
 test('table and board share the floor order between front and rear walking positions', () => {
-  const projection = new RoomProjection(layout);
+  const projection = new RoomProjection(layout, 70);
   projection.update(1024, 768, Math.PI / 2);
   const table = furnitureFrame(
     projection,
@@ -315,7 +324,7 @@ test('table and board share the floor order between front and rear walking posit
 });
 
 test('ground objects cover Aiko only when nearer or on the same depth', () => {
-  const projection = new RoomProjection(layout);
+  const projection = new RoomProjection(layout, 70);
   projection.update(1024, 768, 0);
   const ground = projection.projectPoint(worldPoint(layout, 0.4, 180)).groundY;
   for (const [distance, covered] of [
@@ -330,7 +339,7 @@ test('ground objects cover Aiko only when nearer or on the same depth', () => {
 });
 
 test('food drag has one floor line and scale while vertical movement changes height', () => {
-  const projection = new RoomProjection(layout);
+  const projection = new RoomProjection(layout, 70);
   let scale;
   for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4]) {
     projection.update(1024, 768, yaw);

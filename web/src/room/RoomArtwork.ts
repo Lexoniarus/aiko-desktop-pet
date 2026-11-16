@@ -1,4 +1,3 @@
-import { northWallArtwork } from './RoomDepthCurve.ts';
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
 import { furnitureFrame } from './RoomPresentation.ts';
 import type { RoomProjection } from './RoomProjection';
@@ -6,11 +5,15 @@ import type { RoomProjection } from './RoomProjection';
 /** Visible board contact measured down from the rear rim of the table sprite. */
 export const artworkTabletopInset = 0.12;
 
-/** The front foot lies this fraction of the sprite's height below the wall line. */
-export const wallArtworkFloorInset: Partial<Record<string, number>> = {
-  bed: 0.59,
-  desk: 0.33,
-};
+const northWallArtwork = {
+  wallHeight: 350,
+  pixelsPerUnit: 2.2,
+  doorHeight: 120.1725,
+  fridgeHeight: 120.1725,
+  kitchenHeight: 67,
+  cupboardBottom: 194,
+  cupboardWidth: 0.88,
+} as const;
 
 export const artworkAttachments: Partial<
   Record<
@@ -41,20 +44,22 @@ export function artworkFurnitureFrame(
   projection: RoomProjection,
   item: FurniturePlacement,
 ) {
-  const frame = furnitureFrame(projection, item, wallArtworkFloorInset[item.id]);
-  if (item.wall !== 'north') return frame;
-  const wallScale = artworkWallScale(projection);
-  const height = item.height * northWallArtwork.pixelsPerUnit * wallScale;
+  const frame = furnitureFrame(projection, item);
+  if (item.id !== 'door' && (!item.wall || !item.elevation)) return frame;
+  // The mounted art retains its drawing scale independently of the floor.
+  const wallScale =
+    item.id === 'door'
+      ? northWallArtwork.pixelsPerUnit * artworkWallScale(projection)
+      : projection.angularScale / frame.surface.depth;
+  const height = item.height * wallScale;
   const scale = height / item.crop[3];
-  const offset =
-    item.id === 'kitchen'
-      ? northWallArtwork.kitchenFloorOffset
-      : item.id === 'fridge'
-        ? northWallArtwork.fridgeFloorOffset
-        : 0;
+  const y = item.elevation
+    ? projection.yAt(Infinity) +
+      (projection.layout.camera_height - item.elevation) * wallScale
+    : projection.floorLine;
   return {
     ...frame,
-    y: projection.floorLine + offset * wallScale,
+    y,
     height,
     width: item.crop[2] * scale,
     scale,

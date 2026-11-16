@@ -202,15 +202,21 @@ export class RoomScene {
     if (this.paintedFloor) {
       const tile = this.paintedFloor;
       const repeatWidth = Math.PI * projection.angularScale;
-      tile.visible = floorHeight > 0;
-      tile.position.set(0, floorLine);
+      const art = projection.floorBounds;
+      const artEnd = art.top + art.height;
+      tile.visible = floorHeight > 0 && artEnd > 0;
+      tile.position.set(0, art.top);
       tile.width = width;
-      tile.height = floorHeight;
+      tile.height = art.height;
       tile.tileScale.set(
         repeatWidth / tile.texture.width,
-        floorHeight / tile.texture.height,
+        art.height / tile.texture.height,
       );
       tile.tilePosition.set(origin - repeatWidth / 4, 0);
+      // A wide game framing can reveal space beyond the last painted row.
+      const foreground = Math.max(0, artEnd, floorLine);
+      if (foreground < height)
+        floor.rect(0, foreground, width, height - foreground).fill(0xd9b9aa);
       return;
     }
     floor.rect(0, floorLine, width, floorHeight).fill(0xeac6a7);

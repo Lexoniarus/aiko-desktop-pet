@@ -4,8 +4,11 @@ import {
   type RoomLayout,
   type RoomPoint,
 } from './RoomLayout.ts';
-import { floorCurve, northDepth, northWallBlend } from './RoomDepthCurve.ts';
+import { closeCrop, depthReferenceHeight, RoomDepthCurve } from './RoomDepthCurve.ts';
 import { roomPresentation } from './RoomPresentation.ts';
+
+const referenceFit = depthReferenceHeight / roomPresentation.designHeight;
+const referenceHorizon = depthReferenceHeight * roomPresentation.horizon;
 
 /** Flat wall artwork and one camera-relative floor shared by actors and objects. */
 export class RoomProjection {
@@ -19,21 +22,30 @@ export class RoomProjection {
   private readonly farInverse: number;
   private readonly nearInverse: number;
   private readonly calibratedCallDistance?: number;
-  private readonly paintedFloor: boolean;
+  private readonly depthCurve?: RoomDepthCurve;
   private horizon = 0;
   private magnification = 1;
 
-  constructor(
-    layout: RoomLayout,
-    calibratedCallDistance?: number,
-    paintedFloor = false,
-  ) {
+  constructor(layout: RoomLayout, calibratedCallDistance?: number) {
     this.layout = layout;
     this.calibratedCallDistance = calibratedCallDistance;
-    this.paintedFloor = paintedFloor;
     this.farDistance = Math.hypot(layout.width / 2, layout.depth / 2);
     this.farInverse = this.inverseDepth(this.farDistance);
     this.nearInverse = this.inverseDepth(this.nearDistance);
+    if (calibratedCallDistance !== undefined) {
+      const floorY =
+        referenceHorizon +
+        layout.camera_height *
+          roomPresentation.focalLength *
+          referenceFit *
+          this.farInverse;
+      this.depthCurve = new RoomDepthCurve(
+        this.farDistance,
+        this.nearDistance + 1,
+        calibratedCallDistance,
+        floorY,
+      );
+    }
   }
 
   get nearDistance(): number {
@@ -41,7 +53,16 @@ export class RoomProjection {
   }
 
   get floorLine(): number {
-    return Math.max(0, Math.min(this.height, this.yAt(this.farDistance)));
+    return Math.max(0, Math.min(this.height, this.floorBounds.top));
+  }
+
+  /** The floor raster and the projected radius use the same camera transform. */
+  get floorBounds(): { top: number; height: number } {
+    const top = this.yAt(this.farDistance);
+    const height = this.depthCurve
+      ? (depthReferenceHeight - this.depthCurve.floorY) * (this.fit / referenceFit)
+      : this.height - top;
+    return { top, height };
   }
 
   get fit(): number {
@@ -91,43 +112,25 @@ export class RoomProjection {
   }
 
   scaleAt(distance: number): number {
-    return this.angularScale * this.inverseDepth(distance);
+    return this.groundAt(distance).scale;
   }
 
   yAt(distance: number, elevation = 0): number {
-    return (
-      this.horizon + (this.layout.camera_height - elevation) * this.scaleAt(distance)
-    );
+    const { groundY, scale } = this.groundAt(distance);
+    return groundY - elevation * scale;
   }
 
-  private blendNorth(
-    radius: number,
-    bearing: number,
-    radial: {
-      groundY: number;
-      scale: number;
-    },
-    maxScale = Infinity,
-  ) {
-    if (this.calibratedCallDistance === undefined) return radial;
-    const weight = northWallBlend(bearing);
-    if (weight === 0) return radial;
-    const north = northDepth({
-      radius,
-      bearing,
-      wallAxis: this.layout.depth / 2,
-      frontRadius: this.nearDistance + 1,
-      closeRadius: this.calibratedCallDistance,
-      wallLine: this.floorLine,
-      viewportHeight: this.height,
-      petHeight: this.layout.pet_height,
-      maxScale,
-      paintedFloor: this.paintedFloor,
-    });
-    return {
-      groundY: radial.groundY + (north.groundY - radial.groundY) * weight,
-      scale: radial.scale + (north.scale - radial.scale) * weight,
-    };
+  private groundAt(distance: number): { groundY: number; scale: number } {
+    if (this.depthCurve && Number.isFinite(distance)) {
+      const frame = this.depthCurve.at(distance);
+      const fit = this.fit / referenceFit;
+      return {
+        groundY: this.horizon + (frame.groundY - referenceHorizon) * fit,
+        scale: (frame.spriteHeight / this.layout.pet_height) * fit,
+      };
+    }
+    const scale = this.angularScale * this.inverseDepth(distance);
+    return { groundY: this.horizon + this.layout.camera_height * scale, scale };
   }
 
   projectPoint(
@@ -135,10 +138,7 @@ export class RoomProjection {
     height = 0,
   ): { x: number; y: number; depth: number; scale: number; groundY: number } {
     const { distance: depth, bearing } = worldPolar(this.layout, point);
-    const { scale, groundY } = this.blendNorth(depth, bearing, {
-      scale: this.scaleAt(depth),
-      groundY: this.yAt(depth),
-    });
+    const { scale, groundY } = this.groundAt(depth);
     return {
       x: this.screenX(bearing),
       y: groundY - height * scale,
@@ -152,10 +152,21 @@ export class RoomProjection {
     const projected = this.projectPoint(point);
     const maxScale = Math.max(1, this.width - 24) / (2 * frontalHalfWidth);
     if (this.calibratedCallDistance !== undefined) {
-      const radius = projected.depth;
-      const bearing = this.bearing(point);
-      const radial = this.calibratedRadialAiko(radius, callDistance, maxScale);
-      const { groundY, scale } = this.blendNorth(radius, bearing, radial, maxScale);
+      const front = this.nearDistance + 1;
+      const close = this.calibratedCallDistance;
+      const progress = Math.max(
+        0,
+        Math.min(1, (front - projected.depth) / (front - close)),
+      );
+      const scale = Math.min(projected.scale, maxScale);
+      const closeScale = this.scaleAt(close);
+      // Keep the shared floor contact through the ordinary walk. Only the
+      // cropped close pose needs a vertical correction for narrow screens.
+      const missingHeight =
+        (closeScale - Math.min(closeScale, maxScale)) * this.layout.pet_height;
+      const groundY =
+        projected.groundY -
+        closeCrop * missingHeight * progress ** 2 * (3 - 2 * progress);
       return { ...projected, groundY, y: groundY, scale };
     }
     const near = this.nearDistance;
@@ -179,49 +190,9 @@ export class RoomProjection {
     return { ...projected, y: groundY, groundY, scale };
   }
 
-  private calibratedRadialAiko(radius: number, closeRadius: number, maxScale: number) {
-    const front = this.nearDistance + 1;
-    const frontScale = this.scaleAt(front);
-    if (radius >= front) {
-      return {
-        groundY: this.yAt(radius),
-        scale: Math.min(this.scaleAt(radius), maxScale),
-      };
-    }
-    const span = front - closeRadius;
-    const distance = front - Math.max(closeRadius, radius);
-    const closeScale = Math.min(this.scaleAt(this.nearDistance * 0.8), maxScale);
-    const startScale = Math.min(frontScale, maxScale);
-    const scaleSlope = Math.min(
-      frontScale / front,
-      (3 * (closeScale - startScale)) / span,
-    );
-    const scale = floorCurve(startScale, closeScale, span, distance, scaleSlope, 0);
-    const frontY = this.yAt(front);
-    const frontSlope = (this.layout.camera_height * frontScale) / front;
-    const closeY = Math.max(
-      frontY + (frontSlope * span) / 3,
-      this.height + 0.26 * this.layout.pet_height * closeScale,
-    );
-    const averageSlope = (closeY - frontY) / span;
-    const endSlope = Math.min(averageSlope * 1.35, 3 * averageSlope - frontSlope);
-    const groundY = floorCurve(
-      frontY,
-      closeY,
-      span,
-      distance,
-      frontSlope,
-      Math.max(0, endSlope),
-    );
-    return { groundY, scale };
-  }
-
   intersectFloor(x: number, y: number, height = 0): RoomPoint | undefined {
     const bearing = this.screenBearing(x);
-    if (
-      this.calibratedCallDistance !== undefined &&
-      northWallBlend(Math.atan2(Math.sin(bearing), Math.cos(bearing))) > 0
-    ) {
+    if (this.depthCurve) {
       return this.intersectCalibratedFloor(bearing, y, height);
     }
     const divisor = (this.layout.camera_height - height) * this.angularScale;
@@ -237,11 +208,14 @@ export class RoomProjection {
       this.layout.width / (2 * Math.abs(Math.sin(bearing))),
       this.layout.depth / (2 * Math.abs(Math.cos(bearing))),
     );
-    const screenY = (radius: number) =>
-      this.projectPoint(this.pointAtBearing(bearing, radius), elevation).y;
+    const screenY = (radius: number) => this.yAt(radius, elevation);
     const nearY = screenY(near),
       farY = screenY(far);
-    if (y < Math.min(nearY, farY) - 1e-8 || y > Math.max(nearY, farY) + 1e-8) {
+    if (
+      Math.abs(nearY - farY) < 1e-8 ||
+      y < Math.min(nearY, farY) - 1e-8 ||
+      y > Math.max(nearY, farY) + 1e-8
+    ) {
       return undefined;
     }
     for (let i = 0; i < 42; i++) {
@@ -252,10 +226,8 @@ export class RoomProjection {
     return this.pointAtBearing(bearing, (near + far) / 2);
   }
 
-  floorLimitAt(x: number): number {
-    return this.projectPoint(
-      this.pointAtBearing(this.screenBearing(x), this.nearDistance),
-    ).groundY;
+  get floorLimit(): number {
+    return this.yAt(this.nearDistance);
   }
 
   foodPlacement(x: number, y: number): { point: RoomPoint; height: number } {

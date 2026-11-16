@@ -115,7 +115,6 @@ export class RoomView {
       this.app.canvas,
       this.assets.layout,
       this.assets.room.wall ? this.assets.closeCallDistance : undefined,
-      Boolean(this.assets.room.floor),
     );
     this.picking = new RoomPicking(this.camera);
     this.world.sortableChildren = true;
@@ -379,7 +378,7 @@ export class RoomView {
       x,
       Math.min(
         y + support + 24 * projection.fit,
-        Math.min(projection.height, projection.floorLimitAt(x)),
+        Math.min(projection.height, projection.floorLimit),
       ),
     );
     const held = this.picking.atDepth(
