@@ -72,10 +72,12 @@ table's depth order.
 The revised room artwork uses tight crops for the standing furniture and
 preserves the grid's support points and collision footprints. The upper kitchen
 module and laptop are separate sprites attached to the projected lower unit and
-desk respectively. The stool and wall print are visual props. The open fridge is
-packaged for future use. The fridge tap still opens the current food UI.
-The revised coffee table has its own painted contact point for the board and
-chips, within the visible tabletop.
+desk respectively. The stool sits 70 room units in front of the desk edge and is
+a visual prop, as is the wall print. The open fridge is packaged for future use.
+The fridge tap still opens the current food UI.
+The coffee table sits 190 room units from the east wall, centered on the window.
+Its layout position sets the collision footprint and the approach for Connect
+Four. The board and chips use a painted contact point within the tabletop.
 The door, window, wall decorations and upper cupboard retain their wall
 anchors. The counter, fridge and other standing furniture use their authored
 proportions at the projected support points. Aiko, the free-standing table

@@ -93,7 +93,7 @@ export function artworkFurniture(
       ...desk,
       id: 'stool',
       asset: 'stool',
-      x: desk.x + desk.width / 2 + 25,
+      x: desk.x + desk.width / 2 + 70,
       z: desk.z + 10,
       height: 32,
       wall: null,

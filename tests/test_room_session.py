@@ -212,7 +212,7 @@ class RoomSessionTests(unittest.TestCase):
         self.assertIsNone(session.games.sequence)
         self.advance_until(lambda: session.games.sequence is not None)
         self.assertEqual(room.movement.points[0], transition)
-        self.assertEqual(room.position, RoomPoint(730, 396.25))
+        self.assertEqual(room.position, RoomPoint(675, 396.25))
 
     def test_motion_snapshot_carries_the_duration_used_by_the_simulation(self) -> None:
         locomotion = self.endpoint.session.room.locomotion
@@ -283,7 +283,7 @@ class RoomSessionTests(unittest.TestCase):
         self.command("settings", auto_walk=False, spontaneous_talk=False,
                      auto_routine=False)
         room = self.endpoint.session.room
-        start = RoomPoint(610, 300)
+        start = RoomPoint(540, 300)
         goal = RoomPoint(740, 300)
         room.world.locate_in_room(replace(room.spatial, pet=start))
         self.command("call", x=goal.x, depth=goal.depth)
@@ -297,7 +297,7 @@ class RoomSessionTests(unittest.TestCase):
         self.command("settings", auto_walk=False, spontaneous_talk=False,
                      auto_routine=False)
         room = self.endpoint.session.room
-        start = RoomPoint(610, 300)
+        start = RoomPoint(540, 300)
         room.world.locate_in_room(replace(room.spatial, pet=start))
         self.command("place", definition="apple", x=470, depth=100)
         objects = room.world.snapshot().objects
@@ -313,7 +313,7 @@ class RoomSessionTests(unittest.TestCase):
             ))
             if self.endpoint.session.games.sequence is not None:
                 break
-        self.assertEqual(room.position, RoomPoint(730, 396.25))
+        self.assertEqual(room.position, RoomPoint(675, 396.25))
         self.assertIsNotNone(self.endpoint.session.games.sequence)
         self.command("game_close")
         self.command("suspend")
@@ -789,15 +789,15 @@ class RoomSessionTests(unittest.TestCase):
                     "protocol": 2,
                     "requestId": 500,
                     "name": "place",
-                    "args": {"definition": "horoscope_book", "x": 665, "depth": 300},
+                    "args": {"definition": "horoscope_book", "x": 610, "depth": 300},
                 })
             )
         )
         self.assertFalse(rejected["ok"])
         self.assertEqual(session.room.world.snapshot().objects, before.objects)
-        item = self.command("place", definition="horoscope_book", x=600, depth=300)[
+        item = self.command("place", definition="horoscope_book", x=550, depth=300)[
             "snapshot"]["objects"][0]
-        self.assertEqual(item["position"]["x"], 600)
+        self.assertEqual(item["position"]["x"], 550)
         self.assertEqual(session.room.spatial.depth_for(item["instance_id"]), 300)
 
     def test_room_effects_never_expose_a_dealt_hole_card(self) -> None:
@@ -952,14 +952,14 @@ class RoomGeometryTests(unittest.TestCase):
 
         geometry = RoomGeometry(load_room_layout())
         navigator = RoomNavigator(geometry)
-        route = navigator.find_route(RoomPoint(610, 300), RoomPoint(740, 300))
+        route = navigator.find_route(RoomPoint(540, 300), RoomPoint(740, 300))
         self.assertIsNotNone(route)
         assert route is not None
         self.assertGreater(len(route.points), 2)
         for start, end in zip(route.points, route.points[1:]):
             self.assertTrue(navigator.clear_segment(start, end))
         self.assertIsNone(
-            navigator.find_route(RoomPoint(610, 300), RoomPoint(665, 300))
+            navigator.find_route(RoomPoint(540, 300), RoomPoint(610, 300))
         )
 
     def test_room_walk_continues_through_each_corner_and_can_stop(self) -> None:

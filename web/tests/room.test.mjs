@@ -105,7 +105,11 @@ test('room artwork keeps the existing collision and table surface anchors', () =
   assert.equal(paintedTable.order, originalTable.order);
   assert.equal(paintedTable.height, originalTable.height);
   assert.ok(Math.abs(paintedTable.width - (600 / 250) * paintedTable.height) < 1e-8);
-  assert.equal(artwork.find(({ id }) => id === 'stool').blocking, false);
+  const stool = artwork.find(({ id }) => id === 'stool');
+  const desk = artwork.find(({ id }) => id === 'desk');
+  assert.equal(stool.x - (desk.x + desk.width / 2), 70);
+  assert.equal(stool.z, desk.z + 10);
+  assert.equal(stool.blocking, false);
   assert.equal(artwork.find(({ id }) => id === 'wallArt').blocking, false);
 });
 
@@ -321,7 +325,7 @@ test('table and board share the floor order between front and rear walking posit
   const board = tableGameFrame(table);
   assert.equal(board.order, table.order);
   for (const [point, inFront] of [
-    [{ x: 600, depth: 300 }, true],
+    [{ x: 550, depth: 300 }, true],
     [{ x: 730, depth: 300 }, false],
   ]) {
     assert.ok(canPlace(layout, point, layout.pet_radius));
