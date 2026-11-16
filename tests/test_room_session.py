@@ -212,7 +212,7 @@ class RoomSessionTests(unittest.TestCase):
         self.assertIsNone(session.games.sequence)
         self.advance_until(lambda: session.games.sequence is not None)
         self.assertEqual(room.movement.points[0], transition)
-        self.assertEqual(room.position, RoomPoint(675, 396.25))
+        self.assertEqual(room.position, RoomPoint(672, 396.25))
 
     def test_motion_snapshot_carries_the_duration_used_by_the_simulation(self) -> None:
         locomotion = self.endpoint.session.room.locomotion
@@ -313,7 +313,7 @@ class RoomSessionTests(unittest.TestCase):
             ))
             if self.endpoint.session.games.sequence is not None:
                 break
-        self.assertEqual(room.position, RoomPoint(675, 396.25))
+        self.assertEqual(room.position, RoomPoint(672, 396.25))
         self.assertIsNotNone(self.endpoint.session.games.sequence)
         self.command("game_close")
         self.command("suspend")
@@ -753,11 +753,11 @@ class RoomSessionTests(unittest.TestCase):
         self.assertEqual(room.spatial.depth_for(token), original_depth)
         self.command("object_drag_start", instance=token, revision=restored.revision)
         self._move_to_near_handover()
-        self.command("object_drag_move", x=570, depth=240, height=45, inside=True)
-        self.command("object_drag_drop", x=570, depth=240, height=45, offer=False)
+        self.command("object_drag_move", x=565, depth=240, height=45, inside=True)
+        self.command("object_drag_drop", x=565, depth=240, height=45, offer=False)
         released = room.world.get(token)
         assert released.position is not None
-        floor = room.geometry.food_placement(RoomPoint(570, 240))
+        floor = room.geometry.food_placement(RoomPoint(565, 240))
         self.assertEqual(
             (released.state.value, released.position.height), ("falling", 45)
         )
@@ -789,7 +789,7 @@ class RoomSessionTests(unittest.TestCase):
                     "protocol": 2,
                     "requestId": 500,
                     "name": "place",
-                    "args": {"definition": "horoscope_book", "x": 610, "depth": 300},
+                    "args": {"definition": "horoscope_book", "x": 607, "depth": 300},
                 })
             )
         )
@@ -959,7 +959,7 @@ class RoomGeometryTests(unittest.TestCase):
         for start, end in zip(route.points, route.points[1:]):
             self.assertTrue(navigator.clear_segment(start, end))
         self.assertIsNone(
-            navigator.find_route(RoomPoint(540, 300), RoomPoint(610, 300))
+            navigator.find_route(RoomPoint(540, 300), RoomPoint(607, 300))
         )
 
     def test_room_walk_continues_through_each_corner_and_can_stop(self) -> None:

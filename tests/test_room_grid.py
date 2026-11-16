@@ -66,7 +66,7 @@ class RoomGridTests(unittest.TestCase):
     def test_food_line_has_one_visual_depth_on_all_four_walls(self):
         geometry = RoomGeometry(load_room_layout())
         for point in (
-            RoomPoint(400, 20), RoomPoint(790, 300),
+            RoomPoint(400, 20), RoomPoint(790, 450),
             RoomPoint(400, 580), RoomPoint(10, 300), RoomPoint(780, 40),
         ):
             placed = geometry.food_placement(point)
@@ -79,6 +79,10 @@ class RoomGridTests(unittest.TestCase):
                 geometry.distance(geometry.food_placement(placed), placed), 0,
             )
             self.assertTrue(geometry.layout.can_place(placed.x, placed.depth, 6))
+        in_front_of_window = geometry.food_placement(RoomPoint(790, 300))
+        self.assertFalse(geometry.layout.can_place(
+            in_front_of_window.x, in_front_of_window.depth, 6,
+        ))
 
     def test_v6_upgrade_preserves_values_ids_and_independent_remembered_place(self):
         folder = self.enterContext(tempfile.TemporaryDirectory())

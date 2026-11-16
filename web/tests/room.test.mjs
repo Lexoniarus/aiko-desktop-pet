@@ -123,7 +123,7 @@ test('standing artwork meets its projected support and the door meets the skirti
     ]),
   );
   const artwork = artworkFurniture(layout, images);
-  for (const id of ['kitchen', 'fridge', 'bed', 'desk', 'table', 'plant', 'stool']) {
+  for (const id of ['kitchen', 'fridge', 'desk', 'plant']) {
     const item = artwork.find((entry) => entry.id === id);
     const frame = artworkFurnitureFrame(projection, item);
     const ground = projection.projectPoint(furnitureSupport(layout, item));
@@ -136,6 +136,37 @@ test('standing artwork meets its projected support and the door meets the skirti
   assert.ok(Math.abs(desk.z - layout.depth / 2) <= 25);
   const door = artwork.find(({ id }) => id === 'door');
   assert.equal(artworkFurnitureFrame(projection, door).y, projection.floorLine);
+});
+
+test('approved artwork contacts and table height follow the scene scale', () => {
+  const projection = new RoomProjection(layout, 70);
+  const images = Object.fromEntries(
+    [...layout.furniture.map(({ asset }) => asset), 'stool', 'wallArt'].map((asset) => [
+      asset,
+      { naturalWidth: 600, naturalHeight: 250 },
+    ]),
+  );
+  const artwork = artworkFurniture(layout, images);
+  const frame = (id) =>
+    artworkFurnitureFrame(projection, artwork.find((item) => item.id === id));
+  for (const [width, height, fit, horizon] of [
+    [1100, 544, 544 / 900, 163.2],
+    [393, 852, 0.5, 330],
+  ]) {
+    projection.update(width, height, Math.PI / 2, fit, horizon);
+    const units = (pixels) => pixels * 544 / (fit * 900);
+    assert.ok(Math.abs(units(frame('bed').y - projection.floorLine) - 74.44) < 0.01);
+    assert.ok(Math.abs(units(frame('stool').y - frame('desk').y) - 19.05) < 0.01);
+    assert.equal(frame('stool').order, frame('stool').y);
+    const table = frame('table');
+    assert.ok(Math.abs(units(table.y - projection.floorLine) - 91.7) < 1);
+    assert.ok(Math.abs(units(table.height) - 92.26) < 0.01);
+    assert.equal(table.order, table.y);
+    assert.equal(table.surface.y, table.y - table.height);
+    assert.equal(table.surface.scale, table.height / 40);
+  }
+  const bed = layout.furniture.find(({ id }) => id === 'bed');
+  assert.equal(bed.z + bed.depth / 2, layout.depth);
 });
 
 test('circle walking keeps sprite height and floor row through wall seams and the panorama wrap', () => {
@@ -332,7 +363,7 @@ test('table and board share the floor order between front and rear walking posit
     assert.equal(projection.projectPoint(point).groundY > board.order + 0.01, inFront);
   }
   assert.ok(Math.abs(board.y + 446 * board.scale - table.surface.y) < 1e-8);
-  assert.equal(board.scale * 480, 72 * table.surface.scale);
+  assert.ok(Math.abs(board.scale * 480 - 72 * table.surface.scale) < 1e-8);
 });
 
 test('ground objects cover Aiko only when nearer or on the same depth', () => {

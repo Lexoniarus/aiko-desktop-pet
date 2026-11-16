@@ -75,9 +75,13 @@ module and laptop are separate sprites attached to the projected lower unit and
 desk respectively. The stool sits 70 room units in front of the desk edge and is
 a visual prop, as is the wall print. The open fridge is packaged for future use.
 The fridge tap still opens the current food UI.
-The coffee table sits 190 room units from the east wall, centered on the window.
+The coffee table sits 193 room units from the east wall, centered on the window.
 Its layout position sets the collision footprint and the approach for Connect
-Four. The board and chips use a painted contact point within the tabletop.
+Four. Its approved artwork height sets the scale of the board and chips, which
+use a painted contact point within the tabletop.
+The bed footprint meets the south wall. Its painted foot contact is measured from
+the skirting, and the stool's contact is measured from the desk's foot line.
+These artwork measurements use the same camera scale as the rest of the room.
 The door, window, wall decorations and upper cupboard retain their wall
 anchors. The counter, fridge and other standing furniture use their authored
 proportions at the projected support points. Aiko, the free-standing table

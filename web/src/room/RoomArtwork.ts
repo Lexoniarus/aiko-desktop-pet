@@ -1,5 +1,6 @@
 import type { FurniturePlacement, RoomLayout } from './RoomLayout';
-import { furnitureFrame } from './RoomPresentation.ts';
+import { depthReferenceHeight } from './RoomDepthCurve.ts';
+import { furnitureFrame, roomPresentation } from './RoomPresentation.ts';
 import type { RoomProjection } from './RoomProjection';
 
 /** Visible board contact measured down from the rear rim of the table sprite. */
@@ -13,6 +14,13 @@ const northWallArtwork = {
   kitchenHeight: 67,
   cupboardBottom: 194,
   cupboardWidth: 0.88,
+} as const;
+
+// Contact measurements from the approved furniture preview at the reference height.
+const furnitureArtwork = {
+  bedBelowSkirting: 74.44,
+  stoolAheadOfDesk: 19.05,
+  tableHeight: 92.26,
 } as const;
 
 export const artworkAttachments: Partial<
@@ -45,6 +53,32 @@ export function artworkFurnitureFrame(
   item: FurniturePlacement,
 ) {
   const frame = furnitureFrame(projection, item);
+  const referenceScale =
+    (projection.fit * roomPresentation.designHeight) / depthReferenceHeight;
+  switch (item.id) {
+    case 'bed':
+      return placeArtwork(
+        frame,
+        item,
+        projection.floorBounds.top + furnitureArtwork.bedBelowSkirting * referenceScale,
+      );
+    case 'stool': {
+      const desk = projection.layout.furniture.find((entry) => entry.id === 'desk')!;
+      const deskY = furnitureFrame(projection, desk).y;
+      return placeArtwork(
+        frame,
+        item,
+        deskY + furnitureArtwork.stoolAheadOfDesk * referenceScale,
+      );
+    }
+    case 'table':
+      return placeArtwork(
+        frame,
+        item,
+        frame.y,
+        furnitureArtwork.tableHeight * referenceScale,
+      );
+  }
   if (item.id !== 'door' && (!item.wall || !item.elevation)) return frame;
   // The mounted art retains its drawing scale independently of the floor.
   const wallScale =
@@ -63,6 +97,24 @@ export function artworkFurnitureFrame(
     height,
     width: item.crop[2] * scale,
     scale,
+  };
+}
+
+function placeArtwork(
+  frame: ReturnType<typeof furnitureFrame>,
+  item: FurniturePlacement,
+  y: number,
+  height = frame.height,
+) {
+  const scale = height / item.crop[3];
+  return {
+    ...frame,
+    y,
+    height,
+    width: item.crop[2] * scale,
+    scale,
+    surface: { ...frame.surface, y: y - height, scale: height / item.height },
+    order: item.wall ? frame.order : y,
   };
 }
 
