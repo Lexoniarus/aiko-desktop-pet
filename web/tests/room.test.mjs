@@ -11,7 +11,7 @@ import {
   validatePublishedPackage,
   isNewerPublication,
 } from '../src/platforms/browser/PublishedPackage.ts';
-import { RoomPicking } from '../src/room/RoomPicking.ts';
+import { hitsNearHandover, RoomPicking } from '../src/room/RoomPicking.ts';
 import { RoomMotion } from '../src/room/RoomMotion.ts';
 import { roomWalkFrame } from '../src/room/RoomWalkPresentation.ts';
 import { furnitureFrame, furnitureSupport } from '../src/room/RoomPresentation.ts';
@@ -65,6 +65,14 @@ test('table chips retain their diameter and flight joins the same landing geomet
 const layout = JSON.parse(
   readFileSync(new URL('../../aiko_pet/assets/room/v1/layout.json', import.meta.url)),
 );
+
+test('a cropped handover target covers the visible torso and clips at the viewport', () => {
+  const pet = { x: 10, y: 240, width: 372, height: 610 };
+  assert.equal(hitsNearHandover(196, 610, pet, 393, 690), true);
+  assert.equal(hitsNearHandover(196, 540, pet, 393, 690), false);
+  assert.equal(hitsNearHandover(38, 610, pet, 393, 690), false);
+  assert.equal(hitsNearHandover(196, 700, pet, 393, 690), false);
+});
 
 test('room artwork keeps the existing collision and table surface anchors', () => {
   const images = Object.fromEntries(

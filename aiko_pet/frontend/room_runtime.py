@@ -47,9 +47,13 @@ from .room_drag import RoomDrag
 from .room_environment import RoomEnvironment
 from .room_leisure import RoomLeisure
 from .room_locomotion import RoomLocomotion
-from .room_movement import RoomMovement
+from .room_movement import CALL_DISTANCE, RoomMovement
 from .room_playback import RoomPlayback
 from .view_models.object_reactions import format_object_reaction
+
+_HANDOVER_HEIGHT = 25
+# The bottom of the close framing crops the normal handover height.
+_NEAR_HANDOVER_HEIGHT = 40
 
 
 class RoomRuntime:
@@ -458,21 +462,40 @@ class RoomRuntime:
         *,
         inside: bool,
         face: tuple[float, float] | None = None,
+        near_handover: bool = False,
     ) -> None:
         drag = self._dragged
         if drag is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
         item = self.world.get(drag.instance)
-        if not inside:
+        if not inside or (near_handover and not self._can_offer_near(item)):
             drag.inside = False
+            drag.near_handover = False
+            drag.ready = False
             drag.presentation = None
             return
-        point = self._placement(point)
+        if near_handover:
+            point, height = self.position, _NEAR_HANDOVER_HEIGHT
+            face = (0, 0)
+        else:
+            point = self._placement(point)
         self.world.move_in_room(drag.instance, point, height,
                                 expected_revision=item.revision)
-        drag.inside = inside
-        drag.presentation = (
-            ItemPresentation(drag.gesture, *face) if inside and face else None
+        if drag.near_handover != near_handover:
+            drag.ready = False
+        drag.inside = True
+        drag.near_handover = near_handover
+        drag.presentation = ItemPresentation(drag.gesture, *face) if face else None
+
+    def _can_offer_near(self, item: WorldObjectSnapshot) -> bool:
+        layout = self.geometry.layout
+        _, radius = self.geometry.polar(self.position)
+        return (
+            item.definition_id in self.items.foods
+            and CALL_DISTANCE - 1e-8 <= radius
+            and radius < layout.camera_clearance + layout.pet_radius
+            and not self.game_open()
+            and not self.state.sleeping
         )
 
     def cancel_drag(self) -> None:
@@ -490,20 +513,34 @@ class RoomRuntime:
         self._dragged = None
         self.behavior.refresh_after_placement()
 
-    def drop_drag(self, point: RoomPoint, *, offer: bool, height: float = 0) -> None:
-        if self._dragged is None:
+    def drop_drag(
+        self,
+        point: RoomPoint,
+        *,
+        offer: bool,
+        height: float = 0,
+        near_handover: bool = False,
+    ) -> None:
+        drag = self._dragged
+        if drag is None:
             raise ValueError("Kein Gegenstand wird gezogen.")
-        instance = self._dragged.instance
+        instance = drag.instance
         item = self.world.get(instance)
-        point = (
-            self._placement(point) if offer
-            else self._item_placement(item.definition_id, point)
-        )
-        item = self.world.move_in_room(instance, point, height,
-                                       expected_revision=item.revision)
-        accepted = offer and self.interaction.offer_on_release(instance)
-        if not accepted:
-            self._release_to_floor(instance)
+        if near_handover:
+            if not (offer and drag.near_handover and self._can_offer_near(item)):
+                raise ValueError("Aiko kann die Portion gerade nicht entgegennehmen.")
+            if not self.interaction.offer_on_release(instance):
+                # Continue observing the same portion after a quick release.
+                self._offered = instance, self.now, drag.gesture
+        else:
+            point = (
+                self._placement(point) if offer
+                else self._item_placement(item.definition_id, point)
+            )
+            self.world.move_in_room(instance, point, height,
+                                    expected_revision=item.revision)
+            if not (offer and self.interaction.offer_on_release(instance)):
+                self._release_to_floor(instance)
         self._dragged = None
         self.behavior.refresh_after_placement()
 
@@ -584,7 +621,7 @@ class RoomRuntime:
                     RoomPoint(item.position.x, self.spatial.depth_for(drag.instance)),
                 )
                 < 110
-                and abs(item.position.height - 25) < 16.25
+                and abs(item.position.height - _HANDOVER_HEIGHT) < 16.25
             )
             drag.ready = bool(decision and decision.use and near)
             record = self.awareness.record_for_instance(drag.instance)

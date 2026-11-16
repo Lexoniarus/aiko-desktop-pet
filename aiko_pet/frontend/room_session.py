@@ -397,12 +397,14 @@ class RoomSession:
                 face=(float(args["face_x"]), float(args["face_y"]))
                 if "face_x" in args and "face_y" in args
                 else None,
+                near_handover=args.get("near_handover") is True,
             )
         elif name == "object_drag_drop":
             self.room.drop_drag(
                 RoomPoint(float(args["x"]), float(args["depth"])),
                 offer=args.get("offer") is True,
                 height=float(args.get("height", 0)),
+                near_handover=args.get("near_handover") is True,
             )
         elif name == "object_drag_cancel":
             self.room.cancel_drag()

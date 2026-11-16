@@ -671,6 +671,113 @@ class RoomSessionTests(unittest.TestCase):
         )
         self.assertGreater(session.state.satiety, 30)
 
+    def _approach_for_near_handover(self) -> None:
+        session = self.endpoint.session
+        session.state.restore_checkpoint(
+            replace(session.state.capture_checkpoint(), satiety=30)
+        )
+        self.command("settings", spontaneous_talk=False, auto_walk=False)
+        self.command("call", bearing=0)
+        self.advance_until(
+            lambda: session.room.position == RoomPoint(400, 230)
+            and not session.room.moving
+        )
+
+    def _move_to_near_handover(self) -> None:
+        self.command(
+            "object_drag_move",
+            x=415, depth=230, height=90, inside=True, near_handover=True,
+        )
+
+    def _feed_at_near_handover(self, *, wait_for_ready: bool) -> None:
+        self._approach_for_near_handover()
+        session = self.endpoint.session
+        room = session.room
+        self.command("object_drag_start", definition="onigiri")
+        token = room.drag_instance
+        assert token is not None
+        self._move_to_near_handover()
+        held = room.world.get(token)
+        assert held.position is not None
+        self.assertEqual((held.position.x, held.position.height), (400, 40))
+        self.assertEqual(room.spatial.depth_for(token), 230)
+        if wait_for_ready:
+            self.advance_until(lambda: room.drag_ready)
+        self.assertLessEqual(session.state.satiety, 30)
+        self.command(
+            "object_drag_drop", x=415, depth=230, height=90,
+            offer=True, near_handover=True,
+        )
+        self.assertEqual(
+            room.world.get(token).state.value,
+            "pet_held" if wait_for_ready else "user_held",
+        )
+        self.advance_until(lambda: room.world.get(token).state.value == "pet_held")
+        self.advance_until(lambda: room.world.get(token).state.value == "consumed")
+        self.assertGreater(session.state.satiety, 30)
+        self.assertEqual([item.instance_id for item in room.world.snapshot().objects],
+                         [token])
+
+    def test_near_handover_continues_observing_a_quick_release(self) -> None:
+        self._feed_at_near_handover(wait_for_ready=False)
+
+    def test_near_handover_accepts_a_ready_portion_on_release(self) -> None:
+        self._feed_at_near_handover(wait_for_ready=True)
+
+    def test_leaving_near_handover_uses_the_floor_and_cancel_restores_the_item(
+        self,
+    ) -> None:
+        self._approach_for_near_handover()
+        room = self.endpoint.session.room
+        self.command("object_drag_start", definition="apple")
+        discarded = room.drag_instance
+        assert discarded is not None
+        self._move_to_near_handover()
+        self.command("object_drag_cancel")
+        self.assertEqual(room.world.get(discarded).state.value, "removed")
+
+        placed = self.command("place", definition="apple", x=510, depth=170)
+        original = next(
+            item for item in placed["snapshot"]["objects"]
+            if item["state"] == "resting"
+        )
+        token = original["instance_id"]
+        original_depth = room.spatial.depth_for(token)
+        self.command("object_drag_start", instance=token, revision=original["revision"])
+        self._move_to_near_handover()
+        self.command("object_drag_cancel")
+        restored = room.world.get(token)
+        assert restored.position is not None
+        self.assertEqual(restored.state.value, "resting")
+        self.assertEqual(restored.position.x, original["position"]["x"])
+        self.assertEqual(room.spatial.depth_for(token), original_depth)
+        self.command("object_drag_start", instance=token, revision=restored.revision)
+        self._move_to_near_handover()
+        self.command("object_drag_move", x=570, depth=240, height=45, inside=True)
+        self.command("object_drag_drop", x=570, depth=240, height=45, offer=False)
+        released = room.world.get(token)
+        assert released.position is not None
+        floor = room.geometry.food_placement(RoomPoint(570, 240))
+        self.assertEqual(
+            (released.state.value, released.position.height), ("falling", 45)
+        )
+        self.assertAlmostEqual(released.position.x, floor.x)
+        self.assertAlmostEqual(room.spatial.depth_for(token), floor.depth)
+
+    def test_unaccepted_near_handover_falls_on_the_food_line(self) -> None:
+        self._approach_for_near_handover()
+        room = self.endpoint.session.room
+        self.command("object_drag_start", definition="apple")
+        token = room.drag_instance
+        assert token is not None
+        self._move_to_near_handover()
+        with patch.object(room.interaction, "offer_on_release", return_value=False):
+            self.command("object_drag_drop", x=400, depth=230, offer=True,
+                         near_handover=True)
+            self.advance_until(lambda: room.world.get(token).state.value == "falling")
+        floor = room.geometry.food_placement(room.position)
+        self.assertAlmostEqual(room.spatial.depth_for(token), floor.depth)
+
     def test_furniture_footprints_reject_drop_but_allow_free_ground_in_front(
         self,
     ) -> None:

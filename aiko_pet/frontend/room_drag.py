@@ -15,4 +15,5 @@ class RoomDrag:
     presentation: ItemPresentation | None = None
     ready: bool = False
     inside: bool = False
+    near_handover: bool = False
     feedback: tuple[str, bool] | None = None

@@ -88,6 +88,12 @@ pose also fits Aiko's frontal silhouette inside the viewport. Floor picking
 inverts the same projection out to the rectangular room boundary along the
 selected bearing. The original V16 artwork uses the original radial perspective.
 
+The close food drag targets the visible torso in the current animation frame.
+The room session validates that Aiko is within the close range and positions
+the held portion at handover height. A quick release continues the same offer
+while Aiko observes it. An unaccepted portion falls onto the usual food line.
+Dragging off Aiko uses the ordinary floor placement and collision checks.
+
 The bottom action bar has its own layout row. Its height and bottom safe area
 are excluded from the room viewport. Call, Feed and More are direct actions;
 Play and Talk are also direct actions on wider screens and live under More on

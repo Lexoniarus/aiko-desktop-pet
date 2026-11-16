@@ -107,13 +107,15 @@ export class ObjectDragController {
       },
       move: (x, y) => {
         const target = this.dropTarget(x, y, ground, definition, offsetY);
-        if (target.inside) ground = { x: target.x, depth: target.depth };
+        if (target.inside && !target.near_handover)
+          ground = { x: target.x, depth: target.depth };
+        const preview = target.inside ? target : ground;
         pending = target;
         send();
         const [width, height] = this.room.portionSizeAt(
           definition,
-          ground.depth,
-          ground.x,
+          preview.depth,
+          preview.x,
         );
         ghost.style.width = `${width}px`;
         ghost.style.height = `${height}px`;
@@ -163,10 +165,10 @@ export class ObjectDragController {
     definition: string,
     offsetY: number,
   ): DragPlacement {
-    const overlay = document
-      .elementFromPoint(x, y)
-      ?.closest('button,input,select,dialog,a,.food-tray');
     const point = this.room.dragPoint(x, y - offsetY, ground, definition);
+    const overlay = document
+      .elementFromPoint(x, point.near_handover ? y - offsetY : y)
+      ?.closest('button,input,select,dialog,a,.food-tray');
     return overlay ? { ...point, inside: false, offer: false } : point;
   }
   cancel(): void {

@@ -8,7 +8,7 @@ import type { PetScreenBounds } from './AikoView';
 import { RoomCamera } from './RoomCamera';
 import { RoomMotion } from './RoomMotion';
 import { RoomScene } from './RoomScene';
-import { RoomPicking } from './RoomPicking';
+import { hitsNearHandover, RoomPicking } from './RoomPicking';
 import { canPlace, worldPolar, type RoomLayout, type RoomPoint } from './RoomLayout';
 import type { RoomItemAsset } from './RoomAssets';
 import { furnitureSupport } from './RoomPresentation';
@@ -37,6 +37,7 @@ export interface DragPlacement {
   height: number;
   inside: boolean;
   offer: boolean;
+  near_handover?: true;
   face_x: number;
   face_y: number;
 }
@@ -364,9 +365,28 @@ export class RoomView {
     const x = clientX - box.left,
       y = clientY - box.top;
     const asset = this.assets.items[definition]!;
+    const pet = this.aiko.screenBounds();
+    const position = this.petPosition;
+    const projection = this.camera.projection;
+    if (
+      asset.food &&
+      this.aiko.visible &&
+      position &&
+      worldPolar(this.assets.layout, position).distance < projection.nearDistance &&
+      hitsNearHandover(x, y, pet, box.width, this.camera.sceneHeight)
+    ) {
+      return {
+        ...position,
+        height: 0,
+        inside: true,
+        offer: true,
+        near_handover: true,
+        face_x: 0,
+        face_y: 0,
+      };
+    }
     const overPet = this.petContains(clientX, clientY);
     const previous = ground;
-    const projection = this.camera.projection;
     const foodLine =
       asset.food && !overPet ? projection.foodPlacement(x, y) : undefined;
     const supportPoint = foodLine?.point ?? (overPet ? this.petPosition! : ground);
@@ -401,8 +421,7 @@ export class RoomView {
             }
           : held;
     const point = placement?.point ?? previous;
-    const pet = this.aiko.screenBounds(),
-      width = Math.max(1, pet.scale * 192);
+    const width = Math.max(1, pet.scale * 192);
     const inside =
       x >= 0 &&
       x <= box.width &&
